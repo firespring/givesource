@@ -1,0 +1,41 @@
+{
+	"name": "givesource",
+	"version": "0.0.1",
+	"description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
+	"license": "GPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/firespring/givesource.git"
+	},
+	"scripts": {
+		"cloudformation:build": "cd packages/cloudformation && npm run build",
+		"cloudformation:clean": "cd packages/cloudformation && npm run clean",
+		"cloudformation:create": "cd packages/cloudformation && npm run stack create",
+		"cloudformation:delete": "cd packages/cloudformation && npm run stack delete",
+		"cloudformation:install": "cd packages/cloudformation && npm install",
+		"cloudformation:release": "cd packages/cloudformation && npm run release",
+		"cloudformation:update": "cd packages/cloudformation && npm run stack update",
+		"frontend:build": "cd packages/frontend && npm run build",
+		"frontend:clean": "cd packages/frontend && npm run clean",
+		"frontend:deploy": "cd packages/frontend && npm run deploy",
+		"frontend:dev": "cd packages/frontend && npm run dev",
+		"frontend:install": "cd packages/frontend && npm install",
+		"frontend:release": "cd packages/frontend && npm run release",
+		"frontend:release:force": "cd packages/frontend && npm run release:force",
+		"lambda:build": "cd packages/lambda && npm run build",
+		"lambda:clean": "cd packages/lambda && npm run clean",
+		"lambda:deploy": "cd packages/lambda && npm run deploy",
+		"lambda:install": "cd packages/lambda && npm install",
+		"lambda:release": "cd packages/lambda && npm run release",
+		"lambda:seed": "cd packages/lambda && npm run seed",
+		"lambda:release:force": "cd packages/lambda && npm run release:force",
+		"clean": "npm run cloudformation:clean && npm run frontend:clean && npm run lambda:clean",
+		"deploy": "npm run frontend:deploy && npm run lambda:deploy",
+		"install": "npm run cloudformation:install && npm run frontend:install && npm run lambda:install",
+		"postinstall": "[ -f \".env\" ] || cp .env.example .env",
+		"release": "npm run cloudformation:release && npm run frontend:release && npm run lambda:release",
+		"release:force": "npm run cloudformation:release && npm run frontend:release:force && npm run lambda:release:force"
+	},
+	"author": "Firespring",
+	"devDependencies": {}
+}

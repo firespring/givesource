@@ -1,0 +1,351 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Givesource"
+Parameters:
+
+  AdminEmail:
+    Description: Your admin email address. The initial login information will be sent to the address.
+    Type: String
+    AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+
+Resources:
+
+  DynamoDbStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
+      TimeoutInMinutes: '5'
+
+  S3Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
+      TimeoutInMinutes: '20'
+
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub |-
+        ${AWS::StackName}
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: CloudWatchLogs
+        PolicyDocument:
+          Statement:
+            - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Effect: Allow
+              Resource: arn:aws:logs:*:*:*
+      - PolicyName: DynamoDB
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+      - PolicyName: CloudFormation
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action: cloudformation:DescribeStacks
+              Resource: !Sub |-
+                arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
+      - PolicyName: S3
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:ListBucket
+              Resource:
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
+                - arn:aws:s3:::{{awsReleaseBucket}}
+            - Effect: Allow
+              Action:
+                - s3:Delete*
+                - s3:Put*
+                - s3:Get*
+              Resource:
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
+                - arn:aws:s3:::{{awsReleaseBucket}}/*
+      - PolicyName: Cognito
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:*
+                - iam:PassRole
+              Resource: '*'
+      - PolicyName: APIGateway
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - apigateway:POST
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
+            - Effect: Allow
+              Action:
+                - apigateway:*
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/apikeys
+            - Effect: Allow
+              Action:
+                - apigateway:*
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/apikeys/*
+    DependsOn:
+      - DynamoDbStack
+      - S3Stack
+      - RestApi
+
+  S3HandleFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: WriteS3
+        PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource: arn:aws:s3:::*
+      - PolicyName: WriteCloudWatchLogs
+        PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+
+  CognitoSnsCallerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: SNSPublish
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:publish
+              Resource: '*'
+
+  LambdaStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        RestApi: !Ref RestApi
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-lambda.yml
+      TimeoutInMinutes: '5'
+    DependsOn:
+      - LambdaRole
+      - S3HandleFunctionRole
+
+  CustomStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        RestApi: !Ref RestApi
+        AdminEmail: !Ref AdminEmail
+        AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
+        AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
+        PublicPagesS3: !GetAtt S3Stack.Outputs.PublicPagesS3
+        PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
+        CognitoCreateUserPoolFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserPoolFunctionArn
+        CognitoCreateUserFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserFunctionArn
+        CognitoCreateUserGroupFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserGroupFunctionArn
+        CognitoCreateUserPoolClientFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserPoolClientFunctionArn
+        S3PutObjectFunctionArn: !GetAtt LambdaStack.Outputs.S3PutObjectFunctionArn
+        S3SyncObjectsFunctionArn: !GetAtt LambdaStack.Outputs.S3SyncObjectsFunctionArn
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
+      TimeoutInMinutes: '10'
+    DependsOn:
+      - DynamoDbStack
+      - S3Stack
+      - LambdaStack
+
+  ApiGatewayStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        CognitoUserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
+        GetDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetDonationLambdaFunctionArn
+        GetDonationsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetDonationsLambdaFunctionArn
+        PostDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostDonationLambdaFunctionArn
+        PatchDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchDonationLambdaFunctionArn
+        DeleteDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteDonationLambdaFunctionArn
+        GetDonorLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetDonorLambdaFunctionArn
+        GetDonorsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetDonorsLambdaFunctionArn
+        PostDonorLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostDonorLambdaFunctionArn
+        DeleteDonorLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteDonorLambdaFunctionArn
+        PostFileLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostFileLambdaFunctionArn
+        DeleteFileLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteFileLambdaFunctionArn
+        GetMessageLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetMessageLambdaFunctionArn
+        GetMessagesLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetMessagesLambdaFunctionArn
+        PostMessageLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostMessageLambdaFunctionArn
+        PatchMessageLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchMessageLambdaFunctionArn
+        DeleteMessageLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteMessageLambdaFunctionArn
+        GetNonprofitLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitLambdaFunctionArn
+        GetNonprofitsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitsLambdaFunctionArn
+        PostNonprofitLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostNonprofitLambdaFunctionArn
+        PatchNonprofitLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchNonprofitLambdaFunctionArn
+        DeleteNonprofitLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteNonprofitLambdaFunctionArn
+        AdminRegisterNonprofitLambdaFunctionArn: !GetAtt LambdaStack.Outputs.AdminRegisterNonprofitLambdaFunctionArn
+        GetNonprofitDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitDonationLambdaFunctionArn
+        GetNonprofitDonationsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitDonationsLambdaFunctionArn
+        PostNonprofitDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostNonprofitDonationLambdaFunctionArn
+        PatchNonprofitDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchNonprofitDonationLambdaFunctionArn
+        DeleteNonprofitDonationLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteNonprofitDonationLambdaFunctionArn
+        GetNonprofitDonationTierLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitDonationTierLambdaFunctionArn
+        GetNonprofitDonationTiersLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitDonationTiersLambdaFunctionArn
+        PostNonprofitDonationTierLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostNonprofitDonationTierLambdaFunctionArn
+        PatchNonprofitDonationTiersLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchNonprofitDonationTiersLambdaFunctionArn
+        DeleteNonprofitDonationTiersLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteNonprofitDonationTiersLambdaFunctionArn
+        GetNonprofitSlideLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitSlideLambdaFunctionArn
+        GetNonprofitSlidesLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitSlidesLambdaFunctionArn
+        PostNonprofitSlideLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostNonprofitSlideLambdaFunctionArn
+        PatchNonprofitSlideLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchNonprofitSlideLambdaFunctionArn
+        PatchNonprofitSlidesLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchNonprofitSlidesLambdaFunctionArn
+        DeleteNonprofitSlideLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteNonprofitSlideLambdaFunctionArn
+        GetNonprofitUsersLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetNonprofitUsersLambdaFunctionArn
+        PostNonprofitUserLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostNonprofitUserLambdaFunctionArn
+        GetPaymentTransactionLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetPaymentTransactionLambdaFunctionArn
+        GetPaymentTransactionsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetPaymentTransactionsLambdaFunctionArn
+        PostPaymentTransactionLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostPaymentTransactionLambdaFunctionArn
+        PatchPaymentTransactionLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchPaymentTransactionLambdaFunctionArn
+        DeletePaymentTransactionLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeletePaymentTransactionLambdaFunctionArn
+        GetReportLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetReportLambdaFunctionArn
+        GetReportsLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetReportsLambdaFunctionArn
+        PostReportLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PostReportLambdaFunctionArn
+        PatchReportLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchReportLambdaFunctionArn
+        DeleteReportLambdaFunctionArn: !GetAtt LambdaStack.Outputs.DeleteReportLambdaFunctionArn
+        GetUserLambdaFunctionArn: !GetAtt LambdaStack.Outputs.GetUserLambdaFunctionArn
+        PatchUserLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchUserLambdaFunctionArn
+        ApiGatewayDeployFunctionArn: !GetAtt LambdaStack.Outputs.ApiGatewayDeployFunctionArn
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-gateway.yml
+      TimeoutInMinutes: '20'
+    DependsOn:
+      - RestApi
+      - CustomStack
+      - LambdaStack
+
+Outputs:
+
+  Version:
+    Value: {{version}}
+
+  InvocationUrl:
+    Value: !Sub |-
+      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+
+  LambdaRoleArn:
+    Value: !GetAtt LambdaRole.Arn
+
+  AdminPagesS3BucketUrl:
+    Value: !GetAtt S3Stack.Outputs.AdminPagesS3BucketUrl
+
+  AdminPagesS3BucketName:
+    Value: !GetAtt S3Stack.Outputs.AdminPagesS3
+
+  AdminPagesCloudFrontUrl:
+    Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
+
+  PublicPagesS3BucketUrl:
+    Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
+
+  PublicPagesS3BucketName:
+    Value: !GetAtt S3Stack.Outputs.PublicPagesS3
+
+  PublicPagesCloudFrontUrl:
+    Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
+
+  UserPoolId:
+    Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
+
+  UserPoolClientId:
+    Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId

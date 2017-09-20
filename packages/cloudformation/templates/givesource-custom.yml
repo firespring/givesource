@@ -1,0 +1,169 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS Custom resources for Givesource"
+Parameters:
+
+  StackName:
+    Type: String
+
+  RestApi:
+    Type: String
+
+  AdminEmail:
+    Type: String
+
+  AdminPagesS3:
+    Type: String
+
+  AdminPagesCloudFrontUrl:
+    Type: String
+
+  PublicPagesS3:
+    Type: String
+
+  PublicPagesCloudFrontUrl:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  CognitoSnsCallerRoleArn:
+    Type: String
+
+  CognitoCreateUserPoolFunctionArn:
+    Type: String
+
+  CognitoCreateUserFunctionArn:
+    Type: String
+
+  CognitoCreateUserGroupFunctionArn:
+    Type: String
+
+  CognitoCreateUserPoolClientFunctionArn:
+    Type: String
+
+  S3PutObjectFunctionArn:
+    Type: String
+
+  S3SyncObjectsFunctionArn:
+    Type: String
+
+Resources:
+
+  AdminPagesApiInfo:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !Ref S3PutObjectFunctionArn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref AdminPagesS3
+      Key: "settings.json"
+      Body: !Sub |-
+        {"InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "UserPoolId": "${CognitoUserPool.UserPoolId}", "ClientId": "${CognitoUserPoolClient.UserPoolClientId}", "PublicPagesCloudFrontUrl": "${PublicPagesCloudFrontUrl}", "PublicPagesS3": "${PublicPagesS3}"}
+
+  AdminPagesFrontend:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken: !Ref S3SyncObjectsFunctionArn
+      SourceBucket: {{awsReleaseBucket}}
+      SourceKey: admin-pages/{{version}}
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
+      DestinationBucket: !Ref AdminPagesS3
+
+  PublicPagesApiInfo:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !Ref S3PutObjectFunctionArn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref PublicPagesS3
+      Key: "settings.json"
+      Body: !Sub |-
+        {"InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "UserPoolId": "${CognitoUserPool.UserPoolId}", "ClientId": "${CognitoUserPoolClient.UserPoolClientId}", "PublicPagesS3": "${PublicPagesS3}"}
+
+  PublicPagesFrontend:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken: !Ref S3SyncObjectsFunctionArn
+      SourceBucket: {{awsReleaseBucket}}
+      SourceKey: public-pages/{{version}}
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
+      DestinationBucket: !Ref PublicPagesS3
+
+  CognitoUserPool:
+    Type: Custom::CognitoUserPool
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserPoolFunctionArn
+      Region: !Sub |-
+        ${AWS::Region}
+      PoolName: !Sub |-
+        ${StackName}-Users
+      AdminPageUrl: !Ref AdminPagesCloudFrontUrl
+      SnsCallerArn: !Ref CognitoSnsCallerRoleArn
+
+  CognitoUserPoolClient:
+    Type: Custom::CognitoUserPoolClient
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserPoolClientFunctionArn
+      Region: !Sub |-
+        ${AWS::Region}
+      ClientName: "Browser"
+      UserPoolId: !Sub |-
+        ${CognitoUserPool.UserPoolId}
+    DependsOn:
+     - CognitoUserPool
+
+  CognitoSuperAdminUserGroup:
+    Type: Custom::CognitoSuperAdminUserGroup
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      GroupName: "SuperAdmin"
+      UserPoolId: !Sub |-
+        ${CognitoUserPool.UserPoolId}
+      RoleArn: !Ref LambdaRoleArn
+    DependsOn:
+      - CognitoUserPool
+
+  CognitoAdminUserGroup:
+    Type: Custom::CognitoAdminUserGroup
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      GroupName: "Admin"
+      UserPoolId: !Sub |-
+        ${CognitoUserPool.UserPoolId}
+      RoleArn: !Ref LambdaRoleArn
+    DependsOn:
+      - CognitoUserPool
+
+  CognitoNonprofitUserGroup:
+    Type: Custom::CognitoNonprofitUserGroup
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      GroupName: "Nonprofit"
+      UserPoolId: !Sub |-
+        ${CognitoUserPool.UserPoolId}
+      RoleArn: !Ref LambdaRoleArn
+    DependsOn:
+      - CognitoUserPool
+
+  CognitoInitialUser:
+    Type: Custom::CognitoInitialUser
+    Properties:
+      ServiceToken: !Ref CognitoCreateUserFunctionArn
+      UserPoolId: !Sub |-
+        ${CognitoUserPool.UserPoolId}
+      Email: !Ref AdminEmail
+    DependsOn:
+      - CognitoUserPool
+      - CognitoUserPoolClient
+      - CognitoSuperAdminUserGroup
+
+Outputs:
+
+  CognitoUserPoolId:
+    Value: !GetAtt CognitoUserPool.UserPoolId
+
+  CognitoUserPoolClientId:
+    Value: !GetAtt CognitoUserPoolClient.UserPoolClientId

@@ -1,0 +1,1654 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS Lambda resources for Givesource"
+Parameters:
+
+  StackName:
+    Type: String
+
+  RestApi:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  S3HandleFunctionRoleArn:
+    Type: String
+
+Resources:
+
+  GetDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetDonation.zip
+      Description: "Get a donation by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donations/{donation_uuid}
+    DependsOn: GetDonationLambdaFunction
+
+  GetDonationsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetDonations.zip
+      Description: "Get a list of donations"
+      FunctionName: !Sub |-
+        ${StackName}-GetDonations
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetDonationsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetDonationsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donations
+    DependsOn: GetDonationsLambdaFunction
+    
+  PostDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostDonation.zip
+      Description: "Create a new donation"
+      FunctionName: !Sub |-
+        ${StackName}-PostDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/donations
+    DependsOn: PostDonationLambdaFunction
+
+  PatchDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchDonation.zip
+      Description: "Update an existing donation"
+      FunctionName: !Sub |-
+        ${StackName}-PatchDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/donations/{donation_uuid}
+    DependsOn: PatchDonationLambdaFunction
+
+  DeleteDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteDonation.zip
+      Description: "Delete an existing donation"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/donations/{donation_uuid}
+    DependsOn: DeleteDonationLambdaFunction
+
+  GetDonorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetDonor.zip
+      Description: "Get a donor by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetDonor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetDonorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetDonorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donors/{donor_uuid}
+    DependsOn: GetDonorLambdaFunction
+
+  GetDonorsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetDonors.zip
+      Description: "Get a list of donors"
+      FunctionName: !Sub |-
+        ${StackName}-GetDonors
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetDonorsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetDonorsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donors
+    DependsOn: GetDonorsLambdaFunction
+
+  PostDonorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostDonor.zip
+      Description: "Create a new donor"
+      FunctionName: !Sub |-
+        ${StackName}-PostDonor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostDonorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostDonorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/donors
+    DependsOn: PostDonorLambdaFunction
+
+  DeleteDonorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteDonor.zip
+      Description: "Delete an existing donor"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteDonor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteDonorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteDonorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/donors/{donor_uuid}
+    DependsOn: DeleteDonorLambdaFunction
+
+  PostFileLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostFile.zip
+      Description: "Create a new file"
+      FunctionName: !Sub |-
+        ${StackName}-PostFile
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostFileLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostFileLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/files
+    DependsOn: PostFileLambdaFunction
+
+  DeleteFileLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteFile.zip
+      Description: "Deleting file"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteFile
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteFileLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteFileLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/files/{file_uuid}
+    DependsOn: DeleteFileLambdaFunction
+
+  GetMessageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetMessage.zip
+      Description: "Get a message by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetMessage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetMessageLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetMessageLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/messages/{message_uuid}
+    DependsOn: GetMessageLambdaFunction
+
+  GetMessagesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetMessages.zip
+      Description: "Get a list of messages"
+      FunctionName: !Sub |-
+        ${StackName}-GetMessages
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetMessagesLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetMessagesLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/messages
+    DependsOn: GetMessagesLambdaFunction
+
+  PostMessageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostMessage.zip
+      Description: "Create a new message"
+      FunctionName: !Sub |-
+        ${StackName}-PostMessage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostMessageLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostMessageLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/messages
+    DependsOn: PostMessageLambdaFunction
+
+  PatchMessageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchMessage.zip
+      Description: "Update an existing message"
+      FunctionName: !Sub |-
+        ${StackName}-PatchMessage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchMessageLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchMessageLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/messages/{message_uuid}
+    DependsOn: PatchMessageLambdaFunction
+
+  DeleteMessageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteMessage.zip
+      Description: "Delete an existing message"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteMessage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteMessageLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteMessageLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/messages/{message_uuid}
+    DependsOn: DeleteMessageLambdaFunction
+
+  GetNonprofitLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofit.zip
+      Description: "Get a nonprofit by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}
+    DependsOn: GetNonprofitLambdaFunction
+
+  GetNonprofitsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofits.zip
+      Description: "Get a list of nonprofits"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofits
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits
+    DependsOn: GetNonprofitsLambdaFunction
+
+  PostNonprofitLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostNonprofit.zip
+      Description: "Create a new nonprofit"
+      FunctionName: !Sub |-
+        ${StackName}-PostNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostNonprofitLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostNonprofitLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits
+    DependsOn: PostNonprofitLambdaFunction
+
+  PatchNonprofitLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchNonprofit.zip
+      Description: "Update an existing nonprofit"
+      FunctionName: !Sub |-
+        ${StackName}-PatchNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchNonprofitLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchNonprofitLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}
+    DependsOn: PatchNonprofitLambdaFunction
+
+  DeleteNonprofitLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteNonprofit.zip
+      Description: "Delete an existing nonprofit"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteNonprofitLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteNonprofitLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}
+    DependsOn: DeleteNonprofitLambdaFunction
+
+  AdminRegisterNonprofitLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/AdminRegisterNonprofit.zip
+      Description: "Register a new nonprofit and User"
+      FunctionName: !Sub |-
+        ${StackName}-AdminRegisterNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  AdminRegisterNonprofitLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt AdminRegisterNonprofitLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/register
+    DependsOn: AdminRegisterNonprofitLambdaFunction
+
+  GetNonprofitDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitDonation.zip
+      Description: "Get a nonprofit's donation by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+    DependsOn: GetNonprofitDonationLambdaFunction
+
+  GetNonprofitDonationsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitDonations.zip
+      Description: "Get a list of a nonprofit's donations"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitDonations
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitDonationsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitDonationsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/donations
+    DependsOn: GetNonprofitDonationsLambdaFunction
+
+  PostNonprofitDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostNonprofitDonation.zip
+      Description: "Create a new nonprofit's donation"
+      FunctionName: !Sub |-
+        ${StackName}-PostNonprofitDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostNonprofitDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostNonprofitDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/donations
+    DependsOn: PostNonprofitDonationLambdaFunction
+
+  PatchNonprofitDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchNonprofitDonation.zip
+      Description: "Update an existing nonprofit donation"
+      FunctionName: !Sub |-
+        ${StackName}-PatchNonprofitDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchNonprofitDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchNonprofitDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+    DependsOn: PatchNonprofitDonationLambdaFunction
+
+  DeleteNonprofitDonationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteNonprofitDonation.zip
+      Description: "Delete an existing nonprofit donation"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteNonprofitDonation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteNonprofitDonationLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteNonprofitDonationLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+    DependsOn: DeleteNonprofitDonationLambdaFunction
+
+  GetNonprofitDonationTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitDonationTier.zip
+      Description: "Get a nonprofit's donation tier by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitDonationTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitDonationTierLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitDonationTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/tiers/{donation_tier_uuid}
+    DependsOn: GetNonprofitDonationTierLambdaFunction
+
+  GetNonprofitDonationTiersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitDonationTiers.zip
+      Description: "Get a list of a nonprofit's donation tiers"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitDonationTiers
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitDonationTiersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitDonationTiersLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/tiers
+    DependsOn: GetNonprofitDonationTiersLambdaFunction
+
+  PostNonprofitDonationTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostNonprofitDonationTier.zip
+      Description: "Create a new nonprofit's donation tier"
+      FunctionName: !Sub |-
+        ${StackName}-PostNonprofitDonationTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostNonprofitDonationTierLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostNonprofitDonationTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/tiers
+    DependsOn: PostNonprofitDonationTierLambdaFunction
+
+  PatchNonprofitDonationTiersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchNonprofitDonationTiers.zip
+      Description: "Batch update nonprofit donation tiers"
+      FunctionName: !Sub |-
+        ${StackName}-PatchNonprofitDonationTiers
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchNonprofitDonationTiersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchNonprofitDonationTiersLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/tiers
+    DependsOn: PatchNonprofitDonationTiersLambdaFunction
+
+  DeleteNonprofitDonationTiersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteNonprofitDonationTiers.zip
+      Description: "Batch delete nonprofit donation tiers"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteNonprofitDonationTiers
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteNonprofitDonationTiersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteNonprofitDonationTiersLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/tiers
+    DependsOn: DeleteNonprofitDonationTiersLambdaFunction
+
+  GetNonprofitSlideLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitSlide.zip
+      Description: "Get a nonprofit's slide by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitSlide
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitSlideLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitSlideLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+    DependsOn: GetNonprofitSlideLambdaFunction
+
+  GetNonprofitSlidesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitSlides.zip
+      Description: "Get a list of a nonprofit's slides"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitSlides
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitSlidesLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitSlidesLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/slides
+    DependsOn: GetNonprofitSlidesLambdaFunction
+
+  PostNonprofitSlideLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostNonprofitSlide.zip
+      Description: "Create a new nonprofit's slide"
+      FunctionName: !Sub |-
+        ${StackName}-PostNonprofitSlide
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostNonprofitSlideLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostNonprofitSlideLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/slides
+    DependsOn: PostNonprofitSlideLambdaFunction
+
+  PatchNonprofitSlideLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchNonprofitSlide.zip
+      Description: "Update an existing nonprofit slide"
+      FunctionName: !Sub |-
+        ${StackName}-PatchNonprofitSlide
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchNonprofitSlideLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchNonprofitSlideLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+    DependsOn: PatchNonprofitSlideLambdaFunction
+
+  PatchNonprofitSlidesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchNonprofitSlides.zip
+      Description: "Batch update Nonprofit Slides"
+      FunctionName: !Sub |-
+        ${StackName}-PatchNonprofitSlides
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchNonprofitSlidesLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchNonprofitSlidesLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/slides
+    DependsOn: PatchNonprofitSlidesLambdaFunction
+
+  DeleteNonprofitSlideLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteNonprofitSlide.zip
+      Description: "Delete an existing nonprofit slide"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteNonprofitSlide
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteNonprofitSlideLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteNonprofitSlideLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+    DependsOn: PatchNonprofitSlideLambdaFunction
+
+  GetNonprofitUsersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitUsers.zip
+      Description: "Get a list of a nonprofit's users"
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitUsers
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitUsersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitUsersLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/users
+    DependsOn: GetNonprofitUsersLambdaFunction
+
+  PostNonprofitUserLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostNonprofitUser.zip
+      Description: "Create a new nonprofit user"
+      FunctionName: !Sub |-
+        ${StackName}-PostNonprofitUser
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostNonprofitUserLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostNonprofitUserLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/users
+    DependsOn: PostNonprofitUserLambdaFunction
+
+  GetPaymentTransactionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetPaymentTransaction.zip
+      Description: "Get a paymentTransaction by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetPaymentTransaction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetPaymentTransactionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetPaymentTransactionLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/paymentTransactions/{payment_transaction_uuid}
+    DependsOn: GetPaymentTransactionLambdaFunction
+
+  GetPaymentTransactionsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetPaymentTransactions.zip
+      Description: "Get a list of paymentTransactions"
+      FunctionName: !Sub |-
+        ${StackName}-GetPaymentTransactions
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetPaymentTransactionsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetPaymentTransactionsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/paymentTransactions
+    DependsOn: GetPaymentTransactionsLambdaFunction
+
+  PostPaymentTransactionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostPaymentTransaction.zip
+      Description: "Create a new paymentTransaction"
+      FunctionName: !Sub |-
+        ${StackName}-PostPaymentTransaction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostPaymentTransactionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostPaymentTransactionLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/paymentTransactions
+    DependsOn: PostPaymentTransactionLambdaFunction
+
+  PatchPaymentTransactionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchPaymentTransaction.zip
+      Description: "Update an existing paymentTransaction"
+      FunctionName: !Sub |-
+        ${StackName}-PatchPaymentTransaction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchPaymentTransactionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchPaymentTransactionLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/paymentTransactions/{payment_transaction_uuid}
+    DependsOn: PatchPaymentTransactionLambdaFunction
+
+  DeletePaymentTransactionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeletePaymentTransaction.zip
+      Description: "Delete an existing paymentTransactions"
+      FunctionName: !Sub |-
+        ${StackName}-DeletePaymentTransaction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeletePaymentTransactionLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeletePaymentTransactionLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/paymentTransactions/{payment_transaction_uuid}
+    DependsOn: DeletePaymentTransactionLambdaFunction
+
+  GetReportLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetReport.zip
+      Description: "Get a report by uuid"
+      FunctionName: !Sub |-
+        ${StackName}-GetReport
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetReportLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetReportLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/reports/{report_uuid}
+    DependsOn: GetReportLambdaFunction
+
+  GetReportsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetReports.zip
+      Description: "Get a list of reports"
+      FunctionName: !Sub |-
+        ${StackName}-GetReports
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetReportsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetReportsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/reports
+    DependsOn: GetReportsLambdaFunction
+
+  PostReportLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostReport.zip
+      Description: "Create a new report"
+      FunctionName: !Sub |-
+        ${StackName}-PostReport
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PostReportLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostReportLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/reports
+    DependsOn: PostReportLambdaFunction
+
+  PatchReportLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchReport.zip
+      Description: "Update an existing report"
+      FunctionName: !Sub |-
+        ${StackName}-PatchReport
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchReportLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchReportLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/reports/{report_uuid}
+    DependsOn: PatchReportLambdaFunction
+
+  DeleteReportLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteReport.zip
+      Description: "Delete an existing report"
+      FunctionName: !Sub |-
+        ${StackName}-DeleteReport
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  DeleteReportLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteReportLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/reports/{report_uuid}
+    DependsOn: DeleteReportLambdaFunction
+
+  GetUserLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetUser.zip
+      Description: "Get a user"
+      FunctionName: !Sub |-
+        ${StackName}-GetUser
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetUserLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetUserLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/users/{user_uuid}
+    DependsOn: GetUserLambdaFunction
+
+  PatchUserLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchUser.zip
+      Description: "Update an existing user"
+      FunctionName: !Sub |-
+        ${StackName}-PatchUser
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  PatchUserLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchUserLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/users/{user_uuid}
+    DependsOn: PatchUserLambdaFunction
+
+  ApiGatewayDeployFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/ApiGatewayDeploy.zip
+      Description: "Deploy the API Gateway"
+      FunctionName: !Sub |-
+        ${StackName}-ApiGatewayDeploy
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserPoolFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUserPool.zip
+      Description: "Create a user pool"
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserPool
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserPoolClientFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUserPoolClient.zip
+      Description: "Create a user pool client"
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserPoolClient
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUser.zip
+      Description: "Create a user"
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUser
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserGroupFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateGroup.zip
+      Description: "Create a user group"
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserGroup
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  S3PutObjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3PutObject.zip
+      Description: "Put an object into an AWS S3 bucket"
+      FunctionName: !Sub |-
+        ${StackName}-S3PutObject
+      Handler: "index.handle"
+      Role: !Ref S3HandleFunctionRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  S3SyncObjectsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3SyncObjects.zip
+      Description: "Sync S3 objects between two AWS S3 buckets"
+      FunctionName: !Sub |-
+        ${StackName}-S3SyncObjects
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+Outputs:
+
+  GetDonationLambdaFunctionArn:
+    Value: !GetAtt GetDonationLambdaFunction.Arn
+
+  GetDonationsLambdaFunctionArn:
+    Value: !GetAtt GetDonationsLambdaFunction.Arn
+
+  PostDonationLambdaFunctionArn:
+    Value: !GetAtt PostDonationLambdaFunction.Arn
+
+  PatchDonationLambdaFunctionArn:
+    Value: !GetAtt PatchDonationLambdaFunction.Arn
+
+  DeleteDonationLambdaFunctionArn:
+    Value: !GetAtt DeleteDonationLambdaFunction.Arn
+
+  GetDonorLambdaFunctionArn:
+    Value: !GetAtt GetDonorLambdaFunction.Arn
+
+  GetDonorsLambdaFunctionArn:
+    Value: !GetAtt GetDonorsLambdaFunction.Arn
+
+  PostDonorLambdaFunctionArn:
+    Value: !GetAtt PostDonorLambdaFunction.Arn
+
+  DeleteDonorLambdaFunctionArn:
+    Value: !GetAtt DeleteDonorLambdaFunction.Arn
+
+  PostFileLambdaFunctionArn:
+    Value: !GetAtt PostFileLambdaFunction.Arn
+
+  DeleteFileLambdaFunctionArn:
+    Value: !GetAtt DeleteFileLambdaFunction.Arn
+
+  GetMessageLambdaFunctionArn:
+    Value: !GetAtt GetMessageLambdaFunction.Arn
+
+  GetMessagesLambdaFunctionArn:
+    Value: !GetAtt GetMessagesLambdaFunction.Arn
+
+  PostMessageLambdaFunctionArn:
+    Value: !GetAtt PostMessageLambdaFunction.Arn
+
+  PatchMessageLambdaFunctionArn:
+    Value: !GetAtt PatchMessageLambdaFunction.Arn
+
+  DeleteMessageLambdaFunctionArn:
+    Value: !GetAtt DeleteMessageLambdaFunction.Arn
+
+  GetNonprofitLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitLambdaFunction.Arn
+
+  GetNonprofitsLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitsLambdaFunction.Arn
+
+  PostNonprofitLambdaFunctionArn:
+    Value: !GetAtt PostNonprofitLambdaFunction.Arn
+
+  PatchNonprofitLambdaFunctionArn:
+    Value: !GetAtt PatchNonprofitLambdaFunction.Arn
+
+  DeleteNonprofitLambdaFunctionArn:
+    Value: !GetAtt DeleteNonprofitLambdaFunction.Arn
+
+  AdminRegisterNonprofitLambdaFunctionArn:
+    Value: !GetAtt AdminRegisterNonprofitLambdaFunction.Arn
+
+  GetNonprofitDonationLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitDonationLambdaFunction.Arn
+
+  GetNonprofitDonationsLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitDonationsLambdaFunction.Arn
+
+  PostNonprofitDonationLambdaFunctionArn:
+    Value: !GetAtt PostNonprofitDonationLambdaFunction.Arn
+
+  PatchNonprofitDonationLambdaFunctionArn:
+    Value: !GetAtt PatchNonprofitDonationLambdaFunction.Arn
+
+  DeleteNonprofitDonationLambdaFunctionArn:
+    Value: !GetAtt DeleteNonprofitDonationLambdaFunction.Arn
+
+  GetNonprofitDonationTierLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitDonationTierLambdaFunction.Arn
+
+  GetNonprofitDonationTiersLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitDonationTiersLambdaFunction.Arn
+
+  PostNonprofitDonationTierLambdaFunctionArn:
+    Value: !GetAtt PostNonprofitDonationTierLambdaFunction.Arn
+
+  PatchNonprofitDonationTiersLambdaFunctionArn:
+    Value: !GetAtt PatchNonprofitDonationTiersLambdaFunction.Arn
+
+  DeleteNonprofitDonationTiersLambdaFunctionArn:
+    Value: !GetAtt DeleteNonprofitDonationTiersLambdaFunction.Arn
+
+  GetNonprofitSlideLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitSlideLambdaFunction.Arn
+
+  GetNonprofitSlidesLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitSlidesLambdaFunction.Arn
+
+  PostNonprofitSlideLambdaFunctionArn:
+    Value: !GetAtt PostNonprofitSlideLambdaFunction.Arn
+
+  PatchNonprofitSlideLambdaFunctionArn:
+    Value: !GetAtt PatchNonprofitSlideLambdaFunction.Arn
+
+  PatchNonprofitSlidesLambdaFunctionArn:
+    Value: !GetAtt PatchNonprofitSlidesLambdaFunction.Arn
+
+  DeleteNonprofitSlideLambdaFunctionArn:
+    Value: !GetAtt DeleteNonprofitSlideLambdaFunction.Arn
+
+  GetNonprofitUsersLambdaFunctionArn:
+    Value: !GetAtt GetNonprofitUsersLambdaFunction.Arn
+
+  PostNonprofitUserLambdaFunctionArn:
+    Value: !GetAtt PostNonprofitUserLambdaFunction.Arn
+
+  GetPaymentTransactionLambdaFunctionArn:
+    Value: !GetAtt GetPaymentTransactionLambdaFunction.Arn
+
+  GetPaymentTransactionsLambdaFunctionArn:
+    Value: !GetAtt GetPaymentTransactionsLambdaFunction.Arn
+
+  PostPaymentTransactionLambdaFunctionArn:
+    Value: !GetAtt PostPaymentTransactionLambdaFunction.Arn
+
+  PatchPaymentTransactionLambdaFunctionArn:
+    Value: !GetAtt PatchPaymentTransactionLambdaFunction.Arn
+
+  DeletePaymentTransactionLambdaFunctionArn:
+    Value: !GetAtt DeletePaymentTransactionLambdaFunction.Arn
+
+  GetReportLambdaFunctionArn:
+    Value: !GetAtt GetReportLambdaFunction.Arn
+
+  GetReportsLambdaFunctionArn:
+    Value: !GetAtt GetReportsLambdaFunction.Arn
+
+  PostReportLambdaFunctionArn:
+    Value: !GetAtt PostReportLambdaFunction.Arn
+
+  PatchReportLambdaFunctionArn:
+    Value: !GetAtt PatchReportLambdaFunction.Arn
+
+  DeleteReportLambdaFunctionArn:
+    Value: !GetAtt DeleteReportLambdaFunction.Arn
+
+  GetUserLambdaFunctionArn:
+    Value: !GetAtt GetUserLambdaFunction.Arn
+
+  PatchUserLambdaFunctionArn:
+    Value: !GetAtt PatchUserLambdaFunction.Arn
+
+  ApiGatewayDeployFunctionArn:
+    Value: !GetAtt ApiGatewayDeployFunction.Arn
+
+  CognitoCreateUserPoolFunctionArn:
+    Value: !GetAtt CognitoCreateUserPoolFunction.Arn
+
+  CognitoCreateUserPoolClientFunctionArn:
+    Value: !GetAtt CognitoCreateUserPoolClientFunction.Arn
+
+  CognitoCreateUserFunctionArn:
+    Value: !GetAtt CognitoCreateUserFunction.Arn
+
+  CognitoCreateUserGroupFunctionArn:
+    Value: !GetAtt CognitoCreateUserGroupFunction.Arn
+
+  S3PutObjectFunctionArn:
+    Value: !GetAtt S3PutObjectFunction.Arn
+
+  S3SyncObjectsFunctionArn:
+    Value: !GetAtt S3SyncObjectsFunction.Arn

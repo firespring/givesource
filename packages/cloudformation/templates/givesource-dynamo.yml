@@ -1,0 +1,397 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS DynamoDB resources for Givesource"
+Parameters:
+
+  StackName:
+    Type: String
+
+Resources:
+
+  DonationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Donations
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: nonprofitUuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+  DonationTiersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-DonationTiers
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: nonprofitUuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: DonationsTable
+
+  DonorsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Donors
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: email
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: emailIndex
+        KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: DonationTiersTable
+
+  FilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Files
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: DonorsTable
+
+  MessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Messages
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: FilesTable
+
+  NonprofitsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Nonprofits
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      - AttributeName: status
+        AttributeType: S
+      - AttributeName: slug
+        AttributeType: S
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: statusIndex
+        KeySchema:
+        - AttributeName: status
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: slugIndex
+        KeySchema:
+        - AttributeName: slug
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: MessagesTable
+
+  PaymentTransactionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-PaymentTransactions
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: NonprofitsTable
+
+  ReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Reports
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: PaymentTransactionsTable
+
+  SlidesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Slides
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: nonprofitUuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: ReportsTable
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Users
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: email
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: emailIndex
+        KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: SlidesTable
+
+Outputs:
+
+  DonationsTable:
+    Value: !Ref DonationsTable
+
+  DonationTiersTable:
+    Value: !Ref DonationTiersTable
+
+  DonorsTable:
+    Value: !Ref DonorsTable
+
+  FilesTable:
+    Value: !Ref FilesTable
+
+  MessagesTable:
+    Value: !Ref MessagesTable
+
+  NonprofitsTable:
+    Value: !Ref NonprofitsTable
+
+  PaymentTransactionsTable:
+    Value: !Ref PaymentTransactionsTable
+
+  ReportsTable:
+    Value: !Ref ReportsTable
+
+  SlidesTable:
+    Value: !Ref SlidesTable
+
+  UsersTable:
+    Value: !Ref UsersTable

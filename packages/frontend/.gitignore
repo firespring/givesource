@@ -1,0 +1,17 @@
+# Ignore OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Ignore node generated files
+*.log
+node_modules/
+clean
+
+# Ignore build directory
+build/
+
+# Ignore environment variables
+.env
+config/*.json

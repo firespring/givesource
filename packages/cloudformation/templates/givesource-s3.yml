@@ -1,0 +1,135 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS S3 resources for Givesource"
+Resources:
+
+  AdminPagesS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+
+  AdminPagesS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AdminPagesS3
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+            Principal: "*"
+            Resource: !Sub |-
+              arn:aws:s3:::${AdminPagesS3}/*
+
+  AdminPagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
+            Id: !Ref AdminPagesS3
+            CustomOriginConfig:
+              OriginProtocolPolicy: "http-only"
+        Enabled: "true"
+        Comment: "Distribution for admin pages of Givesource"
+        DefaultRootObject: "index.html"
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          TargetOriginId: !Ref AdminPagesS3
+          ForwardedValues:
+            QueryString: "false"
+            Cookies:
+              Forward: "none"
+          ViewerProtocolPolicy: "allow-all"
+        PriceClass: "PriceClass_200"
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: "true"
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+
+  PublicPagesS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - PUT
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+            MaxAge: "3600"
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+
+  PublicPagesS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PublicPagesS3
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+            Principal: "*"
+            Resource: !Sub |-
+              arn:aws:s3:::${PublicPagesS3}/*
+
+  PublicPagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
+            Id: !Ref PublicPagesS3
+            CustomOriginConfig:
+              OriginProtocolPolicy: "http-only"
+        Enabled: "true"
+        Comment: "Distribution for public pages of Givesource"
+        DefaultRootObject: "index.html"
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          TargetOriginId: !Ref PublicPagesS3
+          ForwardedValues:
+            QueryString: "false"
+            Cookies:
+              Forward: "none"
+          ViewerProtocolPolicy: "allow-all"
+        PriceClass: "PriceClass_200"
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: "true"
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+
+Outputs:
+
+  AdminPagesS3:
+    Value: !Ref AdminPagesS3
+
+  AdminPagesS3BucketUrl:
+    Value: !GetAtt AdminPagesS3.WebsiteURL
+
+  AdminPagesCloudFrontUrl:
+    Value: !Sub |-
+      https://${AdminPagesDistribution.DomainName}
+
+  PublicPagesS3BucketUrl:
+    Value: !GetAtt PublicPagesS3.WebsiteURL
+
+  PublicPagesS3:
+    Value: !Ref PublicPagesS3
+
+  PublicPagesCloudFrontUrl:
+    Value: !Sub |-
+      https://${PublicPagesDistribution.DomainName}
