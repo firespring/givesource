@@ -16,7 +16,6 @@
  */
 
 const AWS = require('aws-sdk');
-const env = require('../helpers/env');
 
 /**
  * ApiGateway constructor
@@ -24,7 +23,7 @@ const env = require('../helpers/env');
  * @constructor
  */
 function ApiGateway() {
-	this.apiGateway = new AWS.APIGateway({region: env.AWS_REGION});
+	this.apiGateway = new AWS.APIGateway({region: process.env.AWS_REGION});
 }
 
 /**
