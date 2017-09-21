@@ -26,9 +26,10 @@ const FormDirective = require('./directives/forms');
 const MessagesDirective = require('./directives/messages');
 const ModalMixin = require('./mixins/modals');
 const NavigationComponent = require('./components/header/Navigation.vue');
-const ValidateMixin = require('./mixins/validate');
 const User = require('./helpers/user');
 const UserMixin = require('./mixins/user');
+const UtilsMixin = require('./mixins/utils');
+const ValidateMixin = require('./mixins/validate');
 
 window._ = require('lodash');
 window.axios = axios;
@@ -45,8 +46,9 @@ Vue.mixin({
 });
 
 // Register mixins
-Vue.mixin(UserMixin.mixin);
 Vue.mixin(ModalMixin.mixin);
+Vue.mixin(UserMixin.mixin);
+Vue.mixin(UtilsMixin.mixin);
 Vue.mixin(ValidateMixin.mixin);
 
 // Register directives

@@ -17,7 +17,7 @@
 
 <template>
     <select v-model="localValue" :name="name" :id="id" ref="input">
-        <option disabled value="">No category selected</option>
+        <option :disabled="!allowEmpty" value="">No category selected</option>
         <option disabled value="">-----</option>
         <option v-for="option in formOptions" :value="option.value" v-html="option.text" :disabled="option.disabled"></option>
     </select>
@@ -46,7 +46,7 @@
 			selectedValue: function () {
 				const vue = this;
 				return vue.localValue;
-			}
+			},
 		},
 		props: {
 			value: {},
@@ -57,6 +57,10 @@
 			name: {
 				type: String,
 				default: null
+			},
+			allowEmpty: {
+				type: Boolean,
+				default: false,
 			},
 			options: {
 				type: [Object, Array],

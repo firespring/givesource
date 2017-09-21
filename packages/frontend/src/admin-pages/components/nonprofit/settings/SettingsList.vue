@@ -20,6 +20,16 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+
+                <div class="o-page-header" v-if="isAdmin">
+                    <div class="o-page-header__text">
+                        <nav class="o-page-header-nav c-breadcrumb">
+                            <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+                        </nav>
+                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">Manage {{ nonprofit.legalName }}'s Settings</h1>
+                    </div>
+                </div>
+
                 <div class="o-app-main-content">
                     <section class="c-page-section c-page-section--headless c-page-section--border c-page-section--shadow c-page-section--segmented">
                         <div class="c-page-section__main">
@@ -87,8 +97,36 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				nonprofit: {}
+			}
+		},
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+		},
 		props: [
 			'nonprofitUuid'
-        ]
-    };
+		],
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.nonprofit = response.data;
+			}).then(function () {
+				next();
+			}).catch(function () {
+				next();
+			});
+		}
+	};
 </script>

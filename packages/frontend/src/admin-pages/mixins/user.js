@@ -25,6 +25,6 @@ exports.mixin = {
 		},
 		isNonprofitUser: function () {
 			return this.user.groups.indexOf('Nonprofit') > -1;
-		}
+		},
 	}
 };
