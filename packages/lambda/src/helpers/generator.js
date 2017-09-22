@@ -16,6 +16,7 @@
  */
 
 const _ = require('lodash');
+const DonationHelper = require('./donation');
 const faker = require('faker');
 
 /**
@@ -40,18 +41,19 @@ Generator.prototype._generators = {
 	 * @return {Object}
 	 */
 	donation: function () {
-		return {
+		const donation = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
-			amountInCents: faker.random.number(),
+			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
 			donorUuid: faker.random.uuid(),
-			feesInCents: faker.random.number(),
 			isAnonymous: faker.random.boolean(),
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
 			paymentTransactionUuid: faker.random.uuid(),
 		};
+		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, donation.isFeeCovered, 30, 0.025);
+		return donation;
 	},
 
 	/**

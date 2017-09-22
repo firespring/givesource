@@ -31,8 +31,8 @@ dotenv.config({path: `${__dirname}/../../../.env`});
  */
 const describeStack = function (stackName) {
 	return new Promise(function (resolve, reject) {
-		const region = process.env.AWS_DEPLOY_REGION;
-		const cloudFormation = new AWS.CloudFormation({region: region});
+		const awsRegion = process.env.AWS_REGION;
+		const cloudFormation = new AWS.CloudFormation({region: awsRegion});
 		const params = {StackName: stackName};
 		cloudFormation.describeStacks(params, function (err, data) {
 			if (err) {

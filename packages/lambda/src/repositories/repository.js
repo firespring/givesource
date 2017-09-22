@@ -17,7 +17,6 @@
 
 const _ = require('lodash');
 const AWS = require('aws-sdk');
-const env = require('../helpers/env');
 const Model = require('../models/model');
 const QueryBuilder = require('../aws/queryBuilder');
 
@@ -27,7 +26,7 @@ const QueryBuilder = require('../aws/queryBuilder');
  * @constructor
  */
 function Repository(table) {
-	const region = env.AWS_REGION;
+	const region = process.env.AWS_REGION;
 	this.dbClient = new AWS.DynamoDB.DocumentClient({region: region});
 	this.table = table || null;
 }

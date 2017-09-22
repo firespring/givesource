@@ -15,16 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const env = require('../helpers/env');
-const StackName = env.STACK_NAME;
+const stackName = process.env.AWS_STACK_NAME;
 
-exports.DonationsTable = `${StackName}-Donations`;
-exports.DonationTiersTable = `${StackName}-DonationTiers`;
-exports.DonorsTable = `${StackName}-Donors`;
-exports.FilesTable = `${StackName}-Files`;
-exports.MessagesTable = `${StackName}-Messages`;
-exports.NonprofitsTable = `${StackName}-Nonprofits`;
-exports.PaymentTransactionsTable = `${StackName}-PaymentTransactions`;
-exports.ReportsTable = `${StackName}-Reports`;
-exports.SlidesTable = `${StackName}-Slides`;
-exports.UsersTable = `${StackName}-Users`;
+exports.DonationsTable = `${stackName}-Donations`;
+exports.DonationTiersTable = `${stackName}-DonationTiers`;
+exports.DonorsTable = `${stackName}-Donors`;
+exports.FilesTable = `${stackName}-Files`;
+exports.MessagesTable = `${stackName}-Messages`;
+exports.NonprofitsTable = `${stackName}-Nonprofits`;
+exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
+exports.ReportsTable = `${stackName}-Reports`;
+exports.SlidesTable = `${stackName}-Slides`;
+exports.UsersTable = `${stackName}-Users`;

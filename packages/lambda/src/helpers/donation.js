@@ -15,13 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// If we are running locally, set AWS specific environment variables from our .env
-if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
-	require('dotenv').config({path: `${__dirname}/../../../../.env`});
-	process.env['AWS_LAMBDA_FUNCTION_NAME'] = process.env.AWS_STACK_NAME;
-	process.env['AWS_REGION'] = process.env.AWS_DEPLOY_REGION;
-}
+const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../../.env`});
 
-exports.AWS_REGION = process.env.AWS_REGION;
-exports.STACK_NAME = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(/-[^-]*$/, '');
-exports.NODE_ENV = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 'production';
+/**
+ * Calculate donation fees
+ *
+ * @param {number} amountInCents
+ * @param {bool} isFeeCovered
+ * @param {number} transactionFlatFee
+ * @param {number} transactionPercentFee
+ * @return {number}
+ */
+exports.calculateFees = function (amountInCents, isFeeCovered, transactionFlatFee, transactionPercentFee) {
+	if (isFeeCovered) {
+		return ~~(Math.round((amountInCents + transactionFlatFee) / (1 - transactionPercentFee) - amountInCents));
+	} else {
+		return ~~(Math.round((amountInCents * transactionPercentFee) + (transactionFlatFee)));
+	}
+};

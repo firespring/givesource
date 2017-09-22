@@ -24,7 +24,7 @@ const packageJson = require('./../../../package.json');
 dotenv.config({path: `${__dirname}/../../../.env`});
 
 const adminEmail = process.env.ADMIN_EMAIL;
-const awsDeployRegion = process.env.AWS_DEPLOY_REGION;
+const awsRegion = process.env.AWS_REGION;
 const awsStackName = process.env.AWS_STACK_NAME;
 const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;
 const awsReleaseBucketRegion = process.env.AWS_RELEASE_BUCKET_REGION;
@@ -54,7 +54,7 @@ const validateEnv = function () {
 	const missing = [];
 	const required = {
 		ADMIN_EMAIL: adminEmail,
-		AWS_DEPLOY_REGION: awsDeployRegion,
+		AWS_REGION: awsRegion,
 		AWS_STACK_NAME: awsStackName,
 		AWS_RELEASE_BUCKET: awsReleaseBucket,
 		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion
@@ -78,7 +78,7 @@ const validateEnv = function () {
  */
 const putStack = function (action) {
 	const url = `https://s3-${awsReleaseBucketRegion}.amazonaws.com/${awsReleaseBucket}/cf-templates/${packageJson.version}/givesource.yml`;
-	const command = `aws cloudformation ${action} --region ${awsDeployRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
+	const command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
 		`--parameters ParameterKey=AdminEmail,ParameterValue=${adminEmail},UsePreviousValue=false`;
 	const options = {
 		maxBuffer: 100 * 1024 * 1024,
@@ -91,7 +91,7 @@ const putStack = function (action) {
  * Delete CloudFormation stack on AWS
  */
 const deleteStack = function () {
-	const command = `aws cloudformation delete-stack --region ${awsDeployRegion} --stack-name ${awsStackName}`;
+	const command = `aws cloudformation delete-stack --region ${awsRegion} --stack-name ${awsStackName}`;
 	const options = {
 		stdio: [0, 1, 2]
 	};
