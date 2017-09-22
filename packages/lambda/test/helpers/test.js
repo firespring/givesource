@@ -16,7 +16,7 @@
  */
 
 const assert = require('assert');
-const Generator = require('./generator');
+const Generator = require('./../../src/helpers/generator');
 
 const promiseMe = require('mocha-promise-me');
 

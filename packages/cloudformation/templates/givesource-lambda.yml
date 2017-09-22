@@ -25,6 +25,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonation.zip
       Description: "Get a donation by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetDonation
       Handler: "index.handle"
@@ -51,6 +54,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonations.zip
       Description: "Get a list of donations"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetDonations
       Handler: "index.handle"
@@ -77,6 +83,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostDonation.zip
       Description: "Create a new donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostDonation
       Handler: "index.handle"
@@ -103,6 +112,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchDonation.zip
       Description: "Update an existing donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchDonation
       Handler: "index.handle"
@@ -129,6 +141,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteDonation.zip
       Description: "Delete an existing donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteDonation
       Handler: "index.handle"
@@ -155,6 +170,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonor.zip
       Description: "Get a donor by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetDonor
       Handler: "index.handle"
@@ -181,6 +199,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonors.zip
       Description: "Get a list of donors"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetDonors
       Handler: "index.handle"
@@ -207,6 +228,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostDonor.zip
       Description: "Create a new donor"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostDonor
       Handler: "index.handle"
@@ -233,6 +257,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteDonor.zip
       Description: "Delete an existing donor"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteDonor
       Handler: "index.handle"
@@ -259,6 +286,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostFile.zip
       Description: "Create a new file"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostFile
       Handler: "index.handle"
@@ -285,6 +315,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteFile.zip
       Description: "Deleting file"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteFile
       Handler: "index.handle"
@@ -311,6 +344,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetMessage.zip
       Description: "Get a message by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetMessage
       Handler: "index.handle"
@@ -337,6 +373,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetMessages.zip
       Description: "Get a list of messages"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetMessages
       Handler: "index.handle"
@@ -363,6 +402,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostMessage.zip
       Description: "Create a new message"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostMessage
       Handler: "index.handle"
@@ -389,6 +431,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchMessage.zip
       Description: "Update an existing message"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchMessage
       Handler: "index.handle"
@@ -415,6 +460,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteMessage.zip
       Description: "Delete an existing message"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteMessage
       Handler: "index.handle"
@@ -441,6 +489,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofit.zip
       Description: "Get a nonprofit by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofit
       Handler: "index.handle"
@@ -467,6 +518,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofits.zip
       Description: "Get a list of nonprofits"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofits
       Handler: "index.handle"
@@ -493,6 +547,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofit.zip
       Description: "Create a new nonprofit"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostNonprofit
       Handler: "index.handle"
@@ -519,6 +576,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofit.zip
       Description: "Update an existing nonprofit"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofit
       Handler: "index.handle"
@@ -545,6 +605,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofit.zip
       Description: "Delete an existing nonprofit"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofit
       Handler: "index.handle"
@@ -571,6 +634,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/AdminRegisterNonprofit.zip
       Description: "Register a new nonprofit and User"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-AdminRegisterNonprofit
       Handler: "index.handle"
@@ -597,6 +663,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonation.zip
       Description: "Get a nonprofit's donation by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonation
       Handler: "index.handle"
@@ -623,6 +692,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonations.zip
       Description: "Get a list of a nonprofit's donations"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonations
       Handler: "index.handle"
@@ -649,6 +721,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitDonation.zip
       Description: "Create a new nonprofit's donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonation
       Handler: "index.handle"
@@ -675,6 +750,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitDonation.zip
       Description: "Update an existing nonprofit donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonation
       Handler: "index.handle"
@@ -701,6 +779,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitDonation.zip
       Description: "Delete an existing nonprofit donation"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonation
       Handler: "index.handle"
@@ -727,6 +808,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonationTier.zip
       Description: "Get a nonprofit's donation tier by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTier
       Handler: "index.handle"
@@ -753,6 +837,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonationTiers.zip
       Description: "Get a list of a nonprofit's donation tiers"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTiers
       Handler: "index.handle"
@@ -779,6 +866,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitDonationTier.zip
       Description: "Create a new nonprofit's donation tier"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonationTier
       Handler: "index.handle"
@@ -805,6 +895,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitDonationTiers.zip
       Description: "Batch update nonprofit donation tiers"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonationTiers
       Handler: "index.handle"
@@ -831,6 +924,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitDonationTiers.zip
       Description: "Batch delete nonprofit donation tiers"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonationTiers
       Handler: "index.handle"
@@ -857,6 +953,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitSlide.zip
       Description: "Get a nonprofit's slide by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlide
       Handler: "index.handle"
@@ -883,6 +982,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitSlides.zip
       Description: "Get a list of a nonprofit's slides"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlides
       Handler: "index.handle"
@@ -909,6 +1011,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitSlide.zip
       Description: "Create a new nonprofit's slide"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitSlide
       Handler: "index.handle"
@@ -935,6 +1040,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitSlide.zip
       Description: "Update an existing nonprofit slide"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlide
       Handler: "index.handle"
@@ -961,6 +1069,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitSlides.zip
       Description: "Batch update Nonprofit Slides"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlides
       Handler: "index.handle"
@@ -987,6 +1098,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitSlide.zip
       Description: "Delete an existing nonprofit slide"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitSlide
       Handler: "index.handle"
@@ -1013,6 +1127,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitUsers.zip
       Description: "Get a list of a nonprofit's users"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitUsers
       Handler: "index.handle"
@@ -1039,6 +1156,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitUser.zip
       Description: "Create a new nonprofit user"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitUser
       Handler: "index.handle"
@@ -1065,6 +1185,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetPaymentTransaction.zip
       Description: "Get a paymentTransaction by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransaction
       Handler: "index.handle"
@@ -1091,6 +1214,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetPaymentTransactions.zip
       Description: "Get a list of paymentTransactions"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransactions
       Handler: "index.handle"
@@ -1117,6 +1243,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostPaymentTransaction.zip
       Description: "Create a new paymentTransaction"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostPaymentTransaction
       Handler: "index.handle"
@@ -1143,6 +1272,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchPaymentTransaction.zip
       Description: "Update an existing paymentTransaction"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchPaymentTransaction
       Handler: "index.handle"
@@ -1169,6 +1301,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeletePaymentTransaction.zip
       Description: "Delete an existing paymentTransactions"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeletePaymentTransaction
       Handler: "index.handle"
@@ -1195,6 +1330,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetReport.zip
       Description: "Get a report by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetReport
       Handler: "index.handle"
@@ -1221,6 +1359,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetReports.zip
       Description: "Get a list of reports"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetReports
       Handler: "index.handle"
@@ -1247,6 +1388,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostReport.zip
       Description: "Create a new report"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PostReport
       Handler: "index.handle"
@@ -1273,6 +1417,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchReport.zip
       Description: "Update an existing report"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchReport
       Handler: "index.handle"
@@ -1299,6 +1446,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteReport.zip
       Description: "Delete an existing report"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-DeleteReport
       Handler: "index.handle"
@@ -1325,6 +1475,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetUser.zip
       Description: "Get a user"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetUser
       Handler: "index.handle"
@@ -1351,6 +1504,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchUser.zip
       Description: "Update an existing user"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-PatchUser
       Handler: "index.handle"
@@ -1377,6 +1533,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/ApiGatewayDeploy.zip
       Description: "Deploy the API Gateway"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-ApiGatewayDeploy
       Handler: "index.handle"
@@ -1392,6 +1551,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/CognitoCreateUserPool.zip
       Description: "Create a user pool"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPool
       Handler: "index.handle"
@@ -1407,6 +1569,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/CognitoCreateUserPoolClient.zip
       Description: "Create a user pool client"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPoolClient
       Handler: "index.handle"
@@ -1422,6 +1587,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/CognitoCreateUser.zip
       Description: "Create a user"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUser
       Handler: "index.handle"
@@ -1437,6 +1605,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/CognitoCreateGroup.zip
       Description: "Create a user group"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserGroup
       Handler: "index.handle"
@@ -1452,6 +1623,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/S3PutObject.zip
       Description: "Put an object into an AWS S3 bucket"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-S3PutObject
       Handler: "index.handle"
@@ -1467,6 +1641,9 @@ Resources:
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/S3SyncObjects.zip
       Description: "Sync S3 objects between two AWS S3 buckets"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-S3SyncObjects
       Handler: "index.handle"

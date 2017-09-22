@@ -59,8 +59,8 @@ const findOutputKey = function (outputs, outputKey) {
 const getSettings = function () {
 	return new Promise(function (resolve, reject) {
 		const stackName = process.env.AWS_STACK_NAME;
-		const region = process.env.AWS_DEPLOY_REGION;
-		const cloudFormation = new AWS.CloudFormation({region: region});
+		const awsRegion = process.env.AWS_REGION;
+		const cloudFormation = new AWS.CloudFormation({region: awsRegion});
 
 		describeStack(cloudFormation, stackName).then(function (stack) {
 			resolve({
@@ -80,8 +80,8 @@ const getSettings = function () {
 const getBucketInfo = function () {
 	return new Promise(function (resolve, reject) {
 		const stackName = process.env.AWS_STACK_NAME;
-		const region = process.env.AWS_DEPLOY_REGION;
-		const cloudFormation = new AWS.CloudFormation({region: region});
+		const awsRegion = process.env.AWS_REGION;
+		const cloudFormation = new AWS.CloudFormation({region: awsRegion});
 
 		describeStack(cloudFormation, stackName).then(function (stack) {
 			resolve({

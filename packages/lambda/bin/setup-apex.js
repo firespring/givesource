@@ -119,6 +119,9 @@ if (validateArguments()) {
 		const apexProjectTemplate = {
 			name: stackName,
 			description: 'AWS Lambda Functions for Givesource app',
+			environment: {
+				AWS_STACK_NAME: stackName,
+			},
 			memory: 128,
 			timeout: 30,
 			runtime: 'nodejs6.10',

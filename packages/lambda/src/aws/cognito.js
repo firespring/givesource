@@ -16,7 +16,6 @@
  */
 
 const AWS = require('aws-sdk');
-const env = require('../helpers/env');
 const randomstring = require('randomstring');
 
 /**
@@ -25,7 +24,7 @@ const randomstring = require('randomstring');
  * @constructor
  */
 function Cognito() {
-	this.awsCognito = new AWS.CognitoIdentityServiceProvider({apiVersion: '2016-04-18', region: env.AWS_REGION});
+	this.awsCognito = new AWS.CognitoIdentityServiceProvider({apiVersion: '2016-04-18', region: process.env.AWS_REGION});
 }
 
 /**

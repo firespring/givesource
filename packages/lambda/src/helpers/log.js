@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const env = require('./env');
+const dotenv = require('dotenv');
+
+dotenv.config({path: `${__dirname}/../../../../.env`});
+const nodeEnv = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 'production';
 
 /**
  * Log a message to the console.
@@ -25,7 +28,7 @@ const env = require('./env');
  * @param {*} [options]
  */
 exports.log = function (message, options) {
-	if (env.NODE_ENV !== 'test') {
+	if (nodeEnv !== 'test') {
 		console.log(message, options);
 	}
 };
@@ -38,7 +41,7 @@ exports.log = function (message, options) {
  * @param {*} [options]
  */
 exports.error = function (message, options) {
-	if (env.NODE_ENV !== 'test') {
+	if (nodeEnv !== 'test') {
 		console.error(message, options);
 	}
 };
@@ -51,7 +54,7 @@ exports.error = function (message, options) {
  * @param {*} [options]
  */
 exports.info = function (message, options) {
-	if (env.NODE_ENV !== 'test') {
+	if (nodeEnv !== 'test') {
 		console.info(message, options);
 	}
 };
@@ -64,7 +67,7 @@ exports.info = function (message, options) {
  * @param {*} [options]
  */
 exports.warn = function (message, options) {
-	if (env.NODE_ENV !== 'test') {
+	if (nodeEnv !== 'test') {
 		console.warn(message, options);
 	}
 };
@@ -77,7 +80,7 @@ exports.warn = function (message, options) {
  * @param {*} [options]
  */
 exports.debug = function (message, options) {
-	if (env.NODE_ENV !== 'test') {
+	if (nodeEnv !== 'test') {
 		console.debug(message, options);
 	}
 };

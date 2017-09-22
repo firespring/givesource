@@ -21,7 +21,7 @@ const path = require('path');
 const S3 = require('./aws/s3');
 
 dotenv.config({path: `${__dirname}/../../../.env`});
-const region = process.env.AWS_DEPLOY_REGION;
+const awsRegion = process.env.AWS_REGION;
 
 /**
  * Validate the environment variables
@@ -31,7 +31,7 @@ const region = process.env.AWS_DEPLOY_REGION;
 const validateEnv = function () {
 	const missing = [];
 	const required = {
-		AWS_DEPLOY_REGION: region,
+		AWS_REGION: awsRegion,
 	};
 	for (let key in required) {
 		if (typeof required[key] === 'undefined') {
@@ -61,7 +61,7 @@ const deploy = function (project, src, assetPath, bucket) {
 	return new Promise(function (resolve, reject) {
 		const path = `${assetPath}`;
 
-		S3.uploadDirectory(src, region, bucket, path).then(function () {
+		S3.uploadDirectory(src, awsRegion, bucket, path).then(function () {
 			resolve();
 		}).catch(function (err) {
 			reject(err);
