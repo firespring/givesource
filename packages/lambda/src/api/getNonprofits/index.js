@@ -23,9 +23,6 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
 
-	console.log(process.env);
-	console.log(process.env.AWS_STACK_NAME);
-
 	request.validate().then(function () {
 		return repository.getAll();
 	}).then(function (nonprofits) {
