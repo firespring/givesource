@@ -20,28 +20,24 @@
         <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
 
-            <!-- BEGIN app main content wrapper -->
             <div class="o-app_main-content o-app_main-content--md">
 
-                <!-- BEGIN page header -->
                 <div class="o-page-header">
 
                     <div class="o-page-header__text">
 
                         <nav class="o-page-header-nav c-breadcrumb">
 
-                            <span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span>
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsor</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Add Sponsor Tier</h1>
                     </div>
 
                 </div>
-                <!-- END page header -->
 
-            <sponsors-add-form></sponsors-add-form>
+            <sponsors-add-tier-form></sponsors-add-tier-form>
 
             </div>
-            <!-- END app main content wrapper -->
 
         </main>
     </div>
@@ -50,7 +46,7 @@
 <script>
 	module.exports = {
 		components: {
-			'sponsors-add-form': require('./SponsorsAddForm.vue')
+			'sponsors-add-tier-form': require('./SponsorsAddTierForm.vue')
 		}
 	};
 </script>

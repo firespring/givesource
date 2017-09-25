@@ -16,164 +16,44 @@
   -->
 
 <template>
-    <!--<div class="o-app">-->
-    <!--<navigation></navigation>-->
-        <!--&lt;!&ndash; BEGIN app main &ndash;&gt;-->
-        <!--<main class="o-app__main o-app__main&#45;&#45;compact">-->
+    <div class="o-app">
+        <navigation></navigation>
+        <!-- BEGIN app main -->
+        <main class="o-app__main o-app__main--compact">
 
-            <!--&lt;!&ndash; BEGIN app main content wrapper &ndash;&gt;-->
-            <!--<div class="o-app_main-content o-app_main-content&#45;&#45;md">-->
+            <!-- BEGIN app main content wrapper -->
+            <div class="o-app_main-content o-app_main-content--md">
 
-                <!--&lt;!&ndash; BEGIN page header &ndash;&gt;-->
-                <!--<div class="o-page-header">-->
+                <!-- BEGIN page header -->
+                <div class="o-page-header">
 
-                    <!--<div class="o-page-header__text">-->
+                    <div class="o-page-header__text">
 
-                        <!--<nav class="o-page-header-nav c-breadcrumb">-->
+                        <nav class="o-page-header-nav c-breadcrumb">
 
                             <!--<span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span><span><a href="../../giving-day-foundation/sponsors/tier.php">Gold</a></span>-->
-                        <!--</nav>-->
-                        <!--<h1 class="o-page-header-title">Add Sponsor</h1>-->
-                    <!--</div>-->
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span><span><router-link :to="{ name: 'manage-tier' }">Gold</router-link></span>
+                        </nav>
+                        <h1 class="o-page-header-title">Add Sponsor</h1>
+                    </div>
 
-                <!--</div>-->
-                <!--&lt;!&ndash; END page header &ndash;&gt;-->
+                </div>
+                <!-- END page header -->
 
-                <!--<div class="o-app-main-content">-->
+                <sponsor-add-form></sponsor-add-form>
 
-                    <!--&lt;!&ndash; BEGIN form &ndash;&gt;-->
-                    <!--<form method="post" action="tier.php" novalidate="">-->
+            </div>
+            <!-- END app main content wrapper -->
 
-                        <!--<section class="c-page-section c-page-section&#45;&#45;border c-page-section&#45;&#45;shadow c-page-section&#45;&#45;headless">-->
+        </main>
+        <!-- END app main -->
 
-                            <!--<div class="c-page-section__main">-->
-
-                                <!--<div class="c-form-item c-form-item&#45;&#45;text c-form-item&#45;&#45;required">-->
-
-                                    <!--<div class="c-form-item__label">-->
-
-                                        <!--<label for="sponsorName" class="c-form-item-label-text">Name</label>-->
-
-                                    <!--</div>-->
-
-                                    <!--<div class="c-form-item__control">-->
-
-                                        <!--<input type="text" name="sponsorName" id="sponsorName">-->
-
-                                    <!--</div>-->
-
-                                <!--</div>-->
-
-                                <!--<div class="c-form-item c-form-item&#45;&#45;url">-->
-
-                                    <!--<div class="c-form-item__label">-->
-
-                                        <!--<label for="sponsorUrl" class="c-form-item-label-text">URL</label>-->
-
-                                    <!--</div>-->
-
-                                    <!--<div class="c-form-item__control">-->
-
-                                        <!--<div class="u-control-icon u-control-icon&#45;&#45;url">-->
-                                            <!--<input type="url" name="sponsorUrl" id="sponsorUrl" placeholder="http://">-->
-                                        <!--</div>-->
-
-                                    <!--</div>-->
-
-                                <!--</div>-->
-
-                                <!--<div class="c-form-item c-form-item&#45;&#45;select">-->
-
-                                    <!--<div class="c-form-item__label">-->
-
-                                        <!--<label for="sponsorTier" class="c-form-item-label-text">Tier</label>-->
-
-                                    <!--</div>-->
-
-                                    <!--<div class="c-form-item__control">-->
-
-                                        <!--<select id="sponsorTier" name="sponsorTier" class="u-width-auto">-->
-                                            <!--<option value="1">Platinum</option>-->
-                                            <!--<option value="2" selected="">Gold</option>-->
-                                            <!--<option value="3">Silver</option>-->
-                                            <!--<option value="4">Bronze</option>-->
-                                        <!--</select>-->
-
-                                    <!--</div>-->
-
-                                <!--</div>-->
-
-                                <!--<div class="c-form-item c-form-item&#45;&#45;file">-->
-
-                                    <!--<div class="c-form-item__label">-->
-                                        <!--<label for="fileFieldDefault" class="c-form-item-label-text">Logo</label>-->
-
-                                        <!--<div class="c-notes">-->
-                                            <!--If no logo is uploaded, one will be automatically generated based on the sponsor's name.-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-
-                                    <!--<div class="c-form-item__control">-->
-
-                                        <!--<input type="file" name="fileFieldDefault" id="fileFieldDefault" data-filenames="fileFieldDefaultFilenames">-->
-                                        <!--<button type="button" class="c-btn c-btn&#45;&#45;good" id="fileFieldDefaultTrigger" data-control="fileFieldDefault" data-filenames="fileFieldDefaultFilenames">Select File</button>-->
-                                        <!--<div class="filenames" id="fileFieldDefaultFilenames"></div>-->
-
-                                        <!--<script>-->
-											<!--$(document).ready(function() {-->
-
-												<!--$('#fileFieldDefaultTrigger').click(function(e) {-->
-													<!--var relatedControl = $(this).attr('data-control');-->
-													<!--$('#' + relatedControl).trigger('click');-->
-													<!--e.preventDefault();-->
-												<!--});-->
-
-												<!--$('#fileFieldDefault').change(function(e) {-->
-													<!--var filenames = '';-->
-													<!--var filenameList = $(this).attr('data-filenames');-->
-													<!--if (this.files && this.files.length > 1) {-->
-														<!--filenames = this.files.length + ' files selected';-->
-													<!--} else if (e.target.value) {-->
-														<!--filenames = e.target.value.split('\\').pop();-->
-													<!--}-->
-													<!--if (filenames) {-->
-														<!--$('#' + filenameList).addClass('has-files').html(filenames);-->
-													<!--} else {-->
-														<!--$('#' + filenameList).removeClass('has-files').html('No file selected');-->
-													<!--}-->
-												<!--});-->
-
-											<!--});-->
-                                        <!--</script>-->
-
-                                    <!--</div>-->
-
-                                <!--</div>-->
-
-                            <!--</div>-->
-
-                        <!--</section>-->
-
-                        <!--&lt;!&ndash; BEGIN form actions &ndash;&gt;-->
-                        <!--<footer class="c-form-actions">-->
-
-                            <!--<button type="submit" class="c-btn">Save &amp; Add Another</button>-->
-                            <!--<button type="submit" class="c-btn">Save &amp; Finish</button>-->
-                            <!--<a href="tier.php" class="c-btn c-btn&#45;&#45;text c-btn&#45;&#45;neutral">Cancel</a>-->
-
-                        <!--</footer>-->
-                        <!--&lt;!&ndash; END form actions &ndash;&gt;-->
-
-                    <!--</form>-->
-                    <!--&lt;!&ndash; END form &ndash;&gt;-->
-
-                <!--</div>-->
-
-            <!--</div>-->
-            <!--&lt;!&ndash; END app main content wrapper &ndash;&gt;-->
-
-        <!--</main>-->
-        <!--&lt;!&ndash; END app main &ndash;&gt;-->
-
-    <!--</div>-->
+    </div>
 </template>
+<script>
+	module.exports = {
+		components: {
+			'sponsor-add-form': require('./SponsorAddForm.vue')
+		}
+	};
+</script>

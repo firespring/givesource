@@ -161,20 +161,36 @@ const router = new VueRouter({
 		},
 		{
 			path: '/sponsors/manage-tier',
-			name: 'sponsor-manage-tiers',
+			name: 'manage-tier',
 			component: require('./components/admin/sponsors/SponsorManageTier.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/sponsor-add',
+			path: '/sponsors/add-sponsor',
 			name: 'add-sponsor',
 			component: require('./components/admin/sponsors/SponsorAdd.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
+		{
+			path: '/sponsors/edit-sponsor',
+			name: 'edit-sponsor',
+			component: require('./components/admin/sponsors/SponsorEdit.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		// {
+		// 	path: '/sponsors/edit-sponsor-tier',
+		// 	name: 'edit-sponsor-tier',
+		// 	component: require('./components/admin/sponsors/SponsorEditTier.vue'),
+		// 	meta: {
+		// 		allowedGroups: ['SuperAdmin', 'Admin']
+		// 	}
+		// },
 
 		// Nonprofit - Donations
 		{

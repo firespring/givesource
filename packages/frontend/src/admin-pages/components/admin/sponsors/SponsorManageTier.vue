@@ -28,7 +28,7 @@
 
                         <nav class="o-page-header-nav c-breadcrumb">
 
-                            <span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span>
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Gold</h1>
                     </div>

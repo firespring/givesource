@@ -24,7 +24,9 @@
             <img alt="" src="">
         </td>
         <td>
-            <strong><a href="sponsor-edit.php">Sponsor #3</a></strong>
+            <!--<strong><a href="sponsor-edit.php">Sponsor #3</a></strong>-->
+            <router-link :to="{ name: 'edit-sponsor' }" role="button" ><strong><a>Sponsor #3 </a></strong>
+            </router-link>
         </td>
         <td class="icon">
             <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete"><i class="fa fa-trash"
