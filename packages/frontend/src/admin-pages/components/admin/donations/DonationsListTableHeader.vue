@@ -19,12 +19,12 @@
     <div class="c-header-actions">
 
         <div>
-            <a href="donation-add.php" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations</a>
+            <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations</a>
             <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
         </div>
 
         <div class="c-header-actions__search u-flex-expand">
-            <form method="post" action="/app-style/_devs/tables-search.php" novalidate="">
+            <form>
                 <div class="c-form-control-grid">
                     <div class="c-form-control-grid__item">
                         <div class="u-control-icon u-control-icon--search">

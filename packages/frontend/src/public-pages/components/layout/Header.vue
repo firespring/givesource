@@ -28,7 +28,7 @@
             <router-link :to="{ name: 'faq' }">FAQ</router-link>
         </nav>
 
-        <form method="post" action="search.php" class="page-header__search">
+        <form class="page-header__search">
             <input type="search" name="searchNonprofit" id="searchNonprofit" placeholder="Find a Nonprofit">
         </form>
 

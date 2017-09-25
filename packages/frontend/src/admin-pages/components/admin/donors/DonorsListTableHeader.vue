@@ -18,7 +18,7 @@
 <template>
     <div class="c-header-actions">
         <div>
-            <a href="add.php" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Donor</a>
+            <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Donor</a>
         </div>
 
         <div class="c-header-actions__search u-flex-expand">

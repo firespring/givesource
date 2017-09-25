@@ -65,7 +65,7 @@
                     <div class="donation-modal__content">
                         <div class="donation-options">
                             <div class="donation-option">
-                                <a href="cart.php">
+                                <a href="#">
                                     <h2 class="donation-option__title">$100</h2>
                                     <div class="donation-option__description">
                                         Intrinsicly enable ubiquitous opportunities for 24/365 data. Interactively predominate just in time communities via tactical e-tailers.
@@ -74,21 +74,21 @@
                             </div>
 
                             <div class="donation-option">
-                                <a href="cart.php">
+                                <a href="#">
                                     <h2 class="donation-option__title">$50</h2>
                                     <div class="donation-option__description">Dynamically restore an expanded array of e-markets before leveraged technologies.</div>
                                 </a>
                             </div>
 
                             <div class="donation-option">
-                                <a href="cart.php">
+                                <a href="#">
                                     <h2 class="donation-option__title">$25</h2>
                                     <div class="donation-option__description">Completely orchestrate impactful metrics after prospective infomediaries.</div>
                                 </a>
                             </div>
 
                             <div class="donation-option">
-                                <a href="cart.php">
+                                <a href="#">
                                     <h2 class="donation-option__title">$10</h2>
                                     <div class="donation-option__description">Enthusiastically network frictionless solutions and high-payoff total linkage.</div>
                                 </a>
@@ -98,7 +98,7 @@
 
                         <div class="donation-options-custom">
                             <h2>Or Enter a Custom Amount</h2>
-                            <form action="cart.php" method="post">
+                            <form action="#" method="post">
                                 <div class="input">
                                     <input type="text" name="customDonationAmount" id="customDonationAmount" placeholder="Enter Amount">
                                 </div>

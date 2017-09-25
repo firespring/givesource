@@ -38,7 +38,7 @@
                                 </router-link>
                             </div>
                             <div class="c-header-actions__search u-flex-expand">
-                                <form method="post" action="/app-style/_devs/tables-search.php" novalidate="">
+                                <form>
                                     <div class="c-form-control-grid">
                                         <div class="c-form-control-grid__item">
                                             <div class="u-control-icon u-control-icon--search">

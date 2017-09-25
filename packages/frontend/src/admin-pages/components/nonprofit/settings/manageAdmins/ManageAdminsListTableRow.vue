@@ -49,7 +49,7 @@
             <div class="date">{{ getDate( user.createdOn) }}</div>
         </td>
         <td class="u-nowrap">
-            <a href="add1.php" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member"><i
+            <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member"><i
                     class="fa fa-minus-circle" aria-hidden="true"></i>Remove</a>
         </td>
     </tr>

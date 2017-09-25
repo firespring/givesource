@@ -26,7 +26,7 @@
                             <div class="c-page-section__main">
 
                                 <div class="c-page-section-segment">
-                                    <h3 class="c-page-section-segment__title"><a href="general.php">General Settings</a></h3>
+                                    <h3 class="c-page-section-segment__title"><a href="#">General Settings</a></h3>
                                     <div class="c-notes c-notes--below">
                                         Modify your campaign's name, dates, etc.
                                     </div>
