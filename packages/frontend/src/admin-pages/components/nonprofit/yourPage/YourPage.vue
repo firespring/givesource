@@ -22,7 +22,7 @@
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
 
-                    <div class="o-page-header" v-if="displayHeader">
+                    <div class="o-page-header" v-if="isAdmin">
                         <div class="o-page-header__text">
                             <nav class="o-page-header-nav c-breadcrumb">
                                 <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
@@ -69,29 +69,27 @@
 			return {
 				nonprofit: {},
 				tabComponent: 'tab-content',
-                pageLink: PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofitUuid,
+				pageLink: PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofitUuid,
 			}
+		},
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
 		},
 		props: [
 			'nonprofitUuid'
 		],
-        computed: {
-			displayHeader: function () {
-				const vue = this;
-
-				return vue.isSuperAdminUser() || vue.isAdminUser();
-            }
-        },
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
 				if (to.query.hasOwnProperty('tab')) {
 					vm.tabComponent = vm.getTabComponent(to.query.tab);
-                }
+				}
 
-                axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-                	vm.nonprofit = response.data;
-                });
-            });
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+				});
+			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
@@ -104,9 +102,9 @@
 				vue.nonprofit = response.data;
 			}).then(function () {
 				next();
-            }).catch(function () {
-            	next();
-            });
+			}).catch(function () {
+				next();
+			});
 		},
 		components: {
 			'tab-content': require('./tabs/Content.vue'),
