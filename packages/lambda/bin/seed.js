@@ -65,7 +65,7 @@ const seedDonations = function () {
 		]);
 	}).then(function (answers) {
 		const count = parseInt(answers.count);
-		const chunkSize = Math.floor(Math.random() * count) + 1;
+		const chunkSize = Math.floor(Math.random() * 3) + 1;
 
 		const donations = _.chunk(generator.modelCollection('donation', count), chunkSize);
 		const donors = generator.modelCollection('donor', donations.length);

@@ -25,7 +25,7 @@
 
                     <donations-list-table-header></donations-list-table-header>
 
-                    <donations-list-table></donations-list-table>
+                    <donations-list-table :nonprofitUuid="nonprofitUuid"></donations-list-table>
 
                     <div class="c-table-footer">
 
