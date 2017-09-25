@@ -25,3 +25,9 @@
 	![Givesource Stack Setup Step 4](wiki/images/givesource-stack-step-4.png)
 	
 6. When the stack is created, an email will be sent to the admin email address entered in on step 2. This will take up to 25 minutes. Click the link in the email to setup a password and login.
+
+## License
+
+Copyright 2017 Firespring.
+
+Licensed under the GNU General Public License, Version 3.0: [https://www.gnu.org/licenses/gpl-3.0](https://www.gnu.org/licenses/gpl-3.0)
