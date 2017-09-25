@@ -191,7 +191,7 @@
 					shortDescription: vue.formData.shortDescription,
                     longDescription: vue.formData.longDescription
                 };
-				axios.patch(API_URL + 'nonprofits/' + vue.user.nonprofitUuid, params).then(function (response) {
+				axios.patch(API_URL + 'nonprofits/' + vue.nonprofit.uuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

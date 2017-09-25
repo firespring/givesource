@@ -50,23 +50,27 @@
 				users: []
 			};
 		},
-        components: {
-			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
+        props: {
+			nonprofit: {
+				type: Object,
+                default: function () {
+                	return {};
+                }
+            }
         },
-		mounted: function () {
-			this.getUsers();
+        created: function () {
+			const vue = this;
+
+	        axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/users').then(function (response) {
+		        response.data.forEach(function (user) {
+			        vue.users.push(user);
+		        });
+	        }).catch(function (err) {
+		        console.log(err);
+	        });
+        },
+		components: {
+			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
 		},
-		methods: {
-			getUsers: function () {
-				const vue = this;
-				axios.get(API_URL + 'nonprofits/' + vue.user.nonprofitUuid + '/users').then(function (response) {
-					response.data.forEach(function (user) {
-						vue.users.push(user);
-					});
-				}).catch(function (err) {
-					console.log(err);
-				});
-			}
-		}
 	};
 </script>

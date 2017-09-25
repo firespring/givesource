@@ -76,9 +76,9 @@
                                 </div>
                             </div>
 
-                            <hr class="expand">
+                            <hr class="expand" v-if="!isAdmin">
 
-                            <div class="c-page-section-segment">
+                            <div class="c-page-section-segment" v-if="!isAdmin">
                                 <h3 class="c-page-section-segment__title">
                                     <router-link :to="{ name: 'nonprofit-settings-request-name-change' }">Request Name Change</router-link>
                                 </h3>

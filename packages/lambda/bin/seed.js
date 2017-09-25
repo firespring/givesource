@@ -153,7 +153,7 @@ const seedNonprofits = function () {
 		let promise = nonprofitsRepository.batchUpdate(nonprofits);
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
-			const slides = generator.modelCollection('slide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE'});
+			const slides = generator.modelCollection('slide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
 			_.each(slides, function (slide, i) {
 				slide.sortOrder = i;
 			});

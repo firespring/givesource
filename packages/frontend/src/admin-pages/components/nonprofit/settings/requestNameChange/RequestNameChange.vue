@@ -20,12 +20,11 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+
                 <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                        <span>
-                            <router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link>
-                        </span>
+                            <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Request Name Change</h1>
                     </div>
@@ -70,5 +69,9 @@
 </template>
 
 <script>
-
+	module.exports = {
+		props: [
+			'nonprofitUuid'
+		],
+	};
 </script>
