@@ -71,6 +71,7 @@ const seedDonations = function () {
 		const donors = generator.modelCollection('donor', donations.length);
 		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
 
+		let donationsTotal = 0;
 		return donorsRepository.batchUpdate(donors).then(function () {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
@@ -83,6 +84,7 @@ const seedDonations = function () {
 				});
 
 				paymentTransactions[i].total = subtotal;
+				donationsTotal += subtotal;
 				promise = promise.then(function () {
 					return donationsRepository.batchUpdate(chunk);
 				});
@@ -90,6 +92,12 @@ const seedDonations = function () {
 			return promise;
 		}).then(function () {
 			return paymentTransactionsRepository.batchUpdate(paymentTransactions);
+		}).then(function () {
+			return nonprofitsRepository.get(answers.nonprofitUuid);
+		}).then(function (nonprofit) {
+			nonprofit.donationsSum = nonprofit.donationsSum += donationsTotal;
+			nonprofit.donationsCount = nonprofit.donationsCount += count;
+			return nonprofitsRepository.save(nonprofit);
 		});
 	}).then(function () {
 		console.log('seeded donations');
@@ -140,12 +148,12 @@ const seedNonprofits = function () {
 		}
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
-		const nonprofits = generator.modelCollection('nonprofit', count);
+		const nonprofits = generator.modelCollection('nonprofit', count, {donationsSum: 0, donationsCount: 0});
 
 		let promise = nonprofitsRepository.batchUpdate(nonprofits);
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
-			const slides = generator.modelCollection('slide', slideCount, { nonprofitUuid: nonprofit.uuid });
+			const slides = generator.modelCollection('slide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE'});
 			_.each(slides, function (slide, i) {
 				slide.sortOrder = i;
 			});

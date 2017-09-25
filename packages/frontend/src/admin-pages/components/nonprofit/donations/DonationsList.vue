@@ -23,6 +23,15 @@
 
                 <div class="o-app-main-content">
 
+                    <div class="o-page-header" v-if="isAdmin">
+                        <div class="o-page-header__text">
+                            <nav class="o-page-header-nav c-breadcrumb">
+                                <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+                            </nav>
+                            <h1 class="o-page-header-title" v-if="nonprofit.legalName">Donations for {{ nonprofit.legalName }}</h1>
+                        </div>
+                    </div>
+
                     <donations-list-table-header></donations-list-table-header>
 
                     <donations-list-table :nonprofitUuid="nonprofitUuid"></donations-list-table>
@@ -70,9 +79,37 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				nonprofit: {},
+			};
+		},
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+		},
 		props: [
 			'nonprofitUuid'
-        ],
+		],
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.nonprofit = response.data;
+			}).then(function () {
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
 		components: {
 			'donations-list-table': require('./DonationsListTable.vue'),
 			'donations-list-table-header': require('./DonationsListTableHeader.vue')
