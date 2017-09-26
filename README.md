@@ -2,6 +2,17 @@
 
 [![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Givesource&templateURL=https://s3-us-west-2.amazonaws.com/givesource-cj/cf-templates/0.0.1/givesource.yml)
 
+Givesource is a new platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
+Leveraging Amazon Web Services, Givesource was built using a serverless architecture to support high site traffic and donor activity.
+This means you have unlimited capacity to help nonprofits fundraise and grow your community without managing expensive servers.
+
+## Features
+
+* Ability to accept donations online and off.
+* Scalability—the platform can accommodate expanding needs and donor traffic.
+* Ease of use by the participating organizations.
+* Opportunity to support matching funds.
+
 ## Installation
 
 1. Click on the Launch Stack button.
