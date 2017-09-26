@@ -164,8 +164,7 @@
             slide: {
 				handler: function () {
 					const vue = this;
-					vue.formData.caption = vue.slide.caption;
-					vue.formData.url = vue.slide.url;
+					vue.formData = vue.sync(vue.formData, vue.slide);
                 },
                 deep: true
             }
@@ -204,16 +203,8 @@
 			},
 			updateNonprofitSlide: function () {
 				const vue = this;
-				const params = {};
 
-				if (vue.formData.caption !== vue.slide.caption) {
-					params['caption'] = vue.formData.caption;
-                }
-
-                if (vue.formData.url !== vue.slide.url) {
-					params['url'] = vue.formData.url;
-                }
-
+				const params = vue.getUpdatedParameters(vue.formData, vue.slide);
                 if (Object.keys(params).length === 0) {
 					vue.clearModals();
 	                vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});

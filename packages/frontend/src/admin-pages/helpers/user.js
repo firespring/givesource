@@ -127,12 +127,28 @@ exports.isAuthenticated = function () {
 	const cognitoUser = this.getCognitoUser();
 	if (cognitoUser) {
 		cognitoUser.getSession(function (err, session) {
-			if (session) {
+			if (session && session.isValid()) {
 				authenticated = true;
 			}
 		});
 	}
 	return authenticated;
+};
+
+/**
+ * Refresh CognitoUser session
+ *
+ * @param {function} callback
+ */
+exports.refreshSession = function (callback) {
+	const cognitoUser = this.getCognitoUser();
+	if (cognitoUser) {
+		cognitoUser.getSession(function (err, session) {
+			if (session) {
+				cognitoUser.refreshSession(session.getRefreshToken(), callback);
+			}
+		});
+	}
 };
 
 /**

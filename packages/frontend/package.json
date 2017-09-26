@@ -16,7 +16,7 @@
 	"license": "GPL-3.0",
 	"dependencies": {},
 	"devDependencies": {
-		"amazon-cognito-identity-js": "^1.19.0",
+		"amazon-cognito-identity-js": "^1.20.0",
 		"axios": "^0.16.2",
 		"babel-core": "^6.25.0",
 		"babel-loader": "^7.1.1",

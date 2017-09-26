@@ -249,7 +249,11 @@ const router = new VueRouter({
 			meta: {requiresAuth: false},
 			beforeEnter: function (to, from, next) {
 				if (User.isAuthenticated()) {
-					next({name: 'homepage'});
+					if (to.query && to.query.redirect) {
+						next(to.query.redirect);
+					} else {
+						next({name: 'homepage'});
+					}
 				}
 				next();
 			}
@@ -319,14 +323,15 @@ const loadUser = function () {
 const authMiddleware = function (to, from, next) {
 	const requiresAuth = to.meta.hasOwnProperty('requiresAuth') ? to.meta.requiresAuth : true;
 	if (requiresAuth && !User.isAuthenticated()) {
-		if (to.fullPath === '/logout') {
-			next({path: '/login'});
-		} else {
-			next({
-				path: '/login',
-				query: {redirect: to.fullPath}
-			});
-		}
+		User.refreshSession(function (err) {
+			if (err) {
+				const params = {path: '/login'};
+				if (to.fullPath !== '/logout') {
+					params.query = {redirect: to.fullPath};
+				}
+				next(params);
+			}
+		});
 	}
 };
 
@@ -339,7 +344,7 @@ const authMiddleware = function (to, from, next) {
  */
 const nonprofitMiddleware = function (to, from, next) {
 	if (to.meta.hasOwnProperty('validateNonprofitUuid') && to.params.hasOwnProperty('nonprofitUuid')) {
-		if (_.intersection(app.user.groups, ['SuperAdmin', 'Admin']) === 0 && app.user.nonprofitUuid !== to.params.nonprofitUuid) {
+		if (_.intersection(app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && app.user.nonprofitUuid !== to.params.nonprofitUuid) {
 			next({name: '404'});
 		}
 	}

@@ -130,16 +130,8 @@
             },
 			updateUser: function () {
 				const vue = this;
-                const params = {};
 
-                if (vue.user.firstName !== vue.formData.firstName) {
-                	params['firstName'] = vue.formData.firstName;
-                }
-
-                if (vue.user.lastName !== vue.formData.lastName) {
-                	params['lastName'] = vue.formData.lastName;
-                }
-
+				const params = vue.getUpdatedParameters(vue.formData, vue.user);
                 if (Object.keys(params).length === 0) {
 	                vue.clearModals();
                 	return;
