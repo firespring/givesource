@@ -26,7 +26,7 @@
                             <div class="c-page-section__main">
 
                                 <div class="c-page-section-segment">
-                                    <h3 class="c-page-section-segment__title"><a href="#">General Settings</a></h3>
+                                    <h3 class="c-page-section-segment__title"><router-link :to="{ name: 'settings-general' }">General Settings</router-link></h3>
                                     <div class="c-notes c-notes--below">
                                         Modify your campaign's name, dates, etc.
                                     </div>
@@ -35,11 +35,31 @@
                                 <hr class="expand">
 
                                 <div class="c-page-section-segment">
-                                    <h3 class="c-page-section-segment__title"><a href="#">Export</a></h3>
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-customize-homepage-messages' }">Customize Homepage Messages</router-link>
+                                    </h3>
                                     <div class="c-notes c-notes--below">
-                                        Export your campaign's info as a single ZIP file for archiving and importing purposes.
+                                        Modify the text that displays on the various stages of your homepage.
                                     </div>
                                 </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title"><router-link :to="{ name: 'settings-customize-appearance' }">Customize Appearance</router-link></h3>
+                                    <div class="c-notes c-notes--below">
+                                        Modify your site's logo, colors, and other visual settings.
+                                    </div>
+                                </div>
+
+                                <!--<hr class="expand">-->
+
+                                <!--<div class="c-page-section-segment">-->
+                                    <!--<h3 class="c-page-section-segment__title"><a href="#">Export</a></h3>-->
+                                    <!--<div class="c-notes c-notes&#45;&#45;below">-->
+                                        <!--Export your campaign's info as a single ZIP file for archiving and importing purposes.-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
                             </div>
                         </section>

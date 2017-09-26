@@ -128,6 +128,30 @@ const router = new VueRouter({
 			},
 		},
 		{
+			path: '/settings/general-settings',
+			name: 'settings-general',
+			component: require('./components/admin/settings/generalSettings/GeneralSettings.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/customize-homepage-messages',
+			name: 'settings-customize-homepage-messages',
+			component: require('./components/admin/settings/homepageMessages/HomepageMessages.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/customize-appearance',
+			name: 'settings-customize-appearance',
+			component: require('./components/admin/settings/appearance/Appearance.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
 			path: '/nonprofits',
 			name: 'nonprofits-list',
 			component: require('./components/admin/nonprofits/NonprofitsList.vue'),

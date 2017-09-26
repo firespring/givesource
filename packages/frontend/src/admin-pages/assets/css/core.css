@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2017  Firespring
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
 * @desc			Breakpoint variables
 * @author		Firespring
@@ -6600,6 +6583,17 @@ tr.reorder-placeholder td {
   .table-sm .item-actions__trigger {
     transform: translateY(0);
     padding: 0 8px; }
+
+/**
+* @desc			Empty table styles, settings
+* @author		Firespring
+*/
+/******************************************************************************
+* General styles
+******************************************************************************/
+.table-empty tbody tr:last-child td {
+  box-shadow: inset 1px 0 0 0 #dadada, inset -1px 0 0 0 #dadada, 0 1px 0 0 #dadada;
+  border-radius: 0 0 3px 3px; }
 
 /**
 * @desc			General modal styles, settings
