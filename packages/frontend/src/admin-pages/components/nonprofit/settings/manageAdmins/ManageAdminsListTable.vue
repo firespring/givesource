@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <table class="table-middle">
+    <table class="table-middle" :class="{ 'table-empty': !displayRows }">
         <thead>
         <tr>
             <th class="input">
@@ -36,8 +36,12 @@
         </tr>
         </thead>
 
-        <tbody>
+        <tbody v-if="displayRows">
         <manage-admins-list-table-row v-for="user in users" v-bind:user="user" v-bind:key="user.uuid"></manage-admins-list-table-row>
+        </tbody>
+
+        <tbody v-else>
+        <layout-empty-table-row :loaded="loaded" :colspan="5" message="There are no users."></layout-empty-table-row>
         </tbody>
 
     </table>
@@ -47,30 +51,29 @@
 	module.exports = {
 		data: function () {
 			return {
-				users: []
+				users: [],
+                loaded: false
 			};
 		},
-        props: {
-			nonprofit: {
-				type: Object,
-                default: function () {
-                	return {};
-                }
+        computed: {
+			displayRows: function () {
+				return this.loaded && this.users.length;
             }
         },
+        props: [
+			'nonprofitUuid'
+        ],
         created: function () {
 			const vue = this;
 
-	        axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/users').then(function (response) {
-		        response.data.forEach(function (user) {
-			        vue.users.push(user);
-		        });
-	        }).catch(function (err) {
-		        console.log(err);
+	        axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+		        vue.users = response.data;
+		        vue.loaded = true;
 	        });
         },
 		components: {
+			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
 			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
-		},
+		}
 	};
 </script>

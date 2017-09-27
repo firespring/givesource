@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <table>
+    <table :class="{ 'table-empty': !displayRows }">
         <thead>
         <tr>
             <th class="input">
@@ -43,8 +43,12 @@
         </tr>
         </thead>
 
-        <tbody>
-            <nonprofits-list-table-row v-for="nonprofit in nonprofits" v-bind:nonprofit="nonprofit" v-bind:key="nonprofit.uuid"></nonprofits-list-table-row>
+        <tbody v-if="displayRows">
+            <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
+        </tbody>
+
+        <tbody v-else>
+        <layout-empty-table-row :loaded="loaded" :colspan="6" message="There are no nonprofits."></layout-empty-table-row>
         </tbody>
 
     </table>
@@ -55,28 +59,25 @@
 		data: function () {
 			return {
 				nonprofits: [],
+                loaded: false,
 			};
 		},
+        computed: {
+			displayRows: function () {
+				return this.loaded && this.nonprofits.length;
+            }
+        },
+		mounted: function () {
+			const vue = this;
+
+			axios.get(API_URL + 'nonprofits').then(function (response) {
+				vue.nonprofits = response.data;
+				vue.loaded = true;
+			});
+		},
 		components: {
+			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue'),
 			'nonprofits-list-table-row': require('./NonprofitsListTableRow.vue')
 		},
-		mounted: function () {
-			this.getNonprofit();
-
-		},
-		methods: {
-			getNonprofit: function () {
-				const vue = this;
-				axios.get(API_URL + 'nonprofits').then(function (response) {
-					response.data.forEach(function (nonprofit) {
-						vue.nonprofits.push(nonprofit);
-					});
-				}).catch(function (err) {
-					console.log(err);
-				});
-			}
-
-			// TODO: create a model for the contact info for each nonprofit
-		}
 	};
 </script>

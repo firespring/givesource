@@ -61,7 +61,7 @@
                             </div>
                         </div>
 
-                        <manage-admins-list-table :nonprofit="nonprofit"></manage-admins-list-table>
+                        <manage-admins-list-table :nonprofitUuid="nonprofitUuid"></manage-admins-list-table>
 
                         <div class="c-table-footer">
                             <div class="c-table-footer__actions">

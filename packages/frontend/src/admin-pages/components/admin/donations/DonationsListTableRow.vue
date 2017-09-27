@@ -18,55 +18,47 @@
 <template>
     <tr>
         <td class="u-nowrap u-text-r">
-            <div class="date">{{ getDate(donation.createdOn) }}</div>
-            <div class="time">{{ getTime(donation.createdOn) }}</div>
+            <div class="date">{{ date }}</div>
+            <div class="time">{{ time }}</div>
         </td>
+
         <td class="u-text-r">
-            {{ formatDonation(donation.amountInCents) }}
+            {{ amount }}
         </td>
+
         <td>
-            <!--TODO: Link to donation page-->
-            <a :href="`/nonprofits/${donation.nonprofit.slug}`">{{ donation.nonprofit.legalName }}</a>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ nonprofit.legalName }}</router-link>
         </td>
+
         <td>
-            {{ donation.donor.name }}
+            {{ donor.name }}
         </td>
+
         <td class="u-nowrap">
-
             <div class="c-user-strip u-flex u-items-center">
-
                 <div class="c-user-strip__content">
-
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${donation.donor.email}`">{{ donation.donor.email }}</a>
+                        <a :href="`mailto:${donor.email}`">{{ donor.email }}</a>
                     </div>
-
                     <div class="c-user-strip__phone u-icon u-flex u-items-center">
-                        {{ donation.donor.phone }}
+                        {{ donor.phone }}
                     </div>
-
                 </div>
-
             </div>
-
         </td>
+
         <td class="u-nowrap">
-
             <div class="c-user-strip u-flex u-items-center">
-
                 <div class="c-user-strip__content">
-
                     <div class="c-user-strip__address u-icon u-flex">
-                        {{ donation.donor.address1 }}<br>
-                        {{ donation.donor.address2 }}<br>
-                        {{ donation.donor.city }}, {{ donation.donor.state }} {{ donation.donor.zip }}
+                        {{ donor.address1 }}<br>
+                        {{ donor.address2 }}<br>
+                        {{ donor.city }}, {{ donor.state }} {{ donor.zip }}
                     </div>
-
                 </div>
-
             </div>
-
         </td>
+
     </tr>
 </template>
 
@@ -74,19 +66,21 @@
 	const numeral = require('numeral');
 
 	module.exports = {
+		computed: {
+			date: function () {
+				return new Date(this.donation.createdOn).toLocaleDateString();
+            },
+            time: function () {
+				return new Date(this.donation.createdOn).toLocaleTimeString();
+            },
+            amount: function () {
+				return numeral(this.donation.amountInCents / 100).format('$0,00.00');
+            }
+        },
 		props: [
-			'donation'
-		],
-        methods: {
-	        getDate: function (createdOn) {
-		        return new Date(createdOn).toLocaleDateString();
-	        },
-	        getTime: function (createdOn) {
-		        return new Date(createdOn).toLocaleTimeString();
-	        },
-	        formatDonation: function(amountInCents) {
-		        return numeral(amountInCents/100).format('$0,0.00');
-	        }
-        }
+			'donation',
+            'donor',
+            'nonprofit'
+		]
 	};
 </script>

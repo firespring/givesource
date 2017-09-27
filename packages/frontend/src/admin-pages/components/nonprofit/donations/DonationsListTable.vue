@@ -16,8 +16,7 @@
   -->
 
 <template>
-    <table>
-
+    <table :class="{ 'table=-empty': !displayRows }">
         <thead>
         <tr>
             <th class="sortable sortable--desc">
@@ -34,8 +33,12 @@
         </tr>
         </thead>
 
-        <tbody>
-            <donations-list-table-row v-for="donation in donations" v-bind:donation="donation" v-bind:key="donation.uuid"></donations-list-table-row>
+        <tbody v-if="displayRows">
+        <donations-list-table-row v-for="donation in donations" :donation="donation" :donor="getDonor(donation.donorUuid)" :key="donation.uuid"></donations-list-table-row>
+        </tbody>
+
+        <tbody v-else>
+        <layout-empty-table-row :loaded="loaded" :colspan="5" message="There are no donations."></layout-empty-table-row>
         </tbody>
 
     </table>
@@ -46,48 +49,40 @@
 		data: function () {
 			return {
 				donations: [],
-				donors: []
+				donors: [],
+
+				loaded: false,
 			};
 		},
-        props: [
-			'nonprofitUuid'
-        ],
-		components: {
-			'donations-list-table-row': require('./DonationsListTableRow.vue')
+		computed: {
+			displayRows: function () {
+				return this.loaded && this.donations.length;
+			}
 		},
+		props: [
+			'nonprofitUuid'
+		],
 		mounted: function () {
-			this.getDonations();
+			const vue = this;
+
+			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/donations').then(function (response) {
+				vue.donations = response.data;
+				return axios.get(API_URL + 'donors');
+			}).then(function (response) {
+				vue.donors = response.data;
+				vue.loaded = true;
+			});
 		},
 		methods: {
-			getDonations: function () {
-				const vue = this;
-				// TODO: make this faster via the GetDonations lambda function & elastic search
-				axios.get(API_URL + 'donors').then(function (response) {
-					response.data.forEach(function (donor) {
-						vue.donors.push(donor);
-					});
-				}).then(function () {
-					axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/donations').then(function (response) {
-						response.data.forEach(function (donation) {
-							donation.donor = vue.getDonor(donation.donorUuid);
-							vue.donations.push(donation);
-						});
-					});
-				}).catch(function (err) {
-					console.log(err);
-				});
-			},
 			getDonor: function (donorUuid) {
 				const vue = this;
-				let result = {};
-				vue.donors.forEach(function (donor) {
-					if (donor.uuid === donorUuid) {
-						result = donor;
-					}
-				});
-				return result;
-			},
 
+				return _.find(vue.donors, {uuid: donorUuid});
+			},
+		},
+		components: {
+			'donations-list-table-row': require('./DonationsListTableRow.vue'),
+			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue')
 		}
 	};
 </script>
