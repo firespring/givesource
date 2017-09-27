@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="contact-info__contact">
-                    <router-link :to="{ name: 'contact-us' }"><i class="fa fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
+                    <router-link :to="{ name: 'contact' }"><i class="fa fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
                 </div>
 
                 <div class="contact-info__terms">

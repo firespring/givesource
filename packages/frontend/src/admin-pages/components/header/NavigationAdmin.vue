@@ -31,7 +31,7 @@
             <router-link tag="li" :to="{ name: 'sponsors' }">
                 <a><i class="fa fa-fw fa-star" aria-hidden="true"></i>Sponsors</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'pages' }">
+            <router-link tag="li" :to="{ name: 'pages-list' }">
                 <a><i class="fa fa-fw fa-files-o" aria-hidden="true"></i>Pages</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'reports' }">
