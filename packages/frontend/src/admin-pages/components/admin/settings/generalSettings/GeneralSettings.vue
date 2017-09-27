@@ -41,9 +41,7 @@
                                         <label for="dateEvent" class="c-form-item-label-text">Event Date</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <div class="u-control-icon u-control-icon--date">
-                                            <input type="text" name="dateEvent" id="dateEvent">
-                                        </div>
+                                        <forms-datetime v-model="formData.dateEvent" name="dateEvent" id="dateEvent"></forms-datetime>
                                     </div>
                                 </div>
 
@@ -243,17 +241,15 @@
                                     <div class="c-form-item__control">
                                         <div class="c-form-control-grid u-items-center">
                                             <div class="c-form-control-grid__item u-flex-collapse">
-                                                <div class="u-control-icon u-control-icon--date">
-                                                    <input type="text" name="dateRegistrationsStart" id="dateRegistrationsStart" placeholder="Start">
-                                                </div>
+                                                <forms-datetime v-model="formData.dateRegistrationsStart" name="dateRegistrationsStart" id="dateRegistrationsStart"
+                                                                placeholder="Start" :maxDate="dateRegistrationsMaxDate"></forms-datetime>
                                             </div>
                                             <div class="c-form-control-grid__separator">
                                                 to
                                             </div>
                                             <div class="c-form-control-grid__item u-flex-collapse">
-                                                <div class="u-control-icon u-control-icon--date">
-                                                    <input type="text" name="dateRegistrationsEnd" id="dateRegistrationsEnd" placeholder="End">
-                                                </div>
+                                                <forms-datetime v-model="formData.dateRegistrationsEnd" name="dateRegistrationsEnd" id="dateRegistrationsEnd"
+                                                                placeholder="End" :minDate="dateRegistrationsMinDate"></forms-datetime>
                                             </div>
                                         </div>
                                         <div class="c-notes c-notes--below">
@@ -269,17 +265,15 @@
                                     <div class="c-form-item__control">
                                         <div class="c-form-control-grid u-items-center">
                                             <div class="c-form-control-grid__item u-flex-collapse">
-                                                <div class="u-control-icon u-control-icon--date">
-                                                    <input type="text" name="dateAcceptDonationsStart" id="dateAcceptDonationsStart" placeholder="Start">
-                                                </div>
+                                                <forms-datetime v-model="formData.dateAcceptDonationsStart" name="dateAcceptDonationsStart" id="dateAcceptDonationsStart"
+                                                                placeholder="Start" :maxDate="dateAcceptDonationsMaxDate"></forms-datetime>
                                             </div>
                                             <div class="c-form-control-grid__separator">
                                                 to
                                             </div>
                                             <div class="c-form-control-grid__item u-flex-collapse">
-                                                <div class="u-control-icon u-control-icon--date">
-                                                    <input type="text" name="dateAcceptDonationsEnd" id="dateAcceptDonationsEnd" placeholder="End">
-                                                </div>
+                                                <forms-datetime v-model="formData.dateAcceptDonationsEnd" name="dateAcceptDonationsEnd" id="dateAcceptDonationsEnd"
+                                                                placeholder="End" :minDate="dateAcceptDonationsMinDate"></forms-datetime>
                                             </div>
                                         </div>
                                         <div class="c-notes c-notes--below">
@@ -305,5 +299,36 @@
 
 <script>
     module.exports = {
+    	data: function () {
+    		return {
+
+    			// Form Data
+                formData: {
+	                dateEvent: '',
+                    dateRegistrationsStart: '',
+                    dateRegistrationsEnd: '',
+	                dateAcceptDonationsStart: '',
+	                dateAcceptDonationsEnd: '',
+                }
+
+            };
+        },
+        computed: {
+	        dateRegistrationsMinDate: function () {
+		        return this.formData.dateRegistrationsStart ? this.formData.dateRegistrationsStart : false;
+	        },
+    		dateRegistrationsMaxDate: function () {
+    			return this.formData.dateRegistrationsEnd ? this.formData.dateRegistrationsEnd : false;
+            },
+	        dateAcceptDonationsMinDate: function () {
+	        	return this.formData.dateAcceptDonationsStart ? this.formData.dateAcceptDonationsStart : false;
+            },
+	        dateAcceptDonationsMaxDate: function () {
+    			return this.formData.dateAcceptDonationsEnd ? this.formData.dateAcceptDonationsEnd : false;
+            }
+        },
+        components: {
+    		'forms-datetime': require('./../../../forms/Datetime.vue')
+        }
     };
 </script>

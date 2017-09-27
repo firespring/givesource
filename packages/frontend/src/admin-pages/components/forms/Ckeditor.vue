@@ -34,6 +34,25 @@
                 localValue: '',
             }
         },
+	    props: {
+		    value: {},
+		    id: {
+			    type: String,
+			    default: 'editor'
+		    },
+		    loaded: {
+			    type: Boolean,
+			    default: false
+		    },
+		    hasErrors: {
+			    type: Boolean,
+			    default: false
+		    },
+		    height: {
+			    type: String,
+			    default: '200'
+		    }
+	    },
         watch: {
     		localValue: function (value, oldValue) {
     			const vue = this;
@@ -49,25 +68,6 @@
 		        }
 		        vue.localValue = value;
 	        }
-        },
-    	props: {
-    		value: {},
-    		id: {
-    			type: String,
-                default: 'editor'
-            },
-		    loaded: {
-			    type: Boolean,
-			    default: false
-		    },
-            hasErrors: {
-    			type: Boolean,
-                default: false
-            },
-            height: {
-    			type: String,
-                default: '200'
-            }
         }
     };
 </script>

@@ -57,7 +57,8 @@ module.exports = {
 	plugins: [
 		new webpack.ProvidePlugin({
 			$: 'jquery',
-			jQuery: 'jquery'
+			jQuery: 'jquery',
+			'window.jQuery': 'jquery'
 		}),
 		new CopyWebpackPlugin([
 			{from: './config/**/*.json', to: '[name].[ext]'},
