@@ -80,19 +80,21 @@
 
         </td>
         <td class="u-nowrap u-text-r">
-            <a href="donations.php">{{ formatSum(nonprofit.donationsSum) }}</a>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ formatSum(nonprofit.donationsSum) }}</router-link>
         </td>
         <td>
 
-            <div class="c-btn-dropdown c-btn-dropdown--r">
-                <a href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only js-btn-dropdown-trigger"></a>
+            <div class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
+                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only js-btn-dropdown-trigger"></a>
 
-                <div class="c-btn-dropdown-menu">
+                <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
                         <a href="#"><i class="fa fa-fw fa-ban" aria-hidden="true"></i>Deny Nonprofit</a>
                         <a href="#"><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Change to Pending</a>
                         <hr>
-                        <a href="manage-donation-page-content.php"><i class="fa fa-fw fa-gear" aria-hidden="true"></i>Manage Donation Page</a>
+                        <router-link :to="{ name: 'nonprofit-your-page', params: { nonprofitUuid: nonprofit.uuid } }">
+                            <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Manage Donation Page
+                        </router-link>
                         <hr>
                         <a href="#" class="js-modal-trigger" rel="modal-confirm-delete"><i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete Nonprofit</a>
                     </div>
@@ -107,6 +109,12 @@
 <script>
 	const numeral = require('numeral');
 	module.exports = {
+		data: function () {
+			return {
+				displayingMenu: false,
+                timer: null,
+            };
+        },
 		props: [
 			'nonprofit'
 		],
@@ -119,7 +127,31 @@
 	        },
 	        formatSum: function (donationsSum) {
 		        return numeral(donationsSum / 100).format('$0,0.00');
-	        }
+	        },
+            toggleMenu: function (event) {
+	        	event.preventDefault();
+                const vue = this;
+                if (vue.displayingMenu) {
+	                $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+	                $(vue.$refs.cBtnDropdownMenu).fadeOut();
+                } else {
+	                $(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+	                $(vue.$refs.cBtnDropdownMenu).fadeIn();
+                }
+                vue.displayingMenu = !vue.displayingMenu;
+            },
+            closeMenu: function () {
+	        	const vue = this;
+	        	vue.timer = setTimeout(function () {
+			        $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+			        $(vue.$refs.cBtnDropdownMenu).fadeOut();
+			        vue.displayingMenu = false;
+                }, 250);
+            },
+	        cancelCloseMenu: function () {
+	        	const vue = this;
+	        	clearTimeout(vue.timer);
+            }
         }
 	};
 </script>

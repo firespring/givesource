@@ -176,7 +176,7 @@
                                 <label for="category2" class="c-form-item-label-text">Category #2</label>
                             </div>
                             <div class="c-form-control-grid__item">
-                                <category-select v-model="formData.category2" name="category2" id="category2" :options="category2Options"
+                                <category-select v-model="formData.category2" name="category2" id="category2" :options="category2Options" :allowEmpty="true"
                                                  :class="{ 'has-error': formErrors.category2 }"></category-select>
                             </div>
                         </div>
@@ -189,7 +189,7 @@
                                 <label for="category3" class="c-form-item-label-text">Category #3</label>
                             </div>
                             <div class="c-form-control-grid__item">
-                                <category-select v-model="formData.category3" name="category3" id="category3" :options="category3Options"
+                                <category-select v-model="formData.category3" name="category3" id="category3" :options="category3Options" :allowEmpty="true"
                                                  :class="{ 'has-error': formErrors.category3 }"></category-select>
                             </div>
                         </div>
@@ -291,16 +291,12 @@
 			formData: {
 				handler: function () {
 					const vue = this;
-                    if (Object.keys(vue.formErrors).length) {
-	                    vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-                    }
-                },
-                deep: true
-            }
-		},
-		components: {
-			'state-select': require('../../forms/SelectState.vue'),
-			'category-select': require('../../forms/SelectNonprofitCategory.vue')
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
 		},
 		methods: {
 			getConstraints: function () {
@@ -374,8 +370,6 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-                console.log(API_URL + 'nonprofits/register');
-
 				axios.post(API_URL + 'nonprofits/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
@@ -408,6 +402,10 @@
 					console.log(err);
 				});
 			},
+		},
+		components: {
+			'category-select': require('../../forms/SelectNonprofitCategory.vue'),
+			'state-select': require('../../forms/SelectState.vue'),
 		}
 	};
 </script>

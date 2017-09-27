@@ -20,7 +20,18 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
-                <div class="o-page-header">
+
+                <div class="o-page-header" v-if="isAdmin">
+                    <div class="o-page-header__text">
+                        <nav class="o-page-header-nav c-breadcrumb">
+                            <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+                            <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
+                        </nav>
+                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">Manage {{ nonprofit.legalName }}'s Organization Info</h1>
+                    </div>
+                </div>
+
+                <div class="o-page-header" v-else>
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
@@ -33,17 +44,30 @@
 
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                         <div class="c-page-section__main">
-                            <div class="c-form-item c-form-item--text c-form-item--required">
 
-                                <div class="c-form-item c-form-item--text c-form-item--required">
-                                    <div class="c-form-item__label">
-                                        <label for="taxId" class="c-form-item-label-text">Tax ID</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <input v-model="taxId" type="text" name="taxId" id="taxId" maxlength="200" value="">
+                            <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.legalName }" v-if="isAdmin">
+                                <div class="c-form-item__label">
+                                    <label for="legalName" class="c-form-item-label-text">Legal Name</label>
+                                </div>
+                                <div class="c-form-item__control">
+                                    <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200" :class="{ 'has-error': formErrors.legalName }"
+                                           v-auto-focus>
+                                    <div v-if="formErrors.legalName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.legalName }}
                                     </div>
                                 </div>
+                            </div>
 
+                            <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.taxId }">
+                                <div class="c-form-item__label">
+                                    <label for="taxId" class="c-form-item-label-text">Tax ID</label>
+                                </div>
+                                <div class="c-form-item__control">
+                                    <input v-model="formData.taxId" type="text" name="taxId" id="taxId" :class="{ 'has-error': formErrors.taxId }" v-auto-focus>
+                                    <div v-if="formErrors.taxId" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.taxId }}
+                                    </div>
+                                </div>
                             </div>
 
                             <hr class="expand">
@@ -57,48 +81,63 @@
                                     <div class="c-form-control-grid">
                                         <div class="c-form-control-grid__item c-form-item--required">
                                             <div class="has-floating-label js-floating-label" v-floating-label>
-                                                <input v-model="address1" type="text" name="address1" id="address1">
+                                                <input v-model="formData.address1" type="text" name="address1" id="address1" :class="{ 'has-error': formErrors.address1 }">
                                                 <label for="address1">Address Line 1</label>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="c-form-control-grid">
-                                        <div class="c-form-control-grid__item">
-                                            <div class="has-floating-label js-floating-label" v-floating-label>
-                                                <input v-model="address2" type="text" name="address2" id="address2">
-                                                <label for="address2">Address Line 2</label>
-                                            </div>
-                                        </div>
+                                    <div v-if="formErrors.address1" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.address1 }}
                                     </div>
 
                                     <div class="c-form-control-grid">
                                         <div class="c-form-control-grid__item">
                                             <div class="has-floating-label js-floating-label" v-floating-label>
-                                                <input v-model="address3" type="text" name="address3" id="address3">
+                                                <input v-model="formData.address2" type="text" name="address2" id="address2" :class="{ 'has-error': formErrors.address2 }">
+                                                <label for="address2">Address Line 2</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-if="formErrors.address2" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.address2 }}
+                                    </div>
+
+                                    <div class="c-form-control-grid">
+                                        <div class="c-form-control-grid__item">
+                                            <div class="has-floating-label js-floating-label" v-floating-label>
+                                                <input v-model="formData.address3" type="text" name="address3" id="address3" :class="{ 'has-error': formErrors.address3 }">
                                                 <label for="address3">Address Line 3</label>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div v-if="formErrors.address3" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.address3 }}
                                     </div>
 
                                     <div class="c-form-control-grid">
                                         <div class="c-form-control-grid__item c-form-item--required">
                                             <div class="has-floating-label js-floating-label" v-floating-label>
-                                                <input v-model="city" type="text" name="city" id="city">
+                                                <input v-model="formData.city" type="text" name="city" id="city" :class="{ 'has-error': formErrors.city }">
                                                 <label for="city">City</label>
                                             </div>
                                         </div>
 
                                         <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
-                                            <state-select :selected.sync="state" name="state" id="state"></state-select>
+                                            <state-select v-model="formData.state" name="state" id="state" placeholder="State"
+                                                          :class="{ 'has-error': formErrors.state }"></state-select>
                                         </div>
 
                                         <div class="c-form-control-grid__item c-form-item--required" style="flex: 1 0 11rem; max-width: 11rem;">
                                             <div class="has-floating-label js-floating-label" v-floating-label>
-                                                <input v-model="zip" type="text" name="zip" id="zip">
+                                                <input v-model="formData.zip" type="text" name="zip" id="zip" :class="{ 'has-error': formErrors.zip }">
                                                 <label for="zip">ZIP Code</label>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div v-if="formErrors.city || formErrors.state || formErrors.zip"
+                                         class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                                            v-if="formErrors.zip">{{ formErrors.zip }}.</span>
                                     </div>
 
                                 </div>
@@ -117,138 +156,40 @@
                                             <label for="category1" class="c-form-item-label-text">Category #1</label>
                                         </div>
                                         <div class="c-form-control-grid__item">
-                                            <select v-model="category1" name="category1" id="category1">
-                                                <option disabled value="">No category selected</option>
-                                                <option disabled value="">-----</option>
-                                                <option value="Animal-Related">Animal-Related</option>
-                                                <option value="Arts, Culture & Humanities">Arts, Culture &amp; Humanities</option>
-                                                <option value="Children & Families">Children &amp; Families</option>
-                                                <option value="Civil Rights, Social Action & Advocacy">Civil Rights, Social Action &amp; Advocacy</option>
-                                                <option value="Community Improvement & Capacity Building">Community Improvement &amp; Capacity Building</option>
-                                                <option value="Crime & Legal-Related">Crime &amp; Legal-Related</option>
-                                                <option value="Diseases, Disorders & Medical Disciplines">Diseases, Disorders &amp; Medical Disciplines</option>
-                                                <option value="Education-Early Childhood">Education-Early Childhood</option>
-                                                <option value="Education-Higher Education">Education-Higher Education</option>
-                                                <option value="Education-K-12">Education-K-12</option>
-                                                <option value="Environment">Environment</option>
-                                                <option value="Food, Agriculture & Nutrition">Food, Agriculture &amp; Nutrition</option>
-                                                <option value="Health Care">Health Care</option>
-                                                <option value="Housing & Shelter">Housing &amp; Shelter</option>
-                                                <option value="Human Services">Human Services</option>
-                                                <option value="International, Foreign Affairs & National Security">International, Foreign Affairs &amp; National Security</option>
-                                                <option value="Library & Literacy Programs">Library &amp; Literacy Programs</option>
-                                                <option value="Medical Research">Medical Research</option>
-                                                <option value="Mental Health & Crisis Intervention">Mental Health &amp; Crisis Intervention</option>
-                                                <option value="Mutual & Membership Benefit">Mutual &amp; Membership Benefit</option>
-                                                <option value="Older Adults">Older Adults</option>
-                                                <option value="Philanthropy, Voluntarism & Grantmaking Foundations">Philanthropy, Voluntarism &amp; Grantmaking Foundations</option>
-                                                <option value="Politics & Public Administration">Politics &amp; Public Administration</option>
-                                                <option value="Public & Societal Benefit">Public &amp; Societal Benefit</option>
-                                                <option value="Public Safety, Disaster Preparedness & Relief">Public Safety, Disaster Preparedness &amp; Relief</option>
-                                                <option value="Recreation & Sports">Recreation &amp; Sports</option>
-                                                <option value="Religion-Related">Religion-Related</option>
-                                                <option value="Science & Technology">Science &amp; Technology</option>
-                                                <option value="Veterans Support">Veterans Support</option>
-                                                <option value="Women">Women</option>
-                                                <option value="Youth Development">Youth Development</option>
-                                            </select>
+                                            <category-select v-model="formData.category1" name="category1" id="category1" :options="category1Options"
+                                                             :class="{ 'has-error': formErrors.category1 }"></category-select>
                                         </div>
+                                    </div>
+                                    <div v-if="formErrors.category1" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.category1 }}
                                     </div>
 
                                     <div class="c-form-control-grid">
-
                                         <div class="c-form-control-grid__item u-flex u-items-center" style="flex: 1 0 8rem; max-width: 8rem;">
                                             <label for="category2" class="c-form-item-label-text">Category #2</label>
                                         </div>
-
                                         <div class="c-form-control-grid__item">
-                                            <select v-model="category2" name="category2" id="category2">
-                                                <option disabled value="">No category selected</option>
-                                                <option disabled value="">-----</option>
-                                                <option value="Animal-Related">Animal-Related</option>
-                                                <option value="Arts, Culture & Humanities">Arts, Culture &amp; Humanities</option>
-                                                <option value="Children & Families">Children &amp; Families</option>
-                                                <option value="Civil Rights, Social Action & Advocacy">Civil Rights, Social Action &amp; Advocacy</option>
-                                                <option value="Community Improvement & Capacity Building">Community Improvement &amp; Capacity Building</option>
-                                                <option value="Crime & Legal-Related">Crime &amp; Legal-Related</option>
-                                                <option value="Diseases, Disorders & Medical Disciplines">Diseases, Disorders &amp; Medical Disciplines</option>
-                                                <option value="Education-Early Childhood">Education-Early Childhood</option>
-                                                <option value="Education-Higher Education">Education-Higher Education</option>
-                                                <option value="Education-K-12">Education-K-12</option>
-                                                <option value="Environment">Environment</option>
-                                                <option value="Food, Agriculture & Nutrition">Food, Agriculture &amp; Nutrition</option>
-                                                <option value="Health Care">Health Care</option>
-                                                <option value="Housing & Shelter">Housing &amp; Shelter</option>
-                                                <option value="Human Services">Human Services</option>
-                                                <option value="International, Foreign Affairs & National Security">International, Foreign Affairs &amp; National Security</option>
-                                                <option value="Library & Literacy Programs">Library &amp; Literacy Programs</option>
-                                                <option value="Medical Research">Medical Research</option>
-                                                <option value="Mental Health & Crisis Intervention">Mental Health &amp; Crisis Intervention</option>
-                                                <option value="Mutual & Membership Benefit">Mutual &amp; Membership Benefit</option>
-                                                <option value="Older Adults">Older Adults</option>
-                                                <option value="Philanthropy, Voluntarism & Grantmaking Foundations">Philanthropy, Voluntarism &amp; Grantmaking Foundations</option>
-                                                <option value="Politics & Public Administration">Politics &amp; Public Administration</option>
-                                                <option value="Public & Societal Benefit">Public &amp; Societal Benefit</option>
-                                                <option value="Public Safety, Disaster Preparedness & Relief">Public Safety, Disaster Preparedness &amp; Relief</option>
-                                                <option value="Recreation & Sports">Recreation &amp; Sports</option>
-                                                <option value="Religion-Related">Religion-Related</option>
-                                                <option value="Science & Technology">Science &amp; Technology</option>
-                                                <option value="Veterans Support">Veterans Support</option>
-                                                <option value="Women">Women</option>
-                                                <option value="Youth Development">Youth Development</option>
-                                            </select>
+                                            <category-select v-model="formData.category2" name="category2" id="category2" :options="category2Options" :allowEmpty="true"
+                                                             :class="{ 'has-error': formErrors.category2 }"></category-select>
                                         </div>
-
+                                    </div>
+                                    <div v-if="formErrors.category2" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.category2 }}
                                     </div>
 
                                     <div class="c-form-control-grid">
-
                                         <div class="c-form-control-grid__item u-flex u-items-center" style="flex: 1 0 8rem; max-width: 8rem;">
                                             <label for="category3" class="c-form-item-label-text">Category #3</label>
                                         </div>
-
                                         <div class="c-form-control-grid__item">
-                                            <select v-model="category3" name="category3" id="category3">
-                                                <option disabled value="">No category selected</option>
-                                                <option disabled value="">-----</option>
-                                                <option value="Animal-Related">Animal-Related</option>
-                                                <option value="Arts, Culture & Humanities">Arts, Culture &amp; Humanities</option>
-                                                <option value="Children & Families">Children &amp; Families</option>
-                                                <option value="Civil Rights, Social Action & Advocacy">Civil Rights, Social Action &amp; Advocacy</option>
-                                                <option value="Community Improvement & Capacity Building">Community Improvement &amp; Capacity Building</option>
-                                                <option value="Crime & Legal-Related">Crime &amp; Legal-Related</option>
-                                                <option value="Diseases, Disorders & Medical Disciplines">Diseases, Disorders &amp; Medical Disciplines</option>
-                                                <option value="Education-Early Childhood">Education-Early Childhood</option>
-                                                <option value="Education-Higher Education">Education-Higher Education</option>
-                                                <option value="Education-K-12">Education-K-12</option>
-                                                <option value="Environment">Environment</option>
-                                                <option value="Food, Agriculture & Nutrition">Food, Agriculture &amp; Nutrition</option>
-                                                <option value="Health Care">Health Care</option>
-                                                <option value="Housing & Shelter">Housing &amp; Shelter</option>
-                                                <option value="Human Services">Human Services</option>
-                                                <option value="International, Foreign Affairs & National Security">International, Foreign Affairs &amp; National Security</option>
-                                                <option value="Library & Literacy Programs">Library &amp; Literacy Programs</option>
-                                                <option value="Medical Research">Medical Research</option>
-                                                <option value="Mental Health & Crisis Intervention">Mental Health &amp; Crisis Intervention</option>
-                                                <option value="Mutual & Membership Benefit">Mutual &amp; Membership Benefit</option>
-                                                <option value="Older Adults">Older Adults</option>
-                                                <option value="Philanthropy, Voluntarism & Grantmaking Foundations">Philanthropy, Voluntarism &amp; Grantmaking Foundations</option>
-                                                <option value="Politics & Public Administration">Politics &amp; Public Administration</option>
-                                                <option value="Public & Societal Benefit">Public &amp; Societal Benefit</option>
-                                                <option value="Public Safety, Disaster Preparedness & Relief">Public Safety, Disaster Preparedness &amp; Relief</option>
-                                                <option value="Recreation & Sports">Recreation &amp; Sports</option>
-                                                <option value="Religion-Related">Religion-Related</option>
-                                                <option value="Science & Technology">Science &amp; Technology</option>
-                                                <option value="Veterans Support">Veterans Support</option>
-                                                <option value="Women">Women</option>
-                                                <option value="Youth Development">Youth Development</option>
-                                            </select>
+                                            <category-select v-model="formData.category3" name="category3" id="category3" :options="category3Options" :allowEmpty="true"
+                                                             :class="{ 'has-error': formErrors.category3 }"></category-select>
                                         </div>
-
                                     </div>
-
+                                    <div v-if="formErrors.category3" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                                        {{ formErrors.category3 }}
+                                    </div>
                                 </div>
-
                             </div>
 
                         </div>
@@ -269,61 +210,220 @@
 	module.exports = {
 		data: function () {
 			return {
-				taxId: '',
-				address1: '',
-				address2: '',
-				address3: '',
-				city: '',
-				state: '',
-				zip: '',
-				category1: '',
-				category2: '',
-				category3: ''
+				nonprofit: {},
+				loaded: false,
+
+				formData: {
+					legalName: '',
+					taxId: '',
+					address1: '',
+					address2: '',
+					address3: '',
+					city: '',
+					state: '',
+					zip: '',
+					category1: '',
+					category2: '',
+					category3: ''
+				},
+
+				categoryOptions: [
+					{value: '1', text: 'Animal-Related'},
+					{value: '2', text: 'Arts, Culture & Humanities'},
+					{value: '3', text: 'Children & Families'},
+					{value: '4', text: 'Community Improvement & Capacity Building'},
+					{value: '5', text: 'Crime & Legal-Related'},
+					{value: '6', text: 'Diseases, Disorders & Medical Disciplines'},
+					{value: '7', text: 'Education-Early Childhood'},
+					{value: '8', text: 'Education-Higher Education'},
+					{value: '9', text: 'Education-K-12'},
+					{value: '10', text: 'Environment'},
+					{value: '11', text: 'Food, Agriculture & Nutrition'},
+					{value: '12', text: 'Health Care'},
+					{value: '13', text: 'Housing & Shelter'},
+					{value: '14', text: 'Human Services'},
+					{value: '15', text: 'International, Foreign Affairs & National Security'},
+					{value: '16', text: 'Library & Literacy Programs'},
+					{value: '17', text: 'Medical Research'},
+					{value: '18', text: 'Mental Health & Crisis Intervention'},
+					{value: '19', text: 'Mutual & Membership Benefit'},
+					{value: '20', text: 'Older Adults'},
+					{value: '21', text: 'Philanthropy, Voluntarism & Grantmaking Foundations'},
+					{value: '22', text: 'Politics & Public Administration'},
+					{value: '23', text: 'Public & Societal Benefit'},
+					{value: '24', text: 'Public Safety, Disaster Preparedness & Relief'},
+					{value: '25', text: 'Recreation & Sports'},
+					{value: '26', text: 'Religion-Related'},
+					{value: '27', text: 'Science & Technology'},
+					{value: '28', text: 'Veterans Support'},
+					{value: '29', text: 'Women'},
+					{value: '30', text: 'Youth Development'}
+				],
+
+				// Errors
+				formErrors: {},
 			}
 		},
-        props: [
-        	'nonprofitUuid'
-        ],
-		components: {
-			'state-select': require('../../../forms/SelectState.vue')
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+			category1Options: function () {
+				const vue = this;
+				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
+					return option.value !== vue.formData.category2 && option.value !== vue.formData.category3;
+				});
+			},
+			category2Options: function () {
+				const vue = this;
+				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
+					return option.value !== vue.formData.category1 && option.value !== vue.formData.category3;
+				});
+			},
+			category3Options: function () {
+				const vue = this;
+				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
+					return option.value !== vue.formData.category1 && option.value !== vue.formData.category2;
+				});
+			}
+		},
+		props: [
+			'nonprofitUuid'
+		],
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.nonprofit = response.data;
+			}).then(function () {
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
+		created: function () {
+			const vue = this;
+
+			vue.addModal('spinner');
+		},
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			},
+			nonprofit: {
+				handler: function () {
+					const vue = this;
+
+					vue.formData = vue.sync(vue.formData, vue.nonprofit);
+					vue.loaded = true;
+					vue.removeModal('spinner');
+				},
+				deep: true
+			}
 		},
 		methods: {
-			validateForm: function () {
-				// TODO: validate form
+			getConstraints: function () {
+				const vue = this;
+
+				const constraints = {
+					taxId: {
+						presence: true,
+					},
+					address1: {
+						label: 'Address line 1',
+						presence: true,
+					},
+					address2: {
+						label: 'Address line 2',
+						presence: false,
+					},
+					address3: {
+						label: 'Address line 3',
+						presence: false,
+					},
+					city: {
+						presence: true,
+					},
+					state: {
+						presence: true,
+					},
+					zip: {
+						label: 'Zip code',
+						presence: true,
+					},
+					category1: {
+						label: 'Category #1',
+						presence: true,
+					},
+					category2: {
+						label: 'Category #2',
+						presence: false,
+					},
+					category3: {
+						label: 'Category #3',
+						presence: false,
+					}
+				};
+
+				if (vue.isAdmin) {
+					constraints.legalName = {
+						presence: true,
+					}
+				}
+
+				return constraints;
 			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.updateNonprofit();
+				vue.addModal('spinner');
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+				} else {
+					vue.updateNonprofit();
+				}
 			},
 			updateNonprofit: function () {
 				const vue = this;
 
-				vue.addModal('spinner');
-				axios.patch(API_URL + 'nonprofits/' + vue.user.nonprofitUuid, {
-						taxId: vue.taxId,
-						address1: vue.address1,
-						address2: vue.address2,
-						address3: vue.address3,
-						city: vue.city,
-						state: vue.state,
-						zip: vue.zip,
-						category1: vue.category1,
-						category2: vue.category2,
-						category3: vue.category3
-				}).then(function (response) {
+				const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
+				if (Object.keys(params).length === 0) {
+					vue.clearModals();
+					vue.$router.push({name: 'nonprofit-settings-list'});
+					return;
+				}
+				axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);
-                    } else {
-						vue.$router.push({name: 'nonprofits-settings-list'});
-                    }
+					} else {
+						vue.$router.push({name: 'nonprofit-settings-list'});
+					}
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
 				});
 			},
+		},
+		components: {
+			'category-select': require('./../../../forms/SelectNonprofitCategory.vue'),
+			'state-select': require('./../../../forms/SelectState.vue')
 		}
 	};
 </script>

@@ -29,53 +29,6 @@
 		}
 	};
 
-	$(document).ready(function () {
-
-		const body = $('body');
-
-        /* ============================================================================
-         Toggle account nav popups
-         ============================================================================ */
-
-		body.delegate('.js-user-popup-toggle', 'click', function (e) {
-			e.preventDefault();
-			const parent = $(this).parent();
-			const popup = $('.o-menubar-popup');
-
-			parent.removeClass('o-menubar-popup-parent--active');
-			popup.fadeOut(200);
-			parent.addClass('o-menubar-popup-parent--active').find('.o-menubar-popup').fadeIn(200);
-
-			parent.lazybind('mouseout', function () {
-				parent.removeClass('o-menubar-popup-parent--active');
-				popup.fadeOut(200);
-			}, 500, 'mouseover');
-		});
-
-	});
-
-    /* ============================================================================
-     jQuery Delay Bind Event Handler
-     http://www.ideawu.com/blog/2011/05/jquery-delay-bind-event-handler-lazy-bind.html
-     ============================================================================ */
-
-	(function ($) {
-		$.fn.lazybind = function (event, fn, timeout, abort) {
-			let timer = null;
-			$(this).bind(event, function () {
-				timer = setTimeout(fn, timeout);
-			});
-			if (abort === undefined) {
-				return;
-			}
-			$(this).bind(abort, function () {
-				if (timer !== null) {
-					clearTimeout(timer);
-				}
-			});
-		};
-	})(jQuery);
-
 	// Ripple-effect animation
 	(function ($) {
 		$('body').delegate('.c-btn', 'click', function (e) {

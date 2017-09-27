@@ -49,6 +49,9 @@
 				donors: []
 			};
 		},
+        props: [
+			'nonprofitUuid'
+        ],
 		components: {
 			'donations-list-table-row': require('./DonationsListTableRow.vue')
 		},
@@ -64,7 +67,7 @@
 						vue.donors.push(donor);
 					});
 				}).then(function () {
-					axios.get(API_URL + 'nonprofits/' + vue.user.nonprofitUuid + '/donations').then(function (response) {
+					axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/donations').then(function (response) {
 						response.data.forEach(function (donation) {
 							donation.donor = vue.getDonor(donation.donorUuid);
 							vue.donations.push(donation);

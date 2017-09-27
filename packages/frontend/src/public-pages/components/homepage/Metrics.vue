@@ -45,7 +45,7 @@
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
-                <form class="nonprofit-search__name" action="search.php" method="post">
+                <form class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitName">Nonprofit Name Search</label>
@@ -68,7 +68,7 @@
                     </div>
                 </form>
 
-                <form class="nonprofit-search__category" action="search.php" method="post">
+                <form class="nonprofit-search__category" method="post">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitCategory">Nonprofit Category Search</label>
@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="nonprofit-search__see-all">
-                    <a href="search.php">See All Nonprofits</a>
+                    <a href="#">See All Nonprofits</a>
                 </div>
             </div>
 

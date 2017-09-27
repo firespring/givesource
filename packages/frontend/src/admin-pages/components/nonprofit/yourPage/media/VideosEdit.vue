@@ -20,7 +20,19 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
-                <div class="o-page-header">
+
+                <div class="o-page-header" v-if="isAdmin">
+                    <div class="o-page-header__text">
+                        <nav class="o-page-header-nav c-breadcrumb">
+                            <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+                            <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
+                            <span><router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}">Manage Image & Videos</router-link></span>
+                        </nav>
+                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">{{ nonprofit.legalName }} - Edit Video</h1>
+                    </div>
+                </div>
+
+                <div class="o-page-header" v-else>
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
@@ -94,6 +106,7 @@
 		data: function () {
 			return {
 				slide: {},
+                nonprofit: {},
 
                 // Form Data
                 formData: {
@@ -105,20 +118,36 @@
 				formErrors: {}
 			}
 		},
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+		},
 		props: [
 			'nonprofitUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid).then(function (response) {
-				next(function (vm) {
+			next(function (vm) {
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+					return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+				}).then(function (response) {
 					vm.slide = response.data;
-                });
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
-			axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid).then(function (response) {
+
+			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.nonprofit = response.data;
+				return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+			}).then(function (response) {
 				vue.slide = response.data;
+			}).then(function () {
+				next();
+			}).catch(function () {
+				console.log(err);
 				next();
 			});
 		},

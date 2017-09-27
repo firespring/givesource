@@ -183,7 +183,7 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				if (slide.type === MediaHelper.TYPE_IMAGE) {
+				if (slide.fileUuid) {
 					axios.delete(API_URL + 'files/' + slide.fileUuid, {
 						data: {
 							bucket: PUBLIC_PAGES_S3

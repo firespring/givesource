@@ -136,7 +136,7 @@ Generator.prototype._generators = {
 			category3: faker.random.word(),
 			city: faker.address.city(),
 			donationsCount: faker.random.number(),
-			donationsSum: faker.finance.amount(),
+			donationsSum: faker.random.number(),
 			legalName: faker.company.companyName(),
 			longDescription: faker.lorem.paragraphs(),
 			phone: faker.phone.phoneNumber(),
@@ -202,9 +202,9 @@ Generator.prototype._generators = {
 			fileUuid: faker.random.uuid(),
 			nonprofitUuid: faker.random.uuid(),
 			sortOrder: faker.random.number(),
-			thumbnail: faker.image.imageUrl(),
+			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
 			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
-			url: faker.image.imageUrl(),
+			url: faker.image.imageUrl(800, 600, 'nature'),
 		}
 	},
 
