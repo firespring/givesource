@@ -138,8 +138,7 @@
 				handler: function () {
 					const vue = this;
 
-					vue.formData.caption = vue.slide.caption;
-					vue.formData.url = vue.slide.url;
+					vue.formData = vue.sync(vue.formData, vue.slide);
 				},
 				deep: true
 			}
