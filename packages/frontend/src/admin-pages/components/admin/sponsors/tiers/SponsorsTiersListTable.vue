@@ -20,22 +20,21 @@
         <thead>
         <tr>
             <th></th>
-            <th>Logo</th>
-            <th class="u-width-100p">Sponsor Name</th>
+            <th class="u-width-100p">Sponsor Tier</th>
             <th></th>
         </tr>
         </thead>
 
         <tbody class="ui-sortable">
-        <sponsors-list-table-row></sponsors-list-table-row>
+            <sponsors-list-table-row></sponsors-list-table-row>
         </tbody>
     </table>
 </template>
 
 <script>
-    module.exports = {
-    	components: {
-    		'sponsors-list-table-row': require('./SponsorsListTableRow.vue')
-        }
-    };
+	module.exports = {
+		components: {
+			'sponsors-list-table-row': require('./SponsorsTiersListTableRow.vue')
+		}
+	};
 </script>

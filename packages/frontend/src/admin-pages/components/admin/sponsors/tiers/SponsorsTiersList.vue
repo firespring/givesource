@@ -19,34 +19,28 @@
     <div class="o-app">
         <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
+            <div class="o-app_main-content o-app_main-content o-app_main-content--md">
+                <div class="o-app-main-content">
 
-            <div class="o-app_main-content o-app_main-content--md">
-
-                <div class="o-page-header">
-
-                    <div class="o-page-header__text">
-
-                        <nav class="o-page-header-nav c-breadcrumb">
-
-                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsor</router-link></span>
-                        </nav>
-                        <h1 class="o-page-header-title">Add Sponsor Tier</h1>
+                    <div class="c-header-actions">
+                        <div>
+                            <router-link :to="{ name: 'sponsors-tiers-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Sponsor Tier
+                            </router-link>
+                        </div>
                     </div>
 
+                    <sponsors-list-table></sponsors-list-table>
+
                 </div>
-
-            <sponsors-add-tier-form></sponsors-add-tier-form>
-
             </div>
-
         </main>
     </div>
-
 </template>
 <script>
 	module.exports = {
 		components: {
-			'sponsors-add-tier-form': require('./SponsorsAddTierForm.vue')
+			'sponsors-list-table': require('./SponsorsTiersListTable.vue')
 		}
 	};
 </script>
