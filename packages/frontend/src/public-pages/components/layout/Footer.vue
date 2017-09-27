@@ -29,6 +29,10 @@
                     <router-link :to="{ name: 'contact' }"><i class="fa fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
                 </div>
 
+                <div class="contact-info__contact">
+                    <i class="fa fa-phone" aria-hidden="true"></i><span>1-111-111-1111</span>
+                </div>
+
                 <div class="contact-info__terms">
                     <router-link :to="{ name: 'tos' }">Terms of Service</router-link>
                 </div>
