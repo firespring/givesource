@@ -16,6 +16,7 @@
 	"license": "GPL-3.0",
 	"dependencies": {},
 	"devDependencies": {
+		"@claviska/jquery-minicolors": "^2.2.6",
 		"amazon-cognito-identity-js": "^1.20.0",
 		"axios": "^0.16.2",
 		"babel-core": "^6.25.0",

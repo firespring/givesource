@@ -183,14 +183,6 @@
     			return this.formData.dateAcceptDonationsEnd ? this.formData.dateAcceptDonationsEnd : false;
             }
         },
-        watch: {
-    		formData: {
-    			handler: function () {
-    				console.log(this.formData);
-                },
-                deep: true
-            }
-        },
         components: {
     		'forms-datetime': require('./../../../forms/Datetime.vue'),
             'forms-select-time-zone': require('./../../../forms/SelectTimeZone.vue')

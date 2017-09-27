@@ -88,7 +88,7 @@
                                         <label for="accentColor" class="c-form-item-label-text">Accent Color</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <div class="minicolors minicolors-theme-default minicolors-position-bottom minicolors-position-left"><input type="text" name="accentColor" id="accentColor" value="#0098d8" class="minicolors-input" size="7"><span class="minicolors-swatch minicolors-sprite minicolors-input-swatch"><span class="minicolors-swatch-color" style="background-color: rgb(0, 152, 216);"></span></span><div class="minicolors-panel minicolors-slider-hue"><div class="minicolors-slider minicolors-sprite"><div class="minicolors-picker" style="top: 67.5926px;"></div></div><div class="minicolors-opacity-slider minicolors-sprite"><div class="minicolors-picker"></div></div><div class="minicolors-grid minicolors-sprite" style="background-color: rgb(0, 179, 255);"><div class="minicolors-grid-inner"></div><div class="minicolors-picker" style="top: 22px; left: 150px;"><div></div></div></div></div></div>
+                                        <forms-color v-model="formData.accentColor" id="accentColor" name="accentColor"></forms-color>
                                         <div class="c-notes c-notes--below">
                                             Customize the look of your page with an accent color.
                                         </div>
@@ -112,5 +112,18 @@
 
 <script>
     module.exports = {
+    	data: function () {
+    		return {
+
+    			// Form Data
+                formData: {
+                	accentColor: '#0098d8',
+                }
+
+            };
+        },
+    	components: {
+    		'forms-color': require('./../../../forms/Color.vue')
+        }
     };
 </script>
