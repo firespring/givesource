@@ -108,6 +108,7 @@
 
 <script>
 	const numeral = require('numeral');
+
 	module.exports = {
 		data: function () {
 			return {

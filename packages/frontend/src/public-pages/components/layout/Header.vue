@@ -16,33 +16,39 @@
   -->
 
 <template>
-    <header class="page-header">
+    <header class="page-header flex text-c">
 
-        <div class="page-header__logo">
-            <router-link :to="{ name: 'homepage' }"><img alt="Give To Lincoln Day Logo" src="/assets/temp/logo-gtld-reverse.png"></router-link>
+        <div class="page-header__logo flex justify-center items-center">
+            <router-link :to="{ name: 'homepage' }" title="Return to the Give to Lincoln Day homepage"><img alt="Give To Lincoln Day Logo" src="/assets/temp/logo-gtld-reverse.png"></router-link>
         </div>
 
-        <nav class="page-header__nav-menu">
+        <nav class="page-header__nav-menu items-center">
             <router-link :to="{ name: 'about' }">About</router-link>
             <router-link :to="{ name: 'toolkits' }">Toolkits</router-link>
             <router-link :to="{ name: 'faq' }">FAQ</router-link>
         </nav>
 
-        <form class="page-header__search">
-            <input type="search" name="searchNonprofit" id="searchNonprofit" placeholder="Find a Nonprofit">
+        <form v-on:submit="search" class="page-header__search flex justify-center items-center">
+            <input type="search" name="searchNonprofits" id="searchNonprofits" placeholder="Find a Nonprofit" ref="search">
         </form>
 
-        <div class="page-header__user-info">
+        <div class="page-header__cart items-center">
             <router-link :to="{ name: 'cart' }"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Your Donations (0)</span></router-link>
         </div>
 
-        <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle"><i class="fa fa-bars" aria-hidden="true"></i><span>Menu</span></a>
+        <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fa fa-bars" aria-hidden="true"></i><span>Menu</span></a>
     </header>
 </template>
 
 <script>
     module.exports = {
 	    methods: {
+	    	search: function (event) {
+	    		event.preventDefault();
+	    		const vue = this;
+
+	    		vue.$router.push({ name: 'search-results', query: { q: vue.$refs.search.value } });
+            },
     		openMenu: function (event) {
     			event.preventDefault();
     			const vue = this;
