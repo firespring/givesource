@@ -74,22 +74,7 @@
                     <div class="c-notes c-notes--above">
                         Describe the non-profit's mission, purpose, and goals for the giving day.
                     </div>
-                    <vue-ckeditor v-if="loaded" v-model="formData.longDescription" :toolbar="toolbar" :id="id" :language="language" :extraplugins="plugins"
-                                  :class="{ 'has-error': formErrors.longDescription }">
-                    </vue-ckeditor>
-                    <div v-else style="height: 12rem; justify-content: center; align-items: center; display: flex;">
-                        <div class="c-progress c-progress--spinner c-spinner-active">
-                            <div class="c-spinner-layer c-spinner-orange-only">
-                                <div class="c-spinner-circle-clipper left">
-                                    <div class="c-spinner-circle"></div>
-                                </div><div class="gap-patch">
-                                <div class="c-spinner-circle"></div>
-                            </div><div class="c-spinner-circle-clipper right">
-                                <div class="c-spinner-circle"></div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
+                    <forms-ckeditor v-model="formData.longDescription" :loaded="loaded" id="longDescription" :hasErrors="formErrors.longDescription"></forms-ckeditor>
                     <div v-if="formErrors.longDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                         {{ formErrors.longDescription }}
                     </div>
@@ -107,17 +92,6 @@
 	module.exports = {
 		data: function () {
 			return {
-				language: 'en-us',
-				id: 'longDescription',
-				toolbar: [
-					{name: 'styles', items: ['Format']},
-					{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
-					{name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote']},
-					{name: 'colors', items: ['TextColor', 'BGColor']},
-					{name: 'links', items: ['Link', 'Unlink']},
-					{name: 'tools', items: ['Maximize']}
-				],
-				plugins: 'colorbutton,colordialog',
                 loaded: false,
 
 				// Form Data
@@ -201,6 +175,9 @@
 					console.log(err);
 				});
 			}
-		}
+		},
+        components: {
+			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
+        }
 	};
 </script>
