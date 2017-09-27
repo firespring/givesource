@@ -1,6 +1,6 @@
 <template>
     <div class="o-app">
-
+        <navigation></navigation>
         <!-- BEGIN app main -->
         <main class="o-app__main o-app__main--compact">
 
@@ -14,14 +14,15 @@
 
                         <nav class="o-page-header-nav c-breadcrumb">
 
-                            <span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span>
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Edit Sponsor Tier</h1>
                     </div>
-                    <sponsor-edit-tier-form></sponsor-edit-tier-form>
+
                 </div>
                 <!-- END page header -->
 
+                <sponsor-edit-tier-form></sponsor-edit-tier-form>
             </div>
             <!-- END app main content wrapper -->
 
@@ -31,7 +32,7 @@
     </div>
 </template>
 <script>
-    modules.exports ={
+    module.exports ={
     	components: {
     		'sponsor-edit-tier-form': require('./SponsorEditTierForm.vue')
         }

@@ -31,7 +31,7 @@
 
                         <nav class="o-page-header-nav c-breadcrumb">
 
-                            <span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span>
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span>
                         </nav>
                         <router-link :to="{ name: 'add-sponsor-tier' }" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Sponsors Tiers
                         </router-link>

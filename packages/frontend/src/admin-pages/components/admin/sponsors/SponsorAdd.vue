@@ -31,8 +31,7 @@
 
                         <nav class="o-page-header-nav c-breadcrumb">
 
-                            <!--<span><a href="../../giving-day-foundation/sponsors/">Sponsors</a></span><span><a href="../../giving-day-foundation/sponsors/tier.php">Gold</a></span>-->
-                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span><span><router-link :to="{ name: 'manage-tier' }">Gold</router-link></span>
+                            <span><router-link :to="{ name: 'sponsors-list' }">Sponsors</router-link></span><span><router-link :to="{ name: 'manage-tiers' }">Gold</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Add Sponsor</h1>
                     </div>

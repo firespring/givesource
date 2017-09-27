@@ -27,7 +27,7 @@
 
         <td class="item-actions">
             <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r">
-                <router-link :to="{ name: 'sponsor-manage-tiers' }" role="button" class="c-btn c-btn--sm c-btn--icon">
+                <router-link :to="{ name: 'manage-tiers' }" role="button" class="c-btn c-btn--sm c-btn--icon">
                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tiers
                 </router-link>
                 <a href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
