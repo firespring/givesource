@@ -112,12 +112,36 @@ const router = new VueRouter({
 			}
 		},
 		{
+			path: '/nonprofits',
+			name: 'nonprofits-list',
+			component: require('./components/admin/nonprofits/NonprofitsList.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/nonprofits/add',
+			name: 'add-nonprofit',
+			component: require('./components/admin/nonprofits/NonprofitsAdd.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
 			path: '/donors',
 			name: 'donors',
 			component: require('./components/admin/donors/DonorsList.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
+		},
+		{
+			path: '/pages',
+			name: 'pages-list',
+			component: require('./components/admin/pages/PagesList.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
 		},
 		{
 			path: '/settings',
@@ -150,22 +174,6 @@ const router = new VueRouter({
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
-		},
-		{
-			path: '/nonprofits',
-			name: 'nonprofits-list',
-			component: require('./components/admin/nonprofits/NonprofitsList.vue'),
-			meta: {
-				allowedGroups: ['SuperAdmin', 'Admin']
-			}
-		},
-		{
-			path: '/nonprofits/add',
-			name: 'add-nonprofit',
-			component: require('./components/admin/nonprofits/NonprofitsAdd.vue'),
-			meta: {
-				allowedGroups: ['SuperAdmin', 'Admin']
-			}
 		},
 
 		// Sponsors

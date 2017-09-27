@@ -70,7 +70,7 @@ const router = new VueRouter({
 			component: require('./components/cart/Cart.vue')
 		},
 		{
-			path: '/contact-us',
+			path: '/contact',
 			name: 'contact-us',
 			component: require('./components/contactUs/ContactUs.vue')
 		},
