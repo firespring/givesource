@@ -69,7 +69,7 @@
             <footer class="c-form-actions">
 
                 <button type="submit" class="c-btn">Save Changes</button>
-                <a href="index.php" class="c-btn c-btn--text c-btn--neutral">Cancel</a>
+                <router-link :to="{name:'sponsors-list'}" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
 
             </footer>
             <!-- END form actions -->

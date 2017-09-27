@@ -93,7 +93,7 @@
 
                 <button type="submit" class="c-btn">Save &amp; Add Another</button>
                 <button type="submit" class="c-btn">Save &amp; Finish</button>
-                <a href="tier.php" class="c-btn c-btn--text c-btn--neutral">Cancel</a>
+                <router-link :to="{name:'sponsors-list'}" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
 
             </footer>
 

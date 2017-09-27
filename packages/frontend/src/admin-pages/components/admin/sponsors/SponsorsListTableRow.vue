@@ -26,20 +26,61 @@
         </td>
 
         <td class="item-actions">
-            <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r">
+            <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                 <router-link :to="{ name: 'manage-tiers' }" role="button" class="c-btn c-btn--sm c-btn--icon">
                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tiers
                 </router-link>
-                <a href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
-                <div class="c-btn-dropdown-menu">
+
+                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
+
+                <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
-                        <a href="sponsor-tier-edit.php"><i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings</a>
+                        <router-link :to="{name: 'edit-sponsor-tier'}"><i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings</router-link>
                         <hr>
                         <a href="#" class="js-modal-trigger" rel="modal-confirm-delete"><i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier</a>
                     </div>
                 </div>
+
             </div>
         </td>
 
     </tr>
 </template>
+<script>
+	module.exports = {
+		data: function () {
+			return {
+				displayingMenu: false,
+				timer: null,
+			};
+		},
+		methods: {
+			toggleMenu: function (event) {
+				event.preventDefault();
+				const vue = this;
+				if (vue.displayingMenu) {
+					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vue.$refs.cBtnDropdownMenu).fadeOut();
+				} else {
+					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+					$(vue.$refs.cBtnDropdownMenu).fadeIn();
+				}
+				vue.displayingMenu = !vue.displayingMenu;
+			},
+			closeMenu: function () {
+				const vue = this;
+				vue.timer = setTimeout(function () {
+					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vue.$refs.cBtnDropdownMenu).fadeOut();
+					vue.displayingMenu = false;
+				}, 250);
+			},
+			cancelCloseMenu: function () {
+				const vue = this;
+				clearTimeout(vue.timer);
+			}
+		}
+
+
+	}
+</script>
