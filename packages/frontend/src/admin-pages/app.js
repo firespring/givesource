@@ -176,6 +176,56 @@ const router = new VueRouter({
 			},
 		},
 
+		// Sponsors
+		{
+			path: '/sponsors',
+			name: 'sponsors-tiers-list',
+			component: require('./components/admin/sponsors/tiers/SponsorsTiersList.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/sponsors/add',
+			name: 'sponsors-add',
+			component: require('./components/admin/sponsors/SponsorAdd.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/sponsors/edit',
+			name: 'sponsors-edit',
+			component: require('./components/admin/sponsors/SponsorEdit.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/sponsors/tiers',
+			name: 'sponsors-list',
+			component: require('./components/admin/sponsors/SponsorsList.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/sponsors/tiers/add',
+			name: 'sponsors-tiers-add',
+			component: require('./components/admin/sponsors/tiers/SponsorsTiersAdd.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/sponsors/tiers/edit',
+			name: 'sponsors-tiers-edit',
+			component: require('./components/admin/sponsors/tiers/SponsorsTiersEdit.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+
 		// Nonprofit - Donations
 		{
 			path: '/nonprofits/:nonprofitUuid/donations',

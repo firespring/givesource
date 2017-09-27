@@ -28,7 +28,7 @@
             <router-link tag="li" :to="{ name: 'donors' }">
                 <a><i class="fa fa-fw fa-users" aria-hidden="true"></i>Donors</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'sponsors' }">
+            <router-link tag="li" :to="{ name: 'sponsors-tiers-list' }">
                 <a><i class="fa fa-fw fa-star" aria-hidden="true"></i>Sponsors</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'pages-list' }">
