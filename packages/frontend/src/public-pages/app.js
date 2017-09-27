@@ -89,6 +89,11 @@ const router = new VueRouter({
 			name: 'search-results',
 			component: require('./components/search/SearchResults.vue')
 		},
+		{
+			path: '/register',
+			name: 'register',
+			component: require('./components/register/Register.vue')
+		},
 
 		// Nonprofit
 		{
