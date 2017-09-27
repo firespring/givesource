@@ -18,19 +18,7 @@
 <template>
     <vue-ckeditor v-if="loaded" v-model="localValue" :toolbar="toolbar" :id="id" :language="language" :extraplugins="plugins" :class="{ 'has-error': hasErrors }" :height="height">
     </vue-ckeditor>
-    <div v-else style="height: 12rem; justify-content: center; align-items: center; display: flex;">
-        <div class="c-progress c-progress--spinner c-spinner-active">
-            <div class="c-spinner-layer c-spinner-orange-only">
-                <div class="c-spinner-circle-clipper left">
-                    <div class="c-spinner-circle"></div>
-                </div><div class="gap-patch">
-                <div class="c-spinner-circle"></div>
-            </div><div class="c-spinner-circle-clipper right">
-                <div class="c-spinner-circle"></div>
-            </div>
-            </div>
-        </div>
-    </div>
+    <layout-spinner v-else :height="height + 'px'"></layout-spinner>
 </template>
 
 <script>
@@ -85,6 +73,9 @@
 		        }
 		        vue.localValue = value;
 	        }
+        },
+        components: {
+    		'layout-spinner': require('./../layout/Spinner.vue')
         }
     };
 </script>

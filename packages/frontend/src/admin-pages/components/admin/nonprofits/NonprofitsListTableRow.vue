@@ -59,8 +59,8 @@
 
         </td>
         <td class="u-nowrap u-text-r">
-            <div class="date">{{ getDate(nonprofit.createdOn) }}</div>
-            <div class="time">{{ getTime(nonprofit.createdOn) }}</div>
+            <div class="date">{{ date }}</div>
+            <div class="time">{{ time }}</div>
         </td>
         <td class="u-nowrap">
 
@@ -68,11 +68,11 @@
                 <div class="c-user-strip__content">
 
                     <div class="c-user-strip__name">
-                        FIX
+                        John Smith
                     </div>
 
                     <div class="c-user-strip__email u-icon u-flex u-items-center c-notes">
-                        <a href="mailto:john.smith@email.com">FIX</a>
+                        <a href="mailto:john.smith@nonprofit.org">john.smith@nonprofit.org</a>
                     </div>
 
                 </div>
@@ -80,7 +80,7 @@
 
         </td>
         <td class="u-nowrap u-text-r">
-            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ formatSum(nonprofit.donationsSum) }}</router-link>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ donationAmount }}</router-link>
         </td>
         <td>
 
@@ -115,22 +115,25 @@
                 timer: null,
             };
         },
+        computed: {
+	        date: function () {
+		        return new Date(this.nonprofit.createdOn).toLocaleDateString();
+	        },
+	        time: function () {
+		        return new Date(this.nonprofit.createdOn).toLocaleTimeString();
+	        },
+            donationAmount: function () {
+	        	return numeral(this.nonprofit.donationsSum / 100).format('$0,0.00');
+            }
+        },
 		props: [
 			'nonprofit'
 		],
         methods: {
-	        getDate: function (createdOn) {
-		        return new Date(createdOn).toLocaleDateString();
-	        },
-	        getTime: function (createdOn) {
-		        return new Date(createdOn).toLocaleTimeString();
-	        },
-	        formatSum: function (donationsSum) {
-		        return numeral(donationsSum / 100).format('$0,0.00');
-	        },
             toggleMenu: function (event) {
 	        	event.preventDefault();
                 const vue = this;
+
                 if (vue.displayingMenu) {
 	                $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
 	                $(vue.$refs.cBtnDropdownMenu).fadeOut();
@@ -142,6 +145,7 @@
             },
             closeMenu: function () {
 	        	const vue = this;
+
 	        	vue.timer = setTimeout(function () {
 			        $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
 			        $(vue.$refs.cBtnDropdownMenu).fadeOut();
@@ -150,6 +154,7 @@
             },
 	        cancelCloseMenu: function () {
 	        	const vue = this;
+
 	        	clearTimeout(vue.timer);
             }
         }

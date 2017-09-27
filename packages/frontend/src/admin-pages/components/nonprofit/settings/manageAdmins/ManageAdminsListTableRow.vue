@@ -46,7 +46,7 @@
 
         </td>
         <td class="u-nowrap u-text-r">
-            <div class="date">{{ getDate( user.createdOn) }}</div>
+            <div class="date">{{ date }}</div>
         </td>
         <td class="u-nowrap">
             <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member"><i
@@ -57,13 +57,13 @@
 
 <script>
 	module.exports = {
+		computed: {
+			date: function () {
+				return new Date(this.user.createdOn).toLocaleDateString();
+            }
+        },
 		props: [
 			'user'
-        ],
-		methods: {
-			getDate: function (createdOn) {
-				return new Date(createdOn).toLocaleDateString();
-			}
-		}
+        ]
 	};
 </script>
