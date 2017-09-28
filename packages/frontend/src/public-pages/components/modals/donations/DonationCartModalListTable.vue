@@ -27,7 +27,7 @@
 
         <tbody>
         <donation-cart-modal-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
-                                            v-on:removeCartItem="removeCartItem"></donation-cart-modal-list-table-row>
+                                            v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></donation-cart-modal-list-table-row>
         </tbody>
     </table>
 </template>
@@ -50,8 +50,19 @@
         methods: {
     		removeCartItem: function (timestamp) {
     			const vue = this;
-			    vue.cartItems = _.remove(vue.cartItems, { timestamp: timestamp });
+			    vue.cartItems = _.reject(vue.cartItems, { timestamp: timestamp });
             },
+            updateCartItem: function (timestamp, amount) {
+    			const vue = this;
+
+    			const cartItem = _.find(vue.cartItems, { timestamp: timestamp });
+    			cartItem.amount = amount;
+
+    			vue.$store.commit('updateCartItem', {
+    				timestamp: timestamp,
+                    amount: amount
+                });
+            }
         },
         components: {
     		'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')

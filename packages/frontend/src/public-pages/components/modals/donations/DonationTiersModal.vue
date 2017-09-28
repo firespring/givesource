@@ -32,9 +32,9 @@
 
                     <div class="donation-options-custom">
                         <h2>Or Enter a Custom Amount</h2>
-                        <form>
+                        <form v-on:submit="customAmount">
                             <div class="input">
-                                <input type="text" name="customDonationAmount" id="customDonationAmount" placeholder="Enter Amount">
+                                <input v-model="formData.customAmount" type="text" name="customAmount" id="customAmount" placeholder="Enter Amount" v-money="currencyOptions">
                             </div>
                             <div class="action">
                                 <button class="btn"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
@@ -55,6 +55,17 @@
     		return {
     			donationTiers: [],
                 nonprofit: null,
+
+                // Form Data
+                formData: {
+    				customAmount: '',
+                },
+
+			    currencyOptions: {
+				    precision: 2,
+				    masked: true,
+				    thousands: '',
+			    }
             };
         },
         computed: {
@@ -66,7 +77,8 @@
 		    data: {
 			    type: Object,
 			    default: {
-				    nonprofitUuid: null,
+				    nonprofit: null,
+                    tiers: []
 			    }
 		    },
 		    zIndex: {
@@ -78,16 +90,8 @@
     		const vue = this;
 
             vue.addBodyClasses('has-donation-overlay');
-
-	        axios.get(API_URL + 'nonprofits/' + vue.data.nonprofitUuid + '/tiers').then(function (response) {
-		        response.data.sort(function (a, b) {
-			        return a.amount - b.amount;
-		        });
-		        vue.donationTiers = response.data;
-		        return axios.get(API_URL + 'nonprofits/' + vue.data.nonprofitUuid);
-	        }).then(function (response) {
-	        	vue.nonprofit = response.data;
-            });
+            vue.donationTiers = vue.data.tiers;
+            vue.nonprofit = vue.data.nonprofit;
         },
         methods: {
 	        close: function (event) {
@@ -112,7 +116,27 @@
 			        vue.removeBodyClasses('has-donation-overlay');
 			        vue.addModal('donation-cart');
                 });
-	        }
+	        },
+            customAmount: function (event) {
+	        	event.preventDefault();
+	        	const vue = this;
+
+	            const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
+	        	if (amount) {
+			        vue.$store.commit('addCartItem', {
+				        amount: amount,
+				        nonprofit: vue.nonprofit
+			        });
+
+			        vue.$emit('updateCart');
+
+			        $(vue.$refs.donationModalOptions).fadeOut(function () {
+				        vue.removeModal('donation-tiers');
+				        vue.removeBodyClasses('has-donation-overlay');
+				        vue.addModal('donation-cart');
+			        });
+                }
+            }
         },
         components: {
             'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue')

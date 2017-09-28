@@ -103,6 +103,7 @@
 			next(function (vm) {
 				vm.nonprofit = to.meta.nonprofit;
 				vm.slides = to.meta.slides;
+				vm.tiers = to.meta.tiers;
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -110,6 +111,7 @@
 
 			vue.nonprofit = to.meta.nonprofit;
 			vue.slides = to.meta.slides;
+			vue.tiers = to.meta.tiers;
 			next();
 		},
         mounted: function () {
@@ -131,7 +133,7 @@
 	        	event.preventDefault();
 	        	const vue = this;
 
-	        	vue.addModal('donation-tiers', { nonprofitUuid: vue.nonprofitUuid });
+	        	vue.addModal('donation-tiers', { nonprofit: vue.nonprofit, tiers: vue.tiers });
             }
         },
         components: {

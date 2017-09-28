@@ -22,7 +22,7 @@
         </td>
         <td class="donation">
             <div class="donation-amount">
-                <input v-model="amount" type="text" name="amount" required="">
+                <input v-model.lazy="localAmount" type="text" name="amount" required="" v-money="currencyOptions">
             </div>
         </td>
         <td class="actions nowrap">
@@ -33,6 +33,17 @@
 
 <script>
     module.exports = {
+    	data: function () {
+    		return {
+    			localAmount: this.amount,
+
+			    currencyOptions: {
+				    precision: 2,
+				    masked: true,
+				    thousands: '',
+			    }
+            };
+        },
     	computed: {
     		donationAmount: function () {
     			return this.formatMoney(this.amount);
@@ -43,6 +54,23 @@
             'amount',
             'timestamp'
         ],
+        watch: {
+    		localAmount: function (value, oldValue) {
+    			const vue = this;
+
+    			if (value !== oldValue && vue.timestamp) {
+				    vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+                }
+            },
+            amount: function (value, oldValue) {
+    			const vue = this;
+
+    			if (value === oldValue) {
+    				return;
+                }
+                vue.localAmount = value;
+            }
+        },
         methods: {
     		deleteCartItem: function (event) {
     			event.preventDefault();

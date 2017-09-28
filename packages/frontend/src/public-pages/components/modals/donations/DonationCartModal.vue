@@ -29,8 +29,8 @@
                     <donation-cart-modal-list-table v-on:close="close"></donation-cart-modal-list-table>
 
                     <div class="donation-footer">
-                        <a :to="{ name: 'cart' }" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></a>
-                        <a :to="{ name: 'search-results' }" class="btn btn--lite">Help More Nonprofits</a>
+                        <router-link :to="{ name: 'cart' }" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></router-link>
+                        <router-link :to="{ name: 'search-results' }" class="btn btn--lite">Help More Nonprofits</router-link>
                     </div>
 
                 </div>
