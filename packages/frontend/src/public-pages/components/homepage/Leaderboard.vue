@@ -167,7 +167,7 @@
         </div>
 
         <div class="leaderboard__actions">
-            <router-link :to="{ name: 'leaderboard' }" class="btn btn--blue btn--lg">See Full Leaderboard</router-link>
+            <router-link :to="{ name: 'leaderboard' }" class="btn btn--dark btn--lg">See Full Leaderboard</router-link>
         </div>
 
     </div>

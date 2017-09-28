@@ -24,43 +24,311 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <h2>Authoritatively customize compelling best practices via clicks-and-mortar bandwidth</h2>
+                <form>
+                    <fieldset>
+                        <legend>Your Current Donations</legend>
 
-                <p>
-                    Collaboratively <strong>productivate</strong> vertical action items <em>after principle-centered platforms</em>. Assertively <a href="#">envisioneer</a> team building e-business rather than client-centered portals. Seamlessly negotiate enterprise-wide outsourcing for client-focused channels.
-                </p>
+                        <div class="form-item">
+                            <table class="table-donations">
+                                <thead>
+                                <tr>
+                                    <th class="width-100">Nonprofit Name</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
 
-                <p>
-                    Competently communicate viral web-readiness through interdependent initiatives. Holisticly revolutionize top-line alignments with focused imperatives. Seamlessly disseminate alternative information and focused leadership skills.
-                </p>
+                                <tbody>
+                                <tr>
+                                    <td class="organization">
+                                        <strong>Pius X Foundation</strong>
+                                    </td>
+                                    <td class="donation">
+                                        <div class="donation-amount">
+                                            <input type="text" name="amount[]" value="25.00" required>
+                                        </div>
+                                    </td>
+                                    <td class="actions nowrap">
+                                        <a href="#" class="btn btn--sm btn--icon btn--red"><i class="fa fa-trash" aria-hidden="true"></i><span>Delete</span></a>
+                                    </td>
+                                </tr>
 
-                <h2>Collaboratively monetize multidisciplinary value and compelling solutions</h2>
+                                <tr>
+                                    <td class="organization">
+                                        <strong>Food Bank of Lincoln</strong>
+                                    </td>
+                                    <td class="donation">
+                                        <div class="donation-amount">
+                                            <input type="text" name="amount[]" value="50.00" required>
+                                        </div>
+                                    </td>
+                                    <td class="actions nowrap">
+                                        <a href="#" class="btn btn--sm btn--icon btn--red"><i class="fa fa-trash" aria-hidden="true"></i><span>Delete</span></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                <p>
-                    Uniquely innovate functionalized benefits after extensible materials. Appropriately myocardinate customer directed synergy with open-source human capital. Professionally recaptiualize next-generation sources with highly efficient e-services.
-                </p>
+                        <div class="cart-totals">
+                            <div class="cart-totals__subtotal">
+                                Your donation subtotal is <strong>$75.00</strong>. (<router-link :to="{ name: 'search-results' }">Find another nonprofit to help</router-link>)
+                            </div>
+                            <div class="cart-totals__transaction-fees">
+                                <div>
+                                    There are <strong>$5.00</strong> in transaction fees associated with your donation. Will you cover them?
+                                </div>
+                                <div>
+                                    <label class="checkbox-solo">
+                                        <input type="checkbox" name="coverDonationFees" id="coverDonationFees-1">
+                                        <span>Yes, I'll donate an extra $5.00 to cover transaction fees</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cart-totals__total">
+                                <strong>Your total donation will be $80.00.</strong>
+                            </div>
+                        </div>
 
-                <ol>
-                    <li>Progressively aggregate emerging communities without market positioning paradigms.</li>
-                    <li>Energistically matrix ethical partnerships through cross-media internal or "organic" sources.</li>
-                    <li>Intrinsicly visualize cross-unit core competencies via long-term high-impact e-business.</li>
-                </ol>
+                    </fieldset>
 
-                <p>
-                    Seamlessly harness high-payoff benefits and cutting-edge portals. Objectively extend innovative markets whereas effective results. Continually engage leveraged solutions for corporate leadership.
-                </p>
+                    <fieldset>
+                        <legend>Your Contact & Billing Info</legend>
 
-                <p>
-                    Monotonectally architect quality mindshare and covalent products. Enthusiastically empower holistic markets after cooperative mindshare. Completely build impactful applications without equity invested channels.
-                </p>
+                        <div class="form-item form-item--required">
+                            <div class="form-item__label">
+                                <label for="donorNameFirst">Your Name</label>
+                            </div>
+                            <div class="form-item__control">
+                                <div class="grid">
+                                    <div class="grid-item">
+                                        <input type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name" required>
+                                    </div>
+                                    <div class="grid-item">
+                                        <input type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                <p>
-                    Conveniently conceptualize goal-oriented value rather than sticky experiences. Uniquely reconceptualize error-free web-readiness and front-end value. Appropriately deploy equity invested ROI before leading-edge schemas.
-                </p>
+                        <div class="form-item form-item--required">
+                            <div class="form-item__label">
+                                <label for="donorEmail">Your Email</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input type="email" name="donorEmail" id="donorEmail" required>
+                            </div>
+                        </div>
 
-                <p>
-                    Continually incubate extensive e-tailers with extensible data.
-                </p>
+                        <div class="form-item form-item--address form-item--required">
+                            <div class="form-item__label">
+                                <label for="billingAddress1">Your Billing Address</label>
+                            </div>
+                            <div class="form-item__control">
+
+                                <div class="address1">
+                                    <input type="text" name="billingAddress1" id="billingAddress1" placeholder="Address Line 1">
+                                </div>
+
+                                <div class="address2">
+                                    <input type="text" name="billingAddress2" id="billingAddress2" placeholder="Address Line 2">
+                                </div>
+
+                                <div class="city-state-zip">
+
+                                    <div class="city-state-zip__city">
+                                        <input type="text" name="billingCity" id="billingCity" placeholder="City" required="">
+                                    </div>
+
+                                    <div class="city-state-zip__state select-wrap">
+                                        <select name="billingState" id="billingState" required="">
+                                            <option value="">State</option>
+                                            <option value="" disabled="disabled">-----</option>
+                                            <option value="AL">Alabama</option>
+                                            <option value="AK">Alaska</option>
+                                            <option value="AZ">Arizona</option>
+                                            <option value="AR">Arkansas</option>
+                                            <option value="CA">California</option>
+                                            <option value="CO">Colorado</option>
+                                            <option value="CT">Connecticut</option>
+                                            <option value="DE">Delaware</option>
+                                            <option value="FL">Florida</option>
+                                            <option value="GA">Georgia</option>
+                                            <option value="HI">Hawaii</option>
+                                            <option value="ID">Idaho</option>
+                                            <option value="IL">Illinois</option>
+                                            <option value="IN">Indiana</option>
+                                            <option value="IA">Iowa</option>
+                                            <option value="KS">Kansas</option>
+                                            <option value="KY">Kentucky</option>
+                                            <option value="LA">Louisiana</option>
+                                            <option value="ME">Maine</option>
+                                            <option value="MD">Maryland</option>
+                                            <option value="MA">Massachusetts</option>
+                                            <option value="MI">Michigan</option>
+                                            <option value="MN">Minnesota</option>
+                                            <option value="MS">Mississippi</option>
+                                            <option value="MO">Missouri</option>
+                                            <option value="MT">Montana</option>
+                                            <option value="NE">Nebraska</option>
+                                            <option value="NV">Nevada</option>
+                                            <option value="NH">New Hampshire</option>
+                                            <option value="NJ">New Jersey</option>
+                                            <option value="NM">New Mexico</option>
+                                            <option value="NY">New York</option>
+                                            <option value="NC">North Carolina</option>
+                                            <option value="ND">North Dakota</option>
+                                            <option value="OH">Ohio</option>
+                                            <option value="OK">Oklahoma</option>
+                                            <option value="OR">Oregon</option>
+                                            <option value="PA">Pennsylvania</option>
+                                            <option value="RI">Rhode Island</option>
+                                            <option value="SC">South Carolina</option>
+                                            <option value="SD">South Dakota</option>
+                                            <option value="TN">Tennessee</option>
+                                            <option value="TX">Texas</option>
+                                            <option value="UT">Utah</option>
+                                            <option value="VT">Vermont</option>
+                                            <option value="VA">Virginia</option>
+                                            <option value="WA">Washington</option>
+                                            <option value="WV">West Virginia</option>
+                                            <option value="WI">Wisconsin</option>
+                                            <option value="WY">Wyoming</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="city-state-zip__zip">
+                                        <input type="text" name="billingZip" id="billingZip" placeholder="ZIP" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-item form-item--required">
+                            <div class="form-item__label">
+                                <label for="billingPhone">Your Billing Phone</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input type="tel" name="billingPhone" id="billingPhone" required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Your Payment Info</legend>
+
+                        <div class="form-item form-item--required">
+                            <div class="form-item__label">
+                                <label for="cc_num">Credit Card #</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input type="text" name="cc_num" id="cc_num" autocomplete="cc-number" required>
+
+                                <div class="notes notes--below accepted-cc">
+                                    <div class="cc visa">
+                                        <i class="fa fa-cc-visa" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cc mastercard">
+                                        <i class="fa fa-cc-mastercard" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cc amex">
+                                        <i class="fa fa-cc-amex" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cc discover">
+                                        <i class="fa fa-cc-discover" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cc dinersclub">
+                                        <i class="fa fa-cc-diners-club" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-item form-item--required">
+                            <div class="form-item__label">
+                                <label for="cc_name">Name on Card</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input type="text" name="cc_name" id="cc_name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <div class="grid">
+
+                                <div class="grid-item grid-item--collapse">
+
+                                    <div class="form-item form-item--required">
+                                        <div class="form-item__label">
+                                            <label for="cc_exp_month">Expiration Date</label>
+                                        </div>
+                                        <div class="form-item__control" style="display: flex;">
+
+                                            <div class="select-wrap" style="margin: 0 .5rem 0 0;">
+                                                <select id="cc_exp_month" name="cc_exp_month" required>
+                                                    <option value="01">01</option>
+                                                    <option value="02">02</option>
+                                                    <option value="03">03</option>
+                                                    <option value="04">04</option>
+                                                    <option value="05">05</option>
+                                                    <option value="06">06</option>
+                                                    <option value="07">07</option>
+                                                    <option value="08">08</option>
+                                                    <option value="09">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11">11</option>
+                                                    <option value="12">12</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="select-wrap">
+                                                <select id="cc_exp_month" name="cc_exp_month" required>
+                                                    <option value="2017">2017</option>
+                                                    <option value="2018">2018</option>
+                                                    <option value="2019">2019</option>
+                                                    <option value="2020">2020</option>
+                                                    <option value="2021">2021</option>
+                                                    <option value="2022">2022</option>
+                                                    <option value="2023">2023</option>
+                                                    <option value="2024">2024</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="grid-item">
+
+                                    <div class="form-item form-item--required">
+                                        <div class="form-item__label">
+                                            <label for="cc_csc">Security Code</label>
+                                        </div>
+                                        <div class="form-item__control">
+                                            <input type="text" name="cc_csc" id="cc_csc" autocomplete="off" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    <div class="form-actions flex justify-center items-center">
+
+                        <button type="submit" class="btn btn--green btn--round btn--lg">
+                            Complete Your Donation
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
         </main>

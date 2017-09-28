@@ -19,13 +19,15 @@
     <div>
         <layout-header></layout-header>
         <router-view></router-view>
+        <modals></modals>
     </div>
 </template>
 
 <script>
 	module.exports = {
 		components: {
-			'layout-header': require('./layout/Header.vue')
+			'layout-header': require('./layout/Header.vue'),
+            'modals': require('./modals/Modals.vue')
         }
 	};
 </script>

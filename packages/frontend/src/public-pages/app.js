@@ -16,20 +16,36 @@
  */
 
 import axios from "axios";
+import createPersistedState from "vuex-persistedstate";
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Vuex from "vuex";
 
+const ModalsMixin = require('./mixins/modals');
 const UtilsMixin = require('./mixins/utils');
 
+window._ = require('lodash');
 window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 window.$ = window.jQuery = require('jquery');
 
+// Initialize the event bus
+const bus = new Vue();
+Vue.mixin({
+	data: function () {
+		return {
+			bus: bus
+		}
+	}
+});
+
 // Register Mixins
+Vue.mixin(ModalsMixin.mixin);
 Vue.mixin(UtilsMixin.mixin);
 
 // Register VueRouter
 Vue.use(VueRouter);
+Vue.use(Vuex);
 
 const router = new VueRouter({
 	hashbang: false,
@@ -138,8 +154,8 @@ const router = new VueRouter({
 			props: true,
 			component: require('./components/nonprofits/Nonprofit.vue'),
 			meta: {
-				slides: [],
-				nonprofit: {}
+				nonprofit: {},
+				slides: []
 			},
 			beforeEnter: function (to, from, next) {
 				axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
@@ -183,7 +199,32 @@ router.beforeEach(function (to, from, next) {
 	});
 });
 
+// Initialize Vuex store
+const store = new Vuex.Store({
+	state: {
+		cartItems: []
+	},
+	mutations: {
+		addCartItem: function (state, payload) {
+			if (payload.amount && payload.nonprofit !== null) {
+				state.cartItems.push({
+					amount: payload.amount,
+					nonprofit: payload.nonprofit,
+					timestamp: Date.now(),
+				});
+			}
+		},
+		removeCartItem: function (state, timestamp) {
+			_.remove(state.cartItems, { timestamp: timestamp });
+		}
+	},
+	plugins: [
+		createPersistedState()
+	]
+});
+
 const appComponent = require('./components/App.vue');
 appComponent.router = router;
+appComponent.store = store;
 
 const app = new Vue(appComponent).$mount('#app');

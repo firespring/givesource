@@ -103,14 +103,13 @@
 
             <div class="main-spotlight-section register wrapper wrapper--xs">
                 <div class="register__action mb4">
-                    <router-link :to="{ name: 'register' }" class="btn btn--reverse btn--round btn--lg">Register Your Nonprofit Today</router-link>
+                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">Register Your Nonprofit Today</router-link>
                 </div>
                 <div class="register__details">
                     <p>
-                        We invite nonprofit organizations in the Greater Area to join Give To City Day by registering to participate.
+                        We invite nonprofit organizations in the Greater Area to join Give To Our City Day by registering to participate.
                         Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                        <router-link :to="{ name: 'about' }">please visit the About page</router-link>
-                        .
+                        <router-link :to="{ name: 'about' }">please visit the About page</router-link>.
                     </p>
                 </div>
             </div>

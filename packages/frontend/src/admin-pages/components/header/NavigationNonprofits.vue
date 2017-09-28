@@ -16,8 +16,8 @@
   -->
 
 <template>
-
     <div class="o-menubar__secondary">
+
         <ul>
             <router-link tag="li" :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofitUuid } }">
                 <a><i class="fa fa-fw fa-credit-card" aria-hidden="true"></i>Donations</a>

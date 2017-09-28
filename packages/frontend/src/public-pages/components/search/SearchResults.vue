@@ -27,7 +27,7 @@
                 <search-results-header></search-results-header>
 
                 <div class="leaderboard">
-                    <search-results-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit"></search-results-row>
+                    <search-results-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
                 </div>
 
                 <div class="pagination flex justify-center items-center">

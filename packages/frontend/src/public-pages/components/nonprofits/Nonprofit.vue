@@ -87,8 +87,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				slides: [],
 				nonprofit: {},
+				slides: []
 			}
 		},
         props: [
@@ -131,7 +131,7 @@
 	        	event.preventDefault();
 	        	const vue = this;
 
-	        	vue.addBodyClasses('has-donation-overlay');
+	        	vue.addModal('donation-tiers', { nonprofitUuid: vue.nonprofitUuid });
             }
         },
         components: {

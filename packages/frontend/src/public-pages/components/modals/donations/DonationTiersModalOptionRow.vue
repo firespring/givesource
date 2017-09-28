@@ -16,33 +16,33 @@
   -->
 
 <template>
-    <div class="page-hero">
-        <div class="page-hero__title wrapper wrapper--sm">
-            <slot name="title"></slot>
-        </div>
-
-        <div class="page-hero__message">
-            <slot></slot>
-        </div>
-
-        <div class="presented-by" v-if="presentedBy">
-            Presented by <a href="#">Make Our City Great Foundation</a>
-        </div>
+    <div class="donation-option">
+        <a v-on:click="selectTier"  href="#">
+            <h2 class="donation-option__title">{{ amount }}</h2>
+            <div class="donation-option__description">
+                {{ donationTier.description }}
+            </div>
+        </a>
     </div>
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-        	return {
-        		backgroundImage: '/assets/temp/hero.jpg',
-            }
-        },
-        props: {
-	        presentedBy: {
-        		type: Boolean,
-                default: false
-            }
-        }
-    };
+	module.exports = {
+		computed: {
+			amount: function () {
+				return this.formatMoney(this.donationTier.amount);
+			}
+		},
+		props: {
+			donationTier: {}
+		},
+		methods: {
+			selectTier: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.$emit('selectTier', vue.donationTier.amount);
+			}
+		}
+	};
 </script>

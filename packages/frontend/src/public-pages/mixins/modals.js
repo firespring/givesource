@@ -15,25 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const numeral = require('numeral');
-
 exports.mixin = {
 	methods: {
-		addBodyClasses: function (...classes) {
-			document.body.classList.add(...classes);
+		addModal: function (modal, data) {
+			this.bus.$emit('addModal', modal, data);
 		},
-		removeBodyClasses: function (...classes) {
-			document.body.classList.remove(...classes);
+		removeModal: function (modal) {
+			this.bus.$emit('removeModal', modal);
 		},
-		setBodyClasses: function (...classes) {
-			document.body.className = '';
-			document.body.classList.add(...classes);
+		replaceModal: function (modal, data) {
+			this.bus.$emit('replaceModal', modal, data);
 		},
-		setPageTitle: function (title) {
-			document.title = title;
-		},
-		formatMoney: function(amountInCents) {
-			return numeral(amountInCents / 100).format('$0,0.00');
+		clearModals: function () {
+			this.bus.$emit('clearModals');
 		}
 	}
 };
