@@ -18,7 +18,7 @@
 <template>
     <div class="leaderboard">
 
-        <h2 class="leaderboard__title"><span>Give to Lincoln Day</span> Leaderboard</h2>
+        <h2 class="leaderboard__title"><span>Give To Our City</span> Leaderboard</h2>
 
         <div class="grid">
             <div class="grid-item">
@@ -45,9 +45,9 @@
 
                 <div class="leaderboard-item">
                     <div class="leaderboard-item__num">04.</div>
-                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Lincoln</router-link></h3></div>
+                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Our City</router-link></h3></div>
                     <div class="leaderboard-item__amount">$33,075</div>
-                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Lincoln')" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
                 </div>
 
                 <div class="leaderboard-item">
@@ -59,9 +59,9 @@
 
                 <div class="leaderboard-item">
                     <div class="leaderboard-item__num">06.</div>
-                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Lincoln</router-link></h3></div>
+                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Our City</router-link></h3></div>
                     <div class="leaderboard-item__amount">$27,961</div>
-                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Lincoln')" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
                 </div>
 
                 <div class="leaderboard-item">
@@ -117,9 +117,9 @@
 
                 <div class="leaderboard-item">
                     <div class="leaderboard-item__num">14.</div>
-                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Lincoln</router-link></h3></div>
+                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Our City</router-link></h3></div>
                     <div class="leaderboard-item__amount">$33,075</div>
-                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Lincoln')" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
                 </div>
 
                 <div class="leaderboard-item">
@@ -131,9 +131,9 @@
 
                 <div class="leaderboard-item">
                     <div class="leaderboard-item__num">16.</div>
-                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Lincoln</router-link></h3></div>
+                    <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Our City</router-link></h3></div>
                     <div class="leaderboard-item__amount">$27,961</div>
-                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Lincoln')" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                    <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
                 </div>
 
                 <div class="leaderboard-item">

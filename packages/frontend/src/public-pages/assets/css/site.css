@@ -354,7 +354,7 @@ Buttons
 .btn--green,
 .btn--green:link,
 .btn--green:visited {
-	background-color: #13b144;
+	background-color: #5F9F21;
 	color: #fff;
 }
 
@@ -501,7 +501,7 @@ Notes
 ---------------------------------------------------------------------------- */
 
 .notes {
-	font-size: .9rem;
+	font-size: .8rem;
 }
 
 .notes--above {
@@ -787,18 +787,30 @@ Presented by
 ---------------------------------------------------------------------------- */
 
 .presented-by {
-	color: rgba(255,255,255,.7);
+	display: flex;
+	justify-content: center;
+	color: #fff;
+	line-height: 1.25;
+}
+
+.presented-by > div {
+	background-color: rgba(0,0,0,.25);
+	padding: .5rem 1rem;
+	border-radius: 100px;
 }
 
 .presented-by a:link,
 .presented-by a:visited {
-	color: #fff;
+	color: rgba(255,255,255,.7);
 	text-decoration: none;
 }
 
 .presented-by a:hover,
 .presented-by a:active {
+	color: #fff;
 	text-decoration: underline;
+    text-decoration-color: #fff;
+    text-decoration-skip: ink;
 }
 
 /* ----------------------------------------------------------------------------
@@ -1083,7 +1095,8 @@ Page Hero
 @media (min-width: 1100px) {
 
 	.home .page-hero__title h1 {
-		font-size: 5rem;
+		font-size: 7.5rem;
+		line-height: .85;
 	}
 
 }
@@ -1113,6 +1126,13 @@ Page Hero
 	background-color: #fff;
 	border-radius: 3px;
 	box-shadow: 0 0 15px rgba(85,85,85,.25);
+}
+
+.main__metrics .number {
+	background-color: #000;
+	border-radius: 3px;
+	text-align: center;
+	color: #fff;
 }
 
 /* Media queries
@@ -1146,6 +1166,7 @@ Page footer
 	margin: 0 0 1.5rem;
 	font-weight: 700;
 	font-size: .875rem;
+	line-height: 1;
 	text-transform: uppercase;
 	letter-spacing: 1px;
 }
@@ -1161,11 +1182,11 @@ Page footer
 }
 
 .sponsors__tier-title h3 {
-	margin: 0;
+	margin: 0 0 .5rem;
 	border-bottom: 2px solid #CDCDCB;
-	padding: 0 0 .25rem;
+	padding: 0 0 .5rem;
 	font-weight: 700;
-	font-size: .875rem;
+	font-size: 1rem;
 	line-height: 1;
 	text-transform: uppercase;
 	letter-spacing: 1px;
@@ -1272,8 +1293,7 @@ Page footer
 
 	.sponsors-title {
 		margin: 0 0 3rem;
-		font-size: 1.5rem;
-		line-height: 1;
+		font-size: 1.25rem;
 	}
 
 	.sponsors__tier-list img {
@@ -1404,6 +1424,14 @@ Homepage
 
 @media (min-width: 900px) {
 
+	.main__content-text {
+		text-align: center;
+	}
+
+	.main__content-text p:first-child {
+		font-size: 1.5rem;
+	}
+
 	.main__content-text + div {
 		margin-top: 3rem;
 	}
@@ -1420,11 +1448,6 @@ Spotlight box
 	padding: 1.5rem;
 }
 
-.main__spotlight a {
-	color: #fff;
-	text-decoration: underline;
-}
-
 .main__spotlight p:last-child {
 	margin: 0;
 }
@@ -1433,7 +1456,7 @@ Spotlight box
 	height: 0;
 	margin: 0;
 	border: 0;
-	border-top: 1px solid #2a2a28;
+	border-top: 1px solid rgba(42,42,40,.5);
 }
 
 /* Day totals
@@ -1459,20 +1482,17 @@ Spotlight box
 
 .main__spotlight .day-totals__numbers {
 	font-size: .8em;
-	color: #fff;
 	margin: 0 .5rem;
 }
 
-.main__spotlight .day-totals__numbers > div:not(:first-child) {
-	margin: 0 0 0 2px;
+.main__spotlight .day-totals__numbers .number {
+	margin: 0 0 0 1px;
+	width: 2em;
+	padding: .25rem 0;
 }
 
-.main__spotlight .day-totals__numbers .number {
-	width: 2em;
-	background-color: #000;
-	border-radius: 3px;
-	padding: .25rem 0;
-	text-align: center;
+.main__spotlight .day-totals__numbers .text {
+	margin: 0 .25rem;
 }
 
 /* Media queries */
@@ -1492,6 +1512,7 @@ Spotlight box
 	}
 
 	.main__spotlight .day-totals__numbers {
+		margin: 0 1rem;
 		font-size: 1em;
 	}
 
@@ -1504,7 +1525,12 @@ Spotlight box
 @media (min-width: 1200px) {
 
 	.main__spotlight .day-totals {
+		padding-top: 1rem;
 		font-size: 1.75rem;
+	}
+
+	.main__spotlight .day-totals__numbers .number {
+		width: 1.75em;
 	}
 
 }
@@ -1514,18 +1540,11 @@ Spotlight box
 
 .countdown {
 	text-align: center;
+	color: #9B9B97;
 }
 
-.countdown__num {
-	display: inline-block;
-	width: 1.25em;
-	border-radius: 3px;
-	background: #000;
-	text-align: center;
-}
-
-.countdown__num + .countdown__num {
-	margin: 0 0 0 1px;
+.countdown__timer {
+	color: #2a2a28;
 }
 
 /* Media queries */
@@ -1544,7 +1563,7 @@ Spotlight box
 .nonprofit-search {
 	width: 100%;
 	text-align: center;
-	border-top: 1px solid #2a2a28;
+	border-top: 1px solid #cacac9;
 }
 
 [class*=nonprofit-search__] {
@@ -1578,8 +1597,13 @@ Spotlight box
 
 .nonprofit-search__see-all {
 	text-transform: uppercase;
-	font-size: .75rem;
+	font-size: .8rem;
 	padding: 0 !important;
+}
+
+.nonprofit-search__see-all a {
+	font-weight: 700;
+	letter-spacing: 1px;
 }
 
 /* Media queries */
@@ -1597,14 +1621,6 @@ Spotlight box
 		padding: 1rem 2.5rem 1.5rem;
 	}
 	
-	.nonprofit-search__name {
-		padding-left: 0;
-	}
-	
-	.nonprofit-search__love {
-		padding-right: 0;
-	}
-	
 	.nonprofit-search__name .grid {
 		flex-direction: column;
 	}
@@ -1616,7 +1632,7 @@ Spotlight box
 	.nonprofit-search__category,
 	.nonprofit-search__love {
 		border: 0;
-		border-left: 1px solid #2a2a28;
+		border-left: 1px solid #cacac9;
 	}
 
 	.nonprofit-search__category:before,
@@ -1641,11 +1657,11 @@ Spotlight box
 	}
 	
 	.nonprofit-search__name {
-		padding-left: 0;
+		padding-right: 3.5rem;
 	}
 	
 	.nonprofit-search__love {
-		padding-right: 0;
+		padding-left: 3.5rem;
 	}
 	
 	.nonprofit-search__name .grid {
@@ -1780,6 +1796,8 @@ Leaderboard
 	margin: 0 0 2rem;
 	font-size: 1.25rem;
 	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
 .leaderboard__actions {

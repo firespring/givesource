@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">About Give to Lincoln Day</h1>
+            <h1 slot="title">About Give To Our City Day</h1>
         </layout-hero>
 
         <main class="main">
@@ -77,7 +77,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('About Give to Lincoln Day');
+			vue.setPageTitle('Give To Our City - About');
 		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),

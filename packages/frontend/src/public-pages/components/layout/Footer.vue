@@ -22,7 +22,7 @@
 
             <div class="contact-info">
                 <div class="contact-info__copyright">
-                    &copy; {{ year }} <router-link :to="{ name: 'homepage' }">Give to Lincoln Day</router-link>
+                    &copy; {{ year }} <router-link :to="{ name: 'homepage' }">Give To Our City</router-link>
                 </div>
 
                 <div class="contact-info__contact">
