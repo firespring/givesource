@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="contact-info__terms">
-                    <router-link :to="{ name: 'tos' }">Terms of Service</router-link>
+                    <router-link :to="{ name: 'terms' }">Terms of Service</router-link>
                 </div>
 
                 <div class="contact-info__login">

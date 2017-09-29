@@ -86,7 +86,7 @@
 					vm.tabComponent = vm.getTabComponent(to.query.tab);
 				}
 
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vm.nonprofit = response.data;
 				});
 			});
@@ -98,7 +98,7 @@
 				vue.tabComponent = vue.getTabComponent(to.query.tab);
 			}
 
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
 			}).then(function () {
 				next();

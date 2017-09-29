@@ -75,14 +75,24 @@ const router = new VueRouter({
 			component: require('./components/contact/Contact.vue')
 		},
 		{
-			path: '/tos',
-			name: 'tos',
-			component: require('./components/tos/TermsOfService.vue')
+			path: '/terms',
+			name: 'terms',
+			component: require('./components/terms/TermsOfService.vue')
 		},
 		{
 			path: '/leaderboard',
 			name: 'leaderboard',
 			component: require('./components/leaderboard/Leaderboard.vue')
+		},
+		{
+			path: '/search',
+			name: 'search-results',
+			component: require('./components/search/SearchResults.vue')
+		},
+		{
+			path: '/register',
+			name: 'register',
+			component: require('./components/register/Register.vue')
 		},
 
 		// Nonprofit
@@ -107,7 +117,7 @@ const router = new VueRouter({
 					}
 				],
 				nonprofit: {
-					legalName: 'Nonprofit Name Goes Here',
+					legalName: 'Demo Nonprofit',
 					longDescription: `<p>Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results. Professionally revolutionize parallel experiences rather than excellent markets.</p>
 						<p>Intrinsicly benchmark mission-critical technologies through business customer service. Enthusiastically formulate e-business core competencies without installed base "outside the box" thinking. Uniquely architect state of the art human capital via out-of-the-box models.</p>
 						<p>Credibly monetize virtual internal or "organic" sources whereas corporate total linkage. Holisticly enhance client-centric information with ethical communities. Phosfluorescently predominate plug-and-play e-services for flexible channels.</p>
@@ -118,7 +128,7 @@ const router = new VueRouter({
 						<p>Distinctively engineer intuitive innovation via virtual potentialities.</p>`,
 					shortDescription: 'Help us to serve artists and the public from our new home. Every dollar will be matched by the Hufflepuff Foundation, doubling your support!',
 					donationsCount: 254,
-					donationsSum: 543250,
+					donationsSum: 12345,
 				}
 			}
 		},
