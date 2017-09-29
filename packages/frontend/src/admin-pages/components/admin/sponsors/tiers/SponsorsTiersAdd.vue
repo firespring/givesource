@@ -76,7 +76,7 @@
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Save &amp; Add Another</button>
                             <button type="submit" class="c-btn">Save &amp; Finish</button>
-                            <router-link :to="{ name: 'sponsors-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
+                            <router-link :to="{ name: 'sponsors-tiers-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
 
                     </form>

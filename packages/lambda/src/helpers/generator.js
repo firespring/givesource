@@ -57,6 +57,21 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random DonationTier data
+	 *
+	 * @return {Object}
+	 */
+	donationTier: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
+			description: faker.random.words(),
+			nonprofitUuid: faker.random.uuid(),
+		}
+	},
+
+	/**
 	 * Generate random Donor data
 	 *
 	 * @return {Object}

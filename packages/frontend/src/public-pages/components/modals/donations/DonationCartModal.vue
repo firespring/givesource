@@ -29,8 +29,8 @@
                     <donation-cart-modal-list-table v-on:close="close"></donation-cart-modal-list-table>
 
                     <div class="donation-footer">
-                        <router-link :to="{ name: 'cart' }" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></router-link>
-                        <router-link :to="{ name: 'search-results' }" class="btn btn--lite">Help More Nonprofits</router-link>
+                        <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></a>
+                        <a v-on:click.prevent="helpMoreBtn" href="#" class="btn btn--lite"><strong>Help More Nonprofits</strong></a>
                     </div>
 
                 </div>
@@ -65,9 +65,27 @@
 			    event.preventDefault();
 			    const vue = this;
 
-			    vue.removeModal('donation-tiers');
-			    vue.removeBodyClasses('has-donation-overlay');
-		    }
+			    $(vue.$refs.donationModalCart).fadeOut(function () {
+				    vue.removeModal('donation-cart');
+				    vue.removeBodyClasses('has-donation-overlay');
+                });
+		    },
+            checkoutBtn: function () {
+		    	const vue = this;
+
+	            $(vue.$refs.donationModalCart).hide();
+	            vue.removeModal('donation-cart');
+	            vue.removeBodyClasses('has-donation-overlay');
+	            vue.$router.push({ name: 'cart' });
+            },
+            helpMoreBtn: function () {
+		    	const vue = this;
+
+	            $(vue.$refs.donationModalCart).hide();
+                vue.removeModal('donation-cart');
+		        vue.removeBodyClasses('has-donation-overlay');
+		        vue.$router.push({ name: 'search-results' });
+            }
         },
         components: {
     		'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
