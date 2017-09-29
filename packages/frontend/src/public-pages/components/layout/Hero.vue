@@ -25,7 +25,7 @@
             <slot></slot>
         </div>
 
-        <div class="presented-by">
+        <div class="presented-by" v-if="presentedBy">
             <div>
                 Presented by <a href="#">The Greater Area Foundation</a>
             </div>
