@@ -71,8 +71,8 @@ const router = new VueRouter({
 		},
 		{
 			path: '/contact',
-			name: 'contact-us',
-			component: require('./components/contactUs/ContactUs.vue')
+			name: 'contact',
+			component: require('./components/contact/Contact.vue')
 		},
 		{
 			path: '/tos',
