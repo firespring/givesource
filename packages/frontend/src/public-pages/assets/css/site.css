@@ -758,7 +758,7 @@ Primary elements
 ---------------------------------------------------------------------------- */
 
 body {
-	background-color: #e5e7de;
+	background-color: #e5e5e5;
 	color: #2a2a28;
 	margin: 0;
 }
@@ -787,17 +787,18 @@ Presented by
 ---------------------------------------------------------------------------- */
 
 .presented-by {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+	color: rgba(255,255,255,.7);
 }
 
-.presented-by h6 {
-	margin: 0 0 .25rem;
-	font-weight: 900;
-	font-size: 10px;
-	letter-spacing: .5px;
-	text-transform: uppercase;
+.presented-by a:link,
+.presented-by a:visited {
+	color: #fff;
+	text-decoration: none;
+}
+
+.presented-by a:hover,
+.presented-by a:active {
+	text-decoration: underline;
 }
 
 /* ----------------------------------------------------------------------------
@@ -1008,10 +1009,7 @@ Page Hero
 	background-position: center;
 	text-align: center;
 	padding: 1rem;
-}
-
-.home .page-hero {
-	padding: 2rem;
+	color: #fff;
 }
 
 .page-hero__spotlight img {
@@ -1022,22 +1020,37 @@ Page Hero
 .page-hero__message {
 	max-width: 40rem;
 	margin: 1.5rem auto 0;
-	color: #fff;
 }
 
 .page-hero__message a {
-	color: #2a2a28;
+	color: #fff !important;
 	text-decoration: underline;
 }
 
 .page-hero__title h1 {
 	margin: 0;
 	font-size: 1.5rem;
+	line-height: 1.1;
 	color: #fff;
 }
 
 .page-hero .presented-by {
 	margin: 1rem 0 0;
+}
+
+/* Homepage styles
+---------------------------------------------------------------------------- */
+
+.home .page-hero {
+	padding: 2rem;
+}
+
+.home .page-hero__title h1 {
+	font-weight: 400;
+	font-size: 2.5rem;
+	line-height: 1;
+	font-family: 'Passion One';
+	letter-spacing: 1px;
 }
 
 /* Media queries
@@ -1057,8 +1070,20 @@ Page Hero
 		font-size: 2.5rem;
 	}
 
+	.home .page-hero__title h1 {
+		font-size: 4rem;
+	}
+
 	.page-hero .presented-by {
 		margin-top: 2rem;
+	}
+
+}
+
+@media (min-width: 1100px) {
+
+	.home .page-hero__title h1 {
+		font-size: 5rem;
 	}
 
 }
@@ -1085,8 +1110,9 @@ Page Hero
 .main__metrics {
 	position: relative;
 	margin: 0 0 2rem;
-	background-color: #494946;
+	background-color: #fff;
 	border-radius: 3px;
+	box-shadow: 0 0 15px rgba(85,85,85,.25);
 }
 
 /* Media queries
@@ -1391,7 +1417,6 @@ Spotlight box
 .main__spotlight {
 	position: relative;
 	border-radius: 3px;
-	color: #fff;
 	padding: 1.5rem;
 }
 
@@ -1539,8 +1564,8 @@ Spotlight box
 	top: 0;
 	left: 50%;
 	transform: translate(-50%,-50%);
-	color: rgba(255,255,255,.5);
-	background-color: #494946;
+	color: rgba(0,0,0,.5);
+	background-color: #fff;
 	padding: 0 1rem;
 	font-size: 1.5rem;
 	line-height: 1;
@@ -1555,12 +1580,6 @@ Spotlight box
 	text-transform: uppercase;
 	font-size: .75rem;
 	padding: 0 !important;
-}
-
-.nonprofit-search__see-all a {
-	color: #fff;
-	border-bottom: 1px solid #fff;
-	text-decoration: none;
 }
 
 /* Media queries */

@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <img alt="" :src="spotlightImage" slot="spotlight">
+            <h1 slot="title">Phosfluorescently repurpose stand-alone outsourcing</h1>
 
             <strong>Please make your gift now, before midnight.</strong>
             Every gift you make is even more meaningful because agencies will receive a share of the $350,000 match fund.
@@ -30,6 +30,16 @@
                 <metrics></metrics>
 
                 <div class="main__content">
+
+                    <div class="main__content-text wrapper wrapper--sm">
+                        <p>
+                            Give To Our City is your chance to make a real impact on our city’s quality of life. We encourage everyone to join us for a record-setting day of giving on May 18th from 12:00am to 11:59pm. Together, we have the power to support local nonprofit organizations and improve lives. Every donation you make on May 18th helps your favorite charities even more because they will also receive a proportional share of our $350,000 challenge match fund.
+                        </p>
+                        <p>
+                            Gifts can be made online at this site beginning May 1st and will qualify for Give To Our City and matching funds.
+                        </p>
+                    </div>
+
                     <leaderboard></leaderboard>
                 </div>
             </div>
@@ -46,6 +56,7 @@
     	data: function () {
     		return {
 			    spotlightImage: '/assets/temp/logo-gtld.png',
+                nonprofits: [],
             }
         },
 	    beforeMount: function () {

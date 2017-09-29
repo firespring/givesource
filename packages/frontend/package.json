@@ -53,7 +53,8 @@
 		"vue-template-compiler": "^2.4.1",
 		"vueckeditor": "^0.1.4",
 		"vuedraggable": "^2.14.1",
-		"vuex": "^2.3.1",
+		"vuex": "^2.4.1",
+		"vuex-persistedstate": "^2.0.0",
 		"webpack": "^3.2.0",
 		"webpack-dev-server": "^2.5.1"
 	}

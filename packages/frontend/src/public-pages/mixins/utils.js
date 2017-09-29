@@ -32,8 +32,20 @@ exports.mixin = {
 		setPageTitle: function (title) {
 			document.title = title;
 		},
-		formatMoney: function(amountInCents) {
-			return numeral(amountInCents/100).format('$0,0.00');
+		formatMoney: function (amountInCents) {
+			return numeral(amountInCents / 100).format('$0,0.00');
+		},
+		pad: function (number, places) {
+			return new Array(Math.max(places - String(number).length + 1, 0)).join(0) + number;
+		},
+		calculateDonationFees: function (cartItems) {
+			let fees = 0;
+			const transactionFlatFee = 30;
+			const transactionPercentFee = 0.029;
+			cartItems.forEach(function (cartItem) {
+				fees += ~~(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
+			});
+			return fees;
 		}
 	}
 };

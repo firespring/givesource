@@ -33,7 +33,7 @@
         </form>
 
         <div class="page-header__cart items-center">
-            <router-link :to="{ name: 'cart' }"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Your Donations (0)</span></router-link>
+            <router-link :to="{ name: 'cart' }"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Your Donations ({{ cartItemsCount }})</span></router-link>
         </div>
 
         <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fa fa-bars" aria-hidden="true"></i><span>Menu</span></a>
@@ -42,7 +42,30 @@
 
 <script>
     module.exports = {
+    	data: function () {
+    		return {
+			    cartItemsCount: 0
+            };
+        },
+    	created: function () {
+            const vue = this;
+
+		    vue.updateCartItemsCount();
+            vue.bus.$on('updateCartItemsCount', function () {
+	            vue.updateCartItemsCount();
+            });
+        },
+        beforeDestroy: function () {
+    		const vue = this;
+
+    		vue.bus.$off('updateCartItemsCount');
+        },
 	    methods: {
+    		updateCartItemsCount: function () {
+    			const vue = this;
+
+    			vue.cartItemsCount = vue.$store.state.cartItems.length;
+            },
 	    	search: function (event) {
 	    		event.preventDefault();
 	    		const vue = this;
@@ -53,7 +76,7 @@
     			event.preventDefault();
     			const vue = this;
 
-    			vue.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
+    			vue.addModal('menu-overlay');
             },
         }
     };
