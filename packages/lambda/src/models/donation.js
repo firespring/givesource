@@ -48,6 +48,7 @@ Donation.prototype.attributes = [
 	'isOfflineDonation',
 	'nonprofitUuid',
 	'paymentTransactionUuid',
+	'totalInCents'
 ];
 
 /**
@@ -87,6 +88,10 @@ Donation.prototype.constraints = {
 	paymentTransactionUuid: {
 		presence: true,
 		uuid: 4
+	},
+	totalInCents: {
+		presence: true,
+		type: 'string|number'
 	}
 };
 

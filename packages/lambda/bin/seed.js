@@ -76,16 +76,16 @@ const seedDonations = function () {
 		return donorsRepository.batchUpdate(donors).then(function () {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
-				let subtotal = 0;
+				let total = 0;
 				_.each(chunk, function (donation) {
 					donation.donorUuid = donors[i].uuid;
 					donation.paymentTransactionUuid = paymentTransactions[i].uuid;
 					donation.nonprofitUuid = answers.nonprofitUuid;
-					subtotal += donation.amountInCents + donation.feesInCents;
+					total += donation.totalInCents;
 				});
 
-				paymentTransactions[i].total = subtotal;
-				donationsTotal += subtotal;
+				paymentTransactions[i].total = total;
+				donationsTotal += total;
 				promise = promise.then(function () {
 					return donationsRepository.batchUpdate(chunk);
 				});

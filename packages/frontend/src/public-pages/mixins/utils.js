@@ -38,12 +38,10 @@ exports.mixin = {
 		pad: function (number, places) {
 			return new Array(Math.max(places - String(number).length + 1, 0)).join(0) + number;
 		},
-		calculateDonationFees: function (cartItems) {
+		calculateFees: function (cartItems, transactionFlatFee, transactionPercentFee) {
 			let fees = 0;
-			const transactionFlatFee = 30;
-			const transactionPercentFee = 0.029;
 			cartItems.forEach(function (cartItem) {
-				fees += ~~(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
+				fees += Math.floor(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
 			});
 			return fees;
 		}

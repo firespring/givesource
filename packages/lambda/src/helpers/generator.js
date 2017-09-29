@@ -44,7 +44,7 @@ Generator.prototype._generators = {
 		const donation = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
-			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
+			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 			donorUuid: faker.random.uuid(),
 			isAnonymous: faker.random.boolean(),
 			isFeeCovered: faker.random.boolean(),
@@ -52,7 +52,8 @@ Generator.prototype._generators = {
 			nonprofitUuid: faker.random.uuid(),
 			paymentTransactionUuid: faker.random.uuid(),
 		};
-		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, donation.isFeeCovered, 30, 0.025);
+		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, 30, 0.029);
+		donation.totalInCents = donation.isFeeCovered ? donation.amountInCents + donation.feesInCents : donation.amountInCents;
 		return donation;
 	},
 

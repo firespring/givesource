@@ -30,11 +30,17 @@
             <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ nonprofit.legalName }}</router-link>
         </td>
 
-        <td>
+        <td v-if="donation.isAnonymous">
+            Anonymous
+        </td>
+
+        <td v-else>
             {{ donor.name }}
         </td>
 
-        <td class="u-nowrap">
+        <td v-if="donation.isAnonymous"></td>
+
+        <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
@@ -47,7 +53,9 @@
             </div>
         </td>
 
-        <td class="u-nowrap">
+        <td v-if="donation.isAnonymous"></td>
+
+        <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__address u-icon u-flex">
@@ -74,8 +82,8 @@
 				return new Date(this.donation.createdOn).toLocaleTimeString();
             },
             amount: function () {
-				return numeral(this.donation.amountInCents / 100).format('$0,00.00');
-            }
+				return numeral(this.donation.totalInCents / 100).format('$0,00.00');
+            },
         },
 		props: [
 			'donation',
