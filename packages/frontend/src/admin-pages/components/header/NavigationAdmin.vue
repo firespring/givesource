@@ -25,34 +25,29 @@
             <router-link tag="li" :to="{ name: 'nonprofits-list' }">
                 <a><i class="fa fa-fw fa-bank" aria-hidden="true"></i>Nonprofits</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'donors' }">
-                <a><i class="fa fa-fw fa-users" aria-hidden="true"></i>Donors</a>
-            </router-link>
             <router-link tag="li" :to="{ name: 'sponsors-tiers-list' }">
                 <a><i class="fa fa-fw fa-star" aria-hidden="true"></i>Sponsors</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'pages-list' }">
                 <a><i class="fa fa-fw fa-files-o" aria-hidden="true"></i>Pages</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'reports' }">
-                <a><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>Reports</a>
-            </router-link>
+            <!--<router-link tag="li" :to="{ name: 'reports' }">-->
+                <!--<a><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>Reports</a>-->
+            <!--</router-link>-->
             <router-link tag="li" :to="{ name: 'settings-list' }">
                 <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'help' }">
-                <a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>
-            </router-link>
+            <!--<router-link tag="li" :to="{ name: 'help' }">-->
+                <!--<a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>-->
+            <!--</router-link>-->
         </ul>
 
         <select class="js-menubar-nav-select">
             <option value="#" selected>Donations</option>
             <option value="#">Nonprofits</option>
-            <option value="#">Content</option>
-            <option value="#">Messages</option>
-            <option value="#">Reports</option>
+            <option value="#">Sponsors</option>
+            <option value="#">Pages</option>
             <option value="#">Settings</option>
-            <option value="#">Help</option>
         </select>
 
     </div>

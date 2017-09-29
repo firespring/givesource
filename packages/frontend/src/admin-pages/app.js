@@ -128,14 +128,6 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/donors',
-			name: 'donors',
-			component: require('./components/admin/donors/DonorsList.vue'),
-			meta: {
-				allowedGroups: ['SuperAdmin', 'Admin']
-			}
-		},
-		{
 			path: '/pages',
 			name: 'pages-list',
 			component: require('./components/admin/pages/PagesList.vue'),

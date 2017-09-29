@@ -28,16 +28,15 @@
             <router-link tag="li" :to="{ name: 'nonprofit-settings-list', params: { nonprofitUuid: nonprofitUuid } }">
                 <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'nonprofit-help', params: { nonprofitUuid: nonprofitUuid } }">
-                <a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>
-            </router-link>
+            <!--<router-link tag="li" :to="{ name: 'nonprofit-help', params: { nonprofitUuid: nonprofitUuid } }">-->
+                <!--<a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>-->
+            <!--</router-link>-->
         </ul>
 
         <select class="js-menubar-nav-select">
             <option value="#" selected>Donations</option>
             <option value="#">Your Page</option>
             <option value="#">Settings</option>
-            <option value="#">Help</option>
         </select>
 
     </div>
