@@ -42,7 +42,9 @@
 
         <div class="leaderboard-item__amount">{{ amount }}</div>
 
-        <div class="leaderboard-item__action"><a v-on:click="donate" href="#" class="btn btn--sm btn--green">Donate</a></div>
+        <div class="leaderboard-item__action">
+            <a v-on:click.prevent="donate" href="#" class="btn btn--sm btn--green" :class="{ 'btn--disabled': !loaded }">Donate</a>
+        </div>
     </div>
 </template>
 
@@ -50,6 +52,7 @@
     module.exports = {
     	data: function () {
     		return {
+    			loaded: false,
     			tiers: []
             };
         },
@@ -70,6 +73,7 @@
 				        return b.amount - a.amount;
 			        });
 			        vue.tiers = response.data;
+			        vue.loaded = true;
 		        });
 	        } else {
 	        	vue.tiers = [
@@ -90,11 +94,16 @@
 				        description: 'Enthusiastically network frictionless solutions and high-payoff total linkage.'
 			        }
                 ];
+	        	vue.loaded = true;
             }
         },
 	    methods: {
 		    donate: function () {
 			    const vue = this;
+
+			    if (!vue.loaded) {
+			    	return;
+                }
 
 			    vue.addModal('donation-tiers', {
 				    nonprofit: vue.nonprofit,
