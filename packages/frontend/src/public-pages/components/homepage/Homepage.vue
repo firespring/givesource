@@ -56,6 +56,7 @@
     	data: function () {
     		return {
 			    spotlightImage: '/assets/temp/logo-gtld.png',
+                nonprofits: [],
             }
         },
 	    beforeMount: function () {

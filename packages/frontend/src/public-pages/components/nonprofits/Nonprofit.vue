@@ -17,7 +17,6 @@
 
 <template>
     <div>
-
         <layout-hero>
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
         </layout-hero>

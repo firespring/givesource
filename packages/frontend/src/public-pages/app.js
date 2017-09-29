@@ -90,6 +90,11 @@ const router = new VueRouter({
 			component: require('./components/cart/Cart.vue')
 		},
 		{
+			path: '/cart/thank-you',
+			name: 'cart-response',
+			component: require('./components/cart/response/CartResponse.vue')
+		},
+		{
 			path: '/contact',
 			name: 'contact',
 			component: require('./components/contact/Contact.vue')
@@ -237,8 +242,13 @@ const store = new Vuex.Store({
 	mutations: {
 		addCartItem: function (state, payload) {
 			if (payload.amount && payload.nonprofit !== null) {
+				let amount = payload.amount;
+				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
+					amount = Math.round(Number.parseFloat(payload.amount) * 100);
+				}
+
 				state.cartItems.push({
-					amount: payload.amount,
+					amount: amount,
 					nonprofit: payload.nonprofit,
 					timestamp: Date.now(),
 				});
@@ -249,9 +259,18 @@ const store = new Vuex.Store({
 		},
 		updateCartItem: function (state, payload) {
 			if (payload.amount && payload.timestamp) {
+
+				let amount = payload.amount;
+				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
+					amount = Math.round(Number.parseFloat(payload.amount) * 100);
+				}
+
 				const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp });
-				cartItem.amount = payload.amount;
+				cartItem.amount = amount;
 			}
+		},
+		clearCartItems: function (state) {
+			state.cartItems = [];
 		}
 	},
 	plugins: [

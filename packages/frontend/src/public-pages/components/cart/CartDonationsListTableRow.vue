@@ -32,56 +32,56 @@
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
-    			localAmount: this.amount,
+	module.exports = {
+		data: function () {
+			return {
+				localAmount: this.amount,
 
-			    currencyOptions: {
-				    precision: 2,
-				    masked: true,
-				    thousands: '',
-			    }
-            };
-        },
-    	computed: {
-    		donationAmount: function () {
-    			return this.formatMoney(this.amount);
-            }
-        },
-    	props: [
-		    'amount',
-    		'nonprofit',
+				currencyOptions: {
+					precision: 2,
+					masked: true,
+					thousands: '',
+				}
+			};
+		},
+		computed: {
+			donationAmount: function () {
+				return this.formatMoney(this.amount);
+			}
+		},
+        props: [
+	        'amount',
+        	'nonprofit',
             'timestamp'
         ],
-        watch: {
-    		localAmount: function (value, oldValue) {
-    			const vue = this;
+		watch: {
+			localAmount: function (value, oldValue) {
+				const vue = this;
 
-    			if (value !== oldValue && vue.timestamp) {
-				    vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
-                }
-            },
-            amount: function (value, oldValue) {
-    			const vue = this;
+				if (value !== oldValue && vue.timestamp) {
+					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+				}
+			},
+			amount: function (value, oldValue) {
+				const vue = this;
 
-    			if (value === oldValue) {
-    				return;
-                }
-                vue.localAmount = value;
-            }
-        },
-        methods: {
-    		deleteCartItem: function (event) {
-    			event.preventDefault();
-    			const vue = this;
+				if (value === oldValue) {
+					return;
+				}
+				vue.localAmount = value;
+			}
+		},
+		methods: {
+			deleteCartItem: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-    			vue.$store.commit('removeCartItem', vue.timestamp);
-    			vue.$emit('removeCartItem', vue.timestamp);
+				vue.$store.commit('removeCartItem', vue.timestamp);
+				vue.$emit('removeCartItem', vue.timestamp);
 
-			    vue.bus.$emit('updateCartItems');
-			    vue.bus.$emit('updateCartItemsCount');
-            }
-        }
-    };
+				vue.bus.$emit('updateCartItems');
+				vue.bus.$emit('updateCartItemsCount');
+			}
+		}
+	};
 </script>

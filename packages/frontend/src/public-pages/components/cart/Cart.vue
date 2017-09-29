@@ -17,80 +17,15 @@
 
 <template>
     <div>
-        <layout-hero :presentedBy="true">
+        <layout-hero>
             <h1 slot="title">Your Donations</h1>
         </layout-hero>
 
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <form>
-                    <fieldset>
-                        <legend>Your Current Donations</legend>
-
-                        <div class="form-item">
-                            <table class="table-donations">
-                                <thead>
-                                <tr>
-                                    <th class="width-100">Nonprofit Name</th>
-                                    <th>Amount</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <tr>
-                                    <td class="organization">
-                                        <strong>Pius X Foundation</strong>
-                                    </td>
-                                    <td class="donation">
-                                        <div class="donation-amount">
-                                            <input type="text" name="amount[]" value="25.00" required>
-                                        </div>
-                                    </td>
-                                    <td class="actions nowrap">
-                                        <a href="#" class="btn btn--sm btn--icon btn--red"><i class="fa fa-trash" aria-hidden="true"></i><span>Delete</span></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="organization">
-                                        <strong>Food Bank of Lincoln</strong>
-                                    </td>
-                                    <td class="donation">
-                                        <div class="donation-amount">
-                                            <input type="text" name="amount[]" value="50.00" required>
-                                        </div>
-                                    </td>
-                                    <td class="actions nowrap">
-                                        <a href="#" class="btn btn--sm btn--icon btn--red"><i class="fa fa-trash" aria-hidden="true"></i><span>Delete</span></a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="cart-totals">
-                            <div class="cart-totals__subtotal">
-                                Your donation subtotal is <strong>$75.00</strong>. (<router-link :to="{ name: 'search-results' }">Find another nonprofit to help</router-link>)
-                            </div>
-                            <div class="cart-totals__transaction-fees">
-                                <div>
-                                    There are <strong>$5.00</strong> in transaction fees associated with your donation. Will you cover them?
-                                </div>
-                                <div>
-                                    <label class="checkbox-solo">
-                                        <input type="checkbox" name="coverDonationFees" id="coverDonationFees-1">
-                                        <span>Yes, I'll donate an extra $5.00 to cover transaction fees</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="cart-totals__total">
-                                <strong>Your total donation will be $80.00.</strong>
-                            </div>
-                        </div>
-
-                    </fieldset>
+                <form v-on:submit="submit">
+                    <cart-donations v-model="donationAmounts"></cart-donations>
 
                     <fieldset>
                         <legend>Your Contact & Billing Info</legend>
@@ -321,11 +256,9 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-
                         <button type="submit" class="btn btn--green btn--round btn--lg">
                             Complete Your Donation
                         </button>
-
                     </div>
 
                 </form>
@@ -341,13 +274,39 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				donationAmounts: {
+					fees: 0,
+					subtotal: 0,
+					total: 0
+                },
+
+				// Form Data
+                formData: {
+                }
+            };
+        },
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Your Donations');
 		},
+        methods: {
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.$store.commit('clearCartItems');
+				vue.bus.$emit('updateCartItems');
+				vue.bus.$emit('updateCartItemsCount');
+
+				vue.$router.push({ name: 'cart-response' });
+            }
+        },
 		components: {
+			'cart-donations': require('./CartDonations.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),

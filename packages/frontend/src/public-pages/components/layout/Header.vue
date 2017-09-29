@@ -50,17 +50,22 @@
     	created: function () {
             const vue = this;
 
-            vue.cartItemsCount = vue.$store.state.cartItems.length;
-            vue.bus.$on('updateCart', function () {
-	            vue.cartItemsCount = vue.$store.state.cartItems.length;
+		    vue.updateCartItemsCount();
+            vue.bus.$on('updateCartItemsCount', function () {
+	            vue.updateCartItemsCount();
             });
         },
         beforeDestroy: function () {
     		const vue = this;
 
-    		vue.bus.$off('updateCart');
+    		vue.bus.$off('updateCartItemsCount');
         },
 	    methods: {
+    		updateCartItemsCount: function () {
+    			const vue = this;
+
+    			vue.cartItemsCount = vue.$store.state.cartItems.length;
+            },
 	    	search: function (event) {
 	    		event.preventDefault();
 	    		const vue = this;

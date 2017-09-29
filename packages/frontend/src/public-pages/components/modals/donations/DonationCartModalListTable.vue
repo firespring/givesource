@@ -62,6 +62,9 @@
     				timestamp: timestamp,
                     amount: amount
                 });
+
+	            vue.bus.$emit('updateCartItems');
+	            vue.bus.$emit('updateCartItemsCount');
             }
         },
         components: {

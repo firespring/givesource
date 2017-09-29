@@ -128,7 +128,8 @@
 				        nonprofit: vue.nonprofit
 			        });
 
-			        vue.$emit('updateCart');
+			        vue.bus.$emit('updateCartItems');
+			        vue.bus.$emit('updateCartItemsCount');
 
 			        $(vue.$refs.donationModalOptions).fadeOut(function () {
 				        vue.removeModal('donation-tiers');
