@@ -100,6 +100,11 @@ const router = new VueRouter({
 			component: require('./components/contact/Contact.vue')
 		},
 		{
+			path: '/contact/thank-you',
+			name: 'contact-response',
+			component: require('./components/contact/response/ContactResponse.vue')
+		},
+		{
 			path: '/terms',
 			name: 'terms',
 			component: require('./components/terms/TermsOfService.vue')
@@ -118,6 +123,11 @@ const router = new VueRouter({
 			path: '/register',
 			name: 'register',
 			component: require('./components/register/Register.vue')
+		},
+		{
+			path: '/register/thank-you',
+			name: 'register-response',
+			component: require('./components/register/response/RegisterResponse.vue')
 		},
 
 		// Nonprofit
