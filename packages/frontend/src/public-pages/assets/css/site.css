@@ -775,12 +775,13 @@ Primary elements
 ---------------------------------------------------------------------------- */
 
 body {
-	background-color: #e5e5e5;
+	background-color: #fff;
 	color: #2a2a28;
 	margin: 0;
 }
 
 .main {
+	background-color: #e5e5e5;
 	padding: 1rem;
 }
 

@@ -17,16 +17,35 @@
 
 <template>
     <div>
-        Page not found.
+        <layout-hero :presentedBy="false">
+            <h1 slot="title">Oops!</h1>
+        </layout-hero>
+
+        <main class="main">
+            <div class="wrapper wrapper--sm text-c">
+
+                <h2>Page Not Found.</h2>
+                <p>
+                    <router-link :to="{ name: 'homepage' }">Return to the homepage.</router-link>
+                </p>
+            </div>
+        </main>
 
         <layout-footer></layout-footer>
     </div>
 </template>
 
 <script>
-    module.exports = {
-    	components: {
-    		'layout-footer': require('./../layout/Footer.vue')
-        }
-    }
+	module.exports = {
+		beforeMount: function () {
+			const vue = this;
+
+			vue.setBodyClasses('page');
+			vue.setPageTitle('Give To Our City - Oops!');
+		},
+		components: {
+			'layout-footer': require('./../layout/Footer.vue'),
+			'layout-hero': require('./../layout/Hero.vue'),
+		}
+	};
 </script>
