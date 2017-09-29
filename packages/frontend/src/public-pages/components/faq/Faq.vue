@@ -76,11 +76,11 @@
 
                 <p>
                     Online donations to participating charities will be accepted from 12:00am to 11:59pm on Jan 1st. Donations made online during
-                    that 24-hour period will be updated in real time on the online leader board at <a href="/index.html">Give To Our City website</a>.
+                    that 24-hour period will be updated in real time on the online leader board at <a href="#">Give To Our City website</a>.
                 </p>
 
                 <p>
-                    All donations on <a href="/index.html">Give To Our City website</a> will be made to the <a href="http://www.firespringfoundation.org/">Firespring Foundation</a>; a 501(c)(3)
+                    All donations on <a href="#">Give To Our City website</a> will be made to the <a href="#">Firespring Foundation</a>; a 501(c)(3)
                     tax-exempt organization which permits donors to advise a re-granting of their donations to other IRS recognized
                     qualifying 501(c)(3) organizations. Firespring Foundation will re-grant 97.1% of each contribution to the
                     qualifying organization as advised by the donor, retaining 2.9% plus $.30 per transaction for credit card
@@ -103,7 +103,7 @@
                 <h2 id="faq4">Can I give before Jan 1st?</h2>
 
                 <p>
-                    Donations made at <a href="/index.html">Give To Our City website</a> starting on Jan 1st will count toward the event
+                    Donations made at <a href="#">Give To Our City website</a> starting on Jan 1st will count toward the event
                     and be eligible for the challenge match fund.
                 </p>
 
@@ -134,7 +134,7 @@
                 <h2 id="faq8">What if I can’t find my favorite nonprofit on the website?</h2>
 
                 <p>
-                    If you can’t find them on <a href="/index.html">Give To Our City website</a>, then it's most likely that organization
+                    If you can’t find them on <a href="#">Give To Our City website</a>, then it's most likely that organization
                     did not register to participate. Encourage them to register by April 21 if they serve the people of Our City
                     and have a local office.
                 </p>
@@ -143,7 +143,7 @@
 
                 <p>
                     The  The Greater Area Foundation and the sponsors listed below are providing a $350,000 challenge match fund for the event.
-                    Credit card donations made through <a href="/index.html">Give To Our City website</a> between May
+                    Credit card donations made through <a href="#">Give To Our City website</a> between May
                     1st and Jan 1st, and cash/check donations made in person at the  The Greater Area Foundation office from
                     8:00am to 5:00pm on Jan 1st, will be used to calculate the distribution of the match funds. The amount of
                     a nonprofit organization's share of the match fund will be based on the percentage of donations the nonprofit
@@ -180,8 +180,8 @@
                 <h2 id="faq13">What if I have additional questions or concerns?</h2>
 
                 <p>
-                    If you have questions about how this event works please consult our <a href="/terms.html">Terms of Use</a>.</br>
-                    If you have additional questions or concerns about this website, please <a href="/contact.html">Contact Us</a>.
+                    If you have questions about how this event works please consult our <a href="#">Terms of Use</a>.</br>
+                    If you have additional questions or concerns about this website, please <a href="#">Contact Us</a>.
                 </p>
 
 
