@@ -25,9 +25,22 @@
         </tr>
         </thead>
 
-        <tbody>
+        <tbody v-if="cartItems.length">
         <donation-cart-modal-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
                                             v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></donation-cart-modal-list-table-row>
+        </tbody>
+
+        <tbody v-else>
+        <tr>
+            <td colspan="3" class="text-c">
+                <p>
+                    <strong>You haven't added any donations yet.</strong>
+                </p>
+                <p>
+                    <a v-on:click.prevent="findNonprofit" href="#" class="btn btn--blue">Find a Nonprofit to Help</a>
+                </p>
+            </td>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -47,6 +60,11 @@
 			    return a.timestamp - b.timestamp;
 		    });
 	    },
+        watch: {
+	    	cartItems: function () {
+	    		this.$emit('updateCartItemsCount', this.cartItems.length);
+            }
+        },
         methods: {
     		removeCartItem: function (timestamp) {
     			const vue = this;
@@ -65,7 +83,16 @@
 
 	            vue.bus.$emit('updateCartItems');
 	            vue.bus.$emit('updateCartItemsCount');
-            }
+	            vue.bus.$emit('updateCartItemsCounter');
+            },
+	        findNonprofit: function () {
+		        const vue = this;
+
+		        $(vue.$refs.donationModalCart).hide();
+		        vue.removeModal('donation-cart');
+		        vue.removeBodyClasses('has-donation-overlay');
+		        vue.$router.push({ name: 'search-results' });
+	        }
         },
         components: {
     		'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')

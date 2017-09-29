@@ -51,14 +51,14 @@
             const vue = this;
 
 		    vue.updateCartItemsCount();
-            vue.bus.$on('updateCartItemsCount', function () {
+            vue.bus.$on('updateCartItemsCounter', function () {
 	            vue.updateCartItemsCount();
             });
         },
         beforeDestroy: function () {
     		const vue = this;
 
-    		vue.bus.$off('updateCartItemsCount');
+    		vue.bus.$off('updateCartItemsCounter');
         },
 	    methods: {
     		updateCartItemsCount: function () {

@@ -17,7 +17,7 @@
 
 <template>
     <div>
-        <layout-hero :presentedBy="true">
+        <layout-hero :presentedBy="true" :wrap="true">
             <h1 slot="title">Make our city a better place!</h1>
 
             <strong>Please make your gift now, before midnight.</strong>
@@ -63,7 +63,7 @@
 		    const vue = this;
 
 		    vue.setBodyClasses('home', 'home--live');
-		    vue.setPageTitle('Give To Our City');
+		    vue.setPageTitle('Give To Our City - May 18th, 2018');
 	    },
         components: {
             'layout-footer': require('./../layout/Footer.vue'),
