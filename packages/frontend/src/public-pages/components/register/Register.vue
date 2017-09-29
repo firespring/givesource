@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Register for Give to Lincoln Day</h1>
+            <h1 slot="title">Register for Give To Our City Day</h1>
         </layout-hero>
 
         <main class="main">
@@ -30,7 +30,7 @@
                     <router-link :to="{ name: 'about' }">please visit the About page</router-link>.
                 </p>
 
-                <form>
+                <form v-on:submit="submit">
                     <fieldset>
 
                         <div class="form-item form-item--required">
@@ -401,8 +401,16 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Register');
+			vue.setPageTitle('Give To Our City - Register');
 		},
+        methods: {
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.$router.push({ name: 'register-response' });
+            }
+        },
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),

@@ -22,15 +22,10 @@ dotenv.config({path: `${__dirname}/../../../../.env`});
  * Calculate donation fees
  *
  * @param {number} amountInCents
- * @param {bool} isFeeCovered
  * @param {number} transactionFlatFee
  * @param {number} transactionPercentFee
  * @return {number}
  */
-exports.calculateFees = function (amountInCents, isFeeCovered, transactionFlatFee, transactionPercentFee) {
-	if (isFeeCovered) {
-		return ~~(Math.round((amountInCents + transactionFlatFee) / (1 - transactionPercentFee) - amountInCents));
-	} else {
-		return ~~(Math.round((amountInCents * transactionPercentFee) + (transactionFlatFee)));
-	}
+exports.calculateFees = function (amountInCents, transactionFlatFee, transactionPercentFee) {
+	return Math.floor(Math.round((amountInCents + transactionFlatFee) / (1 - transactionPercentFee) - amountInCents));
 };

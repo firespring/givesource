@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Phosfluorescently repurpose stand-alone outsourcing</h1>
+            <h1 slot="title">Make our city a better place!</h1>
 
             <strong>Please make your gift now, before midnight.</strong>
             Every gift you make is even more meaningful because agencies will receive a share of the $350,000 match fund.
@@ -63,7 +63,7 @@
 		    const vue = this;
 
 		    vue.setBodyClasses('home', 'home--live');
-		    vue.setPageTitle('Give to Lincoln Day');
+		    vue.setPageTitle('Give To Our City');
 	    },
         components: {
             'layout-footer': require('./../layout/Footer.vue'),

@@ -28,7 +28,7 @@
         <td class="item-actions">
             <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                 <router-link :to="{ name: 'sponsors-list' }" role="button" class="c-btn c-btn--sm c-btn--icon">
-                    <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tiers
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tier
                 </router-link>
                 <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">

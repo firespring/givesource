@@ -19,7 +19,7 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <router-link :to="{ name: 'homepage' }" title="Return to the Give to Lincoln Day homepage"><img alt="Give To Lincoln Day Logo" src="/assets/temp/logo-gtld-reverse.png"></router-link>
+            <router-link :to="{ name: 'homepage' }" title="Return to the Give To Our City homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png"></router-link>
         </div>
 
         <nav class="page-header__nav-menu items-center">

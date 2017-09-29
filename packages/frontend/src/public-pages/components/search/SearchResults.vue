@@ -60,7 +60,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give to Lincoln Day Search');
+			vue.setPageTitle('Give To Our City - Search');
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {

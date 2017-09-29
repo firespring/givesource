@@ -24,7 +24,7 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <form>
+                <form v-on:submit="submit">
                     <fieldset>
 
                         <div class="form-item form-item--required">
@@ -91,6 +91,14 @@
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Contact Us');
 		},
+        methods: {
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.$router.push({ name: 'contact-response' });
+            }
+        },
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),

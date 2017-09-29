@@ -25,10 +25,9 @@
             </div>
 
             <div class="sponsors__tier-list">
-                <img width="324" height="71" alt="Firespring logo" src="/assets/temp/sponsors/firespring.png">
-                <img width="202" height="50" alt="Data Source logo" src="/assets/temp/sponsors/data-source.png">
-                <img width="134" height="62" alt="Bill & Mae Whitmer Family Fund" src="/assets/temp/sponsors/whitmer-family.png">
-                <img width="126" height="101" alt="Assurity logo" src="/assets/temp/sponsors/assurity.png">
+                <img width="320" height="91" alt="Auto Speed logo" src="/assets/temp/sponsors/auto-speed.png">
+                <img width="320" height="108" alt="Beauty Box logo" src="/assets/temp/sponsors/beauty-box.png">
+                <img width="320" height="88" alt="Yoga Baby logo" src="/assets/temp/sponsors/yoga-baby.png">
             </div>
         </div>
 
@@ -37,15 +36,10 @@
                 <h3>Silver Sponsors</h3>
             </div>
             <div class="sponsors__tier-list">
-                <img width="106" height="42" alt="Edward & Mary Copple" src="/assets/temp/sponsors/edward-mary-copple.png">
-                <img width="138" height="80" alt="Cornhusker Bank logo" src="/assets/temp/sponsors/cornhusker-bank.png">
-                <img width="142" height="35" alt="Talent+ logo" src="/assets/temp/sponsors/talent-plus.png">
-                <img width="142" height="36" alt="US Bank logo" src="/assets/temp/sponsors/us-bank.png">
-                <img width="142" height="36" alt="U-Stop logo" src="/assets/temp/sponsors/u-stop.png">
-                <img width="146" height="68" alt="Runza logo" src="/assets/temp/sponsors/runza.png">
-                <img width="152" height="39" alt="Bob & Jan FitzSimmons Fund" src="/assets/temp/sponsors/fitzsimmons-fund.png">
-                <img width="157" height="48" alt="Davis Design logo" src="/assets/temp/sponsors/davis-design.png">
-                <img width="139" height="39" alt="Joe W. & Ruth K. Seacrest Fund" src="/assets/temp/sponsors/seacrest-fund.png">
+                <img width="320" height="122" alt="The Web Works logo" src="/assets/temp/sponsors/the-web-works.png">
+                <img width="320" height="149" alt="Greens Food Suppliers logo" src="/assets/temp/sponsors/greens-food-suppliers.png">
+                <img width="320" height="116" alt="Fast Banana logo" src="/assets/temp/sponsors/fast-banana.png">
+                <img width="320" height="130" alt="The Dance Studio logo" src="/assets/temp/sponsors/the-dance-studio.png">
             </div>
         </div>
 
@@ -54,11 +48,9 @@
                 <h3>Bronze Sponsors</h3>
             </div>
             <div class="sponsors__tier-list">
-                <img width="218" height="41" alt="Mapes logo" src="/assets/temp/sponsors/mapes.png">
-                <img width="162" height="68" alt="Pinnacle Bank logo" src="/assets/temp/sponsors/pinnacle-bank.png">
-                <img width="138" height="39" alt="The Family of Alfred Duteau" src="/assets/temp/sponsors/alfred-duteau-family.png">
-                <img width="200" height="58" alt="Pepsi logo" src="/assets/temp/sponsors/pepsi.png">
-                <img width="131" height="39" alt="Mary Wobig Charitable Fund logo" src="/assets/temp/sponsors/mary-wobig.png">
+                <img width="320" height="81" alt="Crofts Accountants logo" src="/assets/temp/sponsors/crofts-accountants.png">
+                <img width="320" height="173" alt="Space logo" src="/assets/temp/sponsors/space-cube.png">
+                <img width="320" height="246" alt="James and Sons Building Contractors logo" src="/assets/temp/sponsors/james-and-sons.png">
             </div>
         </div>
 
@@ -66,6 +58,5 @@
 </template>
 
 <script>
-    module.exports = {
-    }
+	module.exports = {}
 </script>

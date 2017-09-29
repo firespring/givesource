@@ -26,7 +26,9 @@
         </div>
 
         <div class="presented-by" v-if="presentedBy">
-            Presented by <a href="#">Make Our City Great Foundation</a>
+            <div>
+                Presented by <a href="#">The Greater Area Foundation</a>
+            </div>
         </div>
     </div>
 </template>

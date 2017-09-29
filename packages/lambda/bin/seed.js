@@ -20,15 +20,16 @@ dotenv.config({path: `${__dirname}/../../../.env`});
 
 const _ = require('lodash');
 const fuzzy = require('fuzzy');
-const DonorsRepository = require('../src/repositories/donors');
+const DonorsRepository = require('./../src/repositories/donors');
 const Generator = require('./../src/helpers/generator');
 const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
-const MessagesRepository = require('../src/repositories/messages');
-const NonprofitsRepository = require('../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('../src/repositories/nonprofitDonations');
-const NonprofitSlidesRepository = require('../src/repositories/nonprofitSlides');
-const PaymentTransactionsRepository = require('../src/repositories/paymentTransactions');
+const MessagesRepository = require('./../src/repositories/messages');
+const NonprofitsRepository = require('./../src/repositories/nonprofits');
+const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
+const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
+const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
+const PaymentTransactionsRepository = require('./../src/repositories/paymentTransactions');
 
 /**
  * Seed Donations
@@ -75,16 +76,16 @@ const seedDonations = function () {
 		return donorsRepository.batchUpdate(donors).then(function () {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
-				let subtotal = 0;
+				let total = 0;
 				_.each(chunk, function (donation) {
 					donation.donorUuid = donors[i].uuid;
 					donation.paymentTransactionUuid = paymentTransactions[i].uuid;
 					donation.nonprofitUuid = answers.nonprofitUuid;
-					subtotal += donation.amountInCents + donation.feesInCents;
+					total += donation.totalInCents;
 				});
 
-				paymentTransactions[i].total = subtotal;
-				donationsTotal += subtotal;
+				paymentTransactions[i].total = total;
+				donationsTotal += total;
 				promise = promise.then(function () {
 					return donationsRepository.batchUpdate(chunk);
 				});
@@ -137,6 +138,7 @@ const seedMessages = function () {
 const seedNonprofits = function () {
 	const generator = new Generator();
 	const nonprofitsRepository = new NonprofitsRepository();
+	const nonprofitDonationTiersRepository = new NonprofitDonationTiersRepository();
 	const nonprofitSlidesRepository = new NonprofitSlidesRepository();
 
 	return inquirer.prompt([
@@ -161,6 +163,14 @@ const seedNonprofits = function () {
 				return nonprofitSlidesRepository.batchUpdate(slides);
 			});
 		});
+
+		_.each(nonprofits, function (nonprofit) {
+			const tiers = generator.modelCollection('donationTier', 4, {nonprofitUuid: nonprofit.uuid});
+			promise = promise.then(function () {
+				return nonprofitDonationTiersRepository.batchUpdate(tiers);
+			});
+		});
+
 		return promise;
 	}).then(function () {
 		console.log('seeded nonprofits');

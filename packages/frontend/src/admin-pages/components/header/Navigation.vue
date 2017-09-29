@@ -24,7 +24,7 @@
                     <div class="o-branding__logo">
                         <img alt="Firespring Logo" src="../../assets/svg/firespring-wordmark-white.svg" class="logo svg">
                     </div>
-                    <span class="o-branding__app-name">Giving Day</span>
+                    <span class="o-branding__app-name">Givesource</span>
                 </router-link>
             </div>
 
