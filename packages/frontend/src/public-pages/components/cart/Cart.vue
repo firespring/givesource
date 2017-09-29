@@ -25,9 +25,9 @@
             <div class="wrapper wrapper--sm">
 
                 <form v-on:submit="submit">
-                    <cart-donations v-model="donationAmounts"></cart-donations>
+                    <cart-donations v-model="donationAmounts" :displayTotal="!isCartEmpty"></cart-donations>
 
-                    <fieldset>
+                    <fieldset v-if="!isCartEmpty">
                         <legend>Your Contact & Billing Info</legend>
 
                         <div class="form-item form-item--required">
@@ -149,7 +149,7 @@
                         </div>
                     </fieldset>
 
-                    <fieldset>
+                    <fieldset v-if="!isCartEmpty">
                         <legend>Your Payment Info</legend>
 
                         <div class="form-item form-item--required">
@@ -255,7 +255,7 @@
 
                     </fieldset>
 
-                    <div class="form-actions flex justify-center items-center">
+                    <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
                         <button type="submit" class="btn btn--green btn--round btn--lg">
                             Complete Your Donation
                         </button>
@@ -276,6 +276,8 @@
 	module.exports = {
 		data: function () {
 			return {
+				isCartEmpty: true,
+
 				donationAmounts: {
 					fees: 0,
 					subtotal: 0,
@@ -287,6 +289,19 @@
                 }
             };
         },
+        created: function () {
+			const vue = this;
+
+			vue.isCartEmpty = !vue.$store.state.cartItems.length;
+	        vue.bus.$on('updateCartItemsCount', function () {
+		        vue.isCartEmpty = !vue.$store.state.cartItems.length;
+	        });
+        },
+        beforeDestroy: function () {
+			const vue = this;
+
+	        vue.bus.$off('updateCartItemsCount');
+        },
 		beforeMount: function () {
 			const vue = this;
 
@@ -294,6 +309,9 @@
 			vue.setPageTitle('Your Donations');
 		},
         methods: {
+			prevent: function (event) {
+				event.preventDefault();
+            },
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
@@ -301,6 +319,7 @@
 				vue.$store.commit('clearCartItems');
 				vue.bus.$emit('updateCartItems');
 				vue.bus.$emit('updateCartItemsCount');
+				vue.bus.$emit('updateCartItemsCounter');
 
 				vue.$router.push({ name: 'cart-response' });
             }

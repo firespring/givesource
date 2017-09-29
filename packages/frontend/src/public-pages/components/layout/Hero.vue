@@ -17,11 +17,14 @@
 
 <template>
     <div class="page-hero">
-        <div class="page-hero__title wrapper wrapper--sm">
+        <div class="page-hero__title" :class="{ wrapper: wrap, 'wrapper--sm': wrap }">
+            <div class="page-hero__logo" v-if="hasLogoSlot">
+                <slot name="logo"></slot>
+            </div>
             <slot name="title"></slot>
         </div>
 
-        <div class="page-hero__message">
+        <div class="page-hero__message" v-if="hasMessageSlot">
             <slot></slot>
         </div>
 
@@ -40,9 +43,21 @@
         		backgroundImage: '/assets/temp/hero.jpg',
             }
         },
+        computed: {
+        	hasLogoSlot: function () {
+        		return this.$slots.logo;
+            },
+	        hasMessageSlot: function () {
+		        return this.$slots.default;
+	        }
+        },
         props: {
 	        presentedBy: {
         		type: Boolean,
+                default: false
+            },
+            wrap: {
+	        	type: Boolean,
                 default: false
             }
         }

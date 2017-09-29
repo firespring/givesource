@@ -322,8 +322,12 @@ Donation options overlay
 	font-size: 1.5rem;
 	line-height: 1;
 	cursor: pointer;
-	color: #999;
 	transition: color linear .2s;
+}
+
+.donation-close:link,
+.donation-close:visited {
+	color: #999;
 }
 
 .donation-close:hover,

@@ -26,9 +26,9 @@
 
                 <div class="donation-modal__content">
 
-                    <donation-cart-modal-list-table v-on:close="close"></donation-cart-modal-list-table>
+                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount"></donation-cart-modal-list-table>
 
-                    <div class="donation-footer">
+                    <div class="donation-footer" v-if="displayCheckout">
                         <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></a>
                         <a v-on:click.prevent="helpMoreBtn" href="#" class="btn btn--lite"><strong>Help More Nonprofits</strong></a>
                     </div>
@@ -43,6 +43,11 @@
 
 <script>
     module.exports = {
+    	data: function () {
+    		return {
+    			displayCheckout: true,
+            };
+        },
     	props: {
     		data: {},
 		    zIndex: {
@@ -85,6 +90,11 @@
                 vue.removeModal('donation-cart');
 		        vue.removeBodyClasses('has-donation-overlay');
 		        vue.$router.push({ name: 'search-results' });
+            },
+		    updateCartItemsCount: function (count) {
+		    	const vue = this;
+
+                vue.displayCheckout = count;
             }
         },
         components: {

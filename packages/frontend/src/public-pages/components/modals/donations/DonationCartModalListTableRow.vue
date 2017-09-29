@@ -81,6 +81,7 @@
 
 			    vue.bus.$emit('updateCartItems');
 			    vue.bus.$emit('updateCartItemsCount');
+			    vue.bus.$emit('updateCartItemsCounter');
             }
         }
     };

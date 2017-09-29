@@ -23,7 +23,7 @@
             <cart-donations-list-table></cart-donations-list-table>
         </div>
 
-        <div class="cart-totals">
+        <div class="cart-totals" v-if="displayTotal">
             <div class="cart-totals__subtotal">
                 Your donation subtotal is <strong>{{ subtotal }}</strong>. (<router-link :to="{ name: 'search-results' }">Find another nonprofit to help</router-link>)
             </div>
@@ -80,7 +80,11 @@
             }
         },
         props: {
-    		value: {}
+    		value: {},
+            displayTotal: {
+    			type: Boolean,
+                default: false
+            }
         },
     	created: function () {
     		const vue = this;
