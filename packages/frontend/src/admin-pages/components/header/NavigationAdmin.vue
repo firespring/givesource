@@ -42,12 +42,12 @@
             <!--</router-link>-->
         </ul>
 
-        <select class="js-menubar-nav-select">
-            <option value="#" selected>Donations</option>
-            <option value="#">Nonprofits</option>
-            <option value="#">Sponsors</option>
-            <option value="#">Pages</option>
-            <option value="#">Settings</option>
+        <select v-on:change="mobileSelect"  v-model="selected" >
+            <option value="donations-list">Donations</option>
+            <option value="nonprofits-list">Nonprofits</option>
+            <option value="sponsors-tiers-list">Sponsors</option>
+            <option value="pages-list">Pages</option>
+            <option value="settings-list">Settings</option>
         </select>
 
     </div>
@@ -55,6 +55,18 @@
 
 <script>
     module.exports = {
+    	data: function(){
+    	    return {
+    	    	selected: ''
+            };
+        },
+    	methods:{
+    		mobileSelect: function(){
+                const vue = this;
+                vue.$router.push({name: vue.selected});
+
+            }
+        },
     	props: [
     		'nonprofitUuid'
         ]
