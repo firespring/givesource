@@ -43,6 +43,7 @@
         </ul>
 
         <select v-on:change="mobileSelect"  v-model="selected" >
+            <option disabled value="">Navigation</option>
             <option value="donations-list">Donations</option>
             <option value="nonprofits-list">Nonprofits</option>
             <option value="sponsors-tiers-list">Sponsors</option>
