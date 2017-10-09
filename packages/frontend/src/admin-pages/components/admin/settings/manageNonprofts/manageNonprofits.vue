@@ -1,6 +1,6 @@
 <template>
     <div class="o-app">
-
+            <navigation></navigation>
         <!-- BEGIN app main -->
         <main class="o-app__main o-app__main--compact">
 
@@ -16,7 +16,7 @@
 
                             <nav class="o-page-header-nav c-breadcrumb">
 
-                                <span><a href="../../giving-day-npo/settings/">Settings</a></span>
+                                <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
                             </nav>
                             <h1 class="o-page-header-title">Manage Admins</h1>
                         </div>
