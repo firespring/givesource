@@ -167,6 +167,14 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
+		{
+			path: '/settings/manage-nonprofits',
+			name: 'settings-manage-nonprofits',
+			component: require('./components/admin/settings/manageNonprofts/manageNonprofits.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
 
 		// Sponsors
 		{
