@@ -77,11 +77,18 @@ module.exports = function (env) {
 			PatchUser: './src/api/patchUser/index.js',
 			S3PutObject: './src/api/s3PutObject/index.js',
 			S3SyncObjects: './src/api/s3SyncObjects/index.js',
+			CloudSearchCreateDomain: './src/api/cloudSearchCreateDomain/index.js',
+			CloudSearchDescribeDomain: './src/api/cloudSearchDescribeDomain/index.js',
+			CloudSearchDomainWaitCondition: './src/api/cloudSearchDomainWaitCondition/index.js',
+			CloudSearchUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
 			CognitoCreateUserPool: './src/api/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/api/cognitoCreateUserPoolClient/index.js',
 			CognitoCreateUser: './src/api/cognitoCreateUser/index.js',
 			CognitoCreateGroup: './src/api/cognitoCreateGroup/index.js',
 			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
+
+			HealthCheckDeploy: './src/api/apiGatewayDeploy/index.js',
+			CloudSearchHealth: './src/health/cloudSearch/index.js'
 		},
 		output: {
 			path: path.resolve(__dirname, '../build/functions'),

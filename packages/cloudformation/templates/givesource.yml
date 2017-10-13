@@ -16,19 +16,25 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
-      TimeoutInMinutes: '5'
+      TimeoutInMinutes: 20
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
-      TimeoutInMinutes: '20'
+      TimeoutInMinutes: 20
 
   RestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: !Sub |-
         ${AWS::StackName}
+
+  HealthCheck:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub |-
+        ${AWS::StackName}-Health
 
   LambdaRole:
     Type: AWS::IAM::Role
@@ -42,6 +48,14 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
+      - PolicyName: Lambda
+        PolicyDocument:
+          Statement:
+            - Action:
+              - lambda:InvokeFunction
+              Effect: Allow
+              Resource: !Sub |-
+                arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*
       - PolicyName: CloudWatchLogs
         PolicyDocument:
           Statement:
@@ -61,6 +75,10 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
             - Effect: Allow
               Action: dynamodb:*
@@ -69,11 +87,19 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/stream/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/stream/*
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
@@ -132,6 +158,13 @@ Resources:
                 - cognito-idp:*
                 - iam:PassRole
               Resource: '*'
+      - PolicyName: CloudSearch
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action: cloudsearch:*
+              Resource: !Sub |-
+                arn:aws:cloudsearch:${AWS::Region}:${AWS::AccountId}:domain/*
       - PolicyName: APIGateway
         PolicyDocument:
           Statement:
@@ -150,10 +183,29 @@ Resources:
                 - apigateway:*
               Resource: !Sub |-
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
+      - PolicyName: HealthCheck
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - apigateway:POST
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/restapis/${HealthCheck}/deployments
+            - Effect: Allow
+              Action:
+                - apigateway:*
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/apikeys
+            - Effect: Allow
+              Action:
+                - apigateway:*
+              Resource: !Sub |-
+                arn:aws:apigateway:${AWS::Region}::/apikeys/*
     DependsOn:
       - DynamoDbStack
       - S3Stack
       - RestApi
+      - HealthCheck
 
   S3HandleFunctionRole:
     Type: AWS::IAM::Role
@@ -207,6 +259,19 @@ Resources:
                 - sns:publish
               Resource: '*'
 
+  HealthCheckStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        HealthCheck: !Ref HealthCheck
+        HealthCheckRootResourceId: !GetAtt HealthCheck.RootResourceId
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-health.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - LambdaRole
+
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -216,10 +281,28 @@ Resources:
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-lambda.yml
-      TimeoutInMinutes: '5'
+      TimeoutInMinutes: 20
     DependsOn:
       - LambdaRole
       - S3HandleFunctionRole
+
+  CloudSearchStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        HealthCheckUrl: !Sub |-
+          https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
+        DonationsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonationsTableStreamArn
+        DonorsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonorsTableStreamArn
+        NonprofitsTableStreamArn: !GetAtt DynamoDbStack.Outputs.NonprofitsTableStreamArn
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cloudsearch.yml
+      TimeoutInMinutes: 40
+    DependsOn:
+      - LambdaRole
+      - DynamoDbStack
+      - HealthCheckStack
 
   CustomStack:
     Type: AWS::CloudFormation::Stack
@@ -241,7 +324,7 @@ Resources:
         S3PutObjectFunctionArn: !GetAtt LambdaStack.Outputs.S3PutObjectFunctionArn
         S3SyncObjectsFunctionArn: !GetAtt LambdaStack.Outputs.S3SyncObjectsFunctionArn
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
-      TimeoutInMinutes: '10'
+      TimeoutInMinutes: 20
     DependsOn:
       - DynamoDbStack
       - S3Stack
@@ -308,7 +391,7 @@ Resources:
         PatchUserLambdaFunctionArn: !GetAtt LambdaStack.Outputs.PatchUserLambdaFunctionArn
         ApiGatewayDeployFunctionArn: !GetAtt LambdaStack.Outputs.ApiGatewayDeployFunctionArn
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-gateway.yml
-      TimeoutInMinutes: '20'
+      TimeoutInMinutes: 20
     DependsOn:
       - RestApi
       - CustomStack
@@ -322,6 +405,10 @@ Outputs:
   InvocationUrl:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+
+  HealthCheckUrl:
+    Value: !Sub |-
+      https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn

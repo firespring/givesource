@@ -29,7 +29,11 @@ const nodeEnv = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 
  */
 exports.log = function (message, options) {
 	if (nodeEnv !== 'test') {
-		console.log(message, options);
+		if (options) {
+			console.log(message, options);
+		} else {
+			console.log(message);
+		}
 	}
 };
 
