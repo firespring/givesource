@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
+const Model = require('./model');
 
 /**
  * paymentTransaction constructor

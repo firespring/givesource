@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
-const NonprofitHelper = require('../helpers/nonprofit');
+const Model = require('./model');
+const NonprofitHelper = require('./../helpers/nonprofit');
 
 /**
  * Nonprofit constructor

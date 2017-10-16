@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Donation = require('../models/donation');
-const Repository = require('../repositories/repository');
-const RepositoryHelper = require('../helpers/repository');
+const Donation = require('./../models/donation');
+const Repository = require('./repository');
+const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 
 /**
