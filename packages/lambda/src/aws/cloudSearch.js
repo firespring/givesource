@@ -91,6 +91,77 @@ CloudSearch.prototype.describeDomains = function (domainNames) {
 };
 
 /**
+ * Define a CloudSearch index field
+ *
+ * @param {String} domainName
+ * @param {{}} indexFieldOptions
+ * @return {Promise}
+ */
+CloudSearch.prototype.defineIndexField = function (domainName, indexFieldOptions) {
+	const awsCloudSearch = new AWS.CloudSearch({region: process.env.AWS_REGION});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			DomainName: domainName.toLowerCase(),
+			IndexField: indexFieldOptions,
+		};
+		awsCloudSearch.defineIndexField(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
+ * Define multiple CloudSearch index fields
+ *
+ * @param {String} domainName
+ * @param {Array} indexFieldsOptions
+ * @param {int} [delay]
+ * @return {Promise}
+ */
+CloudSearch.prototype.defineIndexFields = function (domainName, indexFieldsOptions, delay) {
+	const cloudSearch = this;
+	let promise = Promise.resolve();
+	indexFieldsOptions.forEach(function (indexFieldOptions) {
+		promise = promise.then(function () {
+			return cloudSearch.defineIndexField(domainName, indexFieldOptions).then(function () {
+				return new Promise(function (resolve) {
+					if (delay > 0) {
+						setTimeout(resolve, delay);
+					} else {
+						resolve();
+					}
+				});
+			});
+		});
+	});
+	return promise;
+};
+
+/**
+ * Index documents for a CloudSearch domain
+ *
+ * @param {String} domainName
+ * @return {Promise}
+ */
+CloudSearch.prototype.indexDocuments = function (domainName) {
+	const awsCloudSearch = new AWS.CloudSearch({region: process.env.AWS_REGION});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			DomainName: domainName.toLowerCase()
+		};
+		awsCloudSearch.indexDocuments(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
  * Upload documents to CloudSearch
  *
  * @param {String} endpoint

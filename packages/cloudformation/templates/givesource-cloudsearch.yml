@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "AWS Custom resources for Givesource"
+Description: "AWS CloudSearch resources for Givesource"
 Parameters:
 
   StackName:
@@ -41,7 +41,25 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: 30
 
-  CloudSearchDomainWaitConditionLambdaFunction:
+  CloudSearchCreateIndexFieldsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CloudSearchCreateIndexFields.zip
+      Description: "Create CloudSearch index fields"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CloudSearchCreateIndexFields
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CloudSearchHealthWaitConditionLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
@@ -101,6 +119,41 @@ Resources:
         ${StackName}-Nonprofits
     DependsOn: CloudSearchCreateDomainFunction
 
+  CloudSearchDonationsIndexFields:
+    Type: Custom::CloudSearchIndexFields
+    Properties:
+      ServiceToken: !GetAtt CloudSearchCreateIndexFieldsFunction.Arn
+      DomainName: !Sub |-
+        ${StackName}-Donations
+      Model: donation
+    DependsOn:
+      - CloudSearchCreateIndexFieldsFunction
+      - CloudSearchDonationsDomain
+
+  CloudSearchDonorsIndexFields:
+    Type: Custom::CloudSearchIndexFields
+    Properties:
+      ServiceToken: !GetAtt CloudSearchCreateIndexFieldsFunction.Arn
+      DomainName: !Sub |-
+        ${StackName}-Donors
+      Model: donor
+    DependsOn:
+      - CloudSearchCreateIndexFieldsFunction
+      - CloudSearchDonorsDomain
+      - CloudSearchDonationsIndexFields
+
+  CloudSearchNonprofitsIndexFields:
+    Type: Custom::CloudSearchIndexFields
+    Properties:
+      ServiceToken: !GetAtt CloudSearchCreateIndexFieldsFunction.Arn
+      DomainName: !Sub |-
+        ${StackName}-Nonprofits
+      Model: nonprofit
+    DependsOn:
+      - CloudSearchCreateIndexFieldsFunction
+      - CloudSearchNonprofitsDomain
+      - CloudSearchDonorsIndexFields
+
   CloudSearchDomainWaitConditionHandle:
     Type: AWS::CloudFormation::WaitConditionHandle
 
@@ -112,16 +165,16 @@ Resources:
       Timeout: 2700
     DependsOn:
       - CloudSearchDomainWaitConditionHandle
-      - CloudSearchDomainWaitConditionLambdaFunction
+      - CloudSearchHealthWaitConditionLambdaFunction
 
   CloudSearchDomainWaitConditionRecursive:
     Type: Custom::CloudSearchDomainWaitConditionRecursive
     Properties:
-      ServiceToken: !GetAtt CloudSearchDomainWaitConditionLambdaFunction.Arn
+      ServiceToken: !GetAtt CloudSearchHealthWaitConditionLambdaFunction.Arn
       CallbackUrl: !Ref CloudSearchDomainWaitConditionHandle
       HealthCheckUrl: !Ref HealthCheckUrl
       ReportStatusToCloudFormation: true
-    DependsOn: CloudSearchDomainWaitConditionLambdaFunction
+    DependsOn: CloudSearchHealthWaitConditionLambdaFunction
 
   CloudSearchDescribeDonationsDomain:
     Type: Custom::CloudSearchDescribeDonationsDomain

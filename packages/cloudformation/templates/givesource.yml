@@ -436,3 +436,21 @@ Outputs:
 
   UserPoolClientId:
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
+
+  CloudSearchDonationsDocServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsDocServiceEndpoint
+
+  CloudSearchDonationsSearchServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsSearchServiceEndpoint
+
+  CloudSearchDonorssDocServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorssDocServiceEndpoint
+
+  CloudSearchDonorsSearchServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorsSearchServiceEndpoint
+
+  CloudSearchNonprofitsDocServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsDocServiceEndpoint
+
+  CloudSearchNonprofitsSearchServiceEndpoint:
+    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsSearchServiceEndpoint

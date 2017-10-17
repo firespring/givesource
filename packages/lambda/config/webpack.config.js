@@ -78,6 +78,7 @@ module.exports = function (env) {
 			S3PutObject: './src/api/s3PutObject/index.js',
 			S3SyncObjects: './src/api/s3SyncObjects/index.js',
 			CloudSearchCreateDomain: './src/api/cloudSearchCreateDomain/index.js',
+			CloudSearchCreateIndexFields: './src/api/cloudSearchCreateIndexFields/index.js',
 			CloudSearchDescribeDomain: './src/api/cloudSearchDescribeDomain/index.js',
 			CloudSearchDomainWaitCondition: './src/api/cloudSearchDomainWaitCondition/index.js',
 			CloudSearchUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
