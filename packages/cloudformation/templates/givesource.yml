@@ -203,9 +203,9 @@ Resources:
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
     DependsOn:
       - DynamoDbStack
-      - S3Stack
-      - RestApi
       - HealthCheck
+      - RestApi
+      - S3Stack
 
   S3HandleFunctionRole:
     Type: AWS::IAM::Role
@@ -279,12 +279,10 @@ Resources:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-lambda.yml
       TimeoutInMinutes: 20
     DependsOn:
       - LambdaRole
-      - S3HandleFunctionRole
 
   CloudSearchStack:
     Type: AWS::CloudFormation::Stack
@@ -300,9 +298,9 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cloudsearch.yml
       TimeoutInMinutes: 40
     DependsOn:
-      - LambdaRole
       - DynamoDbStack
       - HealthCheckStack
+      - LambdaRole
 
   CustomStack:
     Type: AWS::CloudFormation::Stack
@@ -310,25 +308,21 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
-        AdminEmail: !Ref AdminEmail
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
+        S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
         AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
         PublicPagesS3: !GetAtt S3Stack.Outputs.PublicPagesS3
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
-        CognitoCreateUserPoolFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserPoolFunctionArn
-        CognitoCreateUserFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserFunctionArn
-        CognitoCreateUserGroupFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserGroupFunctionArn
-        CognitoCreateUserPoolClientFunctionArn: !GetAtt LambdaStack.Outputs.CognitoCreateUserPoolClientFunctionArn
-        S3PutObjectFunctionArn: !GetAtt LambdaStack.Outputs.S3PutObjectFunctionArn
-        S3SyncObjectsFunctionArn: !GetAtt LambdaStack.Outputs.S3SyncObjectsFunctionArn
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CognitoSnsCallerRole
       - DynamoDbStack
+      - LambdaRole
+      - S3HandleFunctionRole
       - S3Stack
-      - LambdaStack
 
   ApiGatewayStack:
     Type: AWS::CloudFormation::Stack
@@ -393,9 +387,24 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-gateway.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - RestApi
       - CustomStack
       - LambdaStack
+      - RestApi
+
+  CognitoInitialUser:
+    Type: Custom::CognitoSuperAdminUser
+    Properties:
+      ServiceToken: !GetAtt CustomStack.Outputs.CognitoCreateUserFunctionArn
+      UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
+      Email: !Ref AdminEmail
+    DependsOn:
+      - ApiGatewayStack
+      - CustomStack
+      - CloudSearchStack
+      - DynamoDbStack
+      - HealthCheckStack
+      - LambdaStack
+      - S3Stack
 
 Outputs:
 

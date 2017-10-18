@@ -12,9 +12,6 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
-  S3HandleFunctionRoleArn:
-    Type: String
-
 Resources:
 
   GetDonationLambdaFunction:
@@ -1543,114 +1540,6 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: 30
 
-  CognitoCreateUserPoolFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CognitoCreateUserPool.zip
-      Description: "Create a user pool"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-CognitoCreateUserPool
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
-  CognitoCreateUserPoolClientFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CognitoCreateUserPoolClient.zip
-      Description: "Create a user pool client"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-CognitoCreateUserPoolClient
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
-  CognitoCreateUserFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CognitoCreateUser.zip
-      Description: "Create a user"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-CognitoCreateUser
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
-  CognitoCreateUserGroupFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CognitoCreateUserGroup.zip
-      Description: "Create a user group"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-CognitoCreateUserGroup
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
-  S3PutObjectFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/S3PutObject.zip
-      Description: "Put an object into an AWS S3 bucket"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-S3PutObject
-      Handler: "index.handle"
-      Role: !Ref S3HandleFunctionRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
-  S3SyncObjectsFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/S3SyncObjects.zip
-      Description: "Sync S3 objects between two AWS S3 buckets"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-S3SyncObjects
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: 30
-
 Outputs:
 
   GetDonationLambdaFunctionArn:
@@ -1811,21 +1700,3 @@ Outputs:
 
   ApiGatewayDeployFunctionArn:
     Value: !GetAtt ApiGatewayDeployFunction.Arn
-
-  CognitoCreateUserPoolFunctionArn:
-    Value: !GetAtt CognitoCreateUserPoolFunction.Arn
-
-  CognitoCreateUserPoolClientFunctionArn:
-    Value: !GetAtt CognitoCreateUserPoolClientFunction.Arn
-
-  CognitoCreateUserFunctionArn:
-    Value: !GetAtt CognitoCreateUserFunction.Arn
-
-  CognitoCreateUserGroupFunctionArn:
-    Value: !GetAtt CognitoCreateUserGroupFunction.Arn
-
-  S3PutObjectFunctionArn:
-    Value: !GetAtt S3PutObjectFunction.Arn
-
-  S3SyncObjectsFunctionArn:
-    Value: !GetAtt S3SyncObjectsFunction.Arn

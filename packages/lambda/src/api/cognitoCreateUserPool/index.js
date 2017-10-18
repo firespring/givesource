@@ -23,7 +23,7 @@ exports.handle = function (event, context, callback) {
 	logger.log('cognitoCreateUserPool event: %j', event);
 
 	const poolName = event.ResourceProperties.PoolName;
-	const adminPageUrl = event.ResourceProperties.AdminPageUrl;
+	const adminPageUrl = event.ResourceProperties.AdminPagesUrl;
 	const snsCallerArn = event.ResourceProperties.SnsCallerArn;
 
 	const cognito = new Cognito();
