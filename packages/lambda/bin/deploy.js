@@ -16,48 +16,50 @@
  */
 
 const dotenv = require('dotenv');
-const exec = require('child_process').exec;
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const fs = require('fs');
 const fuzzy = require('fuzzy');
 const inquirer = require('inquirer');
+const Lambda = require('./../src/aws/lambda');
 const path = require('path');
 
-dotenv.config({path: `${__dirname}/../../../.env`});
-
+const stackName = process.env.AWS_STACK_NAME;
 const buildDirectory = path.normalize(`${__dirname}/../build`);
 const functionsDirectory = path.normalize(`${buildDirectory}/functions`);
 
 /**
- * Deploy a lambda function using apex
+ * Deploy a lambda function
  *
  * @param {String} functionName
  * @return {Promise}
  */
 const deploy = function (functionName) {
-	return new Promise(function (resolve, reject) {
-		const options = {
-			cwd: buildDirectory,
-			maxBuffer: 100 * 1024 * 1024,
-			timeout: 10 * 1000
-		};
-		exec(`/usr/local/bin/apex deploy ${functionName}`, options, function (err) {
-			if (err) {
-				return reject(err);
-			}
-			resolve();
-		});
+	const lambda = new Lambda();
+	const deployedFunctionName = `${stackName}-${functionName}`;
+
+	return lambda.getFunction(deployedFunctionName).then(function () {
+		const filepath = `${buildDirectory}/${functionName}.zip`;
+		const data = fs.readFileSync(filepath);
+		const zipFile = new Buffer(data, 'binary');
+		return lambda.updateFunctionCode(deployedFunctionName, zipFile);
+	}).catch(function (err) {
+		console.log(err);
 	});
 };
 
+
+
+
 /**
- * Batch deploy all lambda functions using apex
+ * Batch deploy all lambda functions
  *
  * @param {[]} functions
  * @param {int} [retries]
  * @return {Promise}
  */
 const batchDeploy = function (functions, retries) {
-	retries = retries || 3;
+	retries = (retries > -1) ? retries : 3;
 	return new Promise(function (resolve, reject) {
 		const failed = [];
 		let promise = Promise.resolve();

@@ -17,6 +17,7 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
+const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
 
 dotenv.config({path: `${__dirname}/../../../.env`});
 
@@ -81,11 +82,13 @@ module.exports = function (env) {
 			CloudSearchCreateIndexFields: './src/api/cloudSearchCreateIndexFields/index.js',
 			CloudSearchDescribeDomain: './src/api/cloudSearchDescribeDomain/index.js',
 			CloudSearchDomainWaitCondition: './src/api/cloudSearchDomainWaitCondition/index.js',
-			CloudSearchUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
+			CloudSearchDonationsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
+			CloudSearchDonorsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
+			CloudSearchNonprofitsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
+			CognitoCreateUserGroup: './src/api/cognitoCreateUserGroup/index.js',
 			CognitoCreateUserPool: './src/api/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/api/cognitoCreateUserPoolClient/index.js',
 			CognitoCreateUser: './src/api/cognitoCreateUser/index.js',
-			CognitoCreateGroup: './src/api/cognitoCreateGroup/index.js',
 			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
 
 			HealthCheckDeploy: './src/api/apiGatewayDeploy/index.js',
@@ -107,6 +110,14 @@ module.exports = function (env) {
 				}
 			]
 		},
+		plugins: [
+			new WebpackBundlePlugin({
+				output: path.resolve(__dirname, '../build'),
+				assetName: function (asset) {
+					return asset.substr(asset.indexOf('/'), asset.length - 1);
+				}
+			})
+		],
 		resolve: {
 			modules: [path.resolve(__dirname, '../src'), 'node_modules']
 		}

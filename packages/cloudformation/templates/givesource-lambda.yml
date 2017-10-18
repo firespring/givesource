@@ -1603,7 +1603,7 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CognitoCreateGroup.zip
+        S3Key: fn/{{version}}/CognitoCreateUserGroup.zip
       Description: "Create a user group"
       Environment:
         Variables:

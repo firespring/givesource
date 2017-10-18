@@ -212,7 +212,7 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CloudSearchUploadDocuments.zip
+        S3Key: fn/{{version}}/CloudSearchDonationsUploadDocuments.zip
       Description: "Upload donation records to CloudSearch"
       Environment:
         Variables:
@@ -232,7 +232,7 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CloudSearchUploadDocuments.zip
+        S3Key: fn/{{version}}/CloudSearchDonorsUploadDocuments.zip
       Description: "Upload donor records to CloudSearch"
       Environment:
         Variables:
@@ -252,7 +252,7 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CloudSearchUploadDocuments.zip
+        S3Key: fn/{{version}}/CloudSearchNonprofitsUploadDocuments.zip
       Description: "Upload nonprofit records to CloudSearch"
       Environment:
         Variables:
