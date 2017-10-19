@@ -197,6 +197,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Save Changes</button>
+                        <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
 
                 </form>
