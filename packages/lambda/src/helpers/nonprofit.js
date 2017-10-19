@@ -15,7 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const slug = require('slug');
+
 exports.STATUS_ACTIVE = 'ACTIVE';
 exports.STATUS_DENIED = 'DENIED';
 exports.STATUS_PENDING = 'PENDING';
 exports.STATUS_REVOKED = 'REVOKED';
+
+/**
+ * Generate a slug from a string
+ *
+ * @param {String} string
+ */
+exports.generateSlug = function (string) {
+	return slug(string, {lower: true});
+};

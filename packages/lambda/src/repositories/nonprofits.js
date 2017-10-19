@@ -16,11 +16,11 @@
  */
 
 const Nonprofit = require('./../models/nonprofit');
-const QueryBuilder = require('./../../src/aws/queryBuilder');
+const NonprofitHelper = require('./../helpers/nonprofit');
+const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./../repositories/repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const SlugHelper = require('./../helpers/slug');
 
 /**
  * NonprofitsRepository constructor
@@ -124,38 +124,72 @@ NonprofitsRepository.prototype.save = function (model) {
 };
 
 /**
- * Query Nonprofit Slug
+ * Generate a unique slug for this nonprofit
+ *
+ * @param {Nonprofit} model
+ * @param {String} [slug]
+ * @param {int} [attemptCount]
+ * @param {int} [maxTries]
+ * @return {Promise}
+ */
+NonprofitsRepository.prototype.generateUniqueSlug = function (model, slug, attemptCount, maxTries) {
+	const repository = this;
+	slug = slug || null;
+	attemptCount = (attemptCount > 0) ? attemptCount : 0;
+	maxTries = (maxTries > 0) ? maxTries : 3;
+	return new Promise(function (resolve, reject) {
+		if (!(model instanceof Nonprofit)) {
+			reject(new Error('invalid Nonprofit model'));
+		}
+
+		if (attemptCount > maxTries) {
+			reject(new Error('unable to generate slug'));
+		}
+
+		if (slug && attemptCount === 0) {
+			model.slug = slug;
+		} else if (slug && attemptCount > 0) {
+			model.slug = `${slug}-${attemptCount}`;
+		} else {
+			model.slug = NonprofitHelper.generateSlug(model.legalName);
+			slug = model.slug;
+		}
+
+		repository.validateSlugUniqueness(model).then(function () {
+			resolve();
+		}).catch(function () {
+			resolve(repository.generateUniqueSlug(model, slug, attemptCount + 1, maxTries));
+		});
+	});
+};
+
+/**
+ * Validates the uniqueness of a nonprofit's slug
  *
  * @param {Nonprofit} model
  * @return {Promise}
  */
-NonprofitsRepository.prototype.querySlug = function (model) {
+NonprofitsRepository.prototype.validateSlugUniqueness = function (model) {
 	const repository = this;
-	const builder = new QueryBuilder('query');
-	builder.index('slugIndex');
-
 	return new Promise(function (resolve, reject) {
 		if (!(model instanceof Nonprofit)) {
-			reject(new Error('invalid Nonprofit index'));
+			reject(new Error('invalid Nonprofit model'));
 		}
-		model.validate().then(function () {
-			repository.query(builder).then(function (data) {
-				for (let slipperySlug in data) {
-					if (model.attributes.slug === data[slipperySlug].slug || model.attributes.slug === '' || model.attributes.slug === null || model.attributes.slug === 'undefined') {
-						SlugHelper.generateSlug(model, 0, data, function (slug) {
-							model.slug = slug;
-						});
+		const builder = new QueryBuilder('query');
+		builder.index('slugIndex').condition('slug', '=', model.slug).filter('uuid', '!=', model.uuid);
+		repository.query(builder).then(function (results) {
+			if (results.hasOwnProperty('Count') && results.hasOwnProperty('Items') && results.Count > 0) {
+				results.Items.forEach(function (data) {
+					if (data.uuid !== model.uuid) {
+						reject(new Error('slug is not unique'));
 					}
-				}
-				resolve(new Nonprofit(model));
-			}).catch(function (err) {
-				reject(err);
-			});
+				});
+			}
+			resolve();
 		}).catch(function (err) {
 			reject(err);
 		});
 	});
-
 };
 
 module.exports = NonprofitsRepository;
