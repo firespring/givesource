@@ -1,6 +1,6 @@
 ---
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "AWS S3 resources for Givesource"
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS S3 resources for Givesource
 Resources:
 
   AdminPagesS3:
@@ -114,22 +114,22 @@ Resources:
 
 Outputs:
 
+  AdminPagesCloudFrontUrl:
+    Value: !Sub |-
+      https://${AdminPagesDistribution.DomainName}
+
   AdminPagesS3:
     Value: !Ref AdminPagesS3
 
   AdminPagesS3BucketUrl:
     Value: !GetAtt AdminPagesS3.WebsiteURL
 
-  AdminPagesCloudFrontUrl:
+  PublicPagesCloudFrontUrl:
     Value: !Sub |-
-      https://${AdminPagesDistribution.DomainName}
-
-  PublicPagesS3BucketUrl:
-    Value: !GetAtt PublicPagesS3.WebsiteURL
+      https://${PublicPagesDistribution.DomainName}
 
   PublicPagesS3:
     Value: !Ref PublicPagesS3
 
-  PublicPagesCloudFrontUrl:
-    Value: !Sub |-
-      https://${PublicPagesDistribution.DomainName}
+  PublicPagesS3BucketUrl:
+    Value: !GetAtt PublicPagesS3.WebsiteURL

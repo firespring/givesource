@@ -1,6 +1,6 @@
 ---
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "AWS Custom resources for Givesource"
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS Custom resources for Givesource
 Parameters:
 
   StackName:
