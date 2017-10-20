@@ -59,6 +59,28 @@ NonprofitsRepository.prototype.get = function (uuid) {
 };
 
 /**
+ * Get a Nonprofit by slug
+ *
+ * @param {String} slug
+ * @return {Promise}
+ */
+NonprofitsRepository.prototype.getBySlug = function (slug) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		const builder = new QueryBuilder('query');
+		builder.index('slugIndex').condition('slug', '=', slug);
+		repository.query(builder).then(function (results) {
+			if (results.hasOwnProperty('Count') && results.hasOwnProperty('Items') && results.Count === 1) {
+				resolve(new Nonprofit(results.Items[0]));
+			}
+			reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Get all Nonprofits
  *
  * @return {Promise}
