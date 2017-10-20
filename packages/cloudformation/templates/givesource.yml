@@ -320,9 +320,11 @@ Resources:
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        CloudSearchDonationsSearchServiceEndpoint: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsSearchServiceEndpoint
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CloudSearchStack
       - LambdaRole
       - RestApi
 

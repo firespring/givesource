@@ -67,7 +67,7 @@
 			const vue = this;
 
 			axios.get(API_URL + 'donations').then(function (response) {
-				vue.donations = response.data;
+				vue.donations = response.data.items;
 				return axios.get(API_URL + 'donors');
 			}).then(function (response) {
 				vue.donors = response.data;
