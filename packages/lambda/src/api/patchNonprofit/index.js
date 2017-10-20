@@ -30,6 +30,8 @@ exports.handle = function (event, context, callback) {
 	}).then(function (result) {
 		nonprofit = new Nonprofit(result);
 		nonprofit.populate(request._body);
+		return repository.generateUniqueSlug(nonprofit, request.get('slug'));
+	}).then(function () {
 		return nonprofit.validate();
 	}).then(function () {
 		return repository.save(nonprofit);
