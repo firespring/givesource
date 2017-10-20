@@ -38,7 +38,7 @@
 
                     <div class="c-form-control-grid u-items-center" v-if="!editSlug">
                         <div class="c-form-control-grid__item u-flex-collapse">
-                            {{ pageLink }}{{ formData.slug }}
+                            {{ pageLink }}{{ nonprofit.slug }}
                         </div>
                         <div class="c-form-control-grid__item u-flex-collapse">
                             <a v-on:click="changeSlug" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--neutral">Change</a>
@@ -177,7 +177,7 @@
 						console.log(response.data);
 					}
 					vue.editSlug = false;
-					vue.formData = response.data;
+					vue.$emit('updateNonprofit', response.data);
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
