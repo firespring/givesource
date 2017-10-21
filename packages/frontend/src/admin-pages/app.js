@@ -135,6 +135,8 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
+
+		// Admin - Settings
 		{
 			path: '/settings',
 			name: 'settings-list',
@@ -171,6 +173,14 @@ const router = new VueRouter({
 			path: '/settings/manage-nonprofits',
 			name: 'settings-manage-nonprofits',
 			component: require('./components/admin/settings/manageNonprofts/manageNonprofits.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/invite-nonprofits',
+			name: 'settings-invite-nonprofits',
+			component: require('./components/admin/settings/manageNonprofts/inviteNonprofits.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
