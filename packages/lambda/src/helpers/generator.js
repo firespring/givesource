@@ -276,7 +276,7 @@ Generator.prototype.data = function (type, data) {
  */
 Generator.prototype.model = function (type, data) {
 	this._validateType(type);
-	const Model = require(`../../src/models/${type}`);
+	const Model = require(`./../models/${type}`);
 	return new Model(this.data(type, data));
 };
 

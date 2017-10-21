@@ -38,7 +38,7 @@
                                 <label for="orgLegalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="orgLegalName" id="orgLegalName">
+                                <input type="text" name="orgLegalName" id="orgLegalName" required>
                             </div>
                         </div>
 
@@ -47,7 +47,7 @@
                                 <label for="taxId">Tax ID</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="taxId" id="taxId">
+                                <input type="text" name="taxId" id="taxId" required>
                             </div>
                         </div>
 
@@ -72,7 +72,7 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="email" name="contactEmail" id="contactEmail">
+                                <input type="email" name="contactEmail" id="contactEmail" required>
                             </div>
                         </div>
 
@@ -83,7 +83,7 @@
                             <div class="form-item__control">
 
                                 <div class="address1">
-                                    <input type="text" name="orgAddress1" id="orgAddress1" placeholder="Address Line 1">
+                                    <input type="text" name="orgAddress1" id="orgAddress1" placeholder="Address Line 1" required>
                                 </div>
 
                                 <div class="address2">
@@ -97,11 +97,11 @@
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input type="text" name="orgCity" id="orgCity" placeholder="City" required="">
+                                        <input type="text" name="orgCity" id="orgCity" placeholder="City" required>
                                     </div>
 
                                     <div class="city-state-zip__state select-wrap">
-                                        <select name="orgState" id="orgState" required="">
+                                        <select name="orgState" id="orgState" required>
                                             <option value="">State</option>
                                             <option value="" disabled="disabled">-----</option>
                                             <option value="AL">Alabama</option>
@@ -171,7 +171,7 @@
                                 <label for="orgPhone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="tel" name="orgPhone" id="orgPhone">
+                                <input type="tel" name="orgPhone" id="orgPhone" required>
                             </div>
                         </div>
 

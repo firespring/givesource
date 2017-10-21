@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
-const NonprofitHelper = require('../helpers/nonprofit');
+const Model = require('./model');
+const NonprofitHelper = require('./../helpers/nonprofit');
 
 /**
  * Nonprofit constructor
@@ -154,6 +154,86 @@ Nonprofit.prototype.defaults = function () {
 		donationsSum: 0,
 		status: NonprofitHelper.STATUS_PENDING
 	};
+};
+
+/**
+ * CloudSearch index fields for this model
+ *
+ * @return {{}}
+ */
+Nonprofit.prototype.cloudSearchIndexFields = {
+	address1: {
+		IndexFieldName: 'address1',
+		IndexFieldType: 'text',
+	},
+	address2: {
+		IndexFieldName: 'address2',
+		IndexFieldType: 'text'
+	},
+	address3: {
+		IndexFieldName: 'address3',
+		IndexFieldType: 'text',
+	},
+	category1: {
+		IndexFieldName: 'category1',
+		IndexFieldType: 'text',
+	},
+	category2: {
+		IndexFieldName: 'category2',
+		IndexFieldType: 'text',
+	},
+	category3: {
+		IndexFieldName: 'category3',
+		IndexFieldType: 'text',
+	},
+	city: {
+		IndexFieldName: 'city',
+		IndexFieldType: 'text',
+	},
+	donationsCount: {
+		IndexFieldName: 'donations_count',
+		IndexFieldType: 'int',
+	},
+	donationsSum: {
+		IndexFieldName: 'donations_sum',
+		IndexFieldType: 'int',
+	},
+	legalName: {
+		IndexFieldName: 'legal_name',
+		IndexFieldType: 'text',
+	},
+	longDescription: {
+		IndexFieldName: 'long_description',
+		IndexFieldType: 'text',
+	},
+	phone: {
+		IndexFieldName: 'phone',
+		IndexFieldType: 'text',
+	},
+	shortDescription: {
+		IndexFieldName: 'short_description',
+		IndexFieldType: 'text',
+	},
+	slug: {
+		IndexFieldName: 'slug',
+		IndexFieldType: 'text',
+	},
+	state: {
+		IndexFieldName: 'state',
+		IndexFieldType: 'text',
+	},
+	status: {
+		IndexFieldName: 'status',
+		IndexFieldType: 'text',
+	},
+	taxId: {
+		IndexFieldName: 'tax_id',
+		IndexFieldType: 'text',
+	},
+	zip: {
+		IndexFieldName: 'zip',
+		IndexFieldType: 'text',
+	}
 };
 
 module.exports = Nonprofit;

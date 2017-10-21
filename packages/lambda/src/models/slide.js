@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
-const SlideHelper = require('../helpers/slide');
+const Model = require('./model');
+const SlideHelper = require('./../helpers/slide');
 
 /**
  * Slide constructor

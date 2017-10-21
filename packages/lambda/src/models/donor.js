@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
+const Model = require('./model');
 
 /**
  * Donor constructor
@@ -92,6 +92,50 @@ Donor.prototype.constraints = {
 	zip: {
 		presence: true,
 		type: 'string|number'
+	}
+};
+
+/**
+ * CloudSearch index fields for this model
+ *
+ * @return {{}}
+ */
+Donor.prototype.cloudSearchIndexFields = {
+	address1: {
+		IndexFieldName: 'address1',
+		IndexFieldType: 'text',
+	},
+	address2: {
+		IndexFieldName: 'address2',
+		IndexFieldType: 'text',
+	},
+	city: {
+		IndexFieldName: 'city',
+		IndexFieldType: 'text',
+	},
+	email: {
+		IndexFieldName: 'email',
+		IndexFieldType: 'text',
+	},
+	name: {
+		IndexFieldName: 'name',
+		IndexFieldType: 'text',
+	},
+	phone: {
+		IndexFieldName: 'phone',
+		IndexFieldType: 'text',
+	},
+	state: {
+		IndexFieldName: 'state',
+		IndexFieldType: 'text',
+	},
+	totalAmountInCents: {
+		IndexFieldName: 'total_amount_in_cents',
+		IndexFieldType: 'int',
+	},
+	zip: {
+		IndexFieldName: 'zip',
+		IndexFieldType: 'text',
 	}
 };
 

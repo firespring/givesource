@@ -25,9 +25,22 @@
         </tr>
         </thead>
 
-        <tbody>
+        <tbody v-if="cartItems.length">
         <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
                                        v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></cart-donations-list-table-row>
+        </tbody>
+
+        <tbody v-else>
+        <tr>
+            <td colspan="3" class="text-c">
+                <p>
+                    <strong>You haven't added any donations yet.</strong>
+                </p>
+                <p>
+                    <router-link :to="{ name: 'search-results' }" class="btn btn--blue">Find a Nonprofit to Help</router-link>
+                </p>
+            </td>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -65,6 +78,7 @@
 
 				vue.bus.$emit('updateCartItems');
 				vue.bus.$emit('updateCartItemsCount');
+				vue.bus.$emit('updateCartItemsCounter');
 			}
 		},
         components: {

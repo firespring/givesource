@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Slide = require('../models/slide');
-const NonprofitRepository = require('../repositories/nonprofits');
-const QueryBuilder = require('../aws/queryBuilder');
-const Repository = require('../repositories/repository');
-const RepositoryHelper = require('../helpers/repository');
+const Slide = require('./../models/slide');
+const NonprofitRepository = require('./nonprofits');
+const QueryBuilder = require('./../aws/queryBuilder');
+const Repository = require('./repository');
+const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 
 /**

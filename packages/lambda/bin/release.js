@@ -16,13 +16,12 @@
  */
 
 const dotenv = require('dotenv');
-const execSync  = require('child_process').execSync;
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const fs = require('fs');
 const path = require('path');
 const packageJson = require('../../../package.json');
 const S3 = require('../src/aws/s3');
-
-dotenv.config({path: `${__dirname}/../../../.env`});
 
 const buildDirectory = path.normalize(`${__dirname}/../build`);
 const functionsDirectory = path.normalize(`${buildDirectory}/functions`);
@@ -51,20 +50,6 @@ const validateEnv = function () {
 		process.exit(1);
 	}
 	return true;
-};
-
-/**
- * Build lambda function zip with Apex
- *
- * @param {String} functionName
- */
-const buildFunction = function (functionName) {
-	const command = `/usr/local/bin/apex build ${functionName} > ${functionName}.zip`;
-	const options = {
-		cwd: buildDirectory,
-		maxBuffer: 100 * 1024 * 1024
-	};
-	execSync(command, options);
 };
 
 /**
@@ -113,11 +98,6 @@ const upload = function (region) {
  */
 const release = function (force) {
 	force = (typeof force === 'boolean') ? force : false;
-	const functions = fs.readdirSync(functionsDirectory);
-	functions.forEach(function (func) {
-		buildFunction(func);
-	});
-
 	awsLambdaReleaseBucketAvailableRegions.split('|').forEach(function (region) {
 		functionsExist(region).then(function () {
 			upload(region);

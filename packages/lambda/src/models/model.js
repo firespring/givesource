@@ -57,6 +57,13 @@ Model.prototype.defaults = function () {
 };
 
 /**
+ * CloudSearch index fields for this model
+ *
+ * @type {{}}
+ */
+Model.prototype.cloudSearchIndexFields = {};
+
+/**
  * Base Model attributes
  *
  * @type {[]}
@@ -99,6 +106,23 @@ Model.prototype._defaults = function () {
 };
 
 /**
+ * Base CloudSearch index fields
+ *
+ * @type {{}}
+ * @private
+ */
+Model.prototype._cloudSearchIndexFields = {
+	createdOn: {
+		IndexFieldName: 'created_on',
+		IndexFieldType: 'int',
+	},
+	uuid: {
+		IndexFieldName: 'uuid',
+		IndexFieldType: 'text',
+	}
+};
+
+/**
  * Get all attributes for this model
  *
  * @return {[]}
@@ -123,6 +147,13 @@ Model.prototype.getConstraints = function () {
  */
 Model.prototype.getDefaults = function () {
 	return _.extend({}, this._defaults(), this.defaults());
+};
+
+/**
+ * Get all CloudSearch index fields for this model
+ */
+Model.prototype.getCloudSearchIndexFields = function () {
+	return _.extend({}, this._cloudSearchIndexFields, this.cloudSearchIndexFields);
 };
 
 /**

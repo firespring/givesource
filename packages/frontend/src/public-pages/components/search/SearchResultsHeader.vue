@@ -24,7 +24,7 @@
                     <div class="grid-item grid-item--expand">
                         <div class="select-wrap">
                             <select id="categoryId" name="categoryId" class="sm">
-                                <option>Select a Nonprofit Category</option>
+                                <option>Select by Category</option>
                                 <option value="">-----</option>
                                 <option value="1">Category #1</option>
                                 <option value="2">Category #2</option>

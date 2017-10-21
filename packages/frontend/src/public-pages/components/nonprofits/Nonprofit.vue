@@ -18,6 +18,7 @@
 <template>
     <div>
         <layout-hero>
+            <img slot="logo" width="320" height="140" alt="Cheshire County Hygiene Services logo" src="/assets/temp/sponsors/cheshire-county-hygiene-services.png">
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
         </layout-hero>
 

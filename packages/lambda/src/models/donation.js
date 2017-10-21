@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Model = require('../models/model');
+const Model = require('./model');
 
 /**
  * Donation constructor
@@ -105,6 +105,50 @@ Donation.prototype.defaults = function () {
 		isFeeCovered: false,
 		isOfflineDonation: false
 	};
+};
+
+/**
+ * CloudSearch index fields for this model
+ *
+ * @return {{}}
+ */
+Donation.prototype.cloudSearchIndexFields = {
+	amountInCents: {
+		IndexFieldName: 'amount_in_cents',
+		IndexFieldType: 'int',
+	},
+	donorUuid: {
+		IndexFieldName: 'donor_uuid',
+		IndexFieldType: 'text',
+	},
+	feesInCents: {
+		IndexFieldName: 'fees_in_cents',
+		IndexFieldType: 'int',
+	},
+	isAnonymous: {
+		IndexFieldName: 'is_anonymous',
+		IndexFieldType: 'int',
+	},
+	isFeeCovered: {
+		IndexFieldName: 'is_fee_covered',
+		IndexFieldType: 'int',
+	},
+	isOfflineDonation: {
+		IndexFieldName: 'is_offline_donation',
+		IndexFieldType: 'int',
+	},
+	nonprofitUuid: {
+		IndexFieldName: 'nonprofit_uuid',
+		IndexFieldType: 'text',
+	},
+	paymentTransactionUuid: {
+		IndexFieldName: 'payment_transaction_uuid',
+		IndexFieldType: 'text',
+	},
+	totalInCents: {
+		IndexFieldName: 'total_in_cents',
+		IndexFieldType: 'int',
+	}
 };
 
 module.exports = Donation;

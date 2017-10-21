@@ -775,12 +775,13 @@ Primary elements
 ---------------------------------------------------------------------------- */
 
 body {
-	background-color: #e5e5e5;
+	background-color: #fff;
 	color: #2a2a28;
 	margin: 0;
 }
 
 .main {
+	background-color: #e5e5e5;
 	padding: 1rem;
 }
 
@@ -1546,10 +1547,6 @@ Spotlight box
 		font-size: 1.75rem;
 	}
 
-	.main__spotlight .day-totals__numbers .number {
-		width: 1.75em;
-	}
-
 }
 
 /* Countdown
@@ -1722,8 +1719,12 @@ th:first-child {
 }
 
 tbody td {
-	border-bottom: 1px solid #b6b8b1;
+	border-top: 1px solid #b6b8b1;
 	padding: 12px 16px;
+}
+
+tbody tr:first-child td {
+	border: 0;
 }
 
 tfoot td {

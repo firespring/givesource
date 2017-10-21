@@ -148,6 +148,8 @@ exports.refreshSession = function (callback) {
 				cognitoUser.refreshSession(session.getRefreshToken(), callback);
 			}
 		});
+	} else {
+		callback(true);
 	}
 };
 

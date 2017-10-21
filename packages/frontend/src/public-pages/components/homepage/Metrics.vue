@@ -26,13 +26,13 @@
                     <div class="number">4</div>
                     <div class="number">6</div>
                 </div>
-                <div>donations so far, totaling</div>
+                <div>donations for</div>
                 <div class="day-totals__numbers">
-                    <div>$</div>
+                    <div class="text">$</div>
                     <div class="number">2</div>
                     <div class="number">1</div>
                     <div class="number">5</div>
-                    <div>,</div>
+                    <div class="text">,</div>
                     <div class="number">0</div>
                     <div class="number">2</div>
                     <div class="number">5</div>
@@ -40,15 +40,14 @@
             </div>
 
             <div class="main-spotlight-section countdown">
-                You have <span class="countdown__num">1</span><span class="countdown__num">3</span> hours, <span class="countdown__num">3</span><span
-                    class="countdown__num">5</span> minutes and <span class="countdown__num">2</span><span class="countdown__num">5</span> seconds left to make a donation.
+                You have <span class="countdown__timer">15 hours, 35 minutes and 25 seconds</span> left to make a donation.
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
                 <form v-on:submit="search" class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
-                            <label for="nonprofitName">Nonprofit Name Search</label>
+                            <label for="nonprofitName">Search by Name</label>
                         </div>
                         <div class="form-item__control">
                             <div class="grid--mobile grid--compact grid--middle grid--row">
@@ -71,7 +70,7 @@
                 <form class="nonprofit-search__category">
                     <div class="form-item">
                         <div class="form-item__label">
-                            <label for="nonprofitCategory">Nonprofit Category Search</label>
+                            <label for="nonprofitCategory">Search by Category</label>
                         </div>
                         <div class="form-item__control">
                             <div class="select-wrap">

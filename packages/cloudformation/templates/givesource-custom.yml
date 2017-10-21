@@ -1,6 +1,6 @@
 ---
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "AWS Custom resources for Givesource"
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS Custom resources for Givesource
 Parameters:
 
   StackName:
@@ -9,7 +9,13 @@ Parameters:
   RestApi:
     Type: String
 
-  AdminEmail:
+  LambdaRoleArn:
+    Type: String
+
+  CognitoSnsCallerRoleArn:
+    Type: String
+
+  S3HandleFunctionRoleArn:
     Type: String
 
   AdminPagesS3:
@@ -24,89 +30,195 @@ Parameters:
   PublicPagesCloudFrontUrl:
     Type: String
 
-  LambdaRoleArn:
-    Type: String
-
-  CognitoSnsCallerRoleArn:
-    Type: String
-
-  CognitoCreateUserPoolFunctionArn:
-    Type: String
-
-  CognitoCreateUserFunctionArn:
-    Type: String
-
-  CognitoCreateUserGroupFunctionArn:
-    Type: String
-
-  CognitoCreateUserPoolClientFunctionArn:
-    Type: String
-
-  S3PutObjectFunctionArn:
-    Type: String
-
-  S3SyncObjectsFunctionArn:
-    Type: String
-
 Resources:
+
+  CognitoCreateUserPoolFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUserPool.zip
+      Description: "Create a user pool"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserPool
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserPoolClientFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUserPoolClient.zip
+      Description: "Create a user pool client"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserPoolClient
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUser.zip
+      Description: "Create a user"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUser
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  CognitoCreateUserGroupFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CognitoCreateUserGroup.zip
+      Description: "Create a user group"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CognitoCreateUserGroup
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  S3PutObjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3PutObject.zip
+      Description: "Put an object into an AWS S3 bucket"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-S3PutObject
+      Handler: "index.handle"
+      Role: !Ref S3HandleFunctionRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  S3SyncObjectsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3SyncObjects.zip
+      Description: "Sync S3 objects between two AWS S3 buckets"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-S3SyncObjects
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
 
   AdminPagesApiInfo:
     Type: Custom::S3PutObject
     Properties:
-      ServiceToken: !Ref S3PutObjectFunctionArn
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
       Region: !Sub |-
         ${AWS::Region}
       Bucket: !Ref AdminPagesS3
       Key: "settings.json"
       Body: !Sub |-
-        {"InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "UserPoolId": "${CognitoUserPool.UserPoolId}", "ClientId": "${CognitoUserPoolClient.UserPoolClientId}", "PublicPagesCloudFrontUrl": "${PublicPagesCloudFrontUrl}", "PublicPagesS3": "${PublicPagesS3}"}
+        {
+          "InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
+          "UserPoolId": "${CognitoUserPool.UserPoolId}",
+          "ClientId": "${CognitoUserPoolClient.UserPoolClientId}",
+          "PublicPagesCloudFrontUrl": "${PublicPagesCloudFrontUrl}",
+          "PublicPagesS3": "${PublicPagesS3}"
+        }
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
 
   AdminPagesFrontend:
     Type: Custom::S3SyncObjects
     Properties:
-      ServiceToken: !Ref S3SyncObjectsFunctionArn
+      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
       SourceBucket: {{awsReleaseBucket}}
       SourceKey: admin-pages/{{version}}
       DestinationRegion: !Sub |-
         ${AWS::Region}
       DestinationBucket: !Ref AdminPagesS3
+    DependsOn: S3SyncObjectsFunction
 
   PublicPagesApiInfo:
     Type: Custom::S3PutObject
     Properties:
-      ServiceToken: !Ref S3PutObjectFunctionArn
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
       Region: !Sub |-
         ${AWS::Region}
       Bucket: !Ref PublicPagesS3
       Key: "settings.json"
       Body: !Sub |-
-        {"InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "UserPoolId": "${CognitoUserPool.UserPoolId}", "ClientId": "${CognitoUserPoolClient.UserPoolClientId}", "PublicPagesS3": "${PublicPagesS3}"}
+        {
+          "InvocationUrl": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
+          "UserPoolId": "${CognitoUserPool.UserPoolId}",
+          "ClientId": "${CognitoUserPoolClient.UserPoolClientId}",
+          "PublicPagesS3": "${PublicPagesS3}"
+        }
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
 
   PublicPagesFrontend:
     Type: Custom::S3SyncObjects
     Properties:
-      ServiceToken: !Ref S3SyncObjectsFunctionArn
+      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
       SourceBucket: {{awsReleaseBucket}}
       SourceKey: public-pages/{{version}}
       DestinationRegion: !Sub |-
         ${AWS::Region}
       DestinationBucket: !Ref PublicPagesS3
+    DependsOn: S3SyncObjectsFunction
 
   CognitoUserPool:
     Type: Custom::CognitoUserPool
     Properties:
-      ServiceToken: !Ref CognitoCreateUserPoolFunctionArn
+      ServiceToken: !GetAtt CognitoCreateUserPoolFunction.Arn
       Region: !Sub |-
         ${AWS::Region}
       PoolName: !Sub |-
         ${StackName}-Users
-      AdminPageUrl: !Ref AdminPagesCloudFrontUrl
+      AdminPagesUrl: !Ref AdminPagesCloudFrontUrl
       SnsCallerArn: !Ref CognitoSnsCallerRoleArn
+    DependsOn: CognitoCreateUserPoolFunction
 
   CognitoUserPoolClient:
     Type: Custom::CognitoUserPoolClient
     Properties:
-      ServiceToken: !Ref CognitoCreateUserPoolClientFunctionArn
+      ServiceToken: !GetAtt CognitoCreateUserPoolClientFunction.Arn
       Region: !Sub |-
         ${AWS::Region}
       ClientName: "Browser"
@@ -114,53 +226,48 @@ Resources:
         ${CognitoUserPool.UserPoolId}
     DependsOn:
      - CognitoUserPool
+     - CognitoCreateUserPoolClientFunction
 
   CognitoSuperAdminUserGroup:
     Type: Custom::CognitoSuperAdminUserGroup
     Properties:
-      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      ServiceToken: !GetAtt CognitoCreateUserGroupFunction.Arn
       GroupName: "SuperAdmin"
       UserPoolId: !Sub |-
         ${CognitoUserPool.UserPoolId}
       RoleArn: !Ref LambdaRoleArn
     DependsOn:
       - CognitoUserPool
+      - CognitoCreateUserGroupFunction
 
   CognitoAdminUserGroup:
     Type: Custom::CognitoAdminUserGroup
     Properties:
-      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      ServiceToken: !GetAtt CognitoCreateUserGroupFunction.Arn
       GroupName: "Admin"
       UserPoolId: !Sub |-
         ${CognitoUserPool.UserPoolId}
       RoleArn: !Ref LambdaRoleArn
     DependsOn:
       - CognitoUserPool
+      - CognitoCreateUserGroupFunction
 
   CognitoNonprofitUserGroup:
     Type: Custom::CognitoNonprofitUserGroup
     Properties:
-      ServiceToken: !Ref CognitoCreateUserGroupFunctionArn
+      ServiceToken: !GetAtt CognitoCreateUserGroupFunction.Arn
       GroupName: "Nonprofit"
       UserPoolId: !Sub |-
         ${CognitoUserPool.UserPoolId}
       RoleArn: !Ref LambdaRoleArn
     DependsOn:
       - CognitoUserPool
-
-  CognitoInitialUser:
-    Type: Custom::CognitoInitialUser
-    Properties:
-      ServiceToken: !Ref CognitoCreateUserFunctionArn
-      UserPoolId: !Sub |-
-        ${CognitoUserPool.UserPoolId}
-      Email: !Ref AdminEmail
-    DependsOn:
-      - CognitoUserPool
-      - CognitoUserPoolClient
-      - CognitoSuperAdminUserGroup
+      - CognitoCreateUserGroupFunction
 
 Outputs:
+
+  CognitoCreateUserFunctionArn:
+    Value: !GetAtt CognitoCreateUserFunction.Arn
 
   CognitoUserPoolId:
     Value: !GetAtt CognitoUserPool.UserPoolId

@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const PaymentTransaction = require('../models/paymentTransaction');
-const Repository = require('../repositories/repository');
-const RepositoryHelper = require('../helpers/repository');
+const PaymentTransaction = require('./../models/paymentTransaction');
+const Repository = require('./repository');
+const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 
 /**
