@@ -37,8 +37,8 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <donations-list-table-row v-if="displayRows" v-for="donation in donations" :donation="donation" :nonprofit="getNonprofit(donation.nonprofitUuid)"
-                                  :donor="getDonor(donation.donorUuid)" :key="donation.uuid"></donations-list-table-row>
+        <donations-list-table-row v-for="donation in donations" :donation="donation" :nonprofit="getNonprofit(donation)"
+                                  :donor="getDonor(donation)" :key="donation.uuid"></donations-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -51,11 +51,10 @@
 	module.exports = {
 		data: function () {
 			return {
-				donations: [],
-				donors: [],
 				nonprofits: [],
+				donors: [],
 
-				loaded: false
+                loaded: false
 			};
 		},
 		computed: {
@@ -63,35 +62,67 @@
 				return this.loaded && this.donations.length;
 			}
 		},
-		created: function () {
-			const vue = this;
+		props: {
+			donations: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			}
+		},
+		watch: {
+			donations: function () {
+				const vue = this;
 
-			axios.get(API_URL + 'donations').then(function (response) {
-				vue.donations = response.data.items;
-				return axios.get(API_URL + 'donors');
-			}).then(function (response) {
-				vue.donors = response.data;
-				return axios.get(API_URL + 'nonprofits');
-			}).then(function (response) {
-				vue.nonprofits = response.data;
-				vue.loaded = true;
-			});
+				if (!vue.loaded) {
+					vue.loadData();
+				} else {
+					vue.loaded = false;
+                }
+			}
 		},
 		methods: {
-			getNonprofit: function (nonprofitUuid) {
+			loadData: function () {
 				const vue = this;
 
-				return _.find(vue.nonprofits, { uuid: nonprofitUuid });
+				let promise = Promise.resolve();
+				vue.donations.forEach(function (donation) {
+					promise = promise.then(function () {
+						if (!_.find(vue.nonprofits, {'uuid': donation.nonprofitUuid})) {
+							return axios.get(API_URL + 'nonprofits/' + donation.nonprofitUuid).then(function (response) {
+								vue.nonprofits.push(response.data);
+							});
+						}
+						return Promise.resolve();
+					}).then(function () {
+						if (!_.find(vue.donors, {'uuid': donation.donorUuid}) && !donation.isAnonymous) {
+							return axios.get(API_URL + 'donors/' + donation.donorUuid).then(function (response) {
+								vue.donors.push(response.data);
+							});
+						}
+						return Promise.resolve();
+					});
+				});
+
+				promise = promise.then(function () {
+					vue.loaded = true;
+				});
 			},
-			getDonor: function (donorUuid) {
+			getNonprofit: function (donation) {
 				const vue = this;
-
-				return _.find(vue.donors, { uuid: donorUuid });
+				return _.find(vue.nonprofits, {uuid: donation.nonprofitUuid});
+			},
+			getDonor: function (donation) {
+				const vue = this;
+				if (!donation.isAnonymous) {
+					return _.find(vue.donors, {uuid: donation.donorUuid});
+                }
+                return {};
 			},
 		},
 		components: {
 			'donations-list-table-row': require('./DonationsListTableRow.vue'),
-            'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue')
+			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue')
 		}
 	};
 </script>
