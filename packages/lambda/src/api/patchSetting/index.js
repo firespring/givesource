@@ -24,8 +24,12 @@ exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context);
 
-	const setting = new Setting(request._body);
+	let setting = null;
 	request.validate().then(function () {
+		return repository.get(request.urlParam('key'));
+	}).then(function (result) {
+		setting = new Setting(result);
+		setting.populate(request._body);
 		return setting.validate();
 	}).then(function () {
 		return repository.save(setting);

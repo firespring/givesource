@@ -17,20 +17,19 @@
 
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context);
 
-	const setting = new Setting(request._body);
 	request.validate().then(function () {
-		return setting.validate();
-	}).then(function () {
-		return repository.save(setting);
-	}).then(function (model) {
-		callback(null, model.all());
+		return repository.getAll();
+	}).then(function (settings) {
+		const results = settings.map(function (setting) {
+			return setting.all();
+		});
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
