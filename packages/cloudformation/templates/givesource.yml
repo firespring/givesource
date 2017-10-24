@@ -435,6 +435,21 @@ Resources:
       - LambdaRole
       - RestApi
 
+  ApiSettingsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - LambdaRole
+      - RestApi
+
   ApiUsersStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -468,6 +483,7 @@ Resources:
       - ApiNonprofitsStack
       - ApiPaymentTransactionsStack
       - ApiReportsStack
+      - ApiSettingsStack
       - ApiUsersStack
       - RestApi
 
