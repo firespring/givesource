@@ -118,6 +118,14 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
             - Effect: Allow
               Action: dynamodb:*
