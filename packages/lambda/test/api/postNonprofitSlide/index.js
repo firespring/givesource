@@ -16,37 +16,46 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostNonprofitSlide = require('../../../src/api/postNonprofitSlide/index');
+const NonprofitsRepository = require('../../../src/repositories/nonprofits');
 const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostNonprofitSlide', function () {
 
 	afterEach(function () {
+		NonprofitsRepository.prototype.get.restore();
+		NonprofitSlidesRepository.prototype.getCount.restore();
 		NonprofitSlidesRepository.prototype.save.restore();
 	});
 
 	it('should return a slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
 		const model = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
+		sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(model);
 		const params = {
-			body: model.all(),
+			body: model.except(['uuid', 'createdOn']),
 			params: {
-				nonprofitUuid: nonprofit.uuid
+				nonprofit_uuid: nonprofit.uuid
 			}
 		};
 		return PostNonprofitSlide.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, model.all());
+			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
 		});
 	});
 
 	it('should return error on exception thrown', function () {
+		const nonprofit = TestHelper.generate.model('nonprofit');
+		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
+		sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'save').rejects('Error');
-		return PostNonprofitSlide.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostNonprofitSlide.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

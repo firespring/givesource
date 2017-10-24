@@ -17,7 +17,6 @@
 
 const assert = require('assert');
 const Generator = require('./../../src/helpers/generator');
-
 const promiseMe = require('mocha-promise-me');
 
 /**
@@ -46,6 +45,28 @@ module.exports.validate = function (testCases) {
 			}
 		});
 	});
+};
+
+/**
+ * Compare a data object to a model
+ *
+ * @param {{}} data
+ * @param {Model} model
+ * @param {Array} [except]
+ * @return {boolean}
+ */
+module.exports.assertModelEquals = function (data, model, except) {
+	let equality = true;
+	const modelData = model.all();
+	Object.keys(data).forEach(function (key) {
+		if (except.indexOf(key) < 0) {
+			if (data.hasOwnProperty(key) && modelData.hasOwnProperty(key) && data[key] !== modelData[key]) {
+				equality = false;
+			}
+		}
+	});
+
+	assert(equality === true);
 };
 
 /**

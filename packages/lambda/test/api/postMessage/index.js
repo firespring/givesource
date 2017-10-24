@@ -16,9 +16,10 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostMessage = require('../../../src/api/postMessage/index');
 const MessagesRepository = require('../../../src/repositories/messages');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostMessage', function () {
@@ -31,18 +32,18 @@ describe('PostMessage', function () {
 		const model = TestHelper.generate.model('message');
 		sinon.stub(MessagesRepository.prototype, 'save').resolves(model);
 		const params = {
-			body: model.all()
+			body: model.except(['uuid', 'createdOn'])
 		};
 		return PostMessage.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, model.all());
+			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
 		});
 	});
 
 	it('should return error on exception thrown', function () {
 		sinon.stub(MessagesRepository.prototype, 'save').rejects('Error');
-		return PostMessage.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostMessage.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

@@ -16,19 +16,19 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const Report = require('./../../models/report');
+const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
-const Setting = require('./../../models/setting');
-const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
+	const repository = new ReportsRepository();
 	const request = new Request(event, context);
 
-	const setting = new Setting(request._body);
+	const report = new Report(request._body);
 	request.validate().then(function () {
-		return setting.validate();
+		return report.validate();
 	}).then(function () {
-		return repository.save(setting);
+		return repository.save(report);
 	}).then(function (model) {
 		callback(null, model.all());
 	}).catch(function (err) {

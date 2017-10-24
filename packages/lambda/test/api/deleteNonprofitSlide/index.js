@@ -36,13 +36,13 @@ describe('DeleteNonprofitSlide', function () {
 		sinon.stub(NonprofitSlidesRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				slideUuid: model.uuid,
+				nonprofit_uuid: nonprofit.uuid,
+				slide_uuid: model.uuid,
 			}
 		};
 		return DeleteNonprofitSlide.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -52,11 +52,11 @@ describe('DeleteNonprofitSlide', function () {
 		sinon.stub(NonprofitSlidesRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				slideUuid: '1234'
+				nonprofit_uuid: nonprofit.uuid,
+				slide_uuid: '1234'
 			}
 		};
-		return DeleteNonprofitSlide.handle(params, null, function (error, result) {
+		return DeleteNonprofitSlide.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});
