@@ -16,7 +16,6 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const File = require('../../src/models/file');
 const Model = require('../../src/models/model');
 const TestHelper = require('../helpers/test');

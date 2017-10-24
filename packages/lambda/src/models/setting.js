@@ -15,16 +15,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const stackName = process.env.AWS_STACK_NAME;
+const Model = require('./model');
 
-exports.DonationsTable = `${stackName}-Donations`;
-exports.DonationTiersTable = `${stackName}-DonationTiers`;
-exports.DonorsTable = `${stackName}-Donors`;
-exports.FilesTable = `${stackName}-Files`;
-exports.MessagesTable = `${stackName}-Messages`;
-exports.NonprofitsTable = `${stackName}-Nonprofits`;
-exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
-exports.ReportsTable = `${stackName}-Reports`;
-exports.SettingsTable = `${stackName}-Settings`;
-exports.SlidesTable = `${stackName}-Slides`;
-exports.UsersTable = `${stackName}-Users`;
+/**
+ * Setting constructor
+ *
+ * @param {{}} [data]
+ * @constructor
+ */
+function Setting(data) {
+	Model.call(this, data);
+}
+
+/**
+ * Extend the base Model
+ *
+ * @type {Model}
+ */
+Setting.prototype = new Model();
+
+/**
+ * The allowed attributes for this model
+ *
+ * @type {[*]}
+ */
+Setting.prototype.attributes = [
+	'key',
+	'value'
+];
+
+/**
+ * Validation constraints for this model
+ *
+ * @type {{}}
+ */
+Setting.prototype.constraints = {
+	key: {
+		presence: true,
+		type: 'string',
+	},
+	value: {
+		presence: false,
+	},
+};
+
+module.exports = Setting;

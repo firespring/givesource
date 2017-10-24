@@ -203,6 +203,20 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random Setting data
+	 *
+	 * @return {Object}
+	 */
+	setting: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			key: faker.random.word(),
+			value: faker.random.word(),
+		}
+	},
+
+	/**
 	 * Generate random Slide data
 	 *
 	 * @return {Object}
