@@ -21,26 +21,26 @@
 </template>
 
 <script>
-    module.exports = {
-    	computed: {
-    		start: function () {
-                return this.page * this.size;
-            }
-        },
-    	props: [
-    		'current',
-		    'page',
-            'size'
-        ],
-        methods: {
-	        generatePageLink: function (query) {
-		        const vue = this;
-		        query = query || {};
-		        return {
-			        name: vue.$route.name,
-			        query: _.extend({}, vue.$route.query, query)
-		        };
-	        }
-        }
-    };
+	module.exports = {
+		computed: {
+			start: function () {
+				return this.page * this.size;
+			}
+		},
+		props: [
+			'current',
+			'page',
+			'size'
+		],
+		methods: {
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				return {
+					name: vue.$route.name,
+					query: _.extend({}, vue.$route.query, query)
+				};
+			}
+		}
+	};
 </script>

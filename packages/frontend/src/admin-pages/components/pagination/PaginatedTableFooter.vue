@@ -73,7 +73,7 @@
 		data: function () {
 			return {
 				range: [],
-                size: this.pagination.size || 10,
+				size: this.pagination.size || 10,
 				start: 1,
 				end: 1,
 			};
@@ -81,7 +81,7 @@
 		computed: {
 			displayPagination: function () {
 				return this.pagination.total > this.pagination.size;
-            },
+			},
 			currentPage: function () {
 				return (this.pagination.start / this.pagination.size);
 			},
@@ -126,26 +126,20 @@
 
 			vue.range = _.range(vue.start, vue.end);
 		},
-        methods: {
+		methods: {
 			selectPageSize: function () {
 				const vue = this;
-				vue.$router.push({
-                    name: vue.$route.name,
-                    query: {
-                    	size: vue.size,
-                        start: 0
-                    }
-                });
-            },
-	        generatePageLink: function (query) {
-		        const vue = this;
-		        query = query || {};
-		        return {
-			        name: vue.$route.name,
-			        query: _.extend({}, vue.$route.query, query)
-		        };
-	        }
-        },
+				vue.$router.push(vue.generatePageLink({size: vue.size}));
+			},
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				return {
+					name: vue.$route.name,
+					query: _.extend({}, vue.$route.query, query)
+				};
+			}
+		},
 		components: {
 			'pagination-link': require('./PaginationLink.vue')
 		}
