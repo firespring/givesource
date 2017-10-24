@@ -17,6 +17,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
+const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 
@@ -26,6 +27,14 @@ exports.handle = function (event, context, callback) {
 
 	const setting = new Setting(request._body);
 	request.validate().then(function () {
+		return new Promise(function (resolve, reject) {
+			repository.get(request.get('key')).then(function () {
+				reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
+			}).catch(function () {
+				resolve();
+			});
+		});
+	}).then(function () {
 		return setting.validate();
 	}).then(function () {
 		return repository.save(setting);

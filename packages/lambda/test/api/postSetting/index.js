@@ -25,11 +25,13 @@ const TestHelper = require('./../../helpers/test');
 describe('PostSetting', function () {
 
 	afterEach(function () {
+		SettingsRepository.prototype.get.restore();
 		SettingsRepository.prototype.save.restore();
 	});
 
 	it('should return a setting', function () {
 		const model = TestHelper.generate.model('setting');
+		sinon.stub(SettingsRepository.prototype, 'get').rejects('Error');
 		sinon.stub(SettingsRepository.prototype, 'save').resolves(model);
 		const params = {
 			body: model.except(['uuid', 'createdOn'])
@@ -41,6 +43,7 @@ describe('PostSetting', function () {
 	});
 
 	it('should return error on exception thrown', function () {
+		sinon.stub(SettingsRepository.prototype, 'get').rejects('Error');
 		sinon.stub(SettingsRepository.prototype, 'save').rejects('Error');
 		return PostSetting.handle({}, null, function (error) {
 			assert(error instanceof HttpException);
