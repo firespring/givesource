@@ -21,32 +21,29 @@
 
             <div class="c-form-item c-form-item--text">
                 <div class="c-form-item__label">
-                    <label for="pageSlug" class="c-form-item-label-text">Page URL</label>
+                    <label for="slug" class="c-form-item-label-text">Page URL</label>
                 </div>
                 <div class="c-form-item__control">
-                    <div class="c-form-control-grid u-items-center">
+                    <div class="c-form-control-grid u-items-center" v-if="editSlug">
                         <div class="c-form-control-grid__item u-flex-collapse">
-                            https://www.domain.com/pius-x-foundation
+                            <label for="slug"><strong>{{ pageLink }}</strong></label>
                         </div>
-                        <div class="c-form-control-grid__item u-flex-collapse">
-                            <a href="#" class="c-btn c-btn--xs c-btn--flat c-btn--neutral">Change</a>
+                        <div class="c-form-control-grid__item u-flex-expand">
+                            <input v-model="formData.slug" type="text" name="slug" id="slug" v-on:change="slugMask">
                         </div>
                     </div>
-
-                    <div style="display: none;">
-                        <div class="c-form-control-grid u-items-center">
-                            <div class="c-form-control-grid__item u-flex-collapse">
-                                <label for="pageSlug"><strong>https://www.domain.com/</strong></label>
-                            </div>
-                            <div class="c-form-control-grid__item u-flex-expand">
-                                <input type="text" name="pageSlug" id="pageSlug" value="pius-x-foundation">
-                            </div>
-                        </div>
-                        <div class="c-notes c-notes--below">
-                            Note: Changing your page's URL will break existing bookmarks and links to your page.
-                        </div>
+                    <div class="c-notes c-notes--below" v-if="editSlug">
+                        Note: Changing your page's URL will break existing bookmarks and links to your page.
                     </div>
 
+                    <div class="c-form-control-grid u-items-center" v-if="!editSlug">
+                        <div class="c-form-control-grid__item u-flex-collapse">
+                            {{ pageLink }}{{ nonprofit.slug }}
+                        </div>
+                        <div class="c-form-control-grid__item u-flex-collapse">
+                            <a v-on:click="changeSlug" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--neutral">Change</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -89,15 +86,20 @@
 </template>
 
 <script>
+    const slug = require('slug');
+
 	module.exports = {
 		data: function () {
 			return {
                 loaded: false,
+                editSlug: false,
+				pageLink: PUBLIC_PAGES_URL + '/nonprofits/',
 
 				// Form Data
 				formData: {
 					longDescription: '',
-					shortDescription: ''
+					shortDescription: '',
+					slug: '',
 				},
 
                 // Errors
@@ -114,7 +116,7 @@
         },
 		watch: {
 			formData: {
-				handler: function () {
+				handler: function (value) {
 					const vue = this;
 					if (Object.keys(vue.formErrors).length) {
 						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
@@ -126,8 +128,7 @@
 				handler: function () {
 					const vue = this;
 
-					vue.formData.shortDescription = vue.nonprofit.shortDescription;
-					vue.formData.longDescription = vue.nonprofit.longDescription;
+					vue.formData = vue.sync(vue.formData, vue.nonprofit);
 					vue.loaded = true;
                 },
                 deep: true
@@ -136,13 +137,16 @@
 		methods: {
 			getConstraints: function () {
 				return {
+					longDescription: {
+						presence: false,
+					},
 					shortDescription: {
 						presence: false,
 						length: 200,
 					},
-					longDescription: {
-						presence: false,
-					}
+                    slug: {
+						presence: true
+                    }
 				}
 			},
 			submit: function (e) {
@@ -161,20 +165,34 @@
 			updateNonprofit: function () {
 				const vue = this;
 
-				const params = {
-					shortDescription: vue.formData.shortDescription,
-                    longDescription: vue.formData.longDescription
-                };
+				const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
+				if (Object.keys(params).length === 0) {
+					vue.clearModals();
+					return;
+				}
+
 				axios.patch(API_URL + 'nonprofits/' + vue.nonprofit.uuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					}
+					vue.editSlug = false;
+					vue.$emit('updateNonprofit', response.data);
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
 				});
-			}
+			},
+            changeSlug: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+                vue.editSlug = true;
+            },
+            slugMask: function (event) {
+				const vue = this;
+				vue.formData.slug = slug(event.target.value, {lower: true});
+            }
 		},
         components: {
 			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')

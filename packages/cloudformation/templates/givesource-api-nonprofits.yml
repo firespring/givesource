@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   RestApi:
     Type: String
 
@@ -81,7 +84,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -110,7 +113,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -139,7 +142,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -168,7 +171,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -197,7 +200,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -226,7 +229,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   AdminRegisterNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -257,7 +260,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -286,7 +289,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -315,7 +318,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -344,7 +347,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -373,7 +376,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -404,7 +407,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -433,7 +436,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -462,7 +465,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -491,7 +494,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -520,7 +523,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -531,6 +534,37 @@ Resources:
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/tiers
     DependsOn: DeleteNonprofitDonationTiersLambdaFunction
+
+  # Nonprofit Pages Lambda Resources
+
+  GetNonprofitPageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetNonprofitPage.zip
+      Description: "Get a nonprofit by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetNonprofitPage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+
+  GetNonprofitPageLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetNonprofitPageLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/pages/{slug}
+    DependsOn: GetNonprofitPageLambdaFunction
 
   # Nonprofit Slides Lambda Resources
 
@@ -551,7 +585,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -580,7 +614,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -609,7 +643,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -638,7 +672,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -667,7 +701,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -696,7 +730,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -727,7 +761,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitUsersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -756,7 +790,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -2130,6 +2164,119 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ResourceId: !Ref NonprofitDonationTierApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Nonprofit Pages Api Gateway Resources
+
+  NoprofitsPagesApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref NonprofitsApiResource
+      PathPart: "pages"
+
+  NoprofitsPageApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref NoprofitsPagesApiResource
+      PathPart: "{slug}"
+
+  GetNonprofitPageApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref NoprofitsPageApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetNonprofitPageLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetNonprofitPageLambdaFunction
+
+  OptionsNonprofitPageApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref NoprofitsPageApiResource
       HttpMethod: OPTIONS
       AuthorizationType: NONE
       ApiKeyRequired: false

@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   RestApi:
     Type: String
 
@@ -81,7 +84,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -110,7 +113,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonorsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -139,7 +142,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostDonorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -168,7 +171,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteDonorLambdaInvokePermission:
     Type: AWS::Lambda::Permission

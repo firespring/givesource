@@ -43,19 +43,19 @@
                 </div>
 
                 <div class="o-app-main-content">
-                    <form>
+                    <form v-on:submit="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
-                                <div class="c-form-item c-form-item--textarea">
+                                <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__label">
-                                        <label class="c-form-item-label-text" for="customThankYou">Custom Thank You Message</label>
+                                        <label for="thankYouMessage" class="c-form-item-label-text">Custom Thank You Message</label>
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="c-notes c-notes--above">
                                             This message will be emailed to your donors after they've successfully made a donation to your organization.
                                         </div>
-                                        <textarea name="customThankYou" id="customThankYou" class="lg" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 300px;"></textarea>
+                                        <textarea v-model="formData.thankYouMessage" name="thankYouMessage" id="thankYouMessage" class="lg"></textarea>
                                     </div>
                                 </div>
 
@@ -64,6 +64,7 @@
 
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Save Changes</button>
+                            <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                         </footer>
                     </form>
                 </div>
@@ -76,7 +77,15 @@
 	module.exports = {
 		data: function () {
 			return {
-				nonprofit: {}
+				nonprofit: {},
+
+                // Form Data
+                formData: {
+					thankYouMessage: ''
+                },
+
+				// Errors
+                formErrors: {},
 			}
 		},
 		computed: {
@@ -104,6 +113,45 @@
 			}).catch(function () {
 				next();
 			});
-		}
+		},
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+        methods: {
+	        getConstraints: function () {
+		        return {
+			        thankYouMessage: {
+				        presence: false,
+			        }
+		        };
+	        },
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+				} else {
+					vue.updateThankYouMessage();
+				}
+            },
+            updateThankYouMessage: function () {
+	        	const vue = this;
+
+	        	vue.clearModals();
+	        	vue.$router.push({ name: 'nonprofit-settings-list' });
+            }
+        }
 	};
 </script>

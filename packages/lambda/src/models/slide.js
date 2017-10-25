@@ -61,10 +61,10 @@ Slide.prototype.attributes = [
 Slide.prototype.constraints = {
 	caption: {
 		presence: false,
+		type: 'string',
 		length: {
 			maximum: 100
 		},
-		type: 'string',
 	},
 	embedUrl: {
 		presence: false,

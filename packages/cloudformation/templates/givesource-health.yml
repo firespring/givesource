@@ -15,6 +15,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   IntegrationRequestTemplate:
     Type: String
     Default: |
@@ -72,7 +75,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CloudSearchHealthLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -152,7 +155,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   HealthDeploy:
     Type: Custom::ApiGatewayDeploy

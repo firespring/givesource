@@ -76,7 +76,7 @@ describe('Repository', function () {
 			});
 			const repository = new Repository();
 			repository.table = 'test-Table';
-			return promiseMe.thatYouReject(repository.deleteByKey('uuid', '9ba33b63-41f9-4efc-8869-2b50a35b53df'));
+			return promiseMe.thatYouReject(repository.deleteByKey('uuid'));
 		});
 
 	});
@@ -341,7 +341,7 @@ describe('Repository', function () {
 
 		it('should call reject on an error', function () {
 			AWS.mock('DynamoDB.DocumentClient', 'batchWrite', function (params, callback) {
-				callback('Error');
+				callback('Error', null);
 			});
 			const repository = new Repository();
 			repository.table = 'test-Table';
