@@ -35,9 +35,9 @@
                             <nav class="o-page-header-nav c-breadcrumb">
 
                                 <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
-                                <span><router-link :to="{ name: 'settings-manage-nonprofits' }">Manage Nonprofitss</router-link></span>
+                                <span><router-link :to="{ name: 'settings-manage-admins' }">Manage Admins</router-link></span>
                             </nav>
-                            <h1 class="o-page-header-title">Invite Nonprofits</h1>
+                            <h1 class="o-page-header-title">Invite Admins</h1>
                         </div>
 
                     </div>
@@ -49,7 +49,7 @@
 
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
-                                    <h2 class="c-page-section-title" id="section-segmented">Nonprofits</h2>
+                                    <h2 class="c-page-section-title" id="section-segmented">Admins</h2>
                                 </div>
                             </header>
 
@@ -74,7 +74,7 @@
                                         </div>
 
                                         <div class="c-notes c-notes--below">
-                                            <strong>Note:</strong> Some nongproft notes
+                                            <strong>Note:</strong> Some nonprofit notes
                                         </div>
 
                                     </div>
@@ -94,7 +94,7 @@
                         <!-- BEGIN form actions -->
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Send Invites</button>
-                            <router-link :to="{ name: 'settings-manage-nonprofits' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
+                            <router-link :to="{ name: 'settings-manage-admins' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                         </footer>
                         <!-- END form actions -->
 
@@ -154,7 +154,7 @@
                 	if (response.data.errorMessage) {
                 		console.log(response.data);
                     }else {
-                		vue.$router.push({name: 'settings-manage-nonprofits'});
+                		vue.$router.push({name: 'settings-manage-admins'});
                     }
 
                 }).catch(function(err) {

@@ -170,17 +170,17 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/settings/manage-nonprofits',
-			name: 'settings-manage-nonprofits',
-			component: require('./components/admin/settings/manageNonprofts/manageNonprofits.vue'),
+			path: '/settings/manage-admins',
+			name: 'settings-manage-admins',
+			component: require('./components/admin/settings/manageAdminUsers/ManageAdminUsers.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
 		{
-			path: '/settings/invite-nonprofits',
-			name: 'settings-invite-nonprofits',
-			component: require('./components/admin/settings/manageNonprofts/inviteNonprofits.vue'),
+			path: '/settings/invite-admins',
+			name: 'settings-invite-admins',
+			component: require('./components/admin/settings/manageAdminUsers/InviteAdminUsers.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

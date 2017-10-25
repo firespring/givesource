@@ -55,7 +55,7 @@
                                 <hr class="expand">
 
                                 <div class="c-page-section-segment">
-                                    <h3 class="c-page-section-segment__title"><router-link :to="{ name: 'settings-manage-nonprofits' }">Manage Nonprofits</router-link></h3>
+                                    <h3 class="c-page-section-segment__title"><router-link :to="{ name: 'settings-manage-admins' }">Manage Admins</router-link></h3>
                                     <div class="c-notes c-notes--below">
                                         Invite additional nonprofits
                                     </div>

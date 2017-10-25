@@ -18,7 +18,7 @@
 
                                 <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
                             </nav>
-                            <h1 class="o-page-header-title">Manage Nonprofits</h1>
+                            <h1 class="o-page-header-title">Manage Admins</h1>
                         </div>
 
                     </div>
@@ -28,7 +28,7 @@
                     <div class="c-header-actions">
 
                         <div>
-                            <router-link :to="{ name: 'settings-invite-nonprofits' }" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Nonprofit
+                            <router-link :to="{ name: 'settings-invite-admins' }" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Admin
                             </router-link>
                         </div>
 
