@@ -109,7 +109,11 @@ QueryBuilder.prototype.limit = function (limit) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.condition = function (key, conditional, value) {
-	this.keyConditions.push(`#${key} ${conditional} :${key}`);
+	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
+		this.keyConditions.push(`NOT #${key} = :${key}`);
+	} else {
+		this.keyConditions.push(`#${key} ${conditional} :${key}`);
+	}
 	this.expressionAttributeNames[`#${key}`] = key;
 	this.expressionAttributeValues[`:${key}`] = value;
 	return this;
@@ -124,7 +128,11 @@ QueryBuilder.prototype.condition = function (key, conditional, value) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.filter = function (key, conditional, value) {
-	this.filters.push(`#${key} ${conditional} :${key}`);
+	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
+		this.filters.push(`NOT #${key} = :${key}`);
+	} else {
+		this.filters.push(`#${key} ${conditional} :${key}`);
+	}
 	this.expressionAttributeNames[`#${key}`] = key;
 	this.expressionAttributeValues[`:${key}`] = value;
 	return this;

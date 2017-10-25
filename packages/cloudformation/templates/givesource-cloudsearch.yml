@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   HealthCheckUrl:
     Type: String
 
@@ -39,7 +42,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CloudSearchCreateIndexFieldsFunction:
     Type: AWS::Lambda::Function
@@ -57,7 +60,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CloudSearchHealthWaitConditionLambdaFunction:
     Type: AWS::Lambda::Function
@@ -93,7 +96,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CloudSearchDonationsDomain:
     Type: Custom::CloudSearchDomain
@@ -223,7 +226,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CloudSearchDescribeDonationsDomain
 
   CloudSearchDonorsUploadDocumentsFunction:
@@ -243,7 +246,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CloudSearchDescribeDonorsDomain
 
   CloudSearchNonprofitsUploadDocumentsFunction:
@@ -263,7 +266,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CloudSearchDescribeNonprofitsDomain
 
   CloudSearchDonationsUploadDocumentsEventSourceMapping:

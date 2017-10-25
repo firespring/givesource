@@ -12,6 +12,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   CognitoSnsCallerRoleArn:
     Type: String
 
@@ -48,7 +51,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCreateUserPoolClientFunction:
     Type: AWS::Lambda::Function
@@ -66,7 +69,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCreateUserFunction:
     Type: AWS::Lambda::Function
@@ -84,7 +87,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCreateUserGroupFunction:
     Type: AWS::Lambda::Function
@@ -102,7 +105,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   S3PutObjectFunction:
     Type: AWS::Lambda::Function
@@ -120,7 +123,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref S3HandleFunctionRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   S3SyncObjectsFunction:
     Type: AWS::Lambda::Function
@@ -138,7 +141,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   AdminPagesApiInfo:
     Type: Custom::S3PutObject

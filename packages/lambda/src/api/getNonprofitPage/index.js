@@ -16,27 +16,17 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Nonprofit = require('./../../models/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
+	const repository = new NonprofitsRepository();
 
-	let nonprofit = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
-	}).then(function (result) {
-		nonprofit = new Nonprofit(result);
-		nonprofit.populate(request._body);
-		return repository.generateUniqueSlug(nonprofit, request.get('slug'));
-	}).then(function () {
-		return nonprofit.validate();
-	}).then(function () {
-		return repository.save(nonprofit);
-	}).then(function (model) {
-		callback(null, model.all());
+		return repository.getBySlug(request.urlParam('slug'));
+	}).then(function (nonprofit) {
+		callback(null, nonprofit.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

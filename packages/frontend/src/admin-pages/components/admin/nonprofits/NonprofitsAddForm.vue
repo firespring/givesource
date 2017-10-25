@@ -104,8 +104,21 @@
                                 </div>
                             </div>
                         </div>
+
                         <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
                             <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.phone }">
+                    <div class="c-form-item__label">
+                        <label for="phone" class="c-form-item-label-text">Phone #</label>
+                    </div>
+                    <div class="c-form-item__control">
+                        <input v-model="formData.phone" type="text" name="phone" id="phone" :class="{ 'has-error': formErrors.phone }">
+                        <div v-if="formErrors.phone" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                            {{ formErrors.phone }}
                         </div>
                     </div>
                 </div>
@@ -223,6 +236,7 @@
 					city: '',
 					state: '',
 					zip: '',
+					phone: '',
 					category1: '',
 					category2: '',
 					category3: '',
@@ -329,6 +343,10 @@
 						label: 'Zip code',
 						presence: true,
 					},
+					phone: {
+						label: 'Phone #',
+						presence: true,
+					},
 					category1: {
 						label: 'Category #1',
 						presence: true,
@@ -380,6 +398,7 @@
 						city: vue.formData.city,
 						state: vue.formData.state,
 						zip: vue.formData.zip,
+						phone: vue.formData.phone,
 						category1: vue.formData.category1,
 						category2: vue.formData.category2,
 						category3: vue.formData.category3,

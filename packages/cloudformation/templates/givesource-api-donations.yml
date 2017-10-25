@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   RestApi:
     Type: String
 
@@ -84,7 +87,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -114,7 +117,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -143,7 +146,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -172,7 +175,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -201,7 +204,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission

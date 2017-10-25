@@ -122,7 +122,7 @@ Nonprofit.prototype.constraints = {
 		type: 'string'
 	},
 	slug: {
-		presence: false,
+		presence: true,
 		type: 'string'
 	},
 	state: {

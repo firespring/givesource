@@ -36,7 +36,7 @@
 
                             <div class="c-page-section__sidebar">
                                 <p class="u-text-c">
-                                    <a :href="pageLink" rel="noreferrer noopener" target="_blank" class="c-btn c-btn--flat c-btn--sm">Preview Your Page</a>
+                                    <a :href="landingPageUrl" rel="noreferrer noopener" target="_blank" class="c-btn c-btn--flat c-btn--sm">Preview Your Page</a>
                                 </p>
                                 <div class="c-page-section-nav">
                                     <router-link :to="{name: 'nonprofit-your-page', query: {tab: 'content'}}" :class="{ here: tabComponent === 'tab-content'}" active-class=""
@@ -53,7 +53,7 @@
                                 </div>
                             </div>
 
-                            <component :is="tabComponent" :nonprofitUuid="nonprofitUuid" :nonprofit.sync="nonprofit"></component>
+                            <component :is="tabComponent" :nonprofitUuid="nonprofitUuid" :nonprofit="nonprofit" v-on:updateNonprofit="updateNonprofit"></component>
 
                         </div>
                     </div>
@@ -69,13 +69,15 @@
 			return {
 				nonprofit: {},
 				tabComponent: 'tab-content',
-				pageLink: PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofitUuid,
 			}
 		},
 		computed: {
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
+            landingPageUrl: function () {
+				return PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofit.slug
+            }
 		},
 		props: [
 			'nonprofitUuid'
@@ -122,7 +124,11 @@
 					case 'content':
 						return 'tab-content';
 				}
-			}
+			},
+            updateNonprofit: function (nonprofit) {
+				const vue = this;
+				vue.nonprofit = nonprofit;
+            }
 		}
 	};
 </script>
