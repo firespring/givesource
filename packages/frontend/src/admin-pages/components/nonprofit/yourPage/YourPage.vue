@@ -69,7 +69,7 @@
 			return {
 				nonprofit: {},
 				tabComponent: 'tab-content',
-				pageLink: PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofitUuid,
+				pageLink: PUBLIC_PAGES_CLOUDFRONT_URL + '/nonprofits/' + this.nonprofitUuid,
 			}
 		},
 		computed: {

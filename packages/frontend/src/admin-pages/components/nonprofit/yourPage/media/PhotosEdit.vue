@@ -213,7 +213,7 @@
 					vue.addModal('spinner');
 					axios.delete(API_URL + 'files/' + vue.file.uuid, {
 						data: {
-							bucket: PUBLIC_PAGES_S3
+							bucket: PUBLIC_PAGES_S3_BUCKET_NAME
                         }
 					}).then(function () {
 						vue.clearModals();
@@ -234,7 +234,7 @@
 				if (vue.file) {
 					axios.delete(API_URL + 'files/' + vue.file.uuid, {
 						data: {
-							bucket: PUBLIC_PAGES_S3
+							bucket: PUBLIC_PAGES_S3_BUCKET_NAME
 						}
 					}).then(function () {
 						vue.file = null;
@@ -264,7 +264,7 @@
 				vue.addModal('spinner');
 
 				axios.post(API_URL + 'files', {
-					bucket: PUBLIC_PAGES_S3,
+					bucket: PUBLIC_PAGES_S3_BUCKET_NAME,
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
@@ -279,7 +279,7 @@
 					return instance.put(signedUrl, file);
 				}).then(function () {
 					vue.clearModals();
-					vue.formData.url = PUBLIC_PAGES_URL + '/' + vue.file.path;
+					vue.formData.url = PUBLIC_PAGES_CLOUDFRONT_URL + '/' + vue.file.path;
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
@@ -307,7 +307,7 @@
 					if (vue.file) {
 						return axios.delete(API_URL + 'files/' + vue.slide.fileUuid, {
 							data: {
-								bucket: PUBLIC_PAGES_S3
+								bucket: PUBLIC_PAGES_S3_BUCKET_NAME
 							}
 						});
 					}

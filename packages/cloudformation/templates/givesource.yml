@@ -313,6 +313,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
+        HealthCheck: !Ref HealthCheck
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
@@ -512,6 +513,10 @@ Outputs:
   AdminPagesS3BucketUrl:
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3BucketUrl
 
+  ApiUrl:
+    Value: !Sub |-
+      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+
   CloudSearchDonationsDocServiceEndpoint:
     Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsDocServiceEndpoint
 
@@ -533,10 +538,6 @@ Outputs:
   HealthCheckUrl:
     Value: !Sub |-
       https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
-
-  InvocationUrl:
-    Value: !Sub |-
-      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn

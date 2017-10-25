@@ -146,7 +146,7 @@
 				vue.addModal('spinner');
 
 				axios.post(API_URL + 'files', {
-					bucket: PUBLIC_PAGES_S3,
+					bucket: PUBLIC_PAGES_S3_BUCKET_NAME,
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
@@ -164,7 +164,7 @@
 						fileUuid: vue.file.uuid,
 						filename: vue.file.filename,
 						type: MediaHelper.TYPE_IMAGE,
-						url: PUBLIC_PAGES_URL + '/' + vue.file.path
+						url: PUBLIC_PAGES_CLOUDFRONT_URL + '/' + vue.file.path
 					});
 				}).then(function (response) {
 					vue.$router.push({
@@ -186,7 +186,7 @@
 				if (slide.fileUuid) {
 					axios.delete(API_URL + 'files/' + slide.fileUuid, {
 						data: {
-							bucket: PUBLIC_PAGES_S3
+							bucket: PUBLIC_PAGES_S3_BUCKET_NAME
 						}
 					}).then(function () {
 						return axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid);

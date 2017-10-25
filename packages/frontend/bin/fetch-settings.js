@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
+
+const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
-
-dotenv.config({path: `${__dirname}/../../../.env`});
 
 const describeStack = function (cloudFormation, stackName) {
 	return new Promise(function (resolve, reject) {
@@ -44,13 +44,13 @@ const describeStack = function (cloudFormation, stackName) {
 };
 
 const findOutputKey = function (outputs, outputKey) {
-	let value;
+	let value = null;
 	outputs.forEach((output) => {
 		if (output.OutputKey === outputKey) {
 			value = output.OutputValue;
 		}
 	});
-	if (value === undefined) {
+	if (value === null) {
 		throw new Error(outputKey + ' not found');
 	}
 	return value;
@@ -64,12 +64,8 @@ const getSettings = function () {
 
 		describeStack(cloudFormation, stackName).then(function (stack) {
 			resolve({
-				AdminPagesCloudFrontUrl: findOutputKey(stack.Outputs, 'AdminPagesCloudFrontUrl'),
-				ClientId: findOutputKey(stack.Outputs, 'UserPoolClientId'),
-				InvocationUrl: findOutputKey(stack.Outputs, 'InvocationUrl'),
-				PublicPagesCloudFrontUrl: findOutputKey(stack.Outputs, 'PublicPagesCloudFrontUrl'),
-				PublicPagesS3: findOutputKey(stack.Outputs, 'PublicPagesS3BucketName'),
-				UserPoolId: findOutputKey(stack.Outputs, 'UserPoolId')
+				API_URL: findOutputKey(stack.Outputs, 'ApiUrl'),
+				HEALTH_CHECK_URL: findOutputKey(stack.Outputs, 'HealthCheckUrl')
 			});
 		}).catch(function (err) {
 			reject(err);

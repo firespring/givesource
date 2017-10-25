@@ -81,8 +81,8 @@ module.exports = function (env) {
 			DeleteSetting: './src/api/deleteSetting/index.js',
 			GetUser: './src/api/getUser/index.js',
 			PatchUser: './src/api/patchUser/index.js',
-			S3PutObject: './src/api/s3PutObject/index.js',
-			S3SyncObjects: './src/api/s3SyncObjects/index.js',
+
+			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
 			CloudSearchCreateDomain: './src/api/cloudSearchCreateDomain/index.js',
 			CloudSearchCreateIndexFields: './src/api/cloudSearchCreateIndexFields/index.js',
 			CloudSearchDescribeDomain: './src/api/cloudSearchDescribeDomain/index.js',
@@ -94,7 +94,9 @@ module.exports = function (env) {
 			CognitoCreateUserPool: './src/api/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/api/cognitoCreateUserPoolClient/index.js',
 			CognitoCreateUser: './src/api/cognitoCreateUser/index.js',
-			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
+			S3PutObject: './src/api/s3PutObject/index.js',
+			S3SyncObjects: './src/api/s3SyncObjects/index.js',
+			SaveSettings: './src/api/saveSettings/index.js',
 
 			HealthCheckDeploy: './src/api/apiGatewayDeploy/index.js',
 			CloudSearchHealth: './src/health/cloudSearch/index.js'

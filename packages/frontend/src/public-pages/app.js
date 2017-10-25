@@ -231,16 +231,29 @@ const router = new VueRouter({
 	]
 });
 
-router.beforeEach(function (to, from, next) {
-	axios.get('/settings.json').then(function (response) {
+/**
+ * Load app settings
+ *
+ * @return {Promise}
+ */
+const loadSettings = function () {
+	return axios.get('/settings.json').then(function (response) {
+		return axios.get(response.data.API_URL + 'settings');
+	}).then(function (response) {
 		const settings = response.data;
-		window.ADMIN_PAGES_URL = settings.AdminPagesCloudFrontUrl;
-		window.API_URL = settings.InvocationUrl;
-		window.CLIENT_ID = settings.ClientId;
-		window.PUBLIC_PAGES_S3 = settings.PublicPagesS3;
-		window.USER_POOL_ID = settings.UserPoolId;
-	}).then(function () {
+		window.ADMIN_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
+		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
+		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
+		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
+		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
+	});
+};
+
+router.beforeEach(function (to, from, next) {
+	loadSettings().then(function () {
 		next();
+	}).catch(function (err) {
+		console.log(err);
 	});
 });
 
@@ -265,7 +278,7 @@ const store = new Vuex.Store({
 			}
 		},
 		removeCartItem: function (state, timestamp) {
-			_.remove(state.cartItems, { timestamp: timestamp });
+			_.remove(state.cartItems, {timestamp: timestamp});
 		},
 		updateCartItem: function (state, payload) {
 			if (payload.amount && payload.timestamp) {
@@ -275,7 +288,7 @@ const store = new Vuex.Store({
 					amount = Math.round(Number.parseFloat(payload.amount) * 100);
 				}
 
-				const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp });
+				const cartItem = _.find(state.cartItems, {timestamp: payload.timestamp});
 				cartItem.amount = amount;
 			}
 		},

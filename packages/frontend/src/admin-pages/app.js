@@ -367,11 +367,14 @@ const router = new VueRouter({
  */
 const loadSettings = function () {
 	return axios.get('/settings.json').then(function (response) {
-		window.API_URL = response.data.InvocationUrl;
-		window.USER_POOL_ID = response.data.UserPoolId;
-		window.CLIENT_ID = response.data.ClientId;
-		window.PUBLIC_PAGES_URL = response.data.PublicPagesCloudFrontUrl;
-		window.PUBLIC_PAGES_S3 = response.data.PublicPagesS3;
+		return axios.get(response.data.API_URL + 'settings');
+	}).then(function (response) {
+		const settings = response.data;
+		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
+		window.PUBLIC_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
+		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
+		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
+		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
 	});
 };
 

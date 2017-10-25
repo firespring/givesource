@@ -27,7 +27,7 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 exports.login = function (username, password, callbacks) {
 	const data = {
 		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		ClientId: USER_POOL_CLIENT_ID
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
 	const userData = {
@@ -95,7 +95,7 @@ exports.changePassword = function (oldPassword, newPassword, callback) {
 exports.forgotPassword = function (username, callbacks) {
 	const data = {
 		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		ClientId: USER_POOL_CLIENT_ID
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
 	const userData = {
@@ -171,7 +171,7 @@ exports.logout = function () {
 exports.getCognitoUser = function () {
 	const userPoolData = {
 		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		ClientId: USER_POOL_CLIENT_ID
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData);
 	return userPool.getCurrentUser();
