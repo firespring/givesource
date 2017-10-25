@@ -197,7 +197,7 @@ Resources:
         StreamViewType: NEW_AND_OLD_IMAGES
     DependsOn: MessagesTable
 
-  NonprofitsDonationTiersTable:
+  NonprofitDonationTiersTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
