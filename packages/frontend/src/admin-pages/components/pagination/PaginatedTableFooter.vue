@@ -129,7 +129,7 @@
 		methods: {
 			selectPageSize: function () {
 				const vue = this;
-				vue.$router.push(vue.generatePageLink({size: vue.size}));
+				vue.$router.push(vue.generatePageLink({size: vue.size, start: 0}));
 			},
 			generatePageLink: function (query) {
 				const vue = this;
