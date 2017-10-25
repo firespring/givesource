@@ -108,7 +108,7 @@ Resources:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-PostNonprofit
+        ${StackName}-PostUser
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
@@ -246,7 +246,7 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref UserApiResource
+      ResourceId: !Ref UsersApiResource
       HttpMethod: POST
       AuthorizationType: NONE
       ApiKeyRequired: false
