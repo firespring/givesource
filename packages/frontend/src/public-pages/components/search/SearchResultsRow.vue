@@ -19,7 +19,7 @@
     <div class="leaderboard-item leaderboard-item--detailed">
 
         <div class="leaderboard-item__image" v-if="nonprofit.uuid">
-            <router-link :to="{ name: 'nonprofit-landing-page', params: { nonprofitUuid: nonprofit.uuid } }"><img alt="" src="/assets/temp/thumbnail.jpg"></router-link>
+            <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"><img alt="" src="/assets/temp/thumbnail.jpg"></router-link>
         </div>
 
         <div class="leaderboard-item__image" v-else>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="leaderboard-item__info" v-if="nonprofit.uuid">
-            <h3><router-link :to="{ name: 'nonprofit-landing-page', params: { nonprofitUuid: nonprofit.uuid } }">{{ nonprofit.legalName }}</router-link></h3>
+            <h3><router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link></h3>
             <p>
                 {{ nonprofit.shortDescription }}
             </p>

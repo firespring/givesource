@@ -92,7 +92,7 @@
 			}
 		},
         props: [
-        	'nonprofitUuid'
+        	'slug'
         ],
         beforeMount: function () {
 			const vue = this;

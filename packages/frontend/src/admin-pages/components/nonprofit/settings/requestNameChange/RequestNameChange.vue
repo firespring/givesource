@@ -30,28 +30,35 @@
                     </div>
                 </div>
 
-                <form>
+                <form v-on:submit="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                         <div class="c-page-section__main">
 
-                            <div class="c-form-item c-form-item--text c-form-item--required">
+                            <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.requestedName }">
                                 <div class="c-form-item__label">
                                     <label for="requestedName" class="c-form-item-label-text">Requested Name</label>
                                 </div>
                                 <div class="c-form-item__control">
-                                    <input type="text" name="requestedName" id="requestedName" maxlength="200" value="">
-                                    <div class="c-notes c-notes--below">
-                                        Your nonprofit's current name is: Craig needs this functionality.
+                                    <input v-model="formData.requestedName" type="text" name="requestedName" id="requestedName" maxlength="200"
+                                           :class="{ 'has-error': formErrors.requestedName }" v-auto-focus>
+                                    <div v-if="formErrors.requestedName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.requestedName }}
+                                    </div>
+                                    <div class="c-notes c-notes--below" v-else>
+                                        Your nonprofit's current name is: {{ nonprofit.legalName }}
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="c-form-item c-form-item--textarea">
+                            <div class="c-form-item c-form-item--textarea" :class="{ 'c-form-item--has-error': formErrors.changeReasons }">
                                 <div class="c-form-item__label">
                                     <label for="changeReasons" class="c-form-item-label-text">Reasons for Name Change</label>
                                 </div>
                                 <div class="c-form-item__control">
-                                    <textarea name="changeReasons" id="changeReasons" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 100px;"></textarea>
+                                    <textarea name="changeReasons" id="changeReasons" :class="{ 'has-error': formErrors.changeReasons }"></textarea>
+                                    <div v-if="formErrors.changeReason" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.changeReason }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -60,6 +67,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Submit Your Request</button>
+                        <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
                 </form>
 
@@ -70,8 +78,82 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				nonprofit: {},
+
+				// Form Data
+                formData: {
+	                requestedName: '',
+                    changeReason: ''
+                },
+
+				// Errors
+                formErrors: {}
+            };
+        },
 		props: [
 			'nonprofitUuid'
 		],
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vm.nonprofit = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.nonprofit = response.data;
+			}).then(function () {
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					requestedName: {
+						presence: true,
+					},
+					changeReason: {
+						presence: false,
+                    }
+				};
+			},
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+				} else {
+					vue.submitRequest();
+				}
+			},
+			submitRequest: function () {
+				const vue = this;
+
+				vue.clearModals();
+				vue.$router.push({ name: 'nonprofit-settings-list' });
+			}
+		}
 	};
 </script>

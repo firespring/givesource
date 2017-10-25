@@ -37,7 +37,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <manage-admins-list-table-row v-for="user in users" v-bind:user="user" v-bind:key="user.uuid"></manage-admins-list-table-row>
+        <manage-admins-list-table-row v-for="nonprofitUser in nonprofitUsers" :nonprofitUser="nonprofitUser" :key="user.uuid"></manage-admins-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -51,13 +51,13 @@
 	module.exports = {
 		data: function () {
 			return {
-				users: [],
+				nonprofitUsers: [],
                 loaded: false
 			};
 		},
         computed: {
 			displayRows: function () {
-				return this.loaded && this.users.length;
+				return this.loaded && this.nonprofitUsers.length;
             }
         },
         props: [
@@ -67,7 +67,7 @@
 			const vue = this;
 
 	        axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
-		        vue.users = response.data;
+		        vue.nonprofitUsers = response.data;
 		        vue.loaded = true;
 	        });
         },

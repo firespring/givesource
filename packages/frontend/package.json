@@ -39,6 +39,7 @@
 		"numeral": "^2.0.6",
 		"path": "^0.12.7",
 		"rimraf": "^2.6.1",
+		"slug": "^0.9.1",
 		"style-loader": "^0.18.2",
 		"tooltipster": "^4.2.5",
 		"uglifyjs-webpack-plugin": "^0.4.6",

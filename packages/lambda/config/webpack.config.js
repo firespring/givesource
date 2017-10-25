@@ -56,6 +56,7 @@ module.exports = function (env) {
 			PostNonprofitDonationTier: './src/api/postNonprofitDonationTier/index.js',
 			PatchNonprofitDonationTiers: './src/api/patchNonprofitDonationTiers/index.js',
 			DeleteNonprofitDonationTiers: './src/api/deleteNonprofitDonationTiers/index.js',
+			GetNonprofitPage: './src/api/getNonprofitPage/index.js',
 			GetNonprofitSlides: './src/api/getNonprofitSlides/index.js',
 			GetNonprofitSlide: './src/api/getNonprofitSlide/index.js',
 			PostNonprofitSlide: './src/api/postNonprofitSlide/index.js',

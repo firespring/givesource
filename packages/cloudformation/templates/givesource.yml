@@ -82,6 +82,10 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
             - Effect: Allow
               Action: dynamodb:*
@@ -90,7 +94,15 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
@@ -102,7 +114,15 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
@@ -114,7 +134,23 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
@@ -130,11 +166,15 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}/index/*
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
       - PolicyName: CloudFormation
         PolicyDocument:
           Statement:

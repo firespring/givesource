@@ -24,7 +24,7 @@
             </div>
         </td>
         <td class="image">
-            <img width="400" height="400" alt="firespring" src="../../../../assets/photos/firespring.jpg">
+            <v-gravatar :email="nonprofitUser.email" :size="150" default-img="mm"></v-gravatar>
         </td>
         <td>
 
@@ -33,11 +33,11 @@
                 <div class="c-user-strip__content u-flex u-items-center">
 
                     <div class="c-user-strip__name">
-                        <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+                        <strong>{{ nonprofitUser.firstName }} {{ nonprofitUser.lastName }}</strong>
                     </div>
 
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ user.email }`">{{ user.email }}</a>
+                        <a :href="`mailto:${ nonprofitUser.email }`">{{ nonprofitUser.email }}</a>
                     </div>
 
                 </div>
@@ -49,8 +49,9 @@
             <div class="date">{{ date }}</div>
         </td>
         <td class="u-nowrap">
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member"><i
-                    class="fa fa-minus-circle" aria-hidden="true"></i>Remove</a>
+            <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
+                <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove
+            </a>
         </td>
     </tr>
 </template>
@@ -59,11 +60,11 @@
 	module.exports = {
 		computed: {
 			date: function () {
-				return new Date(this.user.createdOn).toLocaleDateString();
+				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
             }
         },
 		props: [
-			'user'
+			'nonprofitUser'
         ]
 	};
 </script>
