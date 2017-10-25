@@ -241,9 +241,8 @@ const loadSettings = function () {
 		return axios.get(response.data.API_URL + 'settings');
 	}).then(function (response) {
 		const settings = response.data;
-		window.ADMIN_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
 		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
-		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
+		window.ADMIN_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'ADMIN_PAGES_CLOUDFRONT_URL'}).value;
 		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
 		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
 	});

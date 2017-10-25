@@ -372,7 +372,8 @@ const loadSettings = function () {
 		const settings = response.data;
 		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
 		window.PUBLIC_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
-		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
+		window.UPLOADS_CLOUDFRONT_URL = _.find(settings, {key: 'UPLOADS_CLOUDFRONT_URL'}).value;
+		window.UPLOADS_S3_BUCKET_NAME = _.find(settings, {key: 'UPLOADS_S3_BUCKET_NAME'}).value;
 		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
 		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
 	});
