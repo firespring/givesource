@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <form>
+                <form v-on:submit="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                         <div class="c-page-section__main">
 
@@ -53,27 +53,32 @@
                                 <div class="c-form-item__control">
                                     <ul class="c-input-list c-input-list--radio" aria-labelledby="radioDefault">
                                         <li>
-                                            <input type="radio" name="notifications" id="notifications-1" value="1" checked="">
-                                            <label for="notifications-1">Send notifications for every donation</label>
+                                            <input v-model="formData.donationNotificationType" type="radio" name="donationNotificationType" id="donationNotificationType-1"
+                                                   value="0">
+                                            <label for="donationNotificationType-1">Send notifications for every donation</label>
                                         </li>
                                         <li>
-                                            <input type="radio" name="notifications" id="notifications-2" value="2">
-                                            <label for="notifications-2">Hourly - You'll receive a summary of the previous hour's donations</label>
+                                            <input v-model="formData.donationNotificationType" type="radio" name="donationNotificationType" id="donationNotificationType-2"
+                                                   value="1">
+                                            <label for="donationNotificationType-2">Hourly - You'll receive a summary of the previous hour's donations</label>
                                         </li>
                                         <li>
-                                            <input type="radio" name="notifications" id="notifications-3" value="3">
-                                            <label for="notifications-3">Daily - You'll receive a summary of the previous day's donations</label>
+                                            <input v-model="formData.donationNotificationType" type="radio" name="donationNotificationType" id="donationNotificationType-3"
+                                                   value="2">
+                                            <label for="donationNotificationType-3">Daily - You'll receive a summary of the previous day's donations</label>
                                         </li>
                                         <li>
-                                            <input type="radio" name="notifications" id="notifications-4" value="3">
-                                            <label for="notifications-4">Don't send any donation notifications</label>
+                                            <input v-model="formData.donationNotificationType" type="radio" name="donationNotificationType" id="donationNotificationType-4"
+                                                   value="3">
+                                            <label for="donationNotificationType-4">Don't send any donation notifications</label>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="c-notes u-margin-top-thick">
-                                These settings will apply to all of <router-link to="admins">your donation page's admins</router-link>. Donation notifications will be sent from notifications@domain.com. Add that email address to your whitelist so that notifications aren't marked as spam.
+                                These settings will apply to all of <router-link :to="{ name: 'nonprofit-settings-admins-list' }">your donation page's admins</router-link>.
+                                Donation notifications will be sent from notifications@domain.com. Add that email address to your whitelist so that notifications aren't marked as spam.
                             </div>
 
                         </div>
@@ -81,6 +86,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Save Changes</button>
+                        <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
 
                 </form>
@@ -94,8 +100,16 @@
 		data: function () {
 			return {
 				nonprofit: {},
-            };
-        },
+
+				// Form Data
+				formData: {
+					donationNotificationType: 0
+				},
+
+				// Errors
+				formErrors: {},
+			};
+		},
 		computed: {
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
@@ -121,6 +135,45 @@
 			}).catch(function () {
 				next();
 			});
-		}
+		},
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+        methods: {
+	        getConstraints: function () {
+		        return {
+			        donationNotificationType: {
+				        presence: true,
+			        }
+		        };
+	        },
+	        submit: function (event) {
+		        event.preventDefault();
+		        const vue = this;
+
+		        vue.addModal('spinner');
+
+		        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+		        if (Object.keys(vue.formErrors).length) {
+			        vue.clearModals();
+		        } else {
+			        vue.updateNotificationSettings();
+		        }
+	        },
+	        updateNotificationSettings: function () {
+		        const vue = this;
+
+		        vue.clearModals();
+		        vue.$router.push({ name: 'nonprofit-settings-list' });
+	        }
+        }
 	};
 </script>

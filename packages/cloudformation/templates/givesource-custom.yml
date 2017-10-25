@@ -175,7 +175,7 @@ Resources:
       Body: !Sub |-
         {
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
-          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/",
+          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -204,7 +204,7 @@ Resources:
       Body: !Sub |-
         {
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
-          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/",
+          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/"
         }
     DependsOn:
       - S3PutObjectFunction

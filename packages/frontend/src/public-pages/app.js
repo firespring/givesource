@@ -186,7 +186,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid',
+			path: '/nonprofits/:slug',
 			name: 'nonprofit-landing-page',
 			props: true,
 			component: require('./components/nonprofits/Nonprofit.vue'),
@@ -196,17 +196,17 @@ const router = new VueRouter({
 				tiers: []
 			},
 			beforeEnter: function (to, from, next) {
-				axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 					to.meta.nonprofit = response.data;
 				}).then(function () {
-					return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides');
+					return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/slides');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
 					to.meta.slides = response.data;
 				}).then(function () {
-					return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/tiers');
+					return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/tiers');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
 						return b.amount - a.amount;

@@ -144,6 +144,18 @@
 
                             </div>
 
+                            <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.phone }">
+                                <div class="c-form-item__label">
+                                    <label for="legalName" class="c-form-item-label-text">Phone #</label>
+                                </div>
+                                <div class="c-form-item__control">
+                                    <input v-model="formData.phone" type="text" name="phone" id="phone" :class="{ 'has-error': formErrors.phone }">
+                                    <div v-if="formErrors.phone" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.phone }}
+                                    </div>
+                                </div>
+                            </div>
+
                             <hr class="expand">
 
                             <div class="c-form-item c-form-item--select">
@@ -197,6 +209,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Save Changes</button>
+                        <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
 
                 </form>
@@ -222,6 +235,7 @@
 					city: '',
 					state: '',
 					zip: '',
+					phone: '',
 					category1: '',
 					category2: '',
 					category3: ''
@@ -362,6 +376,10 @@
 					},
 					zip: {
 						label: 'Zip code',
+						presence: true,
+					},
+					phone: {
+						label: 'Phone #',
 						presence: true,
 					},
 					category1: {

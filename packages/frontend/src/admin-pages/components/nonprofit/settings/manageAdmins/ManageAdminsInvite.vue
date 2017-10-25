@@ -76,7 +76,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Send Invites</button>
-                        <router-link :to="{ name: 'list-admins' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
+                        <router-link :to="{ name: 'nonprofit-settings-admins-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
                 </form>
 
@@ -158,7 +158,7 @@
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						vue.$router.push({name: 'list-admins'});
+						vue.$router.push({name: 'nonprofit-settings-admins-list'});
 					}
 				}).catch(function (err) {
 					vue.clearModals();
