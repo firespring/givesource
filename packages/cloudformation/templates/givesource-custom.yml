@@ -36,6 +36,12 @@ Parameters:
   PublicPagesCloudFrontUrl:
     Type: String
 
+  UploadsS3:
+    Type: String
+
+  UploadsCloudFrontUrl:
+    Type: String
+
 Resources:
 
   SaveSettingsLambdaFunction:
@@ -182,7 +188,7 @@ Resources:
       - CognitoUserPool
       - CognitoUserPoolClient
 
-  AdminPagesFrontend:
+  AdminPagesDeploy:
     Type: Custom::S3SyncObjects
     Properties:
       ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
@@ -211,7 +217,7 @@ Resources:
       - CognitoUserPool
       - CognitoUserPoolClient
 
-  PublicPagesFrontend:
+  PublicPagesDeploy:
     Type: Custom::S3SyncObjects
     Properties:
       ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
@@ -295,6 +301,8 @@ Resources:
           "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/",
           "PUBLIC_PAGES_CLOUDFRONT_URL": "${PublicPagesCloudFrontUrl}",
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",
+          "UPLOADS_CLOUDFRONT_URL": "${UploadsCloudFrontUrl}",
+          "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
           "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
         }

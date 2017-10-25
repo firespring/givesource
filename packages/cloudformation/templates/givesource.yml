@@ -77,104 +77,57 @@ Resources:
           Statement:
             - Effect: Allow
               Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
+              Resource:
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/stream/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/stream/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
       - PolicyName: CloudFormation
         PolicyDocument:
           Statement:
@@ -193,6 +146,8 @@ Resources:
                   arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
                 - !Sub |-
                   arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
                 - arn:aws:s3:::{{awsReleaseBucket}}
             - Effect: Allow
               Action:
@@ -204,6 +159,8 @@ Resources:
                   arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
                 - !Sub |-
                   arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
                 - arn:aws:s3:::{{awsReleaseBucket}}/*
       - PolicyName: Cognito
         PolicyDocument:
@@ -362,6 +319,8 @@ Resources:
         AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
         PublicPagesS3: !GetAtt S3Stack.Outputs.PublicPagesS3
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
+        UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
+        UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
@@ -590,6 +549,15 @@ Outputs:
 
   PublicPagesS3BucketUrl:
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
+
+  UploadsCloudFrontUrl:
+    Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
+
+  UploadsS3BucketName:
+    Value: !GetAtt S3Stack.Outputs.UploadsS3
+
+  UploadsS3BucketUrl:
+    Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
