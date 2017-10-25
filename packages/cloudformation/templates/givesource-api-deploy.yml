@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   RestApi:
     Type: String
 
@@ -30,7 +33,7 @@ Resources:
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   ApiDeployment:
     Type: AWS::ApiGateway::Deployment
