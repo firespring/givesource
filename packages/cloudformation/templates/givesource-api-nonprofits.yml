@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
   RestApi:
     Type: String
 
@@ -81,7 +84,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -110,7 +113,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -139,7 +142,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -168,7 +171,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -197,7 +200,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -226,7 +229,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   AdminRegisterNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -257,7 +260,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -286,7 +289,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -315,7 +318,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -344,7 +347,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -373,7 +376,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -404,7 +407,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -433,7 +436,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -462,7 +465,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -491,7 +494,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -520,7 +523,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -582,7 +585,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -611,7 +614,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -640,7 +643,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -669,7 +672,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -698,7 +701,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -727,7 +730,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -758,7 +761,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitUsersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -787,7 +790,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
-      Timeout: 30
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
