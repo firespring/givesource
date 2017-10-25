@@ -86,10 +86,6 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
             - Effect: Allow
               Action: dynamodb:*
@@ -110,6 +106,14 @@ Resources:
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
+                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
             - Effect: Allow
               Action: dynamodb:*
@@ -123,10 +127,6 @@ Resources:
               Action: dynamodb:*
               Resource: !Sub |-
                 arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
             - Effect: Allow
               Action: dynamodb:*
               Resource: !Sub |-
