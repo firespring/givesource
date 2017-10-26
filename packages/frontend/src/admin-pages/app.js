@@ -170,17 +170,17 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/settings/manage-admins',
-			name: 'settings-manage-admins',
-			component: require('./components/admin/settings/manageAdminUsers/ManageAdminUsers.vue'),
+			path: '/settings/admins',
+			name: 'settings-admins-list',
+			component: require('./components/admin/settings/manageAdmins/ManageAdmins.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
 		{
-			path: '/settings/invite-admins',
-			name: 'settings-invite-admins',
-			component: require('./components/admin/settings/manageAdminUsers/InviteAdminUsers.vue'),
+			path: '/settings/admins/invite',
+			name: 'settings-admins-invite',
+			component: require('./components/admin/settings/manageAdmins/ManageAdminsInvite.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
