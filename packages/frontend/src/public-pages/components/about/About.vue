@@ -24,102 +24,43 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <h2>Event Overview</h2>
+                <h2>Authoritatively customize compelling best practices via clicks-and-mortar bandwidth</h2>
 
                 <p>
-                    Give To Our City is a 24-hour event that encourages everyone to contribute to Our City and nonprofit organizations
-                    through a single online giving platform on May 18th. Give To Our City is coordinated by , in partnership with local nonprofit organizations.
+                    Collaboratively <strong>productivate</strong> vertical action items <em>after principle-centered platforms</em>. Assertively <a href="#">envisioneer</a> team building e-business rather than client-centered portals. Seamlessly negotiate enterprise-wide outsourcing for client-focused channels.
                 </p>
 
                 <p>
-                    Every donation makes a bigger impact on Give To Our City because nonprofits also get a proportional share of a $350,000
-                    match fund.
+                    Competently communicate viral web-readiness through interdependent initiatives. Holisticly revolutionize top-line alignments with focused imperatives. Seamlessly disseminate alternative information and focused leadership skills.
                 </p>
 
+                <h2>Collaboratively monetize multidisciplinary value and compelling solutions</h2>
+
                 <p>
-                    The purpose of Give To Our City is to promote philanthropy in Our City. There are three primary goals:
+                    Uniquely innovate functionalized benefits after extensible materials. Appropriately myocardinate customer directed synergy with open-source human capital. Professionally recaptiualize next-generation sources with highly efficient e-services.
                 </p>
 
                 <ol>
-                    <li>Introduce new donors to our nonprofit organizations.</li>
-                    <li>Help Our City nonprofit organizations tell their stories and educate Our City about the positive impact they
-                        have on our lives.</li>
-                    <li>Shine a community spotlight on this day of charitable giving to raise a substantial amount of new money to
-                        assist the local nonprofit network.</li>
+                    <li>Progressively aggregate emerging communities without market positioning paradigms.</li>
+                    <li>Energistically matrix ethical partnerships through cross-media internal or "organic" sources.</li>
+                    <li>Intrinsicly visualize cross-unit core competencies via long-term high-impact e-business.</li>
                 </ol>
 
                 <p>
-                    Give To Our City is intended to be a bonus fundraising opportunity for local nonprofits in our community. It is not intended
-                    to replace or interfere with donors’ gifts to a nonprofit organization that would be made in the regular
-                    course of charitable giving.
-                </p>
-
-                <h2>Making A Donation</h2>
-
-                <p>
-                    Donations to participating charities are made online and will be updated in real time on the online leader board at Give To Our City website.
-                    Online donations may be made starting on May 1st. Gifts made between May 1 – May 17 will count toward the
-                    event, show on the leader board when the giving day begins on May 18 and be eligible for the match fund.
+                    Seamlessly harness high-payoff benefits and cutting-edge portals. Objectively extend innovative markets whereas effective results. Continually engage leveraged solutions for corporate leadership.
                 </p>
 
                 <p>
-                    Donations may also be made in person by cash or check at the The Greater Area Foundation office from 8:00am to 5:00pm on
-                    Thursday, May 18. Checks must be written to “The Greater Area Foundation” with the nonprofit name specified
-                    in the memo line. LCF will charge the same 2.9% fee as Firespring Foundation, and direct fees received from
-                    offline gifts to discretionary funds used for community grants to local nonprofits. All donations are final
-                    and cannot be refunded. Nonprofit organizations will receive their donations (minus 2.9% fee), proportional
-                    share of the match fund and a list of offline donors within approximately one month of the event.
-                </p>
-
-                <h2 id="nonprofit-eligibility">Nonprofit Eligibility</h2>
-
-                <p>
-                    Nonprofit organizations recognized by the IRS as 501(c)(3) public charities located in Lancaster County that serve the people
-                    of Our City are eligible to register for Give To Our City. Nonprofits that have either
-                    a Lancaster County address listed on their GuideStar record or most recent Form 990 are eligible. If the
-                    GuideStar/Form 990 official address is outside Lancaster County, the nonprofit must have a physical office
-                    space in Lancaster County other than a personal residence. Houses of worship and their foundations are excluded
-                    from participating.
+                    Monotonectally architect quality mindshare and covalent products. Enthusiastically empower holistic markets after cooperative mindshare. Completely build impactful applications without equity invested channels.
                 </p>
 
                 <p>
-                    Nonprofits must <a href="#">register to participate</a> each year, and may be required to attend
-                    a training session at the The Greater Area Foundation. Training session information will be included in
-                    the registration confirmation from The Greater Area Foundation, or sign up for a training session <a href="#">here</a>.
+                    Conveniently conceptualize goal-oriented value rather than sticky experiences. Uniquely reconceptualize error-free web-readiness and front-end value. Appropriately deploy equity invested ROI before leading-edge schemas.
                 </p>
-
-                <h2>Why is my gift to Firespring Foundation?</h2>
 
                 <p>
-                    All donations on <a href="#">Give To Our City website</a> will be made to the Firespring Foundation; a 501(c)(3)
-                    tax-exempt organization which permits donors to advise a re-granting of their donations to other IRS recognized
-                    qualifying 501(c)(3) organizations. Firespring Foundation will re-grant 97.1% of each contribution to the
-                    qualifying organization as advised by the donor, retaining 2.9% plus $.30 per transaction for credit card
-                    transaction costs.
+                    Continually incubate extensive e-tailers with extensible data.
                 </p>
-
-                <h2>Is there a minimum donation?</h2>
-
-                <p>
-                    The minimum donation on <a href="#">Give To Our City</a> is $10. There is a maximum donation limit
-                    of $10,000 per nonprofit per household.
-                </p>
-
-                <h2>Is there a limit to the amount an organization can receive on Give To Our City?</h2>
-
-                <p>
-                    There is no maximum amount an organization may receive.
-                </p>
-
-                <h2>Are there restrictions on the match fund grants?</h2>
-
-                <p>
-                    Gifts made to satisfy prior pledges are not eligible for matching funds. Household gifts exceeding $10,000 per nonprofit
-                    will be eligible for match fund dollars up to $10,000, and any amount in excess of $10,000 will not be eligible
-                    for the match fund. The Greater Area Foundation reserves the right to deny, condition or modify the distribution
-                    of match grants if deemed necessary in the judgment of its Board of Directors.
-                </p>
-
 
             </div>
         </main>
