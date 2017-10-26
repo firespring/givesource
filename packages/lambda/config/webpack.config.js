@@ -75,6 +75,7 @@ module.exports = function (env) {
 			PostReport: './src/api/postReport/index.js',
 			PatchReport: './src/api/patchReport/index.js',
 			DeleteReport: './src/api/deleteReport/index.js',
+			GetUsers: './src/api/getUsers/index.js',
 			GetUser: './src/api/getUser/index.js',
 			PatchUser: './src/api/patchUser/index.js',
 			PostUser: './src/api/postUser/index.js',
