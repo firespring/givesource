@@ -79,6 +79,31 @@ UsersRepository.prototype.getAll = function () {
 };
 
 /**
+ * Get all admin Users
+ *
+ * @return {Promise}
+ */
+UsersRepository.prototype.getAdminUsers = function () {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		const params = {
+			FilterExpression: 'attribute_not_exists(nonprofitUuid)'
+		};
+		repository.batchScan(params).then(function (data) {
+			let results = [];
+			if (data.Items) {
+				data.Items.forEach(function (item) {
+					results.push(new User(item));
+				});
+			}
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Delete a User
  *
  * @param {String} uuid

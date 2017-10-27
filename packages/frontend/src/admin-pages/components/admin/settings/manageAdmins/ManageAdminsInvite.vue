@@ -17,26 +17,15 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
 
-                <div class="o-page-header" v-if="isAdmin">
+                <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
-                            <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                            <span><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admin Users</router-link></span>
-                        </nav>
-                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">Invite {{ nonprofit.legalName }}'s Admin Users</h1>
-                    </div>
-                </div>
-
-                <div class="o-page-header" v-else>
-                    <div class="o-page-header__text">
-                        <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                            <span><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admins</router-link></span>
+                            <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
+                            <span><router-link :to="{ name: 'settings-admins-list' }">Manage Admins</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Invite Admins</h1>
                     </div>
@@ -77,7 +66,7 @@
 
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Send Invites</button>
-                        <router-link :to="{ name: 'nonprofit-settings-admins-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
+                        <router-link :to="{ name: 'settings-admins-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                     </footer>
                 </form>
 
@@ -90,8 +79,6 @@
 	module.exports = {
 		data: function () {
 			return {
-				nonprofit: {},
-
 				// Form Data
 				formData: {
 					emailAddresses: '',
@@ -100,32 +87,6 @@
 				// Errors
 				formErrors: {}
 			}
-		},
-		computed: {
-			isAdmin: function () {
-				return this.isSuperAdminUser() || this.isAdminUser();
-			}
-		},
-		props: [
-			'nonprofitUuid'
-		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
-
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
-			}).then(function () {
-				next();
-			}).catch(function () {
-				next();
-			});
 		},
 		methods: {
 			getConstraints: function () {
@@ -145,13 +106,13 @@
 				if (Object.keys(vue.formErrors).length) {
 					vue.clearModals();
 				} else {
-					vue.inviteNonprofitAdmins();
+					vue.inviteAdmins();
 				}
 			},
-			inviteNonprofitAdmins: function () {
+			inviteAdmins: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users', {
+				axios.post(API_URL + 'users', {
 					email_addresses: vue.formData.emailAddresses,
 					user_pool_id: USER_POOL_ID
 				}).then(function (response) {
@@ -159,7 +120,7 @@
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						vue.$router.push({name: 'nonprofit-settings-admins-list'});
+						vue.$router.push({name: 'settings-admins-list'});
 					}
 				}).catch(function (err) {
 					vue.clearModals();
