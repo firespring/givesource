@@ -410,11 +410,13 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UploadsBucket: !GetAtt S3Stack.Outputs.PublicPagesS3
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
       - LambdaRole
       - RestApi
+      - S3Stack
 
   ApiMessagesStack:
     Type: AWS::CloudFormation::Stack
@@ -440,9 +442,11 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -500,9 +504,11 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 

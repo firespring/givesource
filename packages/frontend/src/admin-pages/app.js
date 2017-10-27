@@ -385,14 +385,16 @@ const router = new VueRouter({
  */
 const loadSettings = function () {
 	return axios.get('/settings.json').then(function (response) {
-		return axios.get(response.data.API_URL + 'settings');
+		window.API_URL = response.data.API_URL;
+		return axios.get(API_URL + 'settings/USER_POOL_ID');
 	}).then(function (response) {
-		const settings = response.data;
-		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
-		window.PUBLIC_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
-		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
-		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
-		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
+		window.USER_POOL_ID = response.data.value;
+		return axios.get(API_URL + 'settings/USER_POOL_CLIENT_ID');
+	}).then(function (response) {
+		window.USER_POOL_CLIENT_ID = response.data.value;
+		return axios.get(API_URL + 'settings/PUBLIC_PAGES_CLOUDFRONT_URL');
+	}).then(function (response) {
+		window.PUBLIC_PAGES_CLOUDFRONT_URL = response.data.value;
 	});
 };
 
@@ -403,7 +405,7 @@ const loadSettings = function () {
  */
 const loadUser = function () {
 	const userUuid = User.getCognitoUser().username;
-	return axios.get(`${API_URL}users/${userUuid}?user_pool_id=${USER_POOL_ID}`).then(function (response) {
+	return axios.get(API_URL + 'users/' + userUuid).then(function (response) {
 		Vue.prototype.user = response.data;
 	});
 };
@@ -458,7 +460,9 @@ const groupsMiddleware = function (to, from, next) {
 	}
 };
 
-// Route Middleware
+/**
+ * Route Middleware
+ */
 router.beforeEach(function (to, from, next) {
 	loadSettings().then(function () {
 		authMiddleware(to, from, next);

@@ -152,8 +152,7 @@
 				const vue = this;
 
 				axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users', {
-					email_addresses: vue.formData.emailAddresses,
-					user_pool_id: USER_POOL_ID
+					email_addresses: vue.formData.emailAddresses
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {

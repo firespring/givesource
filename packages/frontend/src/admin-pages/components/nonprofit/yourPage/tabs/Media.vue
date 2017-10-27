@@ -48,7 +48,7 @@
 </template>
 
 <script>
-    const MediaHelper = require('./../../../../helpers/media');
+	const MediaHelper = require('./../../../../helpers/media');
 
 	module.exports = {
 		data: function () {
@@ -146,7 +146,6 @@
 				vue.addModal('spinner');
 
 				axios.post(API_URL + 'files', {
-					bucket: PUBLIC_PAGES_S3_BUCKET_NAME,
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
@@ -184,11 +183,7 @@
 
 				vue.addModal('spinner');
 				if (slide.fileUuid) {
-					axios.delete(API_URL + 'files/' + slide.fileUuid, {
-						data: {
-							bucket: PUBLIC_PAGES_S3_BUCKET_NAME
-						}
-					}).then(function () {
+					axios.delete(API_URL + 'files/' + slide.fileUuid).then(function () {
 						return axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid);
 					}).then(function () {
 						const current = JSON.parse(JSON.stringify(vue.slides));

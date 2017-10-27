@@ -34,7 +34,8 @@
                                             <div class="c-form-control-grid">
                                                 <div class="c-form-control-grid__item">
                                                     <div class="has-floating-label has-floating-label--blank js-floating-label has-floating-label--float" v-floating-label>
-                                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" :class="{ 'has-error': formErrors.firstName }" v-auto-focus>
+                                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst"
+                                                               :class="{ 'has-error': formErrors.firstName }" v-auto-focus>
                                                         <label for="nameFirst" style="">First Name</label>
                                                     </div>
                                                     <div v-if="formErrors.firstName" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
@@ -82,8 +83,8 @@
 					lastName: this.user.lastName
 				},
 
-                // Errors
-                formErrors: {}
+				// Errors
+				formErrors: {}
 			}
 		},
 		watch: {
@@ -117,33 +118,33 @@
 			cancel: function () {
 				this.clearModals();
 			},
-            save: function () {
-                const vue = this;
+			save: function () {
+				const vue = this;
 
-	            vue.addModal('spinner');
-	            vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-	            if (Object.keys(vue.formErrors).length) {
-		            vue.removeModal();
-	            } else {
-		            vue.updateUser();
-	            }
-            },
+				vue.addModal('spinner');
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.removeModal();
+				} else {
+					vue.updateUser();
+				}
+			},
 			updateUser: function () {
 				const vue = this;
 
 				const params = vue.getUpdatedParameters(vue.formData, vue.user);
-                if (Object.keys(params).length === 0) {
-	                vue.clearModals();
-                	return;
-                }
+				if (Object.keys(params).length === 0) {
+					vue.clearModals();
+					return;
+				}
 
-                params['userPoolId'] = USER_POOL_ID;
 				axios.patch(API_URL + 'users/' + vue.user.uuid, params).then(function (response) {
+					vue.removeModal();
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						vue.bus.$emit('userAccountUpdateInfo', response.data);
 						vue.clearModals();
+						vue.bus.$emit('userAccountUpdateInfo', response.data);
 					}
 				}).catch(function (err) {
 					vue.removeModal();

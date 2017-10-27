@@ -26,9 +26,9 @@ exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
-	const request = new Request(event, context).parameters(['user_pool_id', 'email_addresses']);
+	const request = new Request(event, context).parameters(['email_addresses']);
 
-	const userPoolId = request.get('user_pool_id');
+	const userPoolId = process.env.USER_POOL_ID;
 	const emailAddresses = request.get('email_addresses');
 	request.validate().then(function () {
 		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));

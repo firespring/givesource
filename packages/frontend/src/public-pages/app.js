@@ -238,17 +238,16 @@ const router = new VueRouter({
  */
 const loadSettings = function () {
 	return axios.get('/settings.json').then(function (response) {
-		return axios.get(response.data.API_URL + 'settings');
+		window.API_URL = response.data.API_URL;
+		return axios.get(API_URL + 'settings/ADMIN_PAGES_CLOUDFRONT_URL');
 	}).then(function (response) {
-		const settings = response.data;
-		window.ADMIN_PAGES_CLOUDFRONT_URL = _.find(settings, {key: 'PUBLIC_PAGES_CLOUDFRONT_URL'}).value;
-		window.API_URL = _.find(settings, {key: 'API_URL'}).value;
-		window.PUBLIC_PAGES_S3_BUCKET_NAME = _.find(settings, {key: 'PUBLIC_PAGES_S3_BUCKET_NAME'}).value;
-		window.USER_POOL_CLIENT_ID = _.find(settings, {key: 'USER_POOL_CLIENT_ID'}).value;
-		window.USER_POOL_ID = _.find(settings, {key: 'USER_POOL_ID'}).value;
+		window.ADMIN_PAGES_CLOUDFRONT_URL = response.data.value;
 	});
 };
 
+/**
+ * Route Middleware
+ */
 router.beforeEach(function (to, from, next) {
 	loadSettings().then(function () {
 		next();
