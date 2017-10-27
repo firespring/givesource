@@ -93,7 +93,7 @@
 			return {
                 loaded: false,
                 editSlug: false,
-				pageLink: PUBLIC_PAGES_URL + '/nonprofits/',
+				pageLink: PUBLIC_PAGES_CLOUDFRONT_URL + '/nonprofits/',
 
 				// Form Data
 				formData: {
