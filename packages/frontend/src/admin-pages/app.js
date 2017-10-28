@@ -135,6 +135,8 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
+
+		// Admin - Settings
 		{
 			path: '/settings',
 			name: 'settings-list',
@@ -163,6 +165,22 @@ const router = new VueRouter({
 			path: '/settings/customize-appearance',
 			name: 'settings-customize-appearance',
 			component: require('./components/admin/settings/appearance/Appearance.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/admins',
+			name: 'settings-admins-list',
+			component: require('./components/admin/settings/manageAdmins/ManageAdmins.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/admins/invite',
+			name: 'settings-admins-invite',
+			component: require('./components/admin/settings/manageAdmins/ManageAdminsInvite.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

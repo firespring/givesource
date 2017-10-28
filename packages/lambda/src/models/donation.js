@@ -59,15 +59,15 @@ Donation.prototype.attributes = [
 Donation.prototype.constraints = {
 	amountInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	},
 	donorUuid: {
 		presence: false,
-		uuid: 4
+		uuid: 4,
 	},
 	feesInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	},
 	isAnonymous: {
 		presence: true,
@@ -83,7 +83,7 @@ Donation.prototype.constraints = {
 	},
 	nonprofitUuid: {
 		presence: true,
-		uuid: 4
+		uuid: 4,
 	},
 	paymentTransactionUuid: {
 		presence: true,
@@ -91,7 +91,7 @@ Donation.prototype.constraints = {
 	},
 	totalInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	}
 };
 

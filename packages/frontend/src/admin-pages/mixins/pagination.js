@@ -15,16 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const stackName = process.env.AWS_STACK_NAME;
+module.exports = {
+	data: function () {
+		return {
+			pagination: {
+				items: [],
+				loaded: false,
+				size: 0,
+				start: 0,
+				total: 0
+			}
+		};
+	},
+	methods: {
+		resetPaginationData: function () {
+			const vue = this;
 
-exports.DonationsTable = `${stackName}-Donations`;
-exports.DonorsTable = `${stackName}-Donors`;
-exports.FilesTable = `${stackName}-Files`;
-exports.MessagesTable = `${stackName}-Messages`;
-exports.NonprofitsTable = `${stackName}-Nonprofits`;
-exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`;
-exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;
-exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
-exports.ReportsTable = `${stackName}-Reports`;
-exports.SettingsTable = `${stackName}-Settings`;
-exports.UsersTable = `${stackName}-Users`;
+			vue.pagination = {
+				items: [],
+				loaded: false,
+				size: 0,
+				start: 0,
+				total: 0
+			};
+		},
+		setPaginationData: function (data) {
+			const vue = this;
+
+			vue.pagination.items = data.items;
+			vue.pagination.size = data.size;
+			vue.pagination.start = data.start;
+			vue.pagination.total = data.total;
+
+			vue.pagination.loaded = true;
+		}
+	}
+};

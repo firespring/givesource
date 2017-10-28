@@ -18,12 +18,12 @@
 const Model = require('./model');
 
 /**
- * DonationTier constructor
+ * NonprofitDonationTier constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function DonationTier(data) {
+function NonprofitDonationTier(data) {
 	Model.call(this, data);
 }
 
@@ -32,14 +32,14 @@ function DonationTier(data) {
  *
  * @type {Model}
  */
-DonationTier.prototype = new Model();
+NonprofitDonationTier.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-DonationTier.prototype.attributes = [
+NonprofitDonationTier.prototype.attributes = [
 	'amount',
 	'description',
 	'nonprofitUuid',
@@ -50,7 +50,7 @@ DonationTier.prototype.attributes = [
  *
  * @type {{}}
  */
-DonationTier.prototype.constraints = {
+NonprofitDonationTier.prototype.constraints = {
 	amount: {
 		presence: true,
 		type: 'number'
@@ -65,4 +65,4 @@ DonationTier.prototype.constraints = {
 	},
 };
 
-module.exports = DonationTier;
+module.exports = NonprofitDonationTier;

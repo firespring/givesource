@@ -16,25 +16,20 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const NonprofitSlide = require('./../../models/nonprofitSlide');
-const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
+const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitSlidesRepository();
+	const repository = new UsersRepository();
 	const request = new Request(event, context);
 
-	let slide = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
-	}).then(function (result) {
-		slide = new NonprofitSlide(result);
-		slide.populate(request._body);
-		return slide.validate();
-	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_uuid'), slide);
-	}).then(function (model) {
-		callback(null, model.all());
+		return repository.getAdminUsers();
+	}).then(function (users) {
+		const results = users.map(function (user) {
+			return user.all();
+		});
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

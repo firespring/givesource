@@ -58,21 +58,6 @@ Generator.prototype._generators = {
 	},
 
 	/**
-	 * Generate random DonationTier data
-	 *
-	 * @return {Object}
-	 */
-	donationTier: function () {
-		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
-			description: faker.random.words(),
-			nonprofitUuid: faker.random.uuid(),
-		}
-	},
-
-	/**
 	 * Generate random Donor data
 	 *
 	 * @return {Object}
@@ -166,6 +151,43 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random NonprofitDonationTier data
+	 *
+	 * @return {Object}
+	 */
+	nonprofitDonationTier: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
+			description: faker.random.words(),
+			nonprofitUuid: faker.random.uuid(),
+		}
+	},
+
+	/**
+	 * Generate random NonprofitSlide data
+	 *
+	 * @return {Object}
+	 */
+	nonprofitSlide: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			caption: faker.random.word(),
+			embedUrl: faker.internet.url(),
+			externalId: faker.random.word(),
+			filename: faker.random.word() + '.jpeg',
+			fileUuid: faker.random.uuid(),
+			nonprofitUuid: faker.random.uuid(),
+			sortOrder: faker.random.number(),
+			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
+			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
+			url: faker.image.imageUrl(800, 600, 'nature'),
+		}
+	},
+
+	/**
 	 * Generate random PaymentTransaction data
 	 *
 	 * @return {Object}
@@ -213,28 +235,6 @@ Generator.prototype._generators = {
 			createdOn: new Date().getTime(),
 			key: faker.random.word(),
 			value: faker.random.word(),
-		}
-	},
-
-	/**
-	 * Generate random Slide data
-	 *
-	 * @return {Object}
-	 */
-	slide: function () {
-		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			caption: faker.random.word(),
-			embedUrl: faker.internet.url(),
-			externalId: faker.random.word(),
-			filename: faker.random.word() + '.jpeg',
-			fileUuid: faker.random.uuid(),
-			nonprofitUuid: faker.random.uuid(),
-			sortOrder: faker.random.number(),
-			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
-			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
-			url: faker.image.imageUrl(800, 600, 'nature'),
 		}
 	},
 

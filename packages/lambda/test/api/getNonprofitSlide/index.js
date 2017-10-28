@@ -16,10 +16,10 @@
  */
 
 const assert = require('assert');
+const GetNonprofitSlide = require('./../../../src/api/getNonprofitSlide/index');
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
 const sinon = require('sinon');
-const GetNonprofitSlide = require('../../../src/api/getNonprofitSlide/index');
-const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
-const TestHelper = require('../../helpers/test');
+const TestHelper = require('./../../helpers/test');
 
 describe('GetNonprofitSlide', function () {
 
@@ -27,9 +27,9 @@ describe('GetNonprofitSlide', function () {
 		NonprofitSlidesRepository.prototype.get.restore();
 	});
 
-	it('should return a slide', function () {
+	it('should return a nonprofit slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const slide = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+		const slide = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 		sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(slide);
 		const params = {
 			params: {

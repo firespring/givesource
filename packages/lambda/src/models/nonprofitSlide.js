@@ -16,15 +16,15 @@
  */
 
 const Model = require('./model');
-const SlideHelper = require('./../helpers/slide');
+const NonprofitSlideHelper = require('../helpers/nonprofitSlide');
 
 /**
- * Slide constructor
+ * NonprofitSlide constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function Slide(data) {
+function NonprofitSlide(data) {
 	Model.call(this, data);
 }
 
@@ -33,14 +33,14 @@ function Slide(data) {
  *
  * @type {Model}
  */
-Slide.prototype = new Model();
+NonprofitSlide.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-Slide.prototype.attributes = [
+NonprofitSlide.prototype.attributes = [
 	'caption',
 	'embedUrl',
 	'externalId',
@@ -58,7 +58,7 @@ Slide.prototype.attributes = [
  *
  * @type {{}}
  */
-Slide.prototype.constraints = {
+NonprofitSlide.prototype.constraints = {
 	caption: {
 		presence: false,
 		type: 'string',
@@ -96,7 +96,7 @@ Slide.prototype.constraints = {
 	},
 	type: {
 		presence: true,
-		inclusion: [SlideHelper.TYPE_IMAGE, SlideHelper.TYPE_VIMEO, SlideHelper.TYPE_YOUTUBE]
+		inclusion: [NonprofitSlideHelper.TYPE_IMAGE, NonprofitSlideHelper.TYPE_VIMEO, NonprofitSlideHelper.TYPE_YOUTUBE]
 	},
 	url: {
 		presence: true,
@@ -104,4 +104,4 @@ Slide.prototype.constraints = {
 	}
 };
 
-module.exports = Slide;
+module.exports = NonprofitSlide;

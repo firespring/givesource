@@ -17,7 +17,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const Slide = require('../../src/models/slide');
+const Slide = require('../../src/models/nonprofitSlide');
 const NonprofitSlidesRepository = require('../../src/repositories/nonprofitSlides');
 const Repository = require('../../src/repositories/repository');
 const TestHelper = require('../helpers/test');
@@ -51,9 +51,9 @@ describe('NonprofitSlidesRepository', function () {
 			AWS.restore('DynamoDB.DocumentClient');
 		});
 
-		it('should return a Slide model', function () {
+		it('should return a NonprofitSlide model', function () {
 			const nonprofit = TestHelper.generate.model('nonprofit');
-			const data = TestHelper.generate.data('slide', {nonprofitUuid: nonprofit.uuid});
+			const data = TestHelper.generate.data('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: nonprofit.all()});
 			});
@@ -87,10 +87,10 @@ describe('NonprofitSlidesRepository', function () {
 			AWS.restore('DynamoDB.DocumentClient');
 		});
 
-		it('should return all Slide models', function () {
+		it('should return all NonprofitSlide models', function () {
 			const count = 3;
 			const nonprofit = TestHelper.generate.model('nonprofit');
-			const data = TestHelper.generate.dataCollection('slide', count, {nonprofitUuid: nonprofit.uuid});
+			const data = TestHelper.generate.dataCollection('nonprofitSlide', count, {nonprofitUuid: nonprofit.uuid});
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: nonprofit.all()});
 			});
@@ -130,7 +130,7 @@ describe('NonprofitSlidesRepository', function () {
 			AWS.restore('DynamoDB.DocumentClient');
 		});
 
-		it('should delete the Slide model', function () {
+		it('should delete the NonprofitSlide model', function () {
 			const nonprofit = TestHelper.generate.model('nonprofit');
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: nonprofit.all()});
@@ -162,9 +162,9 @@ describe('NonprofitSlidesRepository', function () {
 			AWS.restore('DynamoDB.DocumentClient');
 		});
 
-		it('should update the Slide model', function () {
+		it('should update the NonprofitSlide model', function () {
 			const nonprofit = TestHelper.generate.model('nonprofit');
-			const model = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+			const model = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: nonprofit.all()});
 			});
@@ -178,9 +178,9 @@ describe('NonprofitSlidesRepository', function () {
 			});
 		});
 
-		it('should call reject for an invalid Slide model', function () {
+		it('should call reject for an invalid NonprofitSlide model', function () {
 			const nonprofit = TestHelper.generate.model('nonprofit');
-			const model = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+			const model = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: nonprofit.all()});
 			});
@@ -199,7 +199,7 @@ describe('NonprofitSlidesRepository', function () {
 			AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
 				callback('Error');
 			});
-			const model = TestHelper.generate.model('slide');
+			const model = TestHelper.generate.model('nonprofitSlide');
 			const repository = new NonprofitSlidesRepository();
 			return promiseMe.thatYouReject(repository.save(model.nonprofitUuid, model));
 		});

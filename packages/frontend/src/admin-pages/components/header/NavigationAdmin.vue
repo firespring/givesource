@@ -32,31 +32,58 @@
                 <a><i class="fa fa-fw fa-files-o" aria-hidden="true"></i>Pages</a>
             </router-link>
             <!--<router-link tag="li" :to="{ name: 'reports' }">-->
-                <!--<a><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>Reports</a>-->
+            <!--<a><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>Reports</a>-->
             <!--</router-link>-->
             <router-link tag="li" :to="{ name: 'settings-list' }">
                 <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
             </router-link>
             <!--<router-link tag="li" :to="{ name: 'help' }">-->
-                <!--<a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>-->
+            <!--<a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>-->
             <!--</router-link>-->
         </ul>
 
-        <select class="js-menubar-nav-select">
-            <option value="#" selected>Donations</option>
-            <option value="#">Nonprofits</option>
-            <option value="#">Sponsors</option>
-            <option value="#">Pages</option>
-            <option value="#">Settings</option>
+        <select v-on:change="mobileSelect" v-model="selected">
+            <option disabled value="">Navigation</option>
+            <option value="donations-list">Donations</option>
+            <option value="nonprofits-list">Nonprofits</option>
+            <option value="sponsors-tiers-list">Sponsors</option>
+            <option value="pages-list">Pages</option>
+            <option value="settings-list">Settings</option>
         </select>
 
     </div>
 </template>
 
 <script>
-    module.exports = {
-    	props: [
-    		'nonprofitUuid'
-        ]
-    }
+	module.exports = {
+		data: function () {
+			return {
+				selected: ''
+			};
+		},
+		created: function () {
+			this.setSelected();
+		},
+		methods: {
+			setSelected: function () {
+				const vue = this;
+
+				if (vue.$route.path.indexOf('/donatoins') === 0) {
+					vue.selected = 'donations-list';
+				} else if (vue.$route.path.indexOf('/nonprofits') === 0) {
+					vue.selected = 'nonprofits-list';
+				} else if (vue.$route.path.indexOf('/sponsors') === 0) {
+					vue.selected = 'sponsors-tiers-list';
+				} else if (vue.$route.path.indexOf('/pages') === 0) {
+					vue.selected = 'pages-list';
+				} else if (vue.$route.path.indexOf('/settings') === 0) {
+					vue.selected = 'settings-list';
+				}
+			},
+			mobileSelect: function () {
+				const vue = this;
+				vue.$router.push({name: vue.selected});
+			}
+		}
+	}
 </script>

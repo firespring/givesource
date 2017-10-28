@@ -80,8 +80,10 @@ module.exports = function (env) {
 			PostSetting: './src/api/postSetting/index.js',
 			PatchSetting: './src/api/patchSetting/index.js',
 			DeleteSetting: './src/api/deleteSetting/index.js',
+			GetUsers: './src/api/getUsers/index.js',
 			GetUser: './src/api/getUser/index.js',
 			PatchUser: './src/api/patchUser/index.js',
+			PostUser: './src/api/postUser/index.js',
 
 			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
 			CloudSearchCreateDomain: './src/api/cloudSearchCreateDomain/index.js',
