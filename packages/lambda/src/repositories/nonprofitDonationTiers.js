@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const DonationTier = require('./../models/donationTier');
+const NonprofitDonationTier = require('../models/nonprofitDonationTier');
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
@@ -28,7 +28,7 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  * @constructor
  */
 function NonprofitDonationTiersRepository() {
-	Repository.call(this, RepositoryHelper.DonationTiersTable);
+	Repository.call(this, RepositoryHelper.NonprofitDonationTiersTable);
 }
 
 /**
@@ -54,7 +54,7 @@ NonprofitDonationTiersRepository.prototype.get = function (nonprofitUuid, uuid) 
 			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
 			repository.query(builder).then(function (data) {
 				if (data.Items.length === 1) {
-					resolve(new DonationTier(data.Items[0]));
+					resolve(new NonprofitDonationTier(data.Items[0]));
 				}
 				reject(new ResourceNotFoundException('The specified donation tier does not exist.'));
 			}).catch(function (err) {
@@ -83,7 +83,7 @@ NonprofitDonationTiersRepository.prototype.getAll = function (nonprofitUuid) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {
-						results.push(new DonationTier(item));
+						results.push(new NonprofitDonationTier(item));
 					});
 				}
 				resolve(results);
@@ -123,22 +123,22 @@ NonprofitDonationTiersRepository.prototype.delete = function (nonprofitUuid, uui
  * Create or update a Donation Tier
  *
  * @param {String} nonprofitUuid
- * @param {DonationTier} model
+ * @param {NonprofitDonationTier} model
  */
 NonprofitDonationTiersRepository.prototype.save = function (nonprofitUuid, model) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof DonationTier)) {
-				reject(new Error('invalid DonationTier model'));
+			if (!(model instanceof NonprofitDonationTier)) {
+				reject(new Error('invalid NonprofitDonationTier model'));
 			}
 			model.validate().then(function () {
 				const key = {
 					uuid: model.uuid
 				};
 				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new DonationTier(data.Attributes));
+					resolve(new NonprofitDonationTier(data.Attributes));
 				}).catch(function (err) {
 					reject(err);
 				});

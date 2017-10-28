@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const DonationTier = require('./../../models/donationTier');
 const HttpException = require('./../../exceptions/http');
+const NonprofitDonationTier = require('./../../models/nonprofitDonationTier');
 const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
 const Request = require('./../../aws/request');
 
@@ -27,7 +27,7 @@ exports.handle = function (event, context, callback) {
 	let donationTiers = [];
 	request.validate().then(function () {
 		request.get('donation_tiers', []).forEach(function (data) {
-			donationTiers.push(new DonationTier(data));
+			donationTiers.push(new NonprofitDonationTier(data));
 		});
 	}).then(function () {
 		return repository.batchRemove(request.urlParam('nonprofit_uuid'), donationTiers);

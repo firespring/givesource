@@ -16,11 +16,11 @@
  */
 
 const assert = require('assert');
+const DeleteNonprofitSlide = require('./../../../src/api/deleteNonprofitSlide/index');
+const NonprofitsRepository = require('./../../../src/repositories/nonprofits');
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
 const sinon = require('sinon');
-const DeleteNonprofitSlide = require('../../../src/api/deleteNonprofitSlide/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
-const TestHelper = require('../../helpers/test');
+const TestHelper = require('./../../helpers/test');
 
 describe('DeleteNonprofitSlide', function () {
 
@@ -29,9 +29,9 @@ describe('DeleteNonprofitSlide', function () {
 		NonprofitSlidesRepository.prototype.delete.restore();
 	});
 
-	it('should delete a nonprofit', function () {
+	it('should delete a nonprofit slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const model = TestHelper.generate.model('slide');
+		const model = TestHelper.generate.model('nonprofitSlide');
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'delete').resolves(model);
 		const params = {

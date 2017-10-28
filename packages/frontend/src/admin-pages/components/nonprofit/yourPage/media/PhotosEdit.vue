@@ -270,7 +270,7 @@
 					return instance.put(signedUrl, file);
 				}).then(function () {
 					vue.clearModals();
-					vue.formData.url = PUBLIC_PAGES_CLOUDFRONT_URL + '/' + vue.file.path;
+					vue.formData.url = UPLOADS_CLOUDFRONT_URL + '/' + vue.file.path;
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);

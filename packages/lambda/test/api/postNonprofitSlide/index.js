@@ -17,11 +17,11 @@
 
 const assert = require('assert');
 const HttpException = require('./../../../src/exceptions/http');
-const PostNonprofitSlide = require('../../../src/api/postNonprofitSlide/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
+const PostNonprofitSlide = require('./../../../src/api/postNonprofitSlide/index');
+const NonprofitsRepository = require('./../../../src/repositories/nonprofits');
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
 const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const TestHelper = require('./../../helpers/test');
 
 describe('PostNonprofitSlide', function () {
 
@@ -33,7 +33,7 @@ describe('PostNonprofitSlide', function () {
 
 	it('should return a slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const model = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+		const model = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(model);

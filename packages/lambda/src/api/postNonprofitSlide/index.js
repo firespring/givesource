@@ -16,7 +16,7 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Slide = require('./../../models/slide');
+const NonprofitSlide = require('./../../models/nonprofitSlide');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
 
@@ -24,7 +24,7 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
 
-	const slide = new Slide({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+	const slide = new NonprofitSlide({nonprofitUuid: request.urlParam('nonprofit_uuid')});
 	request.validate().then(function () {
 		slide.populate(request._body);
 		return repository.getCount(request.urlParam('nonprofit_uuid'));

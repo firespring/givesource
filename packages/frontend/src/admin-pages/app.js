@@ -395,6 +395,9 @@ const loadSettings = function () {
 		return axios.get(API_URL + 'settings/PUBLIC_PAGES_CLOUDFRONT_URL');
 	}).then(function (response) {
 		window.PUBLIC_PAGES_CLOUDFRONT_URL = response.data.value;
+		return axios.get(API_URL + 'settings/UPLOADS_CLOUDFRONT_URL');
+	}).then(function (response) {
+		window.UPLOADS_CLOUDFRONT_URL = response.data.value;
 	});
 };
 

@@ -80,6 +80,7 @@ Model.prototype._attributes = ['uuid', 'createdOn'];
 Model.prototype._constraints = {
 	createdOn: {
 		presence: true,
+		type: 'number',
 		numericality: {
 			onlyInteger: true,
 			greaterThan: 0
