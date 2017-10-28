@@ -85,10 +85,25 @@
 				return numeral(this.donation.totalInCents / 100).format('$0,00.00');
             },
         },
-		props: [
-			'donation',
-            'donor',
-            'nonprofit'
-		]
+		props: {
+			donation: {
+				type: Object,
+                default: function () {
+                	return {};
+                }
+            },
+			donor: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
+			nonprofit: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			}
+        }
 	};
 </script>
