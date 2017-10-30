@@ -81,7 +81,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          UPLOADS_BUCKET: !Ref UploadsS3
+          UPLOADS_BUCKET: !Ref UploadsBucket
       FunctionName: !Sub |-
         ${StackName}-PostFile
       Handler: "index.handle"
@@ -111,7 +111,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          UPLOADS_BUCKET: !Ref UploadsS3
+          UPLOADS_BUCKET: !Ref UploadsBucket
       FunctionName: !Sub |-
         ${StackName}-DeleteFile
       Handler: "index.handle"

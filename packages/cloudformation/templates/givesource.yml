@@ -371,7 +371,7 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
-        UploadsBucket: !GetAtt S3Stack.Outputs.PublicPagesS3
+        UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
