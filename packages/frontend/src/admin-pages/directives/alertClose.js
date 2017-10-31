@@ -15,21 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const mixin = {
-	methods: {
-		addModal: function (modal, data) {
-			this.bus.$emit('addModal', modal, data);
-		},
-		removeModal: function (modal) {
-			this.bus.$emit('removeModal', modal);
-		},
-		replaceModal: function (modal, data) {
-			this.bus.$emit('replaceModal', modal, data);
-		},
-		clearModals: function () {
-			this.bus.$emit('clearModals');
-		}
+/* ============================================================================
+ Alerts
+ ============================================================================ */
+const directive = {
+	inserted: function (el) {
+		const $el = $(el);
+
+		$el.find('button').click(function () {
+			$(this).parents('.c-alert').fadeOut('slow', function () {
+				$(this).remove();
+			});
+		});
 	}
 };
 
-export default mixin;
+export default directive;

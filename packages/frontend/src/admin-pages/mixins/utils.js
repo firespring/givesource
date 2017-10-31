@@ -1,4 +1,4 @@
-exports.mixin = {
+const mixin = {
 	methods: {
 		sync: function (object, ...sources) {
 			object = JSON.parse(JSON.stringify(object));
@@ -42,3 +42,5 @@ exports.mixin = {
 		}
 	}
 };
+
+export default mixin;

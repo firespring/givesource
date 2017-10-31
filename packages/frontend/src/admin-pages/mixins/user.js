@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-exports.mixin = {
+const mixin = {
 	methods: {
 		isSuperAdminUser: function () {
 			return this.user.groups.indexOf('SuperAdmin') > -1;
@@ -28,3 +28,5 @@ exports.mixin = {
 		},
 	}
 };
+
+export default mixin;

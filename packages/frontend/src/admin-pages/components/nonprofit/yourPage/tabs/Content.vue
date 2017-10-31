@@ -93,7 +93,6 @@
 			return {
                 loaded: false,
                 editSlug: false,
-				pageLink: PUBLIC_PAGES_CLOUDFRONT_URL + '/nonprofits/',
 
 				// Form Data
 				formData: {
@@ -106,6 +105,11 @@
                 formErrors: {}
 			}
 		},
+        computed: {
+			pageLink: function () {
+				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL') + '/nonprofits/'
+            }
+        },
         props: {
 			nonprofit: {
 				type: Object,

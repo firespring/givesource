@@ -15,17 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* ============================================================================
- Alerts
- ============================================================================ */
-exports.alertClose = {
-	inserted: function(el) {
-		const $el = $(el);
+import Vue from 'vue';
 
-		$el.find('button').click(function() {
-			$(this).parents('.c-alert').fadeOut('slow', function() {
-				$(this).remove();
-			});
-		});
+const bus = new Vue();
+const mixin = {
+	data: function () {
+		return {
+			bus: bus
+		};
 	}
 };
+
+export default mixin;

@@ -163,7 +163,7 @@
 						fileUuid: vue.file.uuid,
 						filename: vue.file.filename,
 						type: MediaHelper.TYPE_IMAGE,
-						url: UPLOADS_CLOUDFRONT_URL + '/' + vue.file.path
+						url: vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path
 					});
 				}).then(function (response) {
 					vue.$router.push({

@@ -22,7 +22,7 @@ validate.validators.label = function () {
 	return [];
 };
 
-exports.mixin = {
+const mixin = {
 	methods: {
 		validate: function (data, constraints) {
 			return this.getErrorMessages(validate(data, constraints, {fullMessages: false}), constraints);
@@ -39,3 +39,5 @@ exports.mixin = {
 		}
 	}
 };
+
+export default mixin;

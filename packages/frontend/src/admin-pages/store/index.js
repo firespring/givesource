@@ -15,21 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const mixin = {
-	methods: {
-		addModal: function (modal, data) {
-			this.bus.$emit('addModal', modal, data);
-		},
-		removeModal: function (modal) {
-			this.bus.$emit('removeModal', modal);
-		},
-		replaceModal: function (modal, data) {
-			this.bus.$emit('replaceModal', modal, data);
-		},
-		clearModals: function () {
-			this.bus.$emit('clearModals');
-		}
-	}
-};
+import createPersistedState from 'vuex-persistedstate';
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-export default mixin;
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+	state: {
+		updated: 0,
+		settings: {}
+	},
+	mutations: {
+		settings: function (state, settings) {
+			Object.keys(settings).forEach(function (key) {
+				state.settings[key] = settings[key];
+			});
+		}
+	},
+	getters: {
+		settings: function (state) {
+			return state.settings;
+		},
+		setting: function (state) {
+			return function (key) {
+				return state.settings.hasOwnProperty(key) ? state.settings[key] : null;
+			}
+		}
+	},
+	plugins: [
+		createPersistedState()
+	]
+});
+
+export default store;
