@@ -15,11 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as User from './../helpers/user';
 import store from './../store';
 import Vue from 'vue';
 import VueRouter from 'vue-router'
-
-const User = require('./../helpers/user');
 
 Vue.use(VueRouter);
 

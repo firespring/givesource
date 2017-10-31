@@ -15,20 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Vue from 'vue';
+
+const bus = new Vue();
 const mixin = {
-	methods: {
-		addModal: function (modal, data) {
-			this.bus.$emit('addModal', modal, data);
-		},
-		removeModal: function (modal) {
-			this.bus.$emit('removeModal', modal);
-		},
-		replaceModal: function (modal, data) {
-			this.bus.$emit('replaceModal', modal, data);
-		},
-		clearModals: function () {
-			this.bus.$emit('clearModals');
-		}
+	data: function () {
+		return {
+			bus: bus
+		};
 	}
 };
 
