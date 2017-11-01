@@ -46,6 +46,7 @@ module.exports = function (env) {
 			PatchNonprofit: './src/api/patchNonprofit/index.js',
 			DeleteNonprofit: './src/api/deleteNonprofit/index.js',
 			AdminRegisterNonprofit: './src/api/adminRegisterNonprofit/index.js',
+			RegisterNonprofit: './src/api/RegisterNonprofit/index.js',
 			GetNonprofitDonations: './src/api/getNonprofitDonations/index.js',
 			GetNonprofitDonation: './src/api/getNonprofitDonation/index.js',
 			PostNonprofitDonation: './src/api/postNonprofitDonation/index.js',
