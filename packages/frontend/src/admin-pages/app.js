@@ -41,9 +41,9 @@ Vue.mixin(UtilsMixin);
 Vue.mixin(ValidateMixin);
 
 // Register directives
-Vue.directive('floating-label', AlertCloseDirective);
+Vue.directive('alert-close', AlertCloseDirective);
 Vue.directive('auto-focus', AutoFocusDirective);
-Vue.directive('alert-close', FloatingLabelDirective);
+Vue.directive('floating-label', FloatingLabelDirective);
 Vue.directive('money', VueMoney.VMoney);
 
 // Register global components
