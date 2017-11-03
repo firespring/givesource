@@ -79,6 +79,34 @@ SettingsRepository.prototype.getAll = function () {
 };
 
 /**
+ * Get Settings by keys
+ *
+ * @param {[]} keys
+ * @return {Promise}
+ */
+SettingsRepository.prototype.batchGet = function (keys) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		if (!keys) {
+			reject(new Error('keys is undefined'));
+		}
+		const map = [];
+		keys.forEach(function (value) {
+			map.push({key: value});
+		});
+		repository.batchGetKeys(map).then(function (data) {
+			let results = [];
+			data.forEach(function (item) {
+				results.push(new Setting(item));
+			});
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Delete a Setting
  *
  * @param {String} key

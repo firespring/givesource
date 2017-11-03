@@ -65,6 +65,40 @@ Repository.prototype.getByKey = function (key, value) {
 };
 
 /**
+ * Get items by keys
+ *
+ * @param {[]} keys
+ * @return {Promise}
+ */
+Repository.prototype.batchGetKeys = function (keys) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		if (!repository.table) {
+			reject(new Error('Repository table is undefined'));
+		}
+		if (!keys) {
+			reject(new Error('map is undefined'));
+		}
+		const params = {
+			RequestItems: {}
+		};
+		params.RequestItems[repository.table] = {
+			Keys: keys
+		};
+		repository.dbClient.batchGet(params, function (err, data) {
+			if (err) {
+				reject(new Error(err, 'DynamoDB'));
+			}
+			if (data.Responses.hasOwnProperty(repository.table)) {
+				resolve(data.Responses[repository.table]);
+			} else {
+				resolve([]);
+			}
+		});
+	});
+};
+
+/**
  * Delete and item by key
  *
  * @param {String} key

@@ -22,10 +22,17 @@ const SettingsRepository = require('./../../repositories/settings');
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context);
+	const keys = request.queryParam('keys', '').split(',');
 
 	request.validate().then(function () {
-		return repository.getAll();
+		if (keys.length) {
+			return repository.batchGet(keys);
+		} else {
+			return repository.getAll();
+		}
 	}).then(function (settings) {
+		console.log('%j', settings);
+
 		const results = settings.map(function (setting) {
 			return setting.all();
 		});
