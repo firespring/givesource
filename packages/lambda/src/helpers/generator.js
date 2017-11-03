@@ -44,6 +44,7 @@ Generator.prototype._generators = {
 		const donation = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 			donorUuid: faker.random.uuid(),
 			isAnonymous: faker.random.boolean(),
@@ -66,6 +67,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			city: faker.address.city(),
@@ -87,6 +89,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			path: 'uploads/' + faker.system.fileName(),
 			filename: faker.system.fileName()
 		}
@@ -101,6 +104,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			email: faker.internet.email(),
 			message: faker.lorem.sentence(),
 			name: faker.name.findName(),
@@ -118,6 +122,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 		};
 	},
 
@@ -130,6 +135,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			category1: faker.random.word(),
@@ -159,6 +165,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
 			description: faker.random.words(),
 			nonprofitUuid: faker.random.uuid(),
@@ -174,6 +181,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			caption: faker.random.word(),
 			embedUrl: faker.internet.url(),
 			externalId: faker.random.word(),
@@ -196,6 +204,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
 			creditCardCvvResult: 123,
 			creditCardExpirationMonth: 12,
@@ -218,6 +227,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			status: faker.random.arrayElement(['FAILED', 'PENDING', 'SUCCESS']),
 			type: faker.random.arrayElement(['ALL_DONATIONS', 'NONPROFIT_DONATIONS']),
 			url: faker.internet.url()
@@ -233,6 +243,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			key: faker.random.word(),
 			value: faker.random.word(),
 		}
@@ -247,6 +258,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			cognitoUuid: faker.random.uuid(),
 			email: faker.internet.email(),
 			lastName: faker.name.firstName(),

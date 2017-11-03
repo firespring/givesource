@@ -18,9 +18,6 @@ Parameters:
   RestApiRootResourceId:
     Type: String
 
-  CloudSearchDonationsSearchServiceEndpoint:
-    Type: String
-
   IntegrationRequestTemplate:
     Type: String
     Default: |
@@ -110,7 +107,6 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          SEARCH_SERVICE_ENDPOINT: !Ref CloudSearchDonationsSearchServiceEndpoint
       FunctionName: !Sub |-
         ${StackName}-GetDonations
       Handler: "index.handle"

@@ -39,7 +39,7 @@ const PaymentTransactionsRepository = require('./../src/repositories/paymentTran
 const seedDonations = function () {
 	const generator = new Generator();
 	const donorsRepository = new DonorsRepository();
-	const donationsRepository = new NonprofitDonationsRepository();
+	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 
@@ -73,7 +73,7 @@ const seedDonations = function () {
 		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
 
 		let donationsTotal = 0;
-		return donorsRepository.batchUpdate(donors).then(function () {
+		return donorsRepository.batchUpdate(donors).then(function (response) {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
 				let total = 0;
@@ -87,7 +87,7 @@ const seedDonations = function () {
 				paymentTransactions[i].total = total;
 				donationsTotal += total;
 				promise = promise.then(function () {
-					return donationsRepository.batchUpdate(chunk);
+					return nonprofitDonationsRepository.batchUpdate(chunk);
 				});
 			});
 			return promise;

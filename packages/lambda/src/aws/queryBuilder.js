@@ -32,6 +32,7 @@ function QueryBuilder(type) {
 	this.filters = [];
 	this.expressionAttributeNames = {};
 	this.expressionAttributeValues = {};
+	this._lastEvaluatedKey = null;
 }
 
 /**

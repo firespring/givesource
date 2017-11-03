@@ -68,8 +68,14 @@ describe('Model', function () {
 			{model: TestHelper.generate.model('model'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false},
 			{model: TestHelper.generate.model('model'), param: 'createdOn', value: null, error: true},
 			{model: TestHelper.generate.model('model'), param: 'createdOn', value: 'test', error: true},
-			{model: TestHelper.generate.model('model'), param: 'createdOn', value: '123456', error: false},
+			{model: TestHelper.generate.model('model'), param: 'createdOn', value: '123456', error: true},
 			{model: TestHelper.generate.model('model'), param: 'createdOn', value: 123456, error: false},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: null, error: true},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: 'test', error: true},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: '123456', error: true},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: 123456, error: true},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: 0, error: false},
+			{model: TestHelper.generate.model('model'), param: 'isDeleted', value: 1, error: false},
 		];
 		TestHelper.validate(tests);
 	});

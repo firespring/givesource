@@ -9,9 +9,6 @@ Parameters:
   RestApi:
     Type: String
 
-  HealthCheck:
-    Type: String
-
   LambdaRoleArn:
     Type: String
 
@@ -180,8 +177,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
-          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/"
+          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -209,8 +205,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
-          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/"
+          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -298,7 +293,6 @@ Resources:
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
           "ADMIN_PAGES_CLOUDFRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",
-          "HEALTH_CHECK_URL": "https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/",
           "PUBLIC_PAGES_CLOUDFRONT_URL": "${PublicPagesCloudFrontUrl}",
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",
           "UPLOADS_CLOUDFRONT_URL": "${UploadsCloudFrontUrl}",
