@@ -56,6 +56,17 @@
                                     </div>
                                 </div>
 
+                                <hr class="expand" v-if="isSuperAdmin">
+
+                                <div class="c-page-section-segment" v-if="isSuperAdmin">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-payment-gateway' }">Payment Gateway Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Integrate with PaymentSpring to process credit cards.
+                                    </div>
+                                </div>
+
                                 <hr class="expand">
 
                                 <div class="c-page-section-segment">
@@ -75,3 +86,13 @@
         </main>
     </div>
 </template>
+
+<script>
+	module.exports = {
+		computed: {
+			isSuperAdmin: function () {
+				return this.isSuperAdminUser();
+			},
+		}
+	};
+</script>

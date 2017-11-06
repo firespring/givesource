@@ -124,6 +124,14 @@ const router = new VueRouter({
 			},
 		},
 		{
+			path: '/settings/payment-gateway',
+			name: 'settings-payment-gateway',
+			component: require('./../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin']
+			},
+		},
+		{
 			path: '/settings/admins',
 			name: 'settings-admins-list',
 			component: require('./../components/admin/settings/manageAdmins/ManageAdmins.vue'),
