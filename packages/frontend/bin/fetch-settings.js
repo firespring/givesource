@@ -64,8 +64,7 @@ const getSettings = function () {
 
 		describeStack(cloudFormation, stackName).then(function (stack) {
 			resolve({
-				API_URL: findOutputKey(stack.Outputs, 'ApiUrl'),
-				HEALTH_CHECK_URL: findOutputKey(stack.Outputs, 'HealthCheckUrl')
+				API_URL: findOutputKey(stack.Outputs, 'ApiUrl')
 			});
 		}).catch(function (err) {
 			reject(err);

@@ -331,4 +331,33 @@ Repository.prototype.query = function (builder) {
 	});
 };
 
+/**
+ * DynamoDB batch query
+ *
+ * @param {QueryBuilder} builder
+ * @param {{}} [results]
+ * @return {Promise}
+ */
+Repository.prototype.batchQuery = function (builder, results) {
+	const repository = this;
+	results = results || {Count: 0, Items: []};
+	return new Promise(function (resolve, reject) {
+		repository.query(builder).then(function (data) {
+			if (data.Count) {
+				results.Count += data.Count;
+			}
+			if (data.Items) {
+				results.Items = results.Items.concat(data.Items);
+			}
+			if (data.LastEvaluatedKey) {
+				builder.start(data.LastEvaluatedKey);
+				resolve(repository.batchQuery(builder, results));
+			}
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
 module.exports = Repository;

@@ -20,6 +20,10 @@ Resources:
         AttributeType: S
       - AttributeName: createdOn
         AttributeType: N
+      - AttributeName: isDeleted
+        AttributeType: N
+      - AttributeName: amountInCents
+        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -27,6 +31,28 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
+      - IndexName: paginationCreatedOnIndex
+        KeySchema:
+        - AttributeName: isDeleted
+          KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: paginationAmountInCentsIndex
+        KeySchema:
+        - AttributeName: isDeleted
+          KeyType: HASH
+        - AttributeName: amountInCents
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
       - IndexName: nonprofitUuidIndex
         KeySchema:
         - AttributeName: nonprofitUuid
@@ -45,8 +71,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
 
   DonorsTable:
     Type: AWS::DynamoDB::Table
@@ -85,8 +109,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
     DependsOn: DonationsTable
 
   FilesTable:
@@ -193,8 +215,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
     DependsOn: MessagesTable
 
   NonprofitDonationTiersTable:
@@ -301,8 +321,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
     DependsOn: NonprofitSlidesTable
 
   ReportsTable:
@@ -416,14 +434,8 @@ Outputs:
   DonationsTable:
     Value: !Ref DonationsTable
 
-  DonationsTableStreamArn:
-    Value: !GetAtt DonationsTable.StreamArn
-
   DonorsTable:
     Value: !Ref DonorsTable
-
-  DonorsTableStreamArn:
-    Value: !GetAtt DonorsTable.StreamArn
 
   FilesTable:
     Value: !Ref FilesTable
@@ -439,9 +451,6 @@ Outputs:
 
   NonprofitSlidesTable:
     Value: !Ref NonprofitSlidesTable
-
-  NonprofitsTableStreamArn:
-    Value: !GetAtt NonprofitsTable.StreamArn
 
   PaymentTransactionsTable:
     Value: !Ref PaymentTransactionsTable

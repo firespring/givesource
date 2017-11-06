@@ -86,13 +86,6 @@ module.exports = function (env) {
 			PostUser: './src/api/postUser/index.js',
 
 			ApiGatewayDeploy: './src/api/apiGatewayDeploy/index.js',
-			CloudSearchCreateDomain: './src/api/cloudSearchCreateDomain/index.js',
-			CloudSearchCreateIndexFields: './src/api/cloudSearchCreateIndexFields/index.js',
-			CloudSearchDescribeDomain: './src/api/cloudSearchDescribeDomain/index.js',
-			CloudSearchDomainWaitCondition: './src/api/cloudSearchDomainWaitCondition/index.js',
-			CloudSearchDonationsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
-			CloudSearchDonorsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
-			CloudSearchNonprofitsUploadDocuments: './src/api/cloudSearchUploadDocuments/index.js',
 			CognitoCreateUserGroup: './src/api/cognitoCreateUserGroup/index.js',
 			CognitoCreateUserPool: './src/api/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/api/cognitoCreateUserPoolClient/index.js',
@@ -100,9 +93,6 @@ module.exports = function (env) {
 			S3PutObject: './src/api/s3PutObject/index.js',
 			S3SyncObjects: './src/api/s3SyncObjects/index.js',
 			SaveSettings: './src/api/saveSettings/index.js',
-
-			HealthCheckDeploy: './src/api/apiGatewayDeploy/index.js',
-			CloudSearchHealth: './src/health/cloudSearch/index.js'
 		},
 		output: {
 			path: path.resolve(__dirname, '../build/functions'),

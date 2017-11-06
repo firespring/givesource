@@ -37,12 +37,6 @@ Resources:
       Name: !Sub |-
         ${AWS::StackName}
 
-  HealthCheck:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: !Sub |-
-        ${AWS::StackName}-Health
-
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -83,13 +77,9 @@ Resources:
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
                 - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
-                - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/stream/*
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
                 - !Sub |-
@@ -98,8 +88,6 @@ Resources:
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/stream/*
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
                 - !Sub |-
@@ -170,13 +158,6 @@ Resources:
                 - cognito-idp:*
                 - iam:PassRole
               Resource: '*'
-      - PolicyName: CloudSearch
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action: cloudsearch:*
-              Resource: !Sub |-
-                arn:aws:cloudsearch:${AWS::Region}:${AWS::AccountId}:domain/*
       - PolicyName: APIGateway
         PolicyDocument:
           Statement:
@@ -195,27 +176,8 @@ Resources:
                 - apigateway:*
               Resource: !Sub |-
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
-      - PolicyName: HealthCheck
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - apigateway:POST
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/restapis/${HealthCheck}/deployments
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys/*
     DependsOn:
       - DynamoDbStack
-      - HealthCheck
       - RestApi
       - S3Stack
 
@@ -271,46 +233,12 @@ Resources:
                 - sns:publish
               Resource: '*'
 
-  HealthCheckStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        HealthCheck: !Ref HealthCheck
-        HealthCheckRootResourceId: !GetAtt HealthCheck.RootResourceId
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-health.yml
-      TimeoutInMinutes: 20
-    DependsOn:
-      - LambdaRole
-
-  CloudSearchStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
-        HealthCheckUrl: !Sub |-
-          https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
-        DonationsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonationsTableStreamArn
-        DonorsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonorsTableStreamArn
-        NonprofitsTableStreamArn: !GetAtt DynamoDbStack.Outputs.NonprofitsTableStreamArn
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cloudsearch.yml
-      TimeoutInMinutes: 40
-    DependsOn:
-      - DynamoDbStack
-      - HealthCheckStack
-      - LambdaRole
-
   CustomStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
-        HealthCheck: !Ref HealthCheck
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
@@ -339,11 +267,9 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
-        CloudSearchDonationsSearchServiceEndpoint: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsSearchServiceEndpoint
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CloudSearchStack
       - LambdaRole
       - RestApi
 
@@ -504,9 +430,7 @@ Resources:
     DependsOn:
       - ApiDeployStack
       - CustomStack
-      - CloudSearchStack
       - DynamoDbStack
-      - HealthCheckStack
       - S3Stack
 
 Outputs:
@@ -523,28 +447,6 @@ Outputs:
   ApiUrl:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
-
-  CloudSearchDonationsDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsDocServiceEndpoint
-
-  CloudSearchDonationsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsSearchServiceEndpoint
-
-  CloudSearchDonorssDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorssDocServiceEndpoint
-
-  CloudSearchDonorsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorsSearchServiceEndpoint
-
-  CloudSearchNonprofitsDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsDocServiceEndpoint
-
-  CloudSearchNonprofitsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsSearchServiceEndpoint
-
-  HealthCheckUrl:
-    Value: !Sub |-
-      https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn

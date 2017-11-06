@@ -95,48 +95,4 @@ Donor.prototype.constraints = {
 	}
 };
 
-/**
- * CloudSearch index fields for this model
- *
- * @return {{}}
- */
-Donor.prototype.cloudSearchIndexFields = {
-	address1: {
-		IndexFieldName: 'address1',
-		IndexFieldType: 'text',
-	},
-	address2: {
-		IndexFieldName: 'address2',
-		IndexFieldType: 'text',
-	},
-	city: {
-		IndexFieldName: 'city',
-		IndexFieldType: 'text',
-	},
-	email: {
-		IndexFieldName: 'email',
-		IndexFieldType: 'text',
-	},
-	name: {
-		IndexFieldName: 'name',
-		IndexFieldType: 'text',
-	},
-	phone: {
-		IndexFieldName: 'phone',
-		IndexFieldType: 'text',
-	},
-	state: {
-		IndexFieldName: 'state',
-		IndexFieldType: 'text',
-	},
-	totalAmountInCents: {
-		IndexFieldName: 'total_amount_in_cents',
-		IndexFieldType: 'int',
-	},
-	zip: {
-		IndexFieldName: 'zip',
-		IndexFieldType: 'text',
-	}
-};
-
 module.exports = Donor;
