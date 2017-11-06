@@ -29,16 +29,6 @@ const mixin = {
 		},
 		isEmptyParam: function (param) {
 			return param === undefined || param === null || param === '';
-		},
-		generateQueryString: function (object) {
-			const params = [];
-			Object.keys(object).forEach(function (key) {
-				if (object.hasOwnProperty(key)) {
-					const value = encodeURIComponent(object[key]);
-					params.push(key + '=' + value);
-				}
-			});
-			return '?' + params.join('&');
 		}
 	}
 };

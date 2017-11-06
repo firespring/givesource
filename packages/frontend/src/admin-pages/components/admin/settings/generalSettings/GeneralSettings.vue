@@ -187,6 +187,8 @@
 </template>
 
 <script>
+	import * as Utils from './../../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -229,7 +231,7 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
-				axios.get(API_URL + 'settings' + vm.generateQueryString({
+				axios.get(API_URL + 'settings' + Utils.generateQueryString({
 					keys: Object.keys(vm.formData)
 				})).then(function (response) {
 					vm.settings = response.data;
@@ -239,7 +241,7 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'settings' + vue.generateQueryString({
+			axios.get(API_URL + 'settings' + Utils.generateQueryString({
 				keys: Object.keys(vue.formData)
 			})).then(function (response) {
 				vue.settings = response.data;

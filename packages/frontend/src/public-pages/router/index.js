@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as Utils from './../helpers/utils';
 import store from './../store';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -202,23 +203,33 @@ const router = new VueRouter({
 });
 
 /**
- * Get a setting from local storage or api
+ * Update app settings
  *
- * @param {String} setting
  * @return {Promise}
  */
-const getSetting = function (setting) {
-	const value = store.getters.setting(setting);
-	if (value !== null) {
-		return Promise.resolve(value);
-	} else {
-		return axios.get(API_URL + 'settings/' + setting).then(function (response) {
-			const obj = {};
-			obj[setting] = response.data.value;
-			store.commit('settings', obj);
-			return Promise.resolve(response.data.value);
+const updateSettings = function () {
+	const settings = [
+		'ADMIN_PAGES_CLOUDFRONT_URL'
+	];
+
+	return axios.get('/settings.json').then(function (response) {
+		window.API_URL = response.data.API_URL;
+		store.commit('settings', {API_URL: response.data.API_URL});
+	}).then(function () {
+		return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+			keys: settings
+		})).then(function (response) {
+			if (response.data.length) {
+				response.data.forEach(function (setting) {
+					const set = {};
+					set[setting.key] = setting.value;
+					store.commit('settings', set);
+				});
+			}
 		});
-	}
+	}).then(function () {
+		store.commit('updated');
+	});
 };
 
 /**
@@ -227,31 +238,16 @@ const getSetting = function (setting) {
  * @return {Promise}
  */
 const loadSettings = function () {
-	const settings = [
-		'ADMIN_PAGES_CLOUDFRONT_URL'
-	];
+	const date = new Date();
+	date.setHours(date.getHours() - 1);
 
-	let promise = Promise.resolve();
-	const API_URL = store.getters.setting('API_URL');
-
-	if (API_URL !== null) {
-		window.API_URL = API_URL;
+	const lastUpdated = store.getters.updated;
+	if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
+		return updateSettings();
 	} else {
-		promise = promise.then(function () {
-			return axios.get('/settings.json').then(function (response) {
-				window.API_URL = response.data.API_URL;
-				store.commit('settings', {API_URL: response.data.API_URL});
-			});
-		});
+		window.API_URL = store.getters.setting('API_URL');
+		return Promise.resolve();
 	}
-
-	settings.forEach(function (setting) {
-		promise = promise.then(function () {
-			return getSetting(setting);
-		});
-	});
-
-	return promise;
 };
 
 /**

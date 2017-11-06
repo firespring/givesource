@@ -31,6 +31,9 @@ const store = new Vuex.Store({
 			Object.keys(settings).forEach(function (key) {
 				state.settings[key] = settings[key];
 			});
+		},
+		updated: function (state) {
+			state.updated = new Date().getTime();
 		}
 	},
 	getters: {
@@ -41,6 +44,9 @@ const store = new Vuex.Store({
 			return function (key) {
 				return state.settings.hasOwnProperty(key) ? state.settings[key] : null;
 			}
+		},
+		updated: function (state) {
+			return state.updated;
 		}
 	},
 	plugins: [

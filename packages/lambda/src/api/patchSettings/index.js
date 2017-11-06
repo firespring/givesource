@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const Setting = require('./../../models/setting');
@@ -26,16 +27,21 @@ exports.handle = function (event, context, callback) {
 
 	let settings = [];
 	request.validate().then(function () {
-		let promise = Promise.resolve();
-		request.get('settings', []).forEach(function (data) {
-			promise = promise.then(function () {
-				return repository.get(data.key).then(function (model) {
+		const keys = request.get('settings', []).map(function (setting) {
+			return setting.key;
+		});
+		return repository.batchGet(keys).then(function (models) {
+			request.get('settings', []).forEach(function (data) {
+				let model = _.find(models, {key: data.key});
+				if (model) {
 					model.populate(data);
-					settings.push(model);
-				});
+				} else {
+					model = new Setting(data);
+				}
+
+				settings.push(model);
 			});
 		});
-		return promise;
 	}).then(function () {
 		let promise = Promise.resolve();
 		settings.forEach(function (setting) {
