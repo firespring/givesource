@@ -124,6 +124,34 @@ SettingsRepository.prototype.delete = function (key) {
 };
 
 /**
+ * Batch delete Settings
+ *
+ * @param {[]} models
+ * @return {Promise}
+ */
+SettingsRepository.prototype.batchDeleteByKey = function (models) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		const requestItems = [];
+		models = models || [];
+		models.forEach(function (model) {
+			requestItems.push({
+				DeleteRequest: {
+					Key: {
+						key: model.key
+					}
+				}
+			});
+		});
+		repository.batchWrite(requestItems, 3).then(function (data) {
+			resolve(data);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Create or update a Setting
  *
  * @param {Setting} model

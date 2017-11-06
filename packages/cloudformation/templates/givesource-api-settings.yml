@@ -183,6 +183,35 @@ Resources:
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/settings/{key}
     DependsOn: PatchSettingLambdaFunction
 
+  PatchSettingsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchSettings.zip
+      Description: "Create or update settings"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PatchSettings
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PatchSettingsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchSettingsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/settings
+    DependsOn: PatchSettingsLambdaFunction
+
   DeleteSettingLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -211,6 +240,35 @@ Resources:
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/settings/{key}
     DependsOn: DeleteSettingLambdaFunction
+
+  DeleteSettingsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteSettings.zip
+      Description: "Delete settings"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteSettings
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteSettingsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteSettingsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/settings
+    DependsOn: DeleteSettingsLambdaFunction
 
   # Settings Api Gateway Resources
 
@@ -516,6 +574,78 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: PatchSettingLambdaFunction
 
+  PatchSettingApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SettingsApiResource
+      HttpMethod: PATCH
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PatchSettingsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PatchSettingsLambdaFunction
+
   DeleteSettingApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -588,6 +718,78 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: DeleteSettingLambdaFunction
 
+  DeleteSettinsgApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SettingsApiResource
+      HttpMethod: DELETE
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt DeleteSettingsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: DeleteSettingsLambdaFunction
+
   OptionsSettingsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -604,7 +806,7 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,PATCH,POST,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: 200
