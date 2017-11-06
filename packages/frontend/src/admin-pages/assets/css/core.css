@@ -3332,11 +3332,10 @@ General
   .c-pagination strong,
   .c-pagination span {
     display: block;
-    width: 1.4444rem;
-    height: 1.4444rem;
     border-radius: 3px;
     text-align: center;
-    line-height: 1.4444rem; }
+    line-height: 1;
+    padding: 0.2222rem 0.4444rem; }
   .c-pagination strong {
     margin: 0 0.3333rem;
     background: #474747;
@@ -6859,6 +6858,12 @@ Defaults
   background: #222;
   color: #fff;
   padding: 1.2778rem; }
+  .c-page-section--border > .c-page-section__header a:link,
+  .c-page-section--border > .c-page-section__header a:visited {
+    color: #f55930; }
+  .c-page-section--border > .c-page-section__header a:hover,
+  .c-page-section--border > .c-page-section__header a:active {
+    color: #fff; }
 .c-page-section--border > .c-page-section__main {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
