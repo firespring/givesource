@@ -86,17 +86,27 @@
 		computed: {
 			date: function () {
 				return new Date(this.donation.createdOn).toLocaleDateString();
-            },
-            time: function () {
-	            return new Date(this.donation.createdOn).toLocaleTimeString();
-            },
-            amount: function () {
-	            return numeral(this.donation.totalInCents / 100).format('$0,00.00');
-            }
-        },
-		props: [
-			'donation',
-            'donor'
-		]
+			},
+			time: function () {
+				return new Date(this.donation.createdOn).toLocaleTimeString();
+			},
+			amount: function () {
+				return numeral(this.donation.totalInCents / 100).format('$0,00.00');
+			},
+		},
+		props: {
+			donation: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
+			donor: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			}
+		}
 	};
 </script>
