@@ -113,8 +113,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button type="submit" class="c-btn">Save & Finish</button>
-                            <button type="submit" class="c-btn">Save & Add Another</button>
+                            <button v-on:click="save('close')" type="submit" class="c-btn">Save & Finish</button>
+                            <button v-on:click="save('add')" type="submit" class="c-btn">Save & Add Another</button>
                             <router-link :to="{ name: 'donations-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
 
@@ -215,6 +215,8 @@
 			},
 			submit: function (event) {
 				event.preventDefault();
+			},
+			save: function (action) {
 				const vue = this;
 
 				vue.addModal('spinner');
@@ -223,10 +225,10 @@
 				if (Object.keys(vue.formErrors).length) {
 					vue.clearModals();
 				} else {
-					vue.addDonation();
+					vue.addDonation(action);
 				}
 			},
-			addDonation: function () {
+			addDonation: function (action) {
 				const vue = this;
 
 				const donor = {
@@ -256,7 +258,17 @@
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						vue.$router.push({name: 'donations-list'});
+						if (action === 'add') {
+							vue.formData = {
+								amount: 0,
+								email: '',
+								firstName: '',
+								lastName: '',
+								nonprofitUuid: ''
+							};
+						} else {
+							vue.$router.push({name: 'donations-list'});
+						}
 					}
 				}).catch(function (err) {
 					vue.clearModals();
