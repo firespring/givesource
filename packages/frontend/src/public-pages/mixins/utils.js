@@ -35,9 +35,6 @@ const mixin = {
 		formatMoney: function (amountInCents) {
 			return numeral(amountInCents / 100).format('$0,0.00');
 		},
-		pad: function (number, places) {
-			return new Array(Math.max(places - String(number).length + 1, 0)).join(0) + number;
-		},
 		calculateFees: function (cartItems, transactionFlatFee, transactionPercentFee) {
 			let fees = 0;
 			cartItems.forEach(function (cartItem) {

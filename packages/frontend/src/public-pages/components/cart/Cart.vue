@@ -25,7 +25,7 @@
             <div class="wrapper wrapper--sm">
 
                 <form v-on:submit="submit">
-                    <cart-donations v-model="donationAmounts" :displayTotal="!isCartEmpty"></cart-donations>
+                    <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty"></cart-donations>
 
                     <fieldset v-if="!isCartEmpty">
                         <legend>Your Contact & Billing Info</legend>
@@ -37,11 +37,14 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name" required>
+                                        <input v-model="donor.name" type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name">
                                     </div>
                                     <div class="grid-item">
-                                        <input type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name" required>
+                                        <input v-model="donor.lastName" type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name">
                                     </div>
+                                </div>
+                                <div v-if="formErrors.donor.name || formErrors.donor.lastName" class="notes notes--below notes--error">
+                                    You must enter a first name and last name.
                                 </div>
                             </div>
                         </div>
@@ -51,7 +54,10 @@
                                 <label for="donorEmail">Your Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="email" name="donorEmail" id="donorEmail" required>
+                                <input v-model="donor.email" type="email" name="donorEmail" id="donorEmail">
+                                <div v-if="formErrors.donor.email" class="notes notes--below notes--error">
+                                    {{ formErrors.donor.email }}
+                                </div>
                             </div>
                         </div>
 
@@ -62,21 +68,27 @@
                             <div class="form-item__control">
 
                                 <div class="address1">
-                                    <input type="text" name="billingAddress1" id="billingAddress1" placeholder="Address Line 1">
+                                    <input v-model="donor.address1" type="text" name="billingAddress1" id="billingAddress1" placeholder="Address Line 1">
+                                    <div v-if="formErrors.donor.address1" class="notes notes--below notes--error">
+                                        {{ formErrors.donor.address1 }}
+                                    </div>
                                 </div>
 
                                 <div class="address2">
-                                    <input type="text" name="billingAddress2" id="billingAddress2" placeholder="Address Line 2">
+                                    <input v-model="donor.address2" type="text" name="billingAddress2" id="billingAddress2" placeholder="Address Line 2">
+                                    <div v-if="formErrors.donor.address2" class="notes notes--below notes--error">
+                                        {{ formErrors.donor.address2 }}
+                                    </div>
                                 </div>
 
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input type="text" name="billingCity" id="billingCity" placeholder="City" required="">
+                                        <input v-model="donor.city" type="text" name="billingCity" id="billingCity" placeholder="City">
                                     </div>
 
                                     <div class="city-state-zip__state select-wrap">
-                                        <select name="billingState" id="billingState" required="">
+                                        <select v-model="donor.state" name="billingState" id="billingState">
                                             <option value="">State</option>
                                             <option value="" disabled="disabled">-----</option>
                                             <option value="AL">Alabama</option>
@@ -133,9 +145,13 @@
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input type="text" name="billingZip" id="billingZip" placeholder="ZIP" required>
+                                        <input v-model="donor.zip" type="text" name="billingZip" id="billingZip" placeholder="ZIP">
                                     </div>
                                 </div>
+                                <div v-if="formErrors.donor.city || formErrors.donor.state || formErrors.donor.zip" class="notes notes--below notes--error">
+                                    You must enter a city, state and zip code.
+                                </div>
+
                             </div>
                         </div>
 
@@ -144,7 +160,27 @@
                                 <label for="billingPhone">Your Billing Phone</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="tel" name="billingPhone" id="billingPhone" required>
+                                <input v-model="donor.phone" type="tel" name="billingPhone" id="billingPhone">
+                                <div v-if="formErrors.donor.phone" class="notes notes--below notes--error">
+                                    {{ formErrors.donor.phone }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-item">
+                            <div class="form-item__label">
+                                Do you want your donation to be anonymous?
+                            </div>
+                            <div class="form-item__control">
+                                <label class="checkbox-solo">
+                                    <input v-model="formData.isAnonymous" type="checkbox" name="coverDonationFees" id="coverDonationFees-1">
+                                    <span>Yes, make my donation anonymous</span>
+                                </label>
+                                <div class="notes notes--below">
+                                    The nonprofit(s) you donate to won't receive your contact info but it will still be sent to Give To Our City for tax purposes.
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -157,7 +193,7 @@
                                 <label for="cc_num">Credit Card #</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="cc_num" id="cc_num" autocomplete="cc-number" required>
+                                <input v-model="paymentDetails.ccNumber" type="text" name="cc_num" id="cc_num" autocomplete="cc-number">
 
                                 <div class="notes notes--below accepted-cc">
                                     <div class="cc visa">
@@ -185,7 +221,7 @@
                                 <label for="cc_name">Name on Card</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="cc_name" id="cc_name" required>
+                                <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name">
                             </div>
                         </div>
 
@@ -201,7 +237,7 @@
                                         <div class="form-item__control" style="display: flex;">
 
                                             <div class="select-wrap" style="margin: 0 .5rem 0 0;">
-                                                <select id="cc_exp_month" name="cc_exp_month" required>
+                                                <select v-model="paymentDetails.ccExpMonth" id="cc_exp_month" name="cc_exp_month">
                                                     <option value="01">01</option>
                                                     <option value="02">02</option>
                                                     <option value="03">03</option>
@@ -218,7 +254,7 @@
                                             </div>
 
                                             <div class="select-wrap">
-                                                <select id="cc_exp_month" name="cc_exp_month" required>
+                                                <select v-model="paymentDetails.ccExpYear" id="cc_exp_month" name="cc_exp_month">
                                                     <option value="2017">2017</option>
                                                     <option value="2018">2018</option>
                                                     <option value="2019">2019</option>
@@ -244,7 +280,7 @@
                                             <label for="cc_csc">Security Code</label>
                                         </div>
                                         <div class="form-item__control">
-                                            <input type="text" name="cc_csc" id="cc_csc" autocomplete="off" required>
+                                            <input v-model="paymentDetails.ccCvv" type="text" name="cc_csc" id="cc_csc" autocomplete="off">
                                         </div>
                                     </div>
 
@@ -273,57 +309,254 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
 				isCartEmpty: true,
 
-				donationAmounts: {
-					fees: 0,
-					subtotal: 0,
-					total: 0
-                },
+				settings: [],
+				donations: [],
 
 				// Form Data
-                formData: {
-                }
-            };
-        },
-        created: function () {
+				formData: {
+					isFeeCovered: false,
+					isAnonymous: false,
+				},
+
+				// Donor
+				donor: {
+					address1: '',
+					address2: '',
+					city: '',
+					email: '',
+					lastName: '',
+					name: '',
+					phone: '',
+					state: '',
+					zip: '',
+				},
+
+				// Payment Details
+				paymentDetails: {
+					ccNumber: '',
+					ccExpMonth: '',
+					ccExpYear: '',
+					ccName: '',
+					ccCvv: '',
+				},
+
+				// Errors
+				formErrors: {
+					donor: {},
+					formData: {},
+					paymentDetails: {},
+				}
+			};
+		},
+		created: function () {
 			const vue = this;
 
 			vue.isCartEmpty = !vue.$store.state.cartItems.length;
-	        vue.bus.$on('updateCartItemsCount', function () {
-		        vue.isCartEmpty = !vue.$store.state.cartItems.length;
-	        });
-        },
-        beforeDestroy: function () {
+			vue.bus.$on('updateCartItemsCount', function () {
+				vue.isCartEmpty = !vue.$store.state.cartItems.length;
+			});
+		},
+		beforeDestroy: function () {
 			const vue = this;
 
-	        vue.bus.$off('updateCartItemsCount');
-        },
+			vue.bus.$off('updateCartItemsCount');
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Your Donations');
 		},
-        methods: {
-			prevent: function (event) {
-				event.preventDefault();
-            },
+		watch: {
+			donor: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors.donor).length) {
+						vue.formErrors.donor = vue.validate(vue.donor, vue.getDonorConstraints());
+					}
+				},
+				deep: true
+			},
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors.formData).length) {
+						vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
+					}
+				},
+				deep: true
+			},
+			paymentDetails: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors.paymentDetails).length) {
+						vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getDonorConstraints: function () {
+				return {
+					address1: {
+						label: 'Address line 1',
+						presence: true,
+					},
+					address2: {
+						label: 'Address line 2',
+						presence: false,
+					},
+					city: {
+						presence: true,
+					},
+					email: {
+						presence: true,
+						email: true,
+					},
+					lastName: {
+						presence: true,
+					},
+					name: {
+						presence: true,
+					},
+					phone: {
+						label: 'Phone number',
+						presence: true,
+					},
+					state: {
+						presence: true,
+					},
+					zip: {
+						label: 'Zip code',
+						presence: true,
+					},
+				};
+			},
+			getFormDataConstraints: function () {
+				return {};
+			},
+			getPaymentDetailsConstraints: function () {
+				return {};
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.$store.commit('clearCartItems');
-				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
+				vue.formErrors.donor = vue.validate(vue.donor, vue.getDonorConstraints());
+				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
+				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
-				vue.$router.push({ name: 'cart-response' });
-            }
-        },
+				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
+					vue.clearModals();
+				} else {
+					vue.processDonations();
+				}
+			},
+			processDonations: function () {
+				const vue = this;
+
+				vue.getPaymentToken().then(function (response) {
+					const payment = response.data;
+					payment.is_test_mode = !_.find(vue.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'}).value;
+					return axios.post(API_URL + 'donations/process', {
+						donor: vue.donor,
+						donations: vue.getDonations(),
+						payment: payment,
+					});
+				}).then(function (response) {
+					if (response.data && response.data.errorMessage) {
+						console.log(response.data);
+					} else {
+						vue.$store.commit('clearCartItems');
+						vue.bus.$emit('updateCartItems');
+						vue.bus.$emit('updateCartItemsCount');
+						vue.bus.$emit('updateCartItemsCounter');
+
+						vue.$router.push({name: 'cart-response'});
+					}
+				}).catch(function (err) {
+					console.log(err);
+				});
+			},
+			getDonations: function () {
+				const vue = this;
+
+				vue.donations = [];
+				const cartItems = vue.$store.getters.cartItems;
+				cartItems.forEach(function (cartItem) {
+					const fees = vue.calculateFees([cartItem], 30, 0.029);
+					vue.donations.push({
+						amountInCents: cartItem.amount,
+						feesInCents: fees,
+						isAnonymous: vue.isAnonymous,
+						isFeeCovered: vue.isFeeCovered,
+						isOfflineDonation: false,
+						nonprofitUuid: cartItem.nonprofit.uuid,
+						totalInCents: vue.isFeeCovered ? cartItem.amount + fees : cartItem.amount
+					});
+				});
+
+				return vue.donations;
+			},
+			getApiKey: function () {
+				const vue = this;
+
+				const keys = [
+					'PAYMENT_SPRING_PUBLIC_API_KEY',
+					'PAYMENT_SPRING_TEST_PUBLIC_API_KEY',
+					'PAYMENT_SPRING_LIVE_MODE'
+				];
+				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+					keys: keys
+				})).then(function (response) {
+					vue.settings = response.data;
+
+					const paymentMode = _.find(vue.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'});
+					const publicApiKey = _.find(vue.settings, {key: 'PAYMENT_SPRING_PUBLIC_API_KEY'});
+					const testPublicApiKey = _.find(vue.settings, {key: 'PAYMENT_SPRING_TEST_PUBLIC_API_KEY'});
+
+					if (paymentMode && paymentMode.value === true && publicApiKey.value) {
+						return Promise.resolve(publicApiKey.value);
+					}
+
+					if (paymentMode && paymentMode.value === false && testPublicApiKey.value) {
+						return Promise.resolve(testPublicApiKey.value);
+					}
+
+					return Promise.reject(new Error('There was an error processing your payment.'));
+				});
+			},
+			getPaymentToken: function () {
+				const vue = this;
+
+				const params = {
+					card_number: vue.paymentDetails.ccNumber,
+					card_exp_month: vue.paymentDetails.ccExpMonth,
+					card_exp_year: vue.paymentDetails.ccExpYear,
+					card_owner_name: vue.paymentDetails.ccName,
+					csc: vue.paymentDetails.ccCvv,
+					token_type: 'credit_card',
+					zip: vue.donor.zip
+				};
+				return vue.getApiKey().then(function (publicKey) {
+					params['username'] = publicKey;
+					return axios.post('https://api.paymentspring.com/api/v1/tokens', params, {
+						auth: {
+							username: publicKey,
+							password: ''
+						}
+					});
+				});
+			}
+		},
 		components: {
 			'cart-donations': require('./CartDonations.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
