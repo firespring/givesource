@@ -76,7 +76,7 @@ describe('Donor', function () {
 			{model: TestHelper.generate.model('donor'), param: 'city', value: 123456, error: true},
 			{model: TestHelper.generate.model('donor'), param: 'email', value: null, error: true},
 			{model: TestHelper.generate.model('donor'), param: 'email', value: '', error: true},
-			{model: TestHelper.generate.model('donor'), param: 'email', value: 'alex.woodward@firespring.org', error: false},
+			{model: TestHelper.generate.model('donor'), param: 'email', value: 'test@email.com', error: false},
 			{model: TestHelper.generate.model('donor'), param: 'email', value: 'test', error: true},
 			{model: TestHelper.generate.model('donor'), param: 'email', value: 123456, error: true},
 			{model: TestHelper.generate.model('donor'), param: 'name', value: null, error: true},

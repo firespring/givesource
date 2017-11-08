@@ -29,6 +29,7 @@ module.exports = function (env) {
 			PostDonation: './src/api/postDonation/index.js',
 			PatchDonation: './src/api/patchDonation/index.js',
 			DeleteDonation: './src/api/deleteDonation/index.js',
+			ProcessDonations: './src/api/processDonations/index.js',
 			GetDonors: './src/api/getDonors/index.js',
 			GetDonor: './src/api/getDonor/index.js',
 			PostDonor: './src/api/postDonor/index.js',

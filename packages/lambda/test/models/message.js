@@ -16,13 +16,12 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const Message = require('../../src/models/message');
 const Model = require('../../src/models/model');
 const TestHelper = require('../helpers/test');
 
 describe('Message', function () {
-	
+
 	describe('#construct()', function () {
 
 		it('should be an instance of Model', function () {
@@ -65,7 +64,7 @@ describe('Message', function () {
 			{model: TestHelper.generate.model('message'), param: 'isDeleted', value: 1, error: false},
 			{model: TestHelper.generate.model('message'), param: 'email', value: null, error: true},
 			{model: TestHelper.generate.model('message'), param: 'email', value: '', error: true},
-			{model: TestHelper.generate.model('message'), param: 'email', value: 'alex.woodward@firespring.org', error: false},
+			{model: TestHelper.generate.model('message'), param: 'email', value: 'test@email.com', error: false},
 			{model: TestHelper.generate.model('message'), param: 'email', value: 'test', error: true},
 			{model: TestHelper.generate.model('message'), param: 'email', value: 123456, error: true},
 			{model: TestHelper.generate.model('message'), param: 'message', value: null, error: true},

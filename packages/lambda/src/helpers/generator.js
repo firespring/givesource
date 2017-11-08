@@ -206,15 +206,15 @@ Generator.prototype._generators = {
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
-			creditCardCvvResult: 123,
 			creditCardExpirationMonth: 12,
 			creditCardExpirationYear: new Date().getFullYear() + 1,
-			creditCardLast4: 1234,
+			creditCardLast4: '1234',
 			creditCardName: faker.name.findName(),
-			creditCardZipCode: faker.address.zipCode(),
+			creditCardType: faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']),
 			isTestMode: faker.random.boolean(),
-			total: faker.random.number(),
-			transactionId: faker.random.alphaNumeric(10)
+			transactionAmountInCents: faker.random.number(),
+			transactionId: faker.random.alphaNumeric(10),
+			transactionStatus: 'test'
 		};
 	},
 
