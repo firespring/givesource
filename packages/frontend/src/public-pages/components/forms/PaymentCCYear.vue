@@ -54,6 +54,9 @@
 				default: 10
 			}
 		},
+        mounted: function () {
+	        this.$emit('input', this.localValue);
+        },
 		watch: {
 			value(newVal) {
 				this.localValue = newVal;

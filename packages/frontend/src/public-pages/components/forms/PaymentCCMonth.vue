@@ -53,8 +53,11 @@
 				default: null
 			}
 		},
+		mounted: function () {
+			this.$emit('input', this.localValue);
+		},
 		watch: {
-			lvalue(newVal) {
+			value(newVal) {
 				this.localValue = newVal;
 			},
 			localValue() {

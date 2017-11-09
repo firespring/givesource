@@ -393,6 +393,7 @@
 				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
 				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
+					console.log(vue.formErrors);
 					vue.clearModals();
 				} else {
 					vue.processDonations();
@@ -434,8 +435,8 @@
 					vue.donations.push({
 						amountInCents: cartItem.amount,
 						feesInCents: fees,
-						isAnonymous: vue.isAnonymous,
-						isFeeCovered: vue.isFeeCovered,
+						isAnonymous: vue.formData.isAnonymous,
+						isFeeCovered: vue.formData.isFeeCovered,
 						isOfflineDonation: false,
 						nonprofitUuid: cartItem.nonprofit.uuid,
 						totalInCents: vue.isFeeCovered ? cartItem.amount + fees : cartItem.amount
@@ -476,9 +477,9 @@
 				const vue = this;
 
 				const params = {
-					card_number: vue.paymentDetails.ccNumber,
+					card_number: vue.paymentDetails.ccNumber.replace(/\s/g, ''),
 					card_exp_month: vue.paymentDetails.ccExpMonth,
-					card_exp_year: vue.paymentDetails.ccExpYear,
+					card_exp_year: vue.paymentDetails.ccExpYear.toString(),
 					card_owner_name: vue.paymentDetails.ccName,
 					csc: vue.paymentDetails.ccCvv,
 					token_type: 'credit_card',
