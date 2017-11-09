@@ -82,15 +82,12 @@
                                 </div>
 
                                 <div class="city-state-zip">
-
                                     <div class="city-state-zip__city">
                                         <input v-model="donor.city" type="text" name="billingCity" id="billingCity" placeholder="City">
                                     </div>
-
                                     <div class="city-state-zip__state select-wrap">
-                                        <forms-state-select v-model="donor.state" name="billingState" id="billingState" placeholder="State"></forms-state-select>
+                                        <forms-address-state v-model="donor.state" name="billingState" id="billingState" placeholder="State"></forms-address-state>
                                     </div>
-
                                     <div class="city-state-zip__zip">
                                         <input v-model="donor.zip" type="text" name="billingZip" id="billingZip" placeholder="ZIP">
                                     </div>
@@ -140,26 +137,10 @@
                                 <label for="cc_num">Credit Card #</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="paymentDetails.ccNumber" type="text" name="cc_num" id="cc_num" autocomplete="cc-number">
-
-                                <div class="notes notes--below accepted-cc">
-                                    <div class="cc visa">
-                                        <i class="fa fa-cc-visa" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cc mastercard">
-                                        <i class="fa fa-cc-mastercard" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cc amex">
-                                        <i class="fa fa-cc-amex" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cc discover">
-                                        <i class="fa fa-cc-discover" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cc dinersclub">
-                                        <i class="fa fa-cc-diners-club" aria-hidden="true"></i>
-                                    </div>
+                                <forms-payment-cc-number v-model="paymentDetails.ccNumber" name="cc_num" id="cc_num"></forms-payment-cc-number>
+                                <div v-if="formErrors.paymentDetails.ccNumber" class="notes notes--below notes--error">
+                                    {{ formErrors.paymentDetails.ccNumber }}
                                 </div>
-
                             </div>
                         </div>
 
@@ -169,6 +150,9 @@
                             </div>
                             <div class="form-item__control">
                                 <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name">
+                                <div v-if="formErrors.paymentDetails.ccName" class="notes notes--below notes--error">
+                                    {{ formErrors.paymentDetails.ccName }}
+                                </div>
                             </div>
                         </div>
 
@@ -182,39 +166,13 @@
                                             <label for="cc_exp_month">Expiration Date</label>
                                         </div>
                                         <div class="form-item__control" style="display: flex;">
-
                                             <div class="select-wrap" style="margin: 0 .5rem 0 0;">
-                                                <select v-model="paymentDetails.ccExpMonth" id="cc_exp_month" name="cc_exp_month">
-                                                    <option value="01">01</option>
-                                                    <option value="02">02</option>
-                                                    <option value="03">03</option>
-                                                    <option value="04">04</option>
-                                                    <option value="05">05</option>
-                                                    <option value="06">06</option>
-                                                    <option value="07">07</option>
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
-                                                </select>
+                                                <forms-payment-cc-month v-model="paymentDetails.ccExpMonth" id="cc_exp_month" name="cc_exp_month"></forms-payment-cc-month>
                                             </div>
 
                                             <div class="select-wrap">
-                                                <select v-model="paymentDetails.ccExpYear" id="cc_exp_month" name="cc_exp_month">
-                                                    <option value="2017">2017</option>
-                                                    <option value="2018">2018</option>
-                                                    <option value="2019">2019</option>
-                                                    <option value="2020">2020</option>
-                                                    <option value="2021">2021</option>
-                                                    <option value="2022">2022</option>
-                                                    <option value="2023">2023</option>
-                                                    <option value="2024">2024</option>
-                                                    <option value="2025">2025</option>
-                                                    <option value="2026">2026</option>
-                                                </select>
+                                                <forms-payment-cc-year v-model="paymentDetails.ccExpYear" id="cc_exp_year" name="cc_exp_year" :years="10"></forms-payment-cc-year>
                                             </div>
-
                                         </div>
                                     </div>
 
@@ -227,7 +185,10 @@
                                             <label for="cc_csc">Security Code</label>
                                         </div>
                                         <div class="form-item__control">
-                                            <input v-model="paymentDetails.ccCvv" type="text" name="cc_csc" id="cc_csc" autocomplete="off">
+                                            <forms-payment-cc-security-code v-model="paymentDetails.ccCvv" name="cc_csc" id="cc_csc"></forms-payment-cc-security-code>
+                                            <div v-if="formErrors.paymentDetails.ccCvv" class="notes notes--below notes--error">
+                                                {{ formErrors.paymentDetails.ccCvv }}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -388,10 +349,40 @@
 				};
 			},
 			getFormDataConstraints: function () {
-				return {};
+				return {
+					isFeeCovered: {
+						presence: false,
+                    },
+					isAnonymous: {
+						presence: false,
+                    }
+                };
 			},
 			getPaymentDetailsConstraints: function () {
-				return {};
+				return {
+					ccNumber: {
+						label: 'Credit card number',
+						presence: true,
+                        ccNumber: true,
+                    },
+					ccExpMonth: {
+						label: 'Credit card expiration month',
+						presence: true,
+                    },
+					ccExpYear: {
+						label: 'Credit card expiration year',
+						presence: true,
+					},
+					ccName: {
+						label: 'Name on card',
+						presence: true,
+					},
+					ccCvv: {
+						label: 'Security code',
+						presence: true,
+						ccCvv: true,
+					},
+                };
 			},
 			submit: function (event) {
 				event.preventDefault();
@@ -506,7 +497,11 @@
 		},
 		components: {
 			'cart-donations': require('./CartDonations.vue'),
-			'forms-state-select': require('./../forms/SelectState.vue'),
+			'forms-payment-cc-month': require('../forms/PaymentCCMonth.vue'),
+			'forms-payment-cc-number': require('../forms/PaymentCCNumber.vue'),
+			'forms-payment-cc-security-code': require('../forms/PaymentCCSecurityCode.vue'),
+			'forms-payment-cc-year': require('../forms/PaymentCCYear.vue'),
+			'forms-address-state': require('../forms/AddressState.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('./../layout/Hero.vue'),
 			'layout-sponsors': require('./../layout/Sponsors.vue'),

@@ -15,11 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require('jquery.payment');
 const validate = require('validate.js');
 
 // Add "label" validator to allow custom label mapping functionality
 validate.validators.label = function () {
 	return [];
+};
+
+validate.validators.ccNumber = function (value) {
+	if (!value || value === false || typeof value === 'undefined' || value === null) {
+		return null;
+	}
+	if (!$.payment.validateCardNumber(value)) {
+		return 'is not valid';
+	}
+	return null;
+};
+
+validate.validators.ccCvv = function (value) {
+	if (!value || value === false || typeof value === 'undefined' || value === null) {
+		return null;
+	}
+	if (!$.payment.validateCardCVC(value)) {
+		return 'is not valid';
+	}
+	return null;
 };
 
 const mixin = {

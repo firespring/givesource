@@ -22,10 +22,14 @@
 }
 
 .donation--nonprofit .page-hero__title {
+	display: -ms-flexbox;
 	display: flex;
+	-ms-flex-direction: column;
 	flex-direction: column;
+	-ms-flex-pack: center;
 	justify-content: center;
-	align-items: center;
+	-ms-flex-align: center;
+	        align-items: center;
 }
 
 .donation--nonprofit .page-hero__logo {
@@ -51,6 +55,7 @@
 }
 
 .donation-metrics {
+	display: -ms-flexbox;
 	display: flex;
 }
 
@@ -84,7 +89,9 @@
 
 .donation-share {
 	display: none;
+	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
+	-ms-flex-pack: center;
 	justify-content: center;
 }
 
@@ -110,8 +117,11 @@
 }
 
 .nonprofit-campaign__slider .slide--image {
+	display: -ms-flexbox;
 	display: flex;
+	-ms-flex-pack: center;
 	justify-content: center;
+	-ms-flex-align: center;
 	align-items: center;
 }
 
@@ -133,7 +143,9 @@
 }
 
 .nonprofit-campaign__slider-nav {
+	display: -ms-flexbox;
 	display: flex;
+	-ms-flex-pack: center;
 	justify-content: center;
 	padding: 1rem;
 }
@@ -169,6 +181,7 @@
 @media (min-width: 900px) {
 
 	.donation--nonprofit .page-hero__title {
+		-ms-flex-direction: row;
 		flex-direction: row;
 	}
 
@@ -181,19 +194,24 @@
 	}
 	
 	.nonprofit-campaign__header {
+		display: -ms-flexbox;
 		display: flex;
 	}
 	
 	.nonprofit-campaign__donation {
+		-ms-flex: 1 0 50%;
 		flex: 1 0 50%;
 		max-width: 50%;
+		-ms-flex-order: 2;
 		order: 2;
 		border-bottom: 1px solid #dfdfdf;
 	}
 	
 	.nonprofit-campaign__slider {
+		-ms-flex: 1 0 50%;
 		flex: 1 0 50%;
 		max-width: 50%;
+		-ms-flex-order: 1;
 		order: 1;
 		height: auto;
 	}
@@ -218,10 +236,12 @@
 	}
 	
 	.donation-metrics__raised {
+		-ms-flex: 1;
 		flex: 1;
 	}
 	
 	.donation-metrics__donations {
+		-ms-flex: 0 1 auto;
 		flex: 0 1 auto;
 	}
 	
@@ -230,10 +250,12 @@
 	}
 
 	.donation-share {
+		display: -ms-flexbox;
 		display: flex;
 	}
 
 	.nonprofit-campaign__slider-nav {
+		-ms-flex-pack: start;
 		justify-content: flex-start;
 	}
 
@@ -259,14 +281,18 @@
 @media (min-width: 1200px) {
 	
 	.nonprofit-campaign__donation {
+		display: -ms-flexbox;
 		display: flex;
+		-ms-flex-direction: column;
 		flex-direction: column;
+		-ms-flex: 1 0 400px;
 		flex: 1 0 400px;
 		max-width: 400px;
 		padding: 1.5rem;
 	}
 	
 	.nonprofit-campaign__slider {
+		-ms-flex: 1 0 770px;
 		flex: 1 0 770px;
 		max-width: 770px;
 		height: 433px;
@@ -277,6 +303,7 @@
 	}
 
 	.donation-text {
+		-ms-flex: 1;
 		flex: 1;
 		font-size: 1.125rem;
 	}
@@ -336,11 +363,15 @@ Donation options overlay
 }
 
 .donation-overlay__wrapper {
+	display: -ms-flexbox;
 	display: flex;
 	min-height: 100vh;
+	-ms-flex-direction: column;
 	flex-direction: column;
+	-ms-flex-pack: center;
 	justify-content: center;
-	align-items: center;
+	-ms-flex-align: center;
+	        align-items: center;
 	z-index: 1001;
 	padding: 1rem;
 }
@@ -351,7 +382,7 @@ Donation options overlay
 	background: #fff;
 	padding: 1.5rem 1rem;
 	border-radius: 4px;
-	box-shadow: 0 3px 9px rgba(0,0,0,.25);
+	        box-shadow: 0 3px 9px rgba(0,0,0,.25);
 }
 
 .donation-modal--options {
@@ -428,15 +459,18 @@ Donation options overlay
 }
 	
 .donation-options-custom h2 {
+	display: -ms-flexbox;
 	display: flex;
-	align-items: center;
+	-ms-flex-align: center;
+	        align-items: center;
 	margin: 0 0 2rem;
 	line-height: 1;
 }
 	
 .donation-options-custom h2:before,
 .donation-options-custom h2:after {
-	flex: 1;
+	-ms-flex: 1;
+	        flex: 1;
 	display: block;
 	height: 1px;
 	background-color: #9B9B97;
@@ -452,8 +486,10 @@ Donation options overlay
 }
 	
 .donation-options-custom form {
+	display: -ms-flexbox;
 	display: flex;
-	align-items: center;
+	-ms-flex-align: center;
+	        align-items: center;
 	max-width: 275px;
 	margin: 0 auto;
 	border: 1px solid #dadada;
@@ -462,7 +498,8 @@ Donation options overlay
 }
 	
 .donation-options-custom .input {
-	flex: 1;
+	-ms-flex: 1;
+	        flex: 1;
 	position: relative;
 	margin: 0 .5rem 0 0;
 }
@@ -479,7 +516,7 @@ Donation options overlay
 	
 .donation-options-custom [type=text] {
 	border: 0;
-	box-shadow: none;
+	        box-shadow: none;
 	padding-left: 2rem;
 	font-size: 1.25rem;
 }
@@ -532,14 +569,18 @@ Donation options overlay
 	}
 	
 	.donation-options {
+		display: -ms-flexbox;
 		display: flex;
+		-ms-flex-pack: center;
 		justify-content: center;
+		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
 		margin-left: -1rem;
 		margin-right: -1rem;
 	}
 	
 	.donation-option {
+		-ms-flex: 1 0 50%;
 		flex: 1 0 50%;
 		max-width: 50%;
 		padding: 0 1rem;
@@ -669,7 +710,7 @@ Donations shopping cart totals
 
 .cart-totals {
 	margin-top: 1.5rem;
-	background: #eceee7;
+	background: #e0e0e0;
 	padding: 1rem;
 	border-radius: 3px;
 }
@@ -683,10 +724,11 @@ Accepted CC
 ---------------------------------------------------------------------------- */
 
 .accepted-cc {
+	display: -ms-flexbox;
 	display: flex;
 }
 
-.accepted-cc .fa {
+.accepted-cc .cc {
 	font-size: 2rem;
 	line-height: 1;
 }
@@ -715,8 +757,11 @@ Media queries
 	}
 
 	.table-donations tbody tr {
+		display: -ms-flexbox;
 		display: flex;
+		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
+		-ms-flex-align: center;
 		align-items: center;
 	}
 
@@ -726,6 +771,7 @@ Media queries
 	}
 
 	.table-donations tbody td.organization {
+		-ms-flex: 1 0 100%;
 		flex: 1 0 100%;
 		padding-bottom: 5px;
 	}
@@ -743,8 +789,11 @@ Media queries
 @media (min-width: 640px) {
 
 	.donation-footer {
+		display: -ms-flexbox;
 		display: flex;
+		-ms-flex-pack: center;
 		justify-content: center;
+		-ms-flex-align: center;
 		align-items: center;
 		text-align: left;
 	}
@@ -762,10 +811,12 @@ Media queries
 	}
 
 	.cart-totals__transaction-fees .checkbox-solo {
+		-ms-flex-pack: center;
 		justify-content: center;
 	}
 
 	.cart-totals__transaction-fees .checkbox-solo > span {
+		-ms-flex: none;
 		flex: none;
 	}
 	

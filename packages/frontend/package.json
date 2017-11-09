@@ -14,7 +14,9 @@
 	},
 	"author": "Firespring",
 	"license": "GPL-3.0",
-	"dependencies": {},
+	"dependencies": {
+		"jquery.payment": "^3.0.0"
+	},
 	"devDependencies": {
 		"@claviska/jquery-minicolors": "^2.2.6",
 		"amazon-cognito-identity-js": "^1.20.0",
