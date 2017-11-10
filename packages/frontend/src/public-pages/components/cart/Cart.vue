@@ -239,7 +239,7 @@
 					address2: '',
 					city: '',
 					email: '',
-                    firstName: '',
+					firstName: '',
 					lastName: '',
 					phone: '',
 					state: '',
@@ -352,23 +352,23 @@
 				return {
 					isFeeCovered: {
 						presence: false,
-                    },
+					},
 					isAnonymous: {
 						presence: false,
-                    }
-                };
+					}
+				};
 			},
 			getPaymentDetailsConstraints: function () {
 				return {
 					ccNumber: {
 						label: 'Credit card number',
 						presence: true,
-                        ccNumber: true,
-                    },
+						ccNumber: true,
+					},
 					ccExpMonth: {
 						label: 'Credit card expiration month',
 						presence: true,
-                    },
+					},
 					ccExpYear: {
 						label: 'Credit card expiration year',
 						presence: true,
@@ -382,7 +382,7 @@
 						presence: true,
 						ccCvv: true,
 					},
-                };
+				};
 			},
 			submit: function (event) {
 				event.preventDefault();
@@ -432,6 +432,7 @@
 				const cartItems = vue.$store.getters.cartItems;
 				cartItems.forEach(function (cartItem) {
 					const fees = vue.calculateFees([cartItem], 30, 0.029);
+					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
 					vue.donations.push({
 						amountInCents: cartItem.amount,
 						feesInCents: fees,
@@ -439,7 +440,7 @@
 						isFeeCovered: vue.formData.isFeeCovered,
 						isOfflineDonation: false,
 						nonprofitUuid: cartItem.nonprofit.uuid,
-						totalInCents: vue.isFeeCovered ? cartItem.amount + fees : cartItem.amount
+						totalInCents: total
 					});
 				});
 
