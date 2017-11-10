@@ -103,7 +103,7 @@
 			return {
 				file: null,
 				slide: {},
-                nonprofit: {},
+				nonprofit: {},
 
 				// Form Data
 				formData: {
@@ -147,10 +147,10 @@
 			next(function (vm) {
 				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vm.nonprofit = response.data;
-                    return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+					return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
 				}).then(function (response) {
 					vm.slide = response.data;
-                });
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -172,14 +172,14 @@
 			const vue = this;
 
 			vue.bus.$on('photoEditorSave-Edit', function (data, file) {
-                vue.uploadFile(data, file);
+				vue.uploadFile(data, file);
 			});
 		},
-        beforeDestroy: function () {
+		beforeDestroy: function () {
 			const vue = this;
 
 			vue.bus.$off('photoEditorSave-Edit');
-        },
+		},
 		methods: {
 			getConstraints: function () {
 				return {
@@ -211,11 +211,7 @@
 
 				if (vue.file) {
 					vue.addModal('spinner');
-					axios.delete(API_URL + 'files/' + vue.file.uuid, {
-						data: {
-							bucket: PUBLIC_PAGES_S3
-                        }
-					}).then(function () {
+					axios.delete(API_URL + 'files/' + vue.file.uuid).then(function () {
 						vue.clearModals();
 						vue.file = null;
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
@@ -232,16 +228,12 @@
 				const vue = this;
 
 				if (vue.file) {
-					axios.delete(API_URL + 'files/' + vue.file.uuid, {
-						data: {
-							bucket: PUBLIC_PAGES_S3
-						}
-					}).then(function () {
+					axios.delete(API_URL + 'files/' + vue.file.uuid).then(function () {
 						vue.file = null;
-                    }).catch(function (err) {
-                    	console.log(err);
-                    });
-                }
+					}).catch(function (err) {
+						console.log(err);
+					});
+				}
 
 				vue.$refs.fileInput.click();
 			},
@@ -264,7 +256,6 @@
 				vue.addModal('spinner');
 
 				axios.post(API_URL + 'files', {
-					bucket: PUBLIC_PAGES_S3,
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
@@ -279,7 +270,7 @@
 					return instance.put(signedUrl, file);
 				}).then(function () {
 					vue.clearModals();
-					vue.formData.url = PUBLIC_PAGES_URL + '/' + vue.file.path;
+					vue.formData.url = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path;
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
@@ -305,11 +296,7 @@
 
 				axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + vue.slideUuid, params).then(function () {
 					if (vue.file) {
-						return axios.delete(API_URL + 'files/' + vue.slide.fileUuid, {
-							data: {
-								bucket: PUBLIC_PAGES_S3
-							}
-						});
+						return axios.delete(API_URL + 'files/' + vue.slide.fileUuid);
 					}
 				}).then(function () {
 					vue.clearModals();

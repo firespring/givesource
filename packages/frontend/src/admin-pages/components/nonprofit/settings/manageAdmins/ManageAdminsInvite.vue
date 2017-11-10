@@ -60,7 +60,8 @@
                                     </div>
                                 </div>
                                 <div class="c-form-item__control">
-                                    <textarea v-model="formData.emailAddresses" name="emailAddresses" id="emailAddresses" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 100px;"  :class="{ 'has-error': formErrors.emailAddresses }"></textarea>
+                                    <textarea v-model="formData.emailAddresses" name="emailAddresses" id="emailAddresses"
+                                              :class="{ 'has-error': formErrors.emailAddresses }"></textarea>
                                     <div v-if="formErrors.emailAddresses" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
                                         {{ formErrors.emailAddresses }}
                                     </div>
@@ -105,9 +106,9 @@
 				return this.isSuperAdminUser() || this.isAdminUser();
 			}
 		},
-        props: [
-        	'nonprofitUuid'
-        ],
+		props: [
+			'nonprofitUuid'
+		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
 				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
@@ -151,8 +152,7 @@
 				const vue = this;
 
 				axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users', {
-					email_addresses: vue.formData.emailAddresses,
-					user_pool_id: USER_POOL_ID
+					email_addresses: vue.formData.emailAddresses
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {

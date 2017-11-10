@@ -49,7 +49,7 @@
 	module.exports = {
         computed: {
 			adminPagesUrl: function () {
-				return ADMIN_PAGES_URL + '/login';
+				return this.$store.getters.setting('ADMIN_PAGES_CLOUDFRONT_URL') + '/login';
             },
             year: function () {
 				return new Date().getFullYear();

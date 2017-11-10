@@ -264,8 +264,7 @@ describe('Repository', function () {
 		});
 
 		it('should call reject on an error', function () {
-			const count = 66;
-			const models = TestHelper.generate.modelCollection('model', count);
+			const models = TestHelper.generate.modelCollection('model', 10);
 			AWS.mock('DynamoDB.DocumentClient', 'batchWrite', function (params, callback) {
 				callback('Error');
 			});

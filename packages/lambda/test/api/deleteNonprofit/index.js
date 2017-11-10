@@ -32,12 +32,12 @@ describe('DeleteNonprofit', function () {
 		sinon.stub(NonprofitsRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				nonprofitUuid: model.uuid
+				nonprofit_uuid: model.uuid
 			}
 		};
 		return DeleteNonprofit.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -45,10 +45,10 @@ describe('DeleteNonprofit', function () {
 		sinon.stub(NonprofitsRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				nonprofitUuid: '1234'
+				nonprofit_uuid: '1234'
 			}
 		};
-		return DeleteNonprofit.handle(params, null, function (error, result) {
+		return DeleteNonprofit.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

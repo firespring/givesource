@@ -32,12 +32,12 @@ describe('DeleteDonor', function () {
 		sinon.stub(DonorsRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				donorUuid: model.uuid
+				donor_uuid: model.uuid
 			}
 		};
 		return DeleteDonor.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -45,10 +45,10 @@ describe('DeleteDonor', function () {
 		sinon.stub(DonorsRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				donorUuid: '1234'
+				donor_uuid: '1234'
 			}
 		};
-		return DeleteDonor.handle(params, null, function (error, result) {
+		return DeleteDonor.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

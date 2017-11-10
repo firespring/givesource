@@ -16,9 +16,10 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostDonation = require('../../../src/api/postDonation/index');
 const DonationsRepository = require('../../../src/repositories/donations');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostDonation', function () {
@@ -31,18 +32,18 @@ describe('PostDonation', function () {
 		const model = TestHelper.generate.model('donation');
 		sinon.stub(DonationsRepository.prototype, 'save').resolves(model);
 		const params = {
-			body: model.all()
+			body: model.except(['uuid', 'createdOn'])
 		};
 		return PostDonation.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, model.all());
+			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
 		});
 	});
 
 	it('should return error on exception thrown', function () {
 		sinon.stub(DonationsRepository.prototype, 'save').rejects('Error');
-		return PostDonation.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostDonation.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

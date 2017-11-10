@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Slide = require('./../models/slide');
 const NonprofitRepository = require('./nonprofits');
+const NonprofitSlide = require('../models/nonprofitSlide');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
@@ -28,7 +28,7 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  * @constructor
  */
 function NonprofitSlidesRepository() {
-	Repository.call(this, RepositoryHelper.SlidesTable);
+	Repository.call(this, RepositoryHelper.NonprofitSlidesTable);
 }
 
 /**
@@ -39,7 +39,7 @@ function NonprofitSlidesRepository() {
 NonprofitSlidesRepository.prototype = new Repository();
 
 /**
- * Get a Slide
+ * Get a NonprofitSlide
  *
  * @param {String} nonprofitUuid
  * @param {String} uuid
@@ -54,7 +54,7 @@ NonprofitSlidesRepository.prototype.get = function (nonprofitUuid, uuid) {
 			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
 			repository.query(builder).then(function (data) {
 				if (data.Items.length === 1) {
-					resolve(new Slide(data.Items[0]));
+					resolve(new NonprofitSlide(data.Items[0]));
 				}
 				reject(new ResourceNotFoundException('The specified slide does not exist.'));
 			}).catch(function (err) {
@@ -83,7 +83,7 @@ NonprofitSlidesRepository.prototype.getAll = function (nonprofitUuid) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {
-						results.push(new Slide(item));
+						results.push(new NonprofitSlide(item));
 					});
 				}
 				resolve(results);
@@ -121,7 +121,7 @@ NonprofitSlidesRepository.prototype.getCount = function (nonprofitUuid) {
 };
 
 /**
- * Delete a Slide
+ * Delete a NonprofitSlide
  *
  * @param {String} nonprofitUuid
  * @param {String} uuid
@@ -144,25 +144,25 @@ NonprofitSlidesRepository.prototype.delete = function (nonprofitUuid, uuid) {
 };
 
 /**
- * Create or update a Slide
+ * Create or update a NonprofitSlide
  *
  * @param {String} nonprofitUuid
- * @param {Slide} model
+ * @param {NonprofitSlide} model
  */
 NonprofitSlidesRepository.prototype.save = function (nonprofitUuid, model) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof Slide)) {
-				reject(new Error('invalid Slide model'));
+			if (!(model instanceof NonprofitSlide)) {
+				reject(new Error('invalid NonprofitSlide model'));
 			}
 			model.validate().then(function () {
 				const key = {
 					uuid: model.uuid
 				};
 				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new Slide(data.Attributes));
+					resolve(new NonprofitSlide(data.Attributes));
 				}).catch(function (err) {
 					reject(err);
 				});

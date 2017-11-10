@@ -24,9 +24,11 @@ const S3 = require('./../../aws/s3');
 exports.handle = function (event, context, callback) {
 	const s3 = new S3();
 	const repository = new FilesRepository();
-	const request = new Request(event, context).parameters(['bucket', 'content_type', 'filename']);
+	const request = new Request(event, context).parameters(['content_type', 'filename']);
 
 	let file = null;
+	const bucket = process.env.UPLOADS_BUCKET;
+
 	request.validate().then(function () {
 		file = new File({filename: request.get('filename')});
 		file.populate({path: `uploads/${file.uuid}`});
@@ -35,7 +37,7 @@ exports.handle = function (event, context, callback) {
 		return repository.save(file);
 	}).then(function (model) {
 		file = model;
-		return s3.getSignedUrl(process.env.AWS_REGION, request.get('bucket'), file.path, request.get('content_type'));
+		return s3.getSignedUrl(process.env.AWS_REGION, bucket, file.path, request.get('content_type'));
 	}).then(function (url) {
 		callback(null, {
 			upload_url: url,

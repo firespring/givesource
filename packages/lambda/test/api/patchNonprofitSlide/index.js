@@ -16,11 +16,11 @@
  */
 
 const assert = require('assert');
+const NonprofitsRepository = require('./../../../src/repositories/nonprofits');
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
+const PatchNonprofitSlide = require('./../../../src/api/patchNonprofitSlide/index');
 const sinon = require('sinon');
-const PatchNonprofitSlide = require('../../../src/api/patchNonprofitSlide/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
-const TestHelper = require('../../helpers/test');
+const TestHelper = require('./../../helpers/test');
 
 describe('PatchNonprofitSlide', function () {
 
@@ -32,8 +32,8 @@ describe('PatchNonprofitSlide', function () {
 
 	it('should return an updated nonprofit slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
-		const updated = TestHelper.generate.model('slide', {uuid: original.uuid, nonprofitUuid: nonprofit.uuid});
+		const original = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
+		const updated = TestHelper.generate.model('nonprofitSlide', {uuid: original.uuid, nonprofitUuid: nonprofit.uuid});
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(original);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(updated);
@@ -52,7 +52,7 @@ describe('PatchNonprofitSlide', function () {
 
 	it('should return error on exception thrown - get', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+		const original = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 		const params = {
 			params: {
 				nonprofitUuid: nonprofit.uuid,
@@ -69,7 +69,7 @@ describe('PatchNonprofitSlide', function () {
 
 	it('should return error on exception thrown - save', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('slide', {nonprofitUuid: nonprofit.uuid});
+		const original = TestHelper.generate.model('nonprofitSlide', {nonprofitUuid: nonprofit.uuid});
 		const params = {
 			params: {
 				nonprofitUuid: nonprofit.uuid,

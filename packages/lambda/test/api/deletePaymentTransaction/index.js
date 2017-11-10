@@ -32,12 +32,12 @@ describe('DeletePaymentTransaction', function () {
 		sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				paymentTransactionUuid: model.uuid
+				payment_transaction_uuid: model.uuid
 			}
 		};
 		return DeletePaymentTransaction.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -45,10 +45,10 @@ describe('DeletePaymentTransaction', function () {
 		sinon.stub(PaymentTransactionsRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				paymentTransactionUuid: '1234'
+				payment_transaction_uuid: '1234'
 			}
 		};
-		return DeletePaymentTransaction.handle(params, null, function (error, result) {
+		return DeletePaymentTransaction.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

@@ -16,9 +16,10 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostReport = require('../../../src/api/postReport/index');
 const ReportsRepository = require('../../../src/repositories/reports');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostReport', function () {
@@ -31,18 +32,18 @@ describe('PostReport', function () {
 		const model = TestHelper.generate.model('report');
 		sinon.stub(ReportsRepository.prototype, 'save').resolves(model);
 		const params = {
-			body: model.all()
+			body: model.except(['uuid', 'createdOn'])
 		};
 		return PostReport.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, model.all());
+			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
 		});
 	});
 
 	it('should return error on exception thrown', function () {
 		sinon.stub(ReportsRepository.prototype, 'save').rejects('Error');
-		return PostReport.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostReport.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

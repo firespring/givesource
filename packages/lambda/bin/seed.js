@@ -39,7 +39,7 @@ const PaymentTransactionsRepository = require('./../src/repositories/paymentTran
 const seedDonations = function () {
 	const generator = new Generator();
 	const donorsRepository = new DonorsRepository();
-	const donationsRepository = new NonprofitDonationsRepository();
+	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 
@@ -73,7 +73,7 @@ const seedDonations = function () {
 		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
 
 		let donationsTotal = 0;
-		return donorsRepository.batchUpdate(donors).then(function () {
+		return donorsRepository.batchUpdate(donors).then(function (response) {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
 				let total = 0;
@@ -87,7 +87,7 @@ const seedDonations = function () {
 				paymentTransactions[i].total = total;
 				donationsTotal += total;
 				promise = promise.then(function () {
-					return donationsRepository.batchUpdate(chunk);
+					return nonprofitDonationsRepository.batchUpdate(chunk);
 				});
 			});
 			return promise;
@@ -155,7 +155,7 @@ const seedNonprofits = function () {
 		let promise = nonprofitsRepository.batchUpdate(nonprofits);
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
-			const slides = generator.modelCollection('slide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
+			const slides = generator.modelCollection('nonprofitSlide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
 			_.each(slides, function (slide, i) {
 				slide.sortOrder = i;
 			});
@@ -165,7 +165,7 @@ const seedNonprofits = function () {
 		});
 
 		_.each(nonprofits, function (nonprofit) {
-			const tiers = generator.modelCollection('donationTier', 4, {nonprofitUuid: nonprofit.uuid});
+			const tiers = generator.modelCollection('nonprofitDonationTier', 4, {nonprofitUuid: nonprofit.uuid});
 			promise = promise.then(function () {
 				return nonprofitDonationTiersRepository.batchUpdate(tiers);
 			});

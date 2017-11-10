@@ -106,7 +106,8 @@
                         </div>
 
                         <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                                v-if="formErrors.zip">{{ formErrors.zip }}.</span>
                         </div>
                     </div>
                 </div>
@@ -407,8 +408,7 @@
 						firstName: vue.formData.firstName,
 						lastName: vue.formData.lastName,
 						email: vue.formData.email
-					},
-					user_pool_id: USER_POOL_ID
+					}
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {

@@ -23,14 +23,16 @@ const S3 = require('./../../aws/s3');
 exports.handle = function (event, context, callback) {
 	const s3 = new S3();
 	const repository = new FilesRepository();
-	const request = new Request(event, context).parameters(['bucket']);
+	const request = new Request(event, context);
 
 	let file = null;
+	const bucket = process.env.UPLOADS_BUCKET;
+
 	request.validate().then(function () {
 		return repository.get(request.urlParam('file_uuid'));
 	}).then(function (model) {
 		file = model;
-		return s3.deleteObject(process.env.AWS_REGION, request.get('bucket'), `uploads/${file.uuid}`);
+		return s3.deleteObject(process.env.AWS_REGION, bucket, `uploads/${file.uuid}`);
 	}).then(function () {
 		return repository.delete(file.uuid);
 	}).then(function () {

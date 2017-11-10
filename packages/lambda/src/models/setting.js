@@ -18,12 +18,12 @@
 const Model = require('./model');
 
 /**
- * DonationTier constructor
+ * Setting constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function DonationTier(data) {
+function Setting(data) {
 	Model.call(this, data);
 }
 
@@ -32,17 +32,16 @@ function DonationTier(data) {
  *
  * @type {Model}
  */
-DonationTier.prototype = new Model();
+Setting.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-DonationTier.prototype.attributes = [
-	'amount',
-	'description',
-	'nonprofitUuid',
+Setting.prototype.attributes = [
+	'key',
+	'value'
 ];
 
 /**
@@ -50,19 +49,14 @@ DonationTier.prototype.attributes = [
  *
  * @type {{}}
  */
-DonationTier.prototype.constraints = {
-	amount: {
+Setting.prototype.constraints = {
+	key: {
 		presence: true,
-		type: 'number'
+		type: 'string',
 	},
-	description: {
+	value: {
 		presence: false,
-		type: 'string'
-	},
-	nonprofitUuid: {
-		presence: true,
-		uuid: 4
 	},
 };
 
-module.exports = DonationTier;
+module.exports = Setting;

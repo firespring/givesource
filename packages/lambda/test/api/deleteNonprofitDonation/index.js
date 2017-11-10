@@ -36,13 +36,13 @@ describe('DeleteNonprofitDonation', function () {
 		sinon.stub(NonprofitDonationsRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				donationUuid: model.uuid,
+				nonprofit_uuid: nonprofit.uuid,
+				donation_uuid: model.uuid,
 			}
 		};
 		return DeleteNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -52,11 +52,11 @@ describe('DeleteNonprofitDonation', function () {
 		sinon.stub(NonprofitDonationsRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				DonationUuid: '1234'
+				nonprofit_uuid: nonprofit.uuid,
+				donation_uuid: '1234'
 			}
 		};
-		return DeleteNonprofitDonation.handle(params, null, function (error, result) {
+		return DeleteNonprofitDonation.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

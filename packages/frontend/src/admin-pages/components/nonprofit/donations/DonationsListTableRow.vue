@@ -31,10 +31,20 @@
         </td>
 
         <td v-else>
-            {{ donor.name }}
+            {{ donor.firstName }} {{ donor.lastName}}
         </td>
 
         <td v-if="donation.isAnonymous"></td>
+
+        <td v-else-if="donation.isOfflineDonation">
+            <div class="c-user-strip u-flex u-items-center" v-if="donor.email">
+                <div class="c-user-strip__content">
+                    <div class="c-user-strip__email u-icon u-flex u-items-center">
+                        <a :href="`mailto:${donor.email}`">{{ donor.email }}</a>
+                    </div>
+                </div>
+            </div>
+        </td>
 
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
@@ -50,6 +60,10 @@
         </td>
 
         <td v-if="donation.isAnonymous"></td>
+
+        <td v-else-if="donation.isOfflineDonation">
+            Offline Donation
+        </td>
 
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
@@ -72,17 +86,27 @@
 		computed: {
 			date: function () {
 				return new Date(this.donation.createdOn).toLocaleDateString();
-            },
-            time: function () {
-	            return new Date(this.donation.createdOn).toLocaleTimeString();
-            },
-            amount: function () {
-	            return numeral(this.donation.totalInCents / 100).format('$0,00.00');
-            }
-        },
-		props: [
-			'donation',
-            'donor'
-		]
+			},
+			time: function () {
+				return new Date(this.donation.createdOn).toLocaleTimeString();
+			},
+			amount: function () {
+				return numeral(this.donation.totalInCents / 100).format('$0,00.00');
+			},
+		},
+		props: {
+			donation: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
+			donor: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			}
+		}
 	};
 </script>

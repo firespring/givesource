@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import store from './../store';
+
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
 /**
@@ -24,10 +26,10 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
  * @param {String} password
  * @param {{}} callbacks
  */
-exports.login = function (username, password, callbacks) {
+const login = function (username, password, callbacks) {
 	const data = {
-		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		UserPoolId: store.getters.setting('USER_POOL_ID'),
+		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
 	const userData = {
@@ -71,7 +73,7 @@ exports.login = function (username, password, callbacks) {
  * @param {String} newPassword
  * @param {function} callback
  */
-exports.changePassword = function (oldPassword, newPassword, callback) {
+const changePassword = function (oldPassword, newPassword, callback) {
 	const cognitoUser = this.getCognitoUser();
 	if (cognitoUser) {
 		cognitoUser.getSession(function (err, response) {
@@ -92,10 +94,10 @@ exports.changePassword = function (oldPassword, newPassword, callback) {
  * @param {String} username
  * @param {{}} callbacks
  */
-exports.forgotPassword = function (username, callbacks) {
+const forgotPassword = function (username, callbacks) {
 	const data = {
-		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		UserPoolId: store.getters.setting('USER_POOL_ID'),
+		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
 	const userData = {
@@ -122,7 +124,7 @@ exports.forgotPassword = function (username, callbacks) {
  *
  * @return {boolean}
  */
-exports.isAuthenticated = function () {
+const isAuthenticated = function () {
 	let authenticated = false;
 	const cognitoUser = this.getCognitoUser();
 	if (cognitoUser) {
@@ -140,7 +142,7 @@ exports.isAuthenticated = function () {
  *
  * @param {function} callback
  */
-exports.refreshSession = function (callback) {
+const refreshSession = function (callback) {
 	const cognitoUser = this.getCognitoUser();
 	if (cognitoUser) {
 		cognitoUser.getSession(function (err, session) {
@@ -156,7 +158,7 @@ exports.refreshSession = function (callback) {
 /**
  * Log out CognitoUser
  */
-exports.logout = function () {
+const logout = function () {
 	const cognitoUser = this.getCognitoUser();
 	if (cognitoUser) {
 		cognitoUser.signOut();
@@ -168,11 +170,21 @@ exports.logout = function () {
  *
  * @return {CognitoUser|null}
  */
-exports.getCognitoUser = function () {
+const getCognitoUser = function () {
 	const userPoolData = {
-		UserPoolId: USER_POOL_ID,
-		ClientId: CLIENT_ID
+		UserPoolId: store.getters.setting('USER_POOL_ID'),
+		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
 	};
 	const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData);
 	return userPool.getCurrentUser();
 };
+
+export {
+	login,
+	logout,
+	isAuthenticated,
+	changePassword,
+	forgotPassword,
+	refreshSession,
+	getCognitoUser
+}

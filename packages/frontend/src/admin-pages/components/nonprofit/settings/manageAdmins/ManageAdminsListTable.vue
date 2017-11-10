@@ -37,7 +37,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <manage-admins-list-table-row v-for="nonprofitUser in nonprofitUsers" :nonprofitUser="nonprofitUser" :key="user.uuid"></manage-admins-list-table-row>
+        <manage-admins-list-table-row v-for="nonprofitUser in nonprofitUsers" :nonprofitUser="nonprofitUser" :key="nonprofitUser.uuid"></manage-admins-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -52,25 +52,25 @@
 		data: function () {
 			return {
 				nonprofitUsers: [],
-                loaded: false
+				loaded: false
 			};
 		},
-        computed: {
+		computed: {
 			displayRows: function () {
 				return this.loaded && this.nonprofitUsers.length;
-            }
-        },
-        props: [
+			}
+		},
+		props: [
 			'nonprofitUuid'
-        ],
-        created: function () {
+		],
+		created: function () {
 			const vue = this;
 
-	        axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
-		        vue.nonprofitUsers = response.data;
-		        vue.loaded = true;
-	        });
-        },
+			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+				vue.nonprofitUsers = response.data;
+				vue.loaded = true;
+			});
+		},
 		components: {
 			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
 			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')

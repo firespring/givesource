@@ -32,12 +32,12 @@ describe('DeleteReport', function () {
 		sinon.stub(ReportsRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				reportUuid: model.uuid
+				report_uuid: model.uuid
 			}
 		};
 		return DeleteReport.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -45,10 +45,10 @@ describe('DeleteReport', function () {
 		sinon.stub(ReportsRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				reportUuid: '1234'
+				report_uuid: '1234'
 			}
 		};
-		return DeleteReport.handle(params, null, function (error, result) {
+		return DeleteReport.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

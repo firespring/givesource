@@ -16,9 +16,10 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostNonprofitDonation = require('../../../src/api/postNonprofitDonation/index');
 const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostNonprofitDonation', function () {
@@ -32,21 +33,21 @@ describe('PostNonprofitDonation', function () {
 		const model = TestHelper.generate.model('donation', {nonprofitUuid: nonprofit.uuid});
 		sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(model);
 		const params = {
-			body: model.all(),
+			body: model.except(['uuid', 'createdOn']),
 			params: {
-				nonprofitUuid: nonprofit.uuid
+				nonprofit_uuid: nonprofit.uuid
 			}
 		};
 		return PostNonprofitDonation.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, model.all());
+			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
 		});
 	});
 
 	it('should return error on exception thrown', function () {
 		sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error');
-		return PostNonprofitDonation.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostNonprofitDonation.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

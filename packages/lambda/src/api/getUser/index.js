@@ -24,11 +24,11 @@ const UsersRepository = require('./../../repositories/users');
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const repository = new UsersRepository();
-	const request = new Request(event, context).queryParameters(['user_pool_id']);
+	const request = new Request(event, context);
 
 	let user;
 	const groups = [];
-	const userPoolId = request.queryParam('user_pool_id');
+	const userPoolId = process.env.USER_POOL_ID;
 
 	request.validate().then(function () {
 		return repository.get(request.urlParam('user_uuid'));

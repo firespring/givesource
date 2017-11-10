@@ -18,13 +18,13 @@
 /* ============================================================================
  Floating labels for text inputs
  ============================================================================ */
-exports.floatingLabel = {
+const directive = {
 	inserted: function (el) {
 		const $el = $(el);
 
 		$el.find('input, textarea').each(function () {
 
-			if ($(this).val() !== ''  || $(this).is(':focus')) {
+			if ($(this).val() !== '' || $(this).is(':focus')) {
 				$(this).siblings('label').hide();
 				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
 			}
@@ -55,7 +55,7 @@ exports.floatingLabel = {
 		const $el = $(el);
 
 		$el.find('input, textarea').each(function () {
-			if ($(this).val() !== ''  || $(this).is(':focus')) {
+			if ($(this).val() !== '' || $(this).is(':focus')) {
 				$(this).siblings('label').hide();
 				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
 			}
@@ -65,7 +65,7 @@ exports.floatingLabel = {
 		const $el = $(el);
 
 		$el.find('input, textarea').each(function () {
-			if ($(this).val() !== ''  || $(this).is(':focus')) {
+			if ($(this).val() !== '' || $(this).is(':focus')) {
 				$(this).siblings('label').hide();
 				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
 			}
@@ -73,12 +73,4 @@ exports.floatingLabel = {
 	}
 };
 
-/* ============================================================================
- Autofocus on form inputs
- ============================================================================ */
-exports.autoFocus = {
-	inserted: function (el) {
-		const $el = $(el);
-		$el.focus();
-	}
-};
+export default directive;

@@ -44,32 +44,22 @@ Generator.prototype._generators = {
 		const donation = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 			donorUuid: faker.random.uuid(),
 			isAnonymous: faker.random.boolean(),
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
-			paymentTransactionUuid: faker.random.uuid(),
 		};
 		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, 30, 0.029);
 		donation.totalInCents = donation.isFeeCovered ? donation.amountInCents + donation.feesInCents : donation.amountInCents;
-		return donation;
-	},
 
-	/**
-	 * Generate random DonationTier data
-	 *
-	 * @return {Object}
-	 */
-	donationTier: function () {
-		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
-			description: faker.random.words(),
-			nonprofitUuid: faker.random.uuid(),
+		if (!donation.isOfflineDonation) {
+			donation.paymentTransactionUuid = faker.random.uuid();
 		}
+
+		return donation;
 	},
 
 	/**
@@ -81,14 +71,15 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			city: faker.address.city(),
 			email: faker.internet.email(),
-			name: faker.name.findName(),
+			firstName: faker.name.firstName(),
+			lastName: faker.name.lastName(),
 			phone: faker.phone.phoneNumber(),
 			state: faker.address.stateAbbr(),
-			totalAmountInCents: faker.random.number(),
 			zip: faker.address.zipCode()
 		}
 	},
@@ -102,6 +93,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			path: 'uploads/' + faker.system.fileName(),
 			filename: faker.system.fileName()
 		}
@@ -116,6 +108,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			email: faker.internet.email(),
 			message: faker.lorem.sentence(),
 			name: faker.name.findName(),
@@ -133,6 +126,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 		};
 	},
 
@@ -145,6 +139,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			category1: faker.random.word(),
@@ -166,6 +161,45 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random NonprofitDonationTier data
+	 *
+	 * @return {Object}
+	 */
+	nonprofitDonationTier: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
+			description: faker.random.words(),
+			nonprofitUuid: faker.random.uuid(),
+		}
+	},
+
+	/**
+	 * Generate random NonprofitSlide data
+	 *
+	 * @return {Object}
+	 */
+	nonprofitSlide: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			caption: faker.random.word(),
+			embedUrl: faker.internet.url(),
+			externalId: faker.random.word(),
+			filename: faker.random.word() + '.jpeg',
+			fileUuid: faker.random.uuid(),
+			nonprofitUuid: faker.random.uuid(),
+			sortOrder: faker.random.number(),
+			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
+			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
+			url: faker.image.imageUrl(800, 600, 'nature'),
+		}
+	},
+
+	/**
 	 * Generate random PaymentTransaction data
 	 *
 	 * @return {Object}
@@ -174,6 +208,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
 			creditCardCvvResult: 123,
 			creditCardExpirationMonth: 12,
@@ -196,6 +231,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			status: faker.random.arrayElement(['FAILED', 'PENDING', 'SUCCESS']),
 			type: faker.random.arrayElement(['ALL_DONATIONS', 'NONPROFIT_DONATIONS']),
 			url: faker.internet.url()
@@ -203,24 +239,17 @@ Generator.prototype._generators = {
 	},
 
 	/**
-	 * Generate random Slide data
+	 * Generate random Setting data
 	 *
 	 * @return {Object}
 	 */
-	slide: function () {
+	setting: function () {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
-			caption: faker.random.word(),
-			embedUrl: faker.internet.url(),
-			externalId: faker.random.word(),
-			filename: faker.random.word() + '.jpeg',
-			fileUuid: faker.random.uuid(),
-			nonprofitUuid: faker.random.uuid(),
-			sortOrder: faker.random.number(),
-			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
-			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
-			url: faker.image.imageUrl(800, 600, 'nature'),
+			isDeleted: 0,
+			key: faker.random.word(),
+			value: faker.random.word(),
 		}
 	},
 
@@ -233,6 +262,7 @@ Generator.prototype._generators = {
 		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
+			isDeleted: 0,
 			cognitoUuid: faker.random.uuid(),
 			email: faker.internet.email(),
 			lastName: faker.name.firstName(),

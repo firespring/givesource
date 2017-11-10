@@ -76,7 +76,7 @@
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
             landingPageUrl: function () {
-				return PUBLIC_PAGES_URL + '/nonprofits/' + this.nonprofit.slug
+				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL') + '/nonprofits/' + this.nonprofit.slug
             }
 		},
 		props: [

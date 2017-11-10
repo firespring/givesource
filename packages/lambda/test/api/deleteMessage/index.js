@@ -32,12 +32,12 @@ describe('DeleteMessage', function () {
 		sinon.stub(MessagesRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				messageUuid: model.uuid
+				message_uuid: model.uuid
 			}
 		};
 		return DeleteMessage.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -45,10 +45,10 @@ describe('DeleteMessage', function () {
 		sinon.stub(MessagesRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				messageUuid: '1234'
+				message_uuid: '1234'
 			}
 		};
-		return DeleteMessage.handle(params, null, function (error, result) {
+		return DeleteMessage.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

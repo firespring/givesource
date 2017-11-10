@@ -37,12 +37,6 @@ Resources:
       Name: !Sub |-
         ${AWS::StackName}
 
-  HealthCheck:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: !Sub |-
-        ${AWS::StackName}-Health
-
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -77,96 +71,51 @@ Resources:
           Statement:
             - Effect: Allow
               Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationTiersTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/stream/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SlidesTable}/index/*
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource: !Sub |-
-                arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
+              Resource:
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
       - PolicyName: CloudFormation
         PolicyDocument:
           Statement:
@@ -185,6 +134,8 @@ Resources:
                   arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
                 - !Sub |-
                   arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
                 - arn:aws:s3:::{{awsReleaseBucket}}
             - Effect: Allow
               Action:
@@ -196,6 +147,8 @@ Resources:
                   arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
                 - !Sub |-
                   arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
+                - !Sub |-
+                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
                 - arn:aws:s3:::{{awsReleaseBucket}}/*
       - PolicyName: Cognito
         PolicyDocument:
@@ -205,13 +158,6 @@ Resources:
                 - cognito-idp:*
                 - iam:PassRole
               Resource: '*'
-      - PolicyName: CloudSearch
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action: cloudsearch:*
-              Resource: !Sub |-
-                arn:aws:cloudsearch:${AWS::Region}:${AWS::AccountId}:domain/*
       - PolicyName: APIGateway
         PolicyDocument:
           Statement:
@@ -230,27 +176,8 @@ Resources:
                 - apigateway:*
               Resource: !Sub |-
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
-      - PolicyName: HealthCheck
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - apigateway:POST
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/restapis/${HealthCheck}/deployments
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys/*
     DependsOn:
       - DynamoDbStack
-      - HealthCheck
       - RestApi
       - S3Stack
 
@@ -306,39 +233,6 @@ Resources:
                 - sns:publish
               Resource: '*'
 
-  HealthCheckStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        HealthCheck: !Ref HealthCheck
-        HealthCheckRootResourceId: !GetAtt HealthCheck.RootResourceId
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-health.yml
-      TimeoutInMinutes: 20
-    DependsOn:
-      - LambdaRole
-
-  CloudSearchStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
-        HealthCheckUrl: !Sub |-
-          https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
-        DonationsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonationsTableStreamArn
-        DonorsTableStreamArn: !GetAtt DynamoDbStack.Outputs.DonorsTableStreamArn
-        NonprofitsTableStreamArn: !GetAtt DynamoDbStack.Outputs.NonprofitsTableStreamArn
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cloudsearch.yml
-      TimeoutInMinutes: 40
-    DependsOn:
-      - DynamoDbStack
-      - HealthCheckStack
-      - LambdaRole
-
   CustomStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -353,6 +247,8 @@ Resources:
         AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
         PublicPagesS3: !GetAtt S3Stack.Outputs.PublicPagesS3
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
+        UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
+        UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
@@ -401,11 +297,13 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
       - LambdaRole
       - RestApi
+      - S3Stack
 
   ApiMessagesStack:
     Type: AWS::CloudFormation::Stack
@@ -431,9 +329,11 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -467,6 +367,21 @@ Resources:
       - LambdaRole
       - RestApi
 
+  ApiSettingsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - LambdaRole
+      - RestApi
+
   ApiUsersStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -476,9 +391,11 @@ Resources:
         DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -500,6 +417,7 @@ Resources:
       - ApiNonprofitsStack
       - ApiPaymentTransactionsStack
       - ApiReportsStack
+      - ApiSettingsStack
       - ApiUsersStack
       - RestApi
 
@@ -512,9 +430,7 @@ Resources:
     DependsOn:
       - ApiDeployStack
       - CustomStack
-      - CloudSearchStack
       - DynamoDbStack
-      - HealthCheckStack
       - S3Stack
 
 Outputs:
@@ -528,29 +444,7 @@ Outputs:
   AdminPagesS3BucketUrl:
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3BucketUrl
 
-  CloudSearchDonationsDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsDocServiceEndpoint
-
-  CloudSearchDonationsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonationsSearchServiceEndpoint
-
-  CloudSearchDonorssDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorssDocServiceEndpoint
-
-  CloudSearchDonorsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchDonorsSearchServiceEndpoint
-
-  CloudSearchNonprofitsDocServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsDocServiceEndpoint
-
-  CloudSearchNonprofitsSearchServiceEndpoint:
-    Value: !GetAtt CloudSearchStack.Outputs.CloudSearchNonprofitsSearchServiceEndpoint
-
-  HealthCheckUrl:
-    Value: !Sub |-
-      https://${HealthCheck}.execute-api.${AWS::Region}.amazonaws.com/health/
-
-  InvocationUrl:
+  ApiUrl:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
 
@@ -565,6 +459,15 @@ Outputs:
 
   PublicPagesS3BucketUrl:
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
+
+  UploadsCloudFrontUrl:
+    Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
+
+  UploadsS3BucketName:
+    Value: !GetAtt S3Stack.Outputs.UploadsS3
+
+  UploadsS3BucketUrl:
+    Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId

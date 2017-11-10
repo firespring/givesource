@@ -18,6 +18,9 @@ Parameters:
   RestApiRootResourceId:
     Type: String
 
+  UserPoolId:
+    Type: String
+
   IntegrationRequestTemplate:
     Type: String
     Default: |
@@ -223,6 +226,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
+          USER_POOL_ID: !Ref UserPoolId
       FunctionName: !Sub |-
         ${StackName}-AdminRegisterNonprofit
       Handler: "index.handle"
@@ -813,6 +817,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
+          USER_POOL_ID: !Ref UserPoolId
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitUser
       Handler: "index.handle"

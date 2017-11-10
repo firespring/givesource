@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
 const AWS = require('aws-sdk');
 
 /**
@@ -180,6 +181,28 @@ CloudSearch.prototype.uploadDocuments = function (endpoint, documents) {
 				reject(err);
 			}
 			resolve();
+		});
+	});
+};
+
+/**
+ * Search a CloudSearch Domain
+ *
+ * @param {String} endpoint
+ * @param {String} query
+ * @param {{}} [options]
+ * @return {Promise}
+ */
+CloudSearch.prototype.search = function (endpoint, query, options) {
+	const awsCloudSearchDomain = new AWS.CloudSearchDomain({endpoint: endpoint});
+	options = options || {};
+	return new Promise(function (resolve, reject) {
+		const params = _.extend({}, {query: query}, options);
+		awsCloudSearchDomain.search(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
 		});
 	});
 };

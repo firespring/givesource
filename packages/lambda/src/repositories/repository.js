@@ -65,6 +65,40 @@ Repository.prototype.getByKey = function (key, value) {
 };
 
 /**
+ * Get items by keys
+ *
+ * @param {[]} keys
+ * @return {Promise}
+ */
+Repository.prototype.batchGetKeys = function (keys) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		if (!repository.table) {
+			reject(new Error('Repository table is undefined'));
+		}
+		if (!keys) {
+			reject(new Error('map is undefined'));
+		}
+		const params = {
+			RequestItems: {}
+		};
+		params.RequestItems[repository.table] = {
+			Keys: keys
+		};
+		repository.dbClient.batchGet(params, function (err, data) {
+			if (err) {
+				reject(new Error(err, 'DynamoDB'));
+			}
+			if (data.Responses.hasOwnProperty(repository.table)) {
+				resolve(data.Responses[repository.table]);
+			} else {
+				resolve([]);
+			}
+		});
+	});
+};
+
+/**
  * Delete and item by key
  *
  * @param {String} key
@@ -327,6 +361,35 @@ Repository.prototype.query = function (builder) {
 				reject(new Error(err, 'DynamoDB'));
 			}
 			resolve(data);
+		});
+	});
+};
+
+/**
+ * DynamoDB batch query
+ *
+ * @param {QueryBuilder} builder
+ * @param {{}} [results]
+ * @return {Promise}
+ */
+Repository.prototype.batchQuery = function (builder, results) {
+	const repository = this;
+	results = results || {Count: 0, Items: []};
+	return new Promise(function (resolve, reject) {
+		repository.query(builder).then(function (data) {
+			if (data.Count) {
+				results.Count += data.Count;
+			}
+			if (data.Items) {
+				results.Items = results.Items.concat(data.Items);
+			}
+			if (data.LastEvaluatedKey) {
+				builder.start(data.LastEvaluatedKey);
+				resolve(repository.batchQuery(builder, results));
+			}
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
 		});
 	});
 };

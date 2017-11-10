@@ -20,45 +20,9 @@ Resources:
         AttributeType: S
       - AttributeName: createdOn
         AttributeType: N
-      KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-      - IndexName: nonprofitUuidIndex
-        KeySchema:
-        - AttributeName: nonprofitUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-
-  DonationTiersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub |-
-       ${StackName}-DonationTiers
-      AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: nonprofitUuid
-        AttributeType: S
-      - AttributeName: createdOn
+      - AttributeName: isDeleted
+        AttributeType: N
+      - AttributeName: amountInCents
         AttributeType: N
       KeySchema:
       - AttributeName: uuid
@@ -67,6 +31,50 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
+      - IndexName: paginationCreatedOnIndex
+        KeySchema:
+        - AttributeName: isDeleted
+          KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: paginationAmountInCentsIndex
+        KeySchema:
+        - AttributeName: isDeleted
+          KeyType: HASH
+        - AttributeName: amountInCents
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: nonprofitUuidCreatedOnIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: nonprofitUuidAmountInCentsIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        - AttributeName: amountInCents
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
       - IndexName: nonprofitUuidIndex
         KeySchema:
         - AttributeName: nonprofitUuid
@@ -76,16 +84,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-    DependsOn: DonationsTable
 
   DonorsTable:
     Type: AWS::DynamoDB::Table
@@ -124,9 +122,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-    DependsOn: DonationTiersTable
+    DependsOn: DonationsTable
 
   FilesTable:
     Type: AWS::DynamoDB::Table
@@ -232,9 +228,85 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
     DependsOn: MessagesTable
+
+  NonprofitDonationTiersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-NonprofitDonationTiers
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: nonprofitUuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: NonprofitsTable
+
+  NonprofitSlidesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-NonprofitSlides
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: nonprofitUuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: NonprofitDonationTiersTable
 
   PaymentTransactionsTable:
     Type: AWS::DynamoDB::Table
@@ -262,9 +334,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-    DependsOn: NonprofitsTable
+    DependsOn: NonprofitSlidesTable
 
   ReportsTable:
     Type: AWS::DynamoDB::Table
@@ -294,28 +364,28 @@ Resources:
           WriteCapacityUnits: 1
     DependsOn: PaymentTransactionsTable
 
-  SlidesTable:
+  SettingsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Slides
+       ${StackName}-Settings
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: nonprofitUuid
-        AttributeType: S
       - AttributeName: createdOn
         AttributeType: N
+      - AttributeName: key
+        AttributeType: S
       KeySchema:
-      - AttributeName: uuid
+      - AttributeName: key
         KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: nonprofitUuidIndex
+      - IndexName: uuidIndex
         KeySchema:
-        - AttributeName: nonprofitUuid
+        - AttributeName: uuid
           KeyType: HASH
         Projection:
           ProjectionType: ALL
@@ -370,24 +440,15 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DependsOn: SlidesTable
+    DependsOn: SettingsTable
 
 Outputs:
 
   DonationsTable:
     Value: !Ref DonationsTable
 
-  DonationsTableStreamArn:
-    Value: !GetAtt DonationsTable.StreamArn
-
-  DonationTiersTable:
-    Value: !Ref DonationTiersTable
-
   DonorsTable:
     Value: !Ref DonorsTable
-
-  DonorsTableStreamArn:
-    Value: !GetAtt DonorsTable.StreamArn
 
   FilesTable:
     Value: !Ref FilesTable
@@ -398,8 +459,11 @@ Outputs:
   NonprofitsTable:
     Value: !Ref NonprofitsTable
 
-  NonprofitsTableStreamArn:
-    Value: !GetAtt NonprofitsTable.StreamArn
+  NonprofitDonationTiersTable:
+    Value: !Ref NonprofitDonationTiersTable
+
+  NonprofitSlidesTable:
+    Value: !Ref NonprofitSlidesTable
 
   PaymentTransactionsTable:
     Value: !Ref PaymentTransactionsTable
@@ -407,8 +471,8 @@ Outputs:
   ReportsTable:
     Value: !Ref ReportsTable
 
-  SlidesTable:
-    Value: !Ref SlidesTable
+  SettingsTable:
+    Value: !Ref SettingsTable
 
   UsersTable:
     Value: !Ref UsersTable

@@ -21,41 +21,9 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
-
                     <donations-list-table-header></donations-list-table-header>
-
-                    <donations-list-table></donations-list-table>
-
-                    <div class="c-table-footer">
-                        <div class="c-table-footer__actions">
-                            <div class="c-notes">
-                                All times in CDT.
-                            </div>
-                        </div>
-                        <div class="c-table-footer__rows-page">
-                            <span>Show</span>
-                            <select id="rowsPage" name="rowsPage" class="sm">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span>rows/page</span>
-                        </div>
-                        <div class="c-table-footer__pagination">
-                            <nav class="c-pagination">
-                                <span class="c-pagination__first"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
-                                <span class="c-pagination__prev"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
-                                <strong class="c-pagination__here">1</strong>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <a href="#">4</a>
-                                <a href="#">5</a>
-                                <a href="#" class="c-pagination__next" title="Go to the next page"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                <a href="#" class="c-pagination__last" title="Jump to the last page"><i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                            </nav>
-                        </div>
-                    </div>
+                    <donations-list-table :donations="pagination.items"></donations-list-table>
+                    <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>
         </main>
@@ -63,10 +31,37 @@
 </template>
 
 <script>
-    module.exports = {
-        components: {
-	        'donations-list-table': require('./DonationsListTable.vue'),
-	        'donations-list-table-header': require('./DonationsListTableHeader.vue')
-        }
-    };
+    import * as Utils from './../../../helpers/utils';
+    const PaginationMixin = require('./../../../mixins/pagination');
+
+	module.exports = {
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + 'donations' + Utils.generateQueryString(to.query)).then(function (response) {
+					vm.setPaginationData(response.data);
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+            vue.resetPaginationData();
+			axios.get(API_URL + 'donations' + Utils.generateQueryString(to.query)).then(function (response) {
+				vue.setPaginationData(response.data);
+			}).then(function () {
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
+        mixins: [
+	        PaginationMixin
+        ],
+		components: {
+			'donations-list-table': require('./DonationsListTable.vue'),
+			'donations-list-table-header': require('./DonationsListTableHeader.vue'),
+            'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
+		}
+	};
 </script>

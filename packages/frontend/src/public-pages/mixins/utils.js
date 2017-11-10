@@ -17,7 +17,7 @@
 
 const numeral = require('numeral');
 
-exports.mixin = {
+const mixin = {
 	methods: {
 		addBodyClasses: function (...classes) {
 			document.body.classList.add(...classes);
@@ -47,3 +47,5 @@ exports.mixin = {
 		}
 	}
 };
+
+export default mixin;

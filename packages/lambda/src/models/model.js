@@ -57,19 +57,12 @@ Model.prototype.defaults = function () {
 };
 
 /**
- * CloudSearch index fields for this model
- *
- * @type {{}}
- */
-Model.prototype.cloudSearchIndexFields = {};
-
-/**
  * Base Model attributes
  *
  * @type {[]}
  * @private
  */
-Model.prototype._attributes = ['uuid', 'createdOn'];
+Model.prototype._attributes = ['createdOn', 'isDeleted', 'uuid'];
 
 /**
  * Base Model constraints
@@ -80,11 +73,21 @@ Model.prototype._attributes = ['uuid', 'createdOn'];
 Model.prototype._constraints = {
 	createdOn: {
 		presence: true,
+		type: 'number',
 		numericality: {
 			onlyInteger: true,
 			greaterThan: 0
 		}
 
+	},
+	isDeleted: {
+		presence: true,
+		type: 'number',
+		numericality: {
+			onlyInteger: true,
+			greaterThanOrEqualTo: 0,
+			lessThanOrEqualTo: 1
+		}
 	},
 	uuid: {
 		presence: true,
@@ -100,26 +103,10 @@ Model.prototype._constraints = {
  */
 Model.prototype._defaults = function () {
 	return {
-		uuid: UUID.v4(),
-		createdOn: new Date().getTime()
+		createdOn: new Date().getTime(),
+		isDeleted: 0,
+		uuid: UUID.v4()
 	};
-};
-
-/**
- * Base CloudSearch index fields
- *
- * @type {{}}
- * @private
- */
-Model.prototype._cloudSearchIndexFields = {
-	createdOn: {
-		IndexFieldName: 'created_on',
-		IndexFieldType: 'int',
-	},
-	uuid: {
-		IndexFieldName: 'uuid',
-		IndexFieldType: 'text',
-	}
 };
 
 /**
@@ -147,13 +134,6 @@ Model.prototype.getConstraints = function () {
  */
 Model.prototype.getDefaults = function () {
 	return _.extend({}, this._defaults(), this.defaults());
-};
-
-/**
- * Get all CloudSearch index fields for this model
- */
-Model.prototype.getCloudSearchIndexFields = function () {
-	return _.extend({}, this._cloudSearchIndexFields, this.cloudSearchIndexFields);
 };
 
 /**

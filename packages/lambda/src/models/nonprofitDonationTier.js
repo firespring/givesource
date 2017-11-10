@@ -16,15 +16,14 @@
  */
 
 const Model = require('./model');
-const SlideHelper = require('./../helpers/slide');
 
 /**
- * Slide constructor
+ * NonprofitDonationTier constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function Slide(data) {
+function NonprofitDonationTier(data) {
 	Model.call(this, data);
 }
 
@@ -33,24 +32,17 @@ function Slide(data) {
  *
  * @type {Model}
  */
-Slide.prototype = new Model();
+NonprofitDonationTier.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-Slide.prototype.attributes = [
-	'caption',
-	'embedUrl',
-	'externalId',
-	'filename',
-	'fileUuid',
+NonprofitDonationTier.prototype.attributes = [
+	'amount',
+	'description',
 	'nonprofitUuid',
-	'sortOrder',
-	'thumbnail',
-	'type',
-	'url'
 ];
 
 /**
@@ -58,50 +50,19 @@ Slide.prototype.attributes = [
  *
  * @type {{}}
  */
-Slide.prototype.constraints = {
-	caption: {
-		presence: false,
-		type: 'string',
-		length: {
-			maximum: 100
-		},
+NonprofitDonationTier.prototype.constraints = {
+	amount: {
+		presence: true,
+		type: 'number'
 	},
-	embedUrl: {
-		presence: false,
-		url: true,
-	},
-	externalId: {
+	description: {
 		presence: false,
 		type: 'string'
-	},
-	filename: {
-		presence: false,
-		type: 'string'
-	},
-	fileUuid: {
-		presence: false,
-		uuid: 4
 	},
 	nonprofitUuid: {
 		presence: true,
 		uuid: 4
 	},
-	sortOrder: {
-		presence: true,
-		type: 'number'
-	},
-	thumbnail: {
-		presence: false,
-		url: true,
-	},
-	type: {
-		presence: true,
-		inclusion: [SlideHelper.TYPE_IMAGE, SlideHelper.TYPE_VIMEO, SlideHelper.TYPE_YOUTUBE]
-	},
-	url: {
-		presence: true,
-		url: true
-	}
 };
 
-module.exports = Slide;
+module.exports = NonprofitDonationTier;

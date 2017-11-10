@@ -16,8 +16,8 @@
   -->
 
 <template>
-    <select v-model="localValue" :id="id" :name="name" class="combobox" :data-placeholder="placeholder" ref="select">
-        <option value="" selected></option>
+    <select v-model="localValue" :id="id" :name="name" class="combobox" :data-placeholder="placeholder" ref="select" :class="{'has-error': hasError}">
+        <option value=""></option>
         <option data-offset="-39600" value="International Date Line West">(GMT-11:00) International Date Line West</option>
         <option data-offset="-39600" value="Midway Island">(GMT-11:00) Midway Island</option>
         <option data-offset="-39600" value="Samoa">(GMT-11:00) Samoa</option>
@@ -191,7 +191,11 @@
             placeholder: {
     			type: String,
                 default: 'Select A Time Zone'
-            }
+            },
+	        hasError: {
+		        type: Boolean,
+		        default: false
+	        }
         },
         mounted: function () {
     		const vue = this;
@@ -217,6 +221,8 @@
 				    return;
 			    }
 			    vue.localValue = value;
+			    $(vue.$refs.select).val(value);
+			    $(vue.$refs.select).trigger("chosen:updated");
 		    }
 	    }
     };

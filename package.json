@@ -34,7 +34,8 @@
 		"install": "npm run cloudformation:install && npm run frontend:install && npm run lambda:install",
 		"postinstall": "[ -f \".env\" ] || cp .env.example .env",
 		"release": "npm run cloudformation:release && npm run frontend:release && npm run lambda:release",
-		"release:force": "npm run cloudformation:release && npm run frontend:release:force && npm run lambda:release:force"
+		"release:force": "npm run cloudformation:release && npm run frontend:release:force && npm run lambda:release:force",
+		"test": "cd packages/lambda && npm run test"
 	},
 	"author": "Firespring",
 	"devDependencies": {}

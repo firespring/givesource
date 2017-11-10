@@ -59,15 +59,15 @@ Donation.prototype.attributes = [
 Donation.prototype.constraints = {
 	amountInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	},
 	donorUuid: {
 		presence: false,
-		uuid: 4
+		uuid: 4,
 	},
 	feesInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	},
 	isAnonymous: {
 		presence: true,
@@ -78,20 +78,29 @@ Donation.prototype.constraints = {
 		type: 'boolean'
 	},
 	isOfflineDonation: {
-		presence: false,
+		presence: true,
 		type: 'boolean'
 	},
 	nonprofitUuid: {
 		presence: true,
-		uuid: 4
+		uuid: 4,
 	},
-	paymentTransactionUuid: {
-		presence: true,
-		uuid: 4
+	paymentTransactionUuid: function (value, attributes) {
+		if (attributes.isOfflineDonation) {
+			return {
+				presence: false,
+				uuid: 4,
+			}
+		} else {
+			return {
+				presence: true,
+				uuid: 4
+			}
+		}
 	},
 	totalInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number'
 	}
 };
 
@@ -105,50 +114,6 @@ Donation.prototype.defaults = function () {
 		isFeeCovered: false,
 		isOfflineDonation: false
 	};
-};
-
-/**
- * CloudSearch index fields for this model
- *
- * @return {{}}
- */
-Donation.prototype.cloudSearchIndexFields = {
-	amountInCents: {
-		IndexFieldName: 'amount_in_cents',
-		IndexFieldType: 'int',
-	},
-	donorUuid: {
-		IndexFieldName: 'donor_uuid',
-		IndexFieldType: 'text',
-	},
-	feesInCents: {
-		IndexFieldName: 'fees_in_cents',
-		IndexFieldType: 'int',
-	},
-	isAnonymous: {
-		IndexFieldName: 'is_anonymous',
-		IndexFieldType: 'int',
-	},
-	isFeeCovered: {
-		IndexFieldName: 'is_fee_covered',
-		IndexFieldType: 'int',
-	},
-	isOfflineDonation: {
-		IndexFieldName: 'is_offline_donation',
-		IndexFieldType: 'int',
-	},
-	nonprofitUuid: {
-		IndexFieldName: 'nonprofit_uuid',
-		IndexFieldType: 'text',
-	},
-	paymentTransactionUuid: {
-		IndexFieldName: 'payment_transaction_uuid',
-		IndexFieldType: 'text',
-	},
-	totalInCents: {
-		IndexFieldName: 'total_in_cents',
-		IndexFieldType: 'int',
-	}
 };
 
 module.exports = Donation;

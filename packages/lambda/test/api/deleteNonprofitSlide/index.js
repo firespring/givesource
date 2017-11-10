@@ -16,11 +16,11 @@
  */
 
 const assert = require('assert');
+const DeleteNonprofitSlide = require('./../../../src/api/deleteNonprofitSlide/index');
+const NonprofitsRepository = require('./../../../src/repositories/nonprofits');
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
 const sinon = require('sinon');
-const DeleteNonprofitSlide = require('../../../src/api/deleteNonprofitSlide/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitSlidesRepository = require('../../../src/repositories/nonprofitSlides');
-const TestHelper = require('../../helpers/test');
+const TestHelper = require('./../../helpers/test');
 
 describe('DeleteNonprofitSlide', function () {
 
@@ -29,20 +29,20 @@ describe('DeleteNonprofitSlide', function () {
 		NonprofitSlidesRepository.prototype.delete.restore();
 	});
 
-	it('should delete a nonprofit', function () {
+	it('should delete a nonprofit slide', function () {
 		const nonprofit = TestHelper.generate.model('nonprofit');
-		const model = TestHelper.generate.model('slide');
+		const model = TestHelper.generate.model('nonprofitSlide');
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
 		sinon.stub(NonprofitSlidesRepository.prototype, 'delete').resolves(model);
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				slideUuid: model.uuid,
+				nonprofit_uuid: nonprofit.uuid,
+				slide_uuid: model.uuid,
 			}
 		};
 		return DeleteNonprofitSlide.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert(result === null);
+			assert(error === undefined);
+			assert(result === undefined);
 		});
 	});
 
@@ -52,11 +52,11 @@ describe('DeleteNonprofitSlide', function () {
 		sinon.stub(NonprofitSlidesRepository.prototype, 'delete').rejects('Error');
 		const params = {
 			params: {
-				nonprofitUuid: nonprofit.uuid,
-				slideUuid: '1234'
+				nonprofit_uuid: nonprofit.uuid,
+				slide_uuid: '1234'
 			}
 		};
-		return DeleteNonprofitSlide.handle(params, null, function (error, result) {
+		return DeleteNonprofitSlide.handle(params, null, function (error) {
 			assert(error instanceof Error);
 		});
 	});

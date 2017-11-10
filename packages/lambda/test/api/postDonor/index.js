@@ -16,9 +16,10 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
+const HttpException = require('./../../../src/exceptions/http');
 const PostDonor = require('../../../src/api/postDonor/index');
 const DonorsRepository = require('../../../src/repositories/donors');
+const sinon = require('sinon');
 const TestHelper = require('../../helpers/test');
 
 describe('PostDonor', function () {
@@ -34,11 +35,11 @@ describe('PostDonor', function () {
 		sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data);
 		sinon.stub(DonorsRepository.prototype, 'save').resolves(data);
 		const params = {
-			body: data.all()
+			body: data.except(['uuid', 'createdOn'])
 		};
 		return PostDonor.handle(params, null, function (error, result) {
 			assert(error === null);
-			assert.deepEqual(result, data.all());
+			TestHelper.assertModelEquals(result, data, ['uuid', 'createdOn']);
 		});
 	});
 
@@ -46,8 +47,8 @@ describe('PostDonor', function () {
 		const data = TestHelper.generate.model('donor');
 		sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data);
 		sinon.stub(DonorsRepository.prototype, 'save').rejects('Error');
-		return PostDonor.handle({}, null, function (error, result) {
-			assert(error instanceof Error);
+		return PostDonor.handle({}, null, function (error) {
+			assert(error instanceof HttpException);
 		});
 	});
 

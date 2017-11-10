@@ -16,7 +16,6 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const File = require('../../src/models/file');
 const Model = require('../../src/models/model');
 const TestHelper = require('../helpers/test');
@@ -55,8 +54,14 @@ describe('File', function () {
 			{model: TestHelper.generate.model('file'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false},
 			{model: TestHelper.generate.model('file'), param: 'createdOn', value: null, error: true},
 			{model: TestHelper.generate.model('file'), param: 'createdOn', value: 'test', error: true},
-			{model: TestHelper.generate.model('file'), param: 'createdOn', value: '123456', error: false},
+			{model: TestHelper.generate.model('file'), param: 'createdOn', value: '123456', error: true},
 			{model: TestHelper.generate.model('file'), param: 'createdOn', value: 123456, error: false},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: null, error: true},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: 'test', error: true},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: '123456', error: true},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: 123456, error: true},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: 0, error: false},
+			{model: TestHelper.generate.model('file'), param: 'isDeleted', value: 1, error: false},
 			{model: TestHelper.generate.model('file'), param: 'path', value: null, error: true},
 			{model: TestHelper.generate.model('file'), param: 'path', value: '', error: true},
 			{model: TestHelper.generate.model('file'), param: 'path', value: 'test', error: false},

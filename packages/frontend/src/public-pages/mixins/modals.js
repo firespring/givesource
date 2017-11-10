@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-exports.mixin = {
+const mixin = {
 	methods: {
 		addModal: function (modal, data) {
 			this.bus.$emit('addModal', modal, data);
@@ -31,3 +31,5 @@ exports.mixin = {
 		}
 	}
 };
+
+export default mixin;

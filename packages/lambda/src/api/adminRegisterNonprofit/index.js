@@ -29,10 +29,10 @@ exports.handle = function (event, context, callback) {
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 
-	const request = new Request(event, context).parameters(['nonprofit', 'user', 'user_pool_id']);
-	const userPoolId = request.get('user_pool_id');
+	const request = new Request(event, context).parameters(['nonprofit', 'user']);
 	const user = new User(request.get('user'));
 	const nonprofit = new Nonprofit(request.get('nonprofit'));
+	const userPoolId = process.env.USER_POOL_ID;
 
 	nonprofit.populate({status: NonprofitHelper.STATUS_ACTIVE});
 	request.validate().then(function () {

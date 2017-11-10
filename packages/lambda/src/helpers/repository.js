@@ -18,12 +18,13 @@
 const stackName = process.env.AWS_STACK_NAME;
 
 exports.DonationsTable = `${stackName}-Donations`;
-exports.DonationTiersTable = `${stackName}-DonationTiers`;
 exports.DonorsTable = `${stackName}-Donors`;
 exports.FilesTable = `${stackName}-Files`;
 exports.MessagesTable = `${stackName}-Messages`;
 exports.NonprofitsTable = `${stackName}-Nonprofits`;
+exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`;
+exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;
 exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
 exports.ReportsTable = `${stackName}-Reports`;
-exports.SlidesTable = `${stackName}-Slides`;
+exports.SettingsTable = `${stackName}-Settings`;
 exports.UsersTable = `${stackName}-Users`;
