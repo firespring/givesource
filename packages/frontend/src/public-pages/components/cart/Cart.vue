@@ -37,13 +37,13 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="donor.name" type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name">
+                                        <input v-model="donor.firstName" type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name">
                                     </div>
                                     <div class="grid-item">
                                         <input v-model="donor.lastName" type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name">
                                     </div>
                                 </div>
-                                <div v-if="formErrors.donor.name || formErrors.donor.lastName" class="notes notes--below notes--error">
+                                <div v-if="formErrors.donor.firstName || formErrors.donor.lastName" class="notes notes--below notes--error">
                                     You must enter a first name and last name.
                                 </div>
                             </div>
@@ -239,8 +239,8 @@
 					address2: '',
 					city: '',
 					email: '',
+                    firstName: '',
 					lastName: '',
-					name: '',
 					phone: '',
 					state: '',
 					zip: '',
@@ -329,10 +329,10 @@
 						presence: true,
 						email: true,
 					},
-					lastName: {
+					firstName: {
 						presence: true,
 					},
-					name: {
+					lastName: {
 						presence: true,
 					},
 					phone: {
