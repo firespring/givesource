@@ -66,6 +66,14 @@ const router = new VueRouter({
 			}
 		},
 		{
+			path: '/donations/add',
+			name: 'donations-add',
+			component: require('./../components/admin/donations/DonationsAdd.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
 			path: '/nonprofits',
 			name: 'nonprofits-list',
 			component: require('./../components/admin/nonprofits/NonprofitsList.vue'),

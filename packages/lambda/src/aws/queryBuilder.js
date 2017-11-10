@@ -25,6 +25,7 @@ function QueryBuilder(type) {
 	this.queryType = type;
 	this.tableName = null;
 	this.indexName = null;
+	this._scanIndexForward = true;
 	this._select = null;
 	this.startKey = null;
 	this.limitNumber = 1000;
@@ -64,6 +65,17 @@ QueryBuilder.prototype.table = function (table) {
  */
 QueryBuilder.prototype.index = function (index) {
 	this.indexName = index;
+	return this;
+};
+
+/**
+ * Scan index forward option
+ *
+ * @param {boolean} scanIndexForward
+ * @return {QueryBuilder}
+ */
+QueryBuilder.prototype.scanIndexForward = function (scanIndexForward) {
+	this._scanIndexForward = scanIndexForward;
 	return this;
 };
 
@@ -214,6 +226,10 @@ QueryBuilder.prototype.build = function () {
 
 	if (this.startKey) {
 		params['ExclusiveStartKey'] = this.startKey;
+	}
+
+	if (this._scanIndexForward !== null && this.queryType === 'query') {
+		params['ScanIndexForward'] = this._scanIndexForward;
 	}
 
 	return params;

@@ -22,11 +22,14 @@ const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new DonorsRepository();
-	const request = new Request(event, context).parameters(['email']);
+	const request = new Request(event, context);
 
 	let donor = null;
 	request.validate().then(function () {
-		return repository.queryEmail(request.get('email'));
+		if (request.get('email')) {
+			return repository.queryEmail(request.get('email'));
+		}
+		return Promise.resolve(new Donor());
 	}).then(function (model) {
 		donor = model ? model : new Donor();
 		donor.populate(request._body);

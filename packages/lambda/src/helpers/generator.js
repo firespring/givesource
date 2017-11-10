@@ -51,10 +51,14 @@ Generator.prototype._generators = {
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
-			paymentTransactionUuid: faker.random.uuid(),
 		};
 		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, 30, 0.029);
 		donation.totalInCents = donation.isFeeCovered ? donation.amountInCents + donation.feesInCents : donation.amountInCents;
+
+		if (!donation.isOfflineDonation) {
+			donation.paymentTransactionUuid = faker.random.uuid();
+		}
+
 		return donation;
 	},
 
@@ -72,10 +76,10 @@ Generator.prototype._generators = {
 			address2: faker.address.secondaryAddress(),
 			city: faker.address.city(),
 			email: faker.internet.email(),
-			name: faker.name.findName(),
+			firstName: faker.name.firstName(),
+			lastName: faker.name.lastName(),
 			phone: faker.phone.phoneNumber(),
 			state: faker.address.stateAbbr(),
-			totalAmountInCents: faker.random.number(),
 			zip: faker.address.zipCode()
 		}
 	},

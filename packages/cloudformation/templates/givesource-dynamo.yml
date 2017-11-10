@@ -53,18 +53,31 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: nonprofitUuidIndex
+      - IndexName: nonprofitUuidCreatedOnIndex
         KeySchema:
         - AttributeName: nonprofitUuid
           KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
+      - IndexName: nonprofitUuidAmountInCentsIndex
         KeySchema:
-        - AttributeName: createdOn
+        - AttributeName: nonprofitUuid
+          KeyType: HASH
+        - AttributeName: amountInCents
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: nonprofitUuidIndex
+        KeySchema:
+        - AttributeName: nonprofitUuid
           KeyType: HASH
         Projection:
           ProjectionType: ALL

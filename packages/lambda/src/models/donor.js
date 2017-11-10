@@ -44,10 +44,10 @@ Donor.prototype.attributes = [
 	'address2',
 	'city',
 	'email',
-	'name',
+	'firstName',
+	'lastName',
 	'phone',
 	'state',
-	'totalAmountInCents',
 	'zip'
 ];
 
@@ -58,7 +58,7 @@ Donor.prototype.attributes = [
  */
 Donor.prototype.constraints = {
 	address1: {
-		presence: true,
+		presence: false,
 		type: 'string'
 	},
 	address2: {
@@ -66,32 +66,33 @@ Donor.prototype.constraints = {
 		type: 'string'
 	},
 	city: {
-		presence: true,
+		presence: false,
 		type: 'string'
 	},
 	email: {
-		presence: true,
-		email: true
+		presence: false,
+		email: true,
+		type: 'string'
 	},
-	name: {
+	firstName: {
+		presence: true,
+		type: 'string'
+	},
+	lastName: {
 		presence: true,
 		type: 'string'
 	},
 	phone: {
 		presence: false,
-		type: 'string|number'
-	},
-	state: {
-		presence: true,
 		type: 'string'
 	},
-	totalAmountInCents: {
-		presence: true,
-		type: 'string|number'
+	state: {
+		presence: false,
+		type: 'string'
 	},
 	zip: {
-		presence: true,
-		type: 'string|number'
+		presence: false,
+		type: 'string'
 	}
 };
 

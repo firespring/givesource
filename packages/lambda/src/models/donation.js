@@ -78,16 +78,25 @@ Donation.prototype.constraints = {
 		type: 'boolean'
 	},
 	isOfflineDonation: {
-		presence: false,
+		presence: true,
 		type: 'boolean'
 	},
 	nonprofitUuid: {
 		presence: true,
 		uuid: 4,
 	},
-	paymentTransactionUuid: {
-		presence: true,
-		uuid: 4
+	paymentTransactionUuid: function (value, attributes) {
+		if (attributes.isOfflineDonation) {
+			return {
+				presence: false,
+				uuid: 4,
+			}
+		} else {
+			return {
+				presence: true,
+				uuid: 4
+			}
+		}
 	},
 	totalInCents: {
 		presence: true,
