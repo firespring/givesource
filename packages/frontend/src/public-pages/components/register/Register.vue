@@ -78,21 +78,29 @@
 
                         <div class="form-item form-item--address form-item--required">
                             <div class="form-item__label">
-                                <label for="orgAddress1">Organization Address</label>
+                                <label>Organization Address</label>
                             </div>
+
                             <div class="form-item__control">
 
-                                <div class="address1">
-                                    <input type="text" name="orgAddress1" id="orgAddress1" placeholder="Address Line 1" required>
+
+                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                    <input v-model="formData.address1" type="text" name="address1" id="address1">
+                                    <label for="address1">Address Line 1</label>
                                 </div>
 
-                                <div class="address2">
-                                    <input type="text" name="orgAddress2" id="orgAddress2" placeholder="Address Line 2">
+
+                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                    <input v-model="formData.address2" type="text" name="address2" id="address2">
+                                    <label for="address2">Address Line 2</label>
                                 </div>
 
-                                <div class="address3">
-                                    <input type="text" name="orgAddress3" id="orgAddress3" placeholder="Address Line 3">
+
+                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                    <input v-model="formData.address3" type="text" name="address3" id="address3">
+                                    <label for="address3">Address Line 3</label>
                                 </div>
+
 
                                 <div class="city-state-zip">
 
@@ -384,7 +392,6 @@
                     <div class="form-actions flex justify-center items-center">
                         <button type="submit" class="btn btn--blue btn--round">Register Now</button>
                     </div>
-
                 </form>
             </div>
         </main>
@@ -397,6 +404,24 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				formData: {
+					legalName: '',
+					taxId: '',
+					address1: '',
+					address2: '',
+					address3: '',
+					city: '',
+					state: '',
+					zip: '',
+					phone: '',
+					firstName: '',
+					lastName: '',
+					email: '',
+				},
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
@@ -404,14 +429,101 @@
 			vue.setPageTitle('Give To Our City - Register');
 		},
         methods: {
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+	        getConstraints: function () {
+		        return {
+			        legalName: {
+				        presence: true,
+			        },
+			        taxId: {
+				        presence: true,
+			        },
+			        address1: {
+				        label: 'Address line 1',
+				        presence: true,
+			        },
+			        address2: {
+				        label: 'Address line 2',
+				        presence: false,
+			        },
+			        address3: {
+				        label: 'Address line 3',
+				        presence: false,
+			        },
+			        city: {
+				        presence: true,
+			        },
+			        state: {
+				        presence: true,
+			        },
+			        zip: {
+				        label: 'Zip',
+				        presence: true,
+			        },
+			        phone: {
+				        label: 'Organization Phone Number',
+				        presence: true,
+			        },
+			        firstName: {
+				        presence: true,
+			        },
+			        lastName: {
+				        presence: true,
+			        },
+			        email: {
+				        label: 'Email address',
+				        presence: true,
+				        email: true,
+			        }
+		        }
+	        },
+	        submit: function (event) {
+                event.preventDefault();
+		        const vue = this;
 
-				vue.$router.push({ name: 'register-response' });
-            }
+		        //vue.addModal('spinner');
+                vue.registerNonprofit();
+
+//		        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+//		        if (Object.keys(vue.formErrors).length) {
+//			        vue.clearModals();
+//		        } else {
+//			        vue.registerNonprofit();
+//		        }
+	        },
+	        registerNonprofit: function () {
+		        const vue = this;
+
+		        axios.post(API_URL + 'nonprofits/registerPublicPage', {
+			        nonprofit: {
+				        legalName: vue.formData.legalName,
+				        taxId: vue.formData.taxId,
+				        address1: vue.formData.address1,
+				        address2: vue.formData.address2,
+				        address3: vue.formData.address3,
+				        city: vue.formData.city,
+				        state: vue.formData.state,
+				        zip: vue.formData.zip,
+				        phone: vue.formData.phone
+			        },
+			        user: {
+				        firstName: vue.formData.firstName,
+				        lastName: vue.formData.lastName,
+				        email: vue.formData.email
+			        }
+		        }).then(function (response) {
+			        vue.clearModals();
+			        if (response.data.errorMessage) {
+				        console.log(response.data);
+			        } else {
+				        vue.$router.push({name: 'nonprofits-list'});
+			        }
+		        }).catch(function (err) {
+			        vue.clearModals();
+			        console.log(err);
+		        });
+	        },
         },
-		components: {
+        components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
