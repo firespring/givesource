@@ -101,7 +101,6 @@
                                     <div class="c-form-item__label">
                                         <label for="eventTimezone" class="c-form-item-label-text">Time Zone</label>
                                     </div>
-
                                     <div class="c-form-item__control">
                                         <forms-select-time-zone v-model="formData.EVENT_TIMEZONE" id="eventTimezone" name="eventTimezone"
                                                                 :hasError="formErrors.hasOwnProperty('EVENT_TIMEZONE')"></forms-select-time-zone>

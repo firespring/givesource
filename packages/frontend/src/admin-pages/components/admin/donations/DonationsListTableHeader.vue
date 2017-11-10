@@ -19,7 +19,9 @@
     <div class="c-header-actions">
 
         <div>
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations</a>
+            <router-link :to="{ name: 'donations-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations
+            </router-link>
             <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
         </div>
 

@@ -15,10 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const MessageHelper = require('./../helpers/message');
 const Model = require('./model');
-
-exports.TYPE_CONTACT = 'CONTACT';
-exports.TYPE_FEEDBACK = 'FEEDBACK';
 
 /**
  * Message constructor
@@ -74,7 +72,7 @@ Message.prototype.constraints = {
 	},
 	type: {
 		presence: true,
-		inclusion: [this.TYPE_CONTACT, this.TYPE_FEEDBACK]
+		inclusion: [MessageHelper.TYPE_CONTACT, MessageHelper.TYPE_FEEDBACK]
 	}
 };
 

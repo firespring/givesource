@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Donation = require('./../../models/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const QueryBuilder = require('./../../aws/queryBuilder');
@@ -33,20 +32,20 @@ exports.handle = function (event, context, callback) {
 
 	request.validate().then(function () {
 		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0);
+		builder.select('COUNT').limit(1000).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 		return repository.batchQuery(builder);
 	}).then(function (response) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0);
+			builder.select('COUNT').limit(start).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
 		}
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
-		builder.limit(size).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0);
+		builder.limit(size).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
