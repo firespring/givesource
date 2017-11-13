@@ -75,19 +75,19 @@ exports.handle = function (event, context, callback) {
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
 			}
-			if (model.totalInCents) {
-				total += model.totalInCents;
+			if (model.total) {
+				total += model.total;
 			}
 			donations.push(model);
 			promise = promise.then(function () {
 				return model.validate([
-					'amountInCents',
-					'feesInCents',
+					'fees',
 					'isAnonymous',
 					'isFeeCovered',
 					'isOfflineDonation',
 					'nonprofitUuid',
-					'totalInCents'
+					'subtotal',
+					'total'
 				]);
 			});
 		});
@@ -107,9 +107,9 @@ exports.handle = function (event, context, callback) {
 		if (data.hasOwnProperty('email')) {
 			return donorsRepository.queryEmail(data.email);
 		}
-		return Promise.resolve(new Donor({totalAmountInCents: 0}));
+		return Promise.resolve(new Donor());
 	}).then(function (response) {
-		donor = response ? response : new Donor({totalAmountInCents: 0});
+		donor = response ? response : new Donor();
 		donor.populate(request.get('donor', {}));
 		return donor.validate();
 	}).then(function () {
@@ -143,7 +143,6 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return paymentTransactionsRepository.save(paymentTransaction);
 	}).then(function () {
-		donor.totalAmountInCents = donor.totalAmountInCents + total;
 		return donorsRepository.save(donor);
 	}).then(function () {
 		donations.forEach(function (donation) {
@@ -155,7 +154,10 @@ exports.handle = function (event, context, callback) {
 		nonprofits.forEach(function (nonprofit) {
 			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach(function (donation) {
 				nonprofit.donationsCount = nonprofit.donationsCount + 1;
-				nonprofit.donationsSum = nonprofit.donationsSum + donation.totalInCents;
+				nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
+				nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
+				nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
+				nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
 			});
 		});
 		return nonprofitsRepository.batchUpdate(nonprofits);

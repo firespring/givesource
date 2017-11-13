@@ -22,7 +22,7 @@ Resources:
         AttributeType: N
       - AttributeName: isDeleted
         AttributeType: N
-      - AttributeName: amountInCents
+      - AttributeName: subtotal
         AttributeType: N
       KeySchema:
       - AttributeName: uuid
@@ -42,11 +42,11 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: paginationAmountInCentsIndex
+      - IndexName: paginationSubtotalIndex
         KeySchema:
         - AttributeName: isDeleted
           KeyType: HASH
-        - AttributeName: amountInCents
+        - AttributeName: subtotal
           KeyType: RANGE
         Projection:
           ProjectionType: ALL
@@ -64,11 +64,11 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: nonprofitUuidAmountInCentsIndex
+      - IndexName: nonprofitUuidSubtotalIndex
         KeySchema:
         - AttributeName: nonprofitUuid
           KeyType: HASH
-        - AttributeName: amountInCents
+        - AttributeName: subtotal
           KeyType: RANGE
         Projection:
           ProjectionType: ALL

@@ -70,7 +70,7 @@
 					while (vm.nonprofits.length < 10) {
 						vm.nonprofits.push({
                             legalName: 'Demo Nonprofit',
-                            donationsSum: 12345,
+                            donationsSubtotal: 12345,
                             shortDescription: 'Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results.',
                         });
                     }
@@ -86,7 +86,7 @@
 				while (vue.nonprofits.length < 10) {
 					vue.nonprofits.push({
 						legalName: 'Demo Nonprofit',
-						donationsSum: 12345,
+						donationsSubtotal: 12345,
 						shortDescription: 'Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results.',
 					});
 				}

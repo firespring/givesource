@@ -72,20 +72,24 @@ const seedDonations = function () {
 		const donors = generator.modelCollection('donor', donations.length);
 		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
 
-		let donationsTotal = 0;
-		return donorsRepository.batchUpdate(donors).then(function (response) {
+		let donationsFees, donationsFeesCovered, donationsSubtotal, donationsTotal = 0;
+		return donorsRepository.batchUpdate(donors).then(function () {
 			let promise = Promise.resolve();
 			_.each(donations, function (chunk, i) {
-				let total = 0;
+				let paymentTotal  = 0;
 				_.each(chunk, function (donation) {
 					donation.donorUuid = donors[i].uuid;
 					donation.paymentTransactionUuid = paymentTransactions[i].uuid;
 					donation.nonprofitUuid = answers.nonprofitUuid;
-					total += donation.totalInCents;
+
+					donationsFees += donation.fees;
+					donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
+					donationsSubtotal += donation.subtotal;
+					donationsTotal += donation.total;
+					paymentTotal += donation.total;
 				});
 
-				paymentTransactions[i].total = total;
-				donationsTotal += total;
+				paymentTransactions[i].total = paymentTotal;
 				promise = promise.then(function () {
 					return nonprofitDonationsRepository.batchUpdate(chunk);
 				});
@@ -96,8 +100,11 @@ const seedDonations = function () {
 		}).then(function () {
 			return nonprofitsRepository.get(answers.nonprofitUuid);
 		}).then(function (nonprofit) {
-			nonprofit.donationsSum = nonprofit.donationsSum += donationsTotal;
 			nonprofit.donationsCount = nonprofit.donationsCount += count;
+			nonprofit.donationsFees = nonprofit.donationsFees + donationsFees;
+			nonprofit.donationsFeesCovered = nonprofit.donationsFeesCovered + donationsFeesCovered;
+			nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donationsSubtotal;
+			nonprofit.donationsTotal = nonprofit.donationsTotal + donationsTotal;
 			return nonprofitsRepository.save(nonprofit);
 		});
 	}).then(function () {
@@ -150,7 +157,7 @@ const seedNonprofits = function () {
 		}
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
-		const nonprofits = generator.modelCollection('nonprofit', count, {donationsSum: 0, donationsCount: 0});
+		const nonprofits = generator.modelCollection('nonprofit', count, {donationsCount: 0, donationsFees: 0, donationsFeesCovered: 0, donationsSubtotal: 0, donationsTotal: 0});
 
 		let promise = nonprofitsRepository.batchUpdate(nonprofits);
 		_.each(nonprofits, function (nonprofit) {

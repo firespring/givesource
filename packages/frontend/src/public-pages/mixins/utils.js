@@ -32,8 +32,8 @@ const mixin = {
 		setPageTitle: function (title) {
 			document.title = title;
 		},
-		formatMoney: function (amountInCents) {
-			return numeral(amountInCents / 100).format('$0,0.00');
+		formatMoney: function (amount) {
+			return numeral(amount / 100).format('$0,0.00');
 		},
 		calculateFees: function (cartItems, transactionFlatFee, transactionPercentFee) {
 			let fees = 0;

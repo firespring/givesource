@@ -40,15 +40,15 @@ Donation.prototype = new Model();
  * @type {[*]}
  */
 Donation.prototype.attributes = [
-	'amountInCents',
 	'donorUuid',
-	'feesInCents',
+	'fees',
 	'isAnonymous',
 	'isFeeCovered',
 	'isOfflineDonation',
 	'nonprofitUuid',
 	'paymentTransactionUuid',
-	'totalInCents'
+	'subtotal',
+	'total'
 ];
 
 /**
@@ -57,15 +57,11 @@ Donation.prototype.attributes = [
  * @type {{}}
  */
 Donation.prototype.constraints = {
-	amountInCents: {
-		presence: true,
-		type: 'number'
-	},
 	donorUuid: {
 		presence: false,
 		uuid: 4,
 	},
-	feesInCents: {
+	fees: {
 		presence: true,
 		type: 'number'
 	},
@@ -98,7 +94,11 @@ Donation.prototype.constraints = {
 			}
 		}
 	},
-	totalInCents: {
+	subtotal: {
+		presence: true,
+		type: 'number'
+	},
+	total: {
 		presence: true,
 		type: 'number'
 	}

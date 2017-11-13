@@ -50,17 +50,17 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--number c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.amount }">
+                                <div class="c-form-item c-form-item--number c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.subtotal }">
                                     <div class="c-form-item__label">
                                         <label for="donationAmount" class="c-form-item-label-text">Donation Amount</label>
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--dollar">
-                                            <input v-model="formData.amount" type="text" name="donationAmount" id="donationAmount" style="width: 10rem;"
-                                                   :class="{ 'has-error': formErrors.amount }" v-money="currencyOptions">
+                                            <input v-model="formData.subtotal" type="text" name="donationAmount" id="donationAmount" style="width: 10rem;"
+                                                   :class="{ 'has-error': formErrors.subtotal }" v-money="currencyOptions">
                                         </div>
-                                        <div v-if="formErrors.amount" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.amount }}
+                                        <div v-if="formErrors.subtotal" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.subtotal }}
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@
 
 				// Form Data
 				formData: {
-					amount: 0,
+					subtotal: 0,
 					email: '',
 					firstName: '',
 					lastName: '',
@@ -186,7 +186,7 @@
 		methods: {
 			getConstraints: function () {
 				return {
-					amount: {
+					subtotal: {
 						label: 'Donation amount',
 						presence: true,
 						numericality: {
@@ -243,14 +243,14 @@
 						return Promise.reject(response.data);
 					}
 					const donation = {
-						amountInCents: vue.getAmountInCents(),
 						donorUuid: response.data.uuid,
-						feesInCents: 0,
+						fees: 0,
 						isAnonymous: false,
 						isFeeCovered: false,
 						isOfflineDonation: true,
 						nonprofitUuid: vue.formData.nonprofitUuid,
-						totalInCents: vue.getAmountInCents()
+						subtotal: vue.getSubtotal(),
+						total: vue.getSubtotal()
 					};
 					return axios.post(API_URL + 'donations', donation);
 				}).then(function (response) {
@@ -260,7 +260,7 @@
 					} else {
 						if (action === 'add') {
 							vue.formData = {
-								amount: 0,
+								subtotal: 0,
 								email: '',
 								firstName: '',
 								lastName: '',
@@ -275,8 +275,8 @@
 					console.log(err);
 				});
 			},
-			getAmountInCents: function () {
-				return this.formData.amount * 100;
+			getSubtotal: function () {
+				return this.formData.subtotal * 100;
 			}
 		},
 		components: {

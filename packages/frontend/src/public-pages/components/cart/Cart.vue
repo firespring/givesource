@@ -434,13 +434,13 @@
 					const fees = vue.calculateFees([cartItem], 30, 0.029);
 					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
 					vue.donations.push({
-						amountInCents: cartItem.amount,
-						feesInCents: fees,
+						fees: fees,
 						isAnonymous: vue.formData.isAnonymous,
 						isFeeCovered: vue.formData.isFeeCovered,
 						isOfflineDonation: false,
 						nonprofitUuid: cartItem.nonprofit.uuid,
-						totalInCents: total
+						subtotal: cartItem.amount,
+						total: total
 					});
 				});
 
