@@ -24,7 +24,6 @@ const User = require('./../../models/user');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
-	const cognito = new Cognito();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 
@@ -32,7 +31,7 @@ exports.handle = function (event, context, callback) {
 	const user = new User(request.get('user'));
 	const nonprofit = new Nonprofit(request.get('nonprofit'));
 
-	nonprofit.populate({status: NonprofitHelper.STATUS_ACTIVE});
+	nonprofit.populate({status: NonprofitHelper.STATUS_PENDING});
 	request.validate().then(function () {
 		return nonprofitsRepository.generateUniqueSlug(nonprofit);
 	}).then(function () {
@@ -42,16 +41,6 @@ exports.handle = function (event, context, callback) {
 		user.populate({nonprofitUuid: nonprofit.uuid});
 	}).then(function () {
 		user.validate(['uuid', 'createdOn', 'email']);
-	}).then(function () {
-		return cognito.createUser(userPoolId, user.uuid, user.email);
-	}).then(function (cognitoUser) {
-		cognitoUser.User.Attributes.forEach(function (attribute) {
-			if (attribute.Name === 'sub') {
-				user.cognitoUuid = attribute.Value;
-			}
-		});
-	}).then(function () {
-		return cognito.assignUserToGroup(userPoolId, user.uuid, 'Nonprofit');
 	}).then(function () {
 		return user.validate();
 	}).then(function () {

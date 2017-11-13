@@ -82,6 +82,7 @@
                                     <label for="address3">Address Line 3</label>
                                 </div>
                             </div>
+                            </div>
                         </div>
                         <div v-if="formErrors.address3" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
                             {{ formErrors.address3 }}
@@ -94,9 +95,11 @@
                                     <label for="city">City</label>
                                 </div>
                             </div>
+
                             <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
                                 <state-select v-model="formData.state" name="state" id="state" placeholder="State" :class="{ 'has-error': formErrors.state }"></state-select>
                             </div>
+
                             <div class="c-form-control-grid__item c-form-item--required" style="flex: 1 0 11rem; max-width: 11rem;">
                                 <div class="has-floating-label js-floating-label" v-floating-label>
                                     <input v-model="formData.zip" type="text" name="zip" id="zip" :class="{ 'has-error': formErrors.zip }">

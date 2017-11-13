@@ -35,33 +35,35 @@
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orgLegalName">Organization Legal Name</label>
+                                <label for="orglegalName" >Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="orgLegalName" id="orgLegalName" required>
+                                <input v-model="formData.legalName" type="text" name="legalName" id="orglegalName" maxlength="200">
                             </div>
                         </div>
+
+
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
                                 <label for="taxId">Tax ID</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="taxId" id="taxId" required>
+                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200">
                             </div>
                         </div>
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="contactNameFirst">Contact Name</label>
+                                <label for="firstName">Contact Name</label>
                             </div>
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input type="text" name="contactNameFirst" id="contactNameFirst" placeholder="First Name" required>
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" >
                                     </div>
                                     <div class="grid-item">
-                                        <input type="text" name="contactNameLast" id="contactNameLast" placeholder="Last Name" required>
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" >
                                     </div>
                                 </div>
                             </div>
@@ -72,7 +74,7 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="email" name="contactEmail" id="contactEmail" required>
+                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200" >
                             </div>
                         </div>
 
@@ -84,19 +86,19 @@
                             <div class="form-item__control">
 
 
-                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                <div class="has-floating-label js-floating-label" >
                                     <input v-model="formData.address1" type="text" name="address1" id="address1">
                                     <label for="address1">Address Line 1</label>
                                 </div>
 
 
-                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                <div class="has-floating-label js-floating-label">
                                     <input v-model="formData.address2" type="text" name="address2" id="address2">
                                     <label for="address2">Address Line 2</label>
                                 </div>
 
 
-                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                <div class="has-floating-label js-floating-label">
                                     <input v-model="formData.address3" type="text" name="address3" id="address3">
                                     <label for="address3">Address Line 3</label>
                                 </div>
@@ -105,64 +107,11 @@
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input type="text" name="orgCity" id="orgCity" placeholder="City" required>
+                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200">
                                     </div>
 
-                                    <div class="city-state-zip__state select-wrap">
-                                        <select name="orgState" id="orgState" required>
-                                            <option value="">State</option>
-                                            <option value="" disabled="disabled">-----</option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="AK">Alaska</option>
-                                            <option value="AZ">Arizona</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="CA">California</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="HI">Hawaii</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                            <option value="LA">Louisiana</option>
-                                            <option value="ME">Maine</option>
-                                            <option value="MD">Maryland</option>
-                                            <option value="MA">Massachusetts</option>
-                                            <option value="MI">Michigan</option>
-                                            <option value="MN">Minnesota</option>
-                                            <option value="MS">Mississippi</option>
-                                            <option value="MO">Missouri</option>
-                                            <option value="MT">Montana</option>
-                                            <option value="NE">Nebraska</option>
-                                            <option value="NV">Nevada</option>
-                                            <option value="NH">New Hampshire</option>
-                                            <option value="NJ">New Jersey</option>
-                                            <option value="NM">New Mexico</option>
-                                            <option value="NY">New York</option>
-                                            <option value="NC">North Carolina</option>
-                                            <option value="ND">North Dakota</option>
-                                            <option value="OH">Ohio</option>
-                                            <option value="OK">Oklahoma</option>
-                                            <option value="OR">Oregon</option>
-                                            <option value="PA">Pennsylvania</option>
-                                            <option value="RI">Rhode Island</option>
-                                            <option value="SC">South Carolina</option>
-                                            <option value="SD">South Dakota</option>
-                                            <option value="TN">Tennessee</option>
-                                            <option value="TX">Texas</option>
-                                            <option value="UT">Utah</option>
-                                            <option value="VT">Vermont</option>
-                                            <option value="VA">Virginia</option>
-                                            <option value="WA">Washington</option>
-                                            <option value="WV">West Virginia</option>
-                                            <option value="WI">Wisconsin</option>
-                                            <option value="WY">Wyoming</option>
-                                        </select>
+                                    <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
+                                        <state-select v-model="formData.state" name="state" id="state" placeholder="State"></state-select>
                                     </div>
 
                                     <div class="city-state-zip__zip">
@@ -419,7 +368,7 @@
 					firstName: '',
 					lastName: '',
 					email: '',
-				},
+				}
 			}
 		},
 		beforeMount: function () {
@@ -527,6 +476,7 @@
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
+	        'state-select': require('../forms/SelectState.vue'),
 		}
 	};
 </script>
