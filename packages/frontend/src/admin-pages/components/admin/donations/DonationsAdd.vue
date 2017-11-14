@@ -190,7 +190,6 @@
 						label: 'Donation amount',
 						presence: true,
 						numericality: {
-							onlyInteger: true,
 							greaterThan: 0,
 						}
 					},
