@@ -270,6 +270,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -285,6 +286,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -301,6 +303,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
       - S3Stack
@@ -317,6 +320,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -349,6 +353,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -364,6 +369,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
@@ -379,6 +385,7 @@ Resources:
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - CustomStack
       - LambdaRole
       - RestApi
 
