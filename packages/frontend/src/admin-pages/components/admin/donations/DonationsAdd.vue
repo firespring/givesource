@@ -252,7 +252,7 @@
 						subtotal: vue.getSubtotal(),
 						total: vue.getSubtotal()
 					};
-					return axios.post(API_URL + 'donations', donation);
+					return axios.post(API_URL + 'nonprofits/' + vue.formData.nonprofitUuid + '/donations', donation);
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
