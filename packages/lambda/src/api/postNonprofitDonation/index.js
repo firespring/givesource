@@ -35,6 +35,7 @@ exports.handle = function (event, context, callback) {
 		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
 	}).then(function (response) {
 		nonprofit = response;
+		nonprofit.donationsCount = nonprofit.donationsCount + 1;
 		nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
 		nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
 		nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
