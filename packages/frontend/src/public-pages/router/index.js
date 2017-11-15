@@ -120,7 +120,7 @@ const router = new VueRouter({
 						<p>Distinctively engineer intuitive innovation via virtual potentialities.</p>`,
 					shortDescription: 'Help us to serve artists and the public from our new home. Every dollar will be matched by the Hufflepuff Foundation, doubling your support!',
 					donationsCount: 254,
-					donationsSum: 12345,
+					donationsSubtotal: 12345,
 				},
 				slides: [
 					{

@@ -41,16 +41,15 @@ PaymentTransaction.prototype = new Model();
  */
 PaymentTransaction.prototype.attributes = [
 	'billingZip',
-	'creditCardCvvResult',
 	'creditCardExpirationMonth',
 	'creditCardExpirationYear',
 	'creditCardLast4',
 	'creditCardName',
 	'creditCardType',
-	'creditCardZipCode',
 	'isTestMode',
-	'total',
-	'transactionId'
+	'transactionAmountInCents',
+	'transactionId',
+	'transactionStatus'
 ];
 
 /**
@@ -61,42 +60,51 @@ PaymentTransaction.prototype.attributes = [
 PaymentTransaction.prototype.constraints = {
 	billingZip: {
 		presence: true,
-		type: 'string|number'
-	},
-	creditCardCvvResult: {
-		presence: true,
-		type: 'string|number'
+		type: 'string'
 	},
 	creditCardExpirationMonth: {
 		presence: true,
-		type: 'string|number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 	creditCardExpirationYear: {
 		presence: true,
-		type: 'string|number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 	creditCardLast4: {
 		presence: true,
-		type: 'string|number'
+		type: 'string'
 	},
 	creditCardName: {
 		presence: true,
 		type: 'string'
 	},
-	creditCardZipCode: {
+	creditCardType: {
 		presence: true,
-		type: 'string|number'
+		type: 'string',
 	},
 	isTestMode: {
 		presence: true,
 		type: 'boolean'
 	},
-	total: {
+	transactionAmountInCents: {
 		presence: true,
-		type: 'string|number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 	transactionId: {
 		presence: true,
+		type: 'string'
+	},
+	transactionStatus: {
+		presence: false,
 		type: 'string'
 	}
 };

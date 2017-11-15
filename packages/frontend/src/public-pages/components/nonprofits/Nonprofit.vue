@@ -33,7 +33,7 @@
                         <div class="nonprofit-campaign__donation">
                             <div class="donation-metrics">
                                 <div class="donation-metrics__raised">
-                                    <div class="num">{{ formatMoney(nonprofit.donationsSum) }}</div>
+                                    <div class="num">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                                     <div class="caption">Raised</div>
                                 </div>
 

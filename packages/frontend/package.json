@@ -14,7 +14,9 @@
 	},
 	"author": "Firespring",
 	"license": "GPL-3.0",
-	"dependencies": {},
+	"dependencies": {
+		"jquery.payment": "^3.0.0"
+	},
 	"devDependencies": {
 		"@claviska/jquery-minicolors": "^2.2.6",
 		"amazon-cognito-identity-js": "^1.20.0",
@@ -44,7 +46,7 @@
 		"tooltipster": "^4.2.5",
 		"uglifyjs-webpack-plugin": "^0.4.6",
 		"v-money": "^0.8.0",
-		"validate.js": "^0.10.0",
+		"validate.js": "0.10.0",
 		"vue": "^2.4.1",
 		"vue-cropperjs": "github:Agontuk/vue-cropperjs#d40cd3d334268f6e01ba2b20f072ae2d6a0ff59e",
 		"vue-gravatar": "^1.1.3",

@@ -58,7 +58,7 @@
         },
     	computed: {
 		    amount: function () {
-		    	return this.formatMoney(this.nonprofit.donationsSum);
+		    	return this.formatMoney(this.nonprofit.donationsSubtotal);
 		    }
         },
     	props: [

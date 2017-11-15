@@ -70,6 +70,9 @@ const store = new Vuex.Store({
 		}
 	},
 	getters: {
+		cartItems: function (state) {
+			return state.cartItems;
+		},
 		settings: function (state) {
 			return state.settings;
 		},

@@ -16,7 +16,6 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const Model = require('../../src/models/model');
 const User = require('../../src/models/user');
 const TestHelper = require('../helpers/test');
@@ -70,7 +69,7 @@ describe('User', function () {
 			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: 123456, error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: null, error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: '', error: true},
-			{model: TestHelper.generate.model('user'), param: 'email', value: 'alex.woodward@firespring.org', error: false},
+			{model: TestHelper.generate.model('user'), param: 'email', value: 'test@email.com', error: false},
 			{model: TestHelper.generate.model('user'), param: 'email', value: 'test', error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: 123456, error: true},
 			{model: TestHelper.generate.model('user'), param: 'firstName', value: null, error: false},

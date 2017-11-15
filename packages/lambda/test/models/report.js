@@ -16,7 +16,6 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const Model = require('../../src/models/model');
 const Report = require('../../src/models/report');
 const ReportHelper = require('../../src/helpers/report');
@@ -77,13 +76,13 @@ describe('Report', function () {
 			{model: TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_PENDING, error: false},
 			{model: TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_SUCCESS, error: false},
 			{model: TestHelper.generate.model('report'), param: 'type', value: null, error: true},
-			{model: TestHelper.generate.model('report'), param: 'type', value: 'adsf', error: true},
+			{model: TestHelper.generate.model('report'), param: 'type', value: 'test', error: true},
 			{model: TestHelper.generate.model('report'), param: 'type', value: '', error: true},
 			{model: TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_ALL_DONATIONS, error: false},
 			{model: TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_NONPROFIT_DONATIONS, error: false},
 			{model: TestHelper.generate.model('report'), param: 'url', value: null, error: true},
 			{model: TestHelper.generate.model('report'), param: 'url', value: '', error: true},
-			{model: TestHelper.generate.model('report'), param: 'url', value: 'http://longreport.com/report/money/', error: false},
+			{model: TestHelper.generate.model('report'), param: 'url', value: 'http://test.com/report', error: false},
 			{model: TestHelper.generate.model('report'), param: 'url', value: 123456, error: true},
 		];
 		TestHelper.validate(tests);

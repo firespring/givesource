@@ -86,7 +86,7 @@ describe('NonprofitSlide', function () {
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_YOUTUBE, error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: null, error: true},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: '', error: true},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg', error: false},
+			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://test.com/image.jpg', error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 123456, error: true},
 		];
 		TestHelper.validate(tests);
