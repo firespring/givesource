@@ -36,10 +36,13 @@
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orglegalName">Organization Legal Name</label>
+                                <label for="legalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.legalName" type="text" name="legalName" id="orglegalName" maxlength="200">
+                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200">
+                                <div v-if="formErrors.legalName" class="notes notes--below notes--error">
+                                    {{ formErrors.legalName }}
+                                </div>
                             </div>
                         </div>
 
@@ -50,6 +53,9 @@
                             </div>
                             <div class="form-item__control">
                                 <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200">
+                                <div v-if="formErrors.taxId" class="notes notes--below notes--error">
+                                    {{ formErrors.taxId }}
+                                </div>
                             </div>
                         </div>
 
@@ -60,10 +66,10 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200">
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" v-auto-focus>
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200">
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" v-auto-focus>
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
@@ -78,6 +84,9 @@
                             </div>
                             <div class="form-item__control">
                                 <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200">
+                                <div v-if="formErrors.email" class="notes notes--below notes--error">
+                                    {{ formErrors.email }}
+                                </div>
                             </div>
                         </div>
 
@@ -89,8 +98,11 @@
                             <div class="form-item__control">
 
 
-                                <div class="has-floating-label js-floating-label">
+                                <div class="has-floating-label js-floating-label" v-floating-label>
                                     <input v-model="formData.address1" type="text" name="address1" id="address1">
+                                    <div v-if="formErrors.address1" class="notes notes--below notes--error">
+                                        {{ formErrors.address1 }}
+                                    </div>
                                     <label for="address1">Address Line 1</label>
                                 </div>
 
@@ -114,7 +126,7 @@
                                     </div>
 
                                     <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
-                                        <state-select v-model="formData.state" name="state" id="state" placeholder="State"></state-select>
+                                        <forms-address-state v-model="formData.state" name="state" id="state" placeholder="State"></forms-address-state>
                                     </div>
 
                                     <div class="city-state-zip__zip">
@@ -125,15 +137,23 @@
                                 </div>
 
                             </div>
+
+                            <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
+                                <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                                    v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                            </div>
                         </div>
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orgPhone">Organization Phone Number</label>
+                                <label for="phone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.phone" type="text" name="phone" id="orgPhone" maxlength="200">
-                                <!--<input type="tel" name="orgPhone" id="orgPhone" required>-->
+                                <input v-model="formData.phone" type="text" name="phone" id="phone" maxlength="200">
+                                <div v-if="formErrors.phone" class="notes notes--below notes--error">
+                                    {{ formErrors.phone }}
+                                </div>
+
                             </div>
                         </div>
 
@@ -308,7 +328,7 @@
 						console.log(response.data);
 					} else {
 						//vue.$router.push({name: 'register-response'});
-						console.log("GO TO REGISTER RESPONSE");
+
 					}
 				}).catch(function (err) {
 					vue.clearModals();
@@ -320,7 +340,7 @@
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
-			'state-select': require('../forms/SelectState.vue'),
+			'forms-address-state': require('../forms/AddressState.vue'),
 			'forms-nonprofit-category': require('./../forms/NonprofitCategory.vue'),
 		}
 	};

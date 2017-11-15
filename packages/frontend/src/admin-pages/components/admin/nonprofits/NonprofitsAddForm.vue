@@ -82,7 +82,6 @@
                                     <label for="address3">Address Line 3</label>
                                 </div>
                             </div>
-                            </div>
                         </div>
                         <div v-if="formErrors.address3" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
                             {{ formErrors.address3 }}
@@ -95,11 +94,9 @@
                                     <label for="city">City</label>
                                 </div>
                             </div>
-
                             <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
                                 <state-select v-model="formData.state" name="state" id="state" placeholder="State" :class="{ 'has-error': formErrors.state }"></state-select>
                             </div>
-
                             <div class="c-form-control-grid__item c-form-item--required" style="flex: 1 0 11rem; max-width: 11rem;">
                                 <div class="has-floating-label js-floating-label" v-floating-label>
                                     <input v-model="formData.zip" type="text" name="zip" id="zip" :class="{ 'has-error': formErrors.zip }">
@@ -109,8 +106,7 @@
                         </div>
 
                         <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
-                                v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span v-if="formErrors.zip">{{ formErrors.zip }}.</span>
                         </div>
                     </div>
                 </div>
@@ -392,7 +388,7 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/registerAdminPage', {
+				axios.post(API_URL + 'nonprofits/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,
@@ -411,7 +407,8 @@
 						firstName: vue.formData.firstName,
 						lastName: vue.formData.lastName,
 						email: vue.formData.email
-					}
+					},
+					user_pool_id: USER_POOL_ID
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
