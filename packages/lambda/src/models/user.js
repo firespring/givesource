@@ -40,7 +40,7 @@ User.prototype = new Model();
  * @type {[*]}
  */
 User.prototype.attributes = [
-	// 'cognitoUuid',
+	'cognitoUuid',
 	'email',
 	'lastName',
 	'firstName',
@@ -53,10 +53,10 @@ User.prototype.attributes = [
  * @type {{}}
  */
 User.prototype.constraints = {
-	// cognitoUuid: {
-	// 	presence: true,
-	// 	uuid: 4
-	// },
+	cognitoUuid: {
+		presence: false,
+		uuid: 4
+	},
 	email: {
 		presence: true,
 		email: true

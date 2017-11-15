@@ -27,7 +27,8 @@
                 <p>
                     We invite nonprofit organizations in the Greater Area to join Give To City Day by registering to participate.
                     Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                    <router-link :to="{ name: 'about' }">please visit the About page</router-link>.
+                    <router-link :to="{ name: 'about' }">please visit the About page</router-link>
+                    .
                 </p>
 
                 <form v-on:submit="submit">
@@ -35,13 +36,12 @@
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orglegalName" >Organization Legal Name</label>
+                                <label for="orglegalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
                                 <input v-model="formData.legalName" type="text" name="legalName" id="orglegalName" maxlength="200">
                             </div>
                         </div>
-
 
 
                         <div class="form-item form-item--required">
@@ -60,11 +60,14 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" >
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" >
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200">
                                     </div>
+                                </div>
+                                <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
+                                    You must enter a first name and last name
                                 </div>
                             </div>
                         </div>
@@ -74,7 +77,7 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200" >
+                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200">
                             </div>
                         </div>
 
@@ -86,7 +89,7 @@
                             <div class="form-item__control">
 
 
-                                <div class="has-floating-label js-floating-label" >
+                                <div class="has-floating-label js-floating-label">
                                     <input v-model="formData.address1" type="text" name="address1" id="address1">
                                     <label for="address1">Address Line 1</label>
                                 </div>
@@ -115,7 +118,8 @@
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input type="text" name="orgZip" id="orgZip" placeholder="ZIP" required>
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200">
+                                        <!--<input type="text" name="orgZip" id="orgZip" placeholder="ZIP" required>-->
                                     </div>
 
                                 </div>
@@ -128,7 +132,8 @@
                                 <label for="orgPhone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="tel" name="orgPhone" id="orgPhone" required>
+                                <input v-model="formData.phone" type="text" name="phone" id="orgPhone" maxlength="200">
+                                <!--<input type="tel" name="orgPhone" id="orgPhone" required>-->
                             </div>
                         </div>
 
@@ -137,203 +142,10 @@
                                 Organization Categories (Check up to 3)
                             </div>
                             <div class="form-item__control">
-                                <div class="grid">
-                                    <div class="grid-item">
-                                        <ul class="list-plain list-checkbox">
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="1">
-                                                    <span>Animal-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="2">
-                                                    <span>Arts, Culture &amp; Humanities</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="3">
-                                                    <span>Children &amp; Families</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="4">
-                                                    <span>Civil Rights, Social Action &amp; Advocacy</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="5">
-                                                    <span>Community Improvement &amp; Capacity Building</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="6">
-                                                    <span>Crime &amp; Legal-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="7">
-                                                    <span>Diseases, Disorders &amp; Medical Disciplines</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="8">
-                                                    <span>Education-Early Childhood</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="9">
-                                                    <span>Education-Higher Education</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="10">
-                                                    <span>Education-K-12</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="11">
-                                                    <span>Environment</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="12">
-                                                    <span>Food, Agriculture &amp; Nutrition</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="13">
-                                                    <span>Health Care</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="14">
-                                                    <span>Housing &amp; Shelter</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="15">
-                                                    <span>Human Services</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="16">
-                                                    <span>International, Foreign Affairs &amp; National Security</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="grid-item">
-                                        <ul class="list-plain list-checkbox">
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="17">
-                                                    <span>Library &amp; Literacy Programs</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="18">
-                                                    <span>Medical Research</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="19">
-                                                    <span>Mental Health &amp; Crisis Intervention</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="20">
-                                                    <span>Mutual &amp; Membership Benefit</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="21">
-                                                    <span>Older Adults</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="22">
-                                                    <span>Philanthropy, Voluntarism &amp; Grantmaking Foundations</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="23">
-                                                    <span>Politics &amp; Public Administration</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="24">
-                                                    <span>Public &amp; Societal Benefit</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="25">
-                                                    <span>Public Safety, Disaster Preparedness &amp; Relief</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="26">
-                                                    <span>Recreation &amp; Sports</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="27">
-                                                    <span>Religion-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="28">
-                                                    <span>Science &amp; Technology</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="29">
-                                                    <span>Veterans Support</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="30">
-                                                    <span>Women</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="31">
-                                                    <span>Youth Development</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div v-if="formErrors.categories" class="notes notes--above notes--error">
+                                    {{ formErrors.categories }}
                                 </div>
+                                <forms-nonprofit-category v-model="formData.categories"></forms-nonprofit-category>
                             </div>
                         </div>
                     </fieldset>
@@ -365,10 +177,13 @@
 					state: '',
 					zip: '',
 					phone: '',
+					categories: [],
 					firstName: '',
 					lastName: '',
 					email: '',
-				}
+				},
+
+				formErrors: {},
 			}
 		},
 		beforeMount: function () {
@@ -377,106 +192,136 @@
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Give To Our City - Register');
 		},
-        methods: {
-	        getConstraints: function () {
-		        return {
-			        legalName: {
-				        presence: true,
-			        },
-			        taxId: {
-				        presence: true,
-			        },
-			        address1: {
-				        label: 'Address line 1',
-				        presence: true,
-			        },
-			        address2: {
-				        label: 'Address line 2',
-				        presence: false,
-			        },
-			        address3: {
-				        label: 'Address line 3',
-				        presence: false,
-			        },
-			        city: {
-				        presence: true,
-			        },
-			        state: {
-				        presence: true,
-			        },
-			        zip: {
-				        label: 'Zip',
-				        presence: true,
-			        },
-			        phone: {
-				        label: 'Organization Phone Number',
-				        presence: true,
-			        },
-			        firstName: {
-				        presence: true,
-			        },
-			        lastName: {
-				        presence: true,
-			        },
-			        email: {
-				        label: 'Email address',
-				        presence: true,
-				        email: true,
-			        }
-		        }
-	        },
-	        submit: function (event) {
-                event.preventDefault();
-		        const vue = this;
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					legalName: {
+						presence: true,
+					},
+					taxId: {
+						presence: true,
+					},
+					address1: {
+						label: 'Address line 1',
+						presence: true,
+					},
+					address2: {
+						label: 'Address line 2',
+						presence: false,
+					},
+					address3: {
+						label: 'Address line 3',
+						presence: false,
+					},
+					categories: {
+						label: '',
+						presence: {
+							message: 'You must select at least one category'
+						},
+						length: {
+							minimum: 1,
+							maximum: 3,
+							tooLong: 'You can only select up to three categories'
+						}
+					},
+					city: {
+						presence: true,
+					},
+					state: {
+						presence: true,
+					},
+					zip: {
+						label: 'Zip',
+						presence: true,
+					},
+					phone: {
+						label: 'Organization Phone Number',
+						presence: true,
+					},
 
-		        //vue.addModal('spinner');
-                vue.registerNonprofit();
+					firstName: {
+						presence: true,
+					},
+					lastName: {
+						presence: true,
+					},
+					email: {
+						label: 'Email address',
+						presence: true,
+						email: true,
+					}
+				}
+			},
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-//		        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-//		        if (Object.keys(vue.formErrors).length) {
-//			        vue.clearModals();
-//		        } else {
-//			        vue.registerNonprofit();
-//		        }
-	        },
-	        registerNonprofit: function () {
-		        const vue = this;
+				//vue.addModal('spinner');
+				vue.registerNonprofit();
 
-		        axios.post(API_URL + 'nonprofits/registerPublicPage', {
-			        nonprofit: {
-				        legalName: vue.formData.legalName,
-				        taxId: vue.formData.taxId,
-				        address1: vue.formData.address1,
-				        address2: vue.formData.address2,
-				        address3: vue.formData.address3,
-				        city: vue.formData.city,
-				        state: vue.formData.state,
-				        zip: vue.formData.zip,
-				        phone: vue.formData.phone
-			        },
-			        user: {
-				        firstName: vue.formData.firstName,
-				        lastName: vue.formData.lastName,
-				        email: vue.formData.email
-			        }
-		        }).then(function (response) {
-			        vue.clearModals();
-			        if (response.data.errorMessage) {
-				        console.log(response.data);
-			        } else {
-				        vue.$router.push({name: 'nonprofits-list'});
-			        }
-		        }).catch(function (err) {
-			        vue.clearModals();
-			        console.log(err);
-		        });
-	        },
-        },
-        components: {
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+				} else {
+					vue.registerNonprofit();
+				}
+			},
+			registerNonprofit: function () {
+				const vue = this;
+
+				axios.post(API_URL + 'nonprofits/registerPublicPage', {
+					nonprofit: {
+						legalName: vue.formData.legalName,
+						taxId: vue.formData.taxId,
+						address1: vue.formData.address1,
+						address2: vue.formData.address2,
+						address3: vue.formData.address3,
+						city: vue.formData.city,
+						state: vue.formData.state,
+						zip: vue.formData.zip,
+						phone: vue.formData.phone,
+						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : null,
+						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : null,
+						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : null,
+
+					},
+					user: {
+						firstName: vue.formData.firstName,
+						lastName: vue.formData.lastName,
+						email: vue.formData.email
+					}
+				}).then(function (response) {
+
+					vue.clearModals();
+					if (response.data.errorMessage) {
+						console.log(response.data);
+					} else {
+						//vue.$router.push({name: 'register-response'});
+						console.log("GO TO REGISTER RESPONSE");
+					}
+				}).catch(function (err) {
+					vue.clearModals();
+					console.log(err);
+				});
+			},
+		},
+		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
-	        'state-select': require('../forms/SelectState.vue'),
+			'state-select': require('../forms/SelectState.vue'),
+			'forms-nonprofit-category': require('./../forms/NonprofitCategory.vue'),
 		}
 	};
 </script>
