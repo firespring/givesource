@@ -51,7 +51,7 @@ NonprofitsRepository.prototype.get = function (uuid) {
 			if (data.hasOwnProperty('Item')) {
 				resolve(new Nonprofit(data.Item));
 			}
-			reject(new ResourceNotFoundException('The specified nonprofit does not exist. THIS IS THE ERROR'));
+			reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
 		}).catch(function (err) {
 			reject(err);
 		});

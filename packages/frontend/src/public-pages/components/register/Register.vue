@@ -66,10 +66,10 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" v-auto-focus>
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" v-auto-focus>
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
@@ -98,31 +98,28 @@
                             <div class="form-item__control">
 
 
-                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                    <input v-model="formData.address1" type="text" name="address1" id="address1">
+                                <div class="address1">
+                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1">
                                     <div v-if="formErrors.address1" class="notes notes--below notes--error">
                                         {{ formErrors.address1 }}
                                     </div>
-                                    <label for="address1">Address Line 1</label>
                                 </div>
 
 
-                                <div class="has-floating-label js-floating-label">
-                                    <input v-model="formData.address2" type="text" name="address2" id="address2">
-                                    <label for="address2">Address Line 2</label>
+                                <div class="address2">
+                                    <input v-model="formData.address2" type="text" name="address2" id="address2" placeholder="Address Line 2">
                                 </div>
 
 
-                                <div class="has-floating-label js-floating-label">
-                                    <input v-model="formData.address3" type="text" name="address3" id="address3">
-                                    <label for="address3">Address Line 3</label>
+                                <div class="address3">
+                                    <input v-model="formData.address3" type="text" name="address3" id="address3" placeholder="Address Line 3">
                                 </div>
 
 
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200">
+                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City">
                                     </div>
 
                                     <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
@@ -130,8 +127,7 @@
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200">
-                                        <!--<input type="text" name="orgZip" id="orgZip" placeholder="ZIP" required>-->
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="Zip">
                                     </div>
 
                                 </div>
@@ -139,8 +135,7 @@
                             </div>
 
                             <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
-                                <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
-                                    v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                                You must enter a city, state and zip code
                             </div>
                         </div>
 
@@ -287,7 +282,6 @@
 				event.preventDefault();
 				const vue = this;
 
-				//vue.addModal('spinner');
 				vue.registerNonprofit();
 
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
@@ -327,9 +321,8 @@
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						//vue.$router.push({name: 'register-response'});
-
-					}
+						vue.$router.push({name: 'register-response'});
+                    }
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);

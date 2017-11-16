@@ -24,8 +24,6 @@ import router from './router';
 import store from './store';
 import UtilsMixin from './mixins/utils';
 import ValidateMixin from './mixins/validate';
-import FloatingLabelDirective from './directives/floatingLabel';
-import AutoFocusDirective from './directives/autoFocus';
 import Vue from "vue";
 
 
@@ -37,8 +35,6 @@ Vue.mixin(ValidateMixin);
 
 // Register directives
 Vue.directive('money', VueMoney.VMoney);
-Vue.directive('floating-label', FloatingLabelDirective);
-Vue.directive('auto-focus', AutoFocusDirective);
 
 // Register window globals
 window._ = require('lodash');
