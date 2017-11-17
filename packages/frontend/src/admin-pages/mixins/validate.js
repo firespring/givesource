@@ -36,6 +36,11 @@ const mixin = {
 				}
 			}
 			return validationErrors;
+		},
+		scrollToError: function () {
+			this.$nextTick(function () {
+				$('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text')[0].scrollIntoView(true);
+			});
 		}
 	}
 };

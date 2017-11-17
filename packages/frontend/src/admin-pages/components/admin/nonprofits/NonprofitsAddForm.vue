@@ -382,6 +382,7 @@
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 				if (Object.keys(vue.formErrors).length) {
 					vue.clearModals();
+					vue.scrollToError();
 				} else {
 					vue.registerNonprofit();
 				}
