@@ -388,7 +388,7 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/register', {
+				axios.post(API_URL + 'nonprofits/admin/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,
@@ -408,7 +408,6 @@
 						lastName: vue.formData.lastName,
 						email: vue.formData.email
 					},
-					user_pool_id: USER_POOL_ID
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {

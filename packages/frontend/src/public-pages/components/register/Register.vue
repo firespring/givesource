@@ -92,7 +92,7 @@
 
                         <div class="form-item form-item--address form-item--required">
                             <div class="form-item__label">
-                                <label>Organization Address</label>
+                                <label for="address1">Organization Address</label>
                             </div>
 
                             <div class="form-item__control">
@@ -122,12 +122,12 @@
                                         <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City">
                                     </div>
 
-                                    <div class="c-form-control-grid__item c-form-item--required u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
+                                    <div class="city-state-zip__state select-wrap">
                                         <forms-address-state v-model="formData.state" name="state" id="state" placeholder="State"></forms-address-state>
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="Zip">
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP">
                                     </div>
 
                                 </div>
@@ -144,7 +144,7 @@
                                 <label for="phone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.phone" type="text" name="phone" id="phone" maxlength="200">
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone">
                                 <div v-if="formErrors.phone" class="notes notes--below notes--error">
                                     {{ formErrors.phone }}
                                 </div>
@@ -294,7 +294,7 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/registerPublicPage', {
+				axios.post(API_URL + 'nonprofits/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,
