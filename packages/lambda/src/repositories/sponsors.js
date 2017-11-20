@@ -20,7 +20,6 @@ const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const Sponsor = require('./../models/sponsor');
-const SponsorTier = require('./../models/sponsorTier');
 const SponsorTiersRepository = require('./sponsorTiers');
 
 /**
@@ -51,7 +50,7 @@ SponsorsRepository.prototype.get = function (sponsorTierUuid, uuid) {
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('scan');
+			const builder = new QueryBuilder('query');
 			builder.condition('uuid', '=', uuid).filter('sponsorTierUuid', '=', sponsorTierUuid);
 			repository.query(builder).then(function (data) {
 				if (data.Items.length === 1) {
@@ -155,8 +154,8 @@ SponsorsRepository.prototype.save = function (sponsorTierUuid, model) {
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			if (!(model instanceof SponsorTier)) {
-				reject(new Error('invalid SponsorTier model'));
+			if (!(model instanceof Sponsor)) {
+				reject(new Error('invalid Sponsor model'));
 			}
 			model.validate().then(function () {
 				const key = {

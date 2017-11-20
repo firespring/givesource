@@ -257,6 +257,40 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random Sponsor data
+	 *
+	 * @return {Object}
+	 */
+	sponsor: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			fileUuid: faker.random.uuid(),
+			logoUrl: faker.image.imageUrl(800, 600, 'nature'),
+			name: faker.random.word(),
+			sortOrder: faker.random.number(),
+			sponsorTierUuid: faker.random.uuid(),
+			url: faker.internet.url(),
+		};
+	},
+
+	/**
+	 * Generate random Sponsor Tier data
+	 *
+	 * @return {Object}
+	 */
+	sponsorTier: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			name: faker.random.word(),
+			size: faker.random.arrayElement(['LARGE', 'DEFAULT', 'SMALL']),
+		};
+	},
+
+	/**
 	 * Generate random User data
 	 *
 	 * @return {Object}

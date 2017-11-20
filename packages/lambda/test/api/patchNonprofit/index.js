@@ -26,6 +26,7 @@ describe('PatchNonprofit', function () {
 	afterEach(function () {
 		NonprofitsRepository.prototype.get.restore();
 		NonprofitsRepository.prototype.save.restore();
+		NonprofitsRepository.prototype.generateUniqueSlug.restore();
 	});
 
 	it('should return an updated nonprofit', function () {
@@ -33,6 +34,7 @@ describe('PatchNonprofit', function () {
 		const updated = TestHelper.generate.model('nonprofit', {uuid: original.uuid});
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original);
 		sinon.stub(NonprofitsRepository.prototype, 'save').resolves(updated);
+		sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves();
 		const params = {
 			body: updated.except('uuid'),
 			params: {
@@ -54,6 +56,7 @@ describe('PatchNonprofit', function () {
 		};
 		sinon.stub(NonprofitsRepository.prototype, 'get').rejects('Error');
 		sinon.stub(NonprofitsRepository.prototype, 'save').resolves(original);
+		sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves();
 		return PatchNonprofit.handle(params, null, function (error, result) {
 			assert(error instanceof Error);
 		});
@@ -68,6 +71,7 @@ describe('PatchNonprofit', function () {
 		};
 		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original);
 		sinon.stub(NonprofitsRepository.prototype, 'save').rejects('Error');
+		sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves();
 		return PatchNonprofit.handle(params, null, function (error, result) {
 			assert(error instanceof Error);
 		});
