@@ -209,7 +209,13 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'ADMIN_PAGES_CLOUDFRONT_URL'
+		'ADMIN_PAGES_CLOUDFRONT_URL',
+		'DATE_DONATIONS_END',
+		'DATE_DONATIONS_START',
+		'DATE_EVENT',
+		'DATE_REGISTRATIONS_END',
+		'DATE_REGISTRATIONS_START',
+		'EVENT_TIMEZONE',
 	];
 
 	return axios.get('/settings.json').then(function (response) {
