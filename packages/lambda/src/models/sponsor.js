@@ -43,6 +43,7 @@ Sponsor.prototype.attributes = [
 	'fileUuid',
 	'logoUrl',
 	'name',
+	'sortOrder',
 	'sponsorTierUuid',
 	'url',
 ];
@@ -64,6 +65,10 @@ Sponsor.prototype.constraints = {
 	name: {
 		presence: true,
 		type: 'string'
+	},
+	sortOrder: {
+		presence: true,
+		type: 'number'
 	},
 	sponsorTierUuid: {
 		presence: true,

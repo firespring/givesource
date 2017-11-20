@@ -1,0 +1,1414 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sponsors API resources for Givesource
+Parameters:
+
+  StackName:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
+  RestApi:
+    Type: String
+
+  RestApiRootResourceId:
+    Type: String
+
+  IntegrationRequestTemplate:
+    Type: String
+    Default: |
+     {
+      "body":$input.json('$'),
+      "headers":{
+        #foreach($param in $input.params().header.keySet())
+        "$param": "$util.escapeJavaScript($input.params().header.get($param))"
+        #if($foreach.hasNext),#end
+        #end
+      },
+      "method": "$context.httpMethod",
+      "params":{
+        #foreach($param in $input.params().path.keySet())
+        "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+        #if($foreach.hasNext),#end
+        #end
+      },
+      "query":{
+        #foreach($param in $input.params().querystring.keySet())
+        "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
+        #if($foreach.hasNext),#end
+        #end
+      }
+     }
+
+  IntegrationResponsesTemplate:
+    Type: String
+    Default: |
+      #set ($errorObj = $util.parseJson($input.path('$.errorMessage')))
+      {
+        "errors" : {
+          "type" : "$errorObj.type",
+          "message" : "$errorObj.message",
+          "request_id" : "$errorObj.requestId"
+        }
+      }
+
+  SuccessResponseTemplate:
+    Type: String
+    Default: |
+      {
+        "statusCode": 200
+      }
+
+Resources:
+
+  # Sponsor Tiers Lambda Resources
+
+  GetSponsorTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetSponsorTier.zip
+      Description: "Get a sponsor tier by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetSponsorTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  GetSponsorTierLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetSponsorTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}
+    DependsOn: GetSponsorTierLambdaFunction
+
+  GetSponsorTiersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetSponsorTiers.zip
+      Description: "Get a list of sponsor tiers"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetSponsorTiers
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  GetSponsorTiersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetSponsorTiersLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers
+    DependsOn: GetSponsorTiersLambdaFunction
+
+  PostSponsorTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostSponsorTier.zip
+      Description: "Create a new sponsor tier"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PostSponsorTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PostSponsorTiersLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostSponsorTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/sponsor-tiers
+    DependsOn: PostSponsorTierLambdaFunction
+
+  PatchSponsorTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchSponsorTier.zip
+      Description: "Update an existing sponsor tier"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PatchSponsorTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PatchSponsorTierLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchSponsorTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}
+    DependsOn: PatchSponsorTierLambdaFunction
+
+  DeleteSponsorTierLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteSponsorTier.zip
+      Description: "Delete an existing sponsor tier"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteSponsorTier
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteSponsorTierLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteSponsorTierLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}
+    DependsOn: DeleteSponsorTierLambdaFunction
+
+  # Sponsors Lambda Resources
+
+  GetSponsorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetSponsor.zip
+      Description: "Get a sponsor tiers's sponsor by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetSponsor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  GetSponsorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetSponsorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+    DependsOn: GetSponsorLambdaFunction
+
+  GetSponsorsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetSponsors.zip
+      Description: "Get a list of a sponsor tier's sponsors"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetSponsors
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  GetSponsorsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetSponsorsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+    DependsOn: GetSponsorsLambdaFunction
+
+  PostSponsorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostSponsor.zip
+      Description: "Create a new sponsor tier's sponsor"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PostSponsor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PostSponsorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostSponsorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+    DependsOn: PostSponsorLambdaFunction
+
+  PatchSponsorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchSponsor.zip
+      Description: "Update an existing sponsor tier's sponsor"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PatchSponsor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PatchSponsorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchSponsorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+    DependsOn: PatchSponsorLambdaFunction
+
+  PatchSponsorsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchSponsors.zip
+      Description: "Batch update sponsor tier's sponsors"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PatchSponsors
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  PatchSponsorsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchSponsorsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+    DependsOn: PatchSponsorsLambdaFunction
+
+  DeleteSponsorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteSponsor.zip
+      Description: "Delete an existing sponsor tier's sponsor"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteSponsor
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteSponsorLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteSponsorLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+    DependsOn: DeleteSponsorLambdaFunction
+
+  DeleteSponsorsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteSponsors.zip
+      Description: "Batch delete sponsor tier's sponsors"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteSponsors
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteSponsorsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteSponsorsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+    DependsOn: DeleteSponsorsLambdaFunction
+
+  # Sponsor Tiers Api Gateway Resources
+
+  SponsorTiersApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref RestApiRootResourceId
+      PathPart: "sponsor-tiers"
+
+  SponsorTierApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref SponsorTiersApiResource
+      PathPart: "{sponsor_tier_uuid}"
+
+  GetSponsorTierApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTierApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetSponsorTierLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetSponsorTierLambdaFunction
+
+  GetSponsorTiersApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTiersApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetSponsorTiersLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetSponsorTiersLambdaFunction
+
+  PostSponsorTierApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTiersApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PostSponsorTierLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 201
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 201
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PostSponsorTierLambdaFunction
+
+  PatchSponsorTierApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTierApiResource
+      HttpMethod: PATCH
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PatchSponsorTierLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PatchSponsorTierLambdaFunction
+
+  DeleteSponsorTierApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTierApiResource
+      HttpMethod: DELETE
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt DeleteSponsorTierLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: DeleteSponsorTierLambdaFunction
+
+  OptionsSponsorTiersApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTiersApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  OptionsSponsorTierApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorTierApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Sponsor Api Gateway Resources
+
+  SponsorsApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref SponsorTiersApiResource
+      PathPart: "sponsors"
+
+  SponsorApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref SponsorsApiResource
+      PathPart: "{sponsor_uuid}"
+
+  GetSponsorApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetSponsorLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetSponsorLambdaFunction
+
+  GetSponsorsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorsApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetSponsorsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetSponsorsLambdaFunction
+
+  PostSponsorApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorsApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PostSponsorLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 201
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 201
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PostSponsorLambdaFunction
+
+  PatchSponsorApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorApiResource
+      HttpMethod: PATCH
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PatchSponsorLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PatchSponsorLambdaFunction
+
+  PatchSponsorsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorsApiResource
+      HttpMethod: PATCH
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PatchSponsorsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PatchSponsorsLambdaFunction
+
+  DeleteSponsorApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorApiResource
+      HttpMethod: DELETE
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt DeleteSponsorLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: DeleteSponsorLambdaFunction
+
+  DeleteSponsorsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorsApiResource
+      HttpMethod: DELETE
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt DeleteSponsorsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: DeleteSponsorsLambdaFunction
+
+  OptionsSponsorsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorsApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,PATCH,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  OptionsSponsorApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref SponsorApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true

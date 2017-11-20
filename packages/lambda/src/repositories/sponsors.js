@@ -24,11 +24,11 @@ const SponsorTier = require('./../models/sponsorTier');
 const SponsorTiersRepository = require('./sponsorTiers');
 
 /**
- * SponsorRepository constructor
+ * SponsorsRepository constructor
  *
  * @constructor
  */
-function SponsorRepository() {
+function SponsorsRepository() {
 	Repository.call(this, RepositoryHelper.SponsorsTable);
 }
 
@@ -37,7 +37,7 @@ function SponsorRepository() {
  *
  * @type {Repository}
  */
-SponsorRepository.prototype = new Repository();
+SponsorsRepository.prototype = new Repository();
 
 /**
  * Get a Sponsor
@@ -46,7 +46,7 @@ SponsorRepository.prototype = new Repository();
  * @param {String} uuid
  * @return {Promise}
  */
-SponsorRepository.prototype.get = function (sponsorTierUuid, uuid) {
+SponsorsRepository.prototype.get = function (sponsorTierUuid, uuid) {
 	const repository = this;
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
@@ -73,7 +73,7 @@ SponsorRepository.prototype.get = function (sponsorTierUuid, uuid) {
  * @param {String} sponsorTierUuid
  * @return {Promise}
  */
-SponsorRepository.prototype.getAll = function (sponsorTierUuid) {
+SponsorsRepository.prototype.getAll = function (sponsorTierUuid) {
 	const repository = this;
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
@@ -98,13 +98,37 @@ SponsorRepository.prototype.getAll = function (sponsorTierUuid) {
 };
 
 /**
+ * Get a count of all Sponsors for a SponsorTier
+ *
+ * @param {String} sponsorTierUuid
+ * @return {Promise}
+ */
+SponsorsRepository.prototype.getCount = function (sponsorTierUuid) {
+	const repository = this;
+	const sponsorTiersRepository = new SponsorTiersRepository();
+	return new Promise(function (resolve, reject) {
+		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
+			const builder = new QueryBuilder('scan');
+			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid).select('COUNT');
+			repository.query(builder).then(function (data) {
+				resolve(data.Count);
+			}).catch(function (err) {
+				reject(err);
+			});
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Delete a Sponsor
  *
  * @param {String} sponsorTierUuid
  * @param {String} uuid
  * @return {Promise}
  */
-SponsorRepository.prototype.delete = function (sponsorTierUuid, uuid) {
+SponsorsRepository.prototype.delete = function (sponsorTierUuid, uuid) {
 	const repository = this;
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
@@ -126,7 +150,7 @@ SponsorRepository.prototype.delete = function (sponsorTierUuid, uuid) {
  * @param {String} sponsorTierUuid
  * @param {Sponsor} model
  */
-SponsorRepository.prototype.save = function (sponsorTierUuid, model) {
+SponsorsRepository.prototype.save = function (sponsorTierUuid, model) {
 	const repository = this;
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
@@ -153,13 +177,34 @@ SponsorRepository.prototype.save = function (sponsorTierUuid, model) {
 };
 
 /**
+ * Batch create or update Sponsors
+ *
+ * @param {string} sponsorTierUuid
+ * @param {[]} models
+ * @return {Promise}
+ */
+SponsorsRepository.prototype.batchSave = function (sponsorTierUuid, models) {
+	const repository = this;
+	const sponsorTiersRepository = new SponsorTiersRepository();
+	return new Promise(function (resolve, reject) {
+		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
+			return repository.batchUpdate(models);
+		}).then(function () {
+			resolve();
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Batch delete Sponsors
  *
  * @param {string} sponsorTierUuid
  * @param {[]} models
  * @return {Promise}
  */
-SponsorRepository.prototype.batchRemove = function (sponsorTierUuid, models) {
+SponsorsRepository.prototype.batchRemove = function (sponsorTierUuid, models) {
 	const repository = this;
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
@@ -173,4 +218,4 @@ SponsorRepository.prototype.batchRemove = function (sponsorTierUuid, models) {
 	});
 };
 
-module.exports = SponsorRepository;
+module.exports = SponsorsRepository;
