@@ -24,7 +24,7 @@
                 <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'sponsors-tiers-list' }">Sponsors</router-link></span>
+                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Sponsors</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Gold</h1>
                     </div>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
 
-                    <sponsors-list-table></sponsors-list-table>
+                    <sponsors-list-table :sponsors="sponsors"></sponsors-list-table>
 
                 </div>
             </div>
@@ -50,6 +50,33 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				sponsors: [],
+				loaded: false,
+			};
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors').then(function (response) {
+					vm.sponsors = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors').then(function (response) {
+				vue.sponsors = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
+		props: [
+			'sponsorTierUuid'
+        ],
 		components: {
 			'sponsors-list-table': require('./SponsorsListTable.vue')
 		}

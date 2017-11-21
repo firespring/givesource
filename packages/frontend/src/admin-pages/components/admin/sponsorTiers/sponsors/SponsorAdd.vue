@@ -24,16 +24,15 @@
                 <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'sponsors-tiers-list' }">Sponsors</router-link></span>
+                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Sponsors</router-link></span>
                             <span><router-link :to="{ name: 'sponsors-list' }">Gold</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">Edit Sponsor</h1>
+                        <h1 class="o-page-header-title">Add Sponsor</h1>
                     </div>
                 </div>
 
                 <div class="o-app-main-content">
                     <form>
-
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -42,7 +41,7 @@
                                         <label for="name" class="c-form-item-label-text">Name</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.name" type="text" name="name" id="name">
+                                        <input type="text" name="name" id="name">
                                     </div>
                                 </div>
 
@@ -52,7 +51,7 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.url" type="url" name="sponsorUrl" id="sponsorUrl" placeholder="http://">
+                                            <input type="url" name="url" id="url" placeholder="http://">
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +61,7 @@
                                         <label for="tier" class="c-form-item-label-text">Tier</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <select v-model="formData.tier" id="tier" name="tier" class="u-width-auto">
+                                        <select id="tier" name="tier" class="u-width-auto">
                                             <option value="1">Platinum</option>
                                             <option value="2">Gold</option>
                                             <option value="3">Silver</option>
@@ -80,7 +79,9 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <input type="file" name="fileFieldDefault" id="fileFieldDefault" data-filenames="fileFieldDefaultFilenames">
-                                        <button type="button" class="c-btn c-btn--good" id="fileFieldDefaultTrigger" data-control="fileFieldDefault" data-filenames="fileFieldDefaultFilenames">Select File</button>
+                                        <button type="button" class="c-btn c-btn--good" id="fileFieldDefaultTrigger" data-control="fileFieldDefault" data-filenames="fileFieldDefaultFilenames">
+                                            Select File
+                                        </button>
                                         <div class="filenames" id="fileFieldDefaultFilenames"></div>
                                     </div>
                                 </div>
@@ -89,7 +90,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button type="submit" class="c-btn">Save Changes</button>
+                            <button type="submit" class="c-btn">Save &amp; Add Another</button>
+                            <button type="submit" class="c-btn">Save &amp; Finish</button>
                             <router-link :to="{name:'sponsors-list'}" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
                     </form>
@@ -99,21 +101,3 @@
         </main>
     </div>
 </template>
-
-<script>
-    module.exports ={
-    	data: function () {
-    		return {
-    			sponsor: {},
-
-    			// Form Data
-                formData: {
-                	name: 'Sponsor #3',
-                    url: '',
-                    tier: '1',
-                    logo: '',
-                }
-            };
-        }
-    };
-</script>

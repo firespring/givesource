@@ -22,20 +22,24 @@
         </td>
 
         <td>
-            <strong>Platinum</strong>
+            <strong>{{ sponsorTier.name }}</strong>
         </td>
 
         <td class="item-actions">
             <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <router-link :to="{ name: 'sponsors-list' }" role="button" class="c-btn c-btn--sm c-btn--icon">
+                <router-link :to="{ name: 'sponsors-list', params: {sponsorTierUuid: sponsorTier.uuid} }" role="button" class="c-btn c-btn--sm c-btn--icon">
                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tier
                 </router-link>
                 <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
-                        <router-link :to="{name: 'sponsors-tiers-edit'}"><i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings</router-link>
+                        <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierUuid: sponsorTier.uuid }}">
+                            <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings
+                        </router-link>
                         <hr>
-                        <a href="#" class="js-modal-trigger" rel="modal-confirm-delete"><i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier</a>
+                        <a href="#" class="js-modal-trigger" rel="modal-confirm-delete">
+                            <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier
+                        </a>
                     </div>
                 </div>
             </div>
@@ -50,6 +54,14 @@
 				displayingMenu: false,
 				timer: null,
 			};
+		},
+		props: {
+			sponsorTier: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
 		},
 		methods: {
 			toggleMenu: function (event) {

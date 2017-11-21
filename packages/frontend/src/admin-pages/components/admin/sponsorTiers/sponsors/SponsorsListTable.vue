@@ -20,21 +20,30 @@
         <thead>
         <tr>
             <th></th>
-            <th class="u-width-100p">Sponsor Tier</th>
+            <th>Logo</th>
+            <th class="u-width-100p">Sponsor Name</th>
             <th></th>
         </tr>
         </thead>
 
         <tbody class="ui-sortable">
-            <sponsors-list-table-row></sponsors-list-table-row>
+        <sponsors-list-table-row v-for="sponsor in sponsors" :sponsor="sponsor" :key="sponsor.uuid"></sponsors-list-table-row>
         </tbody>
     </table>
 </template>
 
 <script>
 	module.exports = {
+		props: {
+			sponsors: {
+				type: Array,
+                default: function () {
+                	return [];
+                }
+            }
+        },
 		components: {
-			'sponsors-list-table-row': require('./SponsorsTiersListTableRow.vue')
+			'sponsors-list-table-row': require('./SponsorsListTableRow.vue')
 		}
 	};
 </script>

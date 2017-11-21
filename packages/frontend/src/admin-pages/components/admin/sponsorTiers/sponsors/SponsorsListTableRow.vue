@@ -26,7 +26,9 @@
         </td>
 
         <td>
-            <strong><router-link :to="{ name: 'sponsors-edit' }">Sponsor #3</router-link></strong>
+            <strong>
+                <router-link :to="{ name: 'sponsors-edit', params: {sponsorTierUuid: sponsor.sponsorTierUuid, sponsorUuid: sponsor.uuid} }">{{ sponsor.name }}</router-link>
+            </strong>
         </td>
 
         <td class="icon">
@@ -36,3 +38,16 @@
         </td>
     </tr>
 </template>
+
+<script>
+	module.exports = {
+		props: {
+			sponsor: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
+		},
+	};
+</script>
