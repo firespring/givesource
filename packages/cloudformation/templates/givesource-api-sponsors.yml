@@ -849,7 +849,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestApi
-      ParentId: !Ref SponsorTiersApiResource
+      ParentId: !Ref SponsorTierApiResource
       PathPart: "sponsors"
 
   SponsorApiResource:
