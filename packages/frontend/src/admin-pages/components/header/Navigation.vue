@@ -28,10 +28,6 @@
                 </router-link>
             </div>
 
-            <div class="o-menubar-app">
-            </div>
-
-
             <div class="o-user">
                 <div class="o-user__current o-menubar-popup-parent" ref="oMenubarPopupParent" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                     <a href="#" class="js-user-popup-toggle has-tooltip" title="Manage Your Account" v-on:click="toggleMenu">
