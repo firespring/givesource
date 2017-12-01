@@ -19,7 +19,7 @@
     <div class="c-page-section__content">
         <div class="c-header-actions">
             <div>
-                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" :disabled="disableAddButton">
+                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*" :disabled="disableAddButton">
                 <button v-on:click="onTrigger" type="button" class="c-btn c-btn--sm c-btn--icon" id="fileUploadTrigger" data-control="fileUpload" :disabled="disableAddButton">
                     <i class="fa fa-picture-o" aria-hidden="true"></i>Add Photos
                 </button>

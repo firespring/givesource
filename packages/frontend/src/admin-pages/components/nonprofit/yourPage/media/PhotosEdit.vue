@@ -59,7 +59,7 @@
                                                    class="c-btn c-btn--sm c-btn--icon c-btn--flat c-btn--reverse">
                                                     <i class="fa fa-search" aria-hidden="true"></i>View Image
                                                 </a>
-                                                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none">
+                                                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*">
                                                 <a v-on:click="replaceImage" href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--flat c-btn--reverse">
                                                     <i class="fa fa-refresh" aria-hidden="true"></i>Replace Image
                                                 </a>
