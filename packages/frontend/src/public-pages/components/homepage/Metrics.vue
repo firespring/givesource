@@ -39,13 +39,13 @@
                 </div>
             </div>
 
-            <div class="main-spotlight-section countdown" v-if="displayEventCountdown && countdown.seconds != null">
+            <div class="main-spotlight-section countdown" v-if="displayEventCountdown() && countdown.loaded">
                 {{ countdownPrefix }}
                 <span class="countdown__timer">
                     <span v-if="countdown.days > 0">{{ countdown.days }} days,</span>
                     <span v-if="countdown.days > 0 || countdown.hours > 0">{{ countdown.hours }} hours,</span>
                     <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0">{{ countdown.minutes }} minutes, and</span>
-                    <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0 || countdown.seconds > 0">{{ countdown.seconds }} seconds</span>
+                    <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0 || countdown.seconds >= 0">{{ countdown.seconds }} seconds</span>
                 </span>
                 {{ countdownSuffix }}
             </div>
@@ -132,9 +132,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				currentTime: null,
-
 				countdown: {
+					loaded: false,
 					timer: 0,
 					type: 'preEvent',
 
@@ -147,22 +146,16 @@
 		},
 		computed: {
 			eventDateEndOfDay: function () {
-				if (this.dateEvent) {
-					return new Date(moment(new Date(this.dateEvent)).endOf('day').format());
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).endOf('day').format());
 				}
 				return '';
 			},
 			eventDateStartOfDay: function () {
-				if (this.dateEvent) {
-					return new Date(moment(new Date(this.dateEvent)).startOf('day').format());
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).startOf('day').format());
 				}
 				return '';
-			},
-			displayEventCountdown: function () {
-				if (this.dateEvent) {
-					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
-				}
-				return false;
 			},
 			countdownPrefix: function () {
 				return this.countdown.type === 'event' ? 'You have' : 'There are';
@@ -205,13 +198,19 @@
 			}
 		},
 		watch: {
-			displayEventCountdown: function (value) {
-				if (value) {
+			eventDateEndOfDay: function (value) {
+				if (value && !this.loaded) {
 					this.initializeCountdown();
 				}
 			}
 		},
 		methods: {
+			displayEventCountdown: function () {
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
+				}
+				return false;
+			},
 			initializeCountdown: function () {
 				const vue = this;
 
@@ -232,7 +231,9 @@
 					vue.countdown.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 					vue.countdown.seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+					vue.countdown.loaded = true;
 					if (distance <= 0) {
+						vue.countdown.loaded = false;
 						clearInterval(vue.countdown.timer);
 					}
 				}, 1000);
