@@ -16,38 +16,33 @@
   -->
 
 <template>
-    <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••">
-    <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••">
+    <select v-model="localValue" :name="name" :id="id" ref="input">
+        <option disabled value="" v-if="placeholder">{{ placeholder }}</option>
+        <option disabled value="" v-if="placeholder">-----</option>
+        <option v-for="sponsorTier in sponsorTiers" :value="sponsorTier.uuid">
+            {{ sponsorTier.name }}
+        </option>
+    </select>
 </template>
 
 <script>
-	require('jquery.payment');
-
 	module.exports = {
 		data: function () {
 			return {
-				localValue: this.value ? this.value : null,
-			}
-		},
-		computed: {
-			isMobile: function () {
-				return /Mobi/.test(navigator.userAgent);
-			}
+				localValue: this.value ? this.value : ''
+			};
 		},
 		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
+			id: '',
+			name: '',
+			placeholder: '',
+			sponsorTiers: {
+				type: Array,
+				default: function () {
+					return [];
+				}
 			},
-			name: {
-				type: String,
-				default: null
-			}
-		},
-		mounted: function () {
-			const vue = this;
-			$(vue.$refs.input).payment('formatCardCVC');
+			value: {},
 		},
 		watch: {
 			value: function (newVal) {

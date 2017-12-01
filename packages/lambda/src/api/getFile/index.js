@@ -15,25 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const SponsorTier = require('./../../models/sponsorTier');
-const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SponsorTiersRepository();
+	const repository = new FilesRepository();
 	const request = new Request(event, context);
 
-	const sponsorTier = new SponsorTier(request._body);
 	request.validate().then(function () {
-		return repository.getCount();
-	}).then(function (count) {
-		sponsorTier.populate({sortOrder: count});
-		return sponsorTier.validate();
-	}).then(function () {
-		return repository.save(sponsorTier);
-	}).then(function (model) {
-		callback(null, model.all());
+		return repository.get(request.urlParam('file_uuid'));
+	}).then(function (file) {
+		callback(null, file.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

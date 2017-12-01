@@ -24,14 +24,13 @@
                 <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Sponsors</router-link></span>
+                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Tiers</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">Gold</h1>
+                        <h1 class="o-page-header-title">{{ sponsorTier.name }}</h1>
                     </div>
                 </div>
 
                 <div class="o-app-main-content">
-
                     <div class="c-header-actions">
                         <div>
                             <router-link :to="{ name: 'sponsors-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
@@ -39,36 +38,76 @@
                             </router-link>
                         </div>
                     </div>
-
-                    <sponsors-list-table :sponsors="sponsors"></sponsors-list-table>
-
+                    <sponsors-list-table :sponsors="sponsors" :files="files" :sponsorTierUuid="sponsorTierUuid"></sponsors-list-table>
                 </div>
+
             </div>
         </main>
     </div>
 </template>
 
 <script>
+	import * as Utils from './../../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
+				files: [],
 				sponsors: [],
-				loaded: false,
+				sponsorTier: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors').then(function (response) {
+				axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid).then(function (response) {
+					vm.sponsorTier = response.data;
+					return axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors');
+				}).then(function (response) {
+					response.data.sort(function (a, b) {
+						return a.sortOrder - b.sortOrder;
+					});
 					vm.sponsors = response.data;
+					const uuids = [];
+					vm.sponsors.forEach(function (sponsor) {
+						if (sponsor.fileUuid) {
+							uuids.push(sponsor.fileUuid);
+						}
+					});
+					if (uuids.length) {
+						return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: uuids}));
+                    } else {
+						return Promise.resolve();
+                    }
+				}).then(function (response) {
+					vm.files = response ? response.data : [];
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors').then(function (response) {
+			axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+				vue.sponsorTier = response.data;
+				return axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
+			}).then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
 				vue.sponsors = response.data;
-				next();
+				const uuids = [];
+				vue.sponsors.forEach(function (sponsor) {
+					if (sponsor.fileUuid) {
+						uuids.push(sponsor.fileUuid);
+					}
+				});
+				if (uuids.length) {
+					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: uuids}));
+				} else {
+					return Promise.resolve();
+				}
+			}).then(function (response) {
+				vue.files = response ? response.data : [];
+                next();
 			}).catch(function (err) {
 				console.log(err);
 				next();
@@ -76,7 +115,7 @@
 		},
 		props: [
 			'sponsorTierUuid'
-        ],
+		],
 		components: {
 			'sponsors-list-table': require('./SponsorsListTable.vue')
 		}

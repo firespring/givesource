@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
@@ -73,6 +74,26 @@ SponsorTiersRepository.prototype.getAll = function () {
 			}
 			resolve(results);
 		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
+ * Get a count of all SponsorTiers
+ *
+ * @return {Promise}
+ */
+SponsorTiersRepository.prototype.getCount = function () {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		const builder = new QueryBuilder('scan');
+		builder.select('COUNT');
+		repository.query(builder).then(function (data) {
+			console.log(data);
+			resolve(data.Count);
+		}).catch(function (err) {
+			console.log(err);
 			reject(err);
 		});
 	});

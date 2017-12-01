@@ -94,7 +94,7 @@ describe('SponsorsRepository', function () {
 			AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
 				callback(null, {Item: sponsorTier.all()});
 			});
-			AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
+			AWS.mock('DynamoDB.DocumentClient', 'query', function (params, callback) {
 				callback(null, {
 					Count: count,
 					Items: data

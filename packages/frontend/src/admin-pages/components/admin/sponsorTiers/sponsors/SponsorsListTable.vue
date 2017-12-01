@@ -26,23 +26,82 @@
         </tr>
         </thead>
 
-        <tbody class="ui-sortable">
-        <sponsors-list-table-row v-for="sponsor in sponsors" :sponsor="sponsor" :key="sponsor.uuid"></sponsors-list-table-row>
-        </tbody>
+        <draggable v-model="localSponsors" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
+            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileUuid)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.uuid">
+            </sponsors-list-table-row>
+        </draggable>
     </table>
 </template>
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				localSponsors: [],
+
+				// Sort Options
+				draggableOptions: {
+					handle: '.c-drag-handle',
+					ghostClass: 'reorder-placeholder',
+					draggable: 'tr',
+				}
+			};
+		},
 		props: {
+			files: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			},
 			sponsors: {
 				type: Array,
-                default: function () {
-                	return [];
-                }
+				default: function () {
+					return [];
+				}
+			},
+            sponsorTierUuid: {
+				type: String,
+                default: null,
             }
+		},
+        watch: {
+			sponsors: function (value) {
+				this.localSponsors = value;
+            },
+            localSponsors: function () {
+				this.$emit('sponsors', this.localSponsors);
+            },
         },
+		methods: {
+			getFile: function (fileUuid) {
+				return _.find(this.files, {uuid: fileUuid});
+			},
+			updateSortOrder: function () {
+				const vue = this;
+
+				const original = JSON.parse(JSON.stringify(vue.localSponsors));
+				vue.localSponsors.forEach(function (sponsor, i) {
+					sponsor.sortOrder = i;
+				});
+
+				const toUpdate = _.differenceWith(vue.localSponsors, original, _.isEqual);
+				axios.patch(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors', {
+					sponsors: toUpdate
+				}).catch(function (err) {
+					console.log(err);
+				});
+			},
+			deleteSponsor: function (sponsorUuid) {
+				const vue = this;
+
+				vue.localSponsors = _.filter(vue.localSponsors, function(sponsor) {
+					return sponsor.uuid !== sponsorUuid;
+				});
+            }
+		},
 		components: {
+			'draggable': require('vuedraggable'),
 			'sponsors-list-table-row': require('./SponsorsListTableRow.vue')
 		}
 	};

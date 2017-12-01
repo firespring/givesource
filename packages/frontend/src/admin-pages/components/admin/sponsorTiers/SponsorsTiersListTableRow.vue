@@ -37,7 +37,7 @@
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings
                         </router-link>
                         <hr>
-                        <a href="#" class="js-modal-trigger" rel="modal-confirm-delete">
+                        <a v-on:click="deleteSponsorTier" href="#" class="js-modal-trigger" rel="modal-confirm-delete">
                             <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier
                         </a>
                     </div>
@@ -48,6 +48,8 @@
 </template>
 
 <script>
+	import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -87,6 +89,46 @@
 			cancelCloseMenu: function () {
 				const vue = this;
 				clearTimeout(vue.timer);
+			},
+			deleteSponsorTier: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				const sponsors = [];
+				const fileUuids = [];
+				axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors').then(function (response) {
+					response.data.forEach(function (sponsor) {
+						sponsors.push(sponsor);
+						if (sponsor.fileUuid) {
+							fileUuids.push(sponsor.fileUuid);
+						}
+					});
+					return axios.get(API_URL + 'files' + Utils.generateQueryString({
+						uuids: fileUuids
+					}));
+				}).then(function (response) {
+					return axios.delete(API_URL + 'files', {
+						data: {
+							files: response.data
+						}
+					});
+				}).then(function () {
+					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors', {
+						data: {
+							sponsors: sponsors
+						}
+					});
+				}).then(function () {
+					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid);
+				}).then(function () {
+					vue.clearModals();
+					vue.$emit('deleteSponsorTier', vue.sponsorTier.uuid);
+				}).catch(function (err) {
+					vue.clearModals();
+					console.log(err);
+				});
 			}
 		}
 

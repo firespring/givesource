@@ -94,7 +94,7 @@ Generator.prototype._generators = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
-			path: 'uploads/' + faker.system.fileName(),
+			path: faker.system.fileName(),
 			filename: faker.system.fileName()
 		}
 	},
@@ -192,7 +192,6 @@ Generator.prototype._generators = {
 			caption: faker.random.word(),
 			embedUrl: faker.internet.url(),
 			externalId: faker.random.word(),
-			filename: faker.random.word() + '.jpeg',
 			fileUuid: faker.random.uuid(),
 			nonprofitUuid: faker.random.uuid(),
 			sortOrder: faker.random.number(),
@@ -267,7 +266,6 @@ Generator.prototype._generators = {
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
 			fileUuid: faker.random.uuid(),
-			logoUrl: faker.image.imageUrl(800, 600, 'nature'),
 			name: faker.random.word(),
 			sortOrder: faker.random.number(),
 			sponsorTierUuid: faker.random.uuid(),
@@ -287,6 +285,7 @@ Generator.prototype._generators = {
 			isDeleted: 0,
 			name: faker.random.word(),
 			size: faker.random.arrayElement(['LARGE', 'DEFAULT', 'SMALL']),
+			sortOrder: faker.random.number(),
 		};
 	},
 

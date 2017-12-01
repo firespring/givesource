@@ -41,7 +41,8 @@
             </thead>
 
             <draggable v-model="slides" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-                <media-list-table-row v-for="slide in slides" :slide="slide" :key="slide.uuid" v-on:deleteSlide="deleteSlide"></media-list-table-row>
+                <media-list-table-row v-for="slide in slides" :slide="slide" :file="getFile(slide.fileUuid)" :key="slide.uuid"
+                                      v-on:deleteSlide="deleteSlide" v-if="loadedSlides"></media-list-table-row>
             </draggable>
         </table>
     </div>
@@ -49,11 +50,13 @@
 
 <script>
 	const MediaHelper = require('./../../../../helpers/media');
+	import * as Utils from './../../../../helpers/utils';
 
 	module.exports = {
 		data: function () {
 			return {
 				file: null,
+				files: [],
 				slides: [],
 				loadedSlides: false,
 				maxSlides: 8,
@@ -81,13 +84,25 @@
 			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
+					return Promise.reject();
 				} else {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.slides = response.data;
-					vue.loadedSlides = true;
+					const uuids = [];
+					vue.slides.forEach(function (slide) {
+						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
+							uuids.push(slide.fileUuid);
+                        }
+                    });
+					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
+						uuids: uuids
+					}));
 				}
+			}).then(function (response) {
+				vue.files = response.data;
+				vue.loadedSlides = true;
 			}).catch(function (err) {
 				console.log(err);
 			});
@@ -105,6 +120,10 @@
 			vue.bus.$off('photoEditorSave-New');
 		},
 		methods: {
+			getFile: function (fileUuid) {
+				const vue = this;
+				return _.find(vue.files, {uuid: fileUuid});
+			},
 			updateSortOrder: function () {
 				const vue = this;
 
@@ -161,9 +180,7 @@
 				}).then(function () {
 					return axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides', {
 						fileUuid: vue.file.uuid,
-						filename: vue.file.filename,
-						type: MediaHelper.TYPE_IMAGE,
-						url: vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path
+						type: MediaHelper.TYPE_IMAGE
 					});
 				}).then(function (response) {
 					vue.$router.push({

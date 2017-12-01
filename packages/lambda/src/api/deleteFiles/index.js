@@ -15,25 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const File = require('./../../models/file');
+const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const SponsorTier = require('./../../models/sponsorTier');
-const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
+const S3 = require('./../../aws/s3');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SponsorTiersRepository();
-	const request = new Request(event, context);
+	const repository = new FilesRepository();
+	const request = new Request(event, context).parameters(['files']);
+	const s3 = new S3();
 
-	const sponsorTier = new SponsorTier(request._body);
+	let files = [];
+	const bucket = process.env.UPLOADS_BUCKET;
 	request.validate().then(function () {
-		return repository.getCount();
-	}).then(function (count) {
-		sponsorTier.populate({sortOrder: count});
-		return sponsorTier.validate();
+		let promise = Promise.resolve();
+		request.get('files', []).forEach(function (file) {
+			files.push(new File(file));
+			promise = promise.then(function () {
+				return s3.deleteObject(process.env.AWS_REGION, bucket, `uploads/${file.uuid}`);
+			});
+		});
+		return promise;
 	}).then(function () {
-		return repository.save(sponsorTier);
-	}).then(function (model) {
-		callback(null, model.all());
+		return repository.batchDelete(files);
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

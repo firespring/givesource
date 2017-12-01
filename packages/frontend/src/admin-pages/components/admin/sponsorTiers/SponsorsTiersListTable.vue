@@ -25,14 +25,27 @@
         </tr>
         </thead>
 
-        <tbody class="ui-sortable">
-            <sponsors-list-table-row v-for="sponsorTier in sponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.uuid"></sponsors-list-table-row>
-        </tbody>
+        <draggable v-model="localSponsorTiers" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
+            <sponsors-list-table-row v-for="sponsorTier in localSponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.uuid" v-on:deleteSponsorTier="deleteSponsorTier">
+            </sponsors-list-table-row>
+        </draggable>
     </table>
 </template>
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				localSponsorTiers: [],
+
+				// Sort Options
+				draggableOptions: {
+					handle: '.c-drag-handle',
+					ghostClass: 'reorder-placeholder',
+					draggable: 'tr',
+				}
+			};
+		},
 		props: {
 			sponsorTiers: {
 				type: Array,
@@ -41,7 +54,40 @@
 				}
 			},
 		},
+		watch: {
+			sponsorTiers: function (value) {
+				this.localSponsorTiers = value;
+			},
+			localSponsorTiers: function () {
+				this.$emit('sponsorTiers', this.localSponsorTiers);
+			},
+		},
+		methods: {
+			updateSortOrder: function () {
+				const vue = this;
+
+				const original = JSON.parse(JSON.stringify(vue.localSponsorTiers));
+				vue.localSponsorTiers.forEach(function (sponsorTier, i) {
+					sponsorTier.sortOrder = i;
+				});
+
+				const toUpdate = _.differenceWith(vue.localSponsorTiers, original, _.isEqual);
+				axios.patch(API_URL + 'sponsor-tiers', {
+					sponsorTiers: toUpdate
+				}).catch(function (err) {
+					console.log(err);
+				});
+			},
+			deleteSponsorTier: function (sponsorTierUuid) {
+				const vue = this;
+
+				vue.localSponsorTiers = _.filter(vue.localSponsorTiers, function (sponsorTier) {
+					return sponsorTier.uuid !== sponsorTierUuid;
+				});
+			}
+		},
 		components: {
+			'draggable': require('vuedraggable'),
 			'sponsors-list-table-row': require('./SponsorsTiersListTableRow.vue')
 		}
 	};

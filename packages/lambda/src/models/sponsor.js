@@ -41,7 +41,6 @@ Sponsor.prototype = new Model();
  */
 Sponsor.prototype.attributes = [
 	'fileUuid',
-	'logoUrl',
 	'name',
 	'sortOrder',
 	'sponsorTierUuid',

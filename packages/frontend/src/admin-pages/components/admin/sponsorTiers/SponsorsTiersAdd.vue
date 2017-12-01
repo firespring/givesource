@@ -24,7 +24,7 @@
                 <div class="o-page-header">
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Sponsors</router-link></span>
+                            <span><router-link :to="{ name: 'sponsor-tiers-list' }">Tiers</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Add Sponsor Tier</h1>
                     </div>
@@ -40,7 +40,7 @@
                                         <label for="name" class="c-form-item-label-text">Name</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.name" type="text" name="name" id="name" :class="{ 'has-error': formErrors.name }">
+                                        <input v-model="formData.name" type="text" name="name" id="name" :class="{ 'has-error': formErrors.name }" v-auto-focus>
                                         <div v-if="formErrors.name" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.name }}
                                         </div>

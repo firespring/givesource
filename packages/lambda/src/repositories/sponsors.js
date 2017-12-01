@@ -77,7 +77,7 @@ SponsorsRepository.prototype.getAll = function (sponsorTierUuid) {
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('scan');
+			const builder = new QueryBuilder('query');
 			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid);
 			repository.query(builder).then(function (data) {
 				const results = [];
@@ -107,7 +107,7 @@ SponsorsRepository.prototype.getCount = function (sponsorTierUuid) {
 	const sponsorTiersRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('scan');
+			const builder = new QueryBuilder('query');
 			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid).select('COUNT');
 			repository.query(builder).then(function (data) {
 				resolve(data.Count);

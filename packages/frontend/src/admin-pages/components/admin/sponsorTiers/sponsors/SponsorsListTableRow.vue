@@ -22,7 +22,7 @@
         </td>
 
         <td class="image u-text-c">
-            <img alt="" src="">
+            <img alt="" :src="logoUrl" v-if="logoUrl">
         </td>
 
         <td>
@@ -32,7 +32,7 @@
         </td>
 
         <td class="icon">
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
+            <a v-on:click="deleteSponsor" href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
                 <i class="fa fa-trash" aria-hidden="true"></i>Delete
             </a>
         </td>
@@ -41,7 +41,18 @@
 
 <script>
 	module.exports = {
+		computed: {
+			logoUrl: function () {
+				return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + this.file.path : false;
+			}
+		},
 		props: {
+			file: {
+				type: Object,
+				default: function () {
+					return {};
+				}
+			},
 			sponsor: {
 				type: Object,
 				default: function () {
@@ -49,5 +60,27 @@
 				}
 			},
 		},
+		methods: {
+			deleteSponsor: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+				let promise = Promise.resolve();
+				if (vue.sponsor.hasOwnProperty('fileUuid') && vue.sponsor.fileUuid) {
+					promise = axios.delete(API_URL + 'files/' + vue.sponsor.fileUuid);
+				}
+
+				promise.then(function () {
+					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsor.sponsorTierUuid + '/sponsors/' + vue.sponsor.uuid);
+				}).then(function () {
+					vue.clearModals();
+					vue.$emit('deleteSponsor', vue.sponsor.uuid);
+				}).catch(function (err) {
+					vue.clearModals();
+					console.log(err);
+				});
+			}
+		}
 	};
 </script>

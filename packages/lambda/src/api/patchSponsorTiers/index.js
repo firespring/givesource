@@ -22,18 +22,25 @@ const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SponsorTiersRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).parameters(['sponsorTiers']);
 
-	const sponsorTier = new SponsorTier(request._body);
+	let sponsorTiers = [];
 	request.validate().then(function () {
-		return repository.getCount();
-	}).then(function (count) {
-		sponsorTier.populate({sortOrder: count});
-		return sponsorTier.validate();
+		request.get('sponsorTiers', []).forEach(function (data) {
+			sponsorTiers.push(new SponsorTier(data));
+		});
 	}).then(function () {
-		return repository.save(sponsorTier);
-	}).then(function (model) {
-		callback(null, model.all());
+		let promise = Promise.resolve();
+		sponsorTiers.forEach(function (sponsorTier) {
+			promise = promise.then(function () {
+				return sponsorTier.validate();
+			});
+		});
+		return promise;
+	}).then(function () {
+		return repository.batchUpdate(sponsorTiers);
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

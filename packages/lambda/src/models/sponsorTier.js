@@ -43,6 +43,7 @@ SponsorTier.prototype = new Model();
 SponsorTier.prototype.attributes = [
 	'name',
 	'size',
+	'sortOrder',
 ];
 
 /**
@@ -59,7 +60,11 @@ SponsorTier.prototype.constraints = {
 		presence: true,
 		type: 'string',
 		inclusion: [SponsorHelper.SIZE_LARGE, SponsorHelper.SIZE_DEFAULT, SponsorHelper.SIZE_SMALL]
-	}
+	},
+	sortOrder: {
+		presence: true,
+		type: 'number'
+	},
 };
 
 module.exports = SponsorTier;

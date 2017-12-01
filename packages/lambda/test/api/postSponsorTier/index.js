@@ -25,11 +25,13 @@ const TestHelper = require('../../helpers/test');
 describe('PostSponsorTier', function () {
 
 	afterEach(function () {
+		SponsorTiersRepository.prototype.getCount.restore();
 		SponsorTiersRepository.prototype.save.restore();
 	});
 
 	it('should return a sponsor tier', function () {
 		const model = TestHelper.generate.model('sponsorTier');
+		sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1);
 		sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model);
 		const params = {
 			body: model.except(['uuid', 'createdOn'])
@@ -41,6 +43,7 @@ describe('PostSponsorTier', function () {
 	});
 
 	it('should return error on exception thrown', function () {
+		sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1);
 		sinon.stub(SponsorTiersRepository.prototype, 'save').rejects('Error');
 		return PostSponsorTier.handle({}, null, function (error) {
 			assert(error instanceof HttpException);
