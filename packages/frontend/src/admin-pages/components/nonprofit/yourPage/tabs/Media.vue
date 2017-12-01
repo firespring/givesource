@@ -94,8 +94,8 @@
 					vue.slides.forEach(function (slide) {
 						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
 							uuids.push(slide.fileUuid);
-                        }
-                    });
+						}
+					});
 					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
 						uuids: uuids
 					}));
@@ -147,8 +147,10 @@
 			},
 			onFileChange: function (event) {
 				const vue = this;
+
+				const extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
+				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.split('.').pop()) > -1) {
 					vue.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-New',

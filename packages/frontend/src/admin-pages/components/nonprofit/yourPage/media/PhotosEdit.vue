@@ -120,9 +120,9 @@
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-            imageUrl: function () {
-	            return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + this.file.path : false;
-            }
+			imageUrl: function () {
+				return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + this.file.path : false;
+			}
 		},
 		props: [
 			'nonprofitUuid',
@@ -259,8 +259,10 @@
 			},
 			onFileChange: function (event) {
 				const vue = this;
+
+				const extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
+				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.split('.').pop()) > -1) {
 					vue.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-Edit',
