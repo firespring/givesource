@@ -39,8 +39,15 @@
                 </div>
             </div>
 
-            <div class="main-spotlight-section countdown">
-                You have <span class="countdown__timer">15 hours, 35 minutes and 25 seconds</span> left to make a donation.
+            <div class="main-spotlight-section countdown" v-if="displayEventCountdown() && countdown.loaded">
+                {{ countdownPrefix }}
+                <span class="countdown__timer">
+                    <span v-if="countdown.days > 0">{{ countdown.days }} days,</span>
+                    <span v-if="countdown.days > 0 || countdown.hours > 0">{{ countdown.hours }} hours,</span>
+                    <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0">{{ countdown.minutes }} minutes, and</span>
+                    <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0 || countdown.seconds >= 0">{{ countdown.seconds }} seconds</span>
+                </span>
+                {{ countdownSuffix }}
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
@@ -108,7 +115,8 @@
                     <p>
                         We invite nonprofit organizations in the Greater Area to join Give To Our City Day by registering to participate.
                         Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                        <router-link :to="{ name: 'about' }">please visit the About page</router-link>.
+                        <router-link :to="{ name: 'about' }">please visit the About page</router-link>
+                        .
                     </p>
                 </div>
             </div>
@@ -119,8 +127,117 @@
 </template>
 
 <script>
+	const moment = require('moment-timezone');
+
 	module.exports = {
+		data: function () {
+			return {
+				countdown: {
+					loaded: false,
+					timer: 0,
+					type: 'preEvent',
+
+					days: null,
+					hours: null,
+					minutes: null,
+					seconds: null,
+				}
+			};
+		},
+		computed: {
+			eventDateEndOfDay: function () {
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).endOf('day').format());
+				}
+				return '';
+			},
+			eventDateStartOfDay: function () {
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).startOf('day').format());
+				}
+				return '';
+			},
+			countdownPrefix: function () {
+				return this.countdown.type === 'event' ? 'You have' : 'There are';
+			},
+			countdownSuffix: function () {
+				if (this.countdown.type === 'event') {
+					return 'left to make a donation.';
+				}
+				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
+			},
+		},
+		props: {
+			dateDonationsEnd: {
+				type: String,
+				default: null,
+			},
+			dateDonationsStart: {
+				type: String,
+				default: null,
+			},
+			dateEvent: {
+				type: String,
+				default: null,
+			},
+			dateRegistrationsEnd: {
+				type: String,
+				default: null,
+			},
+			dateRegistrationsStart: {
+				type: String,
+				default: null,
+			},
+			eventTimezone: {
+				type: String,
+				default: null,
+			},
+			eventTitle: {
+				type: String,
+				default: null,
+			}
+		},
+		watch: {
+			eventDateEndOfDay: function (value) {
+				if (value && !this.loaded) {
+					this.initializeCountdown();
+				}
+			}
+		},
 		methods: {
+			displayEventCountdown: function () {
+				if (this.dateEvent && this.eventTimezone) {
+					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
+				}
+				return false;
+			},
+			initializeCountdown: function () {
+				const vue = this;
+
+				const end = this.eventDateEndOfDay.getTime();
+				const start = this.eventDateStartOfDay.getTime();
+
+				vue.countdown.timer = setInterval(function () {
+					const now = new Date().getTime();
+
+					let distance = start - now;
+					if (distance < 0) {
+						distance = end - now;
+						vue.countdown.type = 'event';
+					}
+
+					vue.countdown.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+					vue.countdown.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					vue.countdown.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+					vue.countdown.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+					vue.countdown.loaded = true;
+					if (distance <= 0) {
+						vue.countdown.loaded = false;
+						clearInterval(vue.countdown.timer);
+					}
+				}, 1000);
+			},
 			search: function (event) {
 				event.preventDefault();
 				const vue = this;

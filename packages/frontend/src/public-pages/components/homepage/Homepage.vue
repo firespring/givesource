@@ -27,7 +27,13 @@
         <main class="main">
             <div class="wrapper">
 
-                <metrics></metrics>
+                <metrics :dateDonationsEnd="settings.DATE_DONATIONS_END"
+                         :dateDonationsStart="settings.DATE_DONATIONS_START"
+                         :dateEvent="settings.DATE_EVENT"
+                         :dateRegistrationsEnd="settings.DATE_REGISTRATIONS_END"
+                         :dateRegistrationsStart="settings.DATE_REGISTRATIONS_END"
+                         :eventTimezone="settings.EVENT_TIMEZONE"
+                         :eventTitle="settings.EVENT_TITLE"></metrics>
 
                 <div class="main__content">
 
@@ -52,25 +58,67 @@
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
-			    spotlightImage: '/assets/temp/logo-gtld.png',
-                nonprofits: [],
-            }
-        },
-	    beforeMount: function () {
-		    const vue = this;
+	import * as Utils from './../../helpers/utils';
 
-		    vue.setBodyClasses('home', 'home--live');
-		    vue.setPageTitle('Give To Our City - May 18th, 2018');
-	    },
-        components: {
-            'layout-footer': require('./../layout/Footer.vue'),
-	        'layout-hero': require('../layout/Hero.vue'),
-	        'layout-sponsors': require('../layout/Sponsors.vue'),
-            'leaderboard': require('./Leaderboard.vue'),
-            'metrics': require('./Metrics.vue'),
-        }
-    };
+	module.exports = {
+		data: function () {
+			return {
+				spotlightImage: '/assets/temp/logo-gtld.png',
+				nonprofits: [],
+
+				settings: {
+					DATE_DONATIONS_END: null,
+					DATE_DONATIONS_START: null,
+					DATE_EVENT: null,
+					DATE_REGISTRATIONS_END: null,
+					DATE_REGISTRATIONS_START: null,
+					EVENT_TIMEZONE: null,
+					EVENT_TITLE: null,
+				}
+			}
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + 'settings' + Utils.generateQueryString({
+					keys: Object.keys(vm.settings)
+				})).then(function (response) {
+					response.data.forEach(function (setting) {
+						if (vm.settings.hasOwnProperty(setting.key)) {
+							vm.settings[setting.key] = setting.value;
+						}
+					});
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'settings' + Utils.generateQueryString({
+				keys: Object.keys(vue.formData)
+			})).then(function (response) {
+				response.data.forEach(function (setting) {
+					if (vue.settings.hasOwnProperty(setting.key)) {
+						vue.settings[setting.key] = setting.value;
+					}
+				});
+				vue.loaded = true;
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
+		beforeMount: function () {
+			const vue = this;
+
+			vue.setBodyClasses('home', 'home--live');
+			vue.setPageTitle('Give To Our City - May 18th, 2018');
+		},
+		components: {
+			'layout-footer': require('./../layout/Footer.vue'),
+			'layout-hero': require('../layout/Hero.vue'),
+			'layout-sponsors': require('../layout/Sponsors.vue'),
+			'leaderboard': require('./Leaderboard.vue'),
+			'metrics': require('./Metrics.vue'),
+		}
+	};
 </script>
