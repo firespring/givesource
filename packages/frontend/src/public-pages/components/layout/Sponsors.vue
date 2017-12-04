@@ -16,47 +16,104 @@
   -->
 
 <template>
-    <div class="sponsors wrapper">
+    <div class="sponsors wrapper" v-if="loaded">
         <h2 class="sponsors-title">Many Thanks To Our Sponsors</h2>
 
-        <div class="sponsors__tier sponsors__tier--lg">
+        <div v-for="sponsorTier in sponsorTiers" class="sponsors__tier" :class="getSponsorTierClass(sponsorTier.size)" :key="sponsorTier.uuid">
             <div class="sponsors__tier-title">
-                <h3>Gold Sponsors</h3>
+                <h3>{{ sponsorTier.name }}</h3>
             </div>
 
             <div class="sponsors__tier-list">
-                <img width="320" height="91" alt="Auto Speed logo" src="/assets/temp/sponsors/auto-speed.png">
-                <img width="320" height="108" alt="Beauty Box logo" src="/assets/temp/sponsors/beauty-box.png">
-                <img width="320" height="88" alt="Yoga Baby logo" src="/assets/temp/sponsors/yoga-baby.png">
+                <div v-for="sponsor in sponsors[sponsorTier.uuid]" :key="sponsor.uuid">
+                    <a v-if="sponsor.url" :href="sponsor.url" target="_blank" rel="noopener noreferrer">
+                        <img v-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
+                        <span v-else>
+                            {{ sponsor.name }}
+                        </span>
+                    </a>
+                    <img v-else-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
+                    <span v-else>
+                        {{ sponsor.name }}
+                    </span>
+                </div>
             </div>
         </div>
-
-        <div class="sponsors__tier sponsors__tier--md">
-            <div class="sponsors__tier-title">
-                <h3>Silver Sponsors</h3>
-            </div>
-            <div class="sponsors__tier-list">
-                <img width="320" height="122" alt="The Web Works logo" src="/assets/temp/sponsors/the-web-works.png">
-                <img width="320" height="149" alt="Greens Food Suppliers logo" src="/assets/temp/sponsors/greens-food-suppliers.png">
-                <img width="320" height="116" alt="Fast Banana logo" src="/assets/temp/sponsors/fast-banana.png">
-                <img width="320" height="130" alt="The Dance Studio logo" src="/assets/temp/sponsors/the-dance-studio.png">
-            </div>
-        </div>
-
-        <div class="sponsors__tier sponsors__tier--sm">
-            <div class="sponsors__tier-title">
-                <h3>Bronze Sponsors</h3>
-            </div>
-            <div class="sponsors__tier-list">
-                <img width="320" height="81" alt="Crofts Accountants logo" src="/assets/temp/sponsors/crofts-accountants.png">
-                <img width="320" height="173" alt="Space logo" src="/assets/temp/sponsors/space-cube.png">
-                <img width="320" height="246" alt="James and Sons Building Contractors logo" src="/assets/temp/sponsors/james-and-sons.png">
-            </div>
-        </div>
-
     </div>
 </template>
 
 <script>
-	module.exports = {}
+	import * as Utils from './../../helpers/utils';
+
+	module.exports = {
+		data: function () {
+			return {
+				files: {},
+				loaded: false,
+				sponsors: {},
+				sponsorTiers: [],
+			};
+		},
+		created: function () {
+			const vue = this;
+
+			axios.get(API_URL + 'sponsor-tiers/').then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
+				vue.sponsorTiers = response.data;
+			}).then(function () {
+				let promise = Promise.resolve();
+				vue.sponsorTiers.forEach(function (sponsorTier) {
+					promise = promise.then(function () {
+						return axios.get(API_URL + 'sponsor-tiers/' + sponsorTier.uuid + '/sponsors').then(function (response) {
+							response.data.sort(function (a, b) {
+								return a.sortOrder - b.sortOrder;
+							});
+							vue.sponsors[sponsorTier.uuid] = response.data;
+							response.data.forEach(function (sponsor) {
+								if (sponsor.fileUuid) {
+									vue.files[sponsor.fileUuid] = {};
+								}
+							});
+						});
+					});
+				});
+				return promise;
+			}).then(function () {
+				const fileUuids = Object.keys(vue.files);
+				if (fileUuids.length) {
+					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: fileUuids}));
+				} else {
+					return Promise.resolve();
+				}
+			}).then(function (response) {
+				if (response.data) {
+					response.data.forEach(function (file) {
+						vue.files[file.uuid] = file;
+					});
+				}
+			}).then(function () {
+				vue.loaded = true;
+			});
+		},
+		methods: {
+			getSponsorTierClass: function (size) {
+				switch (size) {
+					case 'LARGE':
+						return 'sponsors__tier--lg';
+					case 'SMALL':
+						return 'sponsors__tier--sm';
+					default:
+						return 'sponsors__tier--md';
+				}
+			},
+			getSponsorImage: function (fileUuid) {
+				const vue = this;
+
+				const file = vue.files[fileUuid];
+				return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : false;
+			}
+		}
+	};
 </script>
