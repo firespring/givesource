@@ -19,7 +19,7 @@
     <div class="c-page-section__content">
         <div class="c-header-actions">
             <div>
-                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" :disabled="disableAddButton">
+                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*" :disabled="disableAddButton">
                 <button v-on:click="onTrigger" type="button" class="c-btn c-btn--sm c-btn--icon" id="fileUploadTrigger" data-control="fileUpload" :disabled="disableAddButton">
                     <i class="fa fa-picture-o" aria-hidden="true"></i>Add Photos
                 </button>
@@ -94,8 +94,8 @@
 					vue.slides.forEach(function (slide) {
 						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
 							uuids.push(slide.fileUuid);
-                        }
-                    });
+						}
+					});
 					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
 						uuids: uuids
 					}));
@@ -147,8 +147,10 @@
 			},
 			onFileChange: function (event) {
 				const vue = this;
+
+				const extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
+				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.split('.').pop()) > -1) {
 					vue.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-New',
