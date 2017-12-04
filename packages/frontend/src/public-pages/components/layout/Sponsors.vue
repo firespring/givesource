@@ -25,17 +25,13 @@
             </div>
 
             <div class="sponsors__tier-list">
-                <div v-for="sponsor in sponsors[sponsorTier.uuid]" :key="sponsor.uuid">
+                <div v-for="sponsor in sponsors[sponsorTier.uuid]" :key="sponsor.uuid" class="sponsor" :class="{ 'sponsor--no-logo': !sponsor.fileUuid }">
                     <a v-if="sponsor.url" :href="sponsor.url" target="_blank" rel="noopener noreferrer">
                         <img v-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
-                        <span v-else>
-                            {{ sponsor.name }}
-                        </span>
+                        <span class="logo-text" v-else>{{ sponsor.name }}</span>
                     </a>
                     <img v-else-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
-                    <span v-else>
-                        {{ sponsor.name }}
-                    </span>
+                    <span class="logo-text" v-else>{{ sponsor.name }}</span>
                 </div>
             </div>
         </div>
