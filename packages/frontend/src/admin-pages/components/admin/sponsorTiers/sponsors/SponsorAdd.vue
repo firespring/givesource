@@ -129,6 +129,9 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
 				axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+					response.data.sort(function (a, b) {
+						return a.sortOrder - b.sortOrder;
+					});
 					vm.sponsorTiers = response.data;
 					vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: to.params.sponsorTierUuid});
 				});
@@ -138,6 +141,9 @@
 			const vue = this;
 
 			axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
 				vue.sponsorTiers = response.data;
 				next();
 			}).catch(function (err) {
