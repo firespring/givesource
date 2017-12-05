@@ -282,8 +282,6 @@
 				event.preventDefault();
 				const vue = this;
 
-				vue.registerNonprofit();
-
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 				if (Object.keys(vue.formErrors).length) {
 					vue.clearModals();
