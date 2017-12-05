@@ -16,25 +16,41 @@
   -->
 
 <template>
-    <table class="table-middle table-reorder js-table-reorder">
-        <thead>
-        <tr>
-            <th></th>
-            <th class="u-width-100p">Sponsor Tier</th>
-            <th></th>
-        </tr>
-        </thead>
-
-        <tbody class="ui-sortable">
-            <sponsors-list-table-row></sponsors-list-table-row>
-        </tbody>
-    </table>
+    <select v-model="localValue" :name="name" :id="id" ref="input">
+        <option disabled value="" v-if="placeholder">{{ placeholder }}</option>
+        <option disabled value="" v-if="placeholder">-----</option>
+        <option v-for="sponsorTier in sponsorTiers" :value="sponsorTier.uuid">
+            {{ sponsorTier.name }}
+        </option>
+    </select>
 </template>
 
 <script>
 	module.exports = {
-		components: {
-			'sponsors-list-table-row': require('./SponsorsTiersListTableRow.vue')
+		data: function () {
+			return {
+				localValue: this.value ? this.value : ''
+			};
+		},
+		props: {
+			id: '',
+			name: '',
+			placeholder: '',
+			sponsorTiers: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			},
+			value: {},
+		},
+		watch: {
+			value: function (newVal) {
+				this.localValue = newVal;
+			},
+			localValue: function () {
+				this.$emit('input', this.localValue);
+			}
 		}
 	};
 </script>

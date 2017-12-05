@@ -200,9 +200,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
-                        <button type="submit" class="btn btn--green btn--round btn--lg">
-                            Complete Your Donation
-                        </button>
+                        <forms-submit :processing="processing" color="green" size="lg">Complete Your Donation</forms-submit>
                     </div>
 
                 </form>
@@ -223,6 +221,7 @@
 		data: function () {
 			return {
 				isCartEmpty: true,
+				processing: false,
 
 				settings: [],
 				donations: [],
@@ -388,13 +387,14 @@
 				event.preventDefault();
 				const vue = this;
 
+				vue.processing = true;
 				vue.formErrors.donor = vue.validate(vue.donor, vue.getDonorConstraints());
 				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
 				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
 				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
 					console.log(vue.formErrors);
-					vue.clearModals();
+					vue.processing = false;
 				} else {
 					vue.processDonations();
 				}
@@ -411,6 +411,7 @@
 						payment: payment,
 					});
 				}).then(function (response) {
+					vue.processing = false;
 					if (response.data && response.data.errorMessage) {
 						console.log(response.data);
 					} else {
@@ -423,6 +424,7 @@
 					}
 				}).catch(function (err) {
 					console.log(err);
+					vue.processing = false;
 				});
 			},
 			getDonations: function () {
@@ -499,11 +501,12 @@
 		},
 		components: {
 			'cart-donations': require('./CartDonations.vue'),
+			'forms-address-state': require('../forms/AddressState.vue'),
 			'forms-payment-cc-month': require('../forms/PaymentCCMonth.vue'),
 			'forms-payment-cc-number': require('../forms/PaymentCCNumber.vue'),
 			'forms-payment-cc-security-code': require('../forms/PaymentCCSecurityCode.vue'),
 			'forms-payment-cc-year': require('../forms/PaymentCCYear.vue'),
-			'forms-address-state': require('../forms/AddressState.vue'),
+			'forms-submit': require('../forms/Submit.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('./../layout/Hero.vue'),
 			'layout-sponsors': require('./../layout/Sponsors.vue'),

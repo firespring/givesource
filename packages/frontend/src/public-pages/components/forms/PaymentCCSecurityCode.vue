@@ -50,10 +50,10 @@
 			$(vue.$refs.input).payment('formatCardCVC');
 		},
 		watch: {
-			value(newVal) {
+			value: function (newVal) {
 				this.localValue = newVal;
 			},
-			localValue() {
+			localValue: function () {
 				this.$emit('input', this.localValue);
 			}
 		}

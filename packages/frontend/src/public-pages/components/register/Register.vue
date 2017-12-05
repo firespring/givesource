@@ -166,7 +166,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <button type="submit" class="btn btn--blue btn--round">Register Now</button>
+                        <forms-submit :processing="processing" color="blue">Register Now</forms-submit>
                     </div>
                 </form>
             </div>
@@ -182,6 +182,8 @@
 	module.exports = {
 		data: function () {
 			return {
+				processing: false,
+
 				formData: {
 					legalName: '',
 					taxId: '',
@@ -282,9 +284,10 @@
 				event.preventDefault();
 				const vue = this;
 
+				vue.processing = true;
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+					vue.processing = false;
 				} else {
 					vue.registerNonprofit();
 				}
@@ -314,25 +317,25 @@
 						email: vue.formData.email
 					}
 				}).then(function (response) {
-
-					vue.clearModals();
+					vue.processing = false;
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
 						vue.$router.push({name: 'register-response'});
-                    }
+					}
 				}).catch(function (err) {
-					vue.clearModals();
+					vue.processing = false;
 					console.log(err);
 				});
 			},
 		},
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
-			'forms-address-state': require('../forms/AddressState.vue'),
+			'forms-address-state': require('./../forms/AddressState.vue'),
 			'forms-nonprofit-category': require('./../forms/NonprofitCategory.vue'),
+			'forms-submit': require('./../forms/Submit.vue'),
+			'layout-footer': require('./../layout/Footer.vue'),
+			'layout-hero': require('./../layout/Hero.vue'),
+			'layout-sponsors': require('./../layout/Sponsors.vue'),
 		}
 	};
 </script>

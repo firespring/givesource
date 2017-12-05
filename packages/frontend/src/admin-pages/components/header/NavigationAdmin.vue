@@ -25,7 +25,7 @@
             <router-link tag="li" :to="{ name: 'nonprofits-list' }">
                 <a><i class="fa fa-fw fa-bank" aria-hidden="true"></i>Nonprofits</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'sponsors-tiers-list' }">
+            <router-link tag="li" :to="{ name: 'sponsor-tiers-list' }">
                 <a><i class="fa fa-fw fa-star" aria-hidden="true"></i>Sponsors</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'pages-list' }">
@@ -46,7 +46,7 @@
             <option disabled value="">Navigation</option>
             <option value="donations-list">Donations</option>
             <option value="nonprofits-list">Nonprofits</option>
-            <option value="sponsors-tiers-list">Sponsors</option>
+            <option value="sponsor-tiers-list">Sponsors</option>
             <option value="pages-list">Pages</option>
             <option value="settings-list">Settings</option>
         </select>
@@ -72,8 +72,8 @@
 					vue.selected = 'donations-list';
 				} else if (vue.$route.path.indexOf('/nonprofits') === 0) {
 					vue.selected = 'nonprofits-list';
-				} else if (vue.$route.path.indexOf('/sponsors') === 0) {
-					vue.selected = 'sponsors-tiers-list';
+				} else if (vue.$route.path.indexOf('/sponsor-tiers') === 0) {
+					vue.selected = 'sponsor-tiers-list';
 				} else if (vue.$route.path.indexOf('/pages') === 0) {
 					vue.selected = 'pages-list';
 				} else if (vue.$route.path.indexOf('/settings') === 0) {
