@@ -1258,7 +1258,9 @@ Page footer
 	letter-spacing: 1px;
 }
 
-.sponsors__tier-list {
+.sponsors__tier-list,
+.sponsor,
+.sponsor a {
 	display: -ms-flexbox;
 	display: flex;
 	-ms-flex-pack: center;
@@ -1269,22 +1271,65 @@ Page footer
 	flex-wrap: wrap;
 }
 
-.sponsors__tier-list img {
+.sponsor {
 	margin: 1rem .5rem 0;
-	width: auto;
-	max-width: none;
 }
 
-.sponsors__tier--lg .sponsors__tier-list img {
+.sponsor a {
+	width: 100%;
+	color: #000;
+}
+
+.sponsor--no-logo {
+	max-width: 100%;
+	font-weight: 700;
+	font-size: .9rem;
+	line-height: 1.2;
+	white-space: wrap;
+}
+
+.sponsor--no-logo .logo-text {
+	display: block;
+	width: 100%;
+}
+
+.sponsor img {
+	width: auto;
+	max-width: none;
+	border: 0;
+}
+
+.sponsors__tier--lg .sponsor img {
 	max-height: 30px;
 }
 
-.sponsors__tier--md .sponsors__tier-list img {
+.sponsors__tier--lg .sponsor--no-logo {
+	-ms-flex: 1 0 200px;
+	flex: 1 0 200px;
+	max-width: 200px;
+	width: 200px;
+}
+
+.sponsors__tier--md .sponsor img {
 	max-height: 25px;
 }
 
-.sponsors__tier--sm .sponsors__tier-list img {
+.sponsors__tier--md .sponsor--no-logo {
+	-ms-flex: 1 0 150px;
+	flex: 1 0 150px;
+	max-width: 150px;
+	width: 150px;
+}
+
+.sponsors__tier--sm .sponsor img {
 	max-height: 20px;
+}
+
+.sponsors__tier--sm .sponsor--no-logo {
+	-ms-flex: 1 0 150px;
+	flex: 1 0 150px;
+	max-width: 150px;
+	width: 150px;
 }
 
 /* Contact info
@@ -1330,7 +1375,7 @@ Page footer
 
 @media (min-width: 640px) {
 
-	.sponsors__tier-list img {
+	.sponsor {
 		margin: 1rem .75rem 0;
 	}
 
@@ -1359,6 +1404,34 @@ Page footer
 
 }
 
+@media (min-width: 1000px) {
+
+	.sponsor {
+		margin: 1.25rem 1rem 0;
+	}
+
+	.sponsors__tier--lg .sponsor img {
+		max-height: 70px;
+	}
+
+	.sponsors__tier--lg .sponsor--no-logo {
+		font-size: 1.2em;
+	}
+
+	.sponsors__tier--md .sponsor img {
+		max-height: 40px;
+	}
+
+	.sponsors__tier--md .sponsor--no-logo {
+		font-size: 1em;
+	}
+
+	.sponsors__tier--sm .sponsor img {
+		max-height: 30px;
+	}
+
+}
+
 @media (min-width: 1200px) {
 
 	.sponsors {
@@ -1369,22 +1442,6 @@ Page footer
 	.sponsors-title {
 		margin: 0 0 3rem;
 		font-size: 1.25rem;
-	}
-
-	.sponsors__tier-list img {
-		margin: 1.25rem 1rem 0;
-	}
-
-	.sponsors__tier--lg .sponsors__tier-list img {
-		max-height: 70px;
-	}
-
-	.sponsors__tier--md .sponsors__tier-list img {
-		max-height: 40px;
-	}
-
-	.sponsors__tier--sm .sponsors__tier-list img {
-		max-height: 30px;
 	}
 
 	.contact-info {
