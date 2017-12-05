@@ -42,7 +42,7 @@
                                         <label for="name" class="c-form-item-label-text">Name</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.name" type="text" name="name" id="name" :class="{ 'has-error': formErrors.name }" v-auto-focus>
+                                        <input v-model="formData.name" type="text" name="name" id="name" :class="{ 'has-error': formErrors.name }" maxlength="90" v-auto-focus>
                                         <div v-if="formErrors.name" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.name }}
                                         </div>
