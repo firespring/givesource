@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.url" type="url" name="url" id="url" placeholder="http://" :class="{ 'has-error': formErrors.url }"
+                                            <input v-model="formData.url" type="url" name="url" id="url" placeholder="https://" :class="{ 'has-error': formErrors.url }"
                                                    v-auto-focus>
                                         </div>
                                         <div v-if="formErrors.url" class="c-notes c-notes--below c-notes--bad c-form-control-error">

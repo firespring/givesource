@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.EVENT_URL" type="url" name="eventUrl" id="eventUrl" maxlength="200" placeholder="http://"
+                                            <input v-model="formData.EVENT_URL" type="url" name="eventUrl" id="eventUrl" maxlength="200" placeholder="https://"
                                                    :class="{ 'has-error': formErrors.EVENT_URL }">
                                         </div>
                                         <div v-if="formErrors.EVENT_URL" class="c-notes c-notes--below c-notes--bad c-form-control-error">

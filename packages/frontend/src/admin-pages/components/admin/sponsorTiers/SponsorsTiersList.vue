@@ -24,13 +24,13 @@
 
                     <div class="c-header-actions">
                         <div>
-                            <router-link :to="{ name: 'sponsors-tiers-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
+                            <router-link :to="{ name: 'sponsor-tiers-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
                                 <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Sponsor Tier
                             </router-link>
                         </div>
                     </div>
 
-                    <sponsors-list-table></sponsors-list-table>
+                    <sponsors-list-table :sponsorTiers="sponsorTiers"></sponsors-list-table>
 
                 </div>
             </div>
@@ -39,6 +39,35 @@
 </template>
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				sponsorTiers: [],
+			};
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+					response.data.sort(function (a, b) {
+						return a.sortOrder - b.sortOrder;
+					});
+					vm.sponsorTiers = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
+				vue.sponsorTiers = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
 		components: {
 			'sponsors-list-table': require('./SponsorsTiersListTable.vue')
 		}

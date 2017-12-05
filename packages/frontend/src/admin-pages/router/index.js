@@ -158,49 +158,53 @@ const router = new VueRouter({
 
 		// Sponsors
 		{
-			path: '/sponsors',
-			name: 'sponsors-tiers-list',
-			component: require('./../components/admin/sponsors/tiers/SponsorsTiersList.vue'),
+			path: '/sponsor-tiers',
+			name: 'sponsor-tiers-list',
+			component: require('./../components/admin/sponsorTiers/SponsorsTiersList.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/add',
-			name: 'sponsors-add',
-			component: require('./../components/admin/sponsors/SponsorAdd.vue'),
+			path: '/sponsor-tiers/add',
+			name: 'sponsor-tiers-add',
+			component: require('./../components/admin/sponsorTiers/SponsorsTiersAdd.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/edit',
-			name: 'sponsors-edit',
-			component: require('./../components/admin/sponsors/SponsorEdit.vue'),
+			path: '/sponsor-tiers/:sponsorTierUuid',
+			name: 'sponsor-tiers-edit',
+			props: true,
+			component: require('./../components/admin/sponsorTiers/SponsorsTiersEdit.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/tiers',
+			path: '/sponsor-tiers/:sponsorTierUuid/sponsors',
 			name: 'sponsors-list',
-			component: require('./../components/admin/sponsors/SponsorsList.vue'),
+			props: true,
+			component: require('./../components/admin/sponsorTiers/sponsors/SponsorsList.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/tiers/add',
-			name: 'sponsors-tiers-add',
-			component: require('./../components/admin/sponsors/tiers/SponsorsTiersAdd.vue'),
+			path: '/sponsor-tiers/:sponsorTierUuid/add',
+			name: 'sponsors-add',
+			props: true,
+			component: require('./../components/admin/sponsorTiers/sponsors/SponsorAdd.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
 		{
-			path: '/sponsors/tiers/edit',
-			name: 'sponsors-tiers-edit',
-			component: require('./../components/admin/sponsors/tiers/SponsorsTiersEdit.vue'),
+			path: '/sponsor-tiers/:sponsorTierUuid/sponsors/:sponsorUuid',
+			name: 'sponsors-edit',
+			props: true,
+			component: require('./../components/admin/sponsorTiers/sponsors/SponsorEdit.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
