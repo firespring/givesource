@@ -80,7 +80,7 @@
 
                         <hr v-if="canChangeStatus && canEditNonprofitDetails">
 
-                        <router-link :to="{ name: 'nonprofit-settings-manage-organization', params: { nonprofitUuid: nonprofit.uuid } }" v-if="canEditNonprofitDetails">
+                        <router-link :to="{ name: 'nonprofit-settings-list', params: { nonprofitUuid: nonprofit.uuid } }" v-if="canEditNonprofitDetails">
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Manage Settings
                         </router-link>
                         <router-link :to="{ name: 'nonprofit-your-page', params: { nonprofitUuid: nonprofit.uuid } }" v-if="canEditNonprofitDonationPage">
