@@ -216,7 +216,10 @@ const router = new VueRouter({
 			name: 'nonprofit-donations-list',
 			props: true,
 			component: require('./../components/nonprofit/donations/DonationsList.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 
 		// Nonprofit - Settings
@@ -225,49 +228,70 @@ const router = new VueRouter({
 			name: 'nonprofit-settings-list',
 			props: true,
 			component: require('./../components/nonprofit/settings/SettingsList.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/manage-organization',
 			name: 'nonprofit-settings-manage-organization',
 			props: true,
 			component: require('./../components/nonprofit/settings/manageOrganization/ManageOrganization.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/thank-you-message',
 			name: 'nonprofit-settings-thank-you-message',
 			props: true,
 			component: require('./../components/nonprofit/settings/thankYouMessage/ThankYouMessage.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/notifications',
 			name: 'nonprofit-settings-notifications',
 			props: true,
 			component: require('./../components/nonprofit/settings/notifications/NotificationSettings.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/admins',
 			name: 'nonprofit-settings-admins-list',
 			props: true,
 			component: require('./../components/nonprofit/settings/manageAdmins/ManageAdmins.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/admins/invite',
 			name: 'nonprofit-settings-admins-invite',
 			props: true,
 			component: require('./../components/nonprofit/settings/manageAdmins/ManageAdminsInvite.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/settings/request-name-change',
 			name: 'nonprofit-settings-request-name-change',
 			props: true,
 			component: require('./../components/nonprofit/settings/requestNameChange/RequestNameChange.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 
 		// Nonprofit - Your Page
@@ -283,21 +307,30 @@ const router = new VueRouter({
 			name: 'nonprofit-your-page-media-videos-add',
 			props: true,
 			component: require('./../components/nonprofit/yourPage/media/VideosAdd.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/your-page/media/videos/:slideUuid',
 			name: 'nonprofit-your-page-media-videos-edit',
 			props: true,
 			component: require('./../components/nonprofit/yourPage/media/VideosEdit.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/your-page/media/photos/:slideUuid',
 			name: 'nonprofit-your-page-media-photos-edit',
 			props: true,
 			component: require('./../components/nonprofit/yourPage/media/PhotosEdit.vue'),
-			meta: {validateNonprofitUuid: true}
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
 		},
 
 		// User Account
@@ -438,6 +471,30 @@ const authMiddleware = function (to, from, next) {
 };
 
 /**
+ * Validate nonprofit status
+ *
+ * @param {{}} to
+ * @param {{}} from
+ * @param {function} next
+ * @return {Promise}
+ */
+const nonprofitStatusMiddleware = function (to, from, next) {
+	if (to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
+		return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			const nonprofit = response.data;
+			const allowed = (to.meta.nonprofitStatus instanceof Array) ? to.meta.nonprofitStatus : [to.meta.nonprofitStatus];
+			if (_.intersection(allowed, [nonprofit.status]).length === 0) {
+				next({name: '404'});
+			} else {
+				return Promise.resolve();
+			}
+		});
+	} else {
+		return Promise.resolve();
+	}
+};
+
+/**
  * Validate nonprofit middleware
  *
  * @param {{}} to
@@ -474,6 +531,8 @@ router.beforeEach(function (to, from, next) {
 	}).then(function () {
 		if (User.isAuthenticated()) {
 			return loadUser().then(function () {
+				return nonprofitStatusMiddleware(to, from, next);
+			}).then(function () {
 				nonprofitMiddleware(to, from, next);
 				groupsMiddleware(to, from, next);
 			});
