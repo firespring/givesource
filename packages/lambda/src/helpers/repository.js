@@ -21,6 +21,7 @@ exports.DonationsTable = `${stackName}-Donations`;
 exports.DonorsTable = `${stackName}-Donors`;
 exports.FilesTable = `${stackName}-Files`;
 exports.MessagesTable = `${stackName}-Messages`;
+exports.MetricsTable = `${stackName}-Metrics`;
 exports.NonprofitsTable = `${stackName}-Nonprofits`;
 exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`;
 exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;

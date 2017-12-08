@@ -180,6 +180,45 @@ Resources:
           WriteCapacityUnits: 1
     DependsOn: FilesTable
 
+  MetricsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Metrics
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      - AttributeName: key
+        AttributeType: S
+      KeySchema:
+      - AttributeName: key
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: uuidIndex
+        KeySchema:
+        - AttributeName: uuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: MessagesTable
+
   NonprofitsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -228,7 +267,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DependsOn: MessagesTable
+    DependsOn: MetricsTable
 
   NonprofitDonationTiersTable:
     Type: AWS::DynamoDB::Table
@@ -533,6 +572,9 @@ Outputs:
 
   MessagesTable:
     Value: !Ref MessagesTable
+
+  MetricsTable:
+    Value: !Ref MetricsTable
 
   NonprofitsTable:
     Value: !Ref NonprofitsTable
