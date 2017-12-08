@@ -27,7 +27,7 @@ function SES() {
 }
 
 /**
- * Send email message
+ * Send email message via AWS SES
  *
  * @param {Message} message
  * @param {Array} to
@@ -61,8 +61,28 @@ SES.prototype.sendEmail = function (message, to, from) {
 				message.email,
 			]
 		};
-
 		awsSES.sendEmail(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
+ * Verify an AWS SES sender email address
+ *
+ * @param {String} email
+ * @return {Promise}
+ */
+SES.prototype.verifyDomainIdentity = function (email) {
+	const awsSES = new AWS.SES();
+	return new Promise(function (resolve, reject) {
+		const params = {
+			EmailAddress: email,
+		};
+		awsSES.verifyEmailIdentity(params, function (err, data) {
 			if (err) {
 				reject(err);
 			}
