@@ -435,6 +435,84 @@ Resources:
           WriteCapacityUnits: 1
     DependsOn: ReportsTable
 
+  SponsorsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Sponsors
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      - AttributeName: sponsorTierUuid
+        AttributeType: S
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: sponsorTierUuidIndex
+        KeySchema:
+        - AttributeName: sponsorTierUuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: SettingsTable
+
+  SponsorTiersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-SponsorTiers
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: createdOn
+        AttributeType: N
+      - AttributeName: name
+        AttributeType: S
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: nameIndex
+        KeySchema:
+        - AttributeName: name
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: createdOnIndex
+        KeySchema:
+        - AttributeName: createdOn
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: SponsorsTable
+
   UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -472,7 +550,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DependsOn: SettingsTable
+    DependsOn: SponsorTiersTable
 
 Outputs:
 
@@ -505,6 +583,12 @@ Outputs:
 
   SettingsTable:
     Value: !Ref SettingsTable
+
+  SponsorsTable:
+    Value: !Ref SponsorsTable
+
+  SponsorTiersTable:
+    Value: !Ref SponsorTiersTable
 
   UsersTable:
     Value: !Ref UsersTable

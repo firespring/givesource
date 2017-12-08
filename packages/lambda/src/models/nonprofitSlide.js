@@ -44,7 +44,6 @@ NonprofitSlide.prototype.attributes = [
 	'caption',
 	'embedUrl',
 	'externalId',
-	'filename',
 	'fileUuid',
 	'nonprofitUuid',
 	'sortOrder',
@@ -74,10 +73,6 @@ NonprofitSlide.prototype.constraints = {
 		presence: false,
 		type: 'string'
 	},
-	filename: {
-		presence: false,
-		type: 'string'
-	},
 	fileUuid: {
 		presence: false,
 		uuid: 4
@@ -99,7 +94,7 @@ NonprofitSlide.prototype.constraints = {
 		inclusion: [NonprofitSlideHelper.TYPE_IMAGE, NonprofitSlideHelper.TYPE_VIMEO, NonprofitSlideHelper.TYPE_YOUTUBE]
 	},
 	url: {
-		presence: true,
+		presence: false,
 		url: true
 	}
 };

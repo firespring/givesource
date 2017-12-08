@@ -22,6 +22,26 @@ validate.validators.label = function () {
 	return [];
 };
 
+// Add image validator
+validate.validators.image = function (value, options) {
+	let extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
+	options = options || true;
+
+	if (!value || value === false || typeof value === 'undefined' || value === null) {
+		return null;
+	}
+
+	if (Array.isArray(options)) {
+		extensions = options;
+	}
+
+	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop()) < 0)) {
+		return 'is not a valid image.';
+	}
+
+	return null;
+};
+
 const mixin = {
 	methods: {
 		validate: function (data, constraints) {
@@ -36,6 +56,11 @@ const mixin = {
 				}
 			}
 			return validationErrors;
+		},
+		scrollToError: function () {
+			this.$nextTick(function () {
+				$('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text')[0].scrollIntoView(true);
+			});
 		}
 	}
 };
