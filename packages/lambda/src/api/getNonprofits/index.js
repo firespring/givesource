@@ -17,19 +17,51 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
+const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
 
+	let total = 0;
+	let items = [];
+	const size = request.queryParam('size', 10);
+	const sort = request.queryParam('sort', null);
+	const start = request.queryParam('start', 0);
+
 	request.validate().then(function () {
-		return repository.getAll();
-	}).then(function (nonprofits) {
-		const results = nonprofits.map(function (nonprofit) {
-			return nonprofit.all();
+		const builder = new QueryBuilder('query');
+		builder.select('COUNT').limit(1000).index('paginatedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		return repository.batchQuery(builder);
+	}).then(function (response) {
+		total = response.Count;
+		if (start > 0) {
+			const builder = new QueryBuilder('query');
+			builder.select('COUNT').limit(start).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+			return repository.query(builder);
+		} else {
+			return Promise.resolve({});
+		}
+	}).then(function (response) {
+		const builder = new QueryBuilder('query');
+		builder.limit(size).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+
+		if (response.hasOwnProperty('LastEvaluatedKey')) {
+			builder.start(response.LastEvaluatedKey);
+		}
+
+		return repository.query(builder);
+	}).then(function (response) {
+		if (response.hasOwnProperty('Items')) {
+			items = response.Items;
+		}
+		callback(null, {
+			items: items,
+			size: size,
+			start: start,
+			total: total
 		});
-		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

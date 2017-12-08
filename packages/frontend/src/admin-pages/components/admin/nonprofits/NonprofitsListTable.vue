@@ -44,7 +44,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-            <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
+        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -56,24 +56,18 @@
 
 <script>
 	module.exports = {
-		data: function () {
-			return {
-				nonprofits: [],
-                loaded: false,
-			};
-		},
-        computed: {
+		computed: {
 			displayRows: function () {
-				return this.loaded && this.nonprofits.length;
-            }
-        },
-		mounted: function () {
-			const vue = this;
-
-			axios.get(API_URL + 'nonprofits').then(function (response) {
-				vue.nonprofits = response.data;
-				vue.loaded = true;
-			});
+				return this.nonprofits.length;
+			}
+		},
+		props: {
+			nonprofits: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			}
 		},
 		components: {
 			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue'),

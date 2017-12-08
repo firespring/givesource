@@ -21,66 +21,9 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
-
-                    <div class="c-header-actions">
-                        <div>
-                            <router-link :to="{ name: 'add-nonprofit' }" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Nonprofit
-                            </router-link>
-                        </div>
-                        <div class="c-header-actions__search u-flex-expand">
-                            <form>
-                                <div class="c-form-control-grid">
-                                    <div class="c-form-control-grid__item u-flex-collapse">
-                                        <select id="selectMenuDefault" name="selectMenuDefault" class="sm u-width-auto">
-                                            <option value="0">View all nonprofits</option>
-                                            <option value="1">View verified</option>
-                                            <option value="2">View pending</option>
-                                            <option value="3">View denied</option>
-                                        </select>
-                                    </div>
-                                    <div class="c-form-control-grid__item">
-                                        <div class="u-control-icon u-control-icon--search">
-                                            <input type="search" name="searchPayOuts" id="searchPayOuts" class="sm" placeholder="Search nonprofits">
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <nonprofits-list-table></nonprofits-list-table>
-
-                    <div class="c-table-footer">
-                        <div class="c-table-footer__actions">
-                            <a href="#" class="c-btn c-btn--bad c-btn--sm c-btn--flat c-btn--icon js-modal-trigger" rel="modal-confirm-delete"><i class="fa fa-fw fa-trash"
-                                                                                                                                                  aria-hidden="true"></i>Delete Selected</a>
-                        </div>
-                        <div class="c-table-footer__rows-page">
-                            <span>Show</span>
-                            <select id="rowsPage" name="rowsPage" class="sm">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span>rows/page</span>
-                        </div>
-
-                        <div class="c-table-footer__pagination">
-                            <nav class="c-pagination">
-                                <span class="c-pagination__first"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
-                                <span class="c-pagination__prev"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
-                                <strong class="c-pagination__here">1</strong>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <a href="#">4</a>
-                                <a href="#">5</a>
-                                <a href="#" class="c-pagination__next" title="Go to the next page"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                <a href="#" class="c-pagination__last" title="Jump to the last page"><i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                            </nav>
-                        </div>
-
-                    </div>
+                    <nonprofits-list-table-header></nonprofits-list-table-header>
+                    <nonprofits-list-table :nonprofits="pagination.items"></nonprofits-list-table>
+                    <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>
         </main>
@@ -88,9 +31,37 @@
 </template>
 
 <script>
-    module.exports = {
-        components: {
-	        'nonprofits-list-table': require('./NonprofitsListTable.vue')
-        }
-    };
+	import * as Utils from './../../../helpers/utils';
+	const PaginationMixin = require('./../../../mixins/pagination');
+
+	module.exports = {
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vm) {
+				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
+					vm.setPaginationData(response.data);
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			vue.resetPaginationData();
+			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
+				vue.setPaginationData(response.data);
+			}).then(function () {
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
+		mixins: [
+			PaginationMixin
+		],
+		components: {
+			'nonprofits-list-table': require('./NonprofitsListTable.vue'),
+			'nonprofits-list-table-header': require('./NonprofitsListTableHeader.vue'),
+			'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
+		}
+	};
 </script>
