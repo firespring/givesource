@@ -97,6 +97,21 @@
                                     </div>
                                 </div>
 
+                                <div class="c-form-item c-form-item--email c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.CONTACT_EMAIL }">
+                                    <div class="c-form-item__label">
+                                        <label for="contactEmail" class="c-form-item-label-text">Contact Email</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <div class="u-control-icon u-control-icon--email">
+                                            <input v-model="formData.CONTACT_EMAIL" type="email" name="contactEmail" id="contactEmail"
+                                                   :class="{ 'has-error': formErrors.CONTACT_EMAIL }">
+                                        </div>
+                                        <div v-if="formErrors.CONTACT_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.CONTACT_EMAIL }}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="c-form-item c-form-item--combobox c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.EVENT_TIMEZONE }">
                                     <div class="c-form-item__label">
                                         <label for="eventTimezone" class="c-form-item-label-text">Time Zone</label>
@@ -195,6 +210,7 @@
 
 				// Form Data
 				formData: {
+					CONTACT_EMAIL: '',
 					DATE_DONATIONS_END: '',
 					DATE_DONATIONS_START: '',
 					DATE_EVENT: '',
@@ -277,6 +293,11 @@
 		methods: {
 			getConstraints: function () {
 				return {
+					CONTACT_EMAIL: {
+						label: 'Contact email address',
+						presence: true,
+						email: true,
+					},
 					DATE_DONATIONS_END: {
 						label: 'Donations start date',
 					},
