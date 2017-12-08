@@ -84,7 +84,7 @@
 					return Promise.resolve();
 				}
 			}).then(function (response) {
-				if (response.data) {
+				if (response && response.data) {
 					response.data.forEach(function (file) {
 						vue.files[file.uuid] = file;
 					});

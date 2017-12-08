@@ -34,11 +34,14 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input type="text" name="nameFirst" id="nameFirst" placeholder="First Name" required>
+                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" placeholder="First Name">
                                     </div>
                                     <div class="grid-item">
-                                        <input type="text" name="nameLast" id="nameLast" placeholder="Last Name" required>
+                                        <input v-model="formData.lastName" type="text" name="nameLast" id="nameLast" placeholder="Last Name">
                                     </div>
+                                </div>
+                                <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
+                                    You must enter a first name and last name
                                 </div>
                             </div>
                         </div>
@@ -48,7 +51,10 @@
                                 <label for="email">Your Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="email" name="email" id="email" required>
+                                <input v-model="formData.email" type="email" name="email" id="email">
+                                <div v-if="formErrors.email" class="notes notes--below notes--error">
+                                    {{ formErrors.email }}
+                                </div>
                             </div>
                         </div>
 
@@ -57,21 +63,22 @@
                                 <label for="questions">Your Questions</label>
                             </div>
                             <div class="form-item__control">
-                                <textarea name="questions" id="questions" required></textarea>
+                                <textarea v-model="formData.message" name="questions" id="questions"></textarea>
+                                <div v-if="formErrors.message" class="notes notes--below notes--error">
+                                    {{ formErrors.message }}
+                                </div>
                             </div>
                         </div>
 
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <button type="submit" class="btn btn--blue btn--round">
-                            Send Your Questions
-                        </button>
+                        <forms-submit :processing="processing" color="blue">Send Your Questions</forms-submit>
                     </div>
                 </form>
 
                 <div class="notes text-c" style="margin-top: 1rem;">
-                    (You can also call our support line at 1-111-111-1111.)
+                    (You can also call our support line at {{ phoneNumber }}.)
                 </div>
 
             </div>
@@ -85,21 +92,97 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				processing: false,
+
+				formData: {
+					email: '',
+					firstName: '',
+					lastName: '',
+					message: '',
+				},
+
+				formErrors: {},
+			}
+		},
+		computed: {
+			phoneNumber: function () {
+				return this.$store.getters.setting('PHONE_NUMBER');
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Contact Us');
 		},
-        methods: {
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					email: {
+						label: 'Email address',
+						presence: true,
+						email: true,
+					},
+					firstName: {
+						presence: true,
+					},
+					lastName: {
+						presence: true,
+					},
+					message: {
+						label: 'Questions',
+						presence: true,
+					}
+				}
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.$router.push({ name: 'contact-response' });
-            }
-        },
+				vue.processing = true;
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.processing = false;
+				} else {
+					vue.sendMessage();
+				}
+			},
+			sendMessage: function () {
+				const vue = this;
+
+				axios.post(API_URL + 'messages', {
+					name: vue.formData.firstName + ' ' + vue.formData.lastName,
+					email: vue.formData.email,
+					message: vue.formData.message,
+					type: 'CONTACT',
+				}).then(function (response) {
+					vue.processing = false;
+					if (response.data.errorMessage) {
+						console.log(response.data);
+					} else {
+						vue.$router.push({name: 'contact-response'});
+					}
+				}).catch(function (err) {
+					vue.processing = false;
+					console.log(err);
+				});
+			}
+		},
 		components: {
+			'forms-submit': require('./../forms/Submit.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
