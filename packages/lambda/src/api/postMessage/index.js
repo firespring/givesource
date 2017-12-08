@@ -19,14 +19,26 @@ const HttpException = require('./../../exceptions/http');
 const Message = require('./../../models/message');
 const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
+const SettingsRepository = require('./../../repositories/settings');
+const SES = require('./../../aws/ses');
 
 exports.handle = function (event, context, callback) {
 	const repository = new MessagesRepository();
 	const request = new Request(event, context);
+	const settingsRepository = new SettingsRepository();
+	const ses = new SES();
 
 	const message = new Message(request._body);
 	request.validate().then(function () {
 		return message.validate();
+	}).then(function () {
+		return settingsRepository.get('CONTACT_EMAIL');
+	}).then(function (setting) {
+		if (setting) {
+			return ses.sendEmail(message, [setting.value], setting.value);
+		} else {
+			return Promise.resolve();
+		}
 	}).then(function () {
 		return repository.save(message);
 	}).then(function (model) {

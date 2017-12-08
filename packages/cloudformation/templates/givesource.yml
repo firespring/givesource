@@ -184,6 +184,14 @@ Resources:
                 - apigateway:*
               Resource: !Sub |-
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
+      - PolicyName: SES
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: '*'
     DependsOn:
       - DynamoDbStack
       - RestApi
