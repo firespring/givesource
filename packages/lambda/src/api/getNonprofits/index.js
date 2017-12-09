@@ -38,14 +38,14 @@ exports.handle = function (event, context, callback) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.select('COUNT').limit(start).index('paginatedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
 		}
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
-		builder.limit(size).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.limit(size).index('paginatedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);

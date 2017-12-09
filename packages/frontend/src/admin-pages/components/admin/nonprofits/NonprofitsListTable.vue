@@ -56,9 +56,14 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				loaded: false,
+            };
+        },
 		computed: {
 			displayRows: function () {
-				return this.nonprofits.length;
+				return this.loaded && this.nonprofits.length;
 			}
 		},
 		props: {
@@ -66,6 +71,15 @@
 				type: Array,
 				default: function () {
 					return [];
+				}
+			}
+		},
+		watch: {
+			nonprofits: function () {
+				const vue = this;
+
+				if (!vue.loaded) {
+					vue.loaded = true;
 				}
 			}
 		},
