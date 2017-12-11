@@ -77,10 +77,7 @@
 		watch: {
 			nonprofits: function () {
 				const vue = this;
-
-				if (!vue.loaded) {
-					vue.loaded = true;
-				}
+				vue.loaded = !vue.loaded;
 			}
 		},
 		components: {
