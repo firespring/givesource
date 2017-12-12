@@ -45,15 +45,15 @@ Generator.prototype._generators = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
-			amountInCents: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 			donorUuid: faker.random.uuid(),
 			isAnonymous: faker.random.boolean(),
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
+			subtotal: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 		};
-		donation.feesInCents = DonationHelper.calculateFees(donation.amountInCents, 30, 0.029);
-		donation.totalInCents = donation.isFeeCovered ? donation.amountInCents + donation.feesInCents : donation.amountInCents;
+		donation.fees = DonationHelper.calculateFees(donation.subtotal, 30, 0.029);
+		donation.total = donation.isFeeCovered ? donation.subtotal + donation.fees : donation.subtotal;
 
 		if (!donation.isOfflineDonation) {
 			donation.paymentTransactionUuid = faker.random.uuid();
@@ -94,7 +94,7 @@ Generator.prototype._generators = {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
-			path: 'uploads/' + faker.system.fileName(),
+			path: faker.system.fileName(),
 			filename: faker.system.fileName()
 		}
 	},
@@ -147,7 +147,10 @@ Generator.prototype._generators = {
 			category3: faker.random.word(),
 			city: faker.address.city(),
 			donationsCount: faker.random.number(),
-			donationsSum: faker.random.number(),
+			donationsFees: faker.random.number(),
+			donationsFeesCovered: faker.random.number(),
+			donationsSubtotal: faker.random.number(),
+			donationsTotal: faker.random.number(),
 			legalName: faker.company.companyName(),
 			longDescription: faker.lorem.paragraphs(),
 			phone: faker.phone.phoneNumber(),
@@ -189,7 +192,6 @@ Generator.prototype._generators = {
 			caption: faker.random.word(),
 			embedUrl: faker.internet.url(),
 			externalId: faker.random.word(),
-			filename: faker.random.word() + '.jpeg',
 			fileUuid: faker.random.uuid(),
 			nonprofitUuid: faker.random.uuid(),
 			sortOrder: faker.random.number(),
@@ -210,15 +212,15 @@ Generator.prototype._generators = {
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
-			creditCardCvvResult: 123,
 			creditCardExpirationMonth: 12,
 			creditCardExpirationYear: new Date().getFullYear() + 1,
-			creditCardLast4: 1234,
+			creditCardLast4: '1234',
 			creditCardName: faker.name.findName(),
-			creditCardZipCode: faker.address.zipCode(),
+			creditCardType: faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']),
 			isTestMode: faker.random.boolean(),
-			total: faker.random.number(),
-			transactionId: faker.random.alphaNumeric(10)
+			transactionAmountInCents: faker.random.number(),
+			transactionId: faker.random.alphaNumeric(10),
+			transactionStatus: 'test'
 		};
 	},
 
@@ -251,6 +253,40 @@ Generator.prototype._generators = {
 			key: faker.random.word(),
 			value: faker.random.word(),
 		}
+	},
+
+	/**
+	 * Generate random Sponsor data
+	 *
+	 * @return {Object}
+	 */
+	sponsor: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			fileUuid: faker.random.uuid(),
+			name: faker.random.word(),
+			sortOrder: faker.random.number(),
+			sponsorTierUuid: faker.random.uuid(),
+			url: faker.internet.url(),
+		};
+	},
+
+	/**
+	 * Generate random Sponsor Tier data
+	 *
+	 * @return {Object}
+	 */
+	sponsorTier: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			name: faker.random.word(),
+			size: faker.random.arrayElement(['LARGE', 'DEFAULT', 'SMALL']),
+			sortOrder: faker.random.number(),
+		};
 	},
 
 	/**

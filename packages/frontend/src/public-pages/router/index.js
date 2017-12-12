@@ -100,68 +100,13 @@ const router = new VueRouter({
 			name: 'register-response',
 			component: require('./../components/register/response/RegisterResponse.vue')
 		},
-
-		// Nonprofit
-		{
-			path: '/nonprofits/demo',
-			name: 'nonprofit-landing-page-demo',
-			props: true,
-			component: require('./../components/nonprofits/Nonprofit.vue'),
-			meta: {
-				nonprofit: {
-					legalName: 'Demo Nonprofit',
-					longDescription: `<p>Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results. Professionally revolutionize parallel experiences rather than excellent markets.</p>
-						<p>Intrinsicly benchmark mission-critical technologies through business customer service. Enthusiastically formulate e-business core competencies without installed base "outside the box" thinking. Uniquely architect state of the art human capital via out-of-the-box models.</p>
-						<p>Credibly monetize virtual internal or "organic" sources whereas corporate total linkage. Holisticly enhance client-centric information with ethical communities. Phosfluorescently predominate plug-and-play e-services for flexible channels.</p>
-						<p>Intrinsicly monetize equity invested e-services whereas cutting-edge products. Distinctively target user-centric human capital vis-a-vis high standards in imperatives. Competently myocardinate next-generation opportunities and seamless resources.</p>
-						<p>Seamlessly maximize multidisciplinary methods of empowerment for holistic interfaces. Energistically repurpose stand-alone outsourcing rather than principle-centered growth strategies. Uniquely actualize multimedia based ideas through open-source systems.</p>
-						<p>Globally re-engineer innovative total linkage and holistic methodologies. Competently reintermediate quality deliverables through plug-and-play schemas. Enthusiastically foster standardized results rather than fully tested vortals.</p>
-						<p>Holisticly morph market positioning scenarios rather than emerging action items. Intrinsicly reinvent bricks-and-clicks data with exceptional models. Progressively build maintainable interfaces before revolutionary testing procedures.</p>
-						<p>Distinctively engineer intuitive innovation via virtual potentialities.</p>`,
-					shortDescription: 'Help us to serve artists and the public from our new home. Every dollar will be matched by the Hufflepuff Foundation, doubling your support!',
-					donationsCount: 254,
-					donationsSum: 12345,
-				},
-				slides: [
-					{
-						type: 'IMAGE',
-						url: `../assets/temp/slide1.jpg`,
-					},
-					{
-						type: 'VIMEO',
-						embedUrl: 'https://player.vimeo.com/video/167469368',
-					},
-					{
-						type: 'YOUTUBE',
-						embedUrl: 'https://www.youtube.com/embed/ragvMBsspms'
-					}
-				],
-				tiers: [
-					{
-						amount: 10000,
-						description: 'Intrinsicly enable ubiquitous opportunities for 24/365 data. Interactively predominate just in time communities via tactical e-tailers.'
-					},
-					{
-						amount: 5000,
-						description: 'Dynamically restore an expanded array of e-markets before leveraged technologies.'
-					},
-					{
-						amount: 2500,
-						description: 'Completely orchestrate impactful metrics after prospective infomediaries.'
-					},
-					{
-						amount: 1000,
-						description: 'Enthusiastically network frictionless solutions and high-payoff total linkage.'
-					}
-				]
-			}
-		},
 		{
 			path: '/nonprofits/:slug',
 			name: 'nonprofit-landing-page',
 			props: true,
 			component: require('./../components/nonprofits/Nonprofit.vue'),
 			meta: {
+				files: [],
 				nonprofit: {},
 				slides: [],
 				tiers: []
@@ -176,7 +121,17 @@ const router = new VueRouter({
 						return a.sortOrder - b.sortOrder;
 					});
 					to.meta.slides = response.data;
-				}).then(function () {
+					const uuids = [];
+					to.meta.slides.forEach(function (slide) {
+						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
+							uuids.push(slide.fileUuid);
+						}
+					});
+					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
+						uuids: uuids
+					}));
+				}).then(function (response) {
+					to.meta.files = response.data;
 					return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/tiers');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
@@ -209,7 +164,8 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'ADMIN_PAGES_CLOUDFRONT_URL'
+		'ADMIN_PAGES_CLOUDFRONT_URL',
+		'UPLOADS_CLOUDFRONT_URL'
 	];
 
 	return axios.get('/settings.json').then(function (response) {

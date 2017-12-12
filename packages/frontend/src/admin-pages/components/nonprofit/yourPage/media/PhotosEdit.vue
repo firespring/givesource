@@ -53,13 +53,13 @@
                                     </div>
                                     <div class="c-alert c-alert--expand c-alert--neutral u-flex u-justify-center">
                                         <div class="c-alert__body u-flex u-flex-column u-items-center">
-                                            <img :src="formData.url" alt="" style="width: auto; max-height: 443px;">
+                                            <img :src="imageUrl" :alt="formData.caption" style="width: auto; max-height: 443px;">
                                             <div class="c-btn-group u-margin-top-thin">
-                                                <a :href="formData.url" target="_blank" rel="noreferrer noopener" role="button"
+                                                <a :href="imageUrl" target="_blank" rel="noreferrer noopener" role="button"
                                                    class="c-btn c-btn--sm c-btn--icon c-btn--flat c-btn--reverse">
                                                     <i class="fa fa-search" aria-hidden="true"></i>View Image
                                                 </a>
-                                                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none">
+                                                <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*">
                                                 <a v-on:click="replaceImage" href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--flat c-btn--reverse">
                                                     <i class="fa fa-refresh" aria-hidden="true"></i>Replace Image
                                                 </a>
@@ -101,7 +101,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				file: null,
+				file: {},
+				newFile: null,
 				slide: {},
 				nonprofit: {},
 
@@ -119,6 +120,9 @@
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
+			imageUrl: function () {
+				return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + this.file.path : false;
+			}
 		},
 		props: [
 			'nonprofitUuid',
@@ -137,11 +141,10 @@
 			slide: {
 				handler: function () {
 					const vue = this;
-
 					vue.formData = vue.sync(vue.formData, vue.slide);
 				},
 				deep: true
-			}
+			},
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
@@ -150,6 +153,15 @@
 					return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
 				}).then(function (response) {
 					vm.slide = response.data;
+					if (vm.slide.fileUuid) {
+						return axios.get(API_URL + 'files/' + vm.slide.fileUuid);
+					} else {
+						return Promise.resolve(null);
+					}
+				}).then(function (response) {
+					if (response) {
+						vm.file = response.data;
+					}
 				});
 			});
 		},
@@ -161,7 +173,15 @@
 				return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
 			}).then(function (response) {
 				vue.slide = response.data;
-			}).then(function () {
+				if (vue.slide.fileUuid) {
+					return axios.get(API_URL + 'files/' + vue.slide.fileUuid);
+				} else {
+					return Promise.resolve(null);
+				}
+			}).then(function (response) {
+				if (response) {
+					vue.file = response.data;
+				}
 				next();
 			}).catch(function () {
 				console.log(err);
@@ -209,11 +229,11 @@
 			cancel: function () {
 				const vue = this;
 
-				if (vue.file) {
+				if (vue.newFile) {
 					vue.addModal('spinner');
-					axios.delete(API_URL + 'files/' + vue.file.uuid).then(function () {
+					axios.delete(API_URL + 'files/' + vue.newFile.uuid).then(function () {
 						vue.clearModals();
-						vue.file = null;
+						vue.newFile = null;
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 					}).catch(function (err) {
 						vue.clearModals();
@@ -227,9 +247,9 @@
 				event.preventDefault();
 				const vue = this;
 
-				if (vue.file) {
-					axios.delete(API_URL + 'files/' + vue.file.uuid).then(function () {
-						vue.file = null;
+				if (vue.newFile) {
+					axios.delete(API_URL + 'files/' + vue.newFile.uuid).then(function () {
+						vue.newFile = null;
 					}).catch(function (err) {
 						console.log(err);
 					});
@@ -239,8 +259,10 @@
 			},
 			onFileChange: function (event) {
 				const vue = this;
+
+				const extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
+				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.split('.').pop()) > -1) {
 					vue.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-Edit',
@@ -259,7 +281,7 @@
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
-					vue.file = response.data.file;
+					vue.newFile = response.data.file;
 					const signedUrl = response.data.upload_url;
 
 					const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
@@ -270,7 +292,7 @@
 					return instance.put(signedUrl, file);
 				}).then(function () {
 					vue.clearModals();
-					vue.formData.url = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path;
+					vue.file = vue.newFile;
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
@@ -280,9 +302,8 @@
 				const vue = this;
 				const params = {};
 
-				if (vue.file) {
-					params['url'] = vue.formData.url;
-					params['fileUuid'] = vue.file.uuid;
+				if (vue.newFile) {
+					params['fileUuid'] = vue.newFile.uuid;
 				}
 
 				if (vue.formData.caption !== vue.slide.caption) {
@@ -295,7 +316,7 @@
 				}
 
 				axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + vue.slideUuid, params).then(function () {
-					if (vue.file) {
+					if (vue.newFile) {
 						return axios.delete(API_URL + 'files/' + vue.slide.fileUuid);
 					}
 				}).then(function () {

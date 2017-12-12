@@ -49,7 +49,10 @@ Nonprofit.prototype.attributes = [
 	'category3',
 	'city',
 	'donationsCount',
-	'donationsSum',
+	'donationsFees',
+	'donationsFeesCovered',
+	'donationsSubtotal',
+	'donationsTotal',
 	'legalName',
 	'longDescription',
 	'phone',
@@ -101,7 +104,19 @@ Nonprofit.prototype.constraints = {
 			onlyInteger: true
 		}
 	},
-	donationsSum: {
+	donationsFees: {
+		presence: true,
+		numericality: true
+	},
+	donationsFeesCovered: {
+		presence: true,
+		numericality: true
+	},
+	donationsSubtotal: {
+		presence: true,
+		numericality: true
+	},
+	donationsTotal: {
 		presence: true,
 		numericality: true
 	},
@@ -151,7 +166,10 @@ Nonprofit.prototype.constraints = {
 Nonprofit.prototype.defaults = function () {
 	return {
 		donationsCount: 0,
-		donationsSum: 0,
+		donationsFees: 0,
+		donationsFeesCovered: 0,
+		donationsSubtotal: 0,
+		donationsTotal: 0,
 		status: NonprofitHelper.STATUS_PENDING
 	};
 };

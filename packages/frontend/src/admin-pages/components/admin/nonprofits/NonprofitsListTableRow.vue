@@ -124,7 +124,7 @@
 		        return new Date(this.nonprofit.createdOn).toLocaleTimeString();
 	        },
             donationAmount: function () {
-	        	return numeral(this.nonprofit.donationsSum / 100).format('$0,0.00');
+	        	return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,0.00');
             }
         },
 		props: [

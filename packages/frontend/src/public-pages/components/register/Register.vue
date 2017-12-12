@@ -27,7 +27,8 @@
                 <p>
                     We invite nonprofit organizations in the Greater Area to join Give To City Day by registering to participate.
                     Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                    <router-link :to="{ name: 'about' }">please visit the About page</router-link>.
+                    <router-link :to="{ name: 'about' }">please visit the About page</router-link>
+                    .
                 </p>
 
                 <form v-on:submit="submit">
@@ -35,34 +36,44 @@
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orgLegalName">Organization Legal Name</label>
+                                <label for="legalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="orgLegalName" id="orgLegalName" required>
+                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200">
+                                <div v-if="formErrors.legalName" class="notes notes--below notes--error">
+                                    {{ formErrors.legalName }}
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
                                 <label for="taxId">Tax ID</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="text" name="taxId" id="taxId" required>
+                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200">
+                                <div v-if="formErrors.taxId" class="notes notes--below notes--error">
+                                    {{ formErrors.taxId }}
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="contactNameFirst">Contact Name</label>
+                                <label for="firstName">Contact Name</label>
                             </div>
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input type="text" name="contactNameFirst" id="contactNameFirst" placeholder="First Name" required>
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name">
                                     </div>
                                     <div class="grid-item">
-                                        <input type="text" name="contactNameLast" id="contactNameLast" placeholder="Last Name" required>
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last">
                                     </div>
+                                </div>
+                                <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
+                                    You must enter a first name and last name
                                 </div>
                             </div>
                         </div>
@@ -72,106 +83,72 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="email" name="contactEmail" id="contactEmail" required>
+                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200">
+                                <div v-if="formErrors.email" class="notes notes--below notes--error">
+                                    {{ formErrors.email }}
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-item form-item--address form-item--required">
                             <div class="form-item__label">
-                                <label for="orgAddress1">Organization Address</label>
+                                <label for="address1">Organization Address</label>
                             </div>
+
                             <div class="form-item__control">
 
+
                                 <div class="address1">
-                                    <input type="text" name="orgAddress1" id="orgAddress1" placeholder="Address Line 1" required>
+                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1">
+                                    <div v-if="formErrors.address1" class="notes notes--below notes--error">
+                                        {{ formErrors.address1 }}
+                                    </div>
                                 </div>
+
 
                                 <div class="address2">
-                                    <input type="text" name="orgAddress2" id="orgAddress2" placeholder="Address Line 2">
+                                    <input v-model="formData.address2" type="text" name="address2" id="address2" placeholder="Address Line 2">
                                 </div>
 
+
                                 <div class="address3">
-                                    <input type="text" name="orgAddress3" id="orgAddress3" placeholder="Address Line 3">
+                                    <input v-model="formData.address3" type="text" name="address3" id="address3" placeholder="Address Line 3">
                                 </div>
+
 
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input type="text" name="orgCity" id="orgCity" placeholder="City" required>
+                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City">
                                     </div>
 
                                     <div class="city-state-zip__state select-wrap">
-                                        <select name="orgState" id="orgState" required>
-                                            <option value="">State</option>
-                                            <option value="" disabled="disabled">-----</option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="AK">Alaska</option>
-                                            <option value="AZ">Arizona</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="CA">California</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="HI">Hawaii</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                            <option value="LA">Louisiana</option>
-                                            <option value="ME">Maine</option>
-                                            <option value="MD">Maryland</option>
-                                            <option value="MA">Massachusetts</option>
-                                            <option value="MI">Michigan</option>
-                                            <option value="MN">Minnesota</option>
-                                            <option value="MS">Mississippi</option>
-                                            <option value="MO">Missouri</option>
-                                            <option value="MT">Montana</option>
-                                            <option value="NE">Nebraska</option>
-                                            <option value="NV">Nevada</option>
-                                            <option value="NH">New Hampshire</option>
-                                            <option value="NJ">New Jersey</option>
-                                            <option value="NM">New Mexico</option>
-                                            <option value="NY">New York</option>
-                                            <option value="NC">North Carolina</option>
-                                            <option value="ND">North Dakota</option>
-                                            <option value="OH">Ohio</option>
-                                            <option value="OK">Oklahoma</option>
-                                            <option value="OR">Oregon</option>
-                                            <option value="PA">Pennsylvania</option>
-                                            <option value="RI">Rhode Island</option>
-                                            <option value="SC">South Carolina</option>
-                                            <option value="SD">South Dakota</option>
-                                            <option value="TN">Tennessee</option>
-                                            <option value="TX">Texas</option>
-                                            <option value="UT">Utah</option>
-                                            <option value="VT">Vermont</option>
-                                            <option value="VA">Virginia</option>
-                                            <option value="WA">Washington</option>
-                                            <option value="WV">West Virginia</option>
-                                            <option value="WI">Wisconsin</option>
-                                            <option value="WY">Wyoming</option>
-                                        </select>
+                                        <forms-address-state v-model="formData.state" name="state" id="state" placeholder="State"></forms-address-state>
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input type="text" name="orgZip" id="orgZip" placeholder="ZIP" required>
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP">
                                     </div>
 
                                 </div>
 
+                            </div>
+
+                            <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
+                                You must enter a city, state and zip code
                             </div>
                         </div>
 
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
-                                <label for="orgPhone">Organization Phone Number</label>
+                                <label for="phone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input type="tel" name="orgPhone" id="orgPhone" required>
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone">
+                                <div v-if="formErrors.phone" class="notes notes--below notes--error">
+                                    {{ formErrors.phone }}
+                                </div>
+
                             </div>
                         </div>
 
@@ -180,211 +157,17 @@
                                 Organization Categories (Check up to 3)
                             </div>
                             <div class="form-item__control">
-                                <div class="grid">
-                                    <div class="grid-item">
-                                        <ul class="list-plain list-checkbox">
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="1">
-                                                    <span>Animal-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="2">
-                                                    <span>Arts, Culture &amp; Humanities</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="3">
-                                                    <span>Children &amp; Families</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="4">
-                                                    <span>Civil Rights, Social Action &amp; Advocacy</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="5">
-                                                    <span>Community Improvement &amp; Capacity Building</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="6">
-                                                    <span>Crime &amp; Legal-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="7">
-                                                    <span>Diseases, Disorders &amp; Medical Disciplines</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="8">
-                                                    <span>Education-Early Childhood</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="9">
-                                                    <span>Education-Higher Education</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="10">
-                                                    <span>Education-K-12</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="11">
-                                                    <span>Environment</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="12">
-                                                    <span>Food, Agriculture &amp; Nutrition</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="13">
-                                                    <span>Health Care</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="14">
-                                                    <span>Housing &amp; Shelter</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="15">
-                                                    <span>Human Services</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="16">
-                                                    <span>International, Foreign Affairs &amp; National Security</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="grid-item">
-                                        <ul class="list-plain list-checkbox">
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="17">
-                                                    <span>Library &amp; Literacy Programs</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="18">
-                                                    <span>Medical Research</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="19">
-                                                    <span>Mental Health &amp; Crisis Intervention</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="20">
-                                                    <span>Mutual &amp; Membership Benefit</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="21">
-                                                    <span>Older Adults</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="22">
-                                                    <span>Philanthropy, Voluntarism &amp; Grantmaking Foundations</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="23">
-                                                    <span>Politics &amp; Public Administration</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="24">
-                                                    <span>Public &amp; Societal Benefit</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="25">
-                                                    <span>Public Safety, Disaster Preparedness &amp; Relief</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="26">
-                                                    <span>Recreation &amp; Sports</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="27">
-                                                    <span>Religion-Related</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="28">
-                                                    <span>Science &amp; Technology</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="29">
-                                                    <span>Veterans Support</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="30">
-                                                    <span>Women</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="category[]" value="31">
-                                                    <span>Youth Development</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div v-if="formErrors.categories" class="notes notes--above notes--error">
+                                    {{ formErrors.categories }}
                                 </div>
+                                <forms-nonprofit-category v-model="formData.categories"></forms-nonprofit-category>
                             </div>
                         </div>
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <button type="submit" class="btn btn--blue btn--round">Register Now</button>
+                        <forms-submit :processing="processing" color="blue">Register Now</forms-submit>
                     </div>
-
                 </form>
             </div>
         </main>
@@ -397,24 +180,162 @@
 
 <script>
 	module.exports = {
+		data: function () {
+			return {
+				processing: false,
+
+				formData: {
+					legalName: '',
+					taxId: '',
+					address1: '',
+					address2: '',
+					address3: '',
+					city: '',
+					state: '',
+					zip: '',
+					phone: '',
+					categories: [],
+					firstName: '',
+					lastName: '',
+					email: '',
+				},
+
+				formErrors: {},
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Give To Our City - Register');
 		},
-        methods: {
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					legalName: {
+						presence: true,
+					},
+					taxId: {
+						presence: true,
+					},
+					address1: {
+						label: 'Address line 1',
+						presence: true,
+					},
+					address2: {
+						label: 'Address line 2',
+						presence: false,
+					},
+					address3: {
+						label: 'Address line 3',
+						presence: false,
+					},
+					categories: {
+						label: '',
+						presence: {
+							message: 'You must select at least one category'
+						},
+						length: {
+							minimum: 1,
+							maximum: 3,
+							tooLong: 'You can only select up to three categories'
+						}
+					},
+					city: {
+						presence: true,
+					},
+					state: {
+						presence: true,
+					},
+					zip: {
+						label: 'Zip',
+						presence: true,
+					},
+					phone: {
+						label: 'Organization Phone Number',
+						presence: true,
+					},
+
+					firstName: {
+						presence: true,
+					},
+					lastName: {
+						presence: true,
+					},
+					email: {
+						label: 'Email address',
+						presence: true,
+						email: true,
+					}
+				}
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.$router.push({ name: 'register-response' });
-            }
-        },
+				vue.processing = true;
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.processing = false;
+				} else {
+					vue.registerNonprofit();
+				}
+			},
+			registerNonprofit: function () {
+				const vue = this;
+
+				axios.post(API_URL + 'nonprofits/register', {
+					nonprofit: {
+						legalName: vue.formData.legalName,
+						taxId: vue.formData.taxId,
+						address1: vue.formData.address1,
+						address2: vue.formData.address2,
+						address3: vue.formData.address3,
+						city: vue.formData.city,
+						state: vue.formData.state,
+						zip: vue.formData.zip,
+						phone: vue.formData.phone,
+						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : null,
+						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : null,
+						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : null,
+
+					},
+					user: {
+						firstName: vue.formData.firstName,
+						lastName: vue.formData.lastName,
+						email: vue.formData.email
+					}
+				}).then(function (response) {
+					vue.processing = false;
+					if (response.data.errorMessage) {
+						console.log(response.data);
+					} else {
+						vue.$router.push({name: 'register-response'});
+					}
+				}).catch(function (err) {
+					vue.processing = false;
+					console.log(err);
+				});
+			},
+		},
 		components: {
+			'forms-address-state': require('./../forms/AddressState.vue'),
+			'forms-nonprofit-category': require('./../forms/NonprofitCategory.vue'),
+			'forms-submit': require('./../forms/Submit.vue'),
 			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
+			'layout-hero': require('./../layout/Hero.vue'),
+			'layout-sponsors': require('./../layout/Sponsors.vue'),
 		}
 	};
 </script>

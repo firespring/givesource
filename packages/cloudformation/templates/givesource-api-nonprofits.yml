@@ -215,35 +215,34 @@ Resources:
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}
     DependsOn: DeleteNonprofitLambdaFunction
 
-  AdminRegisterNonprofitLambdaFunction:
+  RegisterNonprofitLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/AdminRegisterNonprofit.zip
+        S3Key: fn/{{version}}/RegisterNonprofit.zip
       Description: "Register a new nonprofit and User"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          USER_POOL_ID: !Ref UserPoolId
       FunctionName: !Sub |-
-        ${StackName}-AdminRegisterNonprofit
+        ${StackName}-RegisterNonprofit
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  AdminRegisterNonprofitLambdaInvokePermission:
+  RegisterNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt AdminRegisterNonprofitLambdaFunction.Arn
+      FunctionName: !GetAtt RegisterNonprofitLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/register
-    DependsOn: AdminRegisterNonprofitLambdaFunction
+    DependsOn: RegisterNonprofitLambdaFunction
 
   # Nonprofit Donations Lambda Resources
 
@@ -539,6 +538,38 @@ Resources:
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/tiers
     DependsOn: DeleteNonprofitDonationTiersLambdaFunction
 
+  # Nonprofit Admin Lambda Resources
+
+  NonprofitsAdminRegisterLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/AdminRegisterNonprofit.zip
+      Description: "Register a new nonprofit and User"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          USER_POOL_ID: !Ref UserPoolId
+      FunctionName: !Sub |-
+        ${StackName}-AdminRegisterNonprofit
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  NonprofitsAdminRegisterLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt NonprofitsAdminRegisterLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/admin/register
+    DependsOn: NonprofitsAdminRegisterLambdaFunction
+
   # Nonprofit Pages Lambda Resources
 
   GetNonprofitPageLambdaFunction:
@@ -823,7 +854,7 @@ Resources:
       ParentId: !Ref NonprofitsApiResource
       PathPart: "{nonprofit_uuid}"
 
-  AdminRegisterNonprofitsApiResource:
+  NonprofitsRegisterApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestApi
@@ -1190,11 +1221,11 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: DeleteNonprofitLambdaFunction
 
-  AdminRegisterNonprofitApiMethod:
+  NonprofitsRegisterApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref AdminRegisterNonprofitsApiResource
+      ResourceId: !Ref NonprofitsRegisterApiResource
       HttpMethod: POST
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -1206,7 +1237,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt AdminRegisterNonprofitLambdaFunction.Arn
+          - Function: !GetAtt RegisterNonprofitLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 200
             ResponseParameters:
@@ -1260,7 +1291,7 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: AdminRegisterNonprofitLambdaFunction
+    DependsOn: RegisterNonprofitLambdaFunction
 
   OptionsNonprofitsApiMethod:
     Type: AWS::ApiGateway::Method
@@ -1312,11 +1343,11 @@ Resources:
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
 
-  OptionsAdminRegisterNonprofitApiMethod:
+  OptionsNonprofitsRegisterApiMethod:
       Type: AWS::ApiGateway::Method
       Properties:
         RestApiId: !Ref RestApi
-        ResourceId: !Ref AdminRegisterNonprofitsApiResource
+        ResourceId: !Ref NonprofitsRegisterApiResource
         HttpMethod: OPTIONS
         AuthorizationType: NONE
         ApiKeyRequired: false
@@ -2188,6 +2219,119 @@ Resources:
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
+
+  # Nonprofit Admin Api Gateway Resources
+
+  NonprofitsAdminApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref NonprofitsApiResource
+      PathPart: "admin"
+
+  NonprofitsAdminRegisterApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref NonprofitsAdminApiResource
+      PathPart: "register"
+
+  NonprofitsAdminRegisterApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref NonprofitsAdminRegisterApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt NonprofitsAdminRegisterLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: NonprofitsAdminRegisterLambdaFunction
+
+  OptionsNonprofitsAdminRegisterApiMethod:
+        Type: AWS::ApiGateway::Method
+        Properties:
+          RestApiId: !Ref RestApi
+          ResourceId: !Ref NonprofitsAdminRegisterApiResource
+          HttpMethod: OPTIONS
+          AuthorizationType: NONE
+          ApiKeyRequired: false
+          Integration:
+            Type: MOCK
+            RequestTemplates:
+              application/json: !Ref SuccessResponseTemplate
+            IntegrationResponses:
+              - StatusCode: 200
+                ResponseParameters:
+                  method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+                  method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+                  method.response.header.Access-Control-Allow-Origin: "'*'"
+          MethodResponses:
+            - StatusCode: 200
+              ResponseParameters:
+                method.response.header.Access-Control-Allow-Headers: true
+                method.response.header.Access-Control-Allow-Methods: true
+                method.response.header.Access-Control-Allow-Origin: true
 
   # Nonprofit Pages Api Gateway Resources
 

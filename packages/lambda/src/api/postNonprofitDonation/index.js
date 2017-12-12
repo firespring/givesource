@@ -18,20 +18,36 @@
 const Donation = require('./../../models/donation');
 const HttpException = require('./../../exceptions/http');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
+const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitDonationsRepository();
+	const donationsRepository = new NonprofitDonationsRepository();
+	const nonprofitsRepository = new NonprofitsRepository();
 	const request = new Request(event, context);
 
-	const donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+	let nonprofit = null;
+	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_uuid')});
 	request.validate().then(function () {
 		donation.populate(request._body);
 		return donation.validate();
 	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_uuid'), donation);
-	}).then(function (model) {
-		callback(null, model.all());
+		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
+	}).then(function (response) {
+		nonprofit = response;
+		nonprofit.donationsCount = nonprofit.donationsCount + 1;
+		nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
+		nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
+		nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
+		nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
+		return nonprofit.validate();
+	}).then(function () {
+		return donationsRepository.save(request.urlParam('nonprofit_uuid'), donation);
+	}).then(function (response) {
+		donation = response;
+		return nonprofitsRepository.save(nonprofit);
+	}).then(function () {
+		callback(null, donation.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

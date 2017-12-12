@@ -171,13 +171,13 @@
                     </div>
 
                     <div class="pagination flex justify-center items-center">
-                        <a href="#" class="prev"><i class="fa fa-fw fa-chevron-left" aria-hidden="true"></i>Prev</a>
+                        <a href="#" class="prev"><i class="fa fa-fw fa-angle-left" aria-hidden="true"></i><span>Prev</span></a>
                         <a href="#" class="here">1</a>
                         <a href="#">2</a>
                         <a href="#">3</a>
                         <a href="#">4</a>
                         <a href="#">5</a>
-                        <a href="#" class="next">Next<i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i></a>
+                        <a href="#" class="next">Next<i class="fa fa-fw fa-angle-right" aria-hidden="true"></i></a>
                     </div>
                 </div>
 

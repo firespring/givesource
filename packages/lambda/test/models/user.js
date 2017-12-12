@@ -16,7 +16,6 @@
  */
 
 const assert = require('assert');
-const sinon = require('sinon');
 const Model = require('../../src/models/model');
 const User = require('../../src/models/user');
 const TestHelper = require('../helpers/test');
@@ -63,14 +62,14 @@ describe('User', function () {
 			{model: TestHelper.generate.model('user'), param: 'isDeleted', value: 123456, error: true},
 			{model: TestHelper.generate.model('user'), param: 'isDeleted', value: 0, error: false},
 			{model: TestHelper.generate.model('user'), param: 'isDeleted', value: 1, error: false},
-			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: null, error: true},
-			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: '', error: true},
+			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: null, error: false},
+			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: '', error: false},
 			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: '123456', error: true},
 			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false},
 			{model: TestHelper.generate.model('user'), param: 'cognitoUuid', value: 123456, error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: null, error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: '', error: true},
-			{model: TestHelper.generate.model('user'), param: 'email', value: 'alex.woodward@firespring.org', error: false},
+			{model: TestHelper.generate.model('user'), param: 'email', value: 'test@email.com', error: false},
 			{model: TestHelper.generate.model('user'), param: 'email', value: 'test', error: true},
 			{model: TestHelper.generate.model('user'), param: 'email', value: 123456, error: true},
 			{model: TestHelper.generate.model('user'), param: 'firstName', value: null, error: false},

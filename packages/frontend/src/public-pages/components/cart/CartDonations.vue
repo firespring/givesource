@@ -33,7 +33,7 @@
                 </div>
                 <div>
                     <label class="checkbox-solo">
-                        <input v-model="coverFees" type="checkbox" name="coverDonationFees" id="coverDonationFees">
+                        <input v-model="localValue" type="checkbox" name="coverDonationFees" id="coverDonationFees">
                         <span>Yes, I'll donate an extra {{ fees }} to cover transaction fees</span>
                     </label>
                 </div>
@@ -50,7 +50,7 @@
     module.exports = {
     	data: function () {
     		return {
-    			coverFees: false,
+    			localValue: false,
 
 			    donationFees: 0,
                 donationSubtotal: 0,
@@ -60,7 +60,7 @@
 	        donationTotal: function () {
 		        const vue = this;
 
-		        if (vue.coverFees) {
+		        if (vue.localValue) {
 			        return this.donationFees + this.donationSubtotal;
 		        } else {
 			        return this.donationSubtotal;
@@ -100,48 +100,26 @@
     		vue.bus.$off('updateCartItems');
         },
         watch: {
-	        donationFees: function (value, oldValue) {
+	        localValue: function (value, oldValue) {
 		        const vue = this;
-
 		        if (value === oldValue) {
 			        return;
 		        }
-		        vue.$emit('input', {
-		        	fees: vue.donationFees,
-		        	subtotal: vue.donationSubtotal,
-                    total: vue.donationTotal
-		        });
+		        vue.$emit('input', value);
 	        },
-	        donationSubtotal: function (value, oldValue) {
+	        value: function (value, oldValue) {
 		        const vue = this;
-
 		        if (value === oldValue) {
 			        return;
 		        }
-		        vue.$emit('input', {
-			        fees: vue.donationFees,
-			        subtotal: vue.donationSubtotal,
-			        total: vue.donationTotal
-		        });
-	        },
-	        donationTotal: function (value, oldValue) {
-    			const vue = this;
-
-    			if (value === oldValue) {
-    				return;
-                }
-		        vue.$emit('input', {
-			        fees: vue.donationFees,
-			        subtotal: vue.donationSubtotal,
-			        total: vue.donationTotal
-		        });
-            }
+		        vue.localValue = value;
+	        }
         },
         methods: {
     		updateDonationsSubtotal: function () {
     			const vue = this;
 
-			    const cartItems = vue.$store.state.cartItems;
+			    const cartItems = vue.$store.getters.cartItems;
 
                 vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
 			    vue.donationSubtotal = 0;

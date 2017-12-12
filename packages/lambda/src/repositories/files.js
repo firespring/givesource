@@ -79,6 +79,34 @@ FilesRepository.prototype.getAll = function () {
 };
 
 /**
+ * Get Files by uuids
+ *
+ * @param {[]} uuids
+ * @return {Promise}
+ */
+FilesRepository.prototype.batchGet = function (uuids) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		if (!uuids) {
+			reject(new Error('uuids is undefined'));
+		}
+		const map = [];
+		uuids.forEach(function (value) {
+			map.push({uuid: value});
+		});
+		repository.batchGetKeys(map).then(function (data) {
+			let results = [];
+			data.forEach(function (item) {
+				results.push(new File(item));
+			});
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Delete a File
  *
  * @param {String} uuid

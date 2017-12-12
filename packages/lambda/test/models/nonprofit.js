@@ -44,9 +44,24 @@ describe('Nonprofit', function () {
 			assert.equal(model.donationsCount, 0);
 		});
 
-		it('should generate donationsSum', function () {
+		it('should generate donationsFees', function () {
 			let model = new Nonprofit();
-			assert.equal(model.donationsSum, 0);
+			assert.equal(model.donationsFees, 0);
+		});
+
+		it('should generate donationsFeesCovered', function () {
+			let model = new Nonprofit();
+			assert.equal(model.donationsFeesCovered, 0);
+		});
+
+		it('should generate donationsSubtotal', function () {
+			let model = new Nonprofit();
+			assert.equal(model.donationsSubtotal, 0);
+		});
+
+		it('should generate donationsTotal', function () {
+			let model = new Nonprofit();
+			assert.equal(model.donationsTotal, 0);
 		});
 
 		it('should generate status', function () {
@@ -110,10 +125,22 @@ describe('Nonprofit', function () {
 			{model: TestHelper.generate.model('nonprofit'), param: 'donationsCount', value: '', error: true},
 			{model: TestHelper.generate.model('nonprofit'), param: 'donationsCount', value: 'test', error: true},
 			{model: TestHelper.generate.model('nonprofit'), param: 'donationsCount', value: 123456, error: false},
-			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSum', value: null, error: true},
-			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSum', value: '', error: true},
-			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSum', value: 'test', error: true},
-			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSum', value: 123456, error: false},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFees', value: null, error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFees', value: '', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFees', value: 'test', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFees', value: 123456, error: false},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFeesCovered', value: null, error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFeesCovered', value: '', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFeesCovered', value: 'test', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsFeesCovered', value: 123456, error: false},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSubtotal', value: null, error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSubtotal', value: '', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSubtotal', value: 'test', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsSubtotal', value: 123456, error: false},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsTotal', value: null, error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsTotal', value: '', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsTotal', value: 'test', error: true},
+			{model: TestHelper.generate.model('nonprofit'), param: 'donationsTotal', value: 123456, error: false},
 			{model: TestHelper.generate.model('nonprofit'), param: 'legalName', value: null, error: true},
 			{model: TestHelper.generate.model('nonprofit'), param: 'legalName', value: '', error: true},
 			{model: TestHelper.generate.model('nonprofit'), param: 'legalName', value: 'test', error: false},

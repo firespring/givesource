@@ -54,7 +54,7 @@ User.prototype.attributes = [
  */
 User.prototype.constraints = {
 	cognitoUuid: {
-		presence: true,
+		presence: false,
 		uuid: 4
 	},
 	email: {

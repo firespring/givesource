@@ -43,9 +43,15 @@
 	const MediaHelper = require('./../../../../helpers/media');
 
 	module.exports = {
-		props: [
-			'slide'
-		],
+		props: {
+			file: {
+				type: Object,
+				default: function () {
+					return {};
+				},
+			},
+			slide: {},
+		},
 		computed: {
 			icon: function () {
 				const vue = this;
@@ -81,7 +87,7 @@
 						return vue.slide.caption || vue.slide.url;
 					case MediaHelper.TYPE_IMAGE:
 					default:
-						return vue.slide.caption || vue.slide.filename;
+						return vue.slide.caption || vue.file.filename;
 				}
 			},
 			imageSrc: function () {
@@ -93,7 +99,7 @@
 						return vue.slide.thumbnail;
 					case MediaHelper.TYPE_IMAGE:
 					default:
-						return vue.slide.url;
+						return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path;
 				}
 			}
 		},

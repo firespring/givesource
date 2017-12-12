@@ -27,4 +27,6 @@ exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;
 exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
 exports.ReportsTable = `${stackName}-Reports`;
 exports.SettingsTable = `${stackName}-Settings`;
+exports.SponsorsTable = `${stackName}-Sponsors`;
+exports.SponsorTiersTable = `${stackName}-SponsorTiers`;
 exports.UsersTable = `${stackName}-Users`;

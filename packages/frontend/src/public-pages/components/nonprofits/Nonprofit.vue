@@ -33,7 +33,7 @@
                         <div class="nonprofit-campaign__donation">
                             <div class="donation-metrics">
                                 <div class="donation-metrics__raised">
-                                    <div class="num">{{ formatMoney(nonprofit.donationsSum) }}</div>
+                                    <div class="num">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                                     <div class="caption">Raised</div>
                                 </div>
 
@@ -62,8 +62,9 @@
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
                             <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;">
-                                <img v-if="slide.type === 'IMAGE'" alt="" :src="slide.url">
-                                <iframe v-else :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                <img v-if="slide.type === 'IMAGE'" alt="" :src="getImageUrl(slide.fileUuid)">
+                                <iframe v-else :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                        allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
@@ -82,25 +83,27 @@
 </template>
 
 <script>
-    require('fireSlider.js/dist/jquery.fireSlider.velocity');
+	require('fireSlider.js/dist/jquery.fireSlider.velocity');
 
 	module.exports = {
 		data: function () {
 			return {
+				files: [],
 				nonprofit: {},
-				slides: []
+				slides: [],
 			}
 		},
-        props: [
-        	'slug'
-        ],
-        beforeMount: function () {
+		props: [
+			'slug'
+		],
+		beforeMount: function () {
 			const vue = this;
 
-	        vue.setBodyClasses('donation', 'donation--nonprofit');
-        },
+			vue.setBodyClasses('donation', 'donation--nonprofit');
+		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
+				vm.files = to.meta.files;
 				vm.nonprofit = to.meta.nonprofit;
 				vm.slides = to.meta.slides;
 				vm.tiers = to.meta.tiers;
@@ -108,37 +111,43 @@
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
-
+			vue.files = to.meta.files;
 			vue.nonprofit = to.meta.nonprofit;
 			vue.slides = to.meta.slides;
 			vue.tiers = to.meta.tiers;
 			next();
 		},
-        mounted: function () {
+		mounted: function () {
 			const vue = this;
 
 			$(document).ready(function () {
 				$(vue.$refs.slider).data({
 					pager: $(vue.$refs.sliderNav)
-                }).fireSlider({
+				}).fireSlider({
 					activePagerClass: 'current',
 					hoverPause: true,
 					pagerTemplate: '<a href="#"></a>',
 					slide: 'div.slide',
 				});
-            });
-        },
-        methods: {
-	        openDonations: function (event) {
-	        	event.preventDefault();
-	        	const vue = this;
+			});
+		},
+		methods: {
+			getImageUrl: function (fileUuid) {
+				const vue = this;
+                const file = _.find(vue.files, {uuid: fileUuid});
 
-	        	vue.addModal('donation-tiers', { nonprofit: vue.nonprofit, tiers: vue.tiers });
-            }
-        },
-        components: {
+                return file ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : '';
+			},
+			openDonations: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('donation-tiers', {nonprofit: vue.nonprofit, tiers: vue.tiers});
+			}
+		},
+		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('./../layout/Hero.vue')
-        }
+		}
 	};
 </script>

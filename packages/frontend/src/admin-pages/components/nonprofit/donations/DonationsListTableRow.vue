@@ -91,7 +91,7 @@
 				return new Date(this.donation.createdOn).toLocaleTimeString();
 			},
 			amount: function () {
-				return numeral(this.donation.totalInCents / 100).format('$0,00.00');
+				return numeral(this.donation.subtotal / 100).format('$0,00.00');
 			},
 		},
 		props: {

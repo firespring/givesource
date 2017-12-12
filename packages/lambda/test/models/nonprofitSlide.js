@@ -67,10 +67,6 @@ describe('NonprofitSlide', function () {
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: '', error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 'test', error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 123456, error: true},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'filename', value: null, error: false},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'filename', value: '', error: false},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'filename', value: 'test', error: false},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'filename', value: 123456, error: true},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: null, error: true},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '1234567890', error: true},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false},
@@ -84,9 +80,9 @@ describe('NonprofitSlide', function () {
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_IMAGE, error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_VIMEO, error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_YOUTUBE, error: false},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: null, error: true},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: '', error: true},
-			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg', error: false},
+			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: null, error: false},
+			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: '', error: false},
+			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://test.com/image.jpg', error: false},
 			{model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 123456, error: true},
 		];
 		TestHelper.validate(tests);
