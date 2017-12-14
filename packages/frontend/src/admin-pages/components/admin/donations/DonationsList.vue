@@ -32,14 +32,16 @@
 
 <script>
     import * as Utils from './../../../helpers/utils';
+    import Request from './../../../helpers/request';
     const PaginationMixin = require('./../../../mixins/pagination');
 
 	module.exports = {
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vm) {
-				axios.get(API_URL + 'donations' + Utils.generateQueryString(to.query)).then(function (response) {
-					vm.setPaginationData(response.data);
-				});
+				const request = new Request(API_URL);
+				request.get('donations', to.query).then(function (response) {
+					vm.setPaginationData(response.data)
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {

@@ -105,6 +105,11 @@ module.exports = function (env) {
 			PatchUser: './src/api/patchUser/index.js',
 			PostUser: './src/api/postUser/index.js',
 
+			AuthorizeSuperAdminUsers: './src/custom/authorizeSuperAdminUsers/index.js',
+			AuthorizeAdminUsers: './src/custom/authorizeAdminUsers/index.js',
+			AuthorizeNonprofitUsers: './src/custom/authorizeNonprofitUsers/index.js',
+			AuthorizeNonprofitResource: './src/custom/authorizeNonprofitResource/index.js',
+
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
 			CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',

@@ -95,8 +95,6 @@ Resources:
         AttributeType: S
       - AttributeName: email
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -113,15 +111,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: DonationsTable
 
   FilesTable:
@@ -132,24 +121,12 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: DonorsTable
 
   MessagesTable:
@@ -160,24 +137,12 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: FilesTable
 
   NonprofitsTable:
@@ -240,8 +205,6 @@ Resources:
         AttributeType: S
       - AttributeName: nonprofitUuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -252,15 +215,6 @@ Resources:
       - IndexName: nonprofitUuidIndex
         KeySchema:
         - AttributeName: nonprofitUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
           KeyType: HASH
         Projection:
           ProjectionType: ALL
@@ -279,8 +233,6 @@ Resources:
         AttributeType: S
       - AttributeName: nonprofitUuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -297,15 +249,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: NonprofitDonationTiersTable
 
   PaymentTransactionsTable:
@@ -316,24 +259,12 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: NonprofitSlidesTable
 
   ReportsTable:
@@ -344,24 +275,12 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: PaymentTransactionsTable
 
   SettingsTable:
@@ -372,8 +291,6 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       - AttributeName: key
         AttributeType: S
       KeySchema:
@@ -392,15 +309,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: ReportsTable
 
   SponsorsTable:
@@ -411,8 +319,6 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       - AttributeName: sponsorTierUuid
         AttributeType: S
       KeySchema:
@@ -431,15 +337,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: SettingsTable
 
   SponsorTiersTable:
@@ -450,8 +347,6 @@ Resources:
       AttributeDefinitions:
       - AttributeName: uuid
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
       - AttributeName: name
         AttributeType: S
       KeySchema:
@@ -470,15 +365,6 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     DependsOn: SponsorsTable
 
   UsersTable:
@@ -491,8 +377,8 @@ Resources:
         AttributeType: S
       - AttributeName: email
         AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
+      - AttributeName: cognitoUuid
+        AttributeType: S
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -509,9 +395,9 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
+      - IndexName: cognitoUuidIndex
         KeySchema:
-        - AttributeName: createdOn
+        - AttributeName: cognitoUuid
           KeyType: HASH
         Projection:
           ProjectionType: ALL
