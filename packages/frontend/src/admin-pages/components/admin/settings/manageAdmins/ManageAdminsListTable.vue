@@ -66,7 +66,7 @@
 		created: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'users').then(function (response) {
+			vue.$request.get('users').then(function (response) {
 				vue.adminUsers = response.data;
 				vue.loaded = true;
 			});

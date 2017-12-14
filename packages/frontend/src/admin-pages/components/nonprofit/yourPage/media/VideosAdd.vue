@@ -142,18 +142,17 @@
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
+			next(function (vue) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vue.nonprofit = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
-			}).then(function () {
 				next();
 			}).catch(function () {
 				next();
@@ -162,7 +161,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
 				} else {
@@ -211,7 +210,7 @@
 				const vue = this;
 
 				MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
-					return axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides', {
+					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
 						caption: vue.formData.caption,
 						embedUrl: videoData.embedUrl,
 						externalId: videoData.id,

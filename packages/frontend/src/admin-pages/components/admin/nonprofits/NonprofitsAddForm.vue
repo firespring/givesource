@@ -106,7 +106,8 @@
                         </div>
 
                         <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span v-if="formErrors.zip">{{ formErrors.zip }}.</span>
+                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                                v-if="formErrors.zip">{{ formErrors.zip }}.</span>
                         </div>
                     </div>
                 </div>
@@ -389,7 +390,7 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/admin/register', {
+				vue.$request.post('nonprofits/admin/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,

@@ -305,16 +305,16 @@
 			'nonprofitUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
+			next(function (vue) {
+				vue.$request.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vue.nonprofit = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
 			}).then(function () {
 				next();
@@ -426,7 +426,7 @@
 					vue.$router.push({name: 'nonprofit-settings-list'});
 					return;
 				}
-				axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid, params).then(function (response) {
+				vue.$request.patch('nonprofits/' + vue.nonprofitUuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

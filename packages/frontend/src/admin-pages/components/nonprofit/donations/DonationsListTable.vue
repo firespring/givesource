@@ -85,7 +85,7 @@
 				vue.donations.forEach(function (donation) {
 					promise = promise.then(function () {
 						if (!_.find(vue.donors, {'uuid': donation.donorUuid}) && !donation.isAnonymous) {
-							return axios.get(API_URL + 'donors/' + donation.donorUuid).then(function (response) {
+							return vue.$request.get('donors/' + donation.donorUuid).then(function (response) {
 								vue.donors.push(response.data);
 							});
 						}

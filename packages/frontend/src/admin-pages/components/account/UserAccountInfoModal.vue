@@ -138,7 +138,7 @@
 					return;
 				}
 
-				axios.patch(API_URL + 'users/' + vue.user.uuid, params).then(function (response) {
+				vue.$request.patch('users/' + vue.user.uuid, params).then(function (response) {
 					vue.removeModal();
 					if (response.data.errorMessage) {
 						console.log(response.data);

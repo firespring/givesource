@@ -44,7 +44,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-            <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
+        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -59,18 +59,18 @@
 		data: function () {
 			return {
 				nonprofits: [],
-                loaded: false,
+				loaded: false,
 			};
 		},
-        computed: {
+		computed: {
 			displayRows: function () {
 				return this.loaded && this.nonprofits.length;
-            }
-        },
+			}
+		},
 		mounted: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits').then(function (response) {
+			vue.$request.get('nonprofits').then(function (response) {
 				vue.nonprofits = response.data;
 				vue.loaded = true;
 			});

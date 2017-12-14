@@ -112,7 +112,7 @@
 			inviteAdmins: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'users', {
+				vue.$request.post('users', {
 					email_addresses: vue.formData.emailAddresses
 				}).then(function (response) {
 					vue.clearModals();

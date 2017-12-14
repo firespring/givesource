@@ -70,7 +70,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
 				} else {
@@ -105,7 +105,7 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-                vue.updateDonationTiers();
+				vue.updateDonationTiers();
 			},
 			updateDonationTiers: function () {
 				const vue = this;
@@ -119,12 +119,12 @@
 				const toUpdate = _.map(vue.format(_.reject(modified, {amount: '0.00'})), function (tier) {
 					if (!tier.description) {
 						delete tier.description;
-                    }
-                    return tier;
-                });
+					}
+					return tier;
+				});
 
 				if (toUpdate.length && !toDelete.length) {
-					axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
+					vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
 						donation_tiers: toUpdate
 					}).then(function () {
 						vue.clearModals();
@@ -133,34 +133,30 @@
 						console.log(err);
 					});
 				} else if (toDelete.length && !toUpdate.length) {
-					axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
-						data: {
-							donation_tiers: toDelete
-                        }
+					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+						donation_tiers: toDelete
 					}).then(function () {
 						vue.clearModals();
 					}).catch(function (err) {
 						vue.clearModals();
 						console.log(err);
 					});
-                } else if (toUpdate.length && toDelete.length) {
-	                axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
-		                data: {
-			                donation_tiers: toDelete
-		                }
-	                }).then(function () {
-                        return axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
-	                        donation_tiers: toUpdate
-                        });
-	                }).then(function () {
-		                vue.clearModals();
-	                }).catch(function (err) {
-		                vue.clearModals();
-		                console.log(err);
-	                });
-                } else {
+				} else if (toUpdate.length && toDelete.length) {
+					vue.$request.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
+						donation_tiers: toDelete
+					}).then(function () {
+						return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+							donation_tiers: toUpdate
+						});
+					}).then(function () {
+						vue.clearModals();
+					}).catch(function (err) {
+						vue.clearModals();
+						console.log(err);
+					});
+				} else {
 					vue.clearModals();
-                }
+				}
 			},
 			format: function (donationTiers) {
 				const formatted = [];

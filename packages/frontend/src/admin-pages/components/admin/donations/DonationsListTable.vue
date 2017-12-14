@@ -54,7 +54,7 @@
 				nonprofits: [],
 				donors: [],
 
-                loaded: false
+				loaded: false
 			};
 		},
 		computed: {
@@ -78,7 +78,7 @@
 					vue.loadData();
 				} else {
 					vue.loaded = false;
-                }
+				}
 			}
 		},
 		methods: {
@@ -89,14 +89,14 @@
 				vue.donations.forEach(function (donation) {
 					promise = promise.then(function () {
 						if (!_.find(vue.nonprofits, {'uuid': donation.nonprofitUuid})) {
-							return axios.get(API_URL + 'nonprofits/' + donation.nonprofitUuid).then(function (response) {
+							return vue.$request.get('nonprofits/' + donation.nonprofitUuid).then(function (response) {
 								vue.nonprofits.push(response.data);
 							});
 						}
 						return Promise.resolve();
 					}).then(function () {
 						if (!_.find(vue.donors, {'uuid': donation.donorUuid}) && !donation.isAnonymous) {
-							return axios.get(API_URL + 'donors/' + donation.donorUuid).then(function (response) {
+							return vue.$request.get('donors/' + donation.donorUuid).then(function (response) {
 								vue.donors.push(response.data);
 							});
 						}
@@ -116,8 +116,8 @@
 				const vue = this;
 				if (!donation.isAnonymous) {
 					return _.find(vue.donors, {uuid: donation.donorUuid});
-                }
-                return {};
+				}
+				return {};
 			},
 		},
 		components: {

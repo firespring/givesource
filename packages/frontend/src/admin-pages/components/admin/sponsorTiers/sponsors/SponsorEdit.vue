@@ -130,20 +130,20 @@
 			sponsorTierUuid: null,
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			next(function (vue) {
+				vue.$request.get('sponsor-tiers').then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
-					vm.sponsorTiers = response.data;
-					return axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors/' + vm.sponsorUuid);
+					vue.sponsorTiers = response.data;
+					return vue.$request.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
 				}).then(function (response) {
-					vm.sponsor = response.data;
-					vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: vm.sponsor.sponsorTierUuid});
-					return (vm.sponsor.fileUuid) ? axios.get(API_URL + 'files/' + vm.sponsor.fileUuid) : Promise.resolve();
+					vue.sponsor = response.data;
+					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: vue.sponsor.sponsorTierUuid});
+					return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vm.sponsor.fileUuid) : Promise.resolve();
 				}).then(function (response) {
 					if (response) {
-						vm.file = response.data;
+						vue.file = response.data;
 					}
 				});
 			});
@@ -151,16 +151,16 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			vue.$request.get('sponsor-tiers').then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
 				});
 				vue.sponsorTiers = response.data;
-				return axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
+				return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
 			}).then(function (response) {
 				vue.sponsor = response.data;
 				vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: vue.sponsor.sponsorTierUuid});
-				return (vue.sponsor.fileUuid) ? axios.get(API_URL + 'files/' + vue.sponsor.fileUuid) : Promise.resolve();
+				return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vue.sponsor.fileUuid) : Promise.resolve();
 			}).then(function (response) {
 				if (response) {
 					vue.file = response.data;
@@ -232,11 +232,11 @@
 				let promise = Promise.resolve();
 				if (vue.formData.file instanceof File) {
 					if (vue.file.hasOwnProperty('uuid')) {
-						promise = axios.delete(API_URL + 'files/' + vue.file.uuid);
+						promise = vue.$request.delete('files/' + vue.file.uuid);
 					}
 
 					promise = promise.then(function () {
-						return axios.post(API_URL + 'files', {
+						return vue.$request.post('files', {
 							content_type: vue.formData.file.type,
 							filename: vue.formData.file.name
 						});
@@ -259,7 +259,7 @@
 						params.fileUuid = vue.file.uuid;
 					}
 
-					return axios.patch(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid, params);
+					return vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid, params);
 				}).then(function () {
 					vue.clearModals();
 					vue.$router.push({name: 'sponsors-list'});
