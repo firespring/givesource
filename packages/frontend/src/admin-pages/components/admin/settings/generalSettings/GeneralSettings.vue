@@ -343,7 +343,7 @@
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					}
-					return vue.$request.delete(API_URL + 'settings', {
+					return vue.$request.delete('settings', {
 						settings: toDelete
 					});
 				}).then(function (response) {

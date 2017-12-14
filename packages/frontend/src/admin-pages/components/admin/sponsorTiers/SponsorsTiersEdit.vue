@@ -112,7 +112,7 @@
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+				vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
 					vue.sponsorTier = response.data;
 				});
 			});

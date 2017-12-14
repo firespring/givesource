@@ -133,7 +133,7 @@
 				});
 
 				const toUpdate = _.differenceWith(vue.slides, original, _.isEqual);
-				vue.$request.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides', {
+				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
 					slides: toUpdate
 				}).catch(function (err) {
 					console.log(err);
@@ -166,7 +166,7 @@
 
 				vue.addModal('spinner');
 
-				vue.$request.post(API_URL + 'files', {
+				vue.$request.post('files', {
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {

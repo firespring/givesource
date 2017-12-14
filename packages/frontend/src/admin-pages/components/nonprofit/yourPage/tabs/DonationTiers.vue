@@ -142,7 +142,7 @@
 						console.log(err);
 					});
 				} else if (toUpdate.length && toDelete.length) {
-					vue.$request.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/tiers', {
+					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
 						donation_tiers: toDelete
 					}).then(function () {
 						return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {

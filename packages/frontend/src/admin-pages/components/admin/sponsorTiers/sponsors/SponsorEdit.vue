@@ -136,11 +136,11 @@
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.sponsorTiers = response.data;
-					return vue.$request.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
+					return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
 				}).then(function (response) {
 					vue.sponsor = response.data;
 					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: vue.sponsor.sponsorTierUuid});
-					return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vm.sponsor.fileUuid) : Promise.resolve();
+					return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vue.sponsor.fileUuid) : Promise.resolve();
 				}).then(function (response) {
 					if (response) {
 						vue.file = response.data;

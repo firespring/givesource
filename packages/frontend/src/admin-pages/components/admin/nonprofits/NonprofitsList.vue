@@ -36,9 +36,9 @@
 
 	module.exports = {
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
-					vm.setPaginationData(response.data);
+			next(function (vue) {
+				vue.$request.get('nonprofits', to.query).then(function (response) {
+					vue.setPaginationData(response.data);
 				});
 			});
 		},
@@ -46,9 +46,8 @@
 			const vue = this;
 
 			vue.resetPaginationData();
-			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
+			vue.$request.get('nonprofits', to.query).then(function (response) {
 				vue.setPaginationData(response.data);
-			}).then(function () {
 				next();
 			}).catch(function (err) {
 				console.log(err);

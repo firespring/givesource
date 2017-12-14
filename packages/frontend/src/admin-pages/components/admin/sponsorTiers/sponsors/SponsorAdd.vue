@@ -204,7 +204,7 @@
 				let promise = Promise.resolve();
 				if (vue.formData.file) {
 					promise = promise.then(function () {
-						return vue.$request.post(API_URL + 'files', {
+						return vue.$request.post('files', {
 							content_type: vue.formData.file.type,
 							filename: vue.formData.file.name
 						});
