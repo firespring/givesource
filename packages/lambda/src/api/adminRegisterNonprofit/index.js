@@ -38,7 +38,6 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return nonprofitsRepository.generateUniqueSlug(nonprofit);
 	}).then(function () {
-		console.log(nonprofit);
 		return nonprofit.validate();
 	}).then(function () {
 		user.populate({nonprofitUuid: nonprofit.uuid});

@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="c-header-actions">
-                            <div>
+                            <div v-if="canInviteUsers">
                                 <router-link :to="{ name: 'nonprofit-settings-admins-invite' }" role="button" class="c-btn c-btn--sm c-btn--icon">
                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Invite Admins
                                 </router-link>
@@ -111,7 +111,10 @@
 		computed: {
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
-			}
+			},
+            canInviteUsers: function () {
+				return this.nonprofit.status === 'ACTIVE';
+            }
 		},
 		props: [
 			'nonprofitUuid'

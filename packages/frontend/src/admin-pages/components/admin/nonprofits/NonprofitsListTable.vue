@@ -44,7 +44,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></nonprofits-list-table-row>
+            <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid" v-on:updateNonprofit="updateNonprofit"></nonprofits-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -58,23 +58,39 @@
 	module.exports = {
 		data: function () {
 			return {
-				nonprofits: [],
 				loaded: false,
-			};
-		},
+            };
+        },
 		computed: {
 			displayRows: function () {
 				return this.loaded && this.nonprofits.length;
 			}
 		},
-		mounted: function () {
-			const vue = this;
-
-			vue.$request.get('nonprofits').then(function (response) {
-				vue.nonprofits = response.data;
-				vue.loaded = true;
-			});
+		props: {
+			nonprofits: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			}
 		},
+		watch: {
+			nonprofits: function () {
+				const vue = this;
+				vue.loaded = !vue.loaded;
+			}
+		},
+		methods: {
+			updateNonprofit: function (nonprofitUuid) {
+				const vue = this;
+
+				vue.$request.get('nonprofits/' + nonprofitUuid).then(function (response) {
+					vue.nonprofits = _.map(vue.nonprofits, function (nonprofit) {
+						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
+                    });
+				});
+			},
+        },
 		components: {
 			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue'),
 			'nonprofits-list-table-row': require('./NonprofitsListTableRow.vue')

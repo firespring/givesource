@@ -159,6 +159,12 @@ Resources:
         AttributeType: S
       - AttributeName: slug
         AttributeType: S
+      - AttributeName: isDeleted
+        AttributeType: N
+      - AttributeName: donationsSubtotal
+        AttributeType: N
+      - AttributeName: legalName
+        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -166,21 +172,47 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: createdOnIndex
+      - IndexName: paginatedCreatedOnIndex
         KeySchema:
-        - AttributeName: createdOn
+        - AttributeName: isDeleted
           KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: statusIndex
+      - IndexName: paginatedLegalNameIndex
+        KeySchema:
+        - AttributeName: isDeleted
+          KeyType: HASH
+        - AttributeName: legalName
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: statusLegalNameIndex
         KeySchema:
         - AttributeName: status
           KeyType: HASH
+        - AttributeName: legalName
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: statusSubtotalIndex
+        KeySchema:
+        - AttributeName: status
+          KeyType: HASH
+        - AttributeName: donationsSubtotal
+          KeyType: RANGE
+        Projection:
+          ProjectionType:   ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
