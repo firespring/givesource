@@ -20,10 +20,11 @@ const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new FilesRepository();
-	const request = new Request(event, context).parameters(['files']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['files']);
 	const s3 = new S3();
 
 	let files = [];

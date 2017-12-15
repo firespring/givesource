@@ -17,6 +17,7 @@
 
 import * as User from './../helpers/user';
 import * as Utils from './../helpers/utils';
+import Request from './../helpers/request';
 import store from './../store';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -442,8 +443,8 @@ const loadSettings = function () {
  * @return {Promise}
  */
 const loadUser = function () {
-	const userUuid = User.getCognitoUser().username;
-	return axios.get(API_URL + 'users/' + userUuid).then(function (response) {
+	const request = new Request(store.getters.setting('API_URL'));
+	return request.get('user-profile').then(function (response) {
 		Vue.prototype.user = response.data;
 	});
 };
@@ -480,7 +481,8 @@ const authMiddleware = function (to, from, next) {
  */
 const nonprofitStatusMiddleware = function (to, from, next) {
 	if (to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
-		return axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+		const request = new Request(store.getters.setting('API_URL'));
+		return request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 			const nonprofit = response.data;
 			const allowed = (to.meta.nonprofitStatus instanceof Array) ? to.meta.nonprofitStatus : [to.meta.nonprofitStatus];
 			if (_.intersection(allowed, [nonprofit.status]).length === 0) {

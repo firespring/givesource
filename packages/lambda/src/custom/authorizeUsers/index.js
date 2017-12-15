@@ -17,8 +17,6 @@
 
 const Request = require('./../../aws/request');
 const UserAuthorizer = require('./../../auth/user');
-const UserEmailMiddleware = require('./../../auth/middleware/userEmail');
-const UserGroupMiddleware = require('./../../auth/middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	new Request(event, context);
@@ -29,9 +27,6 @@ exports.handle = function (event, context, callback) {
 	const userPoolId = process.env.USER_POOL_ID;
 
 	const authorizer = new UserAuthorizer(arn, region, token, userPoolId);
-	authorizer.middleware(new UserEmailMiddleware());
-	authorizer.middleware(new UserGroupMiddleware(['SuperAdmin']));
-
 	authorizer.authorize().then(function (policy) {
 		callback(null, policy);
 	}).catch(function () {

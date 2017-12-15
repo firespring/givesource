@@ -31,7 +31,7 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: paginationCreatedOnIndex
+      - IndexName: isDeletedCreatedOnIndex
         KeySchema:
         - AttributeName: isDeleted
           KeyType: HASH
@@ -42,7 +42,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: paginationSubtotalIndex
+      - IndexName: isDeletedSubtotalIndex
         KeySchema:
         - AttributeName: isDeleted
           KeyType: HASH
@@ -164,7 +164,7 @@ Resources:
       - AttributeName: donationsSubtotal
         AttributeType: N
       - AttributeName: legalName
-        AttributeType: N
+        AttributeType: S
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -172,7 +172,7 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: paginatedCreatedOnIndex
+      - IndexName: isDeletedCreatedOnIndex
         KeySchema:
         - AttributeName: isDeleted
           KeyType: HASH
@@ -183,7 +183,7 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: paginatedLegalNameIndex
+      - IndexName: isDeletedLegalNameIndex
         KeySchema:
         - AttributeName: isDeleted
           KeyType: HASH

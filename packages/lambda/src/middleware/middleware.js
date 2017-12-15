@@ -15,42 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const _ = require('lodash');
-const Middleware = require('./middleware');
-
 /**
- * UserGroupMiddleware constructor
+ * Middleware constructor
  *
- * @param {[]} userGroups
  * @constructor
  */
-function UserGroupMiddleware(userGroups) {
-	this.userGroups = userGroups;
+function Middleware() {
+	this.user = {};
 }
 
 /**
- * Extend the base Middleware
+ * Prepare the middleware
  *
- * @type {Middleware}
+ * @param {{}} user
  */
-UserGroupMiddleware.prototype = new Middleware();
+Middleware.prototype.prepare = function (user) {
+	this.user = user;
+};
 
 /**
  * Handle the middleware
  *
  * @return {Promise}
  */
-UserGroupMiddleware.prototype.handle = function () {
-	const middleware = this;
-	return new Promise(function (resolve, reject) {
-
-		if (!middleware.payload.hasOwnProperty('cognito:groups') || _.intersection(middleware.payload['cognito:groups'], middleware.userGroups).length === 0) {
-			reject(new Error('Invalid permissions to resource'));
-			return;
-		}
-
-		resolve();
-	});
+Middleware.prototype.handle = function () {
+	return Promise.resolve();
 };
 
-module.exports = UserGroupMiddleware;
+module.exports = Middleware;

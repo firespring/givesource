@@ -16,16 +16,19 @@
  */
 
 const _ = require('lodash');
+const InvalidPermissionsException = require('./../exceptions/invalidPermissions');
 const Middleware = require('./middleware');
-const UsersRepository = require('./../../repositories/users');
+const UsersRepository = require('../repositories/users');
 
 /**
  * NonprofitResourceMiddleware constructor
  *
+ * @param {String} nonprofitUuid
  * @param {[]} userGroups
  * @constructor
  */
-function NonprofitResourceMiddleware(userGroups) {
+function NonprofitResourceMiddleware(nonprofitUuid, userGroups) {
+	this.nonprofitUuid = nonprofitUuid;
 	this.userGroups = userGroups;
 }
 
@@ -43,34 +46,21 @@ NonprofitResourceMiddleware.prototype = new Middleware();
  */
 NonprofitResourceMiddleware.prototype.handle = function () {
 	const middleware = this;
+	const usersRepository = new UsersRepository();
 	return new Promise(function (resolve, reject) {
-		const usersRepository = new UsersRepository();
-
-		if (middleware.payload.hasOwnProperty('cognito:groups') && _.intersection(middleware.payload['cognito:groups'], middleware.userGroups).length > 0) {
+		if (middleware.user.groups && _.intersection(middleware.user.groups, middleware.userGroups).length > 0) {
 			return resolve();
 		}
 
-		if (middleware.payload.hasOwnProperty('cognito:username')) {
-			const uuid = middleware.payload['cognito:username'];
-			usersRepository.get(uuid).then(function (user) {
-				const tmp = authorizer.arn.split(':');
-				const apiGatewayArnTmp = tmp[5].split('/');
-				let resource = '/';
-				if (apiGatewayArnTmp[3]) {
-					resource += apiGatewayArnTmp.slice(3, apiGatewayArnTmp.length).join('/');
+		if (middleware.user.uuid) {
+			usersRepository.get(middleware.user.uuid).then(function (user) {
+				if (middleware.nonprofitUuid === user.nonprofitUuid) {
+					resolve();
 				}
-				const nonprofitUuid = user.nonprofitUuid || '';
-				if (resource.indexOf(nonprofitUuid) > -1) {
-					return Promise.resolve();
-				} else {
-					return Promise.reject();
-				}
-			}).then(function () {
-				return resolve();
 			});
 		}
 
-		return reject();
+		reject(new InvalidPermissionsException());
 	});
 };
 

@@ -43,191 +43,53 @@ Resources:
 
   # Api Gateway Authorizer Lambda Resources
 
-  AuthorizeSuperAdminUsersLambdaFunction:
+  AuthorizeUsersLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/AuthorizeSuperAdminUsers.zip
-      Description: 'Cognito super admin user api gateway authorizer'
+        S3Key: fn/{{version}}/AuthorizeUsers.zip
+      Description: 'Cognito user authorizer'
       Environment:
         Variables:
           REGION: !Sub |-
             ${AWS::Region}
           USER_POOL_ID: !GetAtt CognitoUserPool.UserPoolId
       FunctionName: !Sub |-
-        ${StackName}-AuthorizeSuperAdminUsers
+        ${StackName}-AuthorizeUsers
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CognitoUserPool
 
-  AuthorizeSuperAdminUsersLambdaInvokePermission:
+  AuthorizeUsersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt AuthorizeSuperAdminUsersLambdaFunction.Arn
+      FunctionName: !GetAtt AuthorizeUsersLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub
         - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/authorizers/${Authorizer}
-        - Authorizer: !Ref AuthorizeSuperAdminUsers
+        - Authorizer: !Ref AuthorizeUsers
     DependsOn:
-      - AuthorizeSuperAdminUsersLambdaFunction
-      - AuthorizeSuperAdminUsers
-
-  AuthorizeAdminUsersLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/AuthorizeAdminUsers.zip
-      Description: 'Cognito admin user api gateway authorizer'
-      Environment:
-        Variables:
-          REGION: !Sub |-
-            ${AWS::Region}
-          USER_POOL_ID: !GetAtt CognitoUserPool.UserPoolId
-      FunctionName: !Sub |-
-        ${StackName}-AuthorizeAdminUsers
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-    DependsOn: CognitoUserPool
-
-  AuthorizeAdminUsersLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt AuthorizeAdminUsersLambdaFunction.Arn
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub
-        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/authorizers/${Authorizer}
-        - Authorizer: !Ref AuthorizeAdminUsers
-    DependsOn:
-      - AuthorizeAdminUsersLambdaFunction
-      - AuthorizeAdminUsers
-
-  AuthorizeNonprofitUsersLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/AuthorizeNonprofitUsers.zip
-      Description: 'Cognito admin user api gateway authorizer'
-      Environment:
-        Variables:
-          REGION: !Sub |-
-            ${AWS::Region}
-          USER_POOL_ID: !GetAtt CognitoUserPool.UserPoolId
-      FunctionName: !Sub |-
-        ${StackName}-AuthorizeNonprofitUsers
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-    DependsOn: CognitoUserPool
-
-  AuthorizeNonprofitUsersLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt AuthorizeNonprofitUsersLambdaFunction.Arn
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub
-        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/authorizers/${Authorizer}
-        - Authorizer: !Ref AuthorizeNonprofitUsers
-    DependsOn:
-      - AuthorizeNonprofitUsersLambdaFunction
-      - AuthorizeNonprofitUsers
-
-  AuthorizeNonprofitResourceLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/AuthorizeNonprofitResource.zip
-      Description: 'Cognito admin user api gateway authorizer'
-      Environment:
-        Variables:
-          REGION: !Sub |-
-            ${AWS::Region}
-          USER_POOL_ID: !GetAtt CognitoUserPool.UserPoolId
-      FunctionName: !Sub |-
-        ${StackName}-AuthorizeNonprofitResource
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-    DependsOn: CognitoUserPool
-
-  AuthorizeNonprofitResourceLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt AuthorizeNonprofitResourceLambdaFunction.Arn
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub
-        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/authorizers/${Authorizer}
-        - Authorizer: !Ref AuthorizeNonprofitResource
-    DependsOn:
-      - AuthorizeNonprofitResourceLambdaFunction
-      - AuthorizeNonprofitResource
+      - AuthorizeUsersLambdaFunction
+      - AuthorizeUsers
 
   # Api Gateway Authorizers
 
-  AuthorizeSuperAdminUsers:
+  AuthorizeUsers:
     Type: AWS::ApiGateway::Authorizer
     Properties:
       AuthorizerUri: !Sub
         - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-        - Function: !GetAtt AuthorizeSuperAdminUsersLambdaFunction.Arn
+        - Function: !GetAtt AuthorizeUsersLambdaFunction.Arn
       Type: TOKEN
       IdentitySource: method.request.header.Authorization
-      Name: AuthorizeSuperAdminUsers
+      Name: AuthorizeUsers
       RestApiId: !Ref RestApi
-    DependsOn: AuthorizeSuperAdminUsersLambdaFunction
-
-  AuthorizeAdminUsers:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      AuthorizerUri: !Sub
-        - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-        - Function: !GetAtt AuthorizeAdminUsersLambdaFunction.Arn
-      Type: TOKEN
-      IdentitySource: method.request.header.Authorization
-      Name: AuthorizeAdminUsers
-      RestApiId: !Ref RestApi
-    DependsOn: AuthorizeAdminUsersLambdaFunction
-
-  AuthorizeNonprofitUsers:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      AuthorizerUri: !Sub
-        - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-        - Function: !GetAtt AuthorizeNonprofitUsersLambdaFunction.Arn
-      Type: TOKEN
-      IdentitySource: method.request.header.Authorization
-      Name: AuthorizeNonprofitUsers
-      RestApiId: !Ref RestApi
-    DependsOn: AuthorizeNonprofitUsersLambdaFunction
-
-  AuthorizeNonprofitResource:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      AuthorizerUri: !Sub
-        - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-        - Function: !GetAtt AuthorizeNonprofitResourceLambdaFunction.Arn
-      Type: TOKEN
-      IdentitySource: method.request.header.Authorization
-      Name: AuthorizeNonprofitResource
-      RestApiId: !Ref RestApi
-    DependsOn: AuthorizeNonprofitResourceLambdaFunction
+    DependsOn: AuthorizeUsersLambdaFunction
 
   # Cognito User Pools
 
@@ -496,17 +358,8 @@ Resources:
 
 Outputs:
 
-  AuthorizeSuperAdminUsers:
-    Value: !Ref AuthorizeSuperAdminUsers
-
-  AuthorizeAdminUsers:
-    Value: !Ref AuthorizeAdminUsers
-
-  AuthorizeNonprofitUsers:
-    Value: !Ref AuthorizeNonprofitUsers
-
-  AuthorizeNonprofitResource:
-    Value: !Ref AuthorizeNonprofitResource
+  AuthorizeUsers:
+    Value: !Ref AuthorizeUsers
 
   CognitoCreateUserFunctionArn:
     Value: !GetAtt CognitoCreateUserFunction.Arn

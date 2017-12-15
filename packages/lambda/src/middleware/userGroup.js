@@ -15,14 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
+const InvalidPermissionsException = require('./../exceptions/invalidPermissions');
 const Middleware = require('./middleware');
 
 /**
  * UserGroupMiddleware constructor
  *
+ * @param {[]} userGroups
  * @constructor
  */
-function UserEmailMiddleware() {
+function UserGroupMiddleware(userGroups) {
+	this.userGroups = userGroups;
 }
 
 /**
@@ -30,29 +34,21 @@ function UserEmailMiddleware() {
  *
  * @type {Middleware}
  */
-UserEmailMiddleware.prototype = new Middleware();
+UserGroupMiddleware.prototype = new Middleware();
 
 /**
  * Handle the middleware
  *
  * @return {Promise}
  */
-UserEmailMiddleware.prototype.handle = function () {
+UserGroupMiddleware.prototype.handle = function () {
 	const middleware = this;
 	return new Promise(function (resolve, reject) {
-
-		if (!middleware.payload.hasOwnProperty('email') || !middleware.payload.email) {
-			reject(new Error('User email is invalid'));
-			return;
+		if (!middleware.user.groups || _.intersection(middleware.user.groups, middleware.userGroups).length === 0) {
+			reject(new InvalidPermissionsException());
 		}
-
-		if (!middleware.payload.hasOwnProperty('email_verified') || !middleware.payload.email_verified) {
-			reject(new Error('User email is not verified'));
-			return;
-		}
-
 		resolve();
 	});
 };
 
-module.exports = UserEmailMiddleware;
+module.exports = UserGroupMiddleware;

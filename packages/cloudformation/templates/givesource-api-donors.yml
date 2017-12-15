@@ -18,31 +18,40 @@ Parameters:
   RestApiRootResourceId:
     Type: String
 
+  AuthorizeUsers:
+    Type: String
+
   IntegrationRequestTemplate:
     Type: String
     Default: |
-     {
-      "body":$input.json('$'),
-      "headers":{
-        #foreach($param in $input.params().header.keySet())
-        "$param": "$util.escapeJavaScript($input.params().header.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "method": "$context.httpMethod",
-      "params":{
-        #foreach($param in $input.params().path.keySet())
-        "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "query":{
-        #foreach($param in $input.params().querystring.keySet())
-        "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
-        #if($foreach.hasNext),#end
-        #end
+      #if($context.authorizer.user && "$context.authorizer.user" != "")
+        #set($user = "$context.authorizer.user")
+      #else
+        #set($user = 'null')
+      #end
+      {
+        "body":$input.json('$'),
+        "headers":{
+          #foreach($param in $input.params().header.keySet())
+          "$param": "$util.escapeJavaScript($input.params().header.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "method": "$context.httpMethod",
+        "params":{
+          #foreach($param in $input.params().path.keySet())
+          "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "query":{
+          #foreach($param in $input.params().querystring.keySet())
+          "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "user": $user
       }
-     }
 
   IntegrationResponsesTemplate:
     Type: String
@@ -205,8 +214,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref DonorApiResource
       HttpMethod: GET
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -277,8 +289,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref DonorsApiResource
       HttpMethod: GET
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -349,8 +364,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref DonorsApiResource
       HttpMethod: POST
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -421,8 +439,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref DonorApiResource
       HttpMethod: DELETE
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST

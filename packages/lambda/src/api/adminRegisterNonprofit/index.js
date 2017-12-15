@@ -22,6 +22,7 @@ const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 const User = require('./../../models/user');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
@@ -29,7 +30,7 @@ exports.handle = function (event, context, callback) {
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 
-	const request = new Request(event, context).parameters(['nonprofit', 'user']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['nonprofit', 'user']);
 	const user = new User(request.get('user'));
 	const nonprofit = new Nonprofit(request.get('nonprofit'));
 	const userPoolId = process.env.USER_POOL_ID;

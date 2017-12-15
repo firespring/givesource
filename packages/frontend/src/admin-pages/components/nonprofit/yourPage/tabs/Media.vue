@@ -96,12 +96,17 @@
 							uuids.push(slide.fileUuid);
 						}
 					});
-					return vue.$request.get('files/', {
-						uuids: uuids
-					});
+
+					if (uuids.length) {
+						return vue.$request.get('files/', {uuids: uuids});
+					} else {
+						return Promise.resolve();
+					}
 				}
 			}).then(function (response) {
-				vue.files = response.data;
+				if (response && response.data) {
+					vue.files = response.data;
+				}
 				vue.loadedSlides = true;
 			}).catch(function (err) {
 				console.log(err);

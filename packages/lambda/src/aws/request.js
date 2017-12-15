@@ -16,6 +16,7 @@
  */
 
 const logger = require('./../helpers/log');
+const Middleware = require('./../middleware/middleware');
 const MissingRequiredHeaderException = require('./../exceptions/missingRequiredHeader');
 const MissingRequiredParameter = require('./../exceptions/missingRequiredParameter');
 const MissingRequiredQueryParameterException = require('./../exceptions/missingRequiredQueryParameter');
@@ -38,8 +39,38 @@ function Request(event, context) {
 		logger.log(`${this.context.functionName} event: %j`, event);
 	}
 
+	this._middleware = [];
 	this._populateRequest(event);
 }
+
+/**
+ * Add Request middleware
+ */
+Request.prototype.middleware = function (middleware) {
+	if (middleware instanceof Middleware) {
+		this._middleware.push(middleware);
+	}
+	return this;
+};
+
+/**
+ * Process Request middleware
+ *
+ * @return {Promise}
+ */
+Request.prototype._processMiddleware = function () {
+	const request = this;
+
+	let promise = Promise.resolve();
+	request._middleware.forEach(function (middleware) {
+		promise = promise.then(function () {
+			middleware.prepare(request.user());
+			return middleware.handle();
+		});
+	});
+
+	return promise;
+};
 
 /**
  * Build this Request
@@ -51,9 +82,12 @@ Request.prototype._populateRequest = function (event) {
 	this.method = (event.hasOwnProperty('method')) ? event.method : null;
 
 	this._body = (event.hasOwnProperty('body')) ? event.body : {};
-	this._urlParameters = (event.hasOwnProperty('params')) ? event.params : {};
-	this._queryParameters = (event.hasOwnProperty('query')) ? event.query : {};
 	this._headers = (event.hasOwnProperty('headers')) ? event.headers : {};
+	this._queryParameters = (event.hasOwnProperty('query')) ? event.query : {};
+	this._urlParameters = (event.hasOwnProperty('params')) ? event.params : {};
+	this._user = (event.hasOwnProperty('user')) ? event.user : null;
+
+	return this;
 };
 
 /**
@@ -100,23 +134,26 @@ Request.prototype.validate = function () {
 		for (let i in request._requiredParameters) {
 			const key = request._requiredParameters[i];
 			if (!request._body.hasOwnProperty(key)) {
-				reject(new MissingRequiredParameter('Missing required parameter: ' + key));
+				return reject(new MissingRequiredParameter('Missing required parameter: ' + key));
 			}
 		}
 		for (let i in request._requiredQueryParameters) {
 			const key = request._requiredQueryParameters[i];
-			console.log(key);
 			if (!request._queryParameters.hasOwnProperty(key)) {
-				reject(new MissingRequiredQueryParameterException('Missing required query parameter: ' + key));
+				return reject(new MissingRequiredQueryParameterException('Missing required query parameter: ' + key));
 			}
 		}
 		for (let i in request._requiredHeaders) {
 			const key = request._requiredHeaders[i];
 			if (!request._headers.hasOwnProperty(key)) {
-				reject(new MissingRequiredHeaderException('Missing required header: ' + key));
+				return reject(new MissingRequiredHeaderException('Missing required header: ' + key));
 			}
 		}
-		resolve();
+		request._processMiddleware().then(function () {
+			resolve();
+		}).catch(function (err) {
+			reject(err);
+		});
 	});
 };
 
@@ -197,6 +234,15 @@ Request.prototype.header = function (key, defaultValue) {
 		return this._headers[key];
 	}
 	return (defaultValue !== undefined) ? defaultValue : null;
+};
+
+/**
+ * Get the user from the request
+ *
+ * @return {{}|null}
+ */
+Request.prototype.user = function () {
+	return this._user;
 };
 
 module.exports = Request;

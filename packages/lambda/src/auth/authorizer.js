@@ -16,7 +16,7 @@
  */
 
 const AuthPolicy = require('./../aws/authPolicy');
-const Middleware = require('./middleware/middleware');
+const Middleware = require('../middleware/middleware');
 
 /**
  * Authorizer constructor
@@ -28,40 +28,10 @@ function Authorizer(arn) {
 	this.arn = arn;
 	this.payload = {};
 	this.principalId = null;
-
-	this._middleware = [];
 }
 
 /**
- * Add Authorizer middleware
- */
-Authorizer.prototype.middleware = function (middleware) {
-	if (middleware instanceof Middleware) {
-		this._middleware.push(middleware);
-	}
-};
-
-/**
- * Process Authorizer middleware
- *
- * @return {Promise}
- */
-Authorizer.prototype.processMiddleware = function () {
-	const authorizer = this;
-
-	let promise = Promise.resolve();
-	authorizer._middleware.forEach(function (middleware) {
-		promise = promise.then(function () {
-			middleware.prepare(authorizer.payload);
-			return middleware.handle();
-		});
-	});
-
-	return promise;
-};
-
-/**
- * Issue an AuthPolicy
+ * Issue AuthPolicy
  *
  * @param {Boolean} allow
  * @return {Promise}
@@ -77,18 +47,13 @@ Authorizer.prototype.issueAuthPolicy = function (allow) {
 	apiOptions.restApiId = apiGatewayArnTmp[0];
 	apiOptions.stage = apiGatewayArnTmp[1];
 
-	const method = apiGatewayArnTmp[2];
-	let resource = '/';
-	if (apiGatewayArnTmp[3]) {
-		resource += apiGatewayArnTmp.slice(3, apiGatewayArnTmp.length).join('/');
-	}
-
 	const policy = new AuthPolicy(authorizer.principalId, awsAccountId, apiOptions);
 	if (allow) {
-		policy.allowMethod(method, resource);
+		policy.allowAllMethods();
 	} else {
-		policy.denyMethod(method, resource);
+		policy.denyAllMethods();
 	}
+
 	return Promise.resolve(policy.build());
 };
 
@@ -99,18 +64,9 @@ Authorizer.prototype.issueAuthPolicy = function (allow) {
  */
 Authorizer.prototype.authorize = function () {
 	const authorizer = this;
-	return new Promise(function (resolve, reject) {
-		authorizer.principalId = 'default';
-		authorizer.processMiddleware().then(function () {
-			return authorizer.issueAuthPolicy(true).then(function (policy) {
-				resolve(policy);
-			});
-		}).catch(function () {
-			return authorizer.issueAuthPolicy(false).then(function (policy) {
-				resolve(policy);
-			});
-		});
-	});
+
+	authorizer.principalId = 'default';
+	return authorizer.issueAuthPolicy(true);
 };
 
 module.exports = Authorizer;

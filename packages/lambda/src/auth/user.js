@@ -127,17 +127,16 @@ UserAuthorizer.prototype.authorize = function () {
 		authorizer.getPems().then(function () {
 			return authorizer.validateToken();
 		}).then(function () {
-			return authorizer.processMiddleware().then(function () {
-				return authorizer.issueAuthPolicy(true).then(function (policy) {
-					resolve(policy);
-				});
-			}).catch(function () {
-				return authorizer.issueAuthPolicy(false).then(function (policy) {
-					resolve(policy);
-				});
-			});
-		}).catch(function (err) {
-			reject(err);
+			return authorizer.issueAuthPolicy(true);
+		}).then(function (policy) {
+			const user = {
+				groups: authorizer.payload['cognito:groups'],
+				uuid: authorizer.payload['cognito:username'],
+			};
+			policy.context = {user: JSON.stringify(user, null, 2)};
+			resolve(policy);
+		}).catch(function () {
+			reject(authorizer.issueAuthPolicy(false));
 		});
 	});
 };

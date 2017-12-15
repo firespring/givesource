@@ -24,6 +24,8 @@ dotenv.config({path: `${__dirname}/../../../.env`});
 module.exports = function (env) {
 	return {
 		entry: {
+			AuthorizeUsers: './src/custom/authorizeUsers/index.js',
+
 			GetDonations: './src/api/getDonations/index.js',
 			GetDonation: './src/api/getDonation/index.js',
 			PostDonation: './src/api/postDonation/index.js',
@@ -101,15 +103,10 @@ module.exports = function (env) {
 			PatchSponsorTier: './src/api/patchSponsorTier/index.js',
 			PatchSponsorTiers: './src/api/patchSponsorTiers/index.js',
 			DeleteSponsorTier: './src/api/deleteSponsorTier/index.js',
+			GetUserProfile: './src/api/getUserProfile/index.js',
 			GetUsers: './src/api/getUsers/index.js',
-			GetUser: './src/api/getUser/index.js',
 			PatchUser: './src/api/patchUser/index.js',
 			PostUser: './src/api/postUser/index.js',
-
-			AuthorizeSuperAdminUsers: './src/custom/authorizeSuperAdminUsers/index.js',
-			AuthorizeAdminUsers: './src/custom/authorizeAdminUsers/index.js',
-			AuthorizeNonprofitUsers: './src/custom/authorizeNonprofitUsers/index.js',
-			AuthorizeNonprofitResource: './src/custom/authorizeNonprofitResource/index.js',
 
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',

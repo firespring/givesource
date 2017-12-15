@@ -26,7 +26,7 @@ import axios from 'axios';
  * @constructor
  */
 function Request(baseUrl) {
-	this.baseUrl = baseUrl || API_URL;
+	this.baseUrl = baseUrl;
 }
 
 /**
@@ -82,6 +82,9 @@ Request.prototype.patch = function (uri, body, headers) {
  */
 Request.prototype.post = function (uri, body, headers) {
 	const request = this;
+
+	console.log(request.baseUrl);
+
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
 		return axios.post(request.baseUrl + uri, body, {headers: response});

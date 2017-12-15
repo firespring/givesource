@@ -15,31 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const HttpException = require('./http');
+
 /**
- * Middleware constructor
+ * InvalidPermissionsException constructor
  *
+ * @param {String} [message]
  * @constructor
  */
-function Middleware() {
-	this.payload = {};
+function InvalidPermissionsException (message) {
+	HttpException.call(this, message);
+
+	this._status = 403;
+	this._type = 'invalid_permissions';
+	this.defaultMessage = 'Invalid permissions on resource.';
 }
 
 /**
- * Prepare the middleware
+ * Extend the base HttpException
  *
- * @param {{}} payload
+ * @type {HttpException}
  */
-Middleware.prototype.prepare = function (payload) {
-	this.payload = payload;
-};
+InvalidPermissionsException.prototype = new HttpException();
 
-/**
- * Handle the middleware
- *
- * @return {Promise}
- */
-Middleware.prototype.handle = function () {
-	return Promise.resolve();
-};
-
-module.exports = Middleware;
+module.exports = InvalidPermissionsException;
