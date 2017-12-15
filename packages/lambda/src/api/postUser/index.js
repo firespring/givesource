@@ -19,12 +19,13 @@ const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const User = require('./../../models/user');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const usersRepository = new UsersRepository();
-	const request = new Request(event, context).parameters(['email_addresses']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email_addresses']);
 
 	const userPoolId = process.env.USER_POOL_ID;
 	const emailAddresses = request.get('email_addresses');

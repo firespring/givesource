@@ -21,6 +21,7 @@ const InvalidInputException = require('./../../exceptions/invalidInput');
 const InvalidStatusException = require('./../../exceptions/invalidStatus');
 const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const NonprofitUsersRepository = require('./../../repositories/nonprofitUsers');
 const Request = require('./../../aws/request');
@@ -29,6 +30,7 @@ const UsersRepository = require('./../../repositories/users');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).parameters(['status']);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
 	let status = request.get('status');

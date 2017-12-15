@@ -16,6 +16,7 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitSlide = require('./../../models/nonprofitSlide');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
@@ -23,6 +24,7 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	const slide = new NonprofitSlide({nonprofitUuid: request.urlParam('nonprofit_uuid')});
 	request.validate().then(function () {

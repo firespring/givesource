@@ -19,10 +19,11 @@ const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new DonorsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let donor = null;
 	request.validate().then(function () {

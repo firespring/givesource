@@ -17,6 +17,7 @@
 
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 const User = require('./../../models/user');
@@ -27,6 +28,7 @@ exports.handle = function (event, context, callback) {
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 	const request = new Request(event, context).parameters(['email_addresses']);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	const userPoolId = process.env.USER_POOL_ID;
 	const emailAddresses = request.get('email_addresses');
