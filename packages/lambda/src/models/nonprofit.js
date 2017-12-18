@@ -137,7 +137,7 @@ Nonprofit.prototype.constraints = {
 		type: 'string'
 	},
 	slug: {
-		presence: true,
+		presence: false,
 		type: 'string'
 	},
 	state: {
