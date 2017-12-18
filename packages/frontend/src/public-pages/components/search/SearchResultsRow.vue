@@ -18,23 +18,12 @@
 <template>
     <div class="leaderboard-item leaderboard-item--detailed">
 
-        <div class="leaderboard-item__image" v-if="nonprofit.uuid">
+        <div class="leaderboard-item__image">
             <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"><img alt="" src="/assets/temp/thumbnail.jpg"></router-link>
         </div>
 
-        <div class="leaderboard-item__image" v-else>
-            <router-link :to="{ name: 'nonprofit-landing-page-demo' }"><img alt="" src="/assets/temp/thumbnail.jpg"></router-link>
-        </div>
-
-        <div class="leaderboard-item__info" v-if="nonprofit.uuid">
+        <div class="leaderboard-item__info">
             <h3><router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link></h3>
-            <p>
-                {{ nonprofit.shortDescription }}
-            </p>
-        </div>
-
-        <div class="leaderboard-item__info" v-else>
-            <h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">{{ nonprofit.legalName }}</router-link></h3>
             <p>
                 {{ nonprofit.shortDescription }}
             </p>
@@ -67,35 +56,13 @@
         created: function () {
 	        const vue = this;
 
-	        if (vue.nonprofit.uuid) {
-		        axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
-			        response.data.sort(function (a, b) {
-				        return b.amount - a.amount;
-			        });
-			        vue.tiers = response.data;
-			        vue.loaded = true;
-		        });
-	        } else {
-	        	vue.tiers = [
-			        {
-				        amount: 10000,
-				        description: 'Intrinsicly enable ubiquitous opportunities for 24/365 data. Interactively predominate just in time communities via tactical e-tailers.'
-			        },
-			        {
-				        amount: 5000,
-				        description: 'Dynamically restore an expanded array of e-markets before leveraged technologies.'
-			        },
-			        {
-				        amount: 2500,
-				        description: 'Completely orchestrate impactful metrics after prospective infomediaries.'
-			        },
-			        {
-				        amount: 1000,
-				        description: 'Enthusiastically network frictionless solutions and high-payoff total linkage.'
-			        }
-                ];
-	        	vue.loaded = true;
-            }
+            axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
+                response.data.sort(function (a, b) {
+                    return b.amount - a.amount;
+                });
+                vue.tiers = response.data;
+                vue.loaded = true;
+            });
         },
 	    methods: {
 		    donate: function () {

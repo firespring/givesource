@@ -82,9 +82,6 @@ Request.prototype.patch = function (uri, body, headers) {
  */
 Request.prototype.post = function (uri, body, headers) {
 	const request = this;
-
-	console.log(request.baseUrl);
-
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
 		return axios.post(request.baseUrl + uri, body, {headers: response});
@@ -102,7 +99,7 @@ Request.prototype.buildQuery = function (query) {
 	if (query) {
 		Object.keys(query).forEach(function (key) {
 			if (query.hasOwnProperty(key)) {
-				const value = encodeURIComponent(object[key]);
+				const value = encodeURIComponent(query[key]);
 				params.push(key + '=' + value);
 			}
 		});

@@ -126,8 +126,6 @@
 </template>
 
 <script>
-	const numeral = require('numeral');
-
 	module.exports = {
 		data: function () {
 			return {
@@ -156,7 +154,9 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('nonprofits').then(function (response) {
-					vue.nonprofits = response.data;
+					if (response.data && response.data.hasOwnProperty('items')) {
+						vue.nonprofits = response.data.items;
+					}
 					vue.loaded = true;
 				});
 			});
@@ -165,7 +165,9 @@
 			const vue = this;
 
 			vue.$request.get('nonprofits').then(function (response) {
-				vue.nonprofits = response.data;
+				if (response.data && response.data.hasOwnProperty('items')) {
+					vue.nonprofits = response.data.items;
+                }
 				vue.loaded = true;
 				next();
 			}).catch(function () {

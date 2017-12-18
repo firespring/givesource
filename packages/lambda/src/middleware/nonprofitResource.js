@@ -55,12 +55,18 @@ NonprofitResourceMiddleware.prototype.handle = function () {
 		if (middleware.user.uuid) {
 			usersRepository.get(middleware.user.uuid).then(function (user) {
 				if (middleware.nonprofitUuid === user.nonprofitUuid) {
-					resolve();
+					return Promise.resolve();
+				} else {
+					return Promise.reject();
 				}
+			}).then(function () {
+				return resolve();
+			}).catch(function () {
+				return reject(new InvalidPermissionsException());
 			});
+		} else {
+			reject(new InvalidPermissionsException());
 		}
-
-		reject(new InvalidPermissionsException());
 	});
 };
 

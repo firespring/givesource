@@ -53,4 +53,4 @@ UserResourceMiddleware.prototype.handle = function () {
 	});
 };
 
-module.exports = NonprofitResourceMiddleware;
+module.exports = UserResourceMiddleware;

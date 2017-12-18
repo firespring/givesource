@@ -1,0 +1,97 @@
+<template>
+    <div class="pagination flex justify-center items-center" v-if="displayPagination">
+        <router-link :to="generatePageLink({start: prevPageStart})" class="prev" title="Go to the previous page" v-if="currentPage > 0">
+            <i class="fa fa-fw fa-chevron-left" aria-hidden="true"></i>
+        </router-link>
+        <span class="prev" v-else>
+            <i class="fa fa-fw fa-chevron-left" aria-hidden="true"></i>
+        </span>
+
+        <pagination-link v-for="index in range" :current="currentPage" :page="index" :size="pagination.size" :key="index"></pagination-link>
+
+        <router-link :to="generatePageLink({start: nextPageStart})" class="next" title="Go to the next page" v-if="currentPage < (totalPages - 1)">
+            <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+        </router-link>
+        <span class="next" v-else>
+            <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+        </span>
+    </div>
+</template>
+
+<script>
+	module.exports = {
+		data: function () {
+			return {
+				range: [],
+				size: this.pagination.size || 10,
+				start: 1,
+				end: 1,
+			};
+		},
+		computed: {
+			displayPagination: function () {
+				return this.pagination.total > this.pagination.size;
+			},
+			currentPage: function () {
+				return (this.pagination.start / this.pagination.size);
+			},
+			totalPages: function () {
+				return Math.ceil(this.pagination.total / this.pagination.size);
+			},
+			prevPageStart: function () {
+				return (this.currentPage - 1) * this.pagination.size;
+			},
+			nextPageStart: function () {
+				return (this.currentPage + 1) * this.pagination.size;
+			},
+			lastPageStart: function () {
+				return (this.totalPages - 1) * this.pagination.size;
+			}
+		},
+		props: {
+			maxPaginationLinks: {
+				type: Number,
+				default: 5
+			},
+			pagination: {
+				type: Object,
+				default: function () {
+					return {
+						items: [],
+						loaded: false,
+						size: 0,
+						start: 0,
+						total: 0,
+					};
+				}
+			}
+		},
+		created: function () {
+			const vue = this;
+
+			vue.start = ((vue.currentPage - Math.floor(vue.maxPaginationLinks / 2)) <= 0) ? 0 : (vue.currentPage - Math.floor(vue.maxPaginationLinks / 2));
+			vue.end = ((vue.start + vue.maxPaginationLinks) > vue.totalPages) ? vue.totalPages : (vue.start + vue.maxPaginationLinks);
+			vue.start = ((vue.end - vue.maxPaginationLinks) >= vue.start || (vue.end - vue.maxPaginationLinks) <= 0) ?
+				vue.start : (vue.end - vue.maxPaginationLinks);
+
+			vue.range = _.range(vue.start, vue.end);
+		},
+		methods: {
+			selectPageSize: function () {
+				const vue = this;
+				vue.$router.push(vue.generatePageLink({size: vue.size, start: 0}));
+			},
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				return {
+					name: vue.$route.name,
+					query: _.extend({}, vue.$route.query, query)
+				};
+			}
+		},
+		components: {
+			'pagination-link': require('./PaginationLink.vue')
+		}
+	};
+</script>
