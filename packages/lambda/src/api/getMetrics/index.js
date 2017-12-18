@@ -16,11 +16,11 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
+	const repository = new MetricsRepository();
 	const request = new Request(event, context);
 	const keys = request.queryParam('keys', '').split(',');
 
@@ -30,9 +30,9 @@ exports.handle = function (event, context, callback) {
 		} else {
 			return repository.getAll();
 		}
-	}).then(function (settings) {
-		const results = settings.map(function (setting) {
-			return setting.all();
+	}).then(function (metrics) {
+		const results = metrics.map(function (metric) {
+			return metric.all();
 		});
 		callback(null, results);
 	}).catch(function (err) {

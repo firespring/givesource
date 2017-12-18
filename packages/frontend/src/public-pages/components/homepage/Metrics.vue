@@ -23,19 +23,11 @@
             <div class="main-spotlight-section day-totals">
                 <div>We’ve received</div>
                 <div class="day-totals__numbers">
-                    <div class="number">4</div>
-                    <div class="number">6</div>
+                    <div v-for="digit in donationsCountArray" :class="metricClass(digit)">{{ digit }}</div>
                 </div>
                 <div>donations for</div>
                 <div class="day-totals__numbers">
-                    <div class="text">$</div>
-                    <div class="number">2</div>
-                    <div class="number">1</div>
-                    <div class="number">5</div>
-                    <div class="text">,</div>
-                    <div class="number">0</div>
-                    <div class="number">2</div>
-                    <div class="number">5</div>
+                    <div v-for="digit in donationsTotalArray" :class="metricClass(digit)">{{ digit }}</div>
                 </div>
             </div>
 
@@ -127,7 +119,9 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
 	const moment = require('moment-timezone');
+	const numeral = require('numeral');
 
 	module.exports = {
 		data: function () {
@@ -141,7 +135,12 @@
 					hours: null,
 					minutes: null,
 					seconds: null,
-				}
+				},
+
+                metrics: {
+					'DONATIONS_COUNT': 0,
+                    'DONATIONS_TOTAL': 0,
+                }
 			};
 		},
 		computed: {
@@ -166,6 +165,12 @@
 				}
 				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
 			},
+            donationsCountArray: function () {
+	            return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
+            },
+            donationsTotalArray: function () {
+	            return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
+            }
 		},
 		props: {
 			dateDonationsEnd: {
@@ -197,6 +202,17 @@
 				default: null,
 			}
 		},
+        created: function () {
+			const vue = this;
+
+			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vue.metrics)})).then(function (response) {
+				response.data.forEach(function (metric) {
+					if (vue.metrics.hasOwnProperty(metric.key)) {
+						vue.metrics[metric.key] = metric.value;
+                    }
+                });
+            })
+        },
 		watch: {
 			eventDateEndOfDay: function (value) {
 				if (value && !this.loaded) {
@@ -243,7 +259,10 @@
 				const vue = this;
 
 				vue.$router.push({name: 'search-results', query: {q: vue.$refs.search.value}});
-			}
+			},
+			metricClass: function (digit) {
+				return /^\d+$/.test(digit) ? 'number' : 'text';
+            }
 		}
 	};
 </script>

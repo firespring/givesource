@@ -22,6 +22,7 @@ const DonationsRepository = require('./../../repositories/donations');
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
+const MetricsHelper = require('./../../helpers/metrics');
 const MissingRequiredParameter = require('./../../exceptions/missingRequiredParameter');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const PaymentTransaction = require('./../../models/paymentTransaction');
@@ -43,7 +44,9 @@ exports.handle = function (event, context, callback) {
 	let nonprofitUuids = [];
 	let paymentTransaction = null;
 	let apiKey = null;
+	let subtotal = 0;
 	let total = 0;
+	let topDonation = 0;
 	request.validate().then(function () {
 		const paymentFields = [
 			'card_exp_month',
@@ -78,6 +81,9 @@ exports.handle = function (event, context, callback) {
 			if (model.total) {
 				total += model.total;
 			}
+			if (model.subtotal) {
+				subtotal += model.subtotal;
+			}
 			donations.push(model);
 			promise = promise.then(function () {
 				return model.validate([
@@ -109,7 +115,14 @@ exports.handle = function (event, context, callback) {
 		}
 		return Promise.resolve(new Donor());
 	}).then(function (response) {
-		donor = response ? response : new Donor();
+		if (response) {
+			donor = response;
+			return Promise.resolve();
+		} else {
+			donor = new Donor();
+			return MetricsHelper.addAmountToMetric('DONORS_COUNT', 1);
+		}
+	}).then(function () {
 		donor.populate(request.get('donor', {}));
 		return donor.validate();
 	}).then(function () {
@@ -158,9 +171,16 @@ exports.handle = function (event, context, callback) {
 				nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
 				nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
 				nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
+				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
 			});
 		});
 		return nonprofitsRepository.batchUpdate(nonprofits);
+	}).then(function () {
+		return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', donations.length);
+	}).then(function () {
+		return MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', subtotal);
+	}).then(function () {
+		return MetricsHelper.maxMetricAmount('TOP_DONATION', topDonation);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

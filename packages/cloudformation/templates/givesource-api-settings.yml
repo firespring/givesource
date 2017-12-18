@@ -589,7 +589,7 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: PatchSettingLambdaFunction
 
-  PatchSettingApiMethod:
+  PatchSettingsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
@@ -739,7 +739,7 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: DeleteSettingLambdaFunction
 
-  DeleteSettinsgApiMethod:
+  DeleteSettingsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi

@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
+                    <donations-metrics></donations-metrics>
                     <donations-list-table-header></donations-list-table-header>
                     <donations-list-table :donations="pagination.items"></donations-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
@@ -61,7 +62,8 @@
 		components: {
 			'donations-list-table': require('./DonationsListTable.vue'),
 			'donations-list-table-header': require('./DonationsListTableHeader.vue'),
-			'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
+			'donations-metrics': require('./DonationsMetrics.vue'),
+            'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
 		}
 	};
 </script>

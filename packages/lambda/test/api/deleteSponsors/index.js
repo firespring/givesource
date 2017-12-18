@@ -22,7 +22,7 @@ const SponsorsRepository = require('./../../../src/repositories/sponsors');
 const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers');
 const TestHelper = require('./../../helpers/test');
 
-describe('DeleteSponsor', function () {
+describe('DeleteSponsors', function () {
 
 	afterEach(function () {
 		SponsorTiersRepository.prototype.get.restore();

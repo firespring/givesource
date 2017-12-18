@@ -118,6 +118,21 @@ Generator.prototype._generators = {
 	},
 
 	/**
+	 * Generate random Metric data
+	 *
+	 * @return {Object}
+	 */
+	metric: function () {
+		return {
+			uuid: faker.random.uuid(),
+			createdOn: new Date().getTime(),
+			isDeleted: 0,
+			key: faker.random.word(),
+			value: faker.random.number(),
+		}
+	},
+
+	/**
 	 * Generate random base Model data
 	 *
 	 * @return {Object}

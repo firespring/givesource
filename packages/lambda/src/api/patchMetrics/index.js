@@ -15,26 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
 const HttpException = require('./../../exceptions/http');
+const Metric = require('./../../models/metric');
+const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
-	const request = new Request(event, context);
-	const keys = request.queryParam('keys', '').split(',');
+	const repository = new MetricsRepository();
+	const request = new Request(event, context).parameters(['metrics']);
 
+	let metrics = [];
 	request.validate().then(function () {
-		if (keys.length) {
-			return repository.batchGet(keys);
-		} else {
-			return repository.getAll();
-		}
-	}).then(function (settings) {
-		const results = settings.map(function (setting) {
-			return setting.all();
+		const keys = request.get('metrics', []).map(function (metric) {
+			return metric.key;
 		});
-		callback(null, results);
+		return repository.batchGet(keys).then(function (models) {
+			request.get('metrics', []).forEach(function (data) {
+				let model = _.find(models, {key: data.key});
+				if (model) {
+					model.populate(data);
+				} else {
+					model = new Metric(data);
+				}
+
+				metrics.push(model);
+			});
+		});
+	}).then(function () {
+		let promise = Promise.resolve();
+		metrics.forEach(function (metric) {
+			promise = promise.then(function () {
+				return metric.validate();
+			});
+		});
+		return promise;
+	}).then(function () {
+		return repository.batchUpdate(metrics);
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
