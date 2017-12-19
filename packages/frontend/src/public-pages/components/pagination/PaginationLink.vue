@@ -16,8 +16,8 @@
   -->
 
 <template>
-    <span class="here" v-if="page == current">{{ page + 1 }}</span>
-    <router-link :to="generatePageLink({start: start})" v-else>{{ page + 1 }}</router-link>
+    <a class="here" v-if="page === current">{{ page + 1 }}</a>
+    <router-link :to="generatePageLink({start: start})" active-class="" v-else>{{ page + 1 }}</router-link>
 </template>
 
 <script>

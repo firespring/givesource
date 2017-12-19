@@ -42,6 +42,7 @@
 </template>
 
 <script>
+    import * as Utils from './../../helpers/utils';
 	const PaginationMixin = require('./../../mixins/pagination');
 
 	module.exports = {
@@ -53,7 +54,8 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				axios.get(API_URL + 'nonprofits').then(function (response) {
+				const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
+				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 					vue.setPaginationData(response.data);
 				});
 			});
@@ -61,7 +63,8 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits').then(function (response) {
+			const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
+			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 				vue.setPaginationData(response.data);
 				next();
 			}).catch(function () {

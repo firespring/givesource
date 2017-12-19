@@ -19,7 +19,8 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <router-link :to="{ name: 'homepage' }" title="Return to the Give To Our City homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png"></router-link>
+            <router-link :to="{ name: 'homepage' }" title="Return to the Give To Our City homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png">
+            </router-link>
         </div>
 
         <nav class="page-header__nav-menu items-center">
@@ -41,43 +42,44 @@
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
-			    cartItemsCount: 0
-            };
-        },
-    	created: function () {
-            const vue = this;
+	module.exports = {
+		data: function () {
+			return {
+				cartItemsCount: 0
+			};
+		},
+		created: function () {
+			const vue = this;
 
-		    vue.updateCartItemsCount();
-            vue.bus.$on('updateCartItemsCounter', function () {
-	            vue.updateCartItemsCount();
-            });
-        },
-        beforeDestroy: function () {
-    		const vue = this;
+			vue.updateCartItemsCount();
+			vue.bus.$on('updateCartItemsCounter', function () {
+				vue.updateCartItemsCount();
+			});
+		},
+		beforeDestroy: function () {
+			const vue = this;
 
-    		vue.bus.$off('updateCartItemsCounter');
-        },
-	    methods: {
-    		updateCartItemsCount: function () {
-    			const vue = this;
+			vue.bus.$off('updateCartItemsCounter');
+		},
+		methods: {
+			updateCartItemsCount: function () {
+				const vue = this;
 
-    			vue.cartItemsCount = vue.$store.state.cartItems.length;
-            },
-	    	search: function (event) {
-	    		event.preventDefault();
-	    		const vue = this;
+				vue.cartItemsCount = vue.$store.state.cartItems.length;
+			},
+			search: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-	    		vue.$router.push({ name: 'search-results', query: { q: vue.$refs.search.value } });
-            },
-    		openMenu: function (event) {
-    			event.preventDefault();
-    			const vue = this;
+				const query = vue.$refs.search.value ? {q: vue.$refs.search.value} : {};
+				vue.$router.push({name: 'search-results', query: query});
+			},
+			openMenu: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-    			vue.addModal('menu-overlay');
-            },
-        }
-    };
+				vue.addModal('menu-overlay');
+			},
+		}
+	};
 </script>

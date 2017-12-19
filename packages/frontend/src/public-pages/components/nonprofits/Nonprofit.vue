@@ -83,6 +83,8 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	require('fireSlider.js/dist/jquery.fireSlider.velocity');
 
 	module.exports = {
@@ -102,20 +104,54 @@
 			vue.setBodyClasses('donation', 'donation--nonprofit');
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				vm.files = to.meta.files;
-				vm.nonprofit = to.meta.nonprofit;
-				vm.slides = to.meta.slides;
-				vm.tiers = to.meta.tiers;
+			next(function (vue) {
+				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
+					vue.nonprofit = response.data;
+					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
+				}).then(function (response) {
+					response.data.sort(function (a, b) {
+						return a.sortOrder - b.sortOrder;
+					});
+					vue.slides = response.data;
+					const uuids = [];
+					vue.slides.forEach(function (slide) {
+						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
+							uuids.push(slide.fileUuid);
+						}
+					});
+					return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
+				}).then(function (response) {
+					vue.files = response.data;
+					next();
+				}).catch(function () {
+					next();
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
-			vue.files = to.meta.files;
-			vue.nonprofit = to.meta.nonprofit;
-			vue.slides = to.meta.slides;
-			vue.tiers = to.meta.tiers;
-			next();
+
+			axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
+				vue.nonprofit = response.data;
+				return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
+			}).then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
+				vue.slides = response.data;
+				const uuids = [];
+				vue.slides.forEach(function (slide) {
+					if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
+						uuids.push(slide.fileUuid);
+					}
+				});
+				return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
+			}).then(function (response) {
+				vue.files = response.data;
+				next();
+			}).catch(function () {
+				next();
+			});
 		},
 		mounted: function () {
 			const vue = this;
@@ -134,15 +170,15 @@
 		methods: {
 			getImageUrl: function (fileUuid) {
 				const vue = this;
-                const file = _.find(vue.files, {uuid: fileUuid});
+				const file = _.find(vue.files, {uuid: fileUuid});
 
-                return file ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : '';
+				return file ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : '';
 			},
 			openDonations: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.addModal('donation-tiers', {nonprofit: vue.nonprofit, tiers: vue.tiers});
+				vue.addModal('donation-tiers', {nonprofit: vue.nonprofit});
 			}
 		},
 		components: {
