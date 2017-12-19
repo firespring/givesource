@@ -109,13 +109,16 @@ const router = new VueRouter({
 				files: [],
 				nonprofit: {},
 				slides: [],
-				tiers: []
+				tiers: [],
 			},
 			beforeEnter: function (to, from, next) {
 				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 					to.meta.nonprofit = response.data;
-				}).then(function () {
-					return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/slides');
+					if (to.meta.nonprofit.status !== 'ACTIVE') {
+						return Promise.reject();
+					} else {
+						return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/slides');
+					}
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
@@ -138,7 +141,6 @@ const router = new VueRouter({
 						return b.amount - a.amount;
 					});
 					to.meta.tiers = response.data;
-				}).then(function () {
 					next();
 				}).catch(function () {
 					next({

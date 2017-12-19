@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <div class="sponsors wrapper" v-if="loaded">
+    <div class="sponsors wrapper" v-if="displaySponsorTiers">
         <h2 class="sponsors-title">Many Thanks To Our Sponsors</h2>
 
         <div v-for="sponsorTier in sponsorTiers" class="sponsors__tier" :class="getSponsorTierClass(sponsorTier.size)" :key="sponsorTier.uuid">
@@ -49,6 +49,11 @@
 				sponsors: {},
 				sponsorTiers: [],
 			};
+		},
+		computed: {
+			displaySponsorTiers: function () {
+				return this.loaded && Object.keys(this.sponsors).length;
+			}
 		},
 		created: function () {
 			const vue = this;

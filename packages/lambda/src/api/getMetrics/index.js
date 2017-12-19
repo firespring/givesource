@@ -16,28 +16,25 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Nonprofit = require('./../../models/nonprofit');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
+const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitsRepository();
+	const repository = new MetricsRepository();
 	const request = new Request(event, context);
+	const keys = request.queryParam('keys', '').split(',');
 
-	let nonprofit = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
-	}).then(function (result) {
-		nonprofit = new Nonprofit(result);
-		nonprofit.populate(request._body);
-		nonprofit.status = result.status;
-		return repository.generateUniqueSlug(nonprofit, request.get('slug'));
-	}).then(function () {
-		return nonprofit.validate();
-	}).then(function () {
-		return repository.save(nonprofit);
-	}).then(function (model) {
-		callback(null, model.all());
+		if (keys.length) {
+			return repository.batchGet(keys);
+		} else {
+			return repository.getAll();
+		}
+	}).then(function (metrics) {
+		const results = metrics.map(function (metric) {
+			return metric.all();
+		});
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

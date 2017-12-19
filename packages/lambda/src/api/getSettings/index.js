@@ -31,8 +31,6 @@ exports.handle = function (event, context, callback) {
 			return repository.getAll();
 		}
 	}).then(function (settings) {
-		console.log('%j', settings);
-
 		const results = settings.map(function (setting) {
 			return setting.all();
 		});

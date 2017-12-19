@@ -33,8 +33,6 @@ exports.handle = function (event, context, callback) {
 
 	nonprofit.populate({status: NonprofitHelper.STATUS_PENDING});
 	request.validate().then(function () {
-		return nonprofitsRepository.generateUniqueSlug(nonprofit);
-	}).then(function () {
 		return nonprofit.validate();
 	}).then(function () {
 		user.populate({nonprofitUuid: nonprofit.uuid});

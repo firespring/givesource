@@ -101,6 +101,10 @@ Resources:
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
                 - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
+                - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
@@ -336,6 +340,21 @@ Resources:
       - LambdaRole
       - RestApi
 
+  ApiMetricsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - LambdaRole
+      - RestApi
+
   ApiNonprofitsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -445,6 +464,7 @@ Resources:
       - ApiDonorsStack
       - ApiFilesStack
       - ApiMessagesStack
+      - ApiMetricsStack
       - ApiNonprofitsStack
       - ApiPaymentTransactionsStack
       - ApiReportsStack
