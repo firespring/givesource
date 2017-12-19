@@ -1021,7 +1021,7 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref SettingsApiResource
+      ResourceId: !Ref EmailSettingsApiResource
       HttpMethod: DELETE
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -1033,7 +1033,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt DeleteVerifiedEmailLambdaFunction.Arn
+          - Function: !GetAtt DeleteEmailLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 204
             ResponseParameters:
@@ -1087,7 +1087,7 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: DeleteVerifiedEmailLambdaFunction
+    DependsOn: DeleteEmailLambdaFunction
 
   VerifyEmailSettingApiMethod:
     Type: AWS::ApiGateway::Method
