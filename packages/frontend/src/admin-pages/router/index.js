@@ -108,9 +108,17 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/settings/general-settings',
-			name: 'settings-general',
-			component: require('./../components/admin/settings/generalSettings/GeneralSettings.vue'),
+			path: '/settings/event',
+			name: 'settings-event',
+			component: require('./../components/admin/settings/event/EventSettings.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/contact',
+			name: 'settings-contact',
+			component: require('./../components/admin/settings/contact/ContactSettings.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
