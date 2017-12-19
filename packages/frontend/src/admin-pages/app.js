@@ -67,7 +67,7 @@ main.router = router;
 main.store = store;
 
 // Bootstrap the request library
-Vue.prototype.$request = new Request(store.getters.setting('API_URL'));
+Vue.prototype.$request = new Request();
 
 // Start the app
 const app = new Vue(main);

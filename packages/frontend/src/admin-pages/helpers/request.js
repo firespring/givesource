@@ -18,15 +18,14 @@
 import * as _ from 'lodash';
 import * as User from './user';
 import axios from 'axios';
+import store from './../store';
 
 /**
  * Request constructor
  *
- * @param {String} [baseUrl]
  * @constructor
  */
-function Request(baseUrl) {
-	this.baseUrl = baseUrl;
+function Request() {
 }
 
 /**
@@ -38,9 +37,10 @@ function Request(baseUrl) {
  */
 Request.prototype.delete = function (uri, data, headers) {
 	const request = this;
+	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		const config = data ? {data: data, headers: response} : {headers: response};
-		return axios.delete(request.baseUrl + uri, config);
+		return axios.delete(apiUrl + uri, config);
 	});
 };
 
@@ -53,8 +53,9 @@ Request.prototype.delete = function (uri, data, headers) {
  */
 Request.prototype.get = function (uri, query, headers) {
 	const request = this;
+	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
-		return axios.get(request.baseUrl + uri + request.buildQuery(query), {headers: response});
+		return axios.get(apiUrl + uri + request.buildQuery(query), {headers: response});
 	});
 };
 
@@ -67,9 +68,10 @@ Request.prototype.get = function (uri, query, headers) {
  */
 Request.prototype.patch = function (uri, body, headers) {
 	const request = this;
+	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
-		return axios.patch(request.baseUrl + uri, body, {headers: response});
+		return axios.patch(apiUrl + uri, body, {headers: response});
 	});
 };
 
@@ -82,9 +84,10 @@ Request.prototype.patch = function (uri, body, headers) {
  */
 Request.prototype.post = function (uri, body, headers) {
 	const request = this;
+	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
-		return axios.post(request.baseUrl + uri, body, {headers: response});
+		return axios.post(apiUrl + uri, body, {headers: response});
 	});
 };
 

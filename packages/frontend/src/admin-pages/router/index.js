@@ -443,7 +443,7 @@ const loadSettings = function () {
  * @return {Promise}
  */
 const loadUser = function () {
-	const request = new Request(store.getters.setting('API_URL'));
+	const request = new Request();
 	return request.get('user-profile').then(function (response) {
 		Vue.prototype.user = response.data;
 	});
@@ -481,7 +481,7 @@ const authMiddleware = function (to, from, next) {
  */
 const nonprofitStatusMiddleware = function (to, from, next) {
 	if (to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
-		const request = new Request(store.getters.setting('API_URL'));
+		const request = new Request();
 		return request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 			const nonprofit = response.data;
 			const allowed = (to.meta.nonprofitStatus instanceof Array) ? to.meta.nonprofitStatus : [to.meta.nonprofitStatus];
