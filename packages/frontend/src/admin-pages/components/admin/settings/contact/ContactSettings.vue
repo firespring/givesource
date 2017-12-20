@@ -62,16 +62,20 @@
                             <div class="c-page-section-segment o-grid o-grid--sm-middle">
                                 <div class="o-grid-col o-grid-col--sm-expand">
                                     <h4 class="u-margin-none">Sender Email</h4>
-                                    <div class="u-break-word">testing@email.com (Awaiting Verification)</div>
+                                    <div class="u-break-word">{{ senderEmail }}{{ verificationMessage }}</div>
                                     <div class="c-notes c-notes--below">
                                         All outgoing messages (e.g., to participating nonprofits and donors) will be sent from this email address. However, it must be verified
                                         before it can be used to send any messages.
-                                        <a href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link">Resend Verification Link</a>
+                                        <a v-on:click.prevent="resendVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
+                                           v-if="displayResendVerificationLink">
+                                            Resend Verification Link
+                                        </a>
                                     </div>
                                 </div>
 
                                 <div class="o-grid-col o-grid-col--sm-shrink">
-                                    <a href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger" rel="modal-settings-edit-sender-email-address">
+                                    <a v-on:click.prevent="editSenderEmail" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger"
+                                       rel="modal-settings-edit-sender-email-address">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </a>
                                 </div>
@@ -82,14 +86,15 @@
                             <div class="c-page-section-segment o-grid o-grid--sm-middle">
                                 <div class="o-grid-col o-grid-col--sm-expand">
                                     <h4 class="u-margin-none">Contact Phone #</h4>
-                                    <div class="u-break-word">111-222-3333</div>
+                                    <div class="u-break-word">{{ contactPhone }}</div>
                                     <div class="c-notes c-notes--below">
                                         This will be displayed in various locations throughout your event's site.
                                     </div>
                                 </div>
 
                                 <div class="o-grid-col o-grid-col--sm-shrink">
-                                    <a href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger" rel="modal-settings-edit-contact-phone">
+                                    <a v-on:click.prevent="editContactPhone" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger"
+                                       rel="modal-settings-edit-contact-phone">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </a>
                                 </div>
@@ -109,12 +114,48 @@
 	module.exports = {
 		data: function () {
 			return {
-				settings: []
+				settings: [],
+				emailSettings: [],
 			};
 		},
 		computed: {
+			displayResendVerificationLink: function () {
+				return this.settings.length && this.emailSettings.length && !this.senderEmailIsVerified;
+			},
 			contactEmail: function () {
-				return this.settings.length ? _.find(this.settings, {key: 'CONTACT_EMAIL'}).value : null;
+				let setting = null;
+				if (this.settings.length) {
+					setting = _.find(this.settings, {key: 'CONTACT_EMAIL'});
+				}
+				return setting ? setting.value : null;
+			},
+			contactPhone: function () {
+				let setting = null;
+				if (this.settings.length) {
+					setting = _.find(this.settings, {key: 'CONTACT_PHONE'});
+				}
+				return setting ? setting.value : null;
+			},
+			senderEmail: function () {
+				let setting = null;
+				if (this.settings.length) {
+					setting = _.find(this.settings, {key: 'SENDER_EMAIL'});
+				}
+				return setting ? setting.value : null;
+			},
+			senderEmailIsVerified: function () {
+				let setting = null;
+				if (this.settings.length && this.emailSettings.length && this.senderEmail) {
+					setting = _.find(this.emailSettings, {email: this.senderEmail});
+				}
+				return setting ? setting.verified : false;
+			},
+			verificationMessage: function () {
+				let message = '';
+				if (this.settings.length && this.emailSettings.length) {
+					message = this.senderEmail && !this.senderEmailIsVerified ? ' (Awaiting Verification)' : '';
+				}
+				return message;
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -123,6 +164,9 @@
 					keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
 				})).then(function (response) {
 					vue.settings = response.data;
+					return axios.get(API_URL + 'settings/email');
+				}).then(function (response) {
+					vue.emailSettings = response.data;
 				});
 			});
 		},
@@ -133,22 +177,22 @@
 				keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
 			})).then(function (response) {
 				vue.settings = response.data;
+				return axios.get(API_URL + 'settings/email');
+			}).then(function (response) {
+				vue.emailSettings = response.data;
 				next();
 			}).catch(function () {
 				next();
 			});
 		},
-        created: function () {
+		created: function () {
 			const vue = this;
 
 			vue.bus.$on('updateSetting', function (data) {
-				vue.settings.forEach(function (setting) {
-					if (data.key === setting.key) {
-						setting.value = data.value;
-                    }
-                });
-            });
-        },
+				_.remove(vue.settings, {key: data.key});
+				vue.settings.push(data);
+			});
+		},
 		beforeDestroy: function () {
 			const vue = this;
 			vue.bus.$off('updateSetting');
@@ -157,6 +201,18 @@
 			editContactEmail: function () {
 				const vue = this;
 				vue.addModal('settings-edit-contact-email', {CONTACT_EMAIL: vue.contactEmail});
+			},
+			editContactPhone: function () {
+				const vue = this;
+				vue.addModal('settings-edit-contact-phone', {CONTACT_PHONE: vue.contactPhone});
+			},
+			editSenderEmail: function () {
+				const vue = this;
+				vue.addModal('settings-edit-sender-email', {SENDER_EMAIL: vue.senderEmail, SENDER_EMAIL_IS_VERIFIED: vue.senderEmailIsVerified});
+			},
+			resendVerification: function () {
+				const vue = this;
+				vue.addModal('settings-resend-verify-email', {email: vue.senderEmail});
 			}
 		}
 	};

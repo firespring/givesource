@@ -112,6 +112,27 @@ SES.prototype.listIdentities = function () {
 };
 
 /**
+ * Get AWS SES identity verification statuses
+ *
+ * @param {[]} identities
+ * @return {Promise}
+ */
+SES.prototype.getIdentityVerificationAttributes = function (identities) {
+	const awsSES = new AWS.SES();
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Identities: identities
+		};
+		awsSES.getIdentityVerificationAttributes(params, function (err, data) {
+			if (err) {
+				return reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
  * Delete an AWS SES email address
  *
  * @param {String} identity

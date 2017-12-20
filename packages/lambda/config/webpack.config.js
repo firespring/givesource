@@ -108,6 +108,8 @@ module.exports = function (env) {
 			GetUser: './src/api/getUser/index.js',
 			PatchUser: './src/api/patchUser/index.js',
 			PostUser: './src/api/postUser/index.js',
+			GetEmail: './src/api/getEmail/index.js',
+			VerifyEmail: './src/api/verifyEmail/index.js',
 
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',

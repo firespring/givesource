@@ -193,8 +193,7 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                - ses:SendEmail
-                - ses:SendRawEmail
+                - ses:*
               Resource: '*'
     DependsOn:
       - DynamoDbStack

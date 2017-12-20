@@ -89,6 +89,9 @@
 			'account-edit-password': require('../account/UserAccountPasswordModal.vue'),
 			'photo-editor': require('./photoEditor/PhotoEditorModal.vue'),
 			'settings-edit-contact-email': require('./../admin/settings/contact/ContactEmailModal.vue'),
+			'settings-edit-contact-phone': require('./../admin/settings/contact/ContactPhoneModal.vue'),
+			'settings-edit-sender-email': require('./../admin/settings/contact/SenderEmailModal.vue'),
+			'settings-resend-verify-email': require('./../admin/settings/contact/ResendVerifyEmailModal.vue'),
 		}
 	};
 </script>

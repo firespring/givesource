@@ -18,18 +18,31 @@
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
-const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
 	const request = new Request(event, context);
 	const ses = new SES();
 
 	request.validate().then(function () {
 		return ses.listIdentities();
 	}).then(function (response) {
-		console.log('aws response: %j', response);
-		callback();
+		const identities = response.hasOwnProperty('Identities') ? response.Identities : [];
+		if (identities.length) {
+			return ses.getIdentityVerificationAttributes(identities);
+		} else {
+			return Promise.resolve([]);
+		}
+	}).then(function (response) {
+		const results = [];
+		if (response.hasOwnProperty('VerificationAttributes')) {
+			Object.keys(response.VerificationAttributes).forEach(function (key) {
+				results.push({
+					email: key,
+					verified: response.VerificationAttributes[key].VerificationStatus === 'Success',
+				});
+			});
+		}
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
