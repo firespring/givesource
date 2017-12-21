@@ -43,9 +43,14 @@
                             <div class="c-page-section-segment o-grid o-grid--sm-middle">
                                 <div class="o-grid-col o-grid-col--sm-expand">
                                     <h4 class="u-margin-none">Contact Email</h4>
-                                    <div class="u-break-word">{{ contactEmail }}</div>
+                                    <div class="u-break-word">{{ contactEmail }}{{ contactEmailVerificaitonMessage }}</div>
                                     <div class="c-notes c-notes--below">
-                                        All incoming messages (e.g., donation notifications) will be sent to this email address.
+                                        All incoming messages (e.g., donation notifications) will be sent to this email address. However, it must be verified before it can be used
+                                        to receive any messages.
+                                        <a v-on:click.prevent="resendContactEmailVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
+                                           v-if="displayResendContactEmailVerificationLink">
+                                            Resend Verification Link
+                                        </a>
                                     </div>
                                 </div>
 
@@ -62,12 +67,12 @@
                             <div class="c-page-section-segment o-grid o-grid--sm-middle">
                                 <div class="o-grid-col o-grid-col--sm-expand">
                                     <h4 class="u-margin-none">Sender Email</h4>
-                                    <div class="u-break-word">{{ senderEmail }}{{ verificationMessage }}</div>
+                                    <div class="u-break-word">{{ senderEmail }}{{ senderEmailVerificaitonMessage }}</div>
                                     <div class="c-notes c-notes--below">
                                         All outgoing messages (e.g., to participating nonprofits and donors) will be sent from this email address. However, it must be verified
                                         before it can be used to send any messages.
-                                        <a v-on:click.prevent="resendVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
-                                           v-if="displayResendVerificationLink">
+                                        <a v-on:click.prevent="resendSenderEmailVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
+                                           v-if="displayResendSenderEmailVerificationLink">
                                             Resend Verification Link
                                         </a>
                                     </div>
@@ -119,7 +124,10 @@
 			};
 		},
 		computed: {
-			displayResendVerificationLink: function () {
+			displayResendContactEmailVerificationLink: function () {
+				return this.settings.length && this.emailSettings.length && !this.contactEmailIsVerified;
+			},
+			displayResendSenderEmailVerificationLink: function () {
 				return this.settings.length && this.emailSettings.length && !this.senderEmailIsVerified;
 			},
 			contactEmail: function () {
@@ -129,6 +137,20 @@
 				}
 				return setting ? setting.value : null;
 			},
+            contactEmailIsVerified: function () {
+	            let setting = null;
+	            if (this.settings.length && this.emailSettings.length && this.contactEmail) {
+		            setting = _.find(this.emailSettings, {email: this.contactEmail});
+	            }
+	            return setting ? setting.verified : false;
+            },
+			contactEmailVerificaitonMessage: function () {
+				let message = '';
+				if (this.settings.length && this.emailSettings.length) {
+					message = this.contactEmail && !this.contactEmailIsVerified ? ' (Awaiting Verification)' : '';
+				}
+				return message;
+            },
 			contactPhone: function () {
 				let setting = null;
 				if (this.settings.length) {
@@ -150,7 +172,7 @@
 				}
 				return setting ? setting.verified : false;
 			},
-			verificationMessage: function () {
+			senderEmailVerificaitonMessage: function () {
 				let message = '';
 				if (this.settings.length && this.emailSettings.length) {
 					message = this.senderEmail && !this.senderEmailIsVerified ? ' (Awaiting Verification)' : '';
@@ -210,7 +232,11 @@
 				const vue = this;
 				vue.addModal('settings-edit-sender-email', {SENDER_EMAIL: vue.senderEmail, SENDER_EMAIL_IS_VERIFIED: vue.senderEmailIsVerified});
 			},
-			resendVerification: function () {
+			resendContactEmailVerification: function () {
+				const vue = this;
+				vue.addModal('settings-resend-verify-email', {email: vue.contactEmail});
+			},
+			resendSenderEmailVerification: function () {
 				const vue = this;
 				vue.addModal('settings-resend-verify-email', {email: vue.senderEmail});
 			}

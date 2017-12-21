@@ -77,8 +77,8 @@
                     </div>
                 </form>
 
-                <div class="notes text-c" style="margin-top: 1rem;">
-                    (You can also call our support line at {{ phoneNumber }}.)
+                <div class="notes text-c" style="margin-top: 1rem;" v-if="contactPhone">
+                    (You can also call our support line at {{ contactPhone }}.)
                 </div>
 
             </div>
@@ -107,8 +107,8 @@
 			}
 		},
 		computed: {
-			phoneNumber: function () {
-				return this.$store.getters.setting('PHONE_NUMBER');
+			contactPhone: function () {
+				return this.$store.getters.setting('CONTACT_PHONE') || null;
 			}
 		},
 		beforeMount: function () {

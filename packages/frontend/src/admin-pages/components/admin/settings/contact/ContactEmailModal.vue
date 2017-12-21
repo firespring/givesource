@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <div id="modal-settings-edit-contact-email-address" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
+    <div id="modal-settings-edit-sender-email-address" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
         <div class="c-modal__contents">
             <div class="c-modal-dialog">
                 <div class="c-modal-dialog__contents">
@@ -28,18 +28,18 @@
                     <div class="c-modal-content">
                         <div class="c-page-section">
                             <div class="c-page-section__main">
-                                <fieldset class="c-page-section__fieldset" aria-labelledby="section-contact-email">
-                                    <div class="c-form-item c-form-item--email c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.CONTACT_EMAIL }">
-                                        <div class="c-form-item__control">
-                                            <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                                <input v-model="formData.CONTACT_EMAIL" type="email" name="contactEmail" id="contactEmail"
-                                                       :class="{ 'has-error': formErrors.CONTACT_EMAIL }" v-auto-focus>
-                                                <label for="contactEmail">Contact Email Address</label>
-                                            </div>
-                                            <div v-if="formErrors.CONTACT_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                {{ formErrors.CONTACT_EMAIL }}
-                                            </div>
-                                        </div>
+                                <fieldset class="c-page-section__fieldset" aria-labelledby="section-sender-email">
+                                    <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
+                                        <input v-model="formData.CONTACT_EMAIL" type="email" name="contactEmail" id="contactEmail"
+                                               :class="{ 'has-error': formErrors.CONTACT_EMAIL }" v-auto-focus>
+                                        <label for="contactEmail">Sender Email Address</label>
+                                    </div>
+                                    <div v-if="formErrors.CONTACT_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.CONTACT_EMAIL }}
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        An email will be sent to this address with a verification link. You will not be able to send any messages from this address until that link
+                                        has been clicked.
                                     </div>
                                 </fieldset>
                             </div>
@@ -80,7 +80,7 @@
 			data: {
 				type: Object,
 				default: {
-					CONTACT_EMAIL: null,
+					CONTACT_EMAIL: null
 				}
 			}
 		},
@@ -128,13 +128,24 @@
 					return;
 				}
 
-				axios.patch(API_URL + 'settings', {
-					settings: [
-						{
-							key: 'CONTACT_EMAIL',
-							value: vue.formData.CONTACT_EMAIL
-						},
-					]
+				axios.get(API_URL + 'settings/email').then(function (response) {
+					const setting = _.find(response.data, {email: vue.formData.CONTACT_EMAIL});
+					if (!setting || (setting && !setting.verified)) {
+						return axios.post(API_URL + 'settings/email/verify', {
+							email: vue.formData.CONTACT_EMAIL
+						});
+					} else {
+						return Promise.resolve();
+					}
+				}).then(function () {
+					return axios.patch(API_URL + 'settings', {
+						settings: [
+							{
+								key: 'CONTACT_EMAIL',
+								value: vue.formData.CONTACT_EMAIL
+							},
+						]
+					});
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
@@ -142,8 +153,8 @@
 					}
 					vue.bus.$emit('updateSetting', {
 						key: 'CONTACT_EMAIL',
-                        value: vue.formData.CONTACT_EMAIL
-                    });
+						value: vue.formData.CONTACT_EMAIL
+					});
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
