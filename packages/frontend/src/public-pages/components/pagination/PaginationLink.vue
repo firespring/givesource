@@ -36,9 +36,15 @@
 			generatePageLink: function (query) {
 				const vue = this;
 				query = query || {};
+				query = _.extend({}, vue.$route.query, query);
+				Object.keys(query).forEach(function (key) {
+					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
+						delete query[key];
+					}
+				});
 				return {
 					name: vue.$route.name,
-					query: _.extend({}, vue.$route.query, query)
+					query: query
 				};
 			}
 		}

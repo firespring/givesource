@@ -111,7 +111,8 @@ module.exports = function (env) {
 			PostSponsorTier: './src/api/postSponsorTier/index.js',
 			PostUser: './src/api/postUser/index.js',
 			ProcessDonations: './src/api/processDonations/index.js',
-			RegisterNonprofit: './src/api/RegisterNonprofit/index.js',
+			RegisterNonprofit: './src/api/registerNonprofit/index.js',
+			SearchNonprofits: './src/api/searchNonprofits/index.js',
 
 			// CloudFormation Custom Lambda Functions
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',

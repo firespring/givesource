@@ -62,6 +62,7 @@ exports.handle = function (event, context, callback) {
 		callback(null, {
 			items: items,
 			size: size,
+			sort: sort,
 			start: start,
 			total: total
 		});

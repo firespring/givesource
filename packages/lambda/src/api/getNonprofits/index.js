@@ -26,6 +26,7 @@ exports.handle = function (event, context, callback) {
 
 	let total = 0;
 	let items = [];
+
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', 'all_created_on_descending');
 	const start = request.queryParam('start', 0);
@@ -38,12 +39,14 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		const builder = new QueryBuilder('query');
 		builder.select('COUNT').limit(1000).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
+
 		return repository.batchQuery(builder);
 	}).then(function (response) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
 			builder.select('COUNT').limit(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
+
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
@@ -55,7 +58,6 @@ exports.handle = function (event, context, callback) {
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
 		}
-
 		return repository.query(builder);
 	}).then(function (response) {
 		if (response.hasOwnProperty('Items')) {
@@ -77,10 +79,18 @@ const getIndex = function (sort) {
 	switch (sort) {
 		case 'active_subtotal_ascending':
 		case 'active_subtotal_descending':
+		case 'denied_subtotal_ascending':
+		case 'denied_subtotal_descending':
+		case 'pending_subtotal_ascending':
+		case 'pending_subtotal_descending':
 			return 'statusSubtotalIndex';
 
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
+		case 'denied_legal_name_ascending':
+		case 'denied_legal_name_descending':
+		case 'pending_legal_name_ascending':
+		case 'pending_legal_name_descending':
 			return 'statusLegalNameIndex';
 
 		case 'all_legal_name_ascending':
@@ -102,6 +112,18 @@ const getHashCondition = function (sort) {
 		case 'active_legal_name_descending':
 			return ['status', '=', 'ACTIVE'];
 
+		case 'denied_subtotal_ascending':
+		case 'denied_subtotal_descending':
+		case 'denied_legal_name_ascending':
+		case 'denied_legal_name_descending':
+			return ['status', '=', 'DENIED'];
+
+		case 'pending_subtotal_ascending':
+		case 'pending_subtotal_descending':
+		case 'pending_legal_name_ascending':
+		case 'pending_legal_name_descending':
+			return ['status', '=', 'PENDING'];
+
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
 		case 'all_created_on_ascending':
@@ -115,10 +137,18 @@ const getRangeCondition = function (sort) {
 	switch (sort) {
 		case 'active_subtotal_ascending':
 		case 'active_subtotal_descending':
+		case 'denied_subtotal_ascending':
+		case 'denied_subtotal_descending':
+		case 'pending_subtotal_ascending':
+		case 'pending_subtotal_descending':
 			return ['donationsSubtotal', '>=', 0];
 
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
+		case 'denied_legal_name_ascending':
+		case 'denied_legal_name_descending':
+		case 'pending_legal_name_ascending':
+		case 'pending_legal_name_descending':
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
 			return ['legalName', '>', ' '];
@@ -134,6 +164,10 @@ const getScanIndexForward = function (sort) {
 	switch (sort) {
 		case 'active_subtotal_ascending':
 		case 'active_legal_name_ascending':
+		case 'denied_subtotal_ascending':
+		case 'denied_legal_name_ascending':
+		case 'pending_subtotal_ascending':
+		case 'pending_legal_name_ascending':
 		case 'all_legal_name_ascending':
 		case 'all_created_on_ascending':
 			return true;

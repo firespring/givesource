@@ -18,21 +18,21 @@
 /**
  * QueryBuilder constructor
  *
- * @param {String} type
+ * @param {String} [type]
  * @constructor
  */
 function QueryBuilder(type) {
-	this.queryType = type;
-	this.tableName = null;
-	this.indexName = null;
+	this._type = type || 'query';
+	this._table = null;
+	this._index = null;
 	this._scanIndexForward = true;
 	this._select = null;
-	this.startKey = null;
-	this.limitNumber = 1000;
-	this.keyConditions = [];
-	this.filters = [];
-	this.expressionAttributeNames = {};
-	this.expressionAttributeValues = {};
+	this._start = null;
+	this._limit = 1000;
+	this._keyConditions = [];
+	this._filters = [];
+	this._expressionAttributeNames = {};
+	this._expressionAttributeValues = {};
 }
 
 /**
@@ -42,7 +42,7 @@ function QueryBuilder(type) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.type = function (type) {
-	this.queryType = type;
+	this._type = type;
 	return this;
 };
 
@@ -53,7 +53,7 @@ QueryBuilder.prototype.type = function (type) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.table = function (table) {
-	this.tableName = table;
+	this._table = table;
 	return this;
 };
 
@@ -64,7 +64,7 @@ QueryBuilder.prototype.table = function (table) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.index = function (index) {
-	this.indexName = index;
+	this._index = index;
 	return this;
 };
 
@@ -93,11 +93,11 @@ QueryBuilder.prototype.select = function (select) {
 /**
  * Exclusive start key
  *
- * @param {*} startKey
+ * @param {*} exclusiveStartKey
  * @return {QueryBuilder}
  */
-QueryBuilder.prototype.start = function (startKey) {
-	this.startKey = startKey;
+QueryBuilder.prototype.start = function (exclusiveStartKey) {
+	this._start = exclusiveStartKey;
 	return this;
 };
 
@@ -108,7 +108,7 @@ QueryBuilder.prototype.start = function (startKey) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.limit = function (limit) {
-	this.limitNumber = limit;
+	this._limit = limit;
 	return this;
 };
 
@@ -122,12 +122,12 @@ QueryBuilder.prototype.limit = function (limit) {
  */
 QueryBuilder.prototype.condition = function (key, conditional, value) {
 	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
-		this.keyConditions.push(`NOT #${key} = :${key}`);
+		this._keyConditions.push(`NOT #${key} = :${key}`);
 	} else {
-		this.keyConditions.push(`#${key} ${conditional} :${key}`);
+		this._keyConditions.push(`#${key} ${conditional} :${key}`);
 	}
-	this.expressionAttributeNames[`#${key}`] = key;
-	this.expressionAttributeValues[`:${key}`] = value;
+	this._expressionAttributeNames[`#${key}`] = key;
+	this._expressionAttributeValues[`:${key}`] = value;
 	return this;
 };
 
@@ -141,12 +141,26 @@ QueryBuilder.prototype.condition = function (key, conditional, value) {
  */
 QueryBuilder.prototype.filter = function (key, conditional, value) {
 	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
-		this.filters.push(`NOT #${key} = :${key}`);
+		this._filters.push(`NOT #${key} = :${key}`);
 	} else {
-		this.filters.push(`#${key} ${conditional} :${key}`);
+		this._filters.push(`#${key} ${conditional} :${key}`);
 	}
-	this.expressionAttributeNames[`#${key}`] = key;
-	this.expressionAttributeValues[`:${key}`] = value;
+	this._expressionAttributeNames[`#${key}`] = key;
+	this._expressionAttributeValues[`:${key}`] = value;
+	return this;
+};
+
+/**
+ * Filter contains
+ *
+ * @param {String} key
+ * @param {*} value
+ * @return {QueryBuilder}
+ */
+QueryBuilder.prototype.contains = function (key, value) {
+	this._filters.push(`contains(#${key}, :${key})`);
+	this._expressionAttributeNames[`#${key}`] = key;
+	this._expressionAttributeValues[`:${key}`] = value;
 	return this;
 };
 
@@ -159,10 +173,10 @@ QueryBuilder.prototype.filter = function (key, conditional, value) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.between = function (key, minValue, maxValue) {
-	this.keyConditions.push(`#${key}-between BETWEEN :${key}-min AND :${key}-max`);
-	this.expressionAttributeNames[`#${key}-between`] = key;
-	this.expressionAttributeValues[`:${key}-min`] = minValue;
-	this.expressionAttributeValues[`:${key}-max`] = maxValue;
+	this._keyConditions.push(`#${key}-between BETWEEN :${key}-min AND :${key}-max`);
+	this._expressionAttributeNames[`#${key}-between`] = key;
+	this._expressionAttributeValues[`:${key}-min`] = minValue;
+	this._expressionAttributeValues[`:${key}-max`] = maxValue;
 	return this;
 };
 
@@ -174,9 +188,9 @@ QueryBuilder.prototype.between = function (key, minValue, maxValue) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.beginsWith = function (key, value) {
-	this.keyConditions.push(`begins_with ( #${key}-begins, :${key}-begins )`);
-	this.expressionAttributeNames[`#${key}-begins`] = key;
-	this.expressionAttributeValues[`:${key}-begins`] = value;
+	this._keyConditions.push(`begins_with ( #${key}-begins, :${key}-begins )`);
+	this._expressionAttributeNames[`#${key}-begins`] = key;
+	this._expressionAttributeValues[`:${key}-begins`] = value;
 	return this;
 };
 
@@ -186,49 +200,46 @@ QueryBuilder.prototype.beginsWith = function (key, value) {
  * @return {{}}
  */
 QueryBuilder.prototype.build = function () {
-	if (this.queryType === null || this.queryType === undefined) {
-		this.queryType = 'query';
-	}
-	const join = (this.queryType === 'query') ? ' AND ' : ', ';
+	const join = (this._type === 'query') ? ' AND ' : ', ';
 
-	if (this.tableName === null || this.tableName === '' || this.tableName === undefined) {
+	if (!this._table) {
 		throw new Error('table is undefined');
 	}
 
 	const params = {
-		TableName: this.tableName
+		TableName: this._table
 	};
 
-	if (this.indexName !== null) {
-		params['IndexName'] = this.indexName;
+	if (this._index) {
+		params['IndexName'] = this._index;
 	}
 
-	if (this.keyConditions.length > 0) {
-		params['KeyConditionExpression'] = this.keyConditions.join(join);
+	if (this._keyConditions.length) {
+		params['KeyConditionExpression'] = this._keyConditions.join(join);
 	}
 
-	if (this.filters.length > 0) {
-		params['FilterExpression'] = this.filters.join(join);
+	if (this._filters.length) {
+		params['FilterExpression'] = this._filters.join(join);
 	}
 
-	if (this.keyConditions.length > 0 || this.filters.length > 0) {
-		params['ExpressionAttributeNames'] = this.expressionAttributeNames;
-		params['ExpressionAttributeValues'] = this.expressionAttributeValues;
+	if (this._expressionAttributeNames !== {} && this._expressionAttributeValues !== {}) {
+		params['ExpressionAttributeNames'] = this._expressionAttributeNames;
+		params['ExpressionAttributeValues'] = this._expressionAttributeValues;
 	}
 
-	if (this.limitNumber) {
-		params['Limit'] = this.limitNumber;
+	if (this._limit) {
+		params['Limit'] = this._limit;
 	}
 
 	if (this._select) {
 		params['Select'] = this._select;
 	}
 
-	if (this.startKey) {
-		params['ExclusiveStartKey'] = this.startKey;
+	if (this._start) {
+		params['ExclusiveStartKey'] = this._start;
 	}
 
-	if (this._scanIndexForward !== null && this.queryType === 'query') {
+	if (this._scanIndexForward && this._type === 'query') {
 		params['ScanIndexForward'] = this._scanIndexForward;
 	}
 

@@ -54,6 +54,7 @@ Nonprofit.prototype.attributes = [
 	'donationsSubtotal',
 	'donationsTotal',
 	'legalName',
+	'legalNameSearch',
 	'longDescription',
 	'phone',
 	'shortDescription',
@@ -61,7 +62,7 @@ Nonprofit.prototype.attributes = [
 	'state',
 	'status',
 	'taxId',
-	'zip'
+	'zip',
 ];
 
 /**
@@ -124,6 +125,10 @@ Nonprofit.prototype.constraints = {
 		presence: true,
 		type: 'string',
 	},
+	legalNameSearch: {
+		presence: true,
+		type: 'string',
+	},
 	longDescription: {
 		presence: false,
 		type: 'string'
@@ -172,6 +177,13 @@ Nonprofit.prototype.defaults = function () {
 		donationsTotal: 0,
 		status: NonprofitHelper.STATUS_PENDING
 	};
+};
+
+/**
+ * Event fired for this model before saving
+ */
+Nonprofit.prototype.beforeSave = function () {
+	this.legalNameSearch = this.legalName.toLowerCase();
 };
 
 module.exports = Nonprofit;

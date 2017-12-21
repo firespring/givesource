@@ -22,6 +22,7 @@ module.exports = {
 				items: [],
 				loaded: false,
 				size: 0,
+				sort: '',
 				start: 0,
 				total: 0
 			}
@@ -35,6 +36,7 @@ module.exports = {
 				items: [],
 				loaded: false,
 				size: 0,
+				sort: '',
 				start: 0,
 				total: 0
 			};
@@ -42,11 +44,11 @@ module.exports = {
 		setPaginationData: function (data) {
 			const vue = this;
 
-			vue.pagination.items = data.items;
-			vue.pagination.size = data.size;
-			vue.pagination.start = data.start;
-			vue.pagination.total = data.total;
-
+			Object.keys(vue.pagination).forEach(function (key) {
+				if (data.hasOwnProperty(key)) {
+					vue.pagination[key] = data[key];
+				}
+			});
 			vue.pagination.loaded = true;
 		}
 	}

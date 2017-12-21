@@ -263,6 +263,7 @@ Repository.prototype.batchUpdate = function (models) {
 		models = models || [];
 		models.forEach(function (model) {
 			if (model instanceof Model) {
+				model.beforeSave();
 				requestItems.push({
 					PutRequest: {
 						Item: model.all()
@@ -356,7 +357,7 @@ Repository.prototype.query = function (builder) {
 			reject(new Error('builder must be a QueryBuilder'));
 		}
 		builder.table(repository.table);
-		repository.dbClient[builder.queryType](builder.build(), function (err, data) {
+		repository.dbClient[builder._type](builder.build(), function (err, data) {
 			if (err) {
 				reject(new Error(err, 'DynamoDB'));
 			}

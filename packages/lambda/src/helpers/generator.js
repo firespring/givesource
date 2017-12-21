@@ -157,9 +157,9 @@ Generator.prototype._generators = {
 			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
-			category1: faker.random.word(),
-			category2: faker.random.word(),
-			category3: faker.random.word(),
+			category1: faker.random.number({min: 1, max: 30}),
+			category2: faker.random.number({min: 0, max: 30}),
+			category3: faker.random.number({min: 0, max: 30}),
 			city: faker.address.city(),
 			donationsCount: faker.random.number(),
 			donationsFees: faker.random.number(),
@@ -172,7 +172,7 @@ Generator.prototype._generators = {
 			shortDescription: faker.random.words(),
 			slug: faker.lorem.slug(),
 			state: faker.address.stateAbbr(),
-			status: faker.random.arrayElement(['ACTIVE', 'DENIED', 'PENDING', 'REVOKED']),
+			status: faker.random.arrayElement(['ACTIVE', 'DENIED', 'PENDING']),
 			taxId: faker.random.alphaNumeric(10),
 			zip: faker.address.zipCode()
 		};

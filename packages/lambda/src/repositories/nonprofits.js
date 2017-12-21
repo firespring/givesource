@@ -103,6 +103,49 @@ NonprofitsRepository.prototype.getAll = function () {
 };
 
 /**
+ * Search nonprofits
+ *
+ * @param {[]} keys
+ * @param {String} search
+ * @param {String} [filterKey]
+ * @param {String} [filter]
+ * @return {Promise}
+ */
+NonprofitsRepository.prototype.search = function (keys, search, filterKey, filter) {
+	const repository = this;
+	return new Promise(function (resolve, reject) {
+		const params = {
+			FilterExpression: '',
+			ExpressionAttributeNames: {},
+			ExpressionAttributeValues: {},
+		};
+		keys.forEach(function (key) {
+			params.FilterExpression = params.FilterExpression !== '' ? params.FilterExpression + ` OR contains(#${key}, :${key})` : `contains(#${key}, :${key})`;
+			params.ExpressionAttributeNames[`#${key}`] = key;
+			params.ExpressionAttributeValues[`:${key}`] = search;
+		});
+
+		if (filterKey && filter) {
+			params.FilterExpression = `(${params.FilterExpression}) AND #${filterKey} = :${filterKey}`;
+			params.ExpressionAttributeNames[`#${filterKey}`] = filterKey;
+			params.ExpressionAttributeValues[`:${filterKey}`] = filter;
+		}
+
+		repository.batchScan(params).then(function (data) {
+			let results = [];
+			if (data.Items) {
+				data.Items.forEach(function (item) {
+					results.push(new Nonprofit(item));
+				});
+			}
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+/**
  * Delete a Nonprofit
  *
  * @param {String} uuid
@@ -130,6 +173,7 @@ NonprofitsRepository.prototype.save = function (model) {
 		if (!(model instanceof Nonprofit)) {
 			reject(new Error('invalid Nonprofit model'));
 		}
+		model.beforeSave();
 		model.validate().then(function () {
 			const key = {
 				uuid: model.uuid

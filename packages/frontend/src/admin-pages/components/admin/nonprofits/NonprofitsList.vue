@@ -21,7 +21,8 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
-                    <nonprofits-list-table-header></nonprofits-list-table-header>
+                    <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
+                    </nonprofits-list-table-header>
                     <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"></nonprofits-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
@@ -66,6 +67,28 @@
 						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
 					});
 				});
+            },
+            searchNonprofits: function (params) {
+				const vue = this;
+
+				vue.pagination.loaded = false;
+				vue.$request.get('nonprofits/search', params).then(function (response) {
+					vue.setPaginationData({
+                        size: 0,
+                        sort: params.sort,
+                        start: 0,
+                        total: 0,
+                        items: response.data
+                    });
+                });
+            },
+            resetPagination: function () {
+				const vue = this;
+
+	            vue.resetPaginationData();
+	            vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
+		            vue.setPaginationData(response.data);
+	            });
             }
         },
 		components: {

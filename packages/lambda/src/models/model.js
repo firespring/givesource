@@ -57,6 +57,13 @@ Model.prototype.defaults = function () {
 };
 
 /**
+ * Event fired for this model before saving
+ */
+Model.prototype.beforeSave = function () {
+	return true;
+};
+
+/**
  * Base Model attributes
  *
  * @type {[]}
