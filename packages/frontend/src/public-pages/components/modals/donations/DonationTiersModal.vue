@@ -17,7 +17,7 @@
 
 <template>
     <div class="donation-overlay" :style="{ 'z-index': zIndex }">
-        <div class="donation-overlay__wrapper">
+        <div class="donation-overlay__wrapper" v-if="loaded">
             <div class="donation-modal donation-modal--options" ref="donationModalOptions">
 
                 <header class="donation-modal__header">
@@ -45,6 +45,10 @@
 
                 <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
             </div>
+        </div>
+
+        <div class="donation-overlay__wrapper" v-else>
+            <layout-spinner></layout-spinner>
         </div>
     </div>
 </template>
@@ -144,7 +148,8 @@
 			}
 		},
 		components: {
-			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue')
+			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
+            'layout-spinner': require('./../../layout/Spinner.vue'),
 		}
 	}
 </script>
