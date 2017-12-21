@@ -29,11 +29,15 @@
                         <div class="c-page-section">
                             <div class="c-page-section__main">
                                 <fieldset class="c-page-section__fieldset" aria-labelledby="section-contact-phone">
-                                    <div class="c-form-item c-form-item--email c-form-item--required">
+                                    <div class="c-form-item c-form-item--email c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.CONTACT_PHONE }">
                                         <div class="c-form-item__control">
                                             <div class="u-control-icon u-control-icon--tel has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                                <input v-model="formData.CONTACT_PHONE" type="tel" name="contactPhone" id="contactPhone" v-auto-focus>
+                                                <input v-model="formData.CONTACT_PHONE" type="tel" name="contactPhone" id="contactPhone"
+                                                       :class="{ 'has-error': formErrors.CONTACT_PHONE }" v-auto-focus>
                                                 <label for="contactPhone">Contact Phone #</label>
+                                            </div>
+                                            <div v-if="formErrors.CONTACT_PHONE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                {{ formErrors.CONTACT_PHONE }}
                                             </div>
                                         </div>
                                     </div>

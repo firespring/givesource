@@ -30,8 +30,12 @@
                             <div class="c-page-section__main">
                                 <fieldset class="c-page-section__fieldset" aria-labelledby="section-sender-email">
                                     <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                        <input v-model="formData.SENDER_EMAIL" type="email" name="senderEmail" id="senderEmail" v-auto-focus>
+                                        <input v-model="formData.SENDER_EMAIL" type="email" name="senderEmail" id="senderEmail" :class="{ 'has-error': formErrors.SENDER_EMAIL }"
+                                               v-auto-focus>
                                         <label for="senderEmail">Sender Email Address</label>
+                                    </div>
+                                    <div v-if="formErrors.SENDER_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.SENDER_EMAIL }}
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         An email will be sent to this address with a verification link. You will not be able to send any messages from this address until that link
