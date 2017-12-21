@@ -32,6 +32,9 @@
                                     A new verification link has been sent to <strong class="u-break-word">{{ data.email }}</strong>.
                                     Click on this link to verify your email address.
                                 </p>
+                                <p>
+                                    The verification link will expire after 24 hours.
+                                </p>
                             </div>
                         </div>
 
@@ -69,7 +72,7 @@
 
 			axios.get(API_URL + 'settings/email').then(function (response) {
 				const setting = _.find(response.data, {email: vue.data.email});
-				if (setting && !setting.verified) {
+				if (!setting || (setting && !setting.verified)) {
 					return axios.post(API_URL + 'settings/email/verify', {
 						email: vue.data.email
 					});

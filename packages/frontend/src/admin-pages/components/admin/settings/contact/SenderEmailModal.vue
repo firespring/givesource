@@ -126,7 +126,7 @@
 
 				axios.get(API_URL + 'settings/email').then(function (response) {
 					const setting = _.find(response.data, {email: vue.formData.SENDER_EMAIL});
-					if (setting && !setting.verified) {
+					if (!setting || (setting && !setting.verified)) {
 						return axios.post(API_URL + 'settings/email/verify', {
 							email: vue.formData.SENDER_EMAIL
 						});
