@@ -42,7 +42,8 @@
 </template>
 
 <script>
-    import * as Utils from './../../helpers/utils';
+	import * as Utils from './../../helpers/utils';
+
 	const PaginationMixin = require('./../../mixins/pagination');
 
 	module.exports = {
@@ -54,22 +55,47 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
-				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
-					vue.setPaginationData(response.data);
-				});
+				if (to.query.hasOwnProperty('search') && to.query.search) {
+					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString({
+						keys: 'legalNameSearch',
+						search: to.query.search.toLowerCase(),
+						filter_key: 'status',
+						filter: 'ACTIVE',
+					})).then(function (response) {
+						vue.setPaginationData({
+							items: response.data,
+						});
+					});
+				} else {
+					const options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+					axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+						vue.setPaginationData(response.data);
+					});
+				}
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
-			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
-				vue.setPaginationData(response.data);
-				next();
-			}).catch(function () {
-				next();
-			});
+			if (to.query.hasOwnProperty('search') && to.query.search) {
+				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString({
+					keys: 'legalNameSearch',
+					search: to.query.search.toLowerCase(),
+					filter_key: 'status',
+					filter: 'ACTIVE',
+				})).then(function (response) {
+					vue.setPaginationData({
+						items: response.data,
+					});
+					next();
+				});
+			} else {
+				const options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+					vue.setPaginationData(response.data);
+					next();
+				});
+			}
 		},
 		mixins: [
 			PaginationMixin
@@ -78,7 +104,7 @@
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
-            'pagination': require('./../pagination/Pagination.vue'),
+			'pagination': require('./../pagination/Pagination.vue'),
 			'search-results-header': require('./SearchResultsHeader.vue'),
 			'search-results-row': require('./SearchResultsRow.vue')
 		}

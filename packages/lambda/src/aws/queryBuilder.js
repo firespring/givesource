@@ -31,6 +31,7 @@ function QueryBuilder(type) {
 	this._limit = 1000;
 	this._keyConditions = [];
 	this._filters = [];
+	this._filterExpression = '';
 	this._expressionAttributeNames = {};
 	this._expressionAttributeValues = {};
 }
@@ -150,6 +151,17 @@ QueryBuilder.prototype.filter = function (key, conditional, value) {
 	return this;
 };
 
+QueryBuilder.prototype.filterExpression = function (expression) {
+	this._filterExpression = expression;
+	return this;
+};
+
+QueryBuilder.prototype.expressionAttribute = function (key, value) {
+	this._expressionAttributeNames[`#${key}`] = key;
+	this._expressionAttributeValues[`:${key}`] = value;
+	return this;
+};
+
 /**
  * Filter contains
  *
@@ -218,7 +230,9 @@ QueryBuilder.prototype.build = function () {
 		params['KeyConditionExpression'] = this._keyConditions.join(join);
 	}
 
-	if (this._filters.length) {
+	if (this._filterExpression) {
+		params['FilterExpression'] = this._filterExpression;
+	} else if (this._filters.length) {
 		params['FilterExpression'] = this._filters.join(join);
 	}
 

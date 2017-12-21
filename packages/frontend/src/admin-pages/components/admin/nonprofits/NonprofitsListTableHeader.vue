@@ -121,7 +121,7 @@
 
 	            const filter = vue.getFilter();
 	            const params = {
-		            keys: ['legalNameSearch'],
+		            keys: 'legalNameSearch',
 		            search: vue.formData.search.toLowerCase()
 	            };
 

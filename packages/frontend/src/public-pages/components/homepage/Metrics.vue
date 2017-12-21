@@ -258,7 +258,7 @@
 				event.preventDefault();
 				const vue = this;
 
-				vue.$router.push({name: 'search-results', query: {q: vue.$refs.search.value}});
+				vue.$router.push({name: 'search-results', query: {search: vue.$refs.search.value}});
 			},
 			metricClass: function (digit) {
 				return /^\d+$/.test(digit) ? 'number' : 'text';

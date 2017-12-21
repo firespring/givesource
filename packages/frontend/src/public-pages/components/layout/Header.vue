@@ -71,7 +71,7 @@
 				event.preventDefault();
 				const vue = this;
 
-				const query = vue.$refs.search.value ? {q: vue.$refs.search.value} : {};
+				const query = vue.$refs.search.value ? {search: vue.$refs.search.value} : {};
 				vue.$router.push({name: 'search-results', query: query});
 			},
 			openMenu: function (event) {
