@@ -55,6 +55,7 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
+
 	const numeral = require('numeral');
 
 	module.exports = {
@@ -68,29 +69,29 @@
 				}
 			};
 		},
-        computed: {
+		computed: {
 			donationsCount: function () {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000');
-            },
-            donationsTotal: function () {
-	            return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00');
-            },
-            donorsCount: function () {
-	            return numeral(this.metrics.DONORS_COUNT).format('0,000');
-            },
-            topDonation: function () {
-	            return numeral(this.metrics.TOP_DONATION / 100).format('$0,00.00');
-            }
-        },
+			},
+			donationsTotal: function () {
+				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00');
+			},
+			donorsCount: function () {
+				return numeral(this.metrics.DONORS_COUNT).format('0,000');
+			},
+			topDonation: function () {
+				return numeral(this.metrics.TOP_DONATION / 100).format('$0,00.00');
+			}
+		},
 		created: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vue.metrics)})).then(function (response) {
+			vue.$request.get('metrics', {keys: Object.keys(vue.metrics)}).then(function (response) {
 				response.data.forEach(function (metric) {
 					if (vue.metrics.hasOwnProperty(metric.key)) {
 						vue.metrics[metric.key] = metric.value;
-                    }
-                });
+					}
+				});
 			});
 		}
 	};

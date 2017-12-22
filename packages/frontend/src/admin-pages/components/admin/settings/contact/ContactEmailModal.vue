@@ -128,17 +128,17 @@
 					return;
 				}
 
-				axios.get(API_URL + 'settings/email').then(function (response) {
+				vue.$request.get('settings/email').then(function (response) {
 					const setting = _.find(response.data, {email: vue.formData.CONTACT_EMAIL});
 					if (!setting || (setting && !setting.verified)) {
-						return axios.post(API_URL + 'settings/email/verify', {
+						return vue.$request.post('settings/email/verify', {
 							email: vue.formData.CONTACT_EMAIL
 						});
 					} else {
 						return Promise.resolve();
 					}
 				}).then(function () {
-					return axios.patch(API_URL + 'settings', {
+					return vue.$request.patch('settings', {
 						settings: [
 							{
 								key: 'CONTACT_EMAIL',

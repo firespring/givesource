@@ -127,7 +127,7 @@
 					return;
 				}
 
-				axios.patch(API_URL + 'settings', {
+				vue.$request.patch('settings', {
 					settings: [
 						{
 							key: 'CONTACT_PHONE',

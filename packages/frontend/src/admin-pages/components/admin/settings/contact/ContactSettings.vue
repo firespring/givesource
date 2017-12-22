@@ -182,11 +182,11 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				axios.get(API_URL + 'settings' + Utils.generateQueryString({
+				vue.$request.get('settings', {
 					keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
-				})).then(function (response) {
+				}).then(function (response) {
 					vue.settings = response.data;
-					return axios.get(API_URL + 'settings/email');
+					return vue.$request.get('settings/email');
 				}).then(function (response) {
 					vue.emailSettings = response.data;
 				});
@@ -195,11 +195,11 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'settings' + Utils.generateQueryString({
+			vue.$request.get('settings', {
 				keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
-			})).then(function (response) {
+			}).then(function (response) {
 				vue.settings = response.data;
-				return axios.get(API_URL + 'settings/email');
+				return vue.$request.get('settings/email');
 			}).then(function (response) {
 				vue.emailSettings = response.data;
 				next();

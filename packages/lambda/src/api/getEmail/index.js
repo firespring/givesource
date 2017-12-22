@@ -18,9 +18,10 @@
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 	const ses = new SES();
 
 	request.validate().then(function () {

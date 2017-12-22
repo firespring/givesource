@@ -70,10 +70,10 @@
 		created: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'settings/email').then(function (response) {
+			vue.$request.get('settings/email').then(function (response) {
 				const setting = _.find(response.data, {email: vue.data.email});
 				if (!setting || (setting && !setting.verified)) {
-					return axios.post(API_URL + 'settings/email/verify', {
+					return vue.$request.post('settings/email/verify', {
 						email: vue.data.email
 					});
 				}
