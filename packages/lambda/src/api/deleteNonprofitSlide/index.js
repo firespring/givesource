@@ -16,12 +16,14 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));

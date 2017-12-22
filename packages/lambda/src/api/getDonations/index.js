@@ -19,10 +19,11 @@ const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new DonationsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let total = 0;
 	let items = [];
@@ -32,20 +33,20 @@ exports.handle = function (event, context, callback) {
 
 	request.validate().then(function () {
 		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.select('COUNT').limit(1000).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 		return repository.batchQuery(builder);
 	}).then(function (response) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.select('COUNT').limit(start).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
 		}
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
-		builder.limit(size).index('paginationCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.limit(size).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
@@ -63,6 +64,7 @@ exports.handle = function (event, context, callback) {
 			total: total
 		});
 	}).catch(function (err) {
+		console.log(err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 };

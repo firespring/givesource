@@ -17,12 +17,14 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitDonationsRepository = require('./../../repositories/donations');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationsRepository();
 	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	let total = 0;
 	let items = [];

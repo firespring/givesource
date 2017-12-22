@@ -68,11 +68,11 @@
 				vue.addModal('spinner');
 				let promise = Promise.resolve();
 				if (vue.sponsor.hasOwnProperty('fileUuid') && vue.sponsor.fileUuid) {
-					promise = axios.delete(API_URL + 'files/' + vue.sponsor.fileUuid);
+					promise = vue.$request.delete('files/' + vue.sponsor.fileUuid);
 				}
 
 				promise.then(function () {
-					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsor.sponsorTierUuid + '/sponsors/' + vue.sponsor.uuid);
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsor.sponsorTierUuid + '/sponsors/' + vue.sponsor.uuid);
 				}).then(function () {
 					vue.clearModals();
 					vue.$emit('deleteSponsor', vue.sponsor.uuid);

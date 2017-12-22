@@ -229,20 +229,20 @@
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'settings' + Utils.generateQueryString({
-					keys: Object.keys(vm.formData)
-				})).then(function (response) {
-					vm.settings = response.data;
+			next(function (vue) {
+				vue.$request.get('settings', {
+					keys: Object.keys(vue.formData)
+				}).then(function (response) {
+					vue.settings = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'settings' + Utils.generateQueryString({
+			vue.$request.get('settings', {
 				keys: Object.keys(vue.formData)
-			})).then(function (response) {
+			}).then(function (response) {
 				vue.settings = response.data;
 				next();
 			}).catch(function () {
@@ -337,15 +337,14 @@
 				const toUpdate = _.reject(settings, {value: ''});
 				const toDelete = _.filter(settings, {value: ''});
 
-				const updateParams = {settings: toUpdate};
-				axios.patch(API_URL + 'settings', updateParams).then(function (response) {
+				vue.$request.patch('settings', {
+					settings: toUpdate
+				}).then(function (response) {
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					}
-					return axios.delete(API_URL + 'settings', {
-						data: {
-							settings: toDelete
-						}
+					return vue.$request.delete('settings', {
+						settings: toDelete
 					});
 				}).then(function (response) {
 					vue.clearModals();

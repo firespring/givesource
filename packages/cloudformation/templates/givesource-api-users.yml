@@ -21,31 +21,40 @@ Parameters:
   UserPoolId:
     Type: String
 
+  AuthorizeUsers:
+    Type: String
+
   IntegrationRequestTemplate:
     Type: String
     Default: |
-     {
-      "body":$input.json('$'),
-      "headers":{
-        #foreach($param in $input.params().header.keySet())
-        "$param": "$util.escapeJavaScript($input.params().header.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "method": "$context.httpMethod",
-      "params":{
-        #foreach($param in $input.params().path.keySet())
-        "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "query":{
-        #foreach($param in $input.params().querystring.keySet())
-        "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
-        #if($foreach.hasNext),#end
-        #end
+      #if($context.authorizer.user && "$context.authorizer.user" != "")
+        #set($user = "$context.authorizer.user")
+      #else
+        #set($user = 'null')
+      #end
+      {
+        "body":$input.json('$'),
+        "headers":{
+          #foreach($param in $input.params().header.keySet())
+          "$param": "$util.escapeJavaScript($input.params().header.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "method": "$context.httpMethod",
+        "params":{
+          #foreach($param in $input.params().path.keySet())
+          "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "query":{
+          #foreach($param in $input.params().querystring.keySet())
+          "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "user": $user
       }
-     }
 
   IntegrationResponsesTemplate:
     Type: String
@@ -68,37 +77,38 @@ Parameters:
 
 Resources:
 
-  # Users Lambda Resources
+  # User Profile Lambda Resources
 
-  GetUserLambdaFunction:
+  GetUserProfileLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GetUser.zip
-      Description: "Get a user"
+        S3Key: fn/{{version}}/GetUserProfile.zip
+      Description: "Get authenticated user's profile"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          USER_POOL_ID: !Ref UserPoolId
       FunctionName: !Sub |-
-        ${StackName}-GetUser
+        ${StackName}-GetUserProfile
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  GetUserLambdaInvokePermission:
+  GetUserProfileLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt GetUserLambdaFunction.Arn
+      FunctionName: !GetAtt GetUserProfileLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/users/{user_uuid}
-    DependsOn: GetUserLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/user-profile
+    DependsOn: GetUserProfileLambdaFunction
+
+  # Users Lambda Resources
 
   GetUsersLambdaFunction:
     Type: AWS::Lambda::Function
@@ -188,30 +198,26 @@ Resources:
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/users/{user_uuid}
     DependsOn: PatchUserLambdaFunction
 
-  # Users Api Gateway Resources
+  # User Profile Api Gateway Resources
 
-  UsersApiResource:
+  UserProfileApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref RestApiRootResourceId
-      PathPart: "users"
+      PathPart: "user-profile"
 
-  UserApiResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      RestApiId: !Ref RestApi
-      ParentId: !Ref UsersApiResource
-      PathPart: "{user_uuid}"
-
-  GetUserApiMethod:
+  GetUserProfileApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref UserApiResource
+      ResourceId: !Ref UserProfileApiResource
       HttpMethod: GET
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -220,7 +226,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt GetUserLambdaFunction.Arn
+          - Function: !GetAtt GetUserProfileLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 200
             ResponseParameters:
@@ -274,7 +280,48 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: GetUserLambdaFunction
+    DependsOn: GetUserProfileLambdaFunction
+
+  OptionsUserProfileApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref UserProfileApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Users Api Gateway Resources
+
+  UsersApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref RestApiRootResourceId
+      PathPart: "users"
+
+  UserApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref UsersApiResource
+      PathPart: "{user_uuid}"
 
   GetUsersApiMethod:
     Type: AWS::ApiGateway::Method
@@ -282,8 +329,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref UsersApiResource
       HttpMethod: GET
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -354,8 +404,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref UsersApiResource
       HttpMethod: POST
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -426,8 +479,11 @@ Resources:
       RestApiId: !Ref RestApi
       ResourceId: !Ref UserApiResource
       HttpMethod: PATCH
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -533,7 +589,7 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: 200

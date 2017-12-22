@@ -19,10 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const Report = require('./../../models/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new ReportsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	const report = new Report(request._body);
 	request.validate().then(function () {

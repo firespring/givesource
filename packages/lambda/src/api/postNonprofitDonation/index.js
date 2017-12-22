@@ -20,11 +20,12 @@ const HttpException = require('./../../exceptions/http');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new NonprofitDonationsRepository();
 	const nonprofitsRepository = new NonprofitsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
 	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_uuid')});

@@ -45,19 +45,19 @@
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			next(function (vue) {
+				vue.$request.get('sponsor-tiers').then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
-					vm.sponsorTiers = response.data;
+					vue.sponsorTiers = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			vue.$request.get('sponsor-tiers').then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
 				});

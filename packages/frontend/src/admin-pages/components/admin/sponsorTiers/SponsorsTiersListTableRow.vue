@@ -98,30 +98,26 @@
 
 				const sponsors = [];
 				const fileUuids = [];
-				axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors').then(function (response) {
+				vue.$request.get('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors').then(function (response) {
 					response.data.forEach(function (sponsor) {
 						sponsors.push(sponsor);
 						if (sponsor.fileUuid) {
 							fileUuids.push(sponsor.fileUuid);
 						}
 					});
-					return axios.get(API_URL + 'files' + Utils.generateQueryString({
+					return vue.$request.get('files', {
 						uuids: fileUuids
-					}));
+					});
 				}).then(function (response) {
-					return axios.delete(API_URL + 'files', {
-						data: {
-							files: response.data
-						}
+					return vue.$request.delete('files', {
+						files: response.data
 					});
 				}).then(function () {
-					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors', {
-						data: {
-							sponsors: sponsors
-						}
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors', {
+						sponsors: sponsors
 					});
 				}).then(function () {
-					return axios.delete(API_URL + 'sponsor-tiers/' + vue.sponsorTier.uuid);
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid);
 				}).then(function () {
 					vue.clearModals();
 					vue.$emit('deleteSponsorTier', vue.sponsorTier.uuid);

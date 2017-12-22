@@ -32,33 +32,33 @@
 </template>
 
 <script>
-    import * as Utils from './../../../helpers/utils';
-    const PaginationMixin = require('./../../../mixins/pagination');
+	import * as Utils from './../../../helpers/utils';
+
+	const PaginationMixin = require('./../../../mixins/pagination');
 
 	module.exports = {
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'donations' + Utils.generateQueryString(to.query)).then(function (response) {
-					vm.setPaginationData(response.data);
+			next(function (vue) {
+				vue.$request.get('donations', to.query).then(function (response) {
+					vue.setPaginationData(response.data)
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-            vue.resetPaginationData();
-			axios.get(API_URL + 'donations' + Utils.generateQueryString(to.query)).then(function (response) {
+			vue.resetPaginationData();
+			vue.$request.get('donations', to.query).then(function (response) {
 				vue.setPaginationData(response.data);
-			}).then(function () {
 				next();
 			}).catch(function (err) {
 				console.log(err);
 				next();
 			});
 		},
-        mixins: [
-	        PaginationMixin
-        ],
+		mixins: [
+			PaginationMixin
+		],
 		components: {
 			'donations-list-table': require('./DonationsListTable.vue'),
 			'donations-list-table-header': require('./DonationsListTableHeader.vue'),

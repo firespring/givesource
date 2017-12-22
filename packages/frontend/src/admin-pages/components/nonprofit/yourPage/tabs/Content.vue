@@ -175,7 +175,7 @@
 					return;
 				}
 
-				axios.patch(API_URL + 'nonprofits/' + vue.nonprofit.uuid, params).then(function (response) {
+				vue.$request.patch('nonprofits/' + vue.nonprofit.uuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

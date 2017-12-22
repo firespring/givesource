@@ -20,10 +20,11 @@ const HttpException = require('./../../exceptions/http');
 const Metric = require('./../../models/metric');
 const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new MetricsRepository();
-	const request = new Request(event, context).parameters(['metrics']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['metrics']);
 
 	let metrics = [];
 	request.validate().then(function () {

@@ -58,37 +58,37 @@
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid).then(function (response) {
-					vm.sponsorTier = response.data;
-					return axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors');
+			next(function (vue) {
+				vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+					vue.sponsorTier = response.data;
+					return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
-					vm.sponsors = response.data;
+					vue.sponsors = response.data;
 					const uuids = [];
-					vm.sponsors.forEach(function (sponsor) {
+					vue.sponsors.forEach(function (sponsor) {
 						if (sponsor.fileUuid) {
 							uuids.push(sponsor.fileUuid);
 						}
 					});
 					if (uuids.length) {
-						return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: uuids}));
+						return vue.$request.get('files', {uuids: uuids});
                     } else {
 						return Promise.resolve();
                     }
 				}).then(function (response) {
-					vm.files = response ? response.data : [];
+					vue.files = response ? response.data : [];
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+			vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
 				vue.sponsorTier = response.data;
-				return axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
+				return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
 			}).then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
@@ -101,7 +101,7 @@
 					}
 				});
 				if (uuids.length) {
-					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: uuids}));
+					return vue.$request.get('files', {uuids: uuids});
 				} else {
 					return Promise.resolve();
 				}

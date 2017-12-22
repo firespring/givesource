@@ -148,7 +148,7 @@
 			addSponsorTier: function (action) {
 				const vue = this;
 
-				axios.post(API_URL + 'sponsor-tiers', vue.formData).then(function (response) {
+				vue.$request.post('sponsor-tiers', vue.formData).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

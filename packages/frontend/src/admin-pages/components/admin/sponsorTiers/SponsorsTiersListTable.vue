@@ -72,7 +72,7 @@
 				});
 
 				const toUpdate = _.differenceWith(vue.localSponsorTiers, original, _.isEqual);
-				axios.patch(API_URL + 'sponsor-tiers', {
+				vue.$request.patch('sponsor-tiers', {
 					sponsorTiers: toUpdate
 				}).catch(function (err) {
 					console.log(err);

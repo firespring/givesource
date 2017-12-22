@@ -87,8 +87,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				firstName: this.user.firstName,
-                lastName: this.user.lastName,
+				firstName: this.user.firstName || '',
+                lastName: this.user.lastName || '',
                 nonprofitUuid: this.user.nonprofitUuid,
             }
         },

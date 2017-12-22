@@ -17,11 +17,13 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationsRepository();
 	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
 		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('donation_uuid'));

@@ -19,10 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new PaymentTransactionsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let paymentTransaction = null;
 	request.validate().then(function () {

@@ -201,7 +201,7 @@
 
 				vue.addModal('spinner');
 
-				axios.patch(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/status', {
+	            vue.$request.patch('nonprofits/' + vue.nonprofit.uuid + '/status', {
 					status: status
                 }).then(function () {
                 	vue.clearModals();

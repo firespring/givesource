@@ -19,10 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const Message = require('./../../models/message');
 const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new MessagesRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let message = null;
 	request.validate().then(function () {

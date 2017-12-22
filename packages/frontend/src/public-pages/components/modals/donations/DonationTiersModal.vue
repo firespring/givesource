@@ -17,7 +17,7 @@
 
 <template>
     <div class="donation-overlay" :style="{ 'z-index': zIndex }">
-        <div class="donation-overlay__wrapper">
+        <div class="donation-overlay__wrapper" v-if="loaded">
             <div class="donation-modal donation-modal--options" ref="donationModalOptions">
 
                 <header class="donation-modal__header">
@@ -25,7 +25,7 @@
                 </header>
 
                 <div class="donation-modal__content">
-                    <div class="donation-options" v-if="displayTiers">
+                    <div class="donation-options" v-if="loaded">
                         <donation-tiers-option-row v-for="donationTier in donationTiers" :donationTier="donationTier" :key="donationTier.uuid" v-on:selectTier="selectTier">
                         </donation-tiers-option-row>
                     </div>
@@ -46,104 +46,110 @@
                 <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
             </div>
         </div>
+
+        <div class="donation-overlay__wrapper" v-else>
+            <layout-spinner></layout-spinner>
+        </div>
     </div>
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
-    			donationTiers: [],
-                nonprofit: null,
+	module.exports = {
+		data: function () {
+			return {
+				donationTiers: [],
+				nonprofit: null,
+				loaded: false,
 
-                // Form Data
-                formData: {
-    				customAmount: '',
-                },
+				// Form Data
+				formData: {
+					customAmount: '',
+				},
 
-			    currencyOptions: {
-				    precision: 2,
-				    masked: true,
-				    thousands: '',
-			    }
-            };
-        },
-        computed: {
-    		displayTiers: function () {
-    			return this.nonprofit !== null && this.donationTiers.length;
-            }
-        },
-    	props: {
-		    data: {
-			    type: Object,
-			    default: {
-				    nonprofit: null,
-                    tiers: []
-			    }
-		    },
-		    zIndex: {
-			    type: [Number, String],
-			    default: 1000
-		    }
-        },
-        created: function () {
-    		const vue = this;
+				currencyOptions: {
+					precision: 2,
+					masked: true,
+					thousands: '',
+				}
+			};
+		},
+		props: {
+			data: {
+				type: Object,
+				default: {
+					nonprofit: null,
+				}
+			},
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			}
+		},
+		created: function () {
+			const vue = this;
 
-            vue.addBodyClasses('has-donation-overlay');
-            vue.donationTiers = vue.data.tiers;
-            vue.nonprofit = vue.data.nonprofit;
-        },
-        methods: {
-	        close: function (event) {
-    			event.preventDefault();
-    			const vue = this;
+			vue.addBodyClasses('has-donation-overlay');
+			vue.nonprofit = vue.data.nonprofit;
+			axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
+				response.data.sort(function (a, b) {
+					return b.amount - a.amount;
+				});
+				vue.donationTiers = response.data;
+				vue.loaded = true;
+			});
+		},
+		methods: {
+			close: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-    			vue.removeModal('donation-tiers');
-		        vue.removeBodyClasses('has-donation-overlay');
-            },
-	        selectTier: function (amount) {
-		        const vue = this;
+				vue.removeModal('donation-tiers');
+				vue.removeBodyClasses('has-donation-overlay');
+			},
+			selectTier: function (amount) {
+				const vue = this;
 
-		        vue.$store.commit('addCartItem', {
-		        	amount: amount,
-                    nonprofit: vue.nonprofit
-                });
+				vue.$store.commit('addCartItem', {
+					amount: amount,
+					nonprofit: vue.nonprofit
+				});
 
-		        vue.bus.$emit('updateCart');
+				vue.bus.$emit('updateCart');
 
-		        $(vue.$refs.donationModalOptions).fadeOut(function () {
-			        vue.removeModal('donation-tiers');
-			        vue.removeBodyClasses('has-donation-overlay');
+				$(vue.$refs.donationModalOptions).fadeOut(function () {
+					vue.removeModal('donation-tiers');
+					vue.removeBodyClasses('has-donation-overlay');
 
-			        vue.addModal('donation-cart');
-                });
-	        },
-            customAmount: function (event) {
-	        	event.preventDefault();
-	        	const vue = this;
+					vue.addModal('donation-cart');
+				});
+			},
+			customAmount: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-	            const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
-	        	if (amount) {
-			        vue.$store.commit('addCartItem', {
-				        amount: amount,
-				        nonprofit: vue.nonprofit
-			        });
+				const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
+				if (amount) {
+					vue.$store.commit('addCartItem', {
+						amount: amount,
+						nonprofit: vue.nonprofit
+					});
 
-			        vue.bus.$emit('updateCartItems');
-			        vue.bus.$emit('updateCartItemsCount');
-			        vue.bus.$emit('updateCartItemsCounter');
+					vue.bus.$emit('updateCartItems');
+					vue.bus.$emit('updateCartItemsCount');
+					vue.bus.$emit('updateCartItemsCounter');
 
-			        $(vue.$refs.donationModalOptions).fadeOut(function () {
-				        vue.removeModal('donation-tiers');
-				        vue.removeBodyClasses('has-donation-overlay');
+					$(vue.$refs.donationModalOptions).fadeOut(function () {
+						vue.removeModal('donation-tiers');
+						vue.removeBodyClasses('has-donation-overlay');
 
-				        vue.addModal('donation-cart');
-			        });
-                }
-            }
-        },
-        components: {
-            'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue')
-        }
-    }
+						vue.addModal('donation-cart');
+					});
+				}
+			}
+		},
+		components: {
+			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
+            'layout-spinner': require('./../../layout/Spinner.vue'),
+		}
+	}
 </script>

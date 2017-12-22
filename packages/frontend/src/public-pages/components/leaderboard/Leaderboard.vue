@@ -20,167 +20,26 @@
         <layout-hero :presentedBy="true">
             <h1 slot="title">Leaderboard</h1>
         </layout-hero>
-
         <main class="main">
             <div class="wrapper wrapper--sm">
-
                 <div class="main__content">
 
                     <div class="leaderboard">
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">01.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Pius X Foundation</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$44,746</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Pius X Foundation')" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                        <div class="leaderboard-item" v-for="(nonprofit, nonprofitIndex) in pagination.items">
+                            <div class="leaderboard-item__num">{{ position(nonprofitIndex) }}.</div>
+                            <div class="leaderboard-item__info">
+                                <h3>
+                                    <router-link :to="{ name: 'nonprofit-landing-page', params: {slug: nonprofit.slug} }">{{ nonprofit.legalName }}</router-link>
+                                </h3>
+                            </div>
+                            <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
+                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
                         </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">02.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jacobs Well</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$44,627</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jacobs Well')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">03.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Camp Sonshine</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$40,820</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Camp Sonshine')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">04.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Our City</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$33,075</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">05.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">City Impact</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$29,563</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('City Impact')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">06.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Our City</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$27,961</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">07.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">People’s City Mission</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$25,262</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('People\'s City Mission')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">08.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Matt Talbot Kitchen & Outreach</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$25,169</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Matt Talbot Kitchen & Outreach')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">09.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Tabitha Foundation</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$24,990</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Tabitha Foundation')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">10.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Cat House</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$23,990</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Cat House')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">11.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Pius X Foundation</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$44,746</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Pius X Foundation')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">12.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jacobs Well</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$44,627</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jacobs Well')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">13.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Camp Sonshine</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$40,820</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Camp Sonshine')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">14.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Food Bank of Our City</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$33,075</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Food Bank of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">15.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">City Impact</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$29,563</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('City Impact')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">16.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Jewish Federation of Our City</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$27,961</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Jewish Federation of Our City')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">17.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">People’s City Mission</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$25,262</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('People\'s City Mission')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">18.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Matt Talbot Kitchen & Outreach</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$25,169</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Matt Talbot Kitchen & Outreach')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">19.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Tabitha Foundation</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$24,990</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Tabitha Foundation')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-item__num">20.</div>
-                            <div class="leaderboard-item__info"><h3><router-link :to="{ name: 'nonprofit-landing-page-demo' }">Cat House</router-link></h3></div>
-                            <div class="leaderboard-item__amount">$23,990</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate('Cat House')" href="#" class="btn btn--xs btn--green">Donate</a></div>
-                        </div>
-
                     </div>
 
-                    <div class="pagination flex justify-center items-center">
-                        <a href="#" class="prev"><i class="fa fa-fw fa-angle-left" aria-hidden="true"></i><span>Prev</span></a>
-                        <a href="#" class="here">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        <a href="#">5</a>
-                        <a href="#" class="next">Next<i class="fa fa-fw fa-angle-right" aria-hidden="true"></i></a>
-                    </div>
+                    <pagination :pagination="pagination" v-if="pagination.loaded"></pagination>
+
                 </div>
-
             </div>
         </main>
 
@@ -191,6 +50,10 @@
 </template>
 
 <script>
+	const numeral = require('numeral');
+	const PaginationMixin = require('./../../mixins/pagination');
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		beforeMount: function () {
 			const vue = this;
@@ -198,39 +61,45 @@
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Leaderboard');
 		},
+		beforeRouteEnter: function (to, from, next) {
+			const options = _.extend({}, {size: '20', sort: 'active_subtotal_descending'}, to.query);
+			next(function (vue) {
+				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+					vue.setPaginationData(response.data);
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+			const options = _.extend({}, {size: '20', sort: 'active_subtotal_descending'}, to.query);
+			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+				vue.setPaginationData(response.data);
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
 		methods: {
-			donate: function (legalName) {
+			position: function (nonprofitIndex) {
+				const position = parseInt(this.pagination.start) + nonprofitIndex + 1;
+				return numeral(position).format('00');
+			},
+			donate: function (nonprofit) {
 				const vue = this;
 
 				vue.addModal('donation-tiers', {
-					nonprofit: {
-						legalName: legalName,
-					},
-					tiers: [
-						{
-							amount: 10000,
-							description: 'Intrinsicly enable ubiquitous opportunities for 24/365 data. Interactively predominate just in time communities via tactical e-tailers.'
-						},
-						{
-							amount: 5000,
-							description: 'Dynamically restore an expanded array of e-markets before leveraged technologies.'
-						},
-						{
-							amount: 2500,
-							description: 'Completely orchestrate impactful metrics after prospective infomediaries.'
-						},
-						{
-							amount: 1000,
-							description: 'Enthusiastically network frictionless solutions and high-payoff total linkage.'
-						}
-					]
+					nonprofit: nonprofit
 				});
 			}
 		},
+		mixins: [
+			PaginationMixin,
+		],
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('./../layout/Hero.vue'),
-            'layout-sponsors': require('./../layout/Sponsors.vue')
+			'layout-sponsors': require('./../layout/Sponsors.vue'),
+			'pagination': require('./../pagination/Pagination.vue'),
 		}
 	};
 </script>

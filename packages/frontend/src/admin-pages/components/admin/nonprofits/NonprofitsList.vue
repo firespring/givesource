@@ -22,7 +22,7 @@
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
                     <nonprofits-list-table-header></nonprofits-list-table-header>
-                    <nonprofits-list-table :nonprofits="pagination.items"></nonprofits-list-table>
+                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"></nonprofits-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>
@@ -36,9 +36,9 @@
 
 	module.exports = {
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
-					vm.setPaginationData(response.data);
+			next(function (vue) {
+				vue.$request.get('nonprofits', to.query).then(function (response) {
+					vue.setPaginationData(response.data);
 				});
 			});
 		},
@@ -46,9 +46,8 @@
 			const vue = this;
 
 			vue.resetPaginationData();
-			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(to.query)).then(function (response) {
+			vue.$request.get('nonprofits', to.query).then(function (response) {
 				vue.setPaginationData(response.data);
-			}).then(function () {
 				next();
 			}).catch(function (err) {
 				console.log(err);
@@ -58,6 +57,17 @@
 		mixins: [
 			PaginationMixin
 		],
+        methods: {
+			updateNonprofit: function (nonprofitUuid) {
+				const vue = this;
+
+				vue.$request.get('nonprofits/' + nonprofitUuid).then(function (response) {
+					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
+						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
+					});
+				});
+            }
+        },
 		components: {
 			'nonprofits-list-table': require('./NonprofitsListTable.vue'),
 			'nonprofits-list-table-header': require('./NonprofitsListTableHeader.vue'),

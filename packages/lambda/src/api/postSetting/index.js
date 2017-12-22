@@ -20,10 +20,11 @@ const Request = require('./../../aws/request');
 const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	const setting = new Setting(request._body);
 	request.validate().then(function () {

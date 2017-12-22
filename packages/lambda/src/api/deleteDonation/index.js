@@ -18,10 +18,11 @@
 const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new DonationsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('donation_uuid'));

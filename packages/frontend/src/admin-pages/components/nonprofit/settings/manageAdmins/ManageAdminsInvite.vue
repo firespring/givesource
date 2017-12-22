@@ -110,18 +110,17 @@
 			'nonprofitUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
+			next(function (vue) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vue.nonprofit = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
-			}).then(function () {
 				next();
 			}).catch(function () {
 				next();
@@ -151,7 +150,7 @@
 			inviteNonprofitAdmins: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users', {
+				vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/users', {
 					email_addresses: vue.formData.emailAddresses
 				}).then(function (response) {
 					vue.clearModals();

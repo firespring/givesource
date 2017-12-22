@@ -18,11 +18,13 @@
 const HttpException = require('./../../exceptions/http');
 const NonprofitDonationTier = require('./../../models/nonprofitDonationTier');
 const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationTiersRepository();
 	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	const donationTier = new NonprofitDonationTier({nonprofitUuid: request.urlParam('nonprofit_uuid')});
 	request.validate().then(function () {

@@ -15,27 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HttpException = require('./http');
-
 /**
- * UnhealthyResourceException constructor
+ * Middleware constructor
  *
- * @param {String} [message]
  * @constructor
  */
-function UnhealthyResourceException (message) {
-	HttpException.call(this, message);
-
-	this._status = 400;
-	this._type = 'health_check_failed';
-	this.defaultMessage = 'The resource is not healthy.';
+function Middleware() {
+	this.user = {};
 }
 
 /**
- * Extend the base HttpException
+ * Prepare the middleware
  *
- * @type {HttpException}
+ * @param {{}} user
  */
-UnhealthyResourceException.prototype = new HttpException();
+Middleware.prototype.prepare = function (user) {
+	this.user = user;
+};
 
-module.exports = UnhealthyResourceException;
+/**
+ * Handle the middleware
+ *
+ * @return {Promise}
+ */
+Middleware.prototype.handle = function () {
+	return Promise.resolve();
+};
+
+module.exports = Middleware;

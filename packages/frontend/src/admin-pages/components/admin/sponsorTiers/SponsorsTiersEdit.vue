@@ -111,16 +111,16 @@
 			'sponsorTierUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers/' + vm.sponsorTierUuid).then(function (response) {
-					vm.sponsorTier = response.data;
+			next(function (vue) {
+				vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+					vue.sponsorTier = response.data;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
+			vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
 				vue.sponsorTier = response.data;
 				next();
 			}).catch(function (err) {
@@ -181,7 +181,7 @@
 					return;
 				}
 
-				axios.patch(API_URL + 'sponsor-tiers/' + vue.sponsorTierUuid, params).then(function (response) {
+				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

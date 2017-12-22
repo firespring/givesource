@@ -81,7 +81,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
 					return Promise.reject();
@@ -96,12 +96,17 @@
 							uuids.push(slide.fileUuid);
 						}
 					});
-					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
-						uuids: uuids
-					}));
+
+					if (uuids.length) {
+						return vue.$request.get('files/', {uuids: uuids});
+					} else {
+						return Promise.resolve();
+					}
 				}
 			}).then(function (response) {
-				vue.files = response.data;
+				if (response && response.data) {
+					vue.files = response.data;
+				}
 				vue.loadedSlides = true;
 			}).catch(function (err) {
 				console.log(err);
@@ -133,7 +138,7 @@
 				});
 
 				const toUpdate = _.differenceWith(vue.slides, original, _.isEqual);
-				axios.patch(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides', {
+				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
 					slides: toUpdate
 				}).catch(function (err) {
 					console.log(err);
@@ -166,7 +171,7 @@
 
 				vue.addModal('spinner');
 
-				axios.post(API_URL + 'files', {
+				vue.$request.post('files', {
 					content_type: fileData.type,
 					filename: fileData.name
 				}).then(function (response) {
@@ -180,7 +185,7 @@
 					axios.defaults.headers = defaultHeaders;
 					return instance.put(signedUrl, file);
 				}).then(function () {
-					return axios.post(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides', {
+					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
 						fileUuid: vue.file.uuid,
 						type: MediaHelper.TYPE_IMAGE
 					});
@@ -202,8 +207,8 @@
 
 				vue.addModal('spinner');
 				if (slide.fileUuid) {
-					axios.delete(API_URL + 'files/' + slide.fileUuid).then(function () {
-						return axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid);
+					vue.$request.delete('files/' + slide.fileUuid).then(function () {
+						return vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid);
 					}).then(function () {
 						const current = JSON.parse(JSON.stringify(vue.slides));
 						vue.slides = _.reject(current, {uuid: slide.uuid});
@@ -214,7 +219,7 @@
 						console.log(err);
 					});
 				} else {
-					axios.delete(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
+					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
 						const current = JSON.parse(JSON.stringify(vue.slides));
 						vue.slides = _.reject(current, {uuid: slide.uuid});
 						vue.clearModals();

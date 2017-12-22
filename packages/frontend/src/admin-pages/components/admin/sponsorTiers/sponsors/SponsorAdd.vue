@@ -127,20 +127,20 @@
 			sponsorTierUuid: null,
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			next(function (vue) {
+				vue.$request.get('sponsor-tiers').then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
 					});
-					vm.sponsorTiers = response.data;
-					vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: to.params.sponsorTierUuid});
+					vue.sponsorTiers = response.data;
+					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: to.params.sponsorTierUuid});
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'sponsor-tiers').then(function (response) {
+			vue.$request.get('sponsor-tiers').then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
 				});
@@ -204,7 +204,7 @@
 				let promise = Promise.resolve();
 				if (vue.formData.file) {
 					promise = promise.then(function () {
-						return axios.post(API_URL + 'files', {
+						return vue.$request.post('files', {
 							content_type: vue.formData.file.type,
 							filename: vue.formData.file.name
 						});
@@ -222,7 +222,7 @@
 				}
 
 				promise.then(function () {
-					return axios.post(API_URL + 'sponsor-tiers/' + vue.formData.sponsorTierUuid + '/sponsors', {
+					return vue.$request.post('sponsor-tiers/' + vue.formData.sponsorTierUuid + '/sponsors', {
 						fileUuid: file && file.hasOwnProperty('uuid') ? file.uuid : null,
 						name: vue.formData.name,
 						sponsorTierUuid: vue.formData.sponsorTierUuid,

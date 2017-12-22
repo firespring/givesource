@@ -126,8 +126,6 @@
 </template>
 
 <script>
-	const numeral = require('numeral');
-
 	module.exports = {
 		data: function () {
 			return {
@@ -154,18 +152,22 @@
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'nonprofits').then(function (response) {
-					vm.nonprofits = response.data;
-					vm.loaded = true;
+			next(function (vue) {
+				vue.$request.get('nonprofits').then(function (response) {
+					if (response.data && response.data.hasOwnProperty('items')) {
+						vue.nonprofits = response.data.items;
+					}
+					vue.loaded = true;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits').then(function (response) {
-				vue.nonprofits = response.data;
+			vue.$request.get('nonprofits').then(function (response) {
+				if (response.data && response.data.hasOwnProperty('items')) {
+					vue.nonprofits = response.data.items;
+                }
 				vue.loaded = true;
 				next();
 			}).catch(function () {
@@ -237,7 +239,7 @@
 				if (vue.formData.email) {
 					donor.email = vue.formData.email;
 				}
-				axios.post(API_URL + 'donors', donor).then(function (response) {
+				vue.$request.post('donors', donor).then(function (response) {
 					if (response.data.errorMessage) {
 						return Promise.reject(response.data);
 					}
@@ -251,7 +253,7 @@
 						subtotal: vue.getSubtotal(),
 						total: vue.getSubtotal()
 					};
-					return axios.post(API_URL + 'nonprofits/' + vue.formData.nonprofitUuid + '/donations', donation);
+					return vue.$request.post('nonprofits/' + vue.formData.nonprofitUuid + '/donations', donation);
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {

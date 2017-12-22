@@ -83,13 +83,13 @@
 			'nonprofitUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
+			next(function (vue) {
 				if (to.query.hasOwnProperty('tab')) {
-					vm.tabComponent = vm.getTabComponent(to.query.tab);
+					vue.tabComponent = vue.getTabComponent(to.query.tab);
 				}
 
-				axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
+				vue.$request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vue.nonprofit = response.data;
 				});
 			});
 		},
@@ -100,9 +100,8 @@
 				vue.tabComponent = vue.getTabComponent(to.query.tab);
 			}
 
-			axios.get(API_URL + 'nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
-			}).then(function () {
 				next();
 			}).catch(function () {
 				next();

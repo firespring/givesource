@@ -60,12 +60,12 @@
 			'nonprofitUuid'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vm.nonprofit = response.data;
-					return axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid + '/donations' + Utils.generateQueryString(to.query));
+			next(function (vue) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+					vue.nonprofit = response.data;
+					return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations' , to.query);
 				}).then(function (response) {
-					vm.setPaginationData(response.data);
+					vue.setPaginationData(response.data);
 				});
 			});
 		},
@@ -73,9 +73,9 @@
 			const vue = this;
 
 			vue.resetPaginationData();
-			axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
-				return axios.get(API_URL + '/nonprofits/' + to.params.nonprofitUuid + '/donations' + Utils.generateQueryString(to.query));
+				return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations', to.query);
 			}).then(function (response) {
 				vue.setPaginationData(response.data);
 				next();

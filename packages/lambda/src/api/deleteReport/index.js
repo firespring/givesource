@@ -18,10 +18,11 @@
 const HttpException = require('./../../exceptions/http');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new ReportsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('report_uuid'));

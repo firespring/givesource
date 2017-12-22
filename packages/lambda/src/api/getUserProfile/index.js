@@ -16,32 +16,22 @@
  */
 
 const _ = require('lodash');
-const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
-	const cognito = new Cognito();
 	const repository = new UsersRepository();
 	const request = new Request(event, context);
 
-	let user;
-	const groups = [];
-	const userPoolId = process.env.USER_POOL_ID;
-
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
-	}).then(function (model) {
-		user = model;
-		return cognito.listGroupsForUser(userPoolId, request.urlParam('user_uuid'));
-	}).then(function (response) {
-		if (response.hasOwnProperty('Groups')) {
-			response.Groups.forEach(function (group) {
-				groups.push(group.GroupName);
-			});
+		if (request.user().uuid) {
+			return repository.get(request.user().uuid);
+		} else {
+			return Promise.reject(new HttpException('Unable to retrieve user'));
 		}
-	}).then(function () {
+	}).then(function (user) {
+		const groups = request.user().groups || [];
 		callback(null, _.merge({}, user.all(), {groups: groups}));
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

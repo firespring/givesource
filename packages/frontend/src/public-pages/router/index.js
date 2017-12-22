@@ -105,49 +105,6 @@ const router = new VueRouter({
 			name: 'nonprofit-landing-page',
 			props: true,
 			component: require('./../components/nonprofits/Nonprofit.vue'),
-			meta: {
-				files: [],
-				nonprofit: {},
-				slides: [],
-				tiers: [],
-			},
-			beforeEnter: function (to, from, next) {
-				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
-					to.meta.nonprofit = response.data;
-					if (to.meta.nonprofit.status !== 'ACTIVE') {
-						return Promise.reject();
-					} else {
-						return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/slides');
-					}
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
-						return a.sortOrder - b.sortOrder;
-					});
-					to.meta.slides = response.data;
-					const uuids = [];
-					to.meta.slides.forEach(function (slide) {
-						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
-							uuids.push(slide.fileUuid);
-						}
-					});
-					return axios.get(API_URL + 'files/' + Utils.generateQueryString({
-						uuids: uuids
-					}));
-				}).then(function (response) {
-					to.meta.files = response.data;
-					return axios.get(API_URL + 'nonprofits/' + to.meta.nonprofit.uuid + '/tiers');
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
-						return b.amount - a.amount;
-					});
-					to.meta.tiers = response.data;
-					next();
-				}).catch(function () {
-					next({
-						name: '404'
-					});
-				});
-			}
 		},
 
 		// Error Pages

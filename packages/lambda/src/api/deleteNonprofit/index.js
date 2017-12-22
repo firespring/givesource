@@ -18,10 +18,11 @@
 const HttpException = require('./../../exceptions/http');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('nonprofit_uuid'));

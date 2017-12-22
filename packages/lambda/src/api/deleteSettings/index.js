@@ -19,10 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
-	const request = new Request(event, context).parameters(['settings']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
 
 	let settings = [];
 	request.validate().then(function () {

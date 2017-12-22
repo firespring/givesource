@@ -25,6 +25,7 @@ import FloatingLabelDirective from './directives/floatingLabel';
 import GravatarComponent from 'vue-gravatar';
 import ModalMixin from './mixins/modals';
 import NavigationComponent from './components/header/Navigation.vue';
+import Request from './helpers/request';
 import router from './router';
 import store from './store';
 import UserMixin from './mixins/user';
@@ -64,6 +65,9 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 const main = App;
 main.router = router;
 main.store = store;
+
+// Bootstrap the request library
+Vue.prototype.$request = new Request();
 
 // Start the app
 const app = new Vue(main);

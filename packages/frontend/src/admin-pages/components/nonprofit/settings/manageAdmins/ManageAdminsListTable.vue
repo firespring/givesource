@@ -66,7 +66,7 @@
 		created: function () {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
 				vue.nonprofitUsers = response.data;
 				vue.loaded = true;
 			});

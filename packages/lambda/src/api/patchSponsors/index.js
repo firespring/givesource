@@ -19,10 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const Sponsor = require('./../../models/sponsor');
 const SponsorsRepository = require('./../../repositories/sponsors');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SponsorsRepository();
-	const request = new Request(event, context).parameters(['sponsors']);
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsors']);
 
 	let sponsors = [];
 	request.validate().then(function () {

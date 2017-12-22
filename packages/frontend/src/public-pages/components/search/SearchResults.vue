@@ -27,18 +27,10 @@
                 <search-results-header></search-results-header>
 
                 <div class="leaderboard">
-                    <search-results-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
+                    <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
                 </div>
 
-                <div class="pagination flex justify-center items-center">
-                    <a href="#" class="prev"><i class="fa fa-fw fa-chevron-left" aria-hidden="true"></i>Prev</a>
-                    <a href="#" class="here">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#" class="next">Next<i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i></a>
-                </div>
+                <pagination :pagination="pagination" v-if="pagination.loaded"></pagination>
 
             </div>
         </main>
@@ -50,12 +42,10 @@
 </template>
 
 <script>
+    import * as Utils from './../../helpers/utils';
+	const PaginationMixin = require('./../../mixins/pagination');
+
 	module.exports = {
-		data: function () {
-			return {
-				nonprofits: []
-            };
-        },
 		beforeMount: function () {
 			const vue = this;
 
@@ -63,45 +53,34 @@
 			vue.setPageTitle('Give To Our City - Search');
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
-				axios.get(API_URL + 'nonprofits').then(function (response) {
-					vm.nonprofits = response.data;
-				}).then(function () {
-					while (vm.nonprofits.length < 10) {
-						vm.nonprofits.push({
-                            legalName: 'Demo Nonprofit',
-                            donationsSubtotal: 12345,
-                            shortDescription: 'Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results.',
-                        });
-                    }
-                });
+			next(function (vue) {
+				const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
+				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+					vue.setPaginationData(response.data);
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'nonprofits').then(function (response) {
-				vue.nonprofits = response.data;
-			}).then(function () {
-				while (vue.nonprofits.length < 10) {
-					vue.nonprofits.push({
-						legalName: 'Demo Nonprofit',
-						donationsSubtotal: 12345,
-						shortDescription: 'Dramatically productivate fully researched applications through value-added products. Monotonectally incubate market positioning testing procedures after adaptive results.',
-					});
-				}
-			}).then(function () {
-                next();
+			const options = _.extend({}, {size: '20', sort: 'active_legal_name_ascending'}, to.query);
+			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
+				vue.setPaginationData(response.data);
+				next();
 			}).catch(function () {
 				next();
 			});
 		},
+		mixins: [
+			PaginationMixin
+		],
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
-            'search-results-header': require('./SearchResultsHeader.vue'),
-            'search-results-row': require('./SearchResultsRow.vue')
+            'pagination': require('./../pagination/Pagination.vue'),
+			'search-results-header': require('./SearchResultsHeader.vue'),
+			'search-results-row': require('./SearchResultsRow.vue')
 		}
 	};
 </script>

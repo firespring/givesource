@@ -432,7 +432,7 @@
 			registerNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/register', {
+				vue.$request.post('nonprofits/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,
@@ -467,7 +467,7 @@
 			registerAndActivateNonprofit: function () {
 				const vue = this;
 
-				axios.post(API_URL + 'nonprofits/admin/register', {
+				vue.$request.post('nonprofits/admin/register', {
 					nonprofit: {
 						legalName: vue.formData.legalName,
 						taxId: vue.formData.taxId,

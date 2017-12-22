@@ -18,11 +18,13 @@
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const User = require('./../../models/user');
+const UserResourceMiddleware = require('./../../middleware/userResource');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
 	const repository = new UsersRepository();
 	const request = new Request(event, context);
+	request.middleware(new UserResourceMiddleware(request.urlParam('user_uuid')));
 
 	let user = null;
 	request.validate().then(function () {
