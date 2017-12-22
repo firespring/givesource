@@ -1,17 +1,8 @@
 # App Configuration
-config.json
-globals.js
-updated_globals.js
 .env
 
 # App Dependencies
 node_modules/
-.serverless
-.serverless/*
-
-# App Cache
-cached
-cached/*
 
 # PHP Storm
 .idea/
