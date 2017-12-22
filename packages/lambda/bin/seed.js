@@ -25,6 +25,7 @@ const Generator = require('./../src/helpers/generator');
 const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
 const MessagesRepository = require('./../src/repositories/messages');
+const MetricsHelper = require('./../src/helpers/metrics');
 const NonprofitsRepository = require('./../src/repositories/nonprofits');
 const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
 const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
@@ -72,31 +73,37 @@ const seedDonations = function () {
 		const donors = generator.modelCollection('donor', donations.length);
 		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
 
-		let donationsFees, donationsFeesCovered, donationsSubtotal, donationsTotal = 0;
-		return donorsRepository.batchUpdate(donors).then(function () {
-			let promise = Promise.resolve();
-			_.each(donations, function (chunk, i) {
-				let paymentTotal  = 0;
-				_.each(chunk, function (donation) {
-					donation.donorUuid = donors[i].uuid;
-					donation.paymentTransactionUuid = paymentTransactions[i].uuid;
-					donation.nonprofitUuid = answers.nonprofitUuid;
+		let nonprofitDonations = [];
+		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
+		donations.forEach(function (chunk, i) {
+			let paymentTotal = 0;
+			chunk.forEach(function (donation) {
+				donation.donorUuid = donors[i].uuid;
+				donation.paymentTransactionUuid = paymentTransactions[i].uuid;
+				donation.nonprofitUuid = answers.nonprofitUuid;
 
-					donationsFees += donation.fees;
-					donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
-					donationsSubtotal += donation.subtotal;
-					donationsTotal += donation.total;
-					paymentTotal += donation.total;
-				});
-
-				paymentTransactions[i].total = paymentTotal;
-				promise = promise.then(function () {
-					return nonprofitDonationsRepository.batchUpdate(chunk);
-				});
+				donationsFees += donation.fees;
+				donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
+				donationsSubtotal += donation.subtotal;
+				donationsTotal += donation.total;
+				paymentTotal += donation.total;
+				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
 			});
-			return promise;
+			paymentTransactions[i].total = paymentTotal;
+			nonprofitDonations = nonprofitDonations.concat(chunk);
+		});
+		return donorsRepository.batchUpdate(donors).then(function () {
+			return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
 		}).then(function () {
 			return paymentTransactionsRepository.batchUpdate(paymentTransactions);
+		}).then(function () {
+			return MetricsHelper.addAmountToMetric('DONORS_COUNT', donors.length);
+		}).then(function () {
+			return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', count);
+		}).then(function () {
+			return MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', donationsSubtotal);
+		}).then(function () {
+			return MetricsHelper.addAmountToMetric('TOP_DONATION', topDonation);
 		}).then(function () {
 			return nonprofitsRepository.get(answers.nonprofitUuid);
 		}).then(function (nonprofit) {
@@ -158,27 +165,30 @@ const seedNonprofits = function () {
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
 		const nonprofits = generator.modelCollection('nonprofit', count, {donationsCount: 0, donationsFees: 0, donationsFeesCovered: 0, donationsSubtotal: 0, donationsTotal: 0});
+		const nonprofitSlides = [];
+		const nonprofitDonationTiers = [];
 
-		let promise = nonprofitsRepository.batchUpdate(nonprofits);
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
 			const slides = generator.modelCollection('nonprofitSlide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
 			_.each(slides, function (slide, i) {
 				slide.sortOrder = i;
-			});
-			promise = promise.then(function () {
-				return nonprofitSlidesRepository.batchUpdate(slides);
+				nonprofitSlides.push(slide);
 			});
 		});
 
 		_.each(nonprofits, function (nonprofit) {
 			const tiers = generator.modelCollection('nonprofitDonationTier', 4, {nonprofitUuid: nonprofit.uuid});
-			promise = promise.then(function () {
-				return nonprofitDonationTiersRepository.batchUpdate(tiers);
+			tiers.forEach(function (tier) {
+				nonprofitDonationTiers.push(tier);
 			});
 		});
 
-		return promise;
+		return nonprofitsRepository.batchUpdate(nonprofits).then(function () {
+			nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
+		}).then(function () {
+			nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);
+		});
 	}).then(function () {
 		console.log('seeded nonprofits');
 	});
