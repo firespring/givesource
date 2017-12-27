@@ -18,26 +18,21 @@
 <template>
     <div class="actions-row">
         <div class="actions-row__search" style="width: 100%;">
-            <form>
+            <form v-on:submit="submit">
                 <div class="grid grid--compact grid--middle">
 
                     <div class="grid-item grid-item--expand">
                         <div class="select-wrap">
-                            <select id="categoryId" name="categoryId" class="sm">
-                                <option>Select by Category</option>
-                                <option value="">-----</option>
-                                <option value="1">Category #1</option>
-                                <option value="2">Category #2</option>
-                                <option value="3">Category #3</option>
-                                <option value="4">Category #4</option>
-                                <option value="5">Category #5</option>
-                            </select>
+                            <forms-nonprofit-category-select v-model="formData.category" placeholder="Select a category" :disablePlaceholder="false"></forms-nonprofit-category-select>
                         </div>
                     </div>
 
                     <div class="grid-item grid-item--expand">
                         <div class="search-wrap">
-                            <input type="search" name="search" class="sm" placeholder="Search By Name">
+                            <input v-model="formData.search" type="search" name="search" class="sm" placeholder="Search By Name">
+                        </div>
+                        <div v-if="formErrors.search" class="notes notes--below notes--error">
+                            {{ formErrors.search }}
                         </div>
                     </div>
 
@@ -50,3 +45,93 @@
         </div>
     </div>
 </template>
+
+<script>
+	module.exports = {
+		data: function () {
+			return {
+				// Form Data
+				formData: {
+					category: '',
+					search: '',
+				},
+
+				// Errors
+				formErrors: {},
+			};
+		},
+		props: {
+			category: {
+				type: String,
+				default: ''
+			},
+			search: {
+				type: String,
+				default: '',
+			}
+		},
+		watch: {
+			category: function (value) {
+				this.formData.category = value;
+			},
+			search: function (value) {
+				this.formData.search = value;
+			},
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					search: {
+						presence: false,
+						length: {
+							minimum: 3
+                        },
+					},
+				};
+			},
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (!Object.keys(vue.formErrors).length) {
+					vue.searchNonprofits();
+				}
+			},
+			searchNonprofits: function () {
+				const vue = this;
+
+				vue.$router.push(vue.generatePageLink({
+					category: vue.formData.category,
+					search: vue.formData.search,
+				}));
+			},
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				query = _.extend({}, vue.$route.query, query);
+				Object.keys(query).forEach(function (key) {
+					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
+						delete query[key];
+					}
+				});
+				return {
+					name: vue.$route.name,
+					query: query
+				};
+			}
+		},
+		components: {
+			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue'),
+		}
+	};
+</script>

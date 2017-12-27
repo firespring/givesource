@@ -71,11 +71,17 @@
             searchNonprofits: function (params) {
 				const vue = this;
 
+				let sort = 'all_created_on_descending';
+				if (params.sort) {
+					sort = params.sort;
+					delete params.sort;
+                }
+
 				vue.pagination.loaded = false;
 				vue.$request.get('nonprofits/search', params).then(function (response) {
 					vue.setPaginationData({
                         size: 0,
-                        sort: params.sort,
+                        sort: sort,
                         start: 0,
                         total: 0,
                         items: response.data

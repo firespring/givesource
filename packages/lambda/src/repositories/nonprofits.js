@@ -107,11 +107,10 @@ NonprofitsRepository.prototype.getAll = function () {
  *
  * @param {[]} keys
  * @param {String} search
- * @param {String} [filterKey]
- * @param {String} [filter]
+ * @param {{}} [filters]
  * @return {Promise}
  */
-NonprofitsRepository.prototype.search = function (keys, search, filterKey, filter) {
+NonprofitsRepository.prototype.search = function (keys, search, filters) {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
 		const params = {
@@ -119,16 +118,22 @@ NonprofitsRepository.prototype.search = function (keys, search, filterKey, filte
 			ExpressionAttributeNames: {},
 			ExpressionAttributeValues: {},
 		};
+
 		keys.forEach(function (key) {
-			params.FilterExpression = params.FilterExpression !== '' ? params.FilterExpression + ` OR contains(#${key}, :${key})` : `contains(#${key}, :${key})`;
+			const query = isNaN(search) ? `contains(#${key}, :${key})` : `#${key} = :${key}`;
+			params.FilterExpression = params.FilterExpression ? params.FilterExpression + ' OR ' + query : query;
 			params.ExpressionAttributeNames[`#${key}`] = key;
-			params.ExpressionAttributeValues[`:${key}`] = search;
+			params.ExpressionAttributeValues[`:${key}`] = isNaN(search) ? search : parseInt(search);
 		});
 
-		if (filterKey && filter) {
-			params.FilterExpression = `(${params.FilterExpression}) AND #${filterKey} = :${filterKey}`;
-			params.ExpressionAttributeNames[`#${filterKey}`] = filterKey;
-			params.ExpressionAttributeValues[`:${filterKey}`] = filter;
+		if (Object.keys(filters).length) {
+			params.FilterExpression = `(${params.FilterExpression})`;
+			Object.keys(filters).forEach(function (key) {
+				const query = isNaN(filters[key]) ? `contains(#${key}, :${key})` : `#${key} = :${key}`;
+				params.FilterExpression = params.FilterExpression + ' AND ' + query;
+				params.ExpressionAttributeNames[`#${key}`] = key;
+				params.ExpressionAttributeValues[`:${key}`] = isNaN(filters[key]) ? filters[key] : parseInt(filters[key]);
+			});
 		}
 
 		repository.batchScan(params).then(function (data) {

@@ -43,7 +43,7 @@
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
-                <form v-on:submit="search" class="nonprofit-search__name">
+                <form v-on:submit="submit" class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitName">Search by Name</label>
@@ -53,7 +53,7 @@
 
                                 <div class="grid-item">
                                     <div class="search-wrap">
-                                        <input type="search" name="nonprofitName" id="nonprofitName" ref="search">
+                                        <input v-model="search" type="search" name="nonprofitName" id="nonprofitName">
                                     </div>
                                 </div>
 
@@ -73,13 +73,7 @@
                         </div>
                         <div class="form-item__control">
                             <div class="select-wrap">
-                                <select id="nonprofitCategory" name="nonprofitCategory">
-                                    <option value="1">Category #1</option>
-                                    <option value="2">Category #2</option>
-                                    <option value="3">Category #3</option>
-                                    <option value="4">Category #4</option>
-                                    <option value="5">Category #5</option>
-                                </select>
+                                <forms-nonprofit-category-select v-model="category" placeholder="Select a category"></forms-nonprofit-category-select>
                             </div>
                         </div>
                     </div>
@@ -126,6 +120,9 @@
 	module.exports = {
 		data: function () {
 			return {
+				category: '',
+                search: '',
+
 				countdown: {
 					loaded: false,
 					timer: 0,
@@ -218,7 +215,12 @@
 				if (value && !this.loaded) {
 					this.initializeCountdown();
 				}
-			}
+			},
+            category: function (value) {
+				if (value) {
+					console.log(value);
+                }
+            }
 		},
 		methods: {
 			displayEventCountdown: function () {
@@ -254,15 +256,18 @@
 					}
 				}, 1000);
 			},
-			search: function (event) {
+			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.$router.push({name: 'search-results', query: {search: vue.$refs.search.value}});
+				vue.$router.push({name: 'search-results', query: {search: vue.search}});
 			},
 			metricClass: function (digit) {
 				return /^\d+$/.test(digit) ? 'number' : 'text';
             }
-		}
+		},
+        components: {
+			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue')
+        }
 	};
 </script>

@@ -121,13 +121,11 @@
 
 	            const filter = vue.getFilter();
 	            const params = {
-		            keys: 'legalNameSearch',
-		            search: vue.formData.search.toLowerCase()
+		            legalName: vue.formData.search.toLowerCase(),
 	            };
 
 	            if (filter) {
-		            params.filter_key = 'status';
-		            params.filter = filter;
+		            params.status = filter;
 	            }
 
 	            if (vue.sort) {

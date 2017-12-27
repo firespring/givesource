@@ -24,7 +24,7 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <search-results-header></search-results-header>
+                <search-results-header :category="category" :search="search"></search-results-header>
 
                 <div class="leaderboard">
                     <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
@@ -47,6 +47,12 @@
 	const PaginationMixin = require('./../../mixins/pagination');
 
 	module.exports = {
+		data: function () {
+			return {
+				category: '',
+				search: ''
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
@@ -55,19 +61,22 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
+				let options = {};
 				if (to.query.hasOwnProperty('search') && to.query.search) {
-					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString({
-						keys: 'legalNameSearch',
-						search: to.query.search.toLowerCase(),
-						filter_key: 'status',
-						filter: 'ACTIVE',
-					})).then(function (response) {
-						vue.setPaginationData({
-							items: response.data,
-						});
-					});
-				} else {
-					const options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+					vue.search = to.query.search;
+					options.legalName = vue.search.toLowerCase();
+				}
+				if (to.query.hasOwnProperty('category') && to.query.category) {
+					vue.category = to.query.category;
+					options.category = vue.category;
+				}
+                if (Object.keys(options).length) {
+					options.status = 'ACTIVE';
+					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
+						vue.setPaginationData({items: response.data});
+                    });
+                } else {
+					options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 					axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 						vue.setPaginationData(response.data);
 					});
@@ -76,21 +85,25 @@
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
+            vue.resetPaginationData();
 
+			let options = {};
 			if (to.query.hasOwnProperty('search') && to.query.search) {
-				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString({
-					keys: 'legalNameSearch',
-					search: to.query.search.toLowerCase(),
-					filter_key: 'status',
-					filter: 'ACTIVE',
-				})).then(function (response) {
-					vue.setPaginationData({
-						items: response.data,
-					});
+				vue.search = to.query.search;
+				options.legalName = vue.search.toLowerCase();
+			}
+			if (to.query.hasOwnProperty('category') && to.query.category) {
+				vue.category = to.query.category;
+				options.category = vue.category;
+			}
+			if (Object.keys(options).length) {
+				options.status = 'ACTIVE';
+				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
+					vue.setPaginationData({items: response.data});
 					next();
 				});
 			} else {
-				const options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+				options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 					vue.setPaginationData(response.data);
 					next();

@@ -223,6 +223,44 @@ Request.prototype.queryParam = function (key, defaultValue) {
 };
 
 /**
+ * Get request query parameters
+ *
+ * @param {[]} keys
+ * @return {*}
+ */
+Request.prototype.queryParams = function (keys) {
+	const request = this;
+	if (Array.isArray(keys) && keys.length) {
+		const results = {};
+		Object.keys(request._queryParameters).forEach(function (key) {
+			if (keys.indexOf(key) > -1) {
+				results[key] = request._queryParameters[key];
+			}
+		});
+		return results;
+	}
+	return request._queryParameters;
+};
+
+/**
+ * Get all request query parameters except
+ *
+ * @param {[]} [keys]
+ * @return {{}}
+ */
+Request.prototype.queryParamsExcept = function (keys) {
+	const request = this;
+
+	const except = {};
+	Object.keys(request._queryParameters).forEach(function (key) {
+		if (keys.indexOf(key) < 0) {
+			except[key] = request._queryParameters[key];
+		}
+	});
+	return except;
+};
+
+/**
  * Get a value from this Request's headers
  *
  * @param {String} key

@@ -21,10 +21,16 @@ const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
-	const request = new Request(event, context).queryParameters(['keys', 'search']);
+	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.search(request.queryParam('keys').split(','), request.queryParam('search'), request.queryParam('filter_key', null), request.queryParam('filter', null));
+		if (!request.queryParam('category', false) && !request.queryParam('legalName', false)) {
+			return Promise.reject(new Error('Missing required query parameter: category or legalName'));
+		}
+		if (request.queryParam('category', false)) {
+			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), request.queryParamsExcept(['category']));
+		}
+		return repository.search(['legalNameSearch'], request.queryParam('legalName'), request.queryParamsExcept(['legalName']));
 	}).then(function (response) {
 		const results = response.map(function (model) {
 			return model.all();
