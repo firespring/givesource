@@ -53,7 +53,10 @@
 
                                 <div class="grid-item">
                                     <div class="search-wrap">
-                                        <input v-model="search" type="search" name="nonprofitName" id="nonprofitName">
+                                        <input v-model="formData.search" type="search" name="nonprofitName" id="nonprofitName">
+                                    </div>
+                                    <div v-if="formErrors.search" class="notes notes--below notes--error">
+                                        {{ formErrors.search }}
                                     </div>
                                 </div>
 
@@ -121,7 +124,14 @@
 		data: function () {
 			return {
 				category: '',
-                search: '',
+
+                // Form Data
+				formData: {
+					search: ''
+                },
+
+                // Errors
+                formErrors: {},
 
 				countdown: {
 					loaded: false,
@@ -218,9 +228,18 @@
 			},
             category: function (value) {
 				if (value) {
-					console.log(value);
+					this.$router.push({name: 'search-results', query: { category: value }});
                 }
-            }
+            },
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
 		},
 		methods: {
 			displayEventCountdown: function () {
@@ -256,12 +275,30 @@
 					}
 				}, 1000);
 			},
+			getConstraints: function () {
+				return {
+					search: {
+						presence: false,
+						length: {
+							minimum: 3
+						},
+					},
+				};
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.$router.push({name: 'search-results', query: {search: vue.search}});
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (!Object.keys(vue.formErrors).length) {
+					vue.searchNonprofits();
+				}
 			},
+            searchNonprofits: function () {
+				const vue = this;
+
+	            vue.$router.push({name: 'search-results', query: {search: vue.formData.search}});
+            },
 			metricClass: function (digit) {
 				return /^\d+$/.test(digit) ? 'number' : 'text';
             }
