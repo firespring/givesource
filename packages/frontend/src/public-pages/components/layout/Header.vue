@@ -106,7 +106,7 @@
 			searchNonprofits: function () {
 				const vue = this;
 
-				vue.$router.push({name: 'search-results', query: {search: vue.formData.search}});
+				vue.$router.push(vue.generatePageLink({search: vue.formData.search}));
 			},
 			updateCartItemsCount: function () {
 				const vue = this;
@@ -119,6 +119,20 @@
 
 				vue.addModal('menu-overlay');
 			},
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				query = _.extend({}, vue.$route.query, query);
+				Object.keys(query).forEach(function (key) {
+					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
+						delete query[key];
+					}
+				});
+				return {
+					name: 'search-results',
+					query: query
+				};
+			}
 		}
 	};
 </script>

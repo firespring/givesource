@@ -69,7 +69,7 @@
 	module.exports = {
 		data: function () {
 			return {
-				category: '',
+				category: 0,
 				search: ''
 			}
 		},
@@ -82,11 +82,11 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				let options = {};
-				if (to.query.hasOwnProperty('search') && to.query.search) {
+				if (to.query.hasOwnProperty('search')) {
 					vue.search = to.query.search;
 					options.legalName = vue.search.toLowerCase();
 				}
-				if (to.query.hasOwnProperty('category') && to.query.category) {
+				if (to.query.hasOwnProperty('category')) {
 					vue.category = to.query.category;
 					options.category = vue.category;
 				}
@@ -105,14 +105,18 @@
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
+
+			// Reset form and pagination
+			vue.category = 0;
+			vue.search = '';
             vue.resetPaginationData();
 
 			let options = {};
-			if (to.query.hasOwnProperty('search') && to.query.search) {
+			if (to.query.hasOwnProperty('search')) {
 				vue.search = to.query.search;
 				options.legalName = vue.search.toLowerCase();
 			}
-			if (to.query.hasOwnProperty('category') && to.query.category) {
+			if (to.query.hasOwnProperty('category')) {
 				vue.category = to.query.category;
 				options.category = vue.category;
 			}
