@@ -50,6 +50,7 @@ module.exports = function (env) {
 			GetDonations: './src/api/getDonations/index.js',
 			GetDonor: './src/api/getDonor/index.js',
 			GetDonors: './src/api/getDonors/index.js',
+			GetEmail: './src/api/getEmail/index.js',
 			GetFile: './src/api/getFile/index.js',
 			GetFiles: './src/api/getFiles/index.js',
 			GetMessage: './src/api/getMessage/index.js',
@@ -113,6 +114,7 @@ module.exports = function (env) {
 			ProcessDonations: './src/api/processDonations/index.js',
 			RegisterNonprofit: './src/api/registerNonprofit/index.js',
 			SearchNonprofits: './src/api/searchNonprofits/index.js',
+			VerifyEmail: './src/api/verifyEmail/index.js',
 
 			// CloudFormation Custom Lambda Functions
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',

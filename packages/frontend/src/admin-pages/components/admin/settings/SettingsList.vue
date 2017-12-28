@@ -27,10 +27,21 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
-                                        <router-link :to="{ name: 'settings-general' }">General Settings</router-link>
+                                        <router-link :to="{ name: 'settings-event' }">Event Settings</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">
-                                        Modify your campaign's name, dates, etc.
+                                        Modify your event's name, dates, etc.
+                                    </div>
+                                </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-contact' }">Contact Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Manage the email addresses and contact methods associated with your account.
                                     </div>
                                 </div>
 

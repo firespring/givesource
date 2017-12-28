@@ -26,7 +26,7 @@
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">General Settings</h1>
+                        <h1 class="o-page-header-title">Event Settings</h1>
                     </div>
                 </div>
 

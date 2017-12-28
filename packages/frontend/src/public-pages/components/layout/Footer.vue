@@ -29,8 +29,8 @@
                     <router-link :to="{ name: 'contact' }"><i class="fa fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
                 </div>
 
-                <div class="contact-info__contact">
-                    <i class="fa fa-phone" aria-hidden="true"></i><span>1-111-111-1111</span>
+                <div class="contact-info__contact" v-if="contactPhone">
+                    <i class="fa fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
                 </div>
 
                 <div class="contact-info__terms">
@@ -50,6 +50,9 @@
         computed: {
 			adminPagesUrl: function () {
 				return this.$store.getters.setting('ADMIN_PAGES_CLOUDFRONT_URL') + '/login';
+            },
+            contactPhone: function () {
+	            return this.$store.getters.setting('CONTACT_PHONE') || null;
             },
             year: function () {
 				return new Date().getFullYear();

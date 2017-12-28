@@ -27,7 +27,7 @@
 		data: function () {
 			return {
 				modals: [],
-                data: {}
+				data: {}
 			}
 		},
 		created: function () {
@@ -40,7 +40,7 @@
 			 */
 			vue.bus.$on('addModal', function (modal, data) {
 				vue.modals.push(modal);
-                vue.data[modal] = data || null;
+				vue.data[modal] = data || null;
 			});
 
 			/**
@@ -49,9 +49,9 @@
 			vue.bus.$on('removeModal', function (modal) {
 				if (vue.modals.indexOf(modal) > -1) {
 					vue.modals.splice(vue.modals.indexOf(modal), 1);
-                } else if (vue.modals.length) {
-					vue.modals = vue.modals.slice(0 , -1);
-                }
+				} else if (vue.modals.length) {
+					vue.modals = vue.modals.slice(0, -1);
+				}
 			});
 
 			/**
@@ -64,7 +64,7 @@
 				} else {
 					vue.modals.push(modal);
 					vue.data[modal] = data || null;
-                }
+				}
 			});
 
 			/**
@@ -87,7 +87,11 @@
 			'spinner': require('./ModalSpinner.vue'),
 			'account-edit-info': require('../account/UserAccountInfoModal.vue'),
 			'account-edit-password': require('../account/UserAccountPasswordModal.vue'),
-            'photo-editor': require('./photoEditor/PhotoEditorModal.vue'),
+			'photo-editor': require('./photoEditor/PhotoEditorModal.vue'),
+			'settings-edit-contact-email': require('./../admin/settings/contact/ContactEmailModal.vue'),
+			'settings-edit-contact-phone': require('./../admin/settings/contact/ContactPhoneModal.vue'),
+			'settings-edit-sender-email': require('./../admin/settings/contact/SenderEmailModal.vue'),
+			'settings-resend-verify-email': require('./../admin/settings/contact/ResendVerifyEmailModal.vue'),
 		}
 	};
 </script>

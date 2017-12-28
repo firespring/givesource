@@ -16,31 +16,15 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Message = require('./../../models/message');
-const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
 const SES = require('./../../aws/ses');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new MessagesRepository();
-	const request = new Request(event, context);
-	const settingsRepository = new SettingsRepository();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 	const ses = new SES();
 
-	let to = null;
-	let from = null;
-	const message = new Message(request._body);
-
 	request.validate().then(function () {
-		return message.validate();
-	}).then(function () {
-		return settingsRepository.batchGet(['CONTACT_EMAIL', 'SENDER_EMAIL']);
-	}).then(function (settings) {
-		if (settings.length) {
-			to = getSettingValue(settings, 'CONTACT_EMAIL');
-			from = getSettingValue(settings, 'SENDER_EMAIL');
-		}
 		return ses.listIdentities();
 	}).then(function (response) {
 		const identities = response.hasOwnProperty('Identities') ? response.Identities : [];
@@ -59,30 +43,8 @@ exports.handle = function (event, context, callback) {
 				});
 			});
 		}
-		return Promise.resolve(results);
-	}).then(function (response) {
-		let emailSetting = null;
-		if (response.length && from) {
-			emailSetting = _.find(response, {email: from});
-		}
-		if (emailSetting && emailSetting.verified) {
-			return ses.sendEmail(message, [to], from);
-		} else {
-			return Promise.resolve();
-		}
-	}).then(function () {
-		return repository.save(message);
-	}).then(function (model) {
-		callback(null, model.all());
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
-};
-
-const getSettingValue = function (settings, key) {
-	let result = null;
-	if (settings.length) {
-		result = _.find(settings, {key: key});
-	}
-	return result ? result.value : null;
 };

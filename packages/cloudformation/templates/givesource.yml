@@ -188,6 +188,13 @@ Resources:
                 - apigateway:*
               Resource: !Sub |-
                 arn:aws:apigateway:${AWS::Region}::/apikeys/*
+      - PolicyName: SES
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+                - ses:*
+              Resource: '*'
     DependsOn:
       - DynamoDbStack
       - RestApi

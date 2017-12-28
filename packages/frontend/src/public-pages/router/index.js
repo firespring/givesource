@@ -124,6 +124,7 @@ const router = new VueRouter({
 const updateSettings = function () {
 	const settings = [
 		'ADMIN_PAGES_CLOUDFRONT_URL',
+		'CONTACT_PHONE',
 		'UPLOADS_CLOUDFRONT_URL'
 	];
 
