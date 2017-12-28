@@ -25,7 +25,7 @@ function QueryBuilder(type) {
 	this._type = type || 'query';
 	this._table = null;
 	this._index = null;
-	this._scanIndexForward = true;
+	this._scanIndexForward = null;
 	this._select = null;
 	this._start = null;
 	this._limit = 1000;
@@ -253,7 +253,7 @@ QueryBuilder.prototype.build = function () {
 		params['ExclusiveStartKey'] = this._start;
 	}
 
-	if (this._scanIndexForward && this._type === 'query') {
+	if (this._scanIndexForward !== null && this._type === 'query') {
 		params['ScanIndexForward'] = this._scanIndexForward;
 	}
 

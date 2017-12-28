@@ -35,11 +35,22 @@ const store = new Vuex.Store({
 					amount = Math.round(Number.parseFloat(payload.amount) * 100);
 				}
 
-				state.cartItems.push({
-					amount: amount,
-					nonprofit: payload.nonprofit,
-					timestamp: Date.now(),
+				let isNew = true;
+				state.cartItems.forEach(function (item) {
+					if (item.nonprofit.uuid === payload.nonprofit.uuid) {
+						item.amount = amount;
+						item.timestamp = Date.now();
+						isNew = false;
+					}
 				});
+
+				if (isNew) {
+					state.cartItems.push({
+						amount: amount,
+						nonprofit: payload.nonprofit,
+						timestamp: Date.now()
+					})
+				}
 			}
 		},
 		removeCartItem: function (state, timestamp) {
