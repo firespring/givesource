@@ -29,8 +29,11 @@
             <router-link :to="{ name: 'faq' }">FAQ</router-link>
         </nav>
 
-        <form v-on:submit="search" class="page-header__search flex justify-center items-center">
-            <input type="search" name="searchNonprofits" id="searchNonprofits" placeholder="Find a Nonprofit" ref="search">
+        <form v-on:submit="submit" class="page-header__search flex justify-center items-center">
+            <input v-model="formData.search" type="search" name="searchNonprofits" id="searchNonprofits" placeholder="Find a Nonprofit" ref="search">
+            <div v-if="formErrors.search" class="notes notes--below notes--error">
+                {{ formErrors.search }}
+            </div>
         </form>
 
         <div class="page-header__cart items-center">
@@ -45,7 +48,15 @@
 	module.exports = {
 		data: function () {
 			return {
-				cartItemsCount: 0
+				cartItemsCount: 0,
+
+				// Form Data
+				formData: {
+					search: ''
+				},
+
+				// Errors
+				formErrors: {},
 			};
 		},
 		created: function () {
@@ -61,18 +72,46 @@
 
 			vue.bus.$off('updateCartItemsCounter');
 		},
+        watch: {
+	        formData: {
+		        handler: function () {
+			        const vue = this;
+			        if (Object.keys(vue.formErrors).length) {
+				        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+			        }
+		        },
+		        deep: true
+	        }
+        },
 		methods: {
+			getConstraints: function () {
+				return {
+					search: {
+						presence: false,
+						length: {
+							minimum: 3
+						},
+					},
+                };
+            },
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (!Object.keys(vue.formErrors).length) {
+					vue.searchNonprofits();
+				}
+            },
+			searchNonprofits: function () {
+				const vue = this;
+
+				vue.$router.push({name: 'search-results', query: {search: vue.formData.search}});
+			},
 			updateCartItemsCount: function () {
 				const vue = this;
 
 				vue.cartItemsCount = vue.$store.state.cartItems.length;
-			},
-			search: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				const query = vue.$refs.search.value ? {search: vue.$refs.search.value} : {};
-				vue.$router.push({name: 'search-results', query: query});
 			},
 			openMenu: function (event) {
 				event.preventDefault();
