@@ -28,9 +28,9 @@ exports.handle = function (event, context, callback) {
 			return Promise.reject(new Error('Missing required query parameter: category or legalName'));
 		}
 		if (request.queryParam('category', false)) {
-			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), request.queryParamsExcept(['category']));
+			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category'])));
 		}
-		return repository.search(['legalNameSearch'], request.queryParam('legalName'), request.queryParamsExcept(['legalName']));
+		return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName'])));
 	}).then(function (response) {
 		const results = response.map(function (model) {
 			return model.all();
@@ -39,4 +39,12 @@ exports.handle = function (event, context, callback) {
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
+};
+
+const transformFilters = function (filters) {
+	if (filters.hasOwnProperty('legalName')) {
+		filters.legalNameSearch = filters.legalName;
+		delete filters.legalName;
+	}
+	return filters;
 };

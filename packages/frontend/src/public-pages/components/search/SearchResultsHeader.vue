@@ -52,7 +52,7 @@
 			return {
 				// Form Data
 				formData: {
-					category: '',
+					category: 0,
 					search: '',
 				},
 
@@ -62,8 +62,8 @@
 		},
 		props: {
 			category: {
-				type: String,
-				default: ''
+				type: Number,
+				default: 0
 			},
 			search: {
 				type: String,
@@ -73,10 +73,10 @@
 		watch: {
 			category: function (value) {
 				this.formData.category = value;
-			},
-			search: function (value) {
+            },
+            search: function (value) {
 				this.formData.search = value;
-			},
+            },
 			formData: {
 				handler: function () {
 					const vue = this;
