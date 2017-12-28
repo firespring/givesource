@@ -18,6 +18,7 @@
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
+const MetricsHelper = require('./../../helpers/metrics');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
@@ -30,9 +31,15 @@ exports.handle = function (event, context, callback) {
 		if (request.get('email')) {
 			return repository.queryEmail(request.get('email'));
 		}
-		return Promise.resolve(new Donor());
+		return Promise.resolve();
 	}).then(function (model) {
-		donor = model ? model : new Donor();
+		if (model) {
+			donor = model;
+		} else {
+			donor = new Donor();
+			return MetricsHelper.addAmountToMetric('DONORS_COUNT', 1);
+		}
+	}).then(function () {
 		donor.populate(request._body);
 		return donor.validate();
 	}).then(function () {
