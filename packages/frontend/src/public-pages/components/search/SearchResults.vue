@@ -26,8 +26,28 @@
 
                 <search-results-header :category="category" :search="search"></search-results-header>
 
-                <div class="leaderboard">
+                <div class="leaderboard" v-if="pagination.loaded && pagination.items.length">
                     <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
+                </div>
+
+                <div class="leaderboard" v-else-if="pagination.loaded && pagination.items.length === 0">
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-item__info text-c" v-if="!category && !search">
+                            There are no nonprofits.
+                        </div>
+                        <div class="leaderboard-item__info text-c" v-else-if="search">
+                            There are no nonprofits that match that search.
+                        </div>
+                        <div class="leaderboard-item__info text-c" v-else>
+                            There are no nonprofits in that category.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="leaderboard" v-else>
+                    <div class="ma5 text-c">
+                        <layout-spinner></layout-spinner>
+                    </div>
                 </div>
 
                 <pagination :pagination="pagination" v-if="pagination.loaded"></pagination>
@@ -116,6 +136,7 @@
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
+            'layout-spinner': require('./../layout/Spinner.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
 			'pagination': require('./../pagination/Pagination.vue'),
 			'search-results-header': require('./SearchResultsHeader.vue'),
