@@ -57,6 +57,13 @@ Model.prototype.defaults = function () {
 };
 
 /**
+ * Event fired for this model before validation
+ */
+Model.prototype.beforeValidate = function () {
+	return true;
+};
+
+/**
  * Event fired for this model before saving
  */
 Model.prototype.beforeSave = function () {
@@ -173,6 +180,7 @@ Model.prototype.populate = function (data) {
  */
 Model.prototype.validate = function (fields) {
 	const model = this;
+	model.beforeValidate();
 	return new Promise(function (resolve, reject) {
 		ValidationHelper.loadCustom();
 		let err;

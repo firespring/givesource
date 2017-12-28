@@ -85,15 +85,15 @@ Nonprofit.prototype.constraints = {
 	},
 	category1: {
 		presence: true,
-		type: 'string',
+		type: 'number',
 	},
 	category2: {
 		presence: false,
-		type: 'string',
+		type: 'number',
 	},
 	category3: {
 		presence: false,
-		type: 'string',
+		type: 'number',
 	},
 	city: {
 		presence: true,
@@ -177,6 +177,13 @@ Nonprofit.prototype.defaults = function () {
 		donationsTotal: 0,
 		status: NonprofitHelper.STATUS_PENDING
 	};
+};
+
+/**
+ * Event fired for this model before validation
+ */
+Nonprofit.prototype.beforeValidate = function () {
+	this.legalNameSearch = this.legalName.toLowerCase();
 };
 
 /**
