@@ -151,7 +151,7 @@ Generator.prototype._generators = {
 	 * @return {Object}
 	 */
 	nonprofit: function () {
-		const nonprofit = {
+		return {
 			uuid: faker.random.uuid(),
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
@@ -170,15 +170,12 @@ Generator.prototype._generators = {
 			longDescription: faker.lorem.paragraphs(),
 			phone: faker.phone.phoneNumber(),
 			shortDescription: faker.random.words(),
+			slug: faker.lorem.slug(),
 			state: faker.address.stateAbbr(),
 			status: faker.random.arrayElement(['ACTIVE', 'DENIED', 'PENDING']),
 			taxId: faker.random.alphaNumeric(10),
 			zip: faker.address.zipCode()
 		};
-
-		nonprofit.slug = nonprofit.status === 'ACTIVE' ? faker.lorem.slug() : '';
-
-		return nonprofit;
 	},
 
 	/**

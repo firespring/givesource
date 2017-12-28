@@ -155,6 +155,8 @@ const seedNonprofits = function () {
 	const nonprofitDonationTiersRepository = new NonprofitDonationTiersRepository();
 	const nonprofitSlidesRepository = new NonprofitSlidesRepository();
 
+	const nonprofitSlides = [];
+	const nonprofitDonationTiers = [];
 	return inquirer.prompt([
 		{
 			type: 'input',
@@ -165,8 +167,6 @@ const seedNonprofits = function () {
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
 		const nonprofits = generator.modelCollection('nonprofit', count, {donationsCount: 0, donationsFees: 0, donationsFeesCovered: 0, donationsSubtotal: 0, donationsTotal: 0});
-		const nonprofitSlides = [];
-		const nonprofitDonationTiers = [];
 
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
@@ -184,11 +184,11 @@ const seedNonprofits = function () {
 			});
 		});
 
-		return nonprofitsRepository.batchUpdate(nonprofits).then(function () {
-			nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
-		}).then(function () {
-			nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);
-		});
+		return nonprofitsRepository.batchUpdate(nonprofits);
+	}).then(function () {
+		return nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
+	}).then(function () {
+		return nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);
 	}).then(function () {
 		console.log('seeded nonprofits');
 	});
