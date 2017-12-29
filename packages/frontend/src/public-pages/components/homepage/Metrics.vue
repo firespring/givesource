@@ -84,7 +84,7 @@
 
                 <div class="nonprofit-search__love">
                     <div class="mb3">
-                        <a href="#" class="btn btn--blue btn--lg">Love Them All</a>
+                        <a href="#" class="btn btn--accent btn--lg">Love Them All</a>
                     </div>
                     <div class="notes">
                         Your donation will be added to the challenge match fund distributed to all nonprofits.

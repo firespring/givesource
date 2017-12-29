@@ -37,13 +37,13 @@
                                 <input v-model="formData.customAmount" type="text" name="customAmount" id="customAmount" placeholder="Enter Amount" v-money="currencyOptions">
                             </div>
                             <div class="action">
-                                <button class="btn"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                                <button class="btn"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
             </div>
         </div>
 

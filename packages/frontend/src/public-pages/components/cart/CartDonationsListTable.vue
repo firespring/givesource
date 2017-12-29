@@ -37,7 +37,7 @@
                     <strong>You haven't added any donations yet.</strong>
                 </p>
                 <p>
-                    <router-link :to="{ name: 'search-results' }" class="btn btn--blue">Find a Nonprofit to Help</router-link>
+                    <router-link :to="{ name: 'search-results' }" class="btn btn--accent">Find a Nonprofit to Help</router-link>
                 </p>
             </td>
         </tr>

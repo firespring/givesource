@@ -27,7 +27,7 @@
             <router-link :to="{ name: 'cart' }">Your Donations</router-link>
         </nav>
 
-        <a v-on:click="close" href="#" id="overlay__close" role="button"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+        <a v-on:click="close" href="#" id="overlay__close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
     </div>
 </template>
 

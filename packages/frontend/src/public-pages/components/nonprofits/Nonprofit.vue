@@ -52,10 +52,10 @@
                             </div>
 
                             <div class="donation-share">
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fa fa-facebook" aria-hidden="true"></i><span>Share</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fa fa-twitter" aria-hidden="true"></i><span>Tweet</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i><span>Share</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fa fa-envelope" aria-hidden="true"></i><span>Email</span></a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fab fa-linkedin-in" aria-hidden="true"></i>Share</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fas fa-envelope" aria-hidden="true"></i>Email</a>
                             </div>
 
                         </div>

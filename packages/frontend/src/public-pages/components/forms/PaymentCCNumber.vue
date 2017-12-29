@@ -21,19 +21,19 @@
         <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••">
         <div class="notes notes--below accepted-cc">
             <div class="cc visa" :class="{na: !displayCardType('visa')}">
-                <i class="fa fa-cc-visa" aria-hidden="true"></i>
+                <i class="fab fa-cc-visa" aria-hidden="true"></i>
             </div>
             <div class="cc mastercard" :class="{na: !displayCardType('mastercard')}">
-                <i class="fa fa-cc-mastercard" aria-hidden="true"></i>
+                <i class="fab fa-cc-mastercard" aria-hidden="true"></i>
             </div>
             <div class="cc amex" :class="{na: !displayCardType('amex')}">
-                <i class="fa fa-cc-amex" aria-hidden="true"></i>
+                <i class="fab fa-cc-amex" aria-hidden="true"></i>
             </div>
             <div class="cc discover" :class="{na: !displayCardType('discover')}">
-                <i class="fa fa-cc-discover" aria-hidden="true"></i>
+                <i class="fab fa-cc-discover" aria-hidden="true"></i>
             </div>
             <div class="cc dinersclub" :class="{na: !displayCardType('dinersclub')}">
-                <i class="fa fa-cc-diners-club" aria-hidden="true"></i>
+                <i class="fab fa-cc-diners-club" aria-hidden="true"></i>
             </div>
         </div>
     </div>

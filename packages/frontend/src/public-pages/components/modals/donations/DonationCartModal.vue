@@ -35,7 +35,7 @@
 
                 </div>
 
-                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>

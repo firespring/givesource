@@ -166,7 +166,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <forms-submit :processing="processing" color="blue">Register Now</forms-submit>
+                        <forms-submit :processing="processing" color="accent">Register Now</forms-submit>
                     </div>
                 </form>
             </div>

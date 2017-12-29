@@ -73,7 +73,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <forms-submit :processing="processing" color="blue">Send Your Questions</forms-submit>
+                        <forms-submit :processing="processing" color="accent">Send Your Questions</forms-submit>
                     </div>
                 </form>
 

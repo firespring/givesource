@@ -16,8 +16,7 @@
   -->
 
 <template>
-    <button type="submit" class="btn btn--round btn--icon" :class="classes" :disabled="processing">
-        <i class="fa fa-spinner fa-pulse fa-fw" v-if="processing"></i>
+    <button type="submit" class="btn btn--round btn--icon" :class="buttonClasses" :disabled="processing">
         <slot>Submit</slot>
     </button>
 </template>
@@ -28,19 +27,25 @@
 			return {
 				classes: {
 					// Color
-					'btn--green': this.color.toLowerCase() === 'green',
+                    'btn--accent': this.color.toLowerCase() === 'accent',
 					'btn--blue': this.color.toLowerCase() === 'blue',
-					'btn--red': this.color.toLowerCase() === 'red',
 					'btn--dark': this.color.toLowerCase() === 'dark',
+					'btn--green': this.color.toLowerCase() === 'green',
 					'btn--lite': this.color.toLowerCase() === 'lite',
+					'btn--red': this.color.toLowerCase() === 'red',
 					'btn--reverse': this.color.toLowerCase() === 'reverse',
 
 					// Size
 					'btn--xs': this.size.toLowerCase() === 'xs',
 					'btn--sm': this.size.toLowerCase() === 'sm',
-					'btn--lg': this.size.toLowerCase() === 'lg'
+					'btn--lg': this.size.toLowerCase() === 'lg',
 				}
 			};
+		},
+		computed: {
+			buttonClasses: function () {
+				return _.extend({}, this.classes, {'btn--loading': this.processing});
+			},
 		},
 		props: {
 			processing: {
