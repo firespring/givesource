@@ -153,26 +153,26 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('nonprofits').then(function (response) {
-					if (response.data && response.data.hasOwnProperty('items')) {
-						vue.nonprofits = response.data.items;
-					}
-					vue.loaded = true;
-				});
+				vue.$request.get('nonprofits/search', {
+                    status: 'ACTIVE'
+                }).then(function (response) {
+                	vue.nonprofits = response.data;
+                	vue.loaded = true;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('nonprofits').then(function (response) {
-				if (response.data && response.data.hasOwnProperty('items')) {
-					vue.nonprofits = response.data.items;
-                }
+			vue.$request.get('nonprofits/search', {
+				status: 'ACTIVE'
+			}).then(function (response) {
+				vue.nonprofits = response.data;
 				vue.loaded = true;
 				next();
 			}).catch(function () {
 				next();
-			});
+            });
 		},
 		watch: {
 			formData: {

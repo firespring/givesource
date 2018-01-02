@@ -24,13 +24,16 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		if (!request.queryParam('category', false) && !request.queryParam('legalName', false)) {
-			return Promise.reject(new Error('Missing required query parameter: category or legalName'));
+		if (!request.queryParam('category', false) && !request.queryParam('legalName', false) && !request.queryParam('status', false)) {
+			return Promise.reject(new Error('Missing required query parameter: category, legalName or status'));
 		}
 		if (request.queryParam('category', false)) {
 			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category'])));
 		}
-		return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName'])));
+		if (request.queryParam('legalName', false)) {
+			return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName'])));
+		}
+		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status'])));
 	}).then(function (response) {
 		const results = response.map(function (model) {
 			return model.all();

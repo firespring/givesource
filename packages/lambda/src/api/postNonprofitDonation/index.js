@@ -17,6 +17,7 @@
 
 const Donation = require('./../../models/donation');
 const HttpException = require('./../../exceptions/http');
+const MetricsHelper = require('./../../helpers/metrics');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
@@ -47,6 +48,12 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		donation = response;
 		return nonprofitsRepository.save(nonprofit);
+	}).then(function () {
+		return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', 1);
+	}).then(function () {
+		return MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', donation.subtotal);
+	}).then(function () {
+		return MetricsHelper.maxMetricAmount('TOP_DONATION', donation.subtotal);
 	}).then(function () {
 		callback(null, donation.all());
 	}).catch(function (err) {

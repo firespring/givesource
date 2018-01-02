@@ -93,6 +93,9 @@
                 if (Object.keys(options).length) {
 					options.status = 'ACTIVE';
 					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
+						response.data.sort(function (a, b) {
+							return Utils.sortAlphabetically(a, b, 'legalName');
+						});
 						vue.setPaginationData({items: response.data});
                     });
                 } else {
@@ -123,6 +126,9 @@
 			if (Object.keys(options).length) {
 				options.status = 'ACTIVE';
 				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
+					response.data.sort(function (a, b) {
+						return Utils.sortAlphabetically(a, b, 'legalName');
+					});
 					vue.setPaginationData({items: response.data});
 					next();
 				});
