@@ -26,6 +26,24 @@ const generateQueryString = function (object) {
 	return '?' + params.join('&');
 };
 
+/**
+ * Sort two objects alphabetically by key
+ * @param {{}} a
+ * @param {{}} b
+ * @param {String} key
+ * @return {number}
+ */
+const sortAlphabetically = function (a, b, key) {
+	if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] < b[key]) {
+		return -1;
+	} else if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] > b[key]) {
+		return 1;
+	}
+
+	return 0;
+};
+
 export {
-	generateQueryString
+	generateQueryString,
+	sortAlphabetically
 }
