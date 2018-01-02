@@ -38,7 +38,7 @@ const store = new Vuex.Store({
 				let isNew = true;
 				state.cartItems.forEach(function (item) {
 					if (item.nonprofit.uuid === payload.nonprofit.uuid) {
-						item.amount = amount;
+						item.amount = item.amount += amount;
 						item.timestamp = Date.now();
 						isNew = false;
 					}
