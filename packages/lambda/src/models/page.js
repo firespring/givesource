@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
  */
 
 const Model = require('./model');
-const SponsorHelper = require('./../helpers/sponsor');
 
 /**
- * SponsorTier constructor
+ * Page constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function SponsorTier(data) {
+function Page(data) {
 	Model.call(this, data);
 }
 
@@ -33,17 +32,17 @@ function SponsorTier(data) {
  *
  * @type {model}
  */
-SponsorTier.prototype = new Model();
+Page.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-SponsorTier.prototype.attributes = [
+Page.prototype.attributes = [
+	'isEnabled',
 	'name',
-	'size',
-	'sortOrder',
+	'slug',
 ];
 
 /**
@@ -51,20 +50,18 @@ SponsorTier.prototype.attributes = [
  *
  * @type {{}}
  */
-SponsorTier.prototype.constraints = {
+Page.prototype.constraints = {
+	isEnabled: {
+		presence: false,
+	},
 	name: {
 		presence: true,
 		type: 'string'
 	},
-	size: {
+	slug: {
 		presence: true,
-		type: 'string',
-		inclusion: [SponsorHelper.SIZE_LARGE, SponsorHelper.SIZE_DEFAULT, SponsorHelper.SIZE_SMALL]
-	},
-	sortOrder: {
-		presence: true,
-		type: 'number'
-	},
+		uuid: 4
+	}
 };
 
-module.exports = SponsorTier;
+module.exports = Page;

@@ -30,7 +30,7 @@ function Sponsor(data) {
 /**
  * Extend the base Model
  *
- *@type {model}
+ * @type {model}
  */
 Sponsor.prototype = new Model();
 

@@ -85,6 +85,14 @@ Resources:
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
                 - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
+                - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
@@ -97,13 +105,13 @@ Resources:
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
                 - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PagesTable}
                 - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PagesTable}/index/*
                 - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PageContentsTable}
                 - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PageContentsTable}/index/*
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
                 - !Sub |-
@@ -382,6 +390,23 @@ Resources:
       - LambdaRole
       - RestApi
 
+  ApiPagesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-pages.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - CustomStack
+      - LambdaRole
+      - RestApi
+
   ApiPaymentTransactionsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -485,6 +510,7 @@ Resources:
       - ApiMessagesStack
       - ApiMetricsStack
       - ApiNonprofitsStack
+      - ApiPagesStack
       - ApiPaymentTransactionsStack
       - ApiReportsStack
       - ApiSettingsStack

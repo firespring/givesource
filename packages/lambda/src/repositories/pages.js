@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Page = require('./../models/page');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const SponsorTier = require('./../models/sponsorTier');
 
 /**
- * SponsorTiersRepository constructor
+ * PagesRepository constructor
  *
  * @constructor
  */
-function SponsorTiersRepository() {
+function PagesRepository() {
 	Repository.call(this, RepositoryHelper.SponsorTiersTable);
 }
 
@@ -35,22 +35,22 @@ function SponsorTiersRepository() {
  *
  * @type {Repository}
  */
-SponsorTiersRepository.prototype = new Repository();
+PagesRepository.prototype = new Repository();
 
 /**
- * Get a Sponsor Tier
+ * Get a Page
  *
- * @param {String} uuid
+ * @param {String} slug
  * @return {Promise}
  */
-SponsorTiersRepository.prototype.get = function (uuid) {
+PagesRepository.prototype.get = function (slug) {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
+		repository.getByKey('slug', slug).then(function (data) {
 			if (data.hasOwnProperty('Item')) {
-				resolve(new SponsorTier(data.Item));
+				resolve(new Page(data.Item));
 			}
-			reject(new ResourceNotFoundException('The specified sponsor tier does not exist.'));
+			reject(new ResourceNotFoundException('The specified page does not exist.'));
 		}).catch(function (err) {
 			reject(err);
 		});
@@ -58,18 +58,18 @@ SponsorTiersRepository.prototype.get = function (uuid) {
 };
 
 /**
- * Get all Sponsor Tiers
+ * Get all Pages
  *
  * @return {Promise}
  */
-SponsorTiersRepository.prototype.getAll = function () {
+PagesRepository.prototype.getAll = function () {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
 		repository.batchScan().then(function (data) {
 			let results = [];
 			if (data.Items) {
 				data.Items.forEach(function (item) {
-					results.push(new SponsorTier(item));
+					results.push(new Page(item));
 				});
 			}
 			resolve(results);
@@ -80,11 +80,11 @@ SponsorTiersRepository.prototype.getAll = function () {
 };
 
 /**
- * Get a count of all SponsorTiers
+ * Get a count of all Pages
  *
  * @return {Promise}
  */
-SponsorTiersRepository.prototype.getCount = function () {
+PagesRepository.prototype.getCount = function () {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('scan');
@@ -98,39 +98,22 @@ SponsorTiersRepository.prototype.getCount = function () {
 };
 
 /**
- * Delete a Sponsor Tier
+ * Create or update a Page
  *
- * @param {String} uuid
- * @return {Promise}
+ * @param {Page} model
  */
-SponsorTiersRepository.prototype.delete = function (uuid) {
+PagesRepository.prototype.save = function (model) {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
-
-/**
- * Create or update a Sponsor Tier
- *
- * @param {SponsorTier} model
- */
-SponsorTiersRepository.prototype.save = function (model) {
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		if (!(model instanceof SponsorTier)) {
-			reject(new Error('invalid SponsorTier model'));
+		if (!(model instanceof Page)) {
+			reject(new Error('invalid Page model'));
 		}
 		model.validate().then(function () {
 			const key = {
-				uuid: model.uuid
+				slug: model.slug
 			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new SponsorTier(data.Attributes));
+			repository.put(key, model.except(['slug'])).then(function (data) {
+				resolve(new Page(data.Attributes));
 			}).catch(function (err) {
 				reject(err);
 			});
@@ -140,4 +123,4 @@ SponsorTiersRepository.prototype.save = function (model) {
 	});
 };
 
-module.exports = SponsorTiersRepository;
+module.exports = PagesRepository;

@@ -322,6 +322,62 @@ Resources:
           WriteCapacityUnits: 1
     DependsOn: NonprofitDonationTiersTable
 
+  PagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-Pages
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: slug
+        AttributeType: S
+      KeySchema:
+      - AttributeName: slug
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: uuidIndex
+        KeySchema:
+        - AttributeName: uuid
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: NonprofitSlidesTable
+
+  PageContentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub |-
+       ${StackName}-PageContents
+      AttributeDefinitions:
+      - AttributeName: uuid
+        AttributeType: S
+      - AttributeName: pageSlug
+        AttributeType: S
+      KeySchema:
+      - AttributeName: uuid
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+      - IndexName: pageSlugIndex
+        KeySchema:
+        - AttributeName: pageSlug
+          KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    DependsOn: PagesTable
+
   PaymentTransactionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -336,7 +392,7 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-    DependsOn: NonprofitSlidesTable
+    DependsOn: PageContentsTable
 
   ReportsTable:
     Type: AWS::DynamoDB::Table
@@ -502,6 +558,12 @@ Outputs:
 
   NonprofitSlidesTable:
     Value: !Ref NonprofitSlidesTable
+
+  PagesTable:
+    Value: !Ref PagesTable
+
+  PageContentsTable:
+    Value: !Ref PageContentsTable
 
   PaymentTransactionsTable:
     Value: !Ref PaymentTransactionsTable

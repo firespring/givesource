@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
  */
 
 const Model = require('./model');
-const SponsorHelper = require('./../helpers/sponsor');
 
 /**
- * SponsorTier constructor
+ * PageContent constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function SponsorTier(data) {
+function PageContent(data) {
 	Model.call(this, data);
 }
 
@@ -33,17 +32,19 @@ function SponsorTier(data) {
  *
  * @type {model}
  */
-SponsorTier.prototype = new Model();
+PageContent.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-SponsorTier.prototype.attributes = [
-	'name',
-	'size',
+PageContent.prototype.attributes = [
+	'content',
+	'key',
+	'pageSlug',
 	'sortOrder',
+	'type',
 ];
 
 /**
@@ -51,20 +52,27 @@ SponsorTier.prototype.attributes = [
  *
  * @type {{}}
  */
-SponsorTier.prototype.constraints = {
-	name: {
+PageContent.prototype.constraints = {
+	content: {
 		presence: true,
 		type: 'string'
 	},
-	size: {
+	key: {
 		presence: true,
 		type: 'string',
-		inclusion: [SponsorHelper.SIZE_LARGE, SponsorHelper.SIZE_DEFAULT, SponsorHelper.SIZE_SMALL]
+	},
+	pageSlug: {
+		presence: true,
+		type: 'string'
 	},
 	sortOrder: {
 		presence: true,
 		type: 'number'
 	},
+	type: {
+		presence: true,
+		type: 'string'
+	}
 };
 
-module.exports = SponsorTier;
+module.exports = PageContent;
