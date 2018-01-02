@@ -111,13 +111,13 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GetSponsorTiers.zip
-      Description: "Get a list of sponsor tiers"
+        S3Key: fn/{{version}}/GetPages.zip
+      Description: "Get a list of pages"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-GetSponsorTiers
+        ${StackName}-GetPages
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
@@ -1091,7 +1091,7 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref SponsorsApiResource
+      ResourceId: !Ref PageContentsApiResource
       HttpMethod: OPTIONS
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -1116,7 +1116,7 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref SponsorApiResource
+      ResourceId: !Ref PageContentApiResource
       HttpMethod: OPTIONS
       AuthorizationType: NONE
       ApiKeyRequired: false
