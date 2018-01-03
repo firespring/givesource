@@ -53,6 +53,7 @@ Page.prototype.attributes = [
 Page.prototype.constraints = {
 	isEnabled: {
 		presence: false,
+		type: 'boolean',
 	},
 	name: {
 		presence: true,
@@ -60,7 +61,7 @@ Page.prototype.constraints = {
 	},
 	slug: {
 		presence: true,
-		uuid: 4
+		type: 'string'
 	}
 };
 

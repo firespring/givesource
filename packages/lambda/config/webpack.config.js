@@ -133,6 +133,7 @@ module.exports = function (env) {
 			CognitoCreateUserPoolClient: './src/custom/cognitoCreateUserPoolClient/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
+			SavePages: './src/custom/savePages/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',
 		},
 		output: {

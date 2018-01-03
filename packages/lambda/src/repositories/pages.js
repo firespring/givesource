@@ -27,7 +27,7 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  * @constructor
  */
 function PagesRepository() {
-	Repository.call(this, RepositoryHelper.SponsorTiersTable);
+	Repository.call(this, RepositoryHelper.PagesTable);
 }
 
 /**

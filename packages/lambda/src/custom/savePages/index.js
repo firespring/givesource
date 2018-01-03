@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,33 +16,65 @@
  */
 
 const logger = require('./../../helpers/log');
+const Page = require('./../../models/page');
+const PagesRepository = require('./../../repositories/pages');
 const response = require('cfn-response');
-const Setting = require('./../../models/setting');
-const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	logger.log('saveSettings event: %j', event);
-
-	const models = [];
-	const repository = new SettingsRepository();
-	const settings = JSON.parse(event.ResourceProperties.Settings);
-
-	Object.keys(settings).forEach(function (key) {
-		if (settings.hasOwnProperty(key)) {
-			const data = {};
-			data.key = key;
-			data.value = settings[key];
-			models.push(new Setting(data));
-		}
-	});
+	logger.log('savePages event: %j', event);
+	const repository = new PagesRepository();
 
 	if (event.RequestType === 'Delete') {
 		response.send(event, context, response.SUCCESS);
 		return;
 	}
 
+	const pages = [
+		{
+			name: 'Home',
+			slug: 'homepage',
+			isEnabled: true,
+		},
+		{
+			name: 'Donation Checkout',
+			slug: 'cart',
+			isEnabled: true,
+		},
+		{
+			name: 'Contact Us',
+			slug: 'contact-us',
+			isEnabled: true,
+		},
+		{
+			name: 'About Us',
+			slug: 'about-us',
+			isEnabled: false,
+		},
+		{
+			name: 'FAQ',
+			slug: 'faq',
+			isEnabled: false,
+		},
+		{
+			name: 'Toolkit',
+			slug: 'toolkit',
+			isEnabled: false,
+		},
+		{
+			name: 'Terms',
+			slug: 'terms',
+			isEnabled: false,
+		},
+	];
+
+	const models = [];
+	pages.forEach(function (data) {
+		models.push(new Page(data));
+	});
+
 	let promise = Promise.resolve();
 	models.forEach(function (model) {
+		console.log('model: %j', model);
 		promise = promise.then(function () {
 			return model.validate().then(function () {
 				return repository.save(model);

@@ -165,6 +165,28 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
+  # Save Pages Lambda Resources
+
+  SavePagesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/SavePages.zip
+      Description: "Save default pages"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-SavePages
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # Save Settings Lambda Resources
+
   SaveSettingsLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -172,7 +194,7 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/SaveSettings.zip
-      Description: "Create a user pool"
+      Description: "Save stack settings"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
@@ -182,6 +204,8 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # S3 Lambda Resources
 
   S3PutObjectFunction:
     Type: AWS::Lambda::Function
@@ -355,6 +379,13 @@ Resources:
     DependsOn:
       - CognitoUserPool
       - CognitoUserPoolClient
+      - SaveSettingsLambdaFunction
+
+  SavePages:
+    Type: Custom::Pages
+    Properties:
+      ServiceToken: !GetAtt SavePagesLambdaFunction.Arn
+    DependsOn: SavePagesLambdaFunction
 
 Outputs:
 
