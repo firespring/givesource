@@ -17,6 +17,7 @@
 
 const stackName = process.env.AWS_STACK_NAME;
 
+exports.ContentsTable = `${stackName}-Contents`;
 exports.DonationsTable = `${stackName}-Donations`;
 exports.DonorsTable = `${stackName}-Donors`;
 exports.FilesTable = `${stackName}-Files`;
@@ -25,8 +26,6 @@ exports.MetricsTable = `${stackName}-Metrics`;
 exports.NonprofitsTable = `${stackName}-Nonprofits`;
 exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`;
 exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;
-exports.PagesTable = `${stackName}-Pages`;
-exports.PageContentsTable = `${stackName}-PageContents`;
 exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
 exports.ReportsTable = `${stackName}-Reports`;
 exports.SettingsTable = `${stackName}-Settings`;

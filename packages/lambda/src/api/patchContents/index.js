@@ -15,27 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Content = require('./../../models/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const PageContent = require('./../../models/pageContent');
-const PageContentsRepository = require('./../../repositories/pageContents');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PageContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const repository = new ContentsRepository();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
 
-	const content = new PageContent({pageSlug: request.urlParam('slug')});
+	let contents = [];
 	request.validate().then(function () {
-		content.populate(request._body);
-		return repository.getCount(request.urlParam('slug'));
-	}).then(function (count) {
-		content.populate({sortOrder: count});
-		return content.validate();
+		request.get('contents', []).forEach(function (data) {
+			contents.push(new Content(data));
+		});
 	}).then(function () {
-		return repository.save(request.urlParam('slug'), content);
-	}).then(function (model) {
-		callback(null, model.all());
+		let promise = Promise.resolve();
+		contents.forEach(function (content) {
+			promise = promise.then(function () {
+				return content.validate();
+			});
+		});
+		return promise;
+	}).then(function () {
+		return repository.batchUpdate(contents);
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -15,33 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const ContentHelper = require('./../../helpers/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const PageContent = require('./../../models/pageContent');
-const PageContentsRepository = require('./../../repositories/pageContents');
 const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PageContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
+	const repository = new ContentsRepository();
+	const request = new Request(event, context).queryParameters(['keys']);
+	const keys = request.queryParam('keys', '').split(',');
 
-	let contents = [];
+	let results = [];
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new PageContent(data));
-		});
-	}).then(function () {
+		return repository.batchGet(keys);
+	}).then(function (contents) {
 		let promise = Promise.resolve();
 		contents.forEach(function (content) {
-			promise = promise.then(function () {
-				return content.validate();
-			});
+			const result = content.all();
+			if (content.type === ContentHelper.TYPE_COLLECTION) {
+				promise = promise.then(function () {
+					return repository.getByParentUuid(content.uuid).then(function (response) {
+						result.value = response.map(function (model) {
+							return model.all();
+						});
+						results.push(result);
+					});
+				});
+			} else {
+				promise = promise.then(function () {
+					results.push(result);
+				});
+			}
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('slug'), contents);
-	}).then(function () {
-		callback();
+		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

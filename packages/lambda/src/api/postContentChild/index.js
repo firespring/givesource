@@ -15,25 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Content = require('./../../models/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const PageContent = require('./../../models/pageContent');
-const PageContentsRepository = require('./../../repositories/pageContents');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PageContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
+	const repository = new ContentsRepository();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let contents = [];
+	const content = new Content({parentUuid: request.urlParam('content_uuid')});
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new PageContent(data));
-		});
+		content.populate(request._body);
+		return repository.getCountByParentUuid(request.urlParam('content_uuid'));
+	}).then(function (count) {
+		content.populate({sortOrder: count});
+		return content.validate();
 	}).then(function () {
-		return repository.batchRemove(request.urlParam('slug'), contents);
-	}).then(function () {
-		callback();
+		return repository.saveChild(request.urlParam('content_uuid'), content);
+	}).then(function (model) {
+		callback(null, model.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

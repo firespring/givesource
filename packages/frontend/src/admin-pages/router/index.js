@@ -90,10 +90,68 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
 		},
+
+		// Admin - Pages
 		{
 			path: '/pages',
 			name: 'pages-list',
 			component: require('./../components/admin/pages/PagesList.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/homepage',
+			name: 'pages-homepage',
+			component: require('./../components/admin/pages/Homepage.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/checkout',
+			name: 'pages-checkout',
+			component: require('./../components/admin/pages/Checkout.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/contact-us',
+			name: 'pages-contact-us',
+			component: require('./../components/admin/pages/ContactUs.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/about-us',
+			name: 'pages-about-us',
+			component: require('./../components/admin/pages/AboutUs.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/faq',
+			name: 'pages-faq',
+			component: require('./../components/admin/pages/FAQ.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/toolkit',
+			name: 'pages-toolkit',
+			component: require('./../components/admin/pages/Toolkit.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/terms',
+			name: 'pages-terms',
+			component: require('./../components/admin/pages/Terms.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

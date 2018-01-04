@@ -8,12 +8,56 @@ Parameters:
     Type: String
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
 
-  DefaultLambdaFunctionTimeout:
-    Description: The default timeout for Lambda functions, in seconds.
-    Type: Number
-    MinValue: 10
-    MaxValue: 300
-    Default: 30
+Mappings:
+  ApiGateway:
+    IntegrationRequestTemplate:
+      Default: |
+        #if($context.authorizer.user && "$context.authorizer.user" != "")
+          #set($user = "$context.authorizer.user")
+        #else
+          #set($user = 'null')
+        #end
+        {
+          "body":$input.json('$'),
+          "headers":{
+            #foreach($param in $input.params().header.keySet())
+            "$param": "$util.escapeJavaScript($input.params().header.get($param))"
+            #if($foreach.hasNext),#end
+            #end
+          },
+          "method": "$context.httpMethod",
+          "params":{
+            #foreach($param in $input.params().path.keySet())
+            "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+            #if($foreach.hasNext),#end
+            #end
+          },
+          "query":{
+            #foreach($param in $input.params().querystring.keySet())
+            "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
+            #if($foreach.hasNext),#end
+            #end
+          },
+          "user": $user
+        }
+    IntegrationResponsesTemplate:
+      Default: |
+        #set ($errorObj = $util.parseJson($input.path('$.errorMessage')))
+        {
+          "errors" : {
+            "type" : "$errorObj.type",
+            "message" : "$errorObj.message",
+            "request_id" : "$errorObj.requestId"
+          }
+        }
+    SuccessResponseTemplate:
+      Default: |
+        {
+          "statusCode": 200
+        }
+  Lambda:
+    Timeout:
+      Default: 30
 
 Resources:
 
@@ -73,6 +117,10 @@ Resources:
               Action: dynamodb:*
               Resource:
                 - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}
+                - !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}/index/*
+                - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
@@ -104,14 +152,6 @@ Resources:
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PagesTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PagesTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PageContentsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PageContentsTable}/index/*
                 - !Sub |-
                   arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
                 - !Sub |-
@@ -267,7 +307,7 @@ Resources:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
@@ -285,13 +325,36 @@ Resources:
       - S3HandleFunctionRole
       - S3Stack
 
+  ApiContentsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - CustomStack
+      - LambdaRole
+      - RestApi
+
   ApiDonationsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -308,7 +371,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -325,7 +391,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
@@ -344,7 +413,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -361,7 +433,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -378,29 +453,15 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
-      TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
-
-  ApiPagesStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
-        RestApi: !Ref RestApi
-        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
-        AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-pages.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -413,7 +474,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -430,7 +494,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -447,7 +514,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -464,7 +534,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
@@ -481,7 +554,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
@@ -499,18 +575,18 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !Ref DefaultLambdaFunctionTimeout
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         RestApi: !Ref RestApi
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-deploy.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - ApiContentsStack
       - ApiDonationsStack
       - ApiDonorsStack
       - ApiFilesStack
       - ApiMessagesStack
       - ApiMetricsStack
       - ApiNonprofitsStack
-      - ApiPagesStack
       - ApiPaymentTransactionsStack
       - ApiReportsStack
       - ApiSettingsStack

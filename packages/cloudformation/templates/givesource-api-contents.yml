@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Page and Contets API resources for Givesource
+Description: Contents API resources for Givesource
 Parameters:
 
   StackName:
@@ -12,6 +12,15 @@ Parameters:
   DefaultLambdaFunctionTimeout:
     Type: Number
 
+  IntegrationRequestTemplate:
+    Type: String
+
+  IntegrationResponsesTemplate:
+    Type: String
+
+  SuccessResponseTemplate:
+    Type: String
+
   RestApi:
     Type: String
 
@@ -21,630 +30,234 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
-  IntegrationRequestTemplate:
-    Type: String
-    Default: |
-      #if($context.authorizer.user && "$context.authorizer.user" != "")
-        #set($user = "$context.authorizer.user")
-      #else
-        #set($user = 'null')
-      #end
-      {
-        "body":$input.json('$'),
-        "headers":{
-          #foreach($param in $input.params().header.keySet())
-          "$param": "$util.escapeJavaScript($input.params().header.get($param))"
-          #if($foreach.hasNext),#end
-          #end
-        },
-        "method": "$context.httpMethod",
-        "params":{
-          #foreach($param in $input.params().path.keySet())
-          "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-          #if($foreach.hasNext),#end
-          #end
-        },
-        "query":{
-          #foreach($param in $input.params().querystring.keySet())
-          "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
-          #if($foreach.hasNext),#end
-          #end
-        },
-        "user": $user
-      }
-
-  IntegrationResponsesTemplate:
-    Type: String
-    Default: |
-      #set ($errorObj = $util.parseJson($input.path('$.errorMessage')))
-      {
-        "errors" : {
-          "type" : "$errorObj.type",
-          "message" : "$errorObj.message",
-          "request_id" : "$errorObj.requestId"
-        }
-      }
-
-  SuccessResponseTemplate:
-    Type: String
-    Default: |
-      {
-        "statusCode": 200
-      }
-
 Resources:
 
-  # Pages Lambda Resources
+  # Contents Lambda Resources
 
-  GetPageLambdaFunction:
+  GetContentsLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GetPage.zip
-      Description: "Get a page by slug"
+        S3Key: fn/{{version}}/GetContents.zip
+      Description: "Get a list of contents"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-GetPage
+        ${StackName}-GetContents
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  GetPageLambdaInvokePermission:
+  GetContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt GetPageLambdaFunction.Arn
+      FunctionName: !GetAtt GetContentsLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/pages/{slug}
-    DependsOn: GetPageLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/contents
+    DependsOn: GetContentsLambdaFunction
 
-  GetPagesLambdaFunction:
+  PostContentLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GetPages.zip
-      Description: "Get a list of pages"
+        S3Key: fn/{{version}}/PostContent.zip
+      Description: "Create a new content"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-GetPages
+        ${StackName}-PostContent
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  GetPagesLambdaInvokePermission:
+  PostContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt GetPagesLambdaFunction.Arn
+      FunctionName: !GetAtt PostContentLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/pages
-    DependsOn: GetPagesLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/contents
+    DependsOn: PostContentLambdaFunction
 
-  PatchPageLambdaFunction:
+  PostContentChildLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/PatchPage.zip
-      Description: "Update an existing page"
+        S3Key: fn/{{version}}/PostContentChild.zip
+      Description: "Create a new child content"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-PatchPage
+        ${StackName}-PostContentChild
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  PatchPageLambdaInvokePermission:
+  PostContentChildLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt PatchPageLambdaFunction.Arn
+      FunctionName: !GetAtt PostContentChildLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/pages/{slug}
-    DependsOn: PatchPageLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/contents/{content_uuid}
+    DependsOn: PostContentChildLambdaFunction
 
-  # PageContents Lambda Resources
-
-  GetPageContentsLambdaFunction:
+  PatchContentLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GetPageContents.zip
-      Description: "Get a list of a page's contents"
+        S3Key: fn/{{version}}/PatchContent.zip
+      Description: "Update an existing content"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-GetPageContents
+        ${StackName}-PatchContent
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  GetPageContentsLambdaInvokePermission:
+  PatchContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt GetPageContentsLambdaFunction.Arn
+      FunctionName: !GetAtt PatchContentLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/pages/{slug}/contents
-    DependsOn: GetPageContentsLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/contents/{content_uuid}
+    DependsOn: PatchContentLambdaFunction
 
-  PostPageContnentLambdaFunction:
+  PatchContentsLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/PostPageContent.zip
-      Description: "Create new page content"
+        S3Key: fn/{{version}}/PatchContents.zip
+      Description: "Create or update contents"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-PostPageContent
+        ${StackName}-PatchContents
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  PostPageContentLambdaInvokePermission:
+  PatchContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt PostPageContnentLambdaFunction.Arn
+      FunctionName: !GetAtt PatchContentsLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/pages/{slug}/contents
-    DependsOn: PostPageContnentLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/contents
+    DependsOn: PatchContentsLambdaFunction
 
-  PatchPageContentLambdaFunction:
+  DeleteContentLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/PatchPageContent.zip
-      Description: "Update an existing page's content"
+        S3Key: fn/{{version}}/DeleteContent.zip
+      Description: "Delete a content"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-PatchPageContent
+        ${StackName}-DeleteContent
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  PatchPageContentLambdaInvokePermission:
+  DeleteContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt PatchPageContentLambdaFunction.Arn
+      FunctionName: !GetAtt DeleteContentLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/pages/{slug}/contents/{page_content_uuid}
-    DependsOn: PatchPageContentLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/contents/{content_uuid}
+    DependsOn: DeleteContentLambdaFunction
 
-  PatchPageContentsLambdaFunction:
+  DeleteContentsLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/PatchPageContents.zip
-      Description: "Batch update a pages's contents"
+        S3Key: fn/{{version}}/DeleteContents.zip
+      Description: "Delete contents"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
-        ${StackName}-PatchPageContents
+        ${StackName}-DeleteContents
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  PatchPageContentsLambdaInvokePermission:
+  DeleteContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt PatchPageContentsLambdaFunction.Arn
+      FunctionName: !GetAtt DeleteContentsLambdaFunction.Arn
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/pages/{slug}/contents
-    DependsOn: PatchPageContentsLambdaFunction
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/contents
+    DependsOn: DeleteContentsLambdaFunction
 
-  DeletePageContentLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/DeletePageContent.zip
-      Description: "Delete an existing page's content"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-DeletePageContent
-      Handler: "index.handle"
-      MemorySize: 128
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+  # Contents Api Gateway Resources
 
-  DeletePageContentLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt DeletePageContentLambdaFunction.Arn
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/pages/{slug}/contents/{page_content_uuid}
-    DependsOn: DeletePageContentLambdaFunction
-
-  DeletePageContentsLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/DeletePageContents.zip
-      Description: "Batch delete a page's contents"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-DeletePageContents
-      Handler: "index.handle"
-      MemorySize: 128
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
-  DeletePageContentsLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt DeletePageContentsLambdaFunction.Arn
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/pages/{slug}/contents
-    DependsOn: DeletePageContentsLambdaFunction
-
-  # Pages Api Gateway Resources
-
-  PagesApiResource:
+  ContentsApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref RestApiRootResourceId
-      PathPart: "pages"
-
-  PageApiResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      RestApiId: !Ref RestApi
-      ParentId: !Ref PagesApiResource
-      PathPart: "{slug}"
-
-  GetPageApiMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref RestApi
-      ResourceId: !Ref PageApiResource
-      HttpMethod: GET
-      AuthorizationType: NONE
-      ApiKeyRequired: false
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        PassthroughBehavior: NEVER
-        RequestTemplates:
-          application/json: !Ref IntegrationRequestTemplate
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt GetPageLambdaFunction.Arn
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: 400
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":400.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 401
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":401.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 403
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":403.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 404
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":404.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 500
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":500.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 400
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 401
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 403
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 404
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 500
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: GetPageLambdaFunction
-
-  GetPagesApiMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref RestApi
-      ResourceId: !Ref PagesApiResource
-      HttpMethod: GET
-      AuthorizationType: NONE
-      ApiKeyRequired: false
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        PassthroughBehavior: NEVER
-        RequestTemplates:
-          application/json: !Ref IntegrationRequestTemplate
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt GetPagesLambdaFunction.Arn
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: 400
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":400.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 401
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":401.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 403
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":403.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 404
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":404.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 500
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":500.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 400
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 401
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 403
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 404
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 500
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: GetPagesLambdaFunction
-
-  PatchPageApiMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref RestApi
-      ResourceId: !Ref PageApiResource
-      HttpMethod: PATCH
-      AuthorizationType: CUSTOM
-      AuthorizerId: !Ref AuthorizeUsers
-      ApiKeyRequired: false
-      RequestParameters:
-        method.request.header.Authorization: true
-      Integration:
-        Type: AWS
-        IntegrationHttpMethod: POST
-        PassthroughBehavior: NEVER
-        RequestTemplates:
-          application/json: !Ref IntegrationRequestTemplate
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt PatchPageLambdaFunction.Arn
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: 400
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":400.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 401
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":401.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 403
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":403.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 404
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":404.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-          - StatusCode: 500
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: .*"httpStatus":500.*
-            ResponseTemplates:
-              application/json: !Ref IntegrationResponsesTemplate
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 400
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 401
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 403
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 404
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: 500
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: PatchPageLambdaFunction
-
-  OptionsPagesApiMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref RestApi
-      ResourceId: !Ref PagesApiResource
-      HttpMethod: OPTIONS
-      AuthorizationType: NONE
-      ApiKeyRequired: false
-      Integration:
-        Type: MOCK
-        RequestTemplates:
-          application/json: !Ref SuccessResponseTemplate
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-
-  OptionsPageApiMethod:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref RestApi
-      ResourceId: !Ref PageApiResource
-      HttpMethod: OPTIONS
-      AuthorizationType: NONE
-      ApiKeyRequired: false
-      Integration:
-        Type: MOCK
-        RequestTemplates:
-          application/json: !Ref SuccessResponseTemplate
-        IntegrationResponses:
-          - StatusCode: 200
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,PATCH,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-
-  # PageContents Api Gateway Resources
-
-  PageContentsApiResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      RestApiId: !Ref RestApi
-      ParentId: !Ref PageApiResource
       PathPart: "contents"
 
-  PageContentApiResource:
+  ContentApiResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestApi
-      ParentId: !Ref PageContentsApiResource
-      PathPart: "{page_content_uuid}"
+      ParentId: !Ref ContentsApiResource
+      PathPart: "{content_uuid}"
 
-  GetPageContentsApiMethod:
+  GetContentsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentsApiResource
+      ResourceId: !Ref ContentsApiResource
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -656,7 +269,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt GetPageContentsLambdaFunction.Arn
+          - Function: !GetAtt GetContentsLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 200
             ResponseParameters:
@@ -710,13 +323,13 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: GetPageContentsLambdaFunction
+    DependsOn: GetContentsLambdaFunction
 
-  PostPageContentApiMethod:
+  PostContentApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentsApiResource
+      ResourceId: !Ref ContentsApiResource
       HttpMethod: POST
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref AuthorizeUsers
@@ -731,7 +344,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt PostPageContnentLambdaFunction.Arn
+          - Function: !GetAtt PostContentLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 201
             ResponseParameters:
@@ -785,13 +398,88 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: PostPageContnentLambdaFunction
+    DependsOn: PostContentLambdaFunction
 
-  PatchPageContentApiMethod:
+  PostContentChildApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentApiResource
+      ResourceId: !Ref ContentApiResource
+      HttpMethod: POST
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PostContentChildLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 201
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 201
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PostContentChildLambdaFunction
+
+  PatchContentApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref ContentApiResource
       HttpMethod: PATCH
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref AuthorizeUsers
@@ -806,7 +494,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt PatchPageContentLambdaFunction.Arn
+          - Function: !GetAtt PatchContentLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 200
             ResponseParameters:
@@ -860,13 +548,13 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: PatchPageContentLambdaFunction
+    DependsOn: PatchContentLambdaFunction
 
-  PatchPageContentsApiMethod:
+  PatchContentsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentsApiResource
+      ResourceId: !Ref ContentsApiResource
       HttpMethod: PATCH
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref AuthorizeUsers
@@ -881,7 +569,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt PatchPageContentsLambdaFunction.Arn
+          - Function: !GetAtt PatchContentsLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 204
             ResponseParameters:
@@ -935,13 +623,13 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: PatchPageContentsLambdaFunction
+    DependsOn: PatchContentsLambdaFunction
 
-  DeletePageContentApiMethod:
+  DeleteContentApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentApiResource
+      ResourceId: !Ref ContentApiResource
       HttpMethod: DELETE
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref AuthorizeUsers
@@ -956,7 +644,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt DeletePageContentLambdaFunction.Arn
+          - Function: !GetAtt DeleteContentLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 204
             ResponseParameters:
@@ -1010,13 +698,13 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: DeletePageContentLambdaFunction
+    DependsOn: DeleteContentLambdaFunction
 
-  DeletePageContentsApiMethod:
+  DeleteContentsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentsApiResource
+      ResourceId: !Ref ContentsApiResource
       HttpMethod: DELETE
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref AuthorizeUsers
@@ -1031,7 +719,7 @@ Resources:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function: !GetAtt DeletePageContentsLambdaFunction.Arn
+          - Function: !GetAtt DeleteContentsLambdaFunction.Arn
         IntegrationResponses:
           - StatusCode: 204
             ResponseParameters:
@@ -1085,13 +773,13 @@ Resources:
         - StatusCode: 500
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-    DependsOn: DeletePageContentsLambdaFunction
+    DependsOn: DeleteContentsLambdaFunction
 
-  OptionsPageContentsApiMethod:
+  OptionsContentsApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentsApiResource
+      ResourceId: !Ref ContentsApiResource
       HttpMethod: OPTIONS
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -1112,11 +800,11 @@ Resources:
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
 
-  OptionsPageContentApiMethod:
+  OptionsContentApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
-      ResourceId: !Ref PageContentApiResource
+      ResourceId: !Ref ContentApiResource
       HttpMethod: OPTIONS
       AuthorizationType: NONE
       ApiKeyRequired: false
@@ -1128,7 +816,7 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,POST,DELETE,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: 200

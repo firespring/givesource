@@ -22,60 +22,76 @@
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
-			    language: 'en-us',
-			    toolbar: [
-				    {name: 'styles', items: ['Format']},
-				    {name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
-				    {name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote']},
-				    {name: 'colors', items: ['TextColor', 'BGColor']},
-				    {name: 'links', items: ['Link', 'Unlink']},
-				    {name: 'tools', items: ['Maximize']}
-			    ],
-			    plugins: 'colorbutton,colordialog',
-
-                localValue: '',
-            }
-        },
-	    props: {
-		    value: {},
-		    id: {
-			    type: String,
-			    default: 'editor'
-		    },
-		    loaded: {
-			    type: Boolean,
-			    default: false
-		    },
-		    hasErrors: {
-			    type: Boolean,
-			    default: false
-		    },
-		    height: {
-			    type: String,
-			    default: '200'
-		    }
-	    },
-        watch: {
-    		localValue: function (value, oldValue) {
-    			const vue = this;
-    			if (value === oldValue) {
-    				return;
-                }
-                vue.$emit('input', value);
-            },
-	        value: function (value, oldValue) {
-		        const vue = this;
-		        if (value === oldValue) {
-			        return;
-		        }
-		        vue.localValue = value;
-	        }
-        },
-        components: {
-    		'layout-spinner': require('./../layout/Spinner.vue')
-        }
-    };
+	module.exports = {
+		data: function () {
+			return {
+				localValue: '',
+				language: 'en-us',
+			}
+		},
+		props: {
+			value: {},
+			id: {
+				type: String,
+				default: 'editor'
+			},
+			loaded: {
+				type: Boolean,
+				default: false
+			},
+			hasErrors: {
+				type: Boolean,
+				default: false
+			},
+			height: {
+				type: String,
+				default: '200'
+			},
+			basic: {
+				type: Boolean,
+				default: false,
+			}
+		},
+		computed: {
+			toolbar: function () {
+				let options = [
+					{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
+					{name: 'links', items: ['Link', 'Unlink']},
+				];
+				if (!this.basic) {
+					options = [
+						{name: 'styles', items: ['Format']},
+						{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
+						{name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote']},
+						{name: 'colors', items: ['TextColor', 'BGColor']},
+						{name: 'links', items: ['Link', 'Unlink']},
+						{name: 'tools', items: ['Maximize']},
+					];
+				}
+				return options;
+			},
+			plugins: function () {
+				return this.basic ? '' : 'colorbutton,colordialog';
+			}
+		},
+		watch: {
+			localValue: function (value, oldValue) {
+				const vue = this;
+				if (value === oldValue) {
+					return;
+				}
+				vue.$emit('input', value);
+			},
+			value: function (value, oldValue) {
+				const vue = this;
+				if (value === oldValue) {
+					return;
+				}
+				vue.localValue = value;
+			}
+		},
+		components: {
+			'layout-spinner': require('./../layout/Spinner.vue')
+		}
+	};
 </script>

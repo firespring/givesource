@@ -12,6 +12,15 @@ Parameters:
   DefaultLambdaFunctionTimeout:
     Type: Number
 
+  IntegrationRequestTemplate:
+    Type: String
+
+  IntegrationResponsesTemplate:
+    Type: String
+
+  SuccessResponseTemplate:
+    Type: String
+
   RestApi:
     Type: String
 
@@ -20,51 +29,6 @@ Parameters:
 
   AuthorizeUsers:
      Type: String
-
-  IntegrationRequestTemplate:
-    Type: String
-    Default: |
-     {
-      "body":$input.json('$'),
-      "headers":{
-        #foreach($param in $input.params().header.keySet())
-        "$param": "$util.escapeJavaScript($input.params().header.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "method": "$context.httpMethod",
-      "params":{
-        #foreach($param in $input.params().path.keySet())
-        "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      },
-      "query":{
-        #foreach($param in $input.params().querystring.keySet())
-        "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
-        #if($foreach.hasNext),#end
-        #end
-      }
-     }
-
-  IntegrationResponsesTemplate:
-    Type: String
-    Default: |
-      #set ($errorObj = $util.parseJson($input.path('$.errorMessage')))
-      {
-        "errors" : {
-          "type" : "$errorObj.type",
-          "message" : "$errorObj.message",
-          "request_id" : "$errorObj.requestId"
-        }
-      }
-
-  SuccessResponseTemplate:
-    Type: String
-    Default: |
-      {
-        "statusCode": 200
-      }
 
 Resources:
 

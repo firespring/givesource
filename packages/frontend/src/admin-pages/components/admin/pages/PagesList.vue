@@ -34,18 +34,71 @@
                             <div class="c-form-item-grid">
                                 <div class="c-form-item c-form-item--text">
                                     <div>
-                                        <strong><i class="fa fa-fw fa-file" aria-hidden="true"></i> <a href="#">About Us</a></strong>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-homepage'}">Home</router-link>
+                                        </strong> — <a href="https://www.domain.com">https://www.domain.com</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
-                                        https://www.domain.com/about - Use this page to describe what your event is about, how it got started, and other important info.
+                                        Manage the content displayed on your event's homepage. This page is required and can't be disabled.
                                     </div>
                                 </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-form-item-grid">
+                                <div class="c-form-item c-form-item--text">
+                                    <div>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-checkout'}">Donation Checkout</router-link>
+                                        </strong> — <a href="https://www.domain.com/cart">https://www.domain.com/cart</a>
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        Manage the content that's displayed on your donation checkout page. This page is required and can't be disabled.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-form-item-grid">
+                                <div class="c-form-item c-form-item--text">
+                                    <div>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-contact-us'}">Contact Us</router-link>
+                                        </strong> — <a href="https://www.domain.com/contact">https://www.domain.com/contact</a>
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        This page provides site visitors with a contact form so they can easily contact you. This page is required and can't be disabled.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-form-item-grid">
+                                <div class="c-form-item c-form-item--text">
+                                    <div>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-about-us'}">About Us</router-link>
+                                        </strong> — <a href="https://www.domain.com/about">https://www.domain.com/about</a>
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        Use this page to describe what your event is about, how it got started, and other important info.
+                                    </div>
+                                </div>
+
                                 <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
                                     <div class="c-form-item__control">
                                         <div class="c-switch-control">
                                             <div>
-                                                <input type="checkbox" name="page1" id="page1" value="1">
-                                                <label for="page1" class="c-switch-lever"></label>
+                                                <input v-model="formData.PAGE_ABOUT_US_ENABLED" v-on:change="updateSetting('PAGE_ABOUT_US_ENABLED')" type="checkbox"
+                                                       name="pageAbout" id="pageAbout">
+                                                <label for="pageAbout" class="c-switch-lever"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -57,10 +110,13 @@
                             <div class="c-form-item-grid">
                                 <div class="c-form-item c-form-item--text">
                                     <div>
-                                        <strong><i class="fa fa-fw fa-file" aria-hidden="true"></i> <a href="#">Frequently Asked Questions</a></strong>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-faq'}">FAQ</router-link>
+                                        </strong> — <a href="https://www.domain.com/faq">https://www.domain.com/faq</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
-                                        https://www.domain.com/faq - Use this page to answer all of your potential donors' questions.
+                                        Use this page to answer all of your potential donors' questions.
                                     </div>
                                 </div>
 
@@ -68,8 +124,9 @@
                                     <div class="c-form-item__control">
                                         <div class="c-switch-control">
                                             <div>
-                                                <input type="checkbox" name="page2" id="page2" value="1">
-                                                <label for="page2" class="c-switch-lever"></label>
+                                                <input v-model="formData.PAGE_FAQ_ENABLED" v-on:change="updateSetting('PAGE_FAQ_ENABLED')" type="checkbox" name="pageFaq"
+                                                       id="pageFaq">
+                                                <label for="pageFaq" class="c-switch-lever"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -81,18 +138,23 @@
                             <div class="c-form-item-grid">
                                 <div class="c-form-item c-form-item--text">
                                     <div>
-                                        <strong><i class="fa fa-fw fa-file" aria-hidden="true"></i> <a href="#">Toolkit</a></strong>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-toolkit'}">Toolkit</router-link>
+                                        </strong> — <a href="https://www.domain.com/toolkit">https://www.domain.com/toolkit</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
-                                        https://www.domain.com/toolkit - Use this page to provide participating nonprofits with useful tools, images, and information to make their campaign more successful.
+                                        Use this page to provide participating nonprofits with useful tools, images, and information to make their campaign more successful.
                                     </div>
                                 </div>
+
                                 <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
                                     <div class="c-form-item__control">
                                         <div class="c-switch-control">
                                             <div>
-                                                <input type="checkbox" name="page3" id="page3" value="1">
-                                                <label for="page3" class="c-switch-lever"></label>
+                                                <input v-model="formData.PAGE_TOOLKIT_ENABLED" v-on:change="updateSetting('PAGE_TOOLKIT_ENABLED')" type="checkbox"
+                                                       name="pageToolkit" id="pageToolkit">
+                                                <label for="pageToolkit" class="c-switch-lever"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -104,18 +166,23 @@
                             <div class="c-form-item-grid">
                                 <div class="c-form-item c-form-item--text">
                                     <div>
-                                        <strong><i class="fa fa-fw fa-file" aria-hidden="true"></i> <a href="#">Contact Us</a></strong>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-terms'}">Terms</router-link>
+                                        </strong> — <a href="https://www.domain.com/terms">https://www.domain.com/terms</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
-                                        https://www.domain.com/contact - Use this page to provide site visitors with a contact form so they can easily contact you.
+                                        Use this page to provide information about the terms of your fundraising, such as privacy and refund policies.
                                     </div>
                                 </div>
+
                                 <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
                                     <div class="c-form-item__control">
                                         <div class="c-switch-control">
                                             <div>
-                                                <input type="checkbox" name="page4" id="page4" value="1">
-                                                <label for="page4" class="c-switch-lever"></label>
+                                                <input v-model="formData.PAGE_TERMS_ENABLED" v-on:change="updateSetting('PAGE_TERMS_ENABLED')" type="checkbox" name="pageTerms"
+                                                       id="pageTerms">
+                                                <label for="pageTerms" class="c-switch-lever"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -129,3 +196,82 @@
         </main>
     </div>
 </template>
+
+<script>
+	module.exports = {
+		data: function () {
+			return {
+				settings: [],
+
+				// Form Data
+				formData: {
+					PAGE_ABOUT_US_ENABLED: false,
+					PAGE_FAQ_ENABLED: false,
+					PAGE_TERMS_ENABLED: false,
+					PAGE_TOOLKIT_ENABLED: false,
+					EVENT_URL: '',
+				},
+
+				// Errors
+				formErrors: {}
+			};
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				vue.$request.get('settings', {
+					keys: Object.keys(vue.formData)
+				}).then(function (response) {
+					vue.settings = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			vue.$request.get('settings', {
+				keys: Object.keys(vue.formData)
+			}).then(function (response) {
+				vue.settings = response.data;
+				next();
+			}).catch(function () {
+				next();
+			});
+		},
+		watch: {
+			settings: {
+				handler: function () {
+					const vue = this;
+					if (vue.settings.length) {
+						Object.keys(vue.formData).forEach(function (key) {
+							const setting = _.find(vue.settings, {key: key});
+							if (setting) {
+								vue.formData[key] = setting.value;
+							}
+						});
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			updateSetting: function (key) {
+				const vue = this;
+
+				if (_.find(vue.settings, {key: key})) {
+					vue.$request.patch('settings/' + key, {
+						value: vue.formData[key]
+					}).catch(function (err) {
+						console.log(err);
+					});
+                } else {
+					vue.$request.post('settings', {
+						key: key,
+                        value: vue.formData[key]
+                    }).catch(function (err) {
+                    	console.log(err);
+                    });
+                }
+			},
+		}
+	};
+</script>

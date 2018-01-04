@@ -15,27 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
+const Content = require('./../../models/content');
+const ContentHelper = require('./../../helpers/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const PageContent = require('./../../models/pageContent');
-const PageContentsRepository = require('./../../repositories/pageContents');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PageContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const repository = new ContentsRepository();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
 
-	let content = null;
+	let contents = [];
 	request.validate().then(function () {
-		return repository.get(request.urlParam('slug'), request.urlParam('page_content_uuid'));
-	}).then(function (result) {
-		content = new PageContent(result);
-		content.populate(request._body);
-		return content.validate();
+		request.get('contents', []).forEach(function (data) {
+			contents.push(new Content(data));
+		});
 	}).then(function () {
-		return repository.save(request.urlParam('slug'), content);
-	}).then(function (model) {
-		callback(null, model.all());
+		contents.forEach(function (content) {
+			if (content.type === ContentHelper.TYPE_COLLECTION) {
+				return repository.getByParentUuid(content.uuid).then(function (response) {
+					response.forEach(function (model) {
+						if (!_.find(contents, {uuid: model.uuid})) {
+							contents.push(model);
+						}
+					});
+				});
+			}
+		});
+	}).then(function () {
+		return repository.batchDelete(contents);
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

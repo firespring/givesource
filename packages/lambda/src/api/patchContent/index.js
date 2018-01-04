@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Content = require('./../../models/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const Page = require('./../../models/page');
-const PagesRepository = require('./../../repositories/pages');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PagesRepository();
+	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let page = null;
+	let content = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('slug'));
+		return repository.get(request.urlParam('content_uuid'));
 	}).then(function (result) {
-		page = new Page(result);
-		page.populate(request._body);
-		return page.validate();
+		content = new Content(result);
+		content.populate(request._body);
+		return content.validate();
 	}).then(function () {
-		return repository.save(page);
+		return repository.save(content);
 	}).then(function (model) {
 		callback(null, model.all());
 	}).catch(function (err) {

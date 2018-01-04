@@ -331,7 +331,7 @@
 					settings.push({
 						key: key,
 						value: vue.formData[key]
-					})
+					});
 				});
 
 				const toUpdate = _.reject(settings, {value: ''});

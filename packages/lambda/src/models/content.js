@@ -15,36 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const ContentHelper = require('./../helpers/content');
 const Model = require('./model');
 
 /**
- * PageContent constructor
+ * Content constructor
  *
  * @param {{}} [data]
  * @constructor
  */
-function PageContent(data) {
+function Content(data) {
 	Model.call(this, data);
 }
 
 /**
  * Extend the base Model
  *
- * @type {model}
+ * @type {Model}
  */
-PageContent.prototype = new Model();
+Content.prototype = new Model();
 
 /**
  * The allowed attributes for this model
  *
  * @type {[*]}
  */
-PageContent.prototype.attributes = [
-	'content',
+Content.prototype.attributes = [
 	'key',
-	'pageSlug',
+	'parentUuid',
 	'sortOrder',
 	'type',
+	'value'
 ];
 
 /**
@@ -52,27 +53,65 @@ PageContent.prototype.attributes = [
  *
  * @type {{}}
  */
-PageContent.prototype.constraints = {
-	content: {
-		presence: true,
-		type: 'string'
-	},
+Content.prototype.constraints = {
 	key: {
 		presence: true,
 		type: 'string',
 	},
-	pageSlug: {
-		presence: true,
-		type: 'string'
+	parentUuid: {
+		presence: false,
+		uuid: 4,
 	},
 	sortOrder: {
 		presence: true,
-		type: 'number'
+		type: 'number',
 	},
 	type: {
 		presence: true,
-		type: 'string'
+		inclusion: [
+			ContentHelper.TYPE_COLLECTION,
+			ContentHelper.TYPE_FILE,
+			ContentHelper.TYPE_LINK,
+			ContentHelper.TYPE_OPTION,
+			ContentHelper.TYPE_RICH_TEXT,
+			ContentHelper.TYPE_TEXT
+		],
+	},
+	value: {
+		presence: false,
+	},
+};
+
+/**
+ * Default values for this model
+ *
+ * @return {{}}
+ */
+Content.prototype.defaults = function () {
+	return {
+		sortOrder: 0
+	};
+};
+
+/**
+ * Event fired for this model before validation
+ */
+Content.prototype.beforeValidate = function () {
+	if (this.type === ContentHelper.TYPE_COLLECTION) {
+		this.value = null;
 	}
 };
 
-module.exports = PageContent;
+/**
+ * Event fired for this model before saving
+ */
+Content.prototype.beforeSave = function () {
+	if (this.type === ContentHelper.TYPE_COLLECTION) {
+		this.value = null;
+	}
+	if (!this.parentUuid) {
+		this.parentUuid = this.uuid;
+	}
+};
+
+module.exports = Content;

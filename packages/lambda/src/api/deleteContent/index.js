@@ -15,21 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const ContentHelper = require('./../../helpers/content');
+const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
-const PageContentsRepository = require('./../../repositories/pageContents');
 const Request = require('./../../aws/request');
+const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new PageContentsRepository();
-	const request = new Request(event, context);
+	const repository = new ContentsRepository();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.getAll(request.urlParam('slug'));
-	}).then(function (contents) {
-		const results = contents.map(function (content) {
-			return content.all();
-		});
-		callback(null, results);
+		return repository.get(request.urlParam('content_uuid'));
+	}).then(function (content) {
+		if (content.type === ContentHelper.TYPE_COLLECTION) {
+			return repository.batchDeleteByParentUuid(request.urlParam('content_uuid'));
+		} else {
+			return repository.delete(request.urlParam('content_uuid'));
+		}
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
