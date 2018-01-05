@@ -27,7 +27,7 @@
                             <nav class="o-page-header-nav c-breadcrumb">
                                 <span><router-link :to="{name: 'pages-list'}">Pages</router-link></span>
                             </nav>
-                            <h1 class="o-page-header-title">About Us</h1>
+                            <h1 class="o-page-header-title">About</h1>
                         </div>
                     </div>
 
@@ -43,7 +43,7 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.ABOUT_US_TEXT.value" :loaded="loaded" id="pageText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.ABOUT_TEXT.value" :loaded="loaded" id="pageText"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -71,8 +71,8 @@
 
 				// Form Data
 				formData: {
-					ABOUT_US_TEXT: {
-						key: 'ABOUT_US_TEXT',
+					ABOUT_TEXT: {
+						key: 'ABOUT_TEXT',
 						type: 'RICH_TEXT',
 						value: ''
 					}

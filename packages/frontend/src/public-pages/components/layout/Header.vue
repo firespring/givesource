@@ -19,14 +19,13 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <router-link :to="{ name: 'homepage' }" title="Return to the Give To Our City homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png">
-            </router-link>
+            <a href="/" title="Return to the homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png"></a>
         </div>
 
         <nav class="page-header__nav-menu items-center">
-            <router-link :to="{ name: 'about' }">About</router-link>
-            <router-link :to="{ name: 'toolkits' }">Toolkits</router-link>
-            <router-link :to="{ name: 'faq' }">FAQ</router-link>
+            <router-link :to="{ name: 'about' }" v-if="displayAbout">About</router-link>
+            <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
+            <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
         </nav>
 
         <form v-on:submit="submit" class="page-header__search flex justify-center items-center">
@@ -59,6 +58,17 @@
 				formErrors: {},
 			};
 		},
+        computed: {
+			displayAbout: function () {
+				return this.$store.getters.setting('PAGE_ABOUT_ENABLED') ? this.$store.getters.setting('PAGE_ABOUT_ENABLED') : false;
+            },
+	        displayFAQ: function () {
+		        return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
+	        },
+	        displayToolkits: function () {
+		        return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
+	        },
+        },
 		created: function () {
 			const vue = this;
 

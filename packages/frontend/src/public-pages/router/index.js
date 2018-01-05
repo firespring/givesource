@@ -43,17 +43,38 @@ const router = new VueRouter({
 		{
 			path: '/about',
 			name: 'about',
-			component: require('./../components/about/About.vue')
+			component: require('./../components/about/About.vue'),
+			beforeEnter: function (to, from, next) {
+				if (!store.getters.setting('PAGE_ABOUT_ENABLED')) {
+					next({name: '404'})
+				} else {
+					next();
+				}
+			}
 		},
 		{
 			path: '/toolkits',
 			name: 'toolkits',
-			component: require('./../components/toolkits/Toolkits.vue')
+			component: require('./../components/toolkits/Toolkits.vue'),
+			beforeEnter: function (to, from, next) {
+				if (!store.getters.setting('PAGE_TOOLKIT_ENABLED')) {
+					next({name: '404'})
+				} else {
+					next();
+				}
+			}
 		},
 		{
 			path: '/faq',
 			name: 'faq',
-			component: require('./../components/faq/Faq.vue')
+			component: require('./../components/faq/Faq.vue'),
+			beforeEnter: function (to, from, next) {
+				if (!store.getters.setting('PAGE_FAQ_ENABLED')) {
+					next({name: '404'})
+				} else {
+					next();
+				}
+			}
 		},
 		{
 			path: '/cart',
@@ -78,7 +99,14 @@ const router = new VueRouter({
 		{
 			path: '/terms',
 			name: 'terms',
-			component: require('./../components/terms/TermsOfService.vue')
+			component: require('./../components/terms/TermsOfService.vue'),
+			beforeEnter: function (to, from, next) {
+				if (!store.getters.setting('PAGE_TERMS_ENABLED')) {
+					next({name: '404'})
+				} else {
+					next();
+				}
+			}
 		},
 		{
 			path: '/leaderboard',
@@ -104,7 +132,22 @@ const router = new VueRouter({
 			path: '/nonprofits/:slug',
 			name: 'nonprofit-landing-page',
 			props: true,
+			meta: {
+				nonprofit: null,
+			},
 			component: require('./../components/nonprofits/Nonprofit.vue'),
+			beforeEnter: function (to, from, next) {
+				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
+					if (Object.keys(response.data).length) {
+						to.meta.nonprofit = response.data;
+						next();
+					} else {
+						next({name: '404'});
+					}
+				}).catch(function () {
+					next({name: '404'});
+				});
+			}
 		},
 
 		// Error Pages
@@ -125,6 +168,10 @@ const updateSettings = function () {
 	const settings = [
 		'ADMIN_PAGES_CLOUDFRONT_URL',
 		'CONTACT_PHONE',
+		'PAGE_ABOUT_ENABLED',
+		'PAGE_FAQ_ENABLED',
+		'PAGE_TERMS_ENABLED',
+		'PAGE_TOOLKIT_ENABLED',
 		'UPLOADS_CLOUDFRONT_URL'
 	];
 
@@ -155,7 +202,7 @@ const updateSettings = function () {
  */
 const loadSettings = function () {
 	const date = new Date();
-	date.setHours(date.getHours() - 1);
+	date.setMinutes(date.getMinutes() - 1);
 
 	const lastUpdated = store.getters.updated;
 	if (lastUpdated === 0 || lastUpdated <= date.getTime()) {

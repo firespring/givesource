@@ -82,12 +82,12 @@
                     </div>
                 </form>
 
-                <div class="nonprofit-search__love">
+                <div class="nonprofit-search__love" v-if="displayMatchFund">
                     <div class="mb3">
-                        <a href="#" class="btn btn--blue btn--lg">Love Them All</a>
+                        <a href="#" class="btn btn--blue btn--lg">{{ matchFundButtonText }}</a>
                     </div>
-                    <div class="notes">
-                        Your donation will be added to the challenge match fund distributed to all nonprofits.
+                    <div class="notes" v-if="matchFundDetails">
+                        {{ matchFundDetails }}
                     </div>
                 </div>
 
@@ -96,18 +96,11 @@
                 </div>
             </div>
 
-            <div class="main-spotlight-section register wrapper wrapper--xs">
+            <div class="main-spotlight-section register wrapper wrapper--xs" v-if="displayRegisterButton">
                 <div class="register__action mb4">
-                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">Register Your Nonprofit Today</router-link>
+                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">{{ registerButtonText }}</router-link>
                 </div>
-                <div class="register__details">
-                    <p>
-                        We invite nonprofit organizations in the Greater Area to join Give To Our City Day by registering to participate.
-                        Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                        <router-link :to="{ name: 'about' }">please visit the About page</router-link>
-                        .
-                    </p>
-                </div>
+                <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
             </div>
 
         </div>
@@ -172,6 +165,9 @@
 				}
 				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
 			},
+            displayRegisterButton: function () {
+				return this.registerButtonText;
+            },
             donationsCountArray: function () {
 	            return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
             },
@@ -200,6 +196,10 @@
 				type: String,
 				default: null,
 			},
+			displayMatchFund: {
+				type: Boolean,
+				default: false,
+			},
 			eventTimezone: {
 				type: String,
 				default: null,
@@ -207,7 +207,23 @@
 			eventTitle: {
 				type: String,
 				default: null,
-			}
+			},
+            matchFundButtonText: {
+	            type: String,
+	            default: null,
+            },
+            matchFundDetails: {
+	            type: String,
+	            default: null,
+            },
+            registerButtonText: {
+				type: String,
+                default: null,
+            },
+            registerDetails: {
+				type: String,
+                default: null,
+            }
 		},
         created: function () {
 			const vue = this;

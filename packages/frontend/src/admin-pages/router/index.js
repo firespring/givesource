@@ -125,9 +125,9 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/pages/about-us',
-			name: 'pages-about-us',
-			component: require('./../components/admin/pages/AboutUs.vue'),
+			path: '/pages/about',
+			name: 'pages-about',
+			component: require('./../components/admin/pages/About.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

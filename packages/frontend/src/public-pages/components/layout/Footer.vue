@@ -33,7 +33,7 @@
                     <i class="fa fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
                 </div>
 
-                <div class="contact-info__terms">
+                <div class="contact-info__terms" v-if="displayTerms">
                     <router-link :to="{ name: 'terms' }">Terms of Service</router-link>
                 </div>
 
@@ -54,6 +54,9 @@
             contactPhone: function () {
 	            return this.$store.getters.setting('CONTACT_PHONE') || null;
             },
+	        displayTerms: function () {
+		        return this.$store.getters.setting('PAGE_TERMS_ENABLED') ? this.$store.getters.setting('PAGE_TERMS_ENABLED') : false;
+	        },
             year: function () {
 				return new Date().getFullYear();
             }

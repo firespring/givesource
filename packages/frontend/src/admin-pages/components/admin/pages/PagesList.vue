@@ -84,7 +84,7 @@
                                     <div>
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
-                                            <router-link :to="{name: 'pages-about-us'}">About Us</router-link>
+                                            <router-link :to="{name: 'pages-about'}">About</router-link>
                                         </strong> — <a href="https://www.domain.com/about">https://www.domain.com/about</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
@@ -96,7 +96,7 @@
                                     <div class="c-form-item__control">
                                         <div class="c-switch-control">
                                             <div>
-                                                <input v-model="formData.PAGE_ABOUT_US_ENABLED" v-on:change="updateSetting('PAGE_ABOUT_US_ENABLED')" type="checkbox"
+                                                <input v-model="formData.PAGE_ABOUT_ENABLED" v-on:change="updateSetting('PAGE_ABOUT_ENABLED')" type="checkbox"
                                                        name="pageAbout" id="pageAbout">
                                                 <label for="pageAbout" class="c-switch-lever"></label>
                                             </div>
@@ -205,7 +205,7 @@
 
 				// Form Data
 				formData: {
-					PAGE_ABOUT_US_ENABLED: false,
+					PAGE_ABOUT_ENABLED: false,
 					PAGE_FAQ_ENABLED: false,
 					PAGE_TERMS_ENABLED: false,
 					PAGE_TOOLKIT_ENABLED: false,

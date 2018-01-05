@@ -26,7 +26,7 @@
 
                 <h2>Page Not Found.</h2>
                 <p>
-                    <router-link :to="{ name: 'homepage' }">Return to the homepage.</router-link>
+                    <a href="/">Return to the homepage</a>
                 </p>
             </div>
         </main>

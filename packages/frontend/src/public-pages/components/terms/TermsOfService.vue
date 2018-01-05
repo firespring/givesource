@@ -22,47 +22,7 @@
         </layout-hero>
 
         <main class="main">
-            <div class="wrapper wrapper--sm">
-
-                <h2>Authoritatively customize compelling best practices via clicks-and-mortar bandwidth</h2>
-
-                <p>
-                    Collaboratively <strong>productivate</strong> vertical action items <em>after principle-centered platforms</em>. Assertively <a href="#">envisioneer</a> team building e-business rather than client-centered portals. Seamlessly negotiate enterprise-wide outsourcing for client-focused channels.
-                </p>
-
-                <p>
-                    Competently communicate viral web-readiness through interdependent initiatives. Holisticly revolutionize top-line alignments with focused imperatives. Seamlessly disseminate alternative information and focused leadership skills.
-                </p>
-
-                <h2>Collaboratively monetize multidisciplinary value and compelling solutions</h2>
-
-                <p>
-                    Uniquely innovate functionalized benefits after extensible materials. Appropriately myocardinate customer directed synergy with open-source human capital. Professionally recaptiualize next-generation sources with highly efficient e-services.
-                </p>
-
-                <ol>
-                    <li>Progressively aggregate emerging communities without market positioning paradigms.</li>
-                    <li>Energistically matrix ethical partnerships through cross-media internal or "organic" sources.</li>
-                    <li>Intrinsicly visualize cross-unit core competencies via long-term high-impact e-business.</li>
-                </ol>
-
-                <p>
-                    Seamlessly harness high-payoff benefits and cutting-edge portals. Objectively extend innovative markets whereas effective results. Continually engage leveraged solutions for corporate leadership.
-                </p>
-
-                <p>
-                    Monotonectally architect quality mindshare and covalent products. Enthusiastically empower holistic markets after cooperative mindshare. Completely build impactful applications without equity invested channels.
-                </p>
-
-                <p>
-                    Conveniently conceptualize goal-oriented value rather than sticky experiences. Uniquely reconceptualize error-free web-readiness and front-end value. Appropriately deploy equity invested ROI before leading-edge schemas.
-                </p>
-
-                <p>
-                    Continually incubate extensive e-tailers with extensible data.
-                </p>
-
-            </div>
+            <div class="wrapper wrapper--sm" v-html="terms"></div>
         </main>
 
         <layout-footer>
@@ -72,7 +32,42 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
+		data: function () {
+			return {
+				contents: [],
+            };
+        },
+        computed: {
+			terms: function () {
+                const terms = _.find(this.contents, {key: 'TERMS_TEXT'});
+                return terms ? terms.value : null;
+            },
+        },
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+                    keys: 'TERMS_TEXT'
+                })).then(function (response) {
+                	vue.contents = response.data;
+                });
+            });
+        },
+		beforeRouteUpdate: function (to, from, next) {
+            const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: 'TERMS_TEXT'
+			})).then(function (response) {
+				vue.contents = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+            });
+		},
 		beforeMount: function () {
 			const vue = this;
 

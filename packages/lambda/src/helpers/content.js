@@ -23,7 +23,7 @@ exports.TYPE_RICH_TEXT = 'RICH_TEXT';
 exports.TYPE_TEXT = 'TEXT';
 
 // About Us Page
-exports.CONTENT_ABOUT_US_TEXT = 'ABOUT_US_TEXT';
+exports.CONTENT_ABOUT_TEXT = 'ABOUT_TEXT';
 
 // Cart Page
 exports.CONTENT_CART_CHECKOUT_TEXT = 'CART_CHECKOUT_TEXT';

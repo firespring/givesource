@@ -24,6 +24,8 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
+                <div v-html="text" style="margin: 0 0 1.5rem;"></div>
+
                 <form v-on:submit="submit">
                     <fieldset>
 
@@ -91,9 +93,12 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
+				contents: [],
 				processing: false,
 
 				formData: {
@@ -109,7 +114,33 @@
 		computed: {
 			contactPhone: function () {
 				return this.$store.getters.setting('CONTACT_PHONE') || null;
-			}
+			},
+			text: function () {
+				const text = _.find(this.contents, {key: 'CONTACT_FORM_TEXT'});
+				return text ? text.value : null;
+			},
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: 'CONTACT_FORM_TEXT'
+				})).then(function (response) {
+					vue.contents = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: 'CONTACT_FORM_TEXT'
+			})).then(function (response) {
+				vue.contents = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
 		},
 		beforeMount: function () {
 			const vue = this;

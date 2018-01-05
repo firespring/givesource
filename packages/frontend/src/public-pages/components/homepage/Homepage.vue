@@ -18,10 +18,9 @@
 <template>
     <div>
         <layout-hero :presentedBy="true" :wrap="true">
-            <h1 slot="title">Make our city a better place!</h1>
+            <h1 slot="title">{{ getContentValue('HOMEPAGE_TITLE') }}</h1>
 
-            <strong>Please make your gift now, before midnight.</strong>
-            Every gift you make is even more meaningful because agencies will receive a share of the $350,000 match fund.
+            <div v-html="getContentValue('HOMEPAGE_MASTHEAD_TEXT')"></div>
         </layout-hero>
 
         <main class="main">
@@ -32,21 +31,19 @@
                          :dateEvent="settings.DATE_EVENT"
                          :dateRegistrationsEnd="settings.DATE_REGISTRATIONS_END"
                          :dateRegistrationsStart="settings.DATE_REGISTRATIONS_END"
+                         :displayMatchFund="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"
                          :eventTimezone="settings.EVENT_TIMEZONE"
-                         :eventTitle="settings.EVENT_TITLE"></metrics>
+                         :eventTitle="settings.EVENT_TITLE"
+                         :matchFundButtonText="getContentValue('HOMEPAGE_MATCH_BUTTON', 'Love Them All')"
+                         :matchFundDetails="getContentValue('HOMEPAGE_MATCH_DETAILS')"
+                         :registerButtonText="getContentValue('HOMEPAGE_REGISTER_BUTTON', 'Register Your Nonprofit Today')"
+                         :registerDetails="getContentValue('HOMEPAGE_REGISTER_DETAILS')"></metrics>
 
                 <div class="main__content">
-
-                    <div class="main__content-text wrapper wrapper--sm">
-                        <p>
-                            Give To Our City is your chance to make a real impact on our city’s quality of life. We encourage everyone to join us for a record-setting day of giving on May 18th from 12:00am to 11:59pm. Together, we have the power to support local nonprofit organizations and improve lives. Every donation you make on May 18th helps your favorite charities even more because they will also receive a proportional share of our $350,000 challenge match fund.
-                        </p>
-                        <p>
-                            Gifts can be made online at this site beginning May 1st and will qualify for Give To Our City and matching funds.
-                        </p>
-                    </div>
+                    <div class="main__content-text wrapper wrapper--sm" v-html="getContentValue('HOMEPAGE_MAIN_TEXT')"></div>
 
                     <leaderboard></leaderboard>
+
                 </div>
             </div>
         </main>
@@ -63,6 +60,7 @@
 	module.exports = {
 		data: function () {
 			return {
+				contents: [],
 				spotlightImage: '/assets/temp/logo-gtld.png',
 				nonprofits: [],
 
@@ -78,15 +76,30 @@
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vm) {
+			next(function (vue) {
 				axios.get(API_URL + 'settings' + Utils.generateQueryString({
-					keys: Object.keys(vm.settings)
+					keys: Object.keys(vue.settings)
 				})).then(function (response) {
 					response.data.forEach(function (setting) {
-						if (vm.settings.hasOwnProperty(setting.key)) {
-							vm.settings[setting.key] = setting.value;
+						if (vue.settings.hasOwnProperty(setting.key)) {
+							vue.settings[setting.key] = setting.value;
 						}
 					});
+					return axios.get(API_URL + 'contents' + Utils.generateQueryString({
+                        keys: [
+	                        'HOMEPAGE_TITLE',
+	                        'HOMEPAGE_MASTHEAD_TEXT',
+	                        'HOMEPAGE_MAIN_TEXT',
+	                        'HOMEPAGE_POST_EVENT_TEXT',
+	                        'HOMEPAGE_REGISTER_BUTTON',
+	                        'HOMEPAGE_REGISTER_DETAILS',
+	                        'HOMEPAGE_MATCH_IS_ENABLED',
+	                        'HOMEPAGE_MATCH_BUTTON',
+	                        'HOMEPAGE_MATCH_DETAILS',
+                        ],
+                    }));
+				}).then(function (response) {
+					vue.contents = response.data;
 				});
 			});
 		},
@@ -101,7 +114,21 @@
 						vue.settings[setting.key] = setting.value;
 					}
 				});
-				vue.loaded = true;
+				return axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: [
+						'HOMEPAGE_TITLE',
+						'HOMEPAGE_MASTHEAD_TEXT',
+						'HOMEPAGE_MAIN_TEXT',
+						'HOMEPAGE_POST_EVENT_TEXT',
+						'HOMEPAGE_REGISTER_BUTTON',
+						'HOMEPAGE_REGISTER_DETAILS',
+						'HOMEPAGE_MATCH_IS_ENABLED',
+						'HOMEPAGE_MATCH_BUTTON',
+						'HOMEPAGE_MATCH_DETAILS',
+					],
+				}));
+			}).then(function (response) {
+				vue.contents = response.data;
 				next();
 			}).catch(function () {
 				next();
@@ -113,6 +140,14 @@
 			vue.setBodyClasses('home', 'home--live');
 			vue.setPageTitle('Give To Our City - May 18th, 2018');
 		},
+        methods: {
+			getContentValue: function (contentKey, defaultValue) {
+				const vue = this;
+
+				const content = _.find(vue.contents, {key: contentKey});
+				return content ? content.value : defaultValue ? defaultValue : null;
+            },
+        },
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),

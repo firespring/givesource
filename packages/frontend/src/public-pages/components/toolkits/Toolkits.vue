@@ -23,45 +23,17 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
+                
+                <ul>
+                    <li v-for="resource in resources" :key="resource.uuid">
+                        <a :href="getResourceLink(resource)" target="_blank" rel="noopener noreferrer">{{ getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE') }}</a>
+                        <span v-if="getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION', false)">-</span>
+                        {{ getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION') }}
+                    </li>
+                </ul>
 
-                <h2>Authoritatively customize compelling best practices via clicks-and-mortar bandwidth</h2>
-
-                <p>
-                    Collaboratively <strong>productivate</strong> vertical action items <em>after principle-centered platforms</em>. Assertively <a href="#">envisioneer</a> team building e-business rather than client-centered portals. Seamlessly negotiate enterprise-wide outsourcing for client-focused channels.
-                </p>
-
-                <p>
-                    Competently communicate viral web-readiness through interdependent initiatives. Holisticly revolutionize top-line alignments with focused imperatives. Seamlessly disseminate alternative information and focused leadership skills.
-                </p>
-
-                <h2>Collaboratively monetize multidisciplinary value and compelling solutions</h2>
-
-                <p>
-                    Uniquely innovate functionalized benefits after extensible materials. Appropriately myocardinate customer directed synergy with open-source human capital. Professionally recaptiualize next-generation sources with highly efficient e-services.
-                </p>
-
-                <ol>
-                    <li>Progressively aggregate emerging communities without market positioning paradigms.</li>
-                    <li>Energistically matrix ethical partnerships through cross-media internal or "organic" sources.</li>
-                    <li>Intrinsicly visualize cross-unit core competencies via long-term high-impact e-business.</li>
-                </ol>
-
-                <p>
-                    Seamlessly harness high-payoff benefits and cutting-edge portals. Objectively extend innovative markets whereas effective results. Continually engage leveraged solutions for corporate leadership.
-                </p>
-
-                <p>
-                    Monotonectally architect quality mindshare and covalent products. Enthusiastically empower holistic markets after cooperative mindshare. Completely build impactful applications without equity invested channels.
-                </p>
-
-                <p>
-                    Conveniently conceptualize goal-oriented value rather than sticky experiences. Uniquely reconceptualize error-free web-readiness and front-end value. Appropriately deploy equity invested ROI before leading-edge schemas.
-                </p>
-
-                <p>
-                    Continually incubate extensive e-tailers with extensible data.
-                </p>
-
+                <div v-html="text" style="margin: 0 0 1.5rem;"></div>
+                
             </div>
         </main>
 
@@ -72,13 +44,104 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
+		data: function () {
+			return {
+				contents: [],
+			};
+		},
+		computed: {
+			resources: function () {
+				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
+            },
+			text: function () {
+				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
+				return text ? text.value : null;
+			},
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+				})).then(function (response) {
+					response.data.sort(function (a, b) {
+						return a.sortOrder - b.sortOrder;
+                    });
+					vue.contents = response.data;
+				}).then(function () {
+					let promise = Promise.resolve();
+					vue.contents.forEach(function (content) {
+						if (content.type === 'COLLECTION') {
+							const fileIndex = _.findIndex(content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+							if (content.value[fileIndex].value) {
+								promise = promise.then(function () {
+									return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(function (response) {
+										content.value[fileIndex].value = response.data;
+                                    });
+                                });
+                            }
+                        }
+                    });
+					return promise;
+                });
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+			})).then(function (response) {
+				response.data.sort(function (a, b) {
+					return a.sortOrder - b.sortOrder;
+				});
+				vue.contents = response.data;
+			}).then(function () {
+				let promise = Promise.resolve();
+				vue.contents.forEach(function (content) {
+					if (content.type === 'COLLECTION') {
+						const fileIndex = _.findIndex(content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+						if (content.value[fileIndex].value) {
+							promise = promise.then(function () {
+								return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(function (response) {
+									content.value[fileIndex].value = response.data;
+								});
+							});
+						}
+					}
+				});
+				return promise;
+			}).then(function () {
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Give To Our City - Toolkits');
 		},
+        methods: {
+	        getResourceValue: function (resource, contentKey) {
+				const content = _.find(resource.value, {key: contentKey});
+				return content ? content.value : null;
+            },
+            getResourceLink: function (resource) {
+	        	const vue = this;
+
+	        	const type = vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE', 'FILE');
+	        	if (type === 'FILE') {
+			        return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
+                } else {
+	        		return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
+                }
+            },
+        },
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),

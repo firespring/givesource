@@ -263,6 +263,7 @@
 						let instance = axios.create();
 						instance.defaults.headers.common['Content-Type'] = vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
 						instance.defaults.headers.put['Content-Type'] = vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Disposition'] = `attachment; filename="${vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.name}"`;
 						axios.defaults.headers = defaultHeaders;
 						return instance.put(signedUrl, vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value);
 					}).then(function () {
