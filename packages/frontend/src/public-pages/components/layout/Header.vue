@@ -71,11 +71,16 @@
 			vue.bus.$on('updateCartItemsCounter', function () {
 				vue.updateCartItemsCount();
 			});
+
+			vue.bus.$on('navigate', function () {
+				vue.formData.search = '';
+            });
 		},
 		beforeDestroy: function () {
 			const vue = this;
 
 			vue.bus.$off('updateCartItemsCounter');
+			vue.bus.$off('navigate');
 		},
         watch: {
 	        formData: {

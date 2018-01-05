@@ -171,6 +171,10 @@ const loadSettings = function () {
  */
 router.beforeEach(function (to, from, next) {
 	loadSettings().then(function () {
+		if (router.app.bus) {
+			router.app.bus.$emit('navigate');
+		}
+	}).then(function () {
 		next();
 	}).catch(function (err) {
 		console.log(err);
