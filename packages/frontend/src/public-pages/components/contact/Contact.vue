@@ -34,10 +34,12 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" placeholder="First Name">
+                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" placeholder="First Name"
+                                               :class="{'has-error': formErrors.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="nameLast" id="nameLast" placeholder="Last Name">
+                                        <input v-model="formData.lastName" type="text" name="nameLast" id="nameLast" placeholder="Last Name"
+                                               :class="{'has-error': formErrors.lastName}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
@@ -51,7 +53,7 @@
                                 <label for="email">Your Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.email" type="email" name="email" id="email">
+                                <input v-model="formData.email" type="email" name="email" id="email" :class="{'has-error': formErrors.email}">
                                 <div v-if="formErrors.email" class="notes notes--below notes--error">
                                     {{ formErrors.email }}
                                 </div>
@@ -63,7 +65,7 @@
                                 <label for="questions">Your Questions</label>
                             </div>
                             <div class="form-item__control">
-                                <textarea v-model="formData.message" name="questions" id="questions"></textarea>
+                                <textarea v-model="formData.message" name="questions" id="questions" :class="{'has-error': formErrors.message}"></textarea>
                                 <div v-if="formErrors.message" class="notes notes--below notes--error">
                                     {{ formErrors.message }}
                                 </div>

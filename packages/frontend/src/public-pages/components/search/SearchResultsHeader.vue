@@ -29,7 +29,7 @@
 
                     <div class="grid-item grid-item--expand">
                         <div class="search-wrap">
-                            <input v-model="formData.search" type="search" name="search" class="sm" placeholder="Search By Name">
+                            <input v-model="formData.search" type="search" name="search" class="sm" placeholder="Search By Name" :class="{'has-error': formErrors.search}">
                         </div>
                         <div v-if="formErrors.search" class="notes notes--below notes--error">
                             {{ formErrors.search }}

@@ -17,8 +17,10 @@
 
 <template>
     <div>
-        <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••">
-        <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••">
+        <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••"
+               :class="{'has-error': hasError}">
+        <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••"
+               :class="{'has-error': hasError}">
         <div class="notes notes--below accepted-cc">
             <div class="cc visa" :class="{na: !displayCardType('visa')}">
                 <i class="fab fa-cc-visa" aria-hidden="true"></i>
@@ -62,6 +64,10 @@
 			name: {
 				type: String,
 				default: null
+			},
+			hasError: {
+				type: Boolean,
+				default: false
 			}
 		},
 		mounted: function () {

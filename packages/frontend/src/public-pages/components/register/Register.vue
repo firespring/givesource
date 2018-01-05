@@ -39,7 +39,7 @@
                                 <label for="legalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200">
+                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200" :class="{'has-error': formErrors.legalName}">
                                 <div v-if="formErrors.legalName" class="notes notes--below notes--error">
                                     {{ formErrors.legalName }}
                                 </div>
@@ -52,7 +52,7 @@
                                 <label for="taxId">Tax ID</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200">
+                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200" :class="{'has-error': formErrors.taxId}">
                                 <div v-if="formErrors.taxId" class="notes notes--below notes--error">
                                     {{ formErrors.taxId }}
                                 </div>
@@ -66,10 +66,12 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name">
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name"
+                                               :class="{'has-error': formErrors.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last">
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last"
+                                               :class="{'has-error': formErrors.lastName}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
@@ -83,7 +85,7 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200">
+                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200" :class="{'has-error': formErrors.email}">
                                 <div v-if="formErrors.email" class="notes notes--below notes--error">
                                     {{ formErrors.email }}
                                 </div>
@@ -99,7 +101,8 @@
 
 
                                 <div class="address1">
-                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1">
+                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1"
+                                           :class="{'has-error': formErrors.address1}">
                                     <div v-if="formErrors.address1" class="notes notes--below notes--error">
                                         {{ formErrors.address1 }}
                                     </div>
@@ -119,7 +122,7 @@
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City">
+                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City" :class="{'has-error': formErrors.city}">
                                     </div>
 
                                     <div class="city-state-zip__state select-wrap">
@@ -127,7 +130,7 @@
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP">
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP" :class="{'has-error': formErrors.zip}">
                                     </div>
 
                                 </div>
@@ -144,7 +147,7 @@
                                 <label for="phone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.phone" type="tel" name="phone" id="phone">
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone" :class="{'has-error': formErrors.phone}">
                                 <div v-if="formErrors.phone" class="notes notes--below notes--error">
                                     {{ formErrors.phone }}
                                 </div>
