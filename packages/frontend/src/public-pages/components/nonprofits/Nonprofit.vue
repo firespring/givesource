@@ -39,7 +39,7 @@
 
                                 <div class="donation-metrics__donations">
                                     <div class="num">{{ nonprofit.donationsCount }}</div>
-                                    <div class="caption">Donations</div>
+                                    <div class="caption">{{ donationsLabel }}</div>
                                 </div>
                             </div>
 
@@ -98,6 +98,11 @@
 		props: [
 			'slug'
 		],
+        computed: {
+			donationsLabel: function () {
+				return this.nonprofit.donationsCount === 1 ? 'Donation' : 'Donations';
+            }
+        },
 		beforeMount: function () {
 			const vue = this;
 
