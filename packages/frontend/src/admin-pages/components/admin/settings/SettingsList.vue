@@ -49,17 +49,6 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
-                                        <router-link :to="{ name: 'settings-customize-homepage-messages' }">Customize Homepage Messages</router-link>
-                                    </h3>
-                                    <div class="c-notes c-notes--below">
-                                        Modify the text that displays on the various stages of your homepage.
-                                    </div>
-                                </div>
-
-                                <hr class="expand">
-
-                                <div class="c-page-section-segment">
-                                    <h3 class="c-page-section-segment__title">
                                         <router-link :to="{ name: 'settings-customize-appearance' }">Customize Appearance</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">

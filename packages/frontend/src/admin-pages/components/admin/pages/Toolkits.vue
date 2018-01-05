@@ -27,7 +27,7 @@
                             <nav class="o-page-header-nav c-breadcrumb">
                                 <span><router-link :to="{name: 'pages-list'}">Pages</router-link></span>
                             </nav>
-                            <h1 class="o-page-header-title">Toolkit</h1>
+                            <h1 class="o-page-header-title">Toolkits</h1>
                         </div>
                     </div>
 

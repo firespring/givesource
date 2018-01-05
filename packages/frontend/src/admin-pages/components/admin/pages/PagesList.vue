@@ -37,7 +37,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-homepage'}">Home</router-link>
-                                        </strong> — <a href="https://www.domain.com">https://www.domain.com</a>
+                                        </strong> — <a :href="getPageUrl('')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Manage the content displayed on your event's homepage. This page is required and can't be disabled.
@@ -53,7 +53,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-checkout'}">Donation Checkout</router-link>
-                                        </strong> — <a href="https://www.domain.com/cart">https://www.domain.com/cart</a>
+                                        </strong> — <a :href="getPageUrl('/cart')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/cart') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Manage the content that's displayed on your donation checkout page. This page is required and can't be disabled.
@@ -69,7 +69,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-contact-us'}">Contact Us</router-link>
-                                        </strong> — <a href="https://www.domain.com/contact">https://www.domain.com/contact</a>
+                                        </strong> — <a :href="getPageUrl('/contact')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/contact') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         This page provides site visitors with a contact form so they can easily contact you. This page is required and can't be disabled.
@@ -85,7 +85,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-about'}">About</router-link>
-                                        </strong> — <a href="https://www.domain.com/about">https://www.domain.com/about</a>
+                                        </strong> — <a :href="getPageUrl('/about')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/about') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Use this page to describe what your event is about, how it got started, and other important info.
@@ -113,7 +113,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-faq'}">FAQ</router-link>
-                                        </strong> — <a href="https://www.domain.com/faq">https://www.domain.com/faq</a>
+                                        </strong> — <a :href="getPageUrl('/faq')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/faq') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Use this page to answer all of your potential donors' questions.
@@ -140,8 +140,8 @@
                                     <div>
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
-                                            <router-link :to="{name: 'pages-toolkit'}">Toolkit</router-link>
-                                        </strong> — <a href="https://www.domain.com/toolkit">https://www.domain.com/toolkit</a>
+                                            <router-link :to="{name: 'pages-toolkits'}">Toolkits</router-link>
+                                        </strong> — <a :href="getPageUrl('/toolkits')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/toolkits') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Use this page to provide participating nonprofits with useful tools, images, and information to make their campaign more successful.
@@ -169,7 +169,7 @@
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-terms'}">Terms</router-link>
-                                        </strong> — <a href="https://www.domain.com/terms">https://www.domain.com/terms</a>
+                                        </strong> — <a :href="getPageUrl('/terms')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/terms') }}</a>
                                     </div>
                                     <div class="c-notes c-notes--below">
                                         Use this page to provide information about the terms of your fundraising, such as privacy and refund policies.
@@ -254,6 +254,9 @@
 			}
 		},
 		methods: {
+			getPageUrl: function (relativeLink) {
+				return this.formData.EVENT_URL + relativeLink;
+			},
 			updateSetting: function (key) {
 				const vue = this;
 
@@ -263,14 +266,14 @@
 					}).catch(function (err) {
 						console.log(err);
 					});
-                } else {
+				} else {
 					vue.$request.post('settings', {
 						key: key,
-                        value: vue.formData[key]
-                    }).catch(function (err) {
-                    	console.log(err);
-                    });
-                }
+						value: vue.formData[key]
+					}).catch(function (err) {
+						console.log(err);
+					});
+				}
 			},
 		}
 	};

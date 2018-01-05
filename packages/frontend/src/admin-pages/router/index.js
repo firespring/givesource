@@ -141,9 +141,9 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/pages/toolkit',
-			name: 'pages-toolkit',
-			component: require('./../components/admin/pages/Toolkit.vue'),
+			path: '/pages/toolkits',
+			name: 'pages-toolkits',
+			component: require('./../components/admin/pages/Toolkits.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -178,14 +178,6 @@ const router = new VueRouter({
 			path: '/settings/contact',
 			name: 'settings-contact',
 			component: require('./../components/admin/settings/contact/ContactSettings.vue'),
-			meta: {
-				allowedGroups: ['SuperAdmin', 'Admin']
-			},
-		},
-		{
-			path: '/settings/customize-homepage-messages',
-			name: 'settings-customize-homepage-messages',
-			component: require('./../components/admin/settings/homepageMessages/HomepageMessages.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
