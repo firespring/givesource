@@ -53,7 +53,7 @@
 
                                 <div class="grid-item">
                                     <div class="search-wrap">
-                                        <input v-model="formData.search" type="search" name="nonprofitName" id="nonprofitName">
+                                        <input v-model="formData.search" type="search" name="nonprofitName" id="nonprofitName" placeholder="Enter Keywords">
                                     </div>
                                     <div v-if="formErrors.search" class="notes notes--below notes--error">
                                         {{ formErrors.search }}
