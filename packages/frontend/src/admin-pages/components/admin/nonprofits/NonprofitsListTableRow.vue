@@ -17,13 +17,6 @@
 
 <template>
     <tr>
-        <td class="input">
-            <div class="checkbox checkbox--sm js-check-this-row">
-                <input type="checkbox" name="checkThisRow[]" id="checkThisRow-1" class="check-this-row" value="1">
-                <label for="checkThisRow-1"></label>
-            </div>
-        </td>
-
         <td>
             <div class="u-flex">
                 <div class="u-flex-expand">
