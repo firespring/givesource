@@ -38,13 +38,16 @@
 					return this.localValue.name;
 				} else if (this.localValue && this.localValue.hasOwnProperty('filename')) {
 					return this.localValue.filename;
-				}
+				} else if (this.placeholder) {
+					return this.placeholder;
+                }
 				return '';
 			}
 		},
 		props: {
 			id: '',
 			name: '',
+            placeholder: '',
 			value: {},
 		},
 		watch: {
