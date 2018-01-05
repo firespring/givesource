@@ -149,14 +149,14 @@ ContentsRepository.prototype.batchGet = function (keys) {
 /**
  * Get a count by parentUuid
  *
- * @param {String} parentUuid
+ * @param {String} key
  * @return {Promise}
  */
-ContentsRepository.prototype.getCountByParentUuid = function (parentUuid) {
+ContentsRepository.prototype.getCountByKey = function (key) {
 	const repository = this;
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('scan');
-		builder.index('parentUuidIndex').condition('parentUuid', '=', parentUuid).select('COUNT');
+		builder.index('keyIndex').condition('key', '=', key).select('COUNT');
 		repository.query(builder).then(function (data) {
 			resolve(data.Count);
 		}).catch(function (err) {
@@ -232,30 +232,6 @@ ContentsRepository.prototype.save = function (model) {
 			reject(new Error('invalid Content model'));
 		}
 		model.validate().then(function () {
-			return repository.put({uuid: model.uuid}, model.except(['uuid']));
-		}).then(function (data) {
-			resolve(new Content(data.Attributes));
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
-
-/**
- * Create or update a Child Content
- *
- * @param {String} parentUuid
- * @param {Content} model
- */
-ContentsRepository.prototype.saveChild = function (parentUuid, model) {
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		repository.get(parentUuid).then(function () {
-			if (!(model instanceof Content)) {
-				reject(new Error('invalid Content model'));
-			}
-			return model.validate();
-		}).then(function () {
 			return repository.put({uuid: model.uuid}, model.except(['uuid']));
 		}).then(function (data) {
 			resolve(new Content(data.Attributes));

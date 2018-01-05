@@ -33,17 +33,21 @@ exports.handle = function (event, context, callback) {
 			contents.push(new Content(data));
 		});
 	}).then(function () {
+		let promise = Promise.resolve();
 		contents.forEach(function (content) {
 			if (content.type === ContentHelper.TYPE_COLLECTION) {
-				return repository.getByParentUuid(content.uuid).then(function (response) {
-					response.forEach(function (model) {
-						if (!_.find(contents, {uuid: model.uuid})) {
-							contents.push(model);
-						}
+				promise = promise.then(function () {
+					return repository.getByParentUuid(content.uuid).then(function (response) {
+						response.forEach(function (model) {
+							if (!_.find(contents, {uuid: model.uuid})) {
+								contents.push(model);
+							}
+						});
 					});
 				});
 			}
 		});
+		return promise;
 	}).then(function () {
 		return repository.batchDelete(contents);
 	}).then(function () {

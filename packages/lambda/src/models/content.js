@@ -109,9 +109,6 @@ Content.prototype.beforeSave = function () {
 	if (this.type === ContentHelper.TYPE_COLLECTION) {
 		this.value = null;
 	}
-	if (!this.parentUuid) {
-		this.parentUuid = this.uuid;
-	}
 };
 
 module.exports = Content;

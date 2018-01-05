@@ -236,7 +236,7 @@ QueryBuilder.prototype.build = function () {
 		params['FilterExpression'] = this._filters.join(join);
 	}
 
-	if (this._expressionAttributeNames !== {} && this._expressionAttributeValues !== {}) {
+	if (Object.keys(this._expressionAttributeNames).length && Object.keys(this._expressionAttributeValues).length) {
 		params['ExpressionAttributeNames'] = this._expressionAttributeNames;
 		params['ExpressionAttributeValues'] = this._expressionAttributeValues;
 	}

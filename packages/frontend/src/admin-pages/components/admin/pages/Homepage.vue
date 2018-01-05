@@ -121,7 +121,6 @@
                         </section>
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
-
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
                                     <h2 class="c-page-section-title">Match Fund</h2>
@@ -203,7 +202,7 @@
 
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Save Changes</button>
-                            <a href="index.php" class="c-btn c-btn--neutral c-btn--text">Cancel</a>
+                            <router-link :to="{name: 'pages-list'}" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                         </footer>
 
                     </form>
@@ -218,6 +217,7 @@
 		data: function () {
 			return {
 				contents: [],
+				original: [],
 				loaded: false,
 
 				// Form Data
@@ -273,17 +273,18 @@
 				formErrors: {},
 			};
 		},
-        computed: {
+		computed: {
 			showMatchFundOptions: function () {
 				return this.formData.HOMEPAGE_MATCH_IS_ENABLED.value;
-            },
-        },
+			},
+		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('contents', {
 					keys: Object.keys(vue.formData)
 				}).then(function (response) {
 					vue.contents = response.data;
+					vue.original = JSON.parse(JSON.stringify(response.data));
 					vue.loaded = true;
 				});
 			});
@@ -296,6 +297,7 @@
 				keys: Object.keys(vue.formData)
 			}).then(function (response) {
 				vue.contents = response.data;
+				vue.original = JSON.parse(JSON.stringify(response.data));
 				vue.loaded = true;
 				next();
 			}).catch(function () {
@@ -329,35 +331,46 @@
 			updateContents: function () {
 				const vue = this;
 
-				const contents = [];
+				const created = [];
+				const changed = _.differenceWith(vue.contents, vue.original, _.isEqual);
+				const toUpdate = _.reject(changed, {value: ''});
+				const toDelete = _.filter(changed, {value: ''});
 				Object.keys(vue.formData).forEach(function (key) {
-					let content = _.find(vue.contents, {key: key});
-					if (!content) {
-						content = vue.formData[key];
-                    }
-                    contents.push(content);
+					if (!_.find(vue.original, {key: key}) && vue.formData[key].value !== '') {
+						created.push(vue.formData[key]);
+					}
 				});
 
-				const toUpdate = _.reject(contents, {value: ''});
-				const toDelete = _.filter(contents, {value: ''});
-
-				vue.$request.patch('contents', {
-					contents: toUpdate,
-				}).then(function () {
-					if (toDelete.length) {
-						return vue.$request.delete('contents', {
-							contents: toDelete,
+				let promise = Promise.resolve();
+				if (created.length) {
+					created.forEach(function (content) {
+						promise = promise.then(function () {
+							return vue.$request.post('contents', content);
 						});
-                    } else {
-						return Promise.resolve();
-					}
-				}).then(function (response) {
+					});
+				}
+
+				if (toUpdate.length) {
+					promise = promise.then(function () {
+						return vue.$request.patch('contents', {
+							contents: toUpdate.map(function (content) {
+								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+							}),
+						});
+					});
+				}
+
+				if (toDelete.length) {
+					promise = promise.then(function () {
+						return vue.$request.delete('contents', {
+							contents: toDelete
+						});
+					});
+				}
+
+				promise.then(function () {
 					vue.clearModals();
-					if (response.data.errorMessage) {
-						console.log(response.data);
-					} else {
-						vue.$router.push({name: 'pages-list'});
-					}
+					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);

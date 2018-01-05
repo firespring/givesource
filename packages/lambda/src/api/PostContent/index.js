@@ -27,6 +27,9 @@ exports.handle = function (event, context, callback) {
 
 	const content = new Content(request._body);
 	request.validate().then(function () {
+		return repository.getCountByKey(content.key);
+	}).then(function (count) {
+		content.populate({sortOrder: count});
 		return content.validate();
 	}).then(function () {
 		return repository.save(content);

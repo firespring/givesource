@@ -245,4 +245,16 @@ Model.prototype.except = function (properties) {
 	return except;
 };
 
+/**
+ * Get all non-empty fields
+ *
+ * @return {{}}
+ */
+Model.prototype.nonEmpty = function () {
+	const all = this.all();
+	return _.pick(all, Object.keys(all).filter(function (key) {
+		return (all[key] !== '' && all[key] !== null && all[key] !== undefined);
+	}));
+};
+
 module.exports = Model;

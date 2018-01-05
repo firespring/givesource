@@ -29,7 +29,9 @@ exports.handle = function (event, context, callback) {
 		return repository.get(request.urlParam('content_uuid'));
 	}).then(function (content) {
 		if (content.type === ContentHelper.TYPE_COLLECTION) {
-			return repository.batchDeleteByParentUuid(request.urlParam('content_uuid'));
+			return repository.batchDeleteByParentUuid(request.urlParam('content_uuid')).then(function () {
+				return repository.delete(request.urlParam('content_uuid'));
+			});
 		} else {
 			return repository.delete(request.urlParam('content_uuid'));
 		}

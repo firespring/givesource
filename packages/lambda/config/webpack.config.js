@@ -102,7 +102,6 @@ module.exports = function (env) {
 			PatchSponsorTiers: './src/api/patchSponsorTiers/index.js',
 			PatchUser: './src/api/patchUser/index.js',
 			PostContent: './src/api/postContent/index.js',
-			PostContentChild: './src/api/postContentChild/index.js',
 			PostDonation: './src/api/postDonation/index.js',
 			PostDonor: './src/api/postDonor/index.js',
 			PostFile: './src/api/postFile/index.js',
