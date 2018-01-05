@@ -28,7 +28,9 @@ const router = new VueRouter({
 	mode: 'history',
 	base: __dirname,
 	scrollBehavior: function (to, from, savedPosition) {
-		if (savedPosition) {
+		if (to.hash) {
+			return {selector: to.hash};
+		} else if (savedPosition) {
 			return savedPosition;
 		} else {
 			return {x: 0, y: 0};
@@ -67,7 +69,7 @@ const router = new VueRouter({
 		{
 			path: '/faq',
 			name: 'faq',
-			component: require('./../components/faq/Faq.vue'),
+			component: require('./../components/faq/FAQ.vue'),
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.setting('PAGE_FAQ_ENABLED')) {
 					next({name: '404'})
