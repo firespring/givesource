@@ -73,7 +73,8 @@
                                         <label for="caption" class="c-form-item-label-text">Caption (100 characters or less)</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.caption" type="text" name="caption" id="caption" :class="{ 'has-error': formErrors.caption }" v-auto-focus>
+                                        <input v-model="formData.caption" type="text" name="caption" id="caption" maxlength="100" :class="{ 'has-error': formErrors.caption }"
+                                               v-auto-focus>
                                         <div v-if="formErrors.caption" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.caption }}
                                         </div>
