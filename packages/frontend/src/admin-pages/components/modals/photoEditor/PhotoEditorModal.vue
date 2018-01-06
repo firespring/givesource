@@ -57,7 +57,7 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" type="button" class="c-btn">Save &amp; Close</button>
+                                <button v-on:click="save" type="button" class="c-btn">Save &amp; Continue</button>
                                 <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
