@@ -24,12 +24,7 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
-                <p>
-                    We invite nonprofit organizations in the Greater Area to join Give To City Day by registering to participate.
-                    Nonprofits must register in order to participate in the event. For nonprofit eligibility information,
-                    <router-link :to="{ name: 'about' }">please visit the About page</router-link>
-                    .
-                </p>
+                <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
                 <form v-on:submit="submit">
                     <fieldset>
@@ -179,9 +174,12 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
+				contents: [],
 				processing: false,
 
 				formData: {
@@ -202,6 +200,34 @@
 
 				formErrors: {},
 			}
+		},
+		computed: {
+			text: function () {
+				const text = _.find(this.contents, {key: 'REGISTER_FORM_TEXT'});
+				return text ? text.value : null;
+			},
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: 'REGISTER_FORM_TEXT'
+				})).then(function (response) {
+					vue.contents = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: 'REGISTER_FORM_TEXT'
+			})).then(function (response) {
+				vue.contents = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
 		},
 		beforeMount: function () {
 			const vue = this;

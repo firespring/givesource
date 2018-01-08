@@ -22,21 +22,7 @@
         </layout-hero>
 
         <main class="main">
-            <div class="wrapper wrapper--sm">
-
-                <p>
-                    Thank you for supporting the causes that make Our City such a wonderful place to live, work and play – today and in the future.
-                </p>
-
-                <p>
-                    Please check your email for your donation receipt from Firespring Foundation on behalf of the charity or charities you supported on Give To Our City Day.
-                </p>
-
-                <p>
-                    Donations made on the Give To Our City Website are final, non-refundable charitable gifts to the Firespring Foundation, an IRS recognized 501(c)(3).  See <router-link :to="{ name: 'terms' }">Terms of Service</router-link> for more information.
-                </p>
-
-            </div>
+            <div class="wrapper wrapper--sm" v-html="text"></div>
         </main>
 
         <layout-footer>
@@ -46,7 +32,42 @@
 </template>
 
 <script>
+	import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
+		data: function () {
+			return {
+				contents: [],
+            };
+        },
+		computed: {
+			text: function () {
+				const text = _.find(this.contents, {key: 'CART_RESPONSE_TEXT'});
+				return text ? text.value : null;
+			},
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: 'CART_RESPONSE_TEXT',
+				})).then(function (response) {
+					vue.contents = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: 'CART_RESPONSE_TEXT',
+			})).then(function (response) {
+				vue.contents = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
+			});
+		},
 		beforeMount: function () {
 			const vue = this;
 

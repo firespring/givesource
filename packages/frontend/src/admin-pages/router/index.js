@@ -125,6 +125,14 @@ const router = new VueRouter({
 			},
 		},
 		{
+			path: '/pages/register',
+			name: 'pages-register',
+			component: require('./../components/admin/pages/Register.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
 			path: '/pages/about',
 			name: 'pages-about',
 			component: require('./../components/admin/pages/About.vue'),

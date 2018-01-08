@@ -84,6 +84,22 @@
                                     <div>
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-register'}">Register</router-link>
+                                        </strong> — <a :href="getPageUrl('/register')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/register') }}</a>
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        This page provides nonprofit visitors with a registration form. This page is required and can't be disabled.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-form-item-grid">
+                                <div class="c-form-item c-form-item--text">
+                                    <div>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-about'}">About</router-link>
                                         </strong> — <a :href="getPageUrl('/about')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/about') }}</a>
                                     </div>

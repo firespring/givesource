@@ -160,7 +160,6 @@
                             <div class="grid">
 
                                 <div class="grid-item grid-item--collapse">
-
                                     <div class="form-item form-item--required">
                                         <div class="form-item__label">
                                             <label for="cc_exp_month">Expiration Date</label>
@@ -175,11 +174,9 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="grid-item">
-
                                     <div class="form-item form-item--required">
                                         <div class="form-item__label">
                                             <label for="cc_csc">Security Code</label>
@@ -191,7 +188,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
 
                             </div>
@@ -199,10 +195,11 @@
 
                     </fieldset>
 
+                    <div v-html="text" style="margin: 0 0 1.5rem;"></div>
+
                     <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
                         <forms-submit :processing="processing" color="green" size="lg">Complete Your Donation</forms-submit>
                     </div>
-
                 </form>
 
             </div>
@@ -225,6 +222,7 @@
 
 				settings: [],
 				donations: [],
+                contents: [],
 
 				// Form Data
 				formData: {
@@ -262,12 +260,40 @@
 				}
 			};
 		},
+        computed: {
+	        text: function () {
+		        const text = _.find(this.contents, {key: 'CART_CHECKOUT_TEXT'});
+		        return text ? text.value : null;
+	        },
+        },
 		created: function () {
 			const vue = this;
 
 			vue.isCartEmpty = !vue.$store.state.cartItems.length;
 			vue.bus.$on('updateCartItemsCount', function () {
 				vue.isCartEmpty = !vue.$store.state.cartItems.length;
+			});
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: 'CART_CHECKOUT_TEXT',
+				})).then(function (response) {
+					vue.contents = response.data;
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
+
+			axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: 'CART_CHECKOUT_TEXT',
+			})).then(function (response) {
+				vue.contents = response.data;
+				next();
+			}).catch(function (err) {
+				console.log(err);
+				next();
 			});
 		},
 		beforeDestroy: function () {
