@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <select v-model="localValue" :name="name" :id="id" ref="input" class="sm">
+    <select v-model="localValue" :name="name" :id="id" ref="input">
         <option :disabled="disablePlaceholder" :value="0" v-if="placeholder">{{ placeholder }}</option>
         <option disabled v-if="placeholder">-----</option>
         <option v-for="category in categories" :value="category.value">{{ category.text }}</option>

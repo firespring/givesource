@@ -23,7 +23,8 @@
 
                     <div class="grid-item grid-item--expand">
                         <div class="select-wrap">
-                            <forms-nonprofit-category-select v-model="formData.category" placeholder="Select a category" :disablePlaceholder="false"></forms-nonprofit-category-select>
+                            <forms-nonprofit-category-select v-model="formData.category" placeholder="Select a category" :disablePlaceholder="false" class="sm">
+                            </forms-nonprofit-category-select>
                         </div>
                     </div>
 
@@ -73,10 +74,10 @@
 		watch: {
 			category: function (value) {
 				this.formData.category = value;
-            },
-            search: function (value) {
+			},
+			search: function (value) {
 				this.formData.search = value;
-            },
+			},
 			formData: {
 				handler: function () {
 					const vue = this;
@@ -94,7 +95,7 @@
 						presence: false,
 						length: {
 							minimum: 3
-                        },
+						},
 					},
 				};
 			},
