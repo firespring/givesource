@@ -73,8 +73,8 @@
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__address u-icon u-flex">
-                        {{ donor.address1 }}<br>
-                        {{ donor.address2 }}<br>
+                        {{ donor.address1 }}<br v-if="donor.address2">
+                        {{ donor.address2 }}<br v-if="donor.city || donor.state || donor.zip">
                         {{ donor.city }}, {{ donor.state }} {{ donor.zip }}
                     </div>
                 </div>
