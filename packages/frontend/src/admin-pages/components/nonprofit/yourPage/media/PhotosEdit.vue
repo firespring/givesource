@@ -28,7 +28,7 @@
                             <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}">Manage Image & Videos</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">{{ nonprofit.legalName }} - Edit Photo</h1>
+                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">{{ nonprofit.legalName }} - Edit Image</h1>
                     </div>
                 </div>
 
@@ -38,7 +38,7 @@
                             <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}">Manage Image & Videos</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">Edit Photo</h1>
+                        <h1 class="o-page-header-title">Edit Image</h1>
                     </div>
                 </div>
 

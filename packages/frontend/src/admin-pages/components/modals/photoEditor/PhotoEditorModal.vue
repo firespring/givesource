@@ -22,7 +22,7 @@
                 <div class="c-modal-dialog__contents">
 
                     <div class="c-modal-header">
-                        <h1>Resize Photo</h1>
+                        <h1>Resize Image</h1>
                     </div>
 
                     <div class="c-modal-content">
