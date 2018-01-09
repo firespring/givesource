@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
-                                    You must enter a first name and last name
+                                    Enter your first name and last name
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                             </div>
 
                             <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
-                                You must enter a city, state and zip code
+                                Enter your city, state and zip code
                             </div>
                         </div>
 
