@@ -3,12 +3,19 @@
         <router-link :to="generatePageLink({start: prevPageStart})" class="prev" title="Go to the previous page" active-class="" v-if="currentPage > 0">
             <i class="fas fa-chevron-left" aria-hidden="true"></i><span>Prev</span>
         </router-link>
+        <span class="prev" v-else>
+            <i class="fas fa-chevron-left" aria-hidden="true"></i><span>Prev</span>
+        </span>
 
-        <pagination-link v-for="index in range" :current="currentPage" :page="index" :size="pagination.size" :key="index"></pagination-link>
+        <pagination-link v-for="index in range" :current="currentPage" :page="index" :size="pagination.size" :key="index" class="pg"></pagination-link>
 
         <router-link :to="generatePageLink({start: nextPageStart})" class="next" title="Go to the next page" active-class="" v-if="currentPage < (totalPages - 1)">
             <span>Next</span><i class="fas fa-chevron-right" aria-hidden="true"></i>
         </router-link>
+        <span class="next" v-else>
+            <span>Next</span><i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </span>
+
     </div>
 </template>
 
