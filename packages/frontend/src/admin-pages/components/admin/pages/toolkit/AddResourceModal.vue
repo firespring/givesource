@@ -99,7 +99,8 @@
                                                     <div class="c-form-item__control">
                                                         <div class="u-control-icon u-control-icon--url">
                                                             <input v-model="formData.TOOLKIT_RESOURCE_LIST_ITEM_LINK.value" type="text" name="toolkitResourceType-2-url"
-                                                                   id="toolkitResourceType-2-url" :class="{'has-error': formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']}">
+                                                                   id="toolkitResourceType-2-url" placeholder="https://"
+                                                                   :class="{'has-error': formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']}">
                                                         </div>
                                                         <div v-if="formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']"
                                                              class="c-notes c-notes--below c-notes--bad c-form-control-error">

@@ -102,7 +102,8 @@
                                                     <div class="c-form-item__control">
                                                         <div class="u-control-icon u-control-icon--url">
                                                             <input v-model="formData.TOOLKIT_RESOURCE_LIST_ITEM_LINK.value" type="text" name="toolkitResourceType-2-url"
-                                                                   id="toolkitResourceType-2-url" :class="{'has-error': formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']}">
+                                                                   id="toolkitResourceType-2-url" placeholder="https://"
+                                                                   :class="{'has-error': formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']}">
                                                         </div>
                                                         <div v-if="formErrors['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value']"
                                                              class="c-notes c-notes--below c-notes--bad c-form-control-error">
@@ -136,8 +137,8 @@
 		data: function () {
 			return {
 				original: [],
-                file: {},
-                loading: false,
+				file: {},
+				loading: false,
 
 				// Form Data
 				formData: {
@@ -191,9 +192,9 @@
 			showLinkInput: function () {
 				return this.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'LINK';
 			},
-            filename: function () {
+			filename: function () {
 				return Object.keys(this.file).length ? this.file.filename : '';
-            }
+			}
 		},
 		watch: {
 			formData: {
@@ -231,14 +232,14 @@
 					}
 				});
 
-                const file = _.find(vue.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
-                if (file) {
-                    vue.loading = true;
-                    vue.$request.get('files/' + file.value).then(function (response) {
-                        vue.file = response.data;
-                        vue.loading = false;
-                    });
-                }
+				const file = _.find(vue.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+				if (file) {
+					vue.loading = true;
+					vue.$request.get('files/' + file.value).then(function (response) {
+						vue.file = response.data;
+						vue.loading = false;
+					});
+				}
 			}
 		},
 		methods: {
@@ -277,6 +278,7 @@
 				return constraints;
 			},
 			cancel: function () {
+				this.data.content.value = this.original;
 				this.clearModals();
 			},
 			save: function () {
@@ -360,7 +362,7 @@
 		components: {
 			'forms-ckeditor': require('./../../../forms/Ckeditor.vue'),
 			'forms-file-upload': require('./../../../forms/FileUpload.vue'),
-            'layout-spinner': require('./../../../layout/Spinner.vue'),
+			'layout-spinner': require('./../../../layout/Spinner.vue'),
 		}
 	};
 </script>
