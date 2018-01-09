@@ -37,7 +37,7 @@
                                     <div class="caption">Raised</div>
                                 </div>
 
-                                <div class="donation-metrics__donations">
+                                <div class="donation-metrics__donations" v-if="nonprofitLoaded">
                                     <div class="num">{{ nonprofit.donationsCount }}</div>
                                     <div class="caption">{{ donationsLabel }}</div>
                                 </div>
@@ -93,6 +93,8 @@
 				files: [],
 				nonprofit: {},
 				slides: [],
+
+                nonprofitLoaded: false,
 			}
 		},
 		props: [
@@ -112,6 +114,7 @@
 			next(function (vue) {
 				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 					vue.nonprofit = response.data;
+					vue.nonprofitLoaded = true;
 					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
@@ -138,6 +141,7 @@
 
 			axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 				vue.nonprofit = response.data;
+				vue.nonprofitLoaded = true;
 				return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
 			}).then(function (response) {
 				response.data.sort(function (a, b) {
