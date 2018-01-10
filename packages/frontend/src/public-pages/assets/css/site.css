@@ -1570,6 +1570,32 @@ tr.bottom td {
 }
 
 /* ----------------------------------------------------------------------------
+Toolkit
+---------------------------------------------------------------------------- */
+
+ul.toolkit {
+	list-style: none;
+	background: #fff;
+	padding: 0;
+	border-radius: 3px;
+}
+
+ul.toolkit li {
+	position: relative;
+	padding: 1rem 1rem 1rem 3rem;
+}
+
+ul.toolkit li + li {
+	border-top: 1px solid #e0e0e0;
+}
+
+ul.toolkit svg {
+	position: absolute;
+	left: 1rem;
+	top: calc(1rem + 5px);
+}
+
+/* ----------------------------------------------------------------------------
 Actions Row
 ---------------------------------------------------------------------------- */
 
@@ -2073,10 +2099,6 @@ Global Media Queries
 	}
 
 	[class*=nonprofit-search__] {
-		-ms-flex: 1 0 33.3333%;
-		-webkit-box-flex: 1;
-		flex: 1 0 33.3333%;
-		max-width: 33.3333%;
 		padding: 1rem 2.5rem 1.5rem;
 	}
 	
