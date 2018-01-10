@@ -244,8 +244,8 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your organization\'s address'
-                        },
+							message: 'Enter your organization\'s address'
+						},
 					},
 					address2: {
 						label: 'Address line 2',
@@ -258,7 +258,8 @@
 					categories: {
 						label: '',
 						presence: {
-							message: 'Enter at least one category for you organization'
+							allowEmpty: false,
+							message: 'Enter at least one category for your organization'
 						},
 						length: {
 							minimum: 1,
