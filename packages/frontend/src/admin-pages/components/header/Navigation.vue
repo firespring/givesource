@@ -20,7 +20,7 @@
         <div class="o-menubar__primary">
 
             <div class="o-branding">
-                <router-link :to="{name: 'donations-list'}" class="u-flex u-items-center">
+                <router-link :to="{name: 'nonprofit-donations-list'}" class="u-flex u-items-center">
                     <div class="o-branding__logo">
                         <img alt="Firespring Logo" src="../../assets/svg/firespring-wordmark-white.svg" class="logo svg">
                     </div>
