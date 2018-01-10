@@ -22,7 +22,7 @@
         </td>
         <td class="u-width-100p">
             <strong><a v-on:click="editQuestion" href="#">{{ question }}</a></strong>
-            <div class="c-notes c-notes--below" v-html="answer"></div>
+            <div class="c-notes c-notes--below c-notes--clipped" v-html="answer"></div>
         </td>
         <td class="icon">
             <a v-on:click="deleteQuestion" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>

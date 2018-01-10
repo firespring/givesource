@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7260,6 +7260,10 @@ td .c-drag-handle {
 
 .c-notes--bad {
   color: #f44336; }
+
+.c-notes--clipped {
+  max-height: 2.2rem;
+  overflow: hidden; }
 
 /**
 * @desc			Chip styles, settings
