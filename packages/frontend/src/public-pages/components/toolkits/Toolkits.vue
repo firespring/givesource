@@ -23,17 +23,23 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
-                
-                <ul>
-                    <li v-for="resource in resources" :key="resource.uuid">
-                        <a :href="getResourceLink(resource)" target="_blank" rel="noopener noreferrer">{{ getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE') }}</a>
-                        <span v-if="getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION', false)">-</span>
+
+                <ul class="toolkit">
+                    <li v-for="resource in resources" :key="resource.uuid"
+                        :class="{'toolkit__file': getResourceType(resource) === 'FILE', 'toolkit__link': getResourceType(resource) === 'LINK'}">
+
+                        <i class="fas fa-fw" :class="{'fa-download': getResourceType(resource) === 'FILE', 'fa-link': getResourceType(resource) === 'LINK'}"></i>
+
+                        <strong>
+                            <a :href="getResourceLink(resource)" target="_blank" rel="noopener noreferrer">{{ getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE') }}</a>
+                        </strong>
+                        <br v-if="getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION', false)">
                         {{ getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION') }}
                     </li>
                 </ul>
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
-                
+
             </div>
         </main>
 
@@ -55,7 +61,7 @@
 		computed: {
 			resources: function () {
 				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
-            },
+			},
 			text: function () {
 				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
 				return text ? text.value : null;
@@ -68,7 +74,7 @@
 				})).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
-                    });
+					});
 					vue.contents = response.data;
 				}).then(function () {
 					let promise = Promise.resolve();
@@ -79,13 +85,13 @@
 								promise = promise.then(function () {
 									return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(function (response) {
 										content.value[fileIndex].value = response.data;
-                                    });
-                                });
-                            }
-                        }
-                    });
+									});
+								});
+							}
+						}
+					});
 					return promise;
-                });
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -126,22 +132,26 @@
 			vue.setBodyClasses('page');
 			vue.setPageTitle('Give To Our City - Toolkits');
 		},
-        methods: {
-	        getResourceValue: function (resource, contentKey) {
+		methods: {
+			getResourceValue: function (resource, contentKey, defaultValue) {
 				const content = _.find(resource.value, {key: contentKey});
-				return content ? content.value : null;
-            },
-            getResourceLink: function (resource) {
-	        	const vue = this;
+				return content ? content.value : defaultValue ? defaultValue : null;
+			},
+			getResourceType: function (resource) {
+				const vue = this;
 
-	        	const type = vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE', 'FILE');
-	        	if (type === 'FILE') {
-			        return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
-                } else {
-	        		return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
-                }
-            },
-        },
+				return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE', 'FILE');
+			},
+			getResourceLink: function (resource) {
+				const vue = this;
+
+				if (vue.getResourceType(resource) === 'FILE') {
+					return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
+				} else {
+					return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
+				}
+			}
+		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
