@@ -128,34 +128,6 @@
                                     <div>
                                         <strong>
                                             <i class="fa fa-fw fa-file" aria-hidden="true"></i>
-                                            <router-link :to="{name: 'pages-faq'}">FAQ</router-link>
-                                        </strong> — <a :href="getPageUrl('/faq')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/faq') }}</a>
-                                    </div>
-                                    <div class="c-notes c-notes--below">
-                                        Use this page to answer all of your potential donors' questions.
-                                    </div>
-                                </div>
-
-                                <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
-                                    <div class="c-form-item__control">
-                                        <div class="c-switch-control">
-                                            <div>
-                                                <input v-model="formData.PAGE_FAQ_ENABLED" v-on:change="updateSetting('PAGE_FAQ_ENABLED')" type="checkbox" name="pageFaq"
-                                                       id="pageFaq">
-                                                <label for="pageFaq" class="c-switch-lever"></label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="expand">
-
-                            <div class="c-form-item-grid">
-                                <div class="c-form-item c-form-item--text">
-                                    <div>
-                                        <strong>
-                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
                                             <router-link :to="{name: 'pages-toolkits'}">Toolkits</router-link>
                                         </strong> — <a :href="getPageUrl('/toolkits')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/toolkits') }}</a>
                                     </div>
@@ -171,6 +143,34 @@
                                                 <input v-model="formData.PAGE_TOOLKIT_ENABLED" v-on:change="updateSetting('PAGE_TOOLKIT_ENABLED')" type="checkbox"
                                                        name="pageToolkit" id="pageToolkit">
                                                 <label for="pageToolkit" class="c-switch-lever"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-form-item-grid">
+                                <div class="c-form-item c-form-item--text">
+                                    <div>
+                                        <strong>
+                                            <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                            <router-link :to="{name: 'pages-faq'}">FAQ</router-link>
+                                        </strong> — <a :href="getPageUrl('/faq')" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/faq') }}</a>
+                                    </div>
+                                    <div class="c-notes c-notes--below">
+                                        Use this page to answer all of your potential donors' questions.
+                                    </div>
+                                </div>
+
+                                <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
+                                    <div class="c-form-item__control">
+                                        <div class="c-switch-control">
+                                            <div>
+                                                <input v-model="formData.PAGE_FAQ_ENABLED" v-on:change="updateSetting('PAGE_FAQ_ENABLED')" type="checkbox" name="pageFaq"
+                                                       id="pageFaq">
+                                                <label for="pageFaq" class="c-switch-lever"></label>
                                             </div>
                                         </div>
                                     </div>
