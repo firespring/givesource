@@ -46,7 +46,7 @@
                                     </div>
                                 </div>
                                 <div v-if="formErrors.donor.firstName || formErrors.donor.lastName" class="notes notes--below notes--error">
-                                    Entery your first name and last name
+                                    Enter your first name and last name
                                 </div>
                             </div>
                         </div>
@@ -321,19 +321,27 @@
 			getDonorConstraints: function () {
 				return {
 					address1: {
-						label: 'Address line 1',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your address'
+						},
 					},
 					address2: {
-						label: 'Address line 2',
 						presence: false,
 					},
 					city: {
 						presence: true,
 					},
 					email: {
-						presence: true,
-						email: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your email'
+                        },
+						email: {
+							message: 'The email entered is not valid'
+                        },
 					},
 					firstName: {
 						presence: true,
@@ -342,14 +350,16 @@
 						presence: true,
 					},
 					phone: {
-						label: 'Phone number',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your phone number'
+						},
 					},
 					state: {
 						presence: true,
 					},
 					zip: {
-						label: 'Zip code',
 						presence: true,
 					},
 				};
@@ -367,26 +377,45 @@
 			getPaymentDetailsConstraints: function () {
 				return {
 					ccNumber: {
-						label: 'Credit card number',
-						presence: true,
-						ccNumber: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your credit card number'
+						},
+						ccNumber: {
+							message: 'The credit card number entered is not valid'
+						},
 					},
 					ccExpMonth: {
-						label: 'Credit card expiration month',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your card\'s expiration month'
+						},
 					},
 					ccExpYear: {
-						label: 'Credit card expiration year',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your card\'s expiration year'
+						},
 					},
 					ccName: {
-						label: 'Name on card',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter the name on the card'
+						},
 					},
 					ccCvv: {
-						label: 'Security code',
-						presence: true,
-						ccCvv: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter the card\'s security code'
+						},
+						ccCvv: {
+							message: 'The security code entered is not valid'
+						},
 					},
 				};
 			},

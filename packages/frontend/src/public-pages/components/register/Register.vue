@@ -138,7 +138,7 @@
                             </div>
 
                             <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
-                                Enter your city, state and zip code
+                                Enter your organization's city, state and zip code
                             </div>
                         </div>
 
@@ -227,14 +227,25 @@
 			getConstraints: function () {
 				return {
 					legalName: {
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s legal name'
+						},
 					},
 					taxId: {
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s tax ID number'
+						},
 					},
 					address1: {
-						label: 'Address line 1',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your organization\'s address'
+                        },
 					},
 					address2: {
 						label: 'Address line 2',
@@ -247,12 +258,12 @@
 					categories: {
 						label: '',
 						presence: {
-							message: 'You must select at least one category'
+							message: 'Enter at least one category for you organization'
 						},
 						length: {
 							minimum: 1,
 							maximum: 3,
-							tooLong: 'You can only select up to three categories'
+							tooLong: 'Enter up to three categories for your organization'
 						}
 					},
 					city: {
@@ -266,10 +277,12 @@
 						presence: true,
 					},
 					phone: {
-						label: 'Organization Phone Number',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s phone number'
+						},
 					},
-
 					firstName: {
 						presence: true,
 					},
@@ -277,10 +290,15 @@
 						presence: true,
 					},
 					email: {
-						label: 'Email address',
-						presence: true,
-						email: true,
-					}
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your email'
+						},
+						email: {
+							message: 'The email entered is not valid'
+						},
+					},
 				}
 			},
 			submit: function (event) {

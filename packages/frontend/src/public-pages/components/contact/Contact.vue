@@ -134,9 +134,14 @@
 			getConstraints: function () {
 				return {
 					email: {
-						label: 'Email address',
-						presence: true,
-						email: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your valid email',
+						},
+						email: {
+							message: 'The email entered is not valid'
+						},
 					},
 					firstName: {
 						presence: true,
@@ -145,8 +150,11 @@
 						presence: true,
 					},
 					message: {
-						label: 'Questions',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your questions'
+                        },
 					}
 				}
 			},
