@@ -26,7 +26,7 @@
 
                 <search-results-header :category="category" :search="search"></search-results-header>
 
-                <p class="mt3 mb3 text-c" v-if="search">
+                <p class="mt3 mb3 text-c" v-if="search && pagination.loaded">
                     <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} results.</strong>
                 </p>
 
