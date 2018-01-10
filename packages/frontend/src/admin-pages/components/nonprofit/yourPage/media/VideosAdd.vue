@@ -25,7 +25,8 @@
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
-                            <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
+                            <span v-if="nonprofit.legalName"><router-link :to="{ name: 'nonprofit-your-page'}">Manage {{ nonprofit.legalName }}'s Donation Page</router-link></span>
+                            <span v-else><router-link :to="{ name: 'nonprofit-your-page'}">Manage Donation Page</router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}">Manage Image & Videos</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title" v-if="nonprofit.legalName">{{ nonprofit.legalName }} - Add Video</h1>
@@ -35,7 +36,7 @@
                 <div class="o-page-header" v-else>
                     <div class="o-page-header__text">
                         <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'nonprofit-your-page'}">Your Page </router-link></span>
+                            <span><router-link :to="{ name: 'nonprofit-your-page'}">Manage Donation Page</router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}">Manage Image & Videos</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title">Add Video</h1>

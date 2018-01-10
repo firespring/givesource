@@ -26,7 +26,8 @@
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                            <span><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admin Users</router-link></span>
+                            <span v-if="nonprofit.legalName"><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage {{ nonprofit.legalName }}'s Admin Users</router-link></span>
+                            <span v-else><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admin Users</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title" v-if="nonprofit.legalName">Invite {{ nonprofit.legalName }}'s Admin Users</h1>
                     </div>
