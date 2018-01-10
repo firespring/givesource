@@ -137,7 +137,7 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your valid email',
+                            message: 'Enter your email',
 						},
 						email: {
 							message: 'The email entered is not valid'
