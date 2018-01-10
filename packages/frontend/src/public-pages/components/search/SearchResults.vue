@@ -26,19 +26,20 @@
 
                 <search-results-header :category="category" :search="search"></search-results-header>
 
+                <p class="mt3 mb3 text-c" v-if="search && pagination.loaded">
+                    <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} results.</strong>
+                </p>
+
                 <div class="leaderboard" v-if="pagination.loaded && pagination.items.length">
                     <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
                 </div>
 
                 <div class="leaderboard" v-else-if="pagination.loaded && pagination.items.length === 0">
-                    <div class="leaderboard-item">
+                    <div class="leaderboard-item" v-if="!search">
                         <div class="leaderboard-item__info text-c" v-if="!category && !search">
                             There are no nonprofits.
                         </div>
-                        <div class="leaderboard-item__info text-c" v-else-if="search">
-                            There are no nonprofits that match that search.
-                        </div>
-                        <div class="leaderboard-item__info text-c" v-else>
+                        <div class="leaderboard-item__info text-c" v-else-if="category && !search">
                             There are no nonprofits in that category.
                         </div>
                     </div>
@@ -90,15 +91,15 @@
 					vue.category = to.query.category;
 					options.category = vue.category;
 				}
-                if (Object.keys(options).length) {
+				if (Object.keys(options).length) {
 					options.status = 'ACTIVE';
 					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
 						response.data.sort(function (a, b) {
 							return Utils.sortAlphabetically(a, b, 'legalName');
 						});
 						vue.setPaginationData({items: response.data});
-                    });
-                } else {
+					});
+				} else {
 					options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 					axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 						vue.setPaginationData(response.data);
@@ -112,7 +113,7 @@
 			// Reset form and pagination
 			vue.category = 0;
 			vue.search = '';
-            vue.resetPaginationData();
+			vue.resetPaginationData();
 
 			let options = {};
 			if (to.query.hasOwnProperty('search')) {
@@ -146,7 +147,7 @@
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
-            'layout-spinner': require('./../layout/Spinner.vue'),
+			'layout-spinner': require('./../layout/Spinner.vue'),
 			'layout-sponsors': require('../layout/Sponsors.vue'),
 			'pagination': require('./../pagination/Pagination.vue'),
 			'search-results-header': require('./SearchResultsHeader.vue'),

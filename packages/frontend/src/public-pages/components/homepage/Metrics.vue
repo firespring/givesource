@@ -53,7 +53,7 @@
 
                                 <div class="grid-item">
                                     <div class="search-wrap">
-                                        <input v-model="formData.search" type="search" name="nonprofitName" id="nonprofitName">
+                                        <input v-model="formData.search" type="search" name="nonprofitName" id="nonprofitName" placeholder="Enter Keywords">
                                     </div>
                                     <div v-if="formErrors.search" class="notes notes--below notes--error">
                                         {{ formErrors.search }}
@@ -84,7 +84,7 @@
 
                 <div class="nonprofit-search__love" v-if="displayMatchFund">
                     <div class="mb3">
-                        <a href="#" class="btn btn--blue btn--lg">{{ matchFundButtonText }}</a>
+                        <a href="#" class="btn btn--accent btn--lg">{{ matchFundButtonText }}</a>
                     </div>
                     <div class="notes" v-if="matchFundDetails">
                         {{ matchFundDetails }}
@@ -110,6 +110,7 @@
 
 <script>
 	import * as Utils from './../../helpers/utils';
+
 	const moment = require('moment-timezone');
 	const numeral = require('numeral');
 
@@ -118,13 +119,13 @@
 			return {
 				category: '',
 
-                // Form Data
+				// Form Data
 				formData: {
 					search: ''
-                },
+				},
 
-                // Errors
-                formErrors: {},
+				// Errors
+				formErrors: {},
 
 				countdown: {
 					loaded: false,
@@ -137,10 +138,10 @@
 					seconds: null,
 				},
 
-                metrics: {
+				metrics: {
 					'DONATIONS_COUNT': 0,
-                    'DONATIONS_TOTAL': 0,
-                }
+					'DONATIONS_TOTAL': 0,
+				}
 			};
 		},
 		computed: {
@@ -167,8 +168,7 @@
 			},
             displayRegisterButton: function () {
 				return this.registerButtonText;
-            },
-            donationsCountArray: function () {
+            },donationsCountArray: function () {
 	            return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
             },
             donationsTotalArray: function () {
@@ -225,28 +225,28 @@
                 default: null,
             }
 		},
-        created: function () {
+		created: function () {
 			const vue = this;
 
 			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vue.metrics)})).then(function (response) {
 				response.data.forEach(function (metric) {
 					if (vue.metrics.hasOwnProperty(metric.key)) {
 						vue.metrics[metric.key] = metric.value;
-                    }
-                });
-            })
-        },
+					}
+				});
+			})
+		},
 		watch: {
 			eventDateEndOfDay: function (value) {
 				if (value && !this.loaded) {
 					this.initializeCountdown();
 				}
 			},
-            category: function (value) {
+			category: function (value) {
 				if (value) {
-					this.$router.push({name: 'search-results', query: { category: value }});
-                }
-            },
+					this.$router.push({name: 'search-results', query: {category: value}});
+				}
+			},
 			formData: {
 				handler: function () {
 					const vue = this;
@@ -310,17 +310,31 @@
 					vue.searchNonprofits();
 				}
 			},
-            searchNonprofits: function () {
+			searchNonprofits: function () {
 				const vue = this;
 
-	            vue.$router.push({name: 'search-results', query: {search: vue.formData.search}});
-            },
+				vue.$router.push(vue.generatePageLink({search: vue.formData.search}));
+			},
 			metricClass: function (digit) {
 				return /^\d+$/.test(digit) ? 'number' : 'text';
-            }
+			},
+			generatePageLink: function (query) {
+				const vue = this;
+				query = query || {};
+				query = _.extend({}, vue.$route.query, query);
+				Object.keys(query).forEach(function (key) {
+					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
+						delete query[key];
+					}
+				});
+				return {
+					name: 'search-results',
+					query: query
+				};
+			}
 		},
-        components: {
+		components: {
 			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue')
-        }
+		}
 	};
 </script>

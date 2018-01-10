@@ -34,7 +34,7 @@
                                 <label for="legalName">Organization Legal Name</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200">
+                                <input v-model="formData.legalName" type="text" name="legalName" id="legalName" maxlength="200" :class="{'has-error': formErrors.legalName}">
                                 <div v-if="formErrors.legalName" class="notes notes--below notes--error">
                                     {{ formErrors.legalName }}
                                 </div>
@@ -47,7 +47,7 @@
                                 <label for="taxId">Tax ID</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200">
+                                <input v-model="formData.taxId" type="text" name="taxId" id="taxId" maxlength="200" :class="{'has-error': formErrors.taxId}">
                                 <div v-if="formErrors.taxId" class="notes notes--below notes--error">
                                     {{ formErrors.taxId }}
                                 </div>
@@ -61,14 +61,16 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name">
+                                        <input v-model="formData.firstName" type="text" name="firstName" id="firstName" maxlength="200" placeholder="First Name"
+                                               :class="{'has-error': formErrors.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last">
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last"
+                                               :class="{'has-error': formErrors.lastName}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
-                                    You must enter a first name and last name
+                                    Enter your first name and last name
                                 </div>
                             </div>
                         </div>
@@ -78,7 +80,7 @@
                                 <label for="contactEmail">Contact Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200">
+                                <input v-model="formData.email" type="text" name="email" id="contactEmail" maxlength="200" :class="{'has-error': formErrors.email}">
                                 <div v-if="formErrors.email" class="notes notes--below notes--error">
                                     {{ formErrors.email }}
                                 </div>
@@ -94,7 +96,8 @@
 
 
                                 <div class="address1">
-                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1">
+                                    <input v-model="formData.address1" type="text" name="address1" id="address1" placeholder="Address Line 1"
+                                           :class="{'has-error': formErrors.address1}">
                                     <div v-if="formErrors.address1" class="notes notes--below notes--error">
                                         {{ formErrors.address1 }}
                                     </div>
@@ -114,7 +117,7 @@
                                 <div class="city-state-zip">
 
                                     <div class="city-state-zip__city">
-                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City">
+                                        <input v-model="formData.city" type="text" name="city" id="city" maxlength="200" placeholder="City" :class="{'has-error': formErrors.city}">
                                     </div>
 
                                     <div class="city-state-zip__state select-wrap">
@@ -122,7 +125,7 @@
                                     </div>
 
                                     <div class="city-state-zip__zip">
-                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP">
+                                        <input v-model="formData.zip" type="text" name="zip" id="zip" maxlength="200" placeholder="ZIP" :class="{'has-error': formErrors.zip}">
                                     </div>
 
                                 </div>
@@ -130,7 +133,7 @@
                             </div>
 
                             <div v-if="formErrors.city || formErrors.state || formErrors.zip" class="notes notes--below notes--error">
-                                You must enter a city, state and zip code
+                                Enter your organization's city, state and zip code
                             </div>
                         </div>
 
@@ -139,7 +142,7 @@
                                 <label for="phone">Organization Phone Number</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.phone" type="tel" name="phone" id="phone">
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone" :class="{'has-error': formErrors.phone}">
                                 <div v-if="formErrors.phone" class="notes notes--below notes--error">
                                     {{ formErrors.phone }}
                                 </div>
@@ -161,7 +164,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <forms-submit :processing="processing" color="blue">Register Now</forms-submit>
+                        <forms-submit :processing="processing" color="accent">Register Now</forms-submit>
                     </div>
                 </form>
             </div>
@@ -250,14 +253,25 @@
 			getConstraints: function () {
 				return {
 					legalName: {
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s legal name'
+						},
 					},
 					taxId: {
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s tax ID number'
+						},
 					},
 					address1: {
-						label: 'Address line 1',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s address'
+						},
 					},
 					address2: {
 						label: 'Address line 2',
@@ -270,12 +284,13 @@
 					categories: {
 						label: '',
 						presence: {
-							message: 'You must select at least one category'
+							allowEmpty: false,
+							message: 'Enter at least one category for your organization'
 						},
 						length: {
 							minimum: 1,
 							maximum: 3,
-							tooLong: 'You can only select up to three categories'
+							tooLong: 'Enter up to three categories for your organization'
 						}
 					},
 					city: {
@@ -289,10 +304,12 @@
 						presence: true,
 					},
 					phone: {
-						label: 'Organization Phone Number',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your organization\'s phone number'
+						},
 					},
-
 					firstName: {
 						presence: true,
 					},
@@ -300,10 +317,15 @@
 						presence: true,
 					},
 					email: {
-						label: 'Email address',
-						presence: true,
-						email: true,
-					}
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your email'
+						},
+						email: {
+							message: 'The email entered is not valid'
+						},
+					},
 				}
 			},
 			submit: function (event) {

@@ -16,8 +16,8 @@
   -->
 
 <template>
-    <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••">
-    <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••">
+    <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••" :class="{'has-error': hasError}">
+    <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••" :class="{'has-error': hasError}">
 </template>
 
 <script>
@@ -43,6 +43,10 @@
 			name: {
 				type: String,
 				default: null
+			},
+			hasError: {
+				type: Boolean,
+				default: false
 			}
 		},
 		mounted: function () {

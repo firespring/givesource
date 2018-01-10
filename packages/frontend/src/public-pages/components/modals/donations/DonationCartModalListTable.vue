@@ -37,7 +37,7 @@
                     <strong>You haven't added any donations yet.</strong>
                 </p>
                 <p>
-                    <a v-on:click.prevent="findNonprofit" href="#" class="btn btn--blue">Find a Nonprofit to Help</a>
+                    <a v-on:click.prevent="findNonprofit" href="#" class="btn btn--accent">Find a Nonprofit to Help</a>
                 </p>
             </td>
         </tr>

@@ -37,9 +37,9 @@
                                     <div class="caption">Raised</div>
                                 </div>
 
-                                <div class="donation-metrics__donations">
+                                <div class="donation-metrics__donations" v-if="nonprofitLoaded">
                                     <div class="num">{{ nonprofit.donationsCount }}</div>
-                                    <div class="caption">Donations</div>
+                                    <div class="caption">{{ donationsLabel }}</div>
                                 </div>
                             </div>
 
@@ -52,10 +52,10 @@
                             </div>
 
                             <div class="donation-share">
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fa fa-facebook" aria-hidden="true"></i><span>Share</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fa fa-twitter" aria-hidden="true"></i><span>Tweet</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fa fa-linkedin" aria-hidden="true"></i><span>Share</span></a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fa fa-envelope" aria-hidden="true"></i><span>Email</span></a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fab fa-linkedin-in" aria-hidden="true"></i>Share</a>
+                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fas fa-envelope" aria-hidden="true"></i>Email</a>
                             </div>
 
                         </div>
@@ -93,11 +93,18 @@
 				files: [],
 				nonprofit: {},
 				slides: [],
+
+                nonprofitLoaded: false,
 			}
 		},
 		props: [
 			'slug'
 		],
+        computed: {
+			donationsLabel: function () {
+				return this.nonprofit.donationsCount === 1 ? 'Donation' : 'Donations';
+            }
+        },
 		beforeMount: function () {
 			const vue = this;
 
@@ -109,10 +116,12 @@
 				let promise = Promise.resolve();
 				if (to.meta.nonprofit !== null) {
 					vue.nonprofit = to.meta.nonprofit;
+					vue.nonprofitLoaded = true;
                 } else {
 					promise = promise.then(function () {
 						return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 							vue.nonprofit = response.data;
+							vue.nonprofitLoaded = true;
 						});
                     });
                 }
@@ -142,10 +151,12 @@
 			let promise = Promise.resolve();
 			if (to.meta.nonprofit !== null) {
 				vue.nonprofit = to.meta.nonprofit;
+				vue.nonprofitLoaded = true;
 			} else {
 				promise = promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 						vue.nonprofit = response.data;
+						vue.nonprofitLoaded = true;
 					});
 				});
 			}

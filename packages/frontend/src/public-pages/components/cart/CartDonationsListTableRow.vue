@@ -26,7 +26,9 @@
             </div>
         </td>
         <td class="actions nowrap">
-            <a v-on:click="deleteCartItem" href="#" class="btn btn--sm btn--icon btn--red"><i class="fa fa-trash" aria-hidden="true"></i><span>Delete</span></a>
+            <a v-on:click="deleteCartItem" href="#" class="btn btn--sm btn--icon btn--red">
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>Delete
+            </a>
         </td>
     </tr>
 </template>

@@ -135,7 +135,9 @@
                                         <label for="phone" class="c-form-item-label-text">Phone #</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.phone" type="text" name="phone" id="phone" :class="{ 'has-error': formErrors.phone }">
+                                        <div class="u-control-icon u-control-icon--tel">
+                                            <input v-model="formData.phone" type="text" name="phone" id="phone" :class="{ 'has-error': formErrors.phone }">
+                                        </div>
                                         <div v-if="formErrors.phone" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.phone }}
                                         </div>

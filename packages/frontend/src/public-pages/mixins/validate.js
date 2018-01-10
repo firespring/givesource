@@ -23,21 +23,41 @@ validate.validators.label = function () {
 	return [];
 };
 
-validate.validators.ccNumber = function (value) {
+/**
+ * Credit card number validator
+ *
+ * @param {*} value
+ * @param {{}} [options]
+ * @return {*}
+ */
+validate.validators.ccNumber = function (value, options) {
 	if (!value || value === false || typeof value === 'undefined' || value === null) {
 		return null;
 	}
 	if (!$.payment.validateCardNumber(value)) {
+		if (options && options.hasOwnProperty('message')) {
+			return options.message;
+		}
 		return 'is not valid';
 	}
 	return null;
 };
 
-validate.validators.ccCvv = function (value) {
+/**
+ * Credit card security code validator
+ *
+ * @param {*} value
+ * @param {{}} [options]
+ * @return {*}
+ */
+validate.validators.ccCvv = function (value, options) {
 	if (!value || value === false || typeof value === 'undefined' || value === null) {
 		return null;
 	}
 	if (!$.payment.validateCardCVC(value)) {
+		if (options && options.hasOwnProperty('message')) {
+			return options.message;
+		}
 		return 'is not valid';
 	}
 	return null;

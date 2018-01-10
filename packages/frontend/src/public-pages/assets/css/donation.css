@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018  Firespring
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 .donation-wrapper {
 	border-radius: 4px;
 	background: #fff;
@@ -6,13 +23,18 @@
 
 .donation--nonprofit .page-hero__title {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 	-ms-flex-direction: column;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
 	flex-direction: column;
 	-ms-flex-pack: center;
+	-webkit-box-pack: center;
 	justify-content: center;
 	-ms-flex-align: center;
-	        align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
 }
 
 .donation--nonprofit .page-hero__logo {
@@ -39,6 +61,7 @@
 
 .donation-metrics {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 }
 
@@ -54,7 +77,7 @@
 }
 
 .donation-metrics__raised .num {
-	color: #5F9F21;
+	color: #07A356;
 }
 
 .donation-metrics .caption {
@@ -75,6 +98,7 @@
 	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
 	-ms-flex-pack: center;
+	-webkit-box-pack: center;
 	justify-content: center;
 }
 
@@ -101,10 +125,13 @@
 
 .nonprofit-campaign__slider .slide--image {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 	-ms-flex-pack: center;
+	-webkit-box-pack: center;
 	justify-content: center;
 	-ms-flex-align: center;
+	-webkit-box-align: center;
 	align-items: center;
 }
 
@@ -127,8 +154,10 @@
 
 .nonprofit-campaign__slider-nav {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 	-ms-flex-pack: center;
+	-webkit-box-pack: center;
 	justify-content: center;
 	padding: 1rem;
 }
@@ -157,144 +186,6 @@
 
 .nonprofit-campaign__content {
 	padding: 2rem 1rem 3rem;
-}
-
-/* Media queries */
-
-@media (min-width: 900px) {
-
-	.donation--nonprofit .page-hero__title {
-		-ms-flex-direction: row;
-		flex-direction: row;
-	}
-
-	.donation--nonprofit .page-hero__logo {
-		margin: 0 1rem 0 0;
-	}
-
-	.donation--nonprofit .page-hero__logo img {
-		max-height: 48px;
-	}
-	
-	.nonprofit-campaign__header {
-		display: -ms-flexbox;
-		display: flex;
-	}
-	
-	.nonprofit-campaign__donation {
-		-ms-flex: 1 0 50%;
-		flex: 1 0 50%;
-		max-width: 50%;
-		-ms-flex-order: 2;
-		order: 2;
-		border-bottom: 1px solid #dfdfdf;
-	}
-	
-	.nonprofit-campaign__slider {
-		-ms-flex: 1 0 50%;
-		flex: 1 0 50%;
-		max-width: 50%;
-		-ms-flex-order: 1;
-		order: 1;
-		height: auto;
-	}
-
-	.nonprofit-campaign__slider .slide {
-		width: auto;
-		height: auto;
-	}
-
-	.nonprofit-campaign__slider .slide--image img {
-		width: auto;
-		max-height: none;
-	}
-
-	.nonprofit-campaign__slider .slide--video {
-		padding: 0;
-	}
-	
-	.donation-metrics__raised,
-	.donation-metrics__donations {
-		text-align: center;
-	}
-	
-	.donation-metrics__raised {
-		-ms-flex: 1;
-		flex: 1;
-	}
-	
-	.donation-metrics__donations {
-		-ms-flex: 0 1 auto;
-		flex: 0 1 auto;
-	}
-	
-	.donation-metrics__donations {
-		margin: 0;
-	}
-
-	.donation-share {
-		display: -ms-flexbox;
-		display: flex;
-	}
-
-	.nonprofit-campaign__slider-nav {
-		-ms-flex-pack: start;
-		justify-content: flex-start;
-	}
-
-	.nonprofit-campaign__slider-nav a {
-		width: 14px;
-		height: 14px;
-	}
-
-}
-
-@media (min-width: 900px) and (min-height: 900px) {
-
-	.donation .page-hero {
-		padding: 6rem 2rem 12rem;
-	}
-
-	.donation-wrapper {
-		margin: -11rem auto 0;
-	}
-
-}
-
-@media (min-width: 1200px) {
-	
-	.nonprofit-campaign__donation {
-		display: -ms-flexbox;
-		display: flex;
-		-ms-flex-direction: column;
-		flex-direction: column;
-		-ms-flex: 1 0 400px;
-		flex: 1 0 400px;
-		max-width: 400px;
-		padding: 1.5rem;
-	}
-	
-	.nonprofit-campaign__slider {
-		-ms-flex: 1 0 770px;
-		flex: 1 0 770px;
-		max-width: 770px;
-		height: 433px;
-	}
-
-	.donation-metrics .num {
-		font-size: 2rem;
-	}
-
-	.donation-text {
-		-ms-flex: 1;
-		flex: 1;
-		font-size: 1.125rem;
-	}
-
-	.nonprofit-campaign__content {
-		font-size: 1.2rem;
-	}
-
 }
 
 /* ----------------------------------------------------------------------------
@@ -347,15 +238,20 @@ Donation options overlay
 
 .donation-overlay__wrapper {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
-	min-height: 100vh;
 	-ms-flex-direction: column;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
 	flex-direction: column;
 	-ms-flex-pack: center;
+	-webkit-box-pack: center;
 	justify-content: center;
 	-ms-flex-align: center;
-	        align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
 	z-index: 1001;
+	min-height: 100vh;
 	padding: 1rem;
 }
 
@@ -365,7 +261,7 @@ Donation options overlay
 	background: #fff;
 	padding: 1.5rem 1rem;
 	border-radius: 4px;
-	        box-shadow: 0 3px 9px rgba(0,0,0,.25);
+	box-shadow: 0 3px 9px rgba(0,0,0,.25);
 }
 
 .donation-modal--options {
@@ -404,7 +300,7 @@ Donation options overlay
 
 .donation-option a:hover,
 .donation-option a:active {
-	background-color: #5F9F21;
+	background-color: #07A356;
 	color: #fff;
 }
 
@@ -443,18 +339,21 @@ Donation options overlay
 	
 .donation-options-custom h2 {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 	-ms-flex-align: center;
-	        align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
 	margin: 0 0 2rem;
 	line-height: 1;
 }
 	
 .donation-options-custom h2:before,
 .donation-options-custom h2:after {
-	-ms-flex: 1;
-	        flex: 1;
 	display: block;
+	-ms-flex: 1;
+	-webkit-box-flex: 1;
+	flex: 1;
 	height: 1px;
 	background-color: #9B9B97;
 	content: '';
@@ -470,9 +369,11 @@ Donation options overlay
 	
 .donation-options-custom form {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 	-ms-flex-align: center;
-	        align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
 	max-width: 275px;
 	margin: 0 auto;
 	border: 1px solid #dadada;
@@ -482,7 +383,8 @@ Donation options overlay
 	
 .donation-options-custom .input {
 	-ms-flex: 1;
-	        flex: 1;
+	-webkit-box-flex: 1;
+	flex: 1;
 	position: relative;
 	margin: 0 .5rem 0 0;
 }
@@ -499,7 +401,7 @@ Donation options overlay
 	
 .donation-options-custom [type=text] {
 	border: 0;
-	        box-shadow: none;
+	box-shadow: none;
 	padding-left: 2rem;
 	font-size: 1.25rem;
 }
@@ -528,7 +430,7 @@ Donation options overlay
 	height: auto;
 	background: none;
 	font-size: 1.5rem;
-	color: #5F9F21;
+	color: #07A356;
 	border-left: 1px solid #dadada;
 	padding: .25rem 1rem;
 	transition: color linear .2s;
@@ -536,102 +438,7 @@ Donation options overlay
 
 .donation-options-custom .btn:hover,
 .donation-options-custom .btn:active {
-	color: #088053;
-}
-
-/* Media queries */
-
-@media (min-width: 640px) {
-	
-	.donation-modal__header {
-		margin: 0 0 2rem;
-	}
-
-	.donation-modal__title {
-		font-size: 1.75rem;
-	}
-	
-	.donation-options {
-		display: -ms-flexbox;
-		display: flex;
-		-ms-flex-pack: center;
-		justify-content: center;
-		-ms-flex-wrap: wrap;
-		flex-wrap: wrap;
-		margin-left: -1rem;
-		margin-right: -1rem;
-	}
-	
-	.donation-option {
-		-ms-flex: 1 0 50%;
-		flex: 1 0 50%;
-		max-width: 50%;
-		padding: 0 1rem;
-		margin: 1.875rem 0 0;
-	}
-	
-	.donation-option:nth-child(1),
-	.donation-option:nth-child(2) {
-		margin: 0;
-	}
-	
-	.donation-options-custom:before {
-		min-width: 332px;
-	}
-
-}
-
-@media (min-width: 1000px) {
-
-	.donation-option__title {
-		font-size: 1.4375rem;
-	}
-
-	.donation-close {
-		font-size: 2rem;
-	}
-
-}
-
-@media (min-width: 1200px) {
-
-	.donation__text {
-		font-size: 1.125rem;
-	}
-	
-	.donation-modal__title {
-		font-size: 2.3125rem;
-	}
-	
-	.donation-options-custom {
-		margin: 4.25rem 0 0;
-	}
-	
-	.donation-options-custom:before {
-		top: -.75rem;
-		font-size: 1.25rem;
-		width: 400px;
-	}
-	
-	.donation-options-custom form {
-		max-width: 370px;
-		padding: .875rem 0 .875rem .75rem;
-	}
-	
-	.donation-options-custom .input:before {
-		top: .5rem;
-		font-size: 1.5rem;
-	}
-	
-	.donation-options-custom [type=text] {
-		font-size: 1.5rem;
-		padding-left: 2.25rem;
-	}
-	
-	.donation-options-custom .btn {
-		padding: .25rem 1.75rem;
-	}
-
+	color: #000;
 }
 
 /* ----------------------------------------------------------------------------
@@ -708,6 +515,7 @@ Accepted CC
 
 .accepted-cc {
 	display: -ms-flexbox;
+	display: -webkit-box;
 	display: flex;
 }
 
@@ -730,7 +538,7 @@ Accepted CC
 }
 
 /* ----------------------------------------------------------------------------
-Media queries
+Global Media queries
 ---------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
@@ -741,10 +549,12 @@ Media queries
 
 	.table-donations tbody tr {
 		display: -ms-flexbox;
+		display: -webkit-box;
 		display: flex;
 		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
 		-ms-flex-align: center;
+		-webkit-box-align: center;
 		align-items: center;
 	}
 
@@ -755,6 +565,7 @@ Media queries
 
 	.table-donations tbody td.organization {
 		-ms-flex: 1 0 100%;
+		-webkit-box-flex: 1;
 		flex: 1 0 100%;
 		padding-bottom: 5px;
 	}
@@ -773,10 +584,13 @@ Media queries
 
 	.donation-footer {
 		display: -ms-flexbox;
+		display: -webkit-box;
 		display: flex;
 		-ms-flex-pack: center;
+		-webkit-box-pack: center;
 		justify-content: center;
 		-ms-flex-align: center;
+		-webkit-box-align: center;
 		align-items: center;
 		text-align: left;
 	}
@@ -795,16 +609,254 @@ Media queries
 
 	.cart-totals__transaction-fees .checkbox-solo {
 		-ms-flex-pack: center;
+		-webkit-box-pack: center;
 		justify-content: center;
 	}
 
 	.cart-totals__transaction-fees .checkbox-solo > span {
 		-ms-flex: none;
+		-webkit-box-flex: 0;
 		flex: none;
 	}
 	
 	.cart-totals__total {
 		font-size: 1.5rem;
+	}
+	
+	.donation-modal__header {
+		margin: 0 0 2rem;
+	}
+
+	.donation-modal__title {
+		font-size: 1.75rem;
+	}
+	
+	.donation-options {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: flex;
+		-ms-flex-pack: center;
+		-webkit-box-pack: center;
+		justify-content: center;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+		margin-left: -1rem;
+		margin-right: -1rem;
+	}
+	
+	.donation-option {
+		-ms-flex: 1 0 50%;
+		-webkit-box-flex: 1;
+		flex: 1 0 50%;
+		max-width: 50%;
+		padding: 0 1rem;
+		margin: 1.875rem 0 0;
+	}
+	
+	.donation-option:nth-child(1),
+	.donation-option:nth-child(2) {
+		margin: 0;
+	}
+	
+	.donation-options-custom:before {
+		min-width: 332px;
+	}
+
+}
+
+@media (min-width: 900px) {
+
+	.donation--nonprofit .page-hero__title {
+		-ms-flex-direction: row;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		flex-direction: row;
+	}
+
+	.donation--nonprofit .page-hero__logo {
+		margin: 0 1rem 0 0;
+	}
+
+	.donation--nonprofit .page-hero__logo img {
+		max-height: 48px;
+	}
+	
+	.nonprofit-campaign__header,
+	.donation-share {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: flex;
+	}
+	
+	.nonprofit-campaign__donation {
+		-ms-flex: 1 0 50%;
+		-webkit-box-flex: 1;
+		flex: 1 0 50%;
+		max-width: 50%;
+		-ms-flex-order: 2;
+		-webkit-box-ordinal-group: 3;
+		order: 2;
+		border-bottom: 1px solid #dfdfdf;
+	}
+	
+	.nonprofit-campaign__slider {
+		-ms-flex: 1 0 50%;
+		-webkit-box-flex: 1;
+		flex: 1 0 50%;
+		max-width: 50%;
+		-ms-flex-order: 1;
+		-webkit-box-ordinal-group: 2;
+		order: 1;
+		height: auto;
+	}
+
+	.nonprofit-campaign__slider .slide {
+		width: auto;
+		height: auto;
+	}
+
+	.nonprofit-campaign__slider .slide--image img {
+		width: auto;
+		max-height: none;
+	}
+
+	.nonprofit-campaign__slider .slide--video {
+		padding: 0;
+	}
+	
+	.donation-metrics__raised,
+	.donation-metrics__donations {
+		text-align: center;
+	}
+	
+	.donation-metrics__raised {
+		-ms-flex: 1;
+		-webkit-box-flex: 1;
+		flex: 1;
+	}
+	
+	.donation-metrics__donations {
+		-ms-flex: 0 1 auto;
+		-webkit-box-flex: 0;
+		flex: 0 1 auto;
+	}
+	
+	.donation-metrics__donations {
+		margin: 0;
+	}
+
+	.nonprofit-campaign__slider-nav {
+		-ms-flex-pack: start;
+		-webkit-box-pack: start;
+		justify-content: flex-start;
+	}
+
+	.nonprofit-campaign__slider-nav a {
+		width: 14px;
+		height: 14px;
+	}
+
+}
+
+@media (min-width: 900px) and (min-height: 900px) {
+
+	.donation .page-hero {
+		padding: 6rem 2rem 12rem;
+	}
+
+	.donation-wrapper {
+		margin: -11rem auto 0;
+	}
+
+}
+
+@media (min-width: 1000px) {
+
+	.donation-option__title {
+		font-size: 1.4375rem;
+	}
+
+	.donation-close {
+		font-size: 2rem;
+	}
+
+}
+
+@media (min-width: 1200px) {
+	
+	.nonprofit-campaign__donation {
+		display: -ms-flexbox;
+		display: -webkit-box;
+		display: flex;
+		-ms-flex-direction: column;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		flex-direction: column;
+		-ms-flex: 1 0 400px;
+		-webkit-box-flex: 1;
+		flex: 1 0 400px;
+		max-width: 400px;
+		padding: 1.5rem;
+	}
+	
+	.nonprofit-campaign__slider {
+		-ms-flex: 1 0 770px;
+		-webkit-box-flex: 1;
+		flex: 1 0 770px;
+		max-width: 770px;
+		height: 433px;
+	}
+
+	.donation-metrics .num {
+		font-size: 2rem;
+	}
+
+	.donation-text {
+		-ms-flex: 1;
+		-webkit-box-flex: 1;
+		flex: 1;
+		font-size: 1.125rem;
+	}
+
+	.nonprofit-campaign__content {
+		font-size: 1.2rem;
+	}
+
+	.donation__text {
+		font-size: 1.125rem;
+	}
+	
+	.donation-modal__title {
+		font-size: 2.3125rem;
+	}
+	
+	.donation-options-custom {
+		margin: 4.25rem 0 0;
+	}
+	
+	.donation-options-custom:before {
+		top: -.75rem;
+		font-size: 1.25rem;
+		width: 400px;
+	}
+	
+	.donation-options-custom form {
+		max-width: 370px;
+		padding: .875rem 0 .875rem .75rem;
+	}
+	
+	.donation-options-custom .input:before {
+		top: .5rem;
+		font-size: 1.5rem;
+	}
+	
+	.donation-options-custom [type=text] {
+		font-size: 1.5rem;
+		padding-left: 2.25rem;
+	}
+	
+	.donation-options-custom .btn {
+		padding: .25rem 1.75rem;
 	}
 
 }

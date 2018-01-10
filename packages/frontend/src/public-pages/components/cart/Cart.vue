@@ -37,14 +37,16 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="donor.firstName" type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name">
+                                        <input v-model="donor.firstName" type="text" name="donorNameFirst" id="donorNameFirst" placeholder="First Name"
+                                               :class="{'has-error': formErrors.donor.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="donor.lastName" type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name">
+                                        <input v-model="donor.lastName" type="text" name="donorNameLast" id="donorNameLast" placeholder="Last Name"
+                                               :class="{'has-error': formErrors.donor.lastName}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.donor.firstName || formErrors.donor.lastName" class="notes notes--below notes--error">
-                                    You must enter a first name and last name.
+                                    Enter your first name and last name
                                 </div>
                             </div>
                         </div>
@@ -54,7 +56,7 @@
                                 <label for="donorEmail">Your Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="donor.email" type="email" name="donorEmail" id="donorEmail">
+                                <input v-model="donor.email" type="email" name="donorEmail" id="donorEmail" :class="{'has-error': formErrors.donor.email}">
                                 <div v-if="formErrors.donor.email" class="notes notes--below notes--error">
                                     {{ formErrors.donor.email }}
                                 </div>
@@ -68,14 +70,16 @@
                             <div class="form-item__control">
 
                                 <div class="address1">
-                                    <input v-model="donor.address1" type="text" name="billingAddress1" id="billingAddress1" placeholder="Address Line 1">
+                                    <input v-model="donor.address1" type="text" name="billingAddress1" id="billingAddress1" placeholder="Address Line 1"
+                                           :class="{'has-error': formErrors.donor.address1}">
                                     <div v-if="formErrors.donor.address1" class="notes notes--below notes--error">
                                         {{ formErrors.donor.address1 }}
                                     </div>
                                 </div>
 
                                 <div class="address2">
-                                    <input v-model="donor.address2" type="text" name="billingAddress2" id="billingAddress2" placeholder="Address Line 2">
+                                    <input v-model="donor.address2" type="text" name="billingAddress2" id="billingAddress2" placeholder="Address Line 2"
+                                           :class="{'has-error': formErrors.donor.address2}">
                                     <div v-if="formErrors.donor.address2" class="notes notes--below notes--error">
                                         {{ formErrors.donor.address2 }}
                                     </div>
@@ -83,17 +87,18 @@
 
                                 <div class="city-state-zip">
                                     <div class="city-state-zip__city">
-                                        <input v-model="donor.city" type="text" name="billingCity" id="billingCity" placeholder="City">
+                                        <input v-model="donor.city" type="text" name="billingCity" id="billingCity" placeholder="City"
+                                               :class="{'has-error': formErrors.donor.city}">
                                     </div>
                                     <div class="city-state-zip__state select-wrap">
                                         <forms-address-state v-model="donor.state" name="billingState" id="billingState" placeholder="State"></forms-address-state>
                                     </div>
                                     <div class="city-state-zip__zip">
-                                        <input v-model="donor.zip" type="text" name="billingZip" id="billingZip" placeholder="ZIP">
+                                        <input v-model="donor.zip" type="text" name="billingZip" id="billingZip" placeholder="ZIP" :class="{'has-error': formErrors.donor.zip}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.donor.city || formErrors.donor.state || formErrors.donor.zip" class="notes notes--below notes--error">
-                                    You must enter a city, state and zip code.
+                                    Enter your city, state and zip code
                                 </div>
 
                             </div>
@@ -104,7 +109,7 @@
                                 <label for="billingPhone">Your Billing Phone</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="donor.phone" type="tel" name="billingPhone" id="billingPhone">
+                                <input v-model="donor.phone" type="tel" name="billingPhone" id="billingPhone" :class="{'has-error': formErrors.donor.phone}">
                                 <div v-if="formErrors.donor.phone" class="notes notes--below notes--error">
                                     {{ formErrors.donor.phone }}
                                 </div>
@@ -137,7 +142,8 @@
                                 <label for="cc_num">Credit Card #</label>
                             </div>
                             <div class="form-item__control">
-                                <forms-payment-cc-number v-model="paymentDetails.ccNumber" name="cc_num" id="cc_num"></forms-payment-cc-number>
+                                <forms-payment-cc-number v-model="paymentDetails.ccNumber" name="cc_num" id="cc_num"
+                                                         :hasError="formErrors.paymentDetails.ccNumber"></forms-payment-cc-number>
                                 <div v-if="formErrors.paymentDetails.ccNumber" class="notes notes--below notes--error">
                                     {{ formErrors.paymentDetails.ccNumber }}
                                 </div>
@@ -149,7 +155,7 @@
                                 <label for="cc_name">Name on Card</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name">
+                                <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name" :class="{'has-error': formErrors.paymentDetails.ccName}">
                                 <div v-if="formErrors.paymentDetails.ccName" class="notes notes--below notes--error">
                                     {{ formErrors.paymentDetails.ccName }}
                                 </div>
@@ -182,7 +188,8 @@
                                             <label for="cc_csc">Security Code</label>
                                         </div>
                                         <div class="form-item__control">
-                                            <forms-payment-cc-security-code v-model="paymentDetails.ccCvv" name="cc_csc" id="cc_csc"></forms-payment-cc-security-code>
+                                            <forms-payment-cc-security-code v-model="paymentDetails.ccCvv" name="cc_csc" id="cc_csc"
+                                                                            :hasError="formErrors.paymentDetails.ccCvv"></forms-payment-cc-security-code>
                                             <div v-if="formErrors.paymentDetails.ccCvv" class="notes notes--below notes--error">
                                                 {{ formErrors.paymentDetails.ccCvv }}
                                             </div>
@@ -340,19 +347,27 @@
 			getDonorConstraints: function () {
 				return {
 					address1: {
-						label: 'Address line 1',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your address'
+						},
 					},
 					address2: {
-						label: 'Address line 2',
 						presence: false,
 					},
 					city: {
 						presence: true,
 					},
 					email: {
-						presence: true,
-						email: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your email'
+                        },
+						email: {
+							message: 'The email entered is not valid'
+                        },
 					},
 					firstName: {
 						presence: true,
@@ -361,14 +376,16 @@
 						presence: true,
 					},
 					phone: {
-						label: 'Phone number',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your phone number'
+						},
 					},
 					state: {
 						presence: true,
 					},
 					zip: {
-						label: 'Zip code',
 						presence: true,
 					},
 				};
@@ -386,26 +403,45 @@
 			getPaymentDetailsConstraints: function () {
 				return {
 					ccNumber: {
-						label: 'Credit card number',
-						presence: true,
-						ccNumber: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your credit card number'
+						},
+						ccNumber: {
+							message: 'The credit card number entered is not valid'
+						},
 					},
 					ccExpMonth: {
-						label: 'Credit card expiration month',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your card\'s expiration month'
+						},
 					},
 					ccExpYear: {
-						label: 'Credit card expiration year',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your card\'s expiration year'
+						},
 					},
 					ccName: {
-						label: 'Name on card',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter the name on your card'
+						},
 					},
 					ccCvv: {
-						label: 'Security code',
-						presence: true,
-						ccCvv: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+							message: 'Enter your card\'s security code'
+						},
+						ccCvv: {
+							message: 'The security code entered is not valid'
+						},
 					},
 				};
 			},

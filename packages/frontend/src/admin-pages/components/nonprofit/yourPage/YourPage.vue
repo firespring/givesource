@@ -44,7 +44,7 @@
                                         <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>Edit Page Content
                                     </router-link>
                                     <router-link :to="{name: 'nonprofit-your-page', query: {tab: 'media'}}" :class="{ here: tabComponent === 'tab-media'}" active-class="" replace>
-                                        <i class="fa fa-fw fa-picture-o" aria-hidden="true"></i>Manage Photos &amp; Videos
+                                        <i class="fa fa-fw fa-picture-o" aria-hidden="true"></i>Manage Images &amp; Videos
                                     </router-link>
                                     <router-link :to="{name: 'nonprofit-your-page', query: {tab: 'donation-tiers'}}" :class="{ here: tabComponent === 'tab-donation-tiers'}"
                                                  active-class="" replace>

@@ -36,14 +36,16 @@
                             <div class="form-item__control">
                                 <div class="grid">
                                     <div class="grid-item">
-                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" placeholder="First Name">
+                                        <input v-model="formData.firstName" type="text" name="nameFirst" id="nameFirst" placeholder="First Name"
+                                               :class="{'has-error': formErrors.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="nameLast" id="nameLast" placeholder="Last Name">
+                                        <input v-model="formData.lastName" type="text" name="nameLast" id="nameLast" placeholder="Last Name"
+                                               :class="{'has-error': formErrors.lastName}">
                                     </div>
                                 </div>
                                 <div v-if="formErrors.firstName || formErrors.lastName" class="notes notes--below notes--error">
-                                    You must enter a first name and last name
+                                    Enter your first name and last name
                                 </div>
                             </div>
                         </div>
@@ -53,7 +55,7 @@
                                 <label for="email">Your Email</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="formData.email" type="email" name="email" id="email">
+                                <input v-model="formData.email" type="email" name="email" id="email" :class="{'has-error': formErrors.email}">
                                 <div v-if="formErrors.email" class="notes notes--below notes--error">
                                     {{ formErrors.email }}
                                 </div>
@@ -65,7 +67,7 @@
                                 <label for="questions">Your Questions</label>
                             </div>
                             <div class="form-item__control">
-                                <textarea v-model="formData.message" name="questions" id="questions"></textarea>
+                                <textarea v-model="formData.message" name="questions" id="questions" :class="{'has-error': formErrors.message}"></textarea>
                                 <div v-if="formErrors.message" class="notes notes--below notes--error">
                                     {{ formErrors.message }}
                                 </div>
@@ -75,7 +77,7 @@
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
-                        <forms-submit :processing="processing" color="blue">Send Your Questions</forms-submit>
+                        <forms-submit :processing="processing" color="accent">Send Your Questions</forms-submit>
                     </div>
                 </form>
 
@@ -163,9 +165,14 @@
 			getConstraints: function () {
 				return {
 					email: {
-						label: 'Email address',
-						presence: true,
-						email: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your email',
+						},
+						email: {
+							message: 'The email entered is not valid'
+						},
 					},
 					firstName: {
 						presence: true,
@@ -174,8 +181,11 @@
 						presence: true,
 					},
 					message: {
-						label: 'Questions',
-						presence: true,
+						label: '',
+						presence: {
+							allowEmpty: false,
+                            message: 'Enter your questions'
+                        },
 					}
 				}
 			},

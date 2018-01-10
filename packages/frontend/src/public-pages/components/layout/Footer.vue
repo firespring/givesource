@@ -26,11 +26,11 @@
                 </div>
 
                 <div class="contact-info__contact">
-                    <router-link :to="{ name: 'contact' }"><i class="fa fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
+                    <router-link :to="{ name: 'contact' }"><i class="fas fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
                 </div>
 
                 <div class="contact-info__contact" v-if="contactPhone">
-                    <i class="fa fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
+                    <i class="fas fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
                 </div>
 
                 <div class="contact-info__terms" v-if="displayTerms">
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="contact-info__login">
-                    <a :href="adminPagesUrl"><i class="fa fa-sign-in" aria-hidden="true"></i><span>Admin Log In</span></a>
+                    <a :href="adminPagesUrl"><i class="fas fa-sign-in-alt" aria-hidden="true"></i><span>Admin Log In</span></a>
                 </div>
             </div>
         </footer>

@@ -120,7 +120,7 @@
         },
 		watch: {
 			formData: {
-				handler: function (value) {
+				handler: function () {
 					const vue = this;
 					if (Object.keys(vue.formErrors).length) {
 						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());

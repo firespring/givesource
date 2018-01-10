@@ -28,25 +28,33 @@
     <link rel="stylesheet" href="/assets/css/donation.css">
 
     <style>
+        a:link,
+        a:visited {
+            color: #0098d8;
+        }
+        a:hover,
+        a:active {
+            color: #000;
+        }
         .page-hero {
             background-image: url('/assets/temp/hero.png');
         }
-
-        .page-header__nav-menu a:link,
-        .page-header__nav-menu a:visited {
-            color: #417505;
+        .btn--accent,
+        .btn--accent:link,
+        .btn--accent:visited {
+            background-color: #0198d8;
+            color: #fff;
         }
-
-        .page-header__nav-menu a:hover,
-        .page-header__nav-menu a:active {
-            color: #000;
+        .btn--accent:hover,
+        .btn--accent:active {
+            background-color: #000;
         }
     </style>
 
     <!-- Javascript -->
-    <script defer src="https://use.fontawesome.com/d6f7974e3d.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
 </head>
 <body>
-    <div id="app"></div>
+<div id="app"></div>
 </body>
 </html>

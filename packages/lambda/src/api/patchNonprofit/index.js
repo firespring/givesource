@@ -33,7 +33,12 @@ exports.handle = function (event, context, callback) {
 		nonprofit = new Nonprofit(result);
 		nonprofit.populate(request._body);
 		nonprofit.status = result.status;
-		return repository.generateUniqueSlug(nonprofit, request.get('slug'));
+
+		if (request.get('slug', false)) {
+			return repository.generateUniqueSlug(nonprofit, request.get('slug'));
+		} else {
+			return Promise.resolve();
+		}
 	}).then(function () {
 		return nonprofit.validate();
 	}).then(function () {

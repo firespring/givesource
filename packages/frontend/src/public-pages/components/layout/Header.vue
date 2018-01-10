@@ -36,10 +36,15 @@
         </form>
 
         <div class="page-header__cart items-center">
-            <router-link :to="{ name: 'cart' }"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Your Donations ({{ cartItemsCount }})</span></router-link>
+            <router-link :to="{ name: 'cart' }" title="View your current donations">
+                <span class="fa-layers fa-fw" ref="shoppingBag">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-10 down-3">{{ cartItemsCount }}</span>
+                </span>
+            </router-link>
         </div>
 
-        <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fa fa-bars" aria-hidden="true"></i><span>Menu</span></a>
+        <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars" aria-hidden="true"></i><span>Menu</span></a>
     </header>
 </template>
 
@@ -76,11 +81,16 @@
 			vue.bus.$on('updateCartItemsCounter', function () {
 				vue.updateCartItemsCount();
 			});
+
+			vue.bus.$on('navigate', function () {
+				vue.formData.search = '';
+            });
 		},
 		beforeDestroy: function () {
 			const vue = this;
 
 			vue.bus.$off('updateCartItemsCounter');
+			vue.bus.$off('navigate');
 		},
         watch: {
 	        formData: {
@@ -122,6 +132,7 @@
 				const vue = this;
 
 				vue.cartItemsCount = vue.$store.state.cartItems.length;
+				$(vue.$refs.shoppingBag).find('span[data-fa-processed]').text(vue.cartItemsCount);
 			},
 			openMenu: function (event) {
 				event.preventDefault();
