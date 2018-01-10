@@ -404,14 +404,14 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-							message: 'Enter the name on the card'
+							message: 'Enter the name on your card'
 						},
 					},
 					ccCvv: {
 						label: '',
 						presence: {
 							allowEmpty: false,
-							message: 'Enter the card\'s security code'
+							message: 'Enter your card\'s security code'
 						},
 						ccCvv: {
 							message: 'The security code entered is not valid'
