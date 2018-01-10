@@ -27,6 +27,7 @@ import ModalMixin from './mixins/modals';
 import NavigationComponent from './components/header/Navigation.vue';
 import Request from './helpers/request';
 import router from './router';
+import ShaveDirective from './directives/shave';
 import store from './store';
 import UserMixin from './mixins/user';
 import UtilsMixin from './mixins/utils';
@@ -46,6 +47,7 @@ Vue.directive('alert-close', AlertCloseDirective);
 Vue.directive('auto-focus', AutoFocusDirective);
 Vue.directive('floating-label', FloatingLabelDirective);
 Vue.directive('money', VueMoney.VMoney);
+Vue.directive('shave', ShaveDirective);
 
 // Register global components
 Vue.component('navigation', NavigationComponent);
