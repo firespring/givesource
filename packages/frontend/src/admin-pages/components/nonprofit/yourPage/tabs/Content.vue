@@ -86,13 +86,13 @@
 </template>
 
 <script>
-    const slug = require('slug');
+	const slug = require('slug');
 
 	module.exports = {
 		data: function () {
 			return {
-                loaded: false,
-                editSlug: false,
+				loaded: false,
+				editSlug: false,
 
 				// Form Data
 				formData: {
@@ -101,23 +101,23 @@
 					slug: '',
 				},
 
-                // Errors
-                formErrors: {}
+				// Errors
+				formErrors: {}
 			}
 		},
-        computed: {
+		computed: {
 			pageLink: function () {
 				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL') + '/nonprofits/'
-            }
-        },
-        props: {
+			}
+		},
+		props: {
 			nonprofit: {
 				type: Object,
-                default: function () {
-                	return {};
-                }
-            }
-        },
+				default: function () {
+					return {};
+				}
+			}
+		},
 		watch: {
 			formData: {
 				handler: function () {
@@ -128,15 +128,15 @@
 				},
 				deep: true
 			},
-            nonprofit: {
+			nonprofit: {
 				handler: function () {
 					const vue = this;
 
 					vue.formData = vue.sync(vue.formData, vue.nonprofit);
 					vue.loaded = true;
-                },
-                deep: true
-            }
+				},
+				deep: true
+			}
 		},
 		methods: {
 			getConstraints: function () {
@@ -148,9 +148,9 @@
 						presence: false,
 						length: 200,
 					},
-                    slug: {
+					slug: {
 						presence: true
-                    }
+					}
 				}
 			},
 			submit: function (e) {
@@ -187,19 +187,19 @@
 					console.log(err);
 				});
 			},
-            changeSlug: function (event) {
+			changeSlug: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-                vue.editSlug = true;
-            },
-            slugMask: function (event) {
+				vue.editSlug = true;
+			},
+			slugMask: function (event) {
 				const vue = this;
 				vue.formData.slug = slug(event.target.value, {lower: true});
-            }
+			}
 		},
-        components: {
+		components: {
 			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
-        }
+		}
 	};
 </script>

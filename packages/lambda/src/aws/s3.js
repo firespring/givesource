@@ -56,19 +56,26 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
  * @param {string} region
  * @param {string} bucketName
  * @param {string} objectName
- * @param body
+ * @param {*} body
+ * @param {String} [contentType]
+ * @param {String} [contentDisposition]
  * @return {Promise}
  */
-S3.prototype.putObject = function (region, bucketName, objectName, body) {
+S3.prototype.putObject = function (region, bucketName, objectName, body, contentType, contentDisposition) {
 	const awsS3 = new AWS.S3({region});
 	return new Promise(function (resolve, reject) {
-		const contentType = mime.lookup(objectName);
+		contentType = contentType ? contentType : mime.lookup(objectName);
 		const params = {
 			Bucket: bucketName,
 			Body: body,
 			Key: objectName,
 			ContentType: contentType
 		};
+
+		if (contentDisposition) {
+			params['ContentDisposition'] = contentDisposition;
+		}
+
 		awsS3.putObject(params, function (err) {
 			if (err) {
 				reject(err);
@@ -102,7 +109,6 @@ S3.prototype.deleteObject = function (region, bucketName, objectName) {
 		});
 	});
 };
-
 
 /**
  * List AWS S3 objects
