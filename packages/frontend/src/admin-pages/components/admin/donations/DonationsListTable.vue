@@ -37,8 +37,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <donations-list-table-row v-for="donation in donations" :donation="donation" :nonprofit="getNonprofit(donation)"
-                                  :donor="getDonor(donation)" :key="donation.uuid"></donations-list-table-row>
+        <donations-list-table-row v-for="donation in donations" :donation="donation" :key="donation.uuid"></donations-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -49,14 +48,6 @@
 
 <script>
 	module.exports = {
-		data: function () {
-			return {
-				nonprofits: [],
-				donors: [],
-
-				loaded: false
-			};
-		},
 		computed: {
 			displayRows: function () {
 				return this.loaded && this.donations.length;
@@ -65,60 +56,14 @@
 		props: {
 			donations: {
 				type: Array,
-				default: function () {
-					return [];
-				}
-			}
-		},
-		watch: {
-			donations: function () {
-				const vue = this;
-
-				if (!vue.loaded) {
-					vue.loadData();
-				} else {
-					vue.loaded = false;
-				}
-			}
-		},
-		methods: {
-			loadData: function () {
-				const vue = this;
-
-				let promise = Promise.resolve();
-				vue.donations.forEach(function (donation) {
-					promise = promise.then(function () {
-						if (!_.find(vue.nonprofits, {'uuid': donation.nonprofitUuid})) {
-							return vue.$request.get('nonprofits/' + donation.nonprofitUuid).then(function (response) {
-								vue.nonprofits.push(response.data);
-							});
-						}
-						return Promise.resolve();
-					}).then(function () {
-						if (!_.find(vue.donors, {'uuid': donation.donorUuid}) && !donation.isAnonymous) {
-							return vue.$request.get('donors/' + donation.donorUuid).then(function (response) {
-								vue.donors.push(response.data);
-							});
-						}
-						return Promise.resolve();
-					});
-				});
-
-				promise = promise.then(function () {
-					vue.loaded = true;
-				});
-			},
-			getNonprofit: function (donation) {
-				const vue = this;
-				return _.find(vue.nonprofits, {uuid: donation.nonprofitUuid});
-			},
-			getDonor: function (donation) {
-				const vue = this;
-				if (!donation.isAnonymous) {
-					return _.find(vue.donors, {uuid: donation.donorUuid});
-				}
-				return {};
-			},
+                default: function () {
+                	return [];
+                }
+            },
+            loaded: {
+				type: Boolean,
+                default: false,
+            }
 		},
 		components: {
 			'donations-list-table-row': require('./DonationsListTableRow.vue'),

@@ -18,12 +18,12 @@
 <template>
     <tr>
         <td class="u-nowrap u-text-r">
-            <div class="date">{{ date }}</div>
-            <div class="time">{{ time }}</div>
+            <div class="date">{{ formattedDate }}</div>
+            <div class="time">{{ formattedTime }}</div>
         </td>
 
         <td class="u-text-r">
-            {{ amount }}
+            {{ formattedAmount }}
         </td>
 
         <td v-if="donation.isAnonymous">
@@ -31,16 +31,16 @@
         </td>
 
         <td v-else>
-            {{ donor.firstName }} {{ donor.lastName}}
+            {{ donation.donorFirstName }} {{ donation.donorLastName}}
         </td>
 
         <td v-if="donation.isAnonymous"></td>
 
         <td v-else-if="donation.isOfflineDonation">
-            <div class="c-user-strip u-flex u-items-center" v-if="donor.email">
+            <div class="c-user-strip u-flex u-items-center" v-if="donation.donorEmail">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${donor.email}`">{{ donor.email }}</a>
+                        <a :href="`mailto:${donation.donorEmail}`">{{ donation.donorEmail }}</a>
                     </div>
                 </div>
             </div>
@@ -50,10 +50,10 @@
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ donor.email }`">{{ donor.email }}</a>
+                        <a :href="`mailto:${ donation.donorEmail }`">{{ donation.donorEmail }}</a>
                     </div>
                     <div class="c-user-strip__phone u-icon u-flex u-items-center">
-                        {{ donor.phone }}
+                        {{ donation.donorPhone }}
                     </div>
                 </div>
             </div>
@@ -69,9 +69,9 @@
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__address u-icon u-flex">
-                        {{ donor.address1}}<br>
-                        {{ donor.address2 }}<br>
-                        {{ donor.city }}, {{ donor.state }} {{ donor.zip }}
+                        {{ donation.donorAddress1 }}<br v-if="donation.donorAddress2">
+                        {{ donation.donorAddress2 }}<br v-if="donation.donorCity || donation.donorState || donation.donorZip">
+                        {{ donation.donorCity }}, {{ donation.donorState }} {{ donation.donorZip }}
                     </div>
                 </div>
             </div>
@@ -84,24 +84,18 @@
 
 	module.exports = {
 		computed: {
-			date: function () {
+			formattedAmount: function () {
+				return numeral(this.donation.subtotal / 100).format('$0,00.00');
+			},
+			formattedDate: function () {
 				return new Date(this.donation.createdOn).toLocaleDateString();
 			},
-			time: function () {
+			formattedTime: function () {
 				return new Date(this.donation.createdOn).toLocaleTimeString();
-			},
-			amount: function () {
-				return numeral(this.donation.subtotal / 100).format('$0,00.00');
 			},
 		},
 		props: {
 			donation: {
-				type: Object,
-				default: function () {
-					return {};
-				}
-			},
-			donor: {
 				type: Object,
 				default: function () {
 					return {};

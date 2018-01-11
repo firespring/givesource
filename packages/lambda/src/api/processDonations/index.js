@@ -155,17 +155,41 @@ exports.handle = function (event, context, callback) {
 		return paymentTransaction.validate();
 	}).then(function () {
 		return paymentTransactionsRepository.save(paymentTransaction);
-	}).then(function () {
-		return donorsRepository.save(donor);
-	}).then(function () {
+	}).then(function (response) {
 		donations.forEach(function (donation) {
-			donation.paymentTransactionUuid = paymentTransaction.uuid;
-			donation.donorUuid = donor.uuid;
+			donation.paymentTransactionUuid = response.uuid;
+			donation.creditCardName = response.creditCardName;
+			donation.creditCardType = response.creditCardType;
+			donation.creditCardLast4 = response.creditCardLast4;
+			donation.creditCardExpirationMonth = response.creditCardExpirationMonth;
+			donation.creditCardExpirationYear = response.creditCardExpirationYear;
+			donation.creditCardZip = response.billingZip;
+			donation.paymentTransactionId = response.transactionId;
+			donation.paymentTransactionAmount = response.transactionAmountInCents;
+			donation.paymentTransactionIsTestMode = response.isTestMode;
+			donation.paymentTransactionStatus = response.transactionStatus;
 		});
-		return donationsRepository.batchUpdate(donations);
+		return donorsRepository.save(donor);
+	}).then(function (response) {
+		donations.forEach(function (donation) {
+			donation.donorUuid = response.uuid;
+			if (!donation.isAnonymous) {
+				donation.donorFirstName = response.firstName;
+				donation.donorLastName = response.lastName;
+				donation.donorEmail = response.email;
+				donation.donorPhone = response.phone;
+				donation.donorAddress1 = response.address1;
+				donation.donorAddress2 = response.address2;
+				donation.donorCity = response.city;
+				donation.donorState = response.state;
+				donation.donorZip = response.zip;
+			}
+		});
 	}).then(function () {
 		nonprofits.forEach(function (nonprofit) {
 			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach(function (donation) {
+				donation.nonprofitLegalName = nonprofit.legalName;
+
 				nonprofit.donationsCount = nonprofit.donationsCount + 1;
 				nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
 				nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
@@ -174,6 +198,9 @@ exports.handle = function (event, context, callback) {
 				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
 			});
 		});
+	}).then(function () {
+		return donationsRepository.batchUpdate(donations);
+	}).then(function () {
 		return nonprofitsRepository.batchUpdate(nonprofits);
 	}).then(function () {
 		return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', donations.length);

@@ -16,15 +16,12 @@
  */
 
 const _ = require('lodash');
+const Donation = require('./../../models/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../models/donor');
-const DonorsRepository = require('./../../repositories/donors');
 const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
-const PaymentTransaction = require('./../../models/paymentTransaction');
-const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Report = require('./../../models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
@@ -56,9 +53,9 @@ exports.handle = function (event, context, callback) {
 					return Promise.resolve();
 			}
 		}
-	}).then(function (data) {
-		if (data && data.length) {
-			const csv = json2csv({data: data, fields: Object.keys(data[0])});
+	}).then(function (response) {
+		if (response) {
+			const csv = json2csv({data: response.data, fields: response.fields});
 			return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${file.uuid}`, csv, 'text/csv', `attachment; filename=${file.filename}`).then(function () {
 				return filesRepository.save(file);
 			}).then(function () {
@@ -96,78 +93,28 @@ const getFilenameTimestamp = function () {
  * @return {Promise}
  */
 const getDonationsData = function (report) {
-	const donorsRepository = new DonorsRepository();
-	const paymentTransactionsRepository = new PaymentTransactionsRepository();
+	const donationsRepository = new DonationsRepository();
+	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 
-	let donations = [];
 	let promise = Promise.resolve();
 	if (report.nonprofitUuid) {
-		const donationsRepository = new NonprofitDonationsRepository();
 		promise = promise.then(function () {
-			donationsRepository.getAll(report.nonprofitUuid).then(function (response) {
-				donations = response;
-			});
+			return nonprofitDonationsRepository.getAll(report.nonprofitUuid);
 		});
 	} else {
-		const donationsRepository = new DonationsRepository();
 		promise = promise.then(function () {
 			return donationsRepository.getAll();
-		}).then(function (response) {
-			donations = response;
 		});
 	}
 
-	let donors = [];
-	promise = promise.then(function () {
-		return donorsRepository.getAll();
-	}).then(function (response) {
-		donors = response;
-	});
-
-	let paymentTransactions = [];
-	promise = promise.then(function () {
-		return paymentTransactionsRepository.getAll();
-	}).then(function (response) {
-		paymentTransactions = response;
-	});
-
-	const data = [];
-	promise = promise.then(function () {
-		donations.forEach(function (donation) {
-			const item = {};
-
-			Object.keys(donation.all()).forEach(function (key) {
-				item['donation-' + key] = donation.all()[key];
-			});
-
-			const donor = _.find(donors, {uuid: donation.donorUuid});
-			if (donor && !donation.isAnonymous) {
-				Object.keys(donor.all()).forEach(function (key) {
-					item['donor-' + key] = donor.all()[key];
-				});
-			} else {
-				const temp = new Donor();
-				Object.keys(temp.all()).forEach(function (key) {
-					item['donor-' + key] = '';
-				});
-			}
-
-			const paymentTransaction = _.find(paymentTransactions, {uuid: donation.paymentTransactionUuid});
-			if (paymentTransaction) {
-				Object.keys(paymentTransaction.all()).forEach(function (key) {
-					item['paymentTransaction-' + key] = paymentTransaction.all()[key];
-				});
-			} else {
-				const temp = new PaymentTransaction();
-				Object.keys(temp.all()).forEach(function (key) {
-					item['paymentTransaction-' + key] = '';
-				});
-			}
-
-			data.push(item);
+	promise = promise.then(function (donations) {
+		const mock = new Donation();
+		return Promise.resolve({
+			data: donations.map(function (donation) {
+				return donation.except(['isDeleted']);
+			}),
+			fields: Object.keys(mock.except(['isDeleted'])),
 		});
-	}).then(function () {
-		return Promise.resolve(data);
 	});
 
 	return promise;
