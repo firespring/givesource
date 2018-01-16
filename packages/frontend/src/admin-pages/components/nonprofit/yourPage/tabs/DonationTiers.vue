@@ -30,7 +30,7 @@
 
         </div>
 
-        <table class="table-middle js-table-reorder">
+        <table class="js-table-reorder">
             <thead>
             <tr>
                 <th>
@@ -57,124 +57,149 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				donationTiers: [],
-				originalDonationTiers: []
-			}
-		},
-		props: [
-			'nonprofitUuid'
-		],
-		beforeMount: function () {
-			const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                // Form Data
+                donationTiers: {
+                    amount: ''
+                },
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
-				if (response.data.errorMessage) {
-					console.log(response.data);
-				} else {
-					response.data.sort(function (a, b) {
-						return a.amount - b.amount;
-					});
-					vue.originalDonationTiers = JSON.parse(JSON.stringify(response.data));
-					vue.donationTiers = JSON.parse(JSON.stringify(response.data));
-				}
-			}).catch(function (err) {
-				console.log(err);
-			});
-		},
-		watch: {
-			donationTiers: {
-				handler: function () {
-					const vue = this;
+                donationTiers: [],
+                originalDonationTiers: [],
+            }
+        },
+        props: [
+            'nonprofitUuid'
+        ],
+        beforeMount: function () {
+            const vue = this;
 
-					const current = JSON.parse(JSON.stringify(vue.donationTiers));
-					const emptyRows = _.filter(current, {amount: '0.00', description: ''}).length;
-					if (emptyRows === 0 && current.length < 4) {
-						vue.donationTiers.push({amount: '0.00', description: ''});
-					} else if (emptyRows > 1) {
-						vue.donationTiers = _.reject(current, {amount: '0.00', description: ''});
-					}
-				},
-				deep: true
-			}
-		},
-		methods: {
-			submit: function () {
-				const vue = this;
+            vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
+                if (response.data.errorMessage) {
+                    console.log(response.data);
+                } else {
+                    response.data.sort(function (a, b) {
+                        return a.amount - b.amount;
+                    });
+                    vue.originalDonationTiers = JSON.parse(JSON.stringify(response.data));
+                    vue.donationTiers = JSON.parse(JSON.stringify(response.data));
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        },
+        watch: {
+            donationTiers: {
+                handler: function () {
+                    const vue = this;
 
-				vue.addModal('spinner');
-				vue.updateDonationTiers();
-			},
-			updateDonationTiers: function () {
-				const vue = this;
+                    const current = JSON.parse(JSON.stringify(vue.donationTiers));
+                    const emptyRows = _.filter(current, {amount: '0.00', description: ''}).length;
+                    if (emptyRows === 0 && current.length < 4) {
+                        vue.donationTiers.push({amount: '0.00', description: ''});
+                    } else if (emptyRows > 1) {
+                        vue.donationTiers = _.reject(current, {amount: '0.00', description: ''});
+                    }
+                },
+                deep: true
+            }
+        },
+        methods: {
+            submit: function () {
+                const vue = this;
 
-				const original = JSON.parse(JSON.stringify(vue.originalDonationTiers));
-				const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
-				const filtered = _.reject(donationTiers, {amount: '0.00'});
-				const modified = _.differenceWith(filtered, original, _.isEqual);
+                if(vue.validateDonationTiers()){
+                    vue.addModal('spinner');
+                    vue.updateDonationTiers();
+                    vue.clearModals();
+                }
 
-				const toDelete = _.differenceWith(original, filtered, _.isEqual);
-				const toUpdate = _.map(vue.format(_.reject(modified, {amount: '0.00'})), function (tier) {
-					if (!tier.description) {
-						delete tier.description;
-					}
-					return tier;
-				});
+            },
+            validateDonationTiers: function() {
+                return true;
+                const vue = this;
+                const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
+                const emptyRows = _.filter(donationTiers, {amount: '0.00', description: ''}).length;
+                var donationTiersLessThanTen = _.filter(donationTiers, function(donationTierRow){
+                    return donationTierRow.amount < 10;
+                }).length;
 
-				if (toUpdate.length && !toDelete.length) {
-					vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-						donation_tiers: toUpdate
-					}).then(function () {
-						vue.clearModals();
-					}).catch(function (err) {
-						vue.clearModals();
-						console.log(err);
-					});
-				} else if (toDelete.length && !toUpdate.length) {
-					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-						donation_tiers: toDelete
-					}).then(function () {
-						vue.clearModals();
-					}).catch(function (err) {
-						vue.clearModals();
-						console.log(err);
-					});
-				} else if (toUpdate.length && toDelete.length) {
-					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-						donation_tiers: toDelete
-					}).then(function () {
-						return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-							donation_tiers: toUpdate
-						});
-					}).then(function () {
-						vue.clearModals();
-					}).catch(function (err) {
-						vue.clearModals();
-						console.log(err);
-					});
-				} else {
-					vue.clearModals();
-				}
-			},
-			format: function (donationTiers) {
-				const formatted = [];
-				donationTiers.forEach(function (donationTier, index) {
-					formatted.push(donationTier);
-					formatted[index].amount = Math.round(Number.parseFloat(donationTier.amount) * 100);
-				});
-				return formatted;
-			},
-			changeDonationTier: function (index, values) {
-				const vue = this;
+                if (emptyRows === 0 && donationTiers.length === 4 && donationTiersLessThanTen >= 1) {
+                    return false;
+                } else if (emptyRows === 1 && donationTiers.length > 1 && donationTiersLessThanTen > 1) {
+                    return false;
+                }
 
-				vue.donationTiers[index].amount = values.amount;
-				vue.donationTiers[index].description = values.description;
-			},
-		},
-		components: {
-			'donation-tiers-list-table-row': require('./../donationTiers/DonationTiersListTableRow.vue')
-		}
-	};
+                return true;
+            },
+            updateDonationTiers: function () {
+                const vue = this;
+                const original = JSON.parse(JSON.stringify(vue.originalDonationTiers));
+                const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
+                const filtered = _.reject(donationTiers, {amount: '0.00'});
+                const modified = _.differenceWith(filtered, original, _.isEqual);
+
+                const toDelete = _.differenceWith(original, filtered, _.isEqual);
+                const toUpdate = _.map(vue.format(_.reject(modified, {amount: '0.00'})), function (tier) {
+                    if (!tier.description) {
+                        delete tier.description;
+                    }
+                    return tier;
+                });
+
+                if (toUpdate.length && !toDelete.length) {
+                    vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                        donation_tiers: toUpdate
+                    }).then(function () {
+                        vue.clearModals();
+                    }).catch(function (err) {
+                        vue.clearModals();
+                        console.log(err);
+                    });
+                } else if (toDelete.length && !toUpdate.length) {
+                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                        donation_tiers: toDelete
+                    }).then(function () {
+                        vue.clearModals();
+                    }).catch(function (err) {
+                        vue.clearModals();
+                        console.log(err);
+                    });
+                } else if (toUpdate.length && toDelete.length) {
+                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                        donation_tiers: toDelete
+                    }).then(function () {
+                        return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                            donation_tiers: toUpdate
+                        });
+                    }).then(function () {
+                        vue.clearModals();
+                    }).catch(function (err) {
+                        vue.clearModals();
+                        console.log(err);
+                    });
+                } else {
+                    vue.clearModals();
+                }
+            },
+            format: function (donationTiers) {
+                const formatted = [];
+                donationTiers.forEach(function (donationTier, index) {
+                    formatted.push(donationTier);
+                    formatted[index].amount = Math.round(Number.parseFloat(donationTier.amount) * 100);
+                });
+                return formatted;
+            },
+            changeDonationTier: function (index, values) {
+                const vue = this;
+
+                vue.donationTiers[index].amount = values.amount;
+                vue.donationTiers[index].description = values.description;
+            }
+        },
+        components: {
+            'donation-tiers-list-table-row': require('./../donationTiers/DonationTiersListTableRow.vue')
+        }
+    };
 </script>

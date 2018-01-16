@@ -18,8 +18,12 @@
 <template>
     <tr>
         <td class="input">
-            <div class="u-control-icon u-control-icon--dollar">
-                <input v-model.lazy="localAmount" type="text" style="width: 10rem;" v-money="currencyOptions">
+            <div class="u-control-icon u-control-icon--dollar u-control-icon--has-error">
+                <input v-model.lazy="localAmount" type="text" style="width: 10rem;" v-money="currencyOptions" :class="{ 'has-error': error}">
+            </div>
+            <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                    Minimum amount is $10.00
+                </div>
             </div>
         </td>
         <td>
@@ -34,6 +38,7 @@
     		return {
     			localAmount: this.amount || '',
                 localDescription: this.description || '',
+                error: null,
 
                 currencyOptions: {
     				precision: 2,
@@ -67,6 +72,9 @@
                 if (value === oldValue) {
                 	return;
                 }
+
+                vue.error = (value < 10.00) ? true : false ;
+                vue.error = false;
                 vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             },
@@ -79,5 +87,6 @@
                 vue.localDescription = vue.description;
             }
         }
+
     };
 </script>
