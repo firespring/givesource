@@ -312,20 +312,26 @@
 		computed: {
 			category1Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category2 && option.value !== vue.formData.category3;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category2 || option.value === vue.formData.category3) {
+						option.disabled = true;
+					}
 				});
 			},
 			category2Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category1 && option.value !== vue.formData.category3;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category1 || option.value === vue.formData.category3) {
+						option.disabled = true;
+					}
 				});
 			},
 			category3Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category1 && option.value !== vue.formData.category2;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category1 || option.value === vue.formData.category2) {
+						option.disabled = true;
+					}
 				});
 			}
 		},
