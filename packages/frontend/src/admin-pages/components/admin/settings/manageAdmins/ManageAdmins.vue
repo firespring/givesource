@@ -55,7 +55,7 @@
 
                         <div class="c-table-footer">
                             <div class="c-table-footer__actions">
-                                <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
+                                <a href="#" v-on:click="onDelete" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
                                     <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove Selected
                                 </a>
                             </div>
@@ -95,6 +95,18 @@
 	module.exports = {
 		components: {
 			'manage-admins-list-table': require('./ManageAdminsListTable.vue')
-		}
+		},
+        methods: {
+            onDelete: function (event) {
+                const vue = this;
+                vue.addModal('confirm-delete', {
+                    listener: 'confirmDelete',
+                    modalTitle: 'Modal Title here. ',
+                    modalText: 'modal text here, You sure you want to delete this user?'
+                });
+//                    vue.addModal('spinner');
+            }
+        },
+
 	};
 </script>

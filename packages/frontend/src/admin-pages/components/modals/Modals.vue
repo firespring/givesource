@@ -87,6 +87,7 @@
 			'spinner': require('./ModalSpinner.vue'),
 			'account-edit-info': require('../account/UserAccountInfoModal.vue'),
 			'account-edit-password': require('../account/UserAccountPasswordModal.vue'),
+            'confirm-delete' : require('./DeleteModal.vue'),
 			'photo-editor': require('./photoEditor/PhotoEditorModal.vue'),
             'pages-faq-add-question-modal': require('./../admin/pages/faq/AddQuestionModal.vue'),
 			'pages-faq-delete-question-modal': require('./../admin/pages/faq/DeleteQuestionModal.vue'),

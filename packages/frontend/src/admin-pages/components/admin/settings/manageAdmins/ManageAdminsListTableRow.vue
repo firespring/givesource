@@ -49,7 +49,7 @@
             <div class="date">{{ date }}</div>
         </td>
         <td class="u-nowrap">
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
+            <a href="#" role="button" v-on:click="remove" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
                 <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove
             </a>
         </td>
@@ -57,14 +57,25 @@
 </template>
 
 <script>
-	module.exports = {
-		computed: {
-			date: function () {
-				return new Date(this.adminUser.createdOn).toLocaleDateString();
-			}
-		},
-		props: [
-			'adminUser'
-		]
-	};
+    module.exports = {
+        data: function () {
+            return {
+                selectedAdminUser: this.adminUser
+            }
+        },
+        computed: {
+            date: function () {
+                return new Date(this.adminUser.createdOn).toLocaleDateString();
+            }
+        },
+        props: [
+            'adminUser'
+        ],
+        methods: {
+            remove: function () {
+                const vue = this;
+                vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);
+            },
+        }
+    };
 </script>

@@ -48,32 +48,66 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				adminUsers: [],
-				loaded: false
-			};
-		},
-		computed: {
-			displayRows: function () {
-				return this.loaded && this.adminUsers.length;
-			}
-		},
-		props: [
-			'nonprofitUuid'
-		],
-		created: function () {
-			const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                adminUsers: [],
+                loaded: false
+            };
+        },
+        computed: {
+            displayRows: function () {
+                return this.loaded && this.adminUsers.length;
+            }
+        },
+        props: [
+            'nonprofitUuid'
+        ],
+        created: function () {
+            const vue = this;
 
-			vue.$request.get('users').then(function (response) {
-				vue.adminUsers = response.data;
-				vue.loaded = true;
-			});
-		},
-		components: {
-			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
-			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
-		}
-	};
+            vue.$request.get('users').then(function (response) {
+                vue.adminUsers = response.data;
+                vue.loaded = true;
+            });
+
+            vue.bus.$on('deleteUserAdmin', function () {
+                vue.removeUser();
+            });
+
+            vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
+                vue.selectedAdminUser = selectedAdminUser;
+                vue.deleteModal(selectedAdminUser);
+            });
+        },
+        beforeDestroy: function () {
+            const vue = this;
+            vue.bus.$off('deleteUserAdmin');
+            vue.bus.$off('deleteUserAdminModal');
+        },
+        methods: {
+            deleteModal: function (selectedAdminUser) {
+                const vue = this;
+                vue.addModal('confirm-delete', {
+                    modalTitle: 'Modal Title here. ',
+                    modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
+                    callBack: 'deleteUserAdmin',
+                });
+            },
+
+            removeUser: function () {
+                var vue = this;
+
+                vue.$request.delete('users/' + vue.selectedAdminUser.uuid).then(function () {
+                    console.log('we deleted the user');
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        },
+        components: {
+            'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
+            'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
+        }
+    };
 </script>
