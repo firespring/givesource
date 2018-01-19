@@ -63,7 +63,7 @@
         </td>
 
         <td>
-            <div class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
+            <div v-if="canModify" class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                 <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only js-btn-dropdown-trigger"></a>
 
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
@@ -83,6 +83,9 @@
                         <a href="#" class="js-modal-trigger" rel="modal-confirm-delete" v-if="canDeleteNonprofit">
                             <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete Nonprofit
                         </a>
+
+                        <hr v-if="canRevoke">
+                        <a v-on:click.prevent="revokeNonprofit" href="#" v-if="canRevoke"><i class="fa fa-fw fa-ban" aria-hidden="true"></i>Revoke Nonprofit</a>
                     </div>
                 </div>
             </div>
@@ -126,6 +129,12 @@
 			canEditNonprofitDonationPage: function () {
 				return this.nonprofit.status === 'ACTIVE';
 			},
+			canRevoke: function () {
+				return this.nonprofit.status === 'ACTIVE';
+			},
+			canModify: function () {
+				return this.nonprofit.status !== 'REVOKED';
+			},
 			statusLabelClass: function () {
 				switch (this.nonprofit.status) {
 					case 'ACTIVE':
@@ -154,6 +163,8 @@
 						return 'Pending';
 					case 'DENIED':
 						return 'Denied';
+					case 'REVOKED':
+						return 'Revoked';
 				}
 				return false;
 			}
@@ -189,21 +200,25 @@
 
 				clearTimeout(vue.timer);
 			},
-            updateStatus: function (status) {
+			updateStatus: function (status) {
 				const vue = this;
 
 				vue.addModal('spinner');
 
-	            vue.$request.patch('nonprofits/' + vue.nonprofit.uuid + '/status', {
+				vue.$request.patch('nonprofits/' + vue.nonprofit.uuid + '/status', {
 					status: status
-                }).then(function () {
-                	vue.clearModals();
-                	vue.$emit('updateNonprofit', vue.nonprofit.uuid);
-                }).catch(function (err) {
-                	vue.clearModals();
-                	console.log(err);
-                })
-            }
+				}).then(function () {
+					vue.clearModals();
+					vue.$emit('updateNonprofit', vue.nonprofit.uuid);
+				}).catch(function (err) {
+					vue.clearModals();
+					console.log(err);
+				})
+			},
+			revokeNonprofit: function () {
+				const vue = this;
+				vue.addModal('nonprofits-revoke', {nonprofit: vue.nonprofit});
+			}
 		}
 	};
 </script>
