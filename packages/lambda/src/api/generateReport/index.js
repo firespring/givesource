@@ -16,7 +16,7 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
+const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
@@ -108,12 +108,11 @@ const getDonationsData = function (report) {
 	}
 
 	promise = promise.then(function (donations) {
-		const mock = new Donation();
 		return Promise.resolve({
 			data: donations.map(function (donation) {
 				return donation.except(['isDeleted']);
 			}),
-			fields: Object.keys(mock.except(['isDeleted'])),
+			fields: DonationHelper.reportFields,
 		});
 	});
 

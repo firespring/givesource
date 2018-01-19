@@ -19,6 +19,90 @@ const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
 /**
+ * Get fields for Report
+ *
+ * @type {[]}
+ */
+exports.reportFields = [
+	{
+		label: 'Uuid',
+		value: 'uuid',
+	},
+	{
+		label: 'Date',
+		value: 'createdOn',
+	},
+	{
+		label: 'Nonprofit',
+		value: 'nonprofitLegalName',
+	},
+	{
+		label: 'Is Offline',
+		value: 'isOfflineDonation',
+	},
+	{
+		label: 'Donor Address 1',
+		value: 'donorAddress1',
+	},
+	{
+		label: 'Donor Address 2',
+		value: 'donorAddress2',
+	},
+	{
+		label: 'Donor City',
+		value: 'donorCity',
+	},
+	{
+		label: 'Donor State',
+		value: 'donorState',
+	},
+	{
+		label: 'Donor Zip',
+		value: 'donorZip',
+	},
+	{
+		label: 'Donor Email',
+		value: 'donorEmail',
+	},
+	{
+		label: 'Donor Phone Number',
+		value: 'donorPhone',
+	},
+	{
+		label: 'Donation Amount',
+		value: 'subtotal',
+	},
+	{
+		label: 'Is Fee Covered',
+		value: 'isFeeCovered',
+	},
+	{
+		label: 'Donation Fee',
+		value: 'fees',
+	},
+	{
+		label: 'Donation Total',
+		value: 'total',
+	},
+	{
+		label: 'Payment Id',
+		value: 'paymentTransactionId',
+	},
+	{
+		label: 'Payment Amount',
+		value: 'paymentTransactionAmount',
+	},
+	{
+		label: 'Payment Status',
+		value: 'paymentTransactionStatus',
+	},
+	{
+		label: 'Is Test Mode',
+		value: 'paymentTransactionIsTestMode',
+	}
+];
+
+/**
  * Calculate donation fees
  *
  * @param {number} amount
