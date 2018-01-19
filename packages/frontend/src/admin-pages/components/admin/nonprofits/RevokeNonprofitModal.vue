@@ -30,7 +30,8 @@
                         <div class="c-page-section">
                             <div class="c-page-section__main">
                                 <p>
-
+                                    Revoking a nonprofit's access will remove their access to the admin area and remove their donation page from the website.
+                                    <strong>This is permanent and can't be undone.</strong>
                                 </p>
                             </div>
                         </div>
