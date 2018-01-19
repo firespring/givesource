@@ -40,16 +40,27 @@ exports.handle = function (event, context, callback) {
 	}).then(function (result) {
 		nonprofit = new Nonprofit(result);
 
-		if (nonprofit.status !== NonprofitHelper.STATUS_PENDING) {
+		if (nonprofit.status !== NonprofitHelper.STATUS_PENDING && nonprofit.status !== NonprofitHelper.STATUS_ACTIVE) {
 			return Promise.reject(new InvalidStatusException('Cannot change the status for this nonprofit.'));
 		}
 
 		status = request.get('status');
-		if (status !== NonprofitHelper.STATUS_ACTIVE && status !== NonprofitHelper.STATUS_DENIED) {
-			return Promise.reject(new InvalidInputException('Invalid status: ' + status + '.'));
+		if (nonprofit.status === NonprofitHelper.STATUS_PENDING && status !== NonprofitHelper.STATUS_ACTIVE && status !== NonprofitHelper.STATUS_DENIED) {
+			return Promise.reject(new InvalidInputException('Invalid status for pending nonprofit: ' + status + '.'));
 		}
 
-		nonprofit.populate({status: status});
+		if (nonprofit.status === NonprofitHelper.STATUS_ACTIVE && status !== NonprofitHelper.STATUS_REVOKED) {
+			return Promise.reject(new InvalidInputException('Invalid status for active nonprofit: ' + status + '.'));
+		}
+
+		let attributes = {status: status};
+
+		// reset the slug for revoked nonprofits so the slug can be reused
+		if (status === NonprofitHelper.STATUS_REVOKED) {
+			attributes.slug = '';
+		}
+
+		nonprofit.populate(attributes);
 	}).then(function () {
 		if (status === NonprofitHelper.STATUS_ACTIVE) {
 			return repository.generateUniqueSlug(nonprofit).then(function () {
@@ -61,10 +72,9 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.save(nonprofit);
 	}).then(function () {
-		if (status === NonprofitHelper.STATUS_DENIED) {
+		if (status === NonprofitHelper.STATUS_DENIED || status === NonprofitHelper.STATUS_REVOKED) {
 			return deleteNonprofitUsers(nonprofit);
 		} else if (status === NonprofitHelper.STATUS_ACTIVE) {
-
 			return addNonprofitCognitoUsers(nonprofit);
 		}
 	}).then(function () {
