@@ -277,33 +277,34 @@
 					{value: 1, text: 'Animal-Related'},
 					{value: 2, text: 'Arts, Culture & Humanities'},
 					{value: 3, text: 'Children & Families'},
-					{value: 4, text: 'Community Improvement & Capacity Building'},
-					{value: 5, text: 'Crime & Legal-Related'},
-					{value: 6, text: 'Diseases, Disorders & Medical Disciplines'},
-					{value: 7, text: 'Education-Early Childhood'},
-					{value: 8, text: 'Education-Higher Education'},
-					{value: 9, text: 'Education-K-12'},
-					{value: 10, text: 'Environment'},
-					{value: 11, text: 'Food, Agriculture & Nutrition'},
-					{value: 12, text: 'Health Care'},
-					{value: 13, text: 'Housing & Shelter'},
-					{value: 14, text: 'Human Services'},
-					{value: 15, text: 'International, Foreign Affairs & National Security'},
-					{value: 16, text: 'Library & Literacy Programs'},
-					{value: 17, text: 'Medical Research'},
-					{value: 18, text: 'Mental Health & Crisis Intervention'},
-					{value: 19, text: 'Mutual & Membership Benefit'},
-					{value: 20, text: 'Older Adults'},
-					{value: 21, text: 'Philanthropy, Voluntarism & Grantmaking Foundations'},
-					{value: 22, text: 'Politics & Public Administration'},
-					{value: 23, text: 'Public & Societal Benefit'},
-					{value: 24, text: 'Public Safety, Disaster Preparedness & Relief'},
-					{value: 25, text: 'Recreation & Sports'},
-					{value: 26, text: 'Religion-Related'},
-					{value: 27, text: 'Science & Technology'},
-					{value: 28, text: 'Veterans Support'},
-					{value: 29, text: 'Women'},
-					{value: 30, text: 'Youth Development'}
+					{value: 4, text: 'Civil Rights, Social Action & Advocacy'},
+					{value: 5, text: 'Community Improvement & Capacity Building'},
+					{value: 6, text: 'Crime & Legal-Related'},
+					{value: 7, text: 'Diseases, Disorders & Medical Disciplines'},
+					{value: 8, text: 'Education-Early Childhood'},
+					{value: 9, text: 'Education-Higher Education'},
+					{value: 10, text: 'Education-K-12'},
+					{value: 11, text: 'Environment'},
+					{value: 12, text: 'Food, Agriculture & Nutrition'},
+					{value: 13, text: 'Health Care'},
+					{value: 14, text: 'Housing & Shelter'},
+					{value: 15, text: 'Human Services'},
+					{value: 16, text: 'International, Foreign Affairs & National Security'},
+					{value: 17, text: 'Library & Literacy Programs'},
+					{value: 18, text: 'Medical Research'},
+					{value: 19, text: 'Mental Health & Crisis Intervention'},
+					{value: 20, text: 'Mutual & Membership Benefit'},
+					{value: 21, text: 'Older Adults'},
+					{value: 22, text: 'Philanthropy, Voluntarism & Grantmaking Foundations'},
+					{value: 23, text: 'Politics & Public Administration'},
+					{value: 24, text: 'Public & Societal Benefit'},
+					{value: 25, text: 'Public Safety, Disaster Preparedness & Relief'},
+					{value: 26, text: 'Recreation & Sports'},
+					{value: 27, text: 'Religion-Related'},
+					{value: 28, text: 'Science & Technology'},
+					{value: 29, text: 'Veterans Support'},
+					{value: 30, text: 'Women'},
+					{value: 31, text: 'Youth Development'}
 				],
 
 				formErrors: {}
@@ -312,20 +313,26 @@
 		computed: {
 			category1Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category2 && option.value !== vue.formData.category3;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category2 || option.value === vue.formData.category3) {
+						option.disabled = true;
+					}
 				});
 			},
 			category2Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category1 && option.value !== vue.formData.category3;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category1 || option.value === vue.formData.category3) {
+						option.disabled = true;
+					}
 				});
 			},
 			category3Options: function () {
 				const vue = this;
-				return _.remove(_.clone(vue.categoryOptions, true), function (option) {
-					return option.value !== vue.formData.category1 && option.value !== vue.formData.category2;
+				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
+					if (option.value === vue.formData.category1 || option.value === vue.formData.category2) {
+						option.disabled = true;
+					}
 				});
 			}
 		},
