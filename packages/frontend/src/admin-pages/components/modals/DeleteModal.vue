@@ -83,8 +83,8 @@
 
             remove: function () {
                 const vue = this;
-                vue.bus.$emit('deleteUserAdmin');
                 vue.clearModals();
+                vue.bus.$emit('deleteUserAdmin');
             }
         }
     }

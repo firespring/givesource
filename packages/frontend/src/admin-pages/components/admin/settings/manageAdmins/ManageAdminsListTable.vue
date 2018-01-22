@@ -91,11 +91,14 @@
 
             removeUser: function () {
                 var vue = this;
+                vue.addModal('spinner');
                 vue.$request.delete('users/' + vue.selectedAdminUser.uuid).then(function () {
                     vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
                         return adminUser.uuid !== vue.selectedAdminUser.uuid;
                     });
+                    vue.clearModals();
                 }).catch(function (err) {
+                    vue.clearModals();
                     console.log(err);
                 });
             }

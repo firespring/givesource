@@ -49,7 +49,6 @@ module.exports = function (env) {
 			DeleteSponsors: './src/api/deleteSponsors/index.js',
 			DeleteSponsorTier: './src/api/deleteSponsorTier/index.js',
 			DeleteUser: './src/api/deleteUser/index.js',
-			DeleteUsers: './src/api/deleteUsers/index.js',
 			GetContents: './src/api/getContents/index.js',
 			GetDonation: './src/api/getDonation/index.js',
 			GetDonations: './src/api/getDonations/index.js',
