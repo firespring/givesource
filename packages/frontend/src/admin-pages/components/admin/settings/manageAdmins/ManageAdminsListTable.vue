@@ -19,12 +19,6 @@
     <table class="table-middle" :class="{ 'table-empty': !displayRows }">
         <thead>
         <tr>
-            <th class="input">
-                <div class="checkbox checkbox--sm">
-                    <input type="checkbox" name="checkAllRows" id="checkAllRows-1" class="check-all-rows js-check-all-rows" value="1">
-                    <label for="checkAllRows-1"></label>
-                </div>
-            </th>
             <th class="icon"><i class="fa fa-picture-o" aria-hidden="true"></i></th>
             <th class="u-width-100p sortable sortable--asc">
                 <a href="#">Name</a>
