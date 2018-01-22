@@ -91,11 +91,16 @@ exports.handle = function (event, context, callback) {
  * @return {Promise}
  */
 const deleteNonprofitUsers = function (nonprofit) {
+	const cognito = new Cognito();
 	const nonprofitUsersRepository = new NonprofitUsersRepository();
+	const userPoolId = process.env.USER_POOL_ID;
+
 	return nonprofitUsersRepository.getAll(nonprofit.uuid).then(function (users) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
 			promise = promise.then(function () {
+				return cognito.deleteUser(userPoolId, user.uuid)
+			}).then(function () {
 				return nonprofitUsersRepository.delete(nonprofit.uuid, user.uuid);
 			});
 		});

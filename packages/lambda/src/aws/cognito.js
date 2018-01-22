@@ -250,6 +250,29 @@ Cognito.prototype.createUser = function (userPoolId, userName, email) {
 };
 
 /**
+ * Delete an AWS Cognito user
+ *
+ * @param {String} userPoolId
+ * @param {String} userName
+ * @return {Promise}
+ */
+Cognito.prototype.deleteUser = function (userPoolId, userName) {
+	const cognito = this;
+	return new Promise(function (resolve, reject) {
+		const params = {
+			UserPoolId: userPoolId,
+			Username: userName
+		};
+		cognito.awsCognito.adminDeleteUser(params, function (err, result) {
+			if (err) {
+				return reject(err);
+			}
+			resolve(result);
+		});
+	});
+};
+
+/**
  * Get a list of AWS Cognito User Groups for an AWS Cognito User
  *
  * @param {String} userPoolId
