@@ -15,17 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const UsersRepository = require('./../../repositories/users');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
+	const cognito = new Cognito();
 	const repository = new UsersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
+	console.log('This is my USER POOL ID, %j', process.env.USER_POOL_ID);
+	console.log('This is my user uuid, %j', request.urlParam('user_uuid'));
+
 	request.validate().then(function () {
-		return repository.delete(request.urlParam('uuid'));
+		return cognito.deleteUser(process.env.USER_POOL_ID, request.urlParam('user_uuid'));
+	}).then(function () {
+		return repository.delete(request.urlParam('user_uuid'));
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

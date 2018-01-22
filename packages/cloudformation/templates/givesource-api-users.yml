@@ -167,6 +167,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
+          USER_POOL_ID: !Ref UserPoolId
       FunctionName: !Sub |-
         ${StackName}-DeleteUser
       Handler: "index.handle"
@@ -731,7 +732,7 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,POST,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: 200
@@ -756,7 +757,7 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,PATCH,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: 200

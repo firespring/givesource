@@ -58,7 +58,7 @@
         computed: {
             displayRows: function () {
                 return this.loaded && this.adminUsers.length;
-            }
+            },
         },
         props: [
             'nonprofitUuid'
@@ -97,9 +97,10 @@
 
             removeUser: function () {
                 var vue = this;
-
                 vue.$request.delete('users/' + vue.selectedAdminUser.uuid).then(function () {
-                    console.log('we deleted the user');
+                    vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
+                        return adminUser.uuid !== vue.selectedAdminUser.uuid;
+                    });
                 }).catch(function (err) {
                     console.log(err);
                 });
