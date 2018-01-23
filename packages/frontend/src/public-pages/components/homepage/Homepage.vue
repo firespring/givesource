@@ -26,14 +26,7 @@
         <main class="main">
             <div class="wrapper">
 
-                <metrics :dateDonationsEnd="settings.DATE_DONATIONS_END"
-                         :dateDonationsStart="settings.DATE_DONATIONS_START"
-                         :dateEvent="settings.DATE_EVENT"
-                         :dateRegistrationsEnd="settings.DATE_REGISTRATIONS_END"
-                         :dateRegistrationsStart="settings.DATE_REGISTRATIONS_END"
-                         :displayMatchFund="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"
-                         :eventTimezone="settings.EVENT_TIMEZONE"
-                         :eventTitle="settings.EVENT_TITLE"
+                <metrics :displayMatchFund="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"
                          :matchFundButtonText="getContentValue('HOMEPAGE_MATCH_BUTTON', 'Love Them All')"
                          :matchFundDetails="getContentValue('HOMEPAGE_MATCH_DETAILS')"
                          :registerButtonText="getContentValue('HOMEPAGE_REGISTER_BUTTON', 'Register Your Nonprofit Today')"
@@ -66,12 +59,7 @@
 
 				settings: {
 					DATE_DONATIONS_END: null,
-					DATE_DONATIONS_START: null,
-					DATE_EVENT: null,
-					DATE_REGISTRATIONS_END: null,
-					DATE_REGISTRATIONS_START: null,
-					EVENT_TIMEZONE: null,
-					EVENT_TITLE: null,
+					DATE_DONATIONS_START: null
 				}
 			}
 		},
