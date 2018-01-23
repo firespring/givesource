@@ -431,15 +431,45 @@ const router = new VueRouter({
 		},
 		{
 			path: '/forgot-password',
-			name: 'forgot-password',
 			component: require('./../components/auth/forgotPassword/ForgotPassword.vue'),
-			meta: {requiresAuth: false},
-			beforeEnter: function (to, from, next) {
-				if (User.isAuthenticated()) {
-					next({name: 'homepage'});
+			children: [
+				{
+					path: '/',
+					name: 'forgot-password',
+					component: require('./../components/auth/forgotPassword/ForgotPasswordForm.vue'),
+					meta: {requiresAuth: false},
+					beforeEnter: function (to, from, next) {
+						if (User.isAuthenticated()) {
+							next({name: 'homepage'});
+						}
+						next();
+					}
+				},
+				{
+					path: 'sent',
+					name: 'forgot-password-request-sent',
+					component: require('./../components/auth/forgotPassword/ForgotPasswordEmailSent.vue'),
+					meta: {requiresAuth: false},
+					beforeEnter: function (to, from, next) {
+						if (User.isAuthenticated()) {
+							next({name: 'homepage'});
+						}
+						next();
+					}
+				},
+				{
+					path: 'reset',
+					name: 'forgot-password-reset',
+					component: require('./../components/auth/forgotPassword/ForgotPasswordResetForm.vue'),
+					meta: {requiresAuth: false},
+					beforeEnter: function (to, from, next) {
+						if (User.isAuthenticated()) {
+							next({name: 'homepage'});
+						}
+						next();
+					}
 				}
-				next();
-			}
+			]
 		},
 
 		// Error Pages

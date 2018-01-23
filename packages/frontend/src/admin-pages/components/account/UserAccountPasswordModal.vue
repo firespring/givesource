@@ -179,18 +179,11 @@
 				User.changePassword(vue.formData.currentPassword, vue.formData.password, function (err) {
 					vue.removeModal();
 					if (err) {
-						vue.errors.push(vue.formatCognitoErrorMessage(err));
+						vue.errors.push(User.formatCognitoErrorMessage(err));
 					} else {
 						vue.clearModals();
 					}
 				});
-			},
-			formatCognitoErrorMessage: function (err) {
-				// Make Cognito error message consistent with the Cognito errors that are returned in other areas.
-				if (err.name === 'InvalidParameterException' && err.message.includes('Member must have length')) {
-					return 'Password does not conform to policy: Password not long enough';
-				}
-				return err.message;
 			}
 		}
 	};

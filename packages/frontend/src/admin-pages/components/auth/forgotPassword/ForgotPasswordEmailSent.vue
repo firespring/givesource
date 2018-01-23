@@ -16,24 +16,20 @@
   -->
 
 <template>
-    <div class="o-app o-app--no-nav o-app--centered">
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content--xs">
+    <div class="c-page-section__main">
+        <h4>We need you to confirm your identity</h4>
 
-                <section class="c-page-section c-page-section--border c-page-section--shadow">
-                    <header class="c-page-section__header u-justify-center">
-                        <a href="#"><img alt="Firespring Logo" src="../../../assets/svg/firespring-wordmark-white.svg" class="logo"></a>
-                    </header>
+        <p>
+            We have sent you an email with a link to reset your password.
+        </p>
 
-                    <router-view></router-view>
+        <footer class="c-form-actions c-form-actions--compact">
+            <router-link :to="{ name: 'login' }" class="c-btn c-btn--text c-btn--neutral">Return to login</router-link>
+        </footer>
 
-                </section>
-
-            </div>
-        </main>
     </div>
 </template>
 
 <script>
-	module.exports = {};
+	module.exports = {}
 </script>
