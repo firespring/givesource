@@ -59,7 +59,7 @@
 
 				vue.addModal('spinner');
 
-				vue.$request.post('reports', {
+				vue.$request.post('nonprofits/' + vue.nonprofit.uuid + '/reports' , {
 					type: 'DONATIONS',
 					nonprofitUuid: vue.nonprofit.uuid,
 					name: slug(vue.nonprofit.legalName),
@@ -75,7 +75,7 @@
 				const vue = this;
 
 				vue.countdown = setInterval(function () {
-					vue.$request.get('reports/' + vue.report.uuid).then(function (response) {
+					vue.$request.get('nonprofits/' + vue.nonprofit.uuid + '/reports/' + vue.report.uuid).then(function (response) {
 						vue.report = response.data;
 						if (vue.report.status === 'SUCCESS') {
 							vue.clearModals();

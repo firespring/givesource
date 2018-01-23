@@ -16,6 +16,7 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitReportsRepository = require('./../../repositories/nonprofitReports');
 const Request = require('./../../aws/request');
 
