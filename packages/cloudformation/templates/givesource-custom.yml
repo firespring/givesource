@@ -41,6 +41,57 @@ Parameters:
 
 Resources:
 
+  # AWS CloudWatch Event Rules
+
+  HourlyScheduledEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub |-
+        ${StackName}-HourlyScheduledEvent
+      Description: Event scheduled once an hour
+      ScheduleExpression: rate(1 hour)
+      State: ENABLED
+      Targets:
+        -
+          Arn: !GetAtt DeleteReportsLambdaFunction.Arn
+          Id: DeleteReportsScheduledJob
+    DependsOn:
+      - DeleteReportsLambdaFunction
+
+  # AWS Lambda Scheduled Events
+
+  DeleteReportsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteReports.zip
+      Description: "Delete expired reports"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref UploadsS3
+      FunctionName: !Sub |-
+        ${StackName}-DeleteReports
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteReportsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteReportsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt HourlyScheduledEventRule.Arn
+    DependsOn:
+      - DeleteReportsLambdaFunction
+      - HourlyScheduledEventRule
+
+
   # Api Gateway Authorizer Lambda Resources
 
   AuthorizeUsersLambdaFunction:
@@ -223,6 +274,8 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
+  # Admin Pages Settings and Deploy Resources
+
   AdminPagesSettingsJson:
     Type: Custom::S3PutObject
     Properties:
@@ -251,6 +304,8 @@ Resources:
       DestinationBucket: !Ref AdminPagesS3
     DependsOn: S3SyncObjectsFunction
 
+  # Public Pages Settings and Deploy Resources
+
   PublicPagesSettingsJson:
     Type: Custom::S3PutObject
     Properties:
@@ -278,6 +333,8 @@ Resources:
         ${AWS::Region}
       DestinationBucket: !Ref PublicPagesS3
     DependsOn: S3SyncObjectsFunction
+
+  # Cognito User Pool Resources
 
   CognitoUserPool:
     Type: Custom::CognitoUserPool
@@ -339,6 +396,8 @@ Resources:
     DependsOn:
       - CognitoUserPool
       - CognitoCreateUserGroupFunction
+
+  # Save Settings Custom Resources
 
   SaveInitialStackSettings:
     Type: Custom::Settings

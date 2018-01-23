@@ -128,6 +128,7 @@ module.exports = function (env) {
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
 			CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/custom/cognitoCreateUserPoolClient/index.js',
+			DeleteReports: './src/custom/deleteReports/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',

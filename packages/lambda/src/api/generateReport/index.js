@@ -110,11 +110,32 @@ const getDonationsData = function (report) {
 	promise = promise.then(function (donations) {
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				return donation.except(['isDeleted']);
+				return transform(donation, DonationHelper.reportFields, ['isDeleted']);
 			}),
 			fields: DonationHelper.reportFields,
 		});
 	});
 
 	return promise;
+};
+
+/**
+ * Transform fields for report
+ *
+ * @param {Model} model
+ * @param {[]} map
+ * @param {[]} [excluded]
+ * @return {{}}
+ */
+const transform = function (model, map, excluded) {
+	excluded = excluded || [];
+	const values = model.except(excluded);
+	const results = {};
+
+	Object.keys(values).forEach(function (key) {
+		const transformer = _.find(map, {value: key});
+		results[key] = transformer && transformer.transform ? transformer.transform(values[key]) : values[key];
+	});
+
+	return results;
 };

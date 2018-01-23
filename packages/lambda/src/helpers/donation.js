@@ -18,6 +18,8 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
+const numeral = require('numeral');
+
 /**
  * Get fields for Report
  *
@@ -25,12 +27,16 @@ dotenv.config({path: `${__dirname}/../../../../.env`});
  */
 exports.reportFields = [
 	{
-		label: 'Uuid',
-		value: 'uuid',
+		label: 'ID',
+		value: 'uuid'
 	},
 	{
 		label: 'Date',
 		value: 'createdOn',
+		transform: function (value) {
+			const date = new Date(value);
+			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		}
 	},
 	{
 		label: 'Nonprofit',
@@ -39,6 +45,9 @@ exports.reportFields = [
 	{
 		label: 'Is Offline',
 		value: 'isOfflineDonation',
+		transform: function (value) {
+			return value ? 'Yes' : 'No';
+		}
 	},
 	{
 		label: 'Donor Address 1',
@@ -71,26 +80,41 @@ exports.reportFields = [
 	{
 		label: 'Donation Amount',
 		value: 'subtotal',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
 	},
 	{
 		label: 'Is Fee Covered',
 		value: 'isFeeCovered',
+		transform: function (value) {
+			return value ? 'Yes' : 'No';
+		}
 	},
 	{
 		label: 'Donation Fee',
 		value: 'fees',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
 	},
 	{
 		label: 'Donation Total',
 		value: 'total',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
 	},
 	{
-		label: 'Payment Id',
+		label: 'Payment ID',
 		value: 'paymentTransactionId',
 	},
 	{
 		label: 'Payment Amount',
 		value: 'paymentTransactionAmount',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
 	},
 	{
 		label: 'Payment Status',
@@ -99,6 +123,9 @@ exports.reportFields = [
 	{
 		label: 'Is Test Mode',
 		value: 'paymentTransactionIsTestMode',
+		transform: function (value) {
+			return value ? 'Yes' : 'No';
+		}
 	}
 ];
 
