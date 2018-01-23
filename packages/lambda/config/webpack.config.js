@@ -41,6 +41,7 @@ module.exports = function (env) {
 			DeleteNonprofitDonation: './src/api/deleteNonprofitDonation/index.js',
 			DeleteNonprofitDonationTiers: './src/api/deleteNonprofitDonationTiers/index.js',
 			DeleteNonprofitSlide: './src/api/deleteNonprofitSlide/index.js',
+			DeleteNonprofitUser: './src/api/deleteNonprofitUser/index.js',
 			DeletePaymentTransaction: './src/api/deletePaymentTransaction/index.js',
 			DeleteReport: './src/api/deleteReport/index.js',
 			DeleteSetting: './src/api/deleteSetting/index.js',

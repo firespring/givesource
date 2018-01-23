@@ -83,9 +83,9 @@
             deleteModal: function (selectedAdminUser) {
                 const vue = this;
                 vue.addModal('confirm-delete', {
-                    modalTitle: 'Modal Title here. ',
+                    modalTitle: 'Remove Admin User',
                     modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
-                    callBack: 'deleteUserAdmin',
+                    callback: 'deleteUserAdmin',
                 });
             },
 

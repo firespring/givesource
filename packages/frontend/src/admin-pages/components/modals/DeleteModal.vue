@@ -58,7 +58,7 @@
             return {
                 modalTitle: this.data.modalTitle,
                 modalText: this.data.modalText,
-                callBack: this.data.callBack
+                callback: this.data.callback
             }
         },
         props: {
@@ -71,7 +71,7 @@
                 default: {
                     modalTitle: 'Delete Confirmation',
                     modalText: 'Are you sure you want to delete item(s)?',
-                    callBack: String
+                    callback: String
                 }
             }
         },
@@ -84,7 +84,7 @@
             remove: function () {
                 const vue = this;
                 vue.clearModals();
-                vue.bus.$emit('deleteUserAdmin');
+                vue.bus.$emit(vue.callback);
             }
         }
     }
