@@ -62,6 +62,18 @@
                             </div>
                         </div>
 
+                        <div class="form-item">
+                            <div class="form-item__label">
+                                <label for="phone">Phone Number</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone" :class="{'has-error': formErrors.phone}">
+                                <div v-if="formErrors.phone" class="notes notes--below notes--error">
+                                    {{ formErrors.phone }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
                                 <label for="questions">Your Questions</label>
@@ -107,6 +119,7 @@
 					email: '',
 					firstName: '',
 					lastName: '',
+					phone: '',
 					message: '',
 				},
 
@@ -168,7 +181,7 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your email',
+							message: 'Enter your email',
 						},
 						email: {
 							message: 'The email entered is not valid'
@@ -180,12 +193,15 @@
 					lastName: {
 						presence: true,
 					},
+					phone: {
+						presence: false
+					},
 					message: {
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your questions'
-                        },
+							message: 'Enter your questions'
+						},
 					}
 				}
 			},
@@ -207,6 +223,7 @@
 				axios.post(API_URL + 'messages', {
 					name: vue.formData.firstName + ' ' + vue.formData.lastName,
 					email: vue.formData.email,
+					phone: vue.formData.phone,
 					message: vue.formData.message,
 					type: 'CONTACT',
 				}).then(function (response) {
