@@ -158,7 +158,7 @@
 					},
 					onFailure: function (err) {
 						vue.toggleAuthorizing(false);
-						vue.errors.push(err.message);
+						vue.errors.push('Incorrect username or password.');
 					},
 					mfaRequired: function (codeDeliveryDetails, cognitoUser) {
 						vue.toggleAuthorizing(false);
