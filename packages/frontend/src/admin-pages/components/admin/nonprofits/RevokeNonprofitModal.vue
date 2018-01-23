@@ -22,7 +22,7 @@
                 <div class="c-modal-dialog__contents">
 
                     <div class="c-modal-header">
-                        <h1>Do you want to revoke this Nonprofit?</h1>
+                        <h1>Do you want to revoke this Nonprofit? This can't be undone.</h1>
                     </div>
 
 
@@ -31,15 +31,14 @@
                             <div class="c-page-section__main">
                                 <p>
                                     Revoking a nonprofit's access will remove their access to the admin area and remove their donation page from the website.
-                                    <strong>This is permanent and can't be undone.</strong>
                                 </p>
                             </div>
                         </div>
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="revokeNonprofit" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Revoke Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep Them</button>
+                                <button v-on:click="revokeNonprofit" type="button" class="c-btn c-btn--bad js-modal-close">Revoke Them</button>
+                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
                             </div>
                         </div>
 
