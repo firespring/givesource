@@ -26,9 +26,6 @@ exports.handle = function (event, context, callback) {
 	const repository = new UsersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	console.log('This is my USER POOL ID, %j', process.env.USER_POOL_ID);
-	console.log('This is my user uuid, %j', request.urlParam('user_uuid'));
-
 	request.validate().then(function () {
 		return cognito.deleteUser(process.env.USER_POOL_ID, request.urlParam('user_uuid'));
 	}).then(function () {
