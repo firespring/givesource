@@ -24,7 +24,7 @@
             <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
             <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
             <router-link :to="{ name: 'contact' }">Contact Us</router-link>
-            <router-link :to="{ name: 'cart' }">Your Donations</router-link>
+            <router-link :to="{ name: 'cart' }" v-if="displayCart">Your Donations</router-link>
         </nav>
 
         <a v-on:click="close" href="#" id="overlay__close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
@@ -43,6 +43,9 @@
 			displayToolkits: function () {
 				return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
 			},
+			displayCart: function () {
+				return this.$store.getters.cartItems.length > 0;
+			}
 		},
 		props: {
 			data: {},
