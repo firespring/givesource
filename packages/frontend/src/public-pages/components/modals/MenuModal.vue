@@ -20,9 +20,9 @@
 
         <nav class="overlay__nav">
             <router-link :to="{ name: 'homepage' }">Home</router-link>
-            <router-link :to="{ name: 'about' }">About</router-link>
-            <router-link :to="{ name: 'toolkits' }">Toolkits</router-link>
-            <router-link :to="{ name: 'faq' }">FAQ</router-link>
+            <router-link :to="{ name: 'about' }" v-if="displayAbout">About</router-link>
+            <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
+            <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
             <router-link :to="{ name: 'contact' }">Contact Us</router-link>
             <router-link :to="{ name: 'cart' }">Your Donations</router-link>
         </nav>
@@ -32,25 +32,36 @@
 </template>
 
 <script>
-    module.exports = {
-	    props: {
-		    data: {},
-		    zIndex: {
-			    type: [Number, String],
-			    default: 1000
-		    }
-	    },
-        created: function () {
-            this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
-        },
-        methods: {
-	    	close: function (event) {
-	    		event.preventDefault();
-	    		const vue = this;
+	module.exports = {
+		computed: {
+			displayAbout: function () {
+				return this.$store.getters.setting('PAGE_ABOUT_ENABLED') ? this.$store.getters.setting('PAGE_ABOUT_ENABLED') : false;
+			},
+			displayFAQ: function () {
+				return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
+			},
+			displayToolkits: function () {
+				return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
+			},
+		},
+		props: {
+			data: {},
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			}
+		},
+		created: function () {
+			this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
+		},
+		methods: {
+			close: function (event) {
+				event.preventDefault();
+				const vue = this;
 
-	    		vue.removeModal('menu-overlay');
-	    		vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
-            }
-        }
-    };
+				vue.removeModal('menu-overlay');
+				vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
+			}
+		}
+	};
 </script>
