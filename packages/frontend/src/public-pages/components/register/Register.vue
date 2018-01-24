@@ -227,11 +227,11 @@
 			},
 			registrationStartDate: function () {
 				var vue = this;
-				return moment(new Date(vue.$store.getters.setting('DATE_REGISTRATIONS_START'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo YYYY');
+				return moment(new Date(Settings.registrationStartDate())).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo YYYY');
 			},
 			canRegister: function () {
 				const vue = this;
-				return Settings.isRegistrationActive(vue.settings);
+				return Settings.acceptRegistrations(vue.settings);
 			},
 			isAfterRegistrationEnd: function () {
 				const vue = this;

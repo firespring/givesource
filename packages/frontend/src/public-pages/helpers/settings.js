@@ -25,24 +25,52 @@ const moment = require('moment-timezone');
  *
  * @returns {boolean}
  */
-const isRegistrationActive = function () {
+const acceptRegistrations = function () {
 
 	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START');
-	const dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END');
-
-	if (eventTimezone) {
-		let now = moment().tz(eventTimezone);
-		if (dateRegistrationsStart && isBeforeRegistrationStart()) {
-			return false;
-		}
-
-		if (dateRegistrationsEnd && isAfterRegistrationEnd()) {
-			return false;
+	const dateEvent = store.getters.setting('DATE_EVENT');
+	if (eventTimezone && dateEvent) {
+		const now = moment().tz(eventTimezone);
+		const start = moment(new Date(registrationStartDate())).tz(eventTimezone);
+		const end = moment(new Date(registrationEndDate())).tz(eventTimezone);
+		if (now.isBetween(start, end, 'day', '[]')) {
+			return true;
 		}
 	}
 
-	return true;
+	return false;
+};
+
+/**
+ * Get registration start date
+ *
+ * @returns {String|null}
+ */
+const registrationStartDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+	let dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START');
+	if (!dateRegistrationsStart && eventTimezone && dateEvent) {
+		dateRegistrationsStart = moment(new Date(dateEvent)).tz(eventTimezone).subtract(30, 'days').format('MM/DD/YYYY');
+	}
+
+	return dateRegistrationsStart;
+};
+
+/**
+ * Get registration end date
+ *
+ * @returns {String|null}
+ */
+const registrationEndDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+	let dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END');
+	if (!dateRegistrationsEnd && eventTimezone && dateEvent) {
+		dateRegistrationsEnd = moment(new Date(dateEvent)).tz(eventTimezone).subtract(1, 'days').format('MM/DD/YYYY');
+	}
+
+	return dateRegistrationsEnd;
 };
 
 /**
@@ -53,7 +81,7 @@ const isRegistrationActive = function () {
 const isBeforeRegistrationStart = function () {
 
 	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START');
+	const dateRegistrationsStart = registrationStartDate();
 
 	if (eventTimezone && dateRegistrationsStart) {
 		let now = moment().tz(eventTimezone);
@@ -73,7 +101,7 @@ const isBeforeRegistrationStart = function () {
 const isAfterRegistrationEnd = function () {
 
 	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END');
+	const dateRegistrationsEnd = registrationEndDate();
 
 	if (eventTimezone && dateRegistrationsEnd) {
 		let now = moment().tz(eventTimezone);
@@ -167,6 +195,7 @@ export {
 	isBeforeRegistrationStart,
 	isDayOfEvent,
 	isDayOfEventOrAfter,
-	isRegistrationActive,
-	acceptDonations
+	acceptRegistrations,
+	acceptDonations,
+	registrationStartDate
 }

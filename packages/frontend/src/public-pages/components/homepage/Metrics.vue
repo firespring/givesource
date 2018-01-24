@@ -185,7 +185,7 @@
 					return false;
 				}
 
-				return Settings.isRegistrationActive();
+				return Settings.acceptRegistrations();
 			},
 			displayDonationTotals: function () {
 				return Settings.isDayOfEventOrAfter();
