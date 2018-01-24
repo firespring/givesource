@@ -15,7 +15,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<template>
+<template xmlns:v-on="http://www.w3.org/1999/xhtml">
     <div class="c-page-section__content">
         <div class="c-alert c-alert--info c-alert--expand u-flex u-justify-center">
 
@@ -93,7 +93,6 @@
             donationTiers: {
                 handler: function () {
                     const vue = this;
-
                     const current = JSON.parse(JSON.stringify(vue.donationTiers));
                     const emptyRows = _.filter(current, {amount: '0.00', description: ''}).length;
                     if (emptyRows === 0 && current.length < 4) {
@@ -109,28 +108,26 @@
             submit: function () {
                 const vue = this;
 
-                if(vue.validateDonationTiers()){
+                if (vue.validateDonationTiers()) {
                     vue.addModal('spinner');
                     vue.updateDonationTiers();
                     vue.clearModals();
                 }
 
             },
-            validateDonationTiers: function() {
+            validateDonationTiers: function () {
                 return true;
                 const vue = this;
                 const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
                 const emptyRows = _.filter(donationTiers, {amount: '0.00', description: ''}).length;
-                var donationTiersLessThanTen = _.filter(donationTiers, function(donationTierRow){
+                var donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
                     return donationTierRow.amount < 10;
                 }).length;
-
                 if (emptyRows === 0 && donationTiers.length === 4 && donationTiersLessThanTen >= 1) {
                     return false;
                 } else if (emptyRows === 1 && donationTiers.length > 1 && donationTiersLessThanTen > 1) {
                     return false;
                 }
-
                 return true;
             },
             updateDonationTiers: function () {

@@ -18,12 +18,12 @@
 <template>
     <tr>
         <td class="input">
-            <div class="u-control-icon u-control-icon--dollar u-control-icon--has-error">
+            <div class="u-control-icon u-control-icon--dollar" :class="{ 'u-control-icon--has-error': error}">
                 <input v-model.lazy="localAmount" type="text" style="width: 10rem;" v-money="currencyOptions" :class="{ 'has-error': error}">
             </div>
             <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                    Minimum amount is $10.00
-                </div>
+                Minimum amount is $10.00
+            </div>
             </div>
         </td>
         <td>
@@ -34,56 +34,54 @@
 
 <script>
     module.exports = {
-    	data: function () {
-    		return {
-    			localAmount: this.amount || '',
+        data: function () {
+            return {
+                localAmount: this.amount || '',
                 localDescription: this.description || '',
                 error: null,
 
                 currencyOptions: {
-    				precision: 2,
+                    precision: 2,
                     masked: true,
                     thousands: '',
                 }
             }
         },
-    	props: [
-    		'amount',
+        props: [
+            'amount',
             'description',
             'index'
         ],
         watch: {
-    		localAmount: function (value, oldValue) {
-    			const vue = this;
-    			if (value === oldValue) {
-    				return;
+            localAmount: function (value, oldValue) {
+                const vue = this;
+                if (value === oldValue) {
+                    return;
                 }
                 vue.$emit('change', vue.index, {amount: value, description: vue.localDescription});
             },
             localDescription: function (value, oldValue) {
-    			const vue = this;
-	            if (value === oldValue) {
-		            return;
-	            }
-	            vue.$emit('change', vue.index, {amount: vue.localAmount, description: value});
+                const vue = this;
+                if (value === oldValue) {
+                    return;
+                }
+                vue.$emit('change', vue.index, {amount: vue.localAmount, description: value});
             },
             amount: function (value, oldValue) {
-    			const vue = this;
+                const vue = this;
                 if (value === oldValue) {
-                	return;
+                    return;
                 }
-
-                vue.error = (value < 10.00) ? true : false ;
-                vue.error = false;
+                vue.error = (value < 10.00);
                 vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             },
-	        description: function (value, oldValue) {
-    			const vue = this;
-    			if (value === oldValue) {
-    				return;
+            description: function (value, oldValue) {
+                const vue = this;
+                if (value === oldValue) {
+                    return;
                 }
-		        vue.localAmount = vue.amount;
+                vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             }
         }
