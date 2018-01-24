@@ -85,8 +85,48 @@ const isAfterRegistrationEnd = function () {
 	return false;
 };
 
+/**
+ * Is it the day of the event?
+ *
+ * @returns {boolean}
+ */
+const isDayOfEvent = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+
+	if (eventTimezone && dateEvent) {
+		let now = moment().tz(eventTimezone);
+		if (now.isSame(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/**
+ * Is it the day of the event or after?
+ *
+ * @returns {boolean}
+ */
+const isDayOfEventOrAfter = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+
+	if (eventTimezone && dateEvent) {
+		let now = moment().tz(eventTimezone);
+		if (now.isSameOrAfter(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
 export {
-	isRegistrationActive,
+	isAfterRegistrationEnd,
 	isBeforeRegistrationStart,
-	isAfterRegistrationEnd
+	isDayOfEvent,
+	isDayOfEventOrAfter,
+	isRegistrationActive
 }
