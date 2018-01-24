@@ -37,25 +37,6 @@ Resources:
 
   # Reports Lambda Resources
 
-  GenerateReportLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GenerateReport.zip
-      Description: "Generate report"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-          AWS_S3_BUCKET_NAME: !Ref UploadsBucket
-      FunctionName: !Sub |-
-        ${StackName}-GenerateReport
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
   GetReportLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:

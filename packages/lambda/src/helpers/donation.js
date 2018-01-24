@@ -50,6 +50,14 @@ exports.reportFields = [
 		}
 	},
 	{
+		label: 'Donor First Name',
+		value: 'donorFirstName',
+	},
+	{
+		label: 'Donor Last Name',
+		value: 'donorLastName',
+	},
+	{
 		label: 'Donor Address 1',
 		value: 'donorAddress1',
 	},
@@ -103,28 +111,6 @@ exports.reportFields = [
 		value: 'total',
 		transform: function (value) {
 			return numeral(value / 100).format('$0,0.00');
-		}
-	},
-	{
-		label: 'Payment ID',
-		value: 'paymentTransactionId',
-	},
-	{
-		label: 'Payment Amount',
-		value: 'paymentTransactionAmount',
-		transform: function (value) {
-			return numeral(value / 100).format('$0,0.00');
-		}
-	},
-	{
-		label: 'Payment Status',
-		value: 'paymentTransactionStatus',
-	},
-	{
-		label: 'Is Test Mode',
-		value: 'paymentTransactionIsTestMode',
-		transform: function (value) {
-			return value ? 'Yes' : 'No';
 		}
 	}
 ];
