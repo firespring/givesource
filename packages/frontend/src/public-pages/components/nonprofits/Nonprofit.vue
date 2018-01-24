@@ -47,7 +47,7 @@
                                 {{ nonprofit.shortDescription }}
                             </div>
 
-                            <div class="donation-action">
+                            <div v-if="canDonate" class="donation-action">
                                 <a v-on:click="openDonations" href="#" class="btn btn--green btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
@@ -118,7 +118,10 @@
 			},
 			displayDonationMetrics: function () {
 				return Settings.isDayOfEventOrAfter();
-			}
+			},
+            canDonate: function() {
+				return Settings.acceptDonations();
+            }
 		},
 		beforeMount: function () {
 			const vue = this;

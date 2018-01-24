@@ -136,11 +136,37 @@ const eventTitle = function () {
 	return title;
 };
 
+/**
+ * Can donations be submitted?
+ *
+ * @returns {boolean}
+ */
+const acceptDonations = function () {
+
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+
+	if (eventTimezone && dateEvent) {
+		const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START') ? store.getters.setting('DATE_DONATIONS_START') : dateEvent;
+		const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END') ? store.getters.setting('DATE_DONATIONS_END') : dateEvent;
+
+		const now = moment().tz(eventTimezone);
+		const start = moment(new Date(dateDonationsStart)).tz(eventTimezone);
+		const end = moment(new Date(dateDonationsEnd)).tz(eventTimezone);
+		if (now.isBetween(start, end, 'day', '[]')) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
 export {
 	eventTitle,
 	isAfterRegistrationEnd,
 	isBeforeRegistrationStart,
 	isDayOfEvent,
 	isDayOfEventOrAfter,
-	isRegistrationActive
+	isRegistrationActive,
+	acceptDonations
 }

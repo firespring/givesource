@@ -33,7 +33,7 @@
 
         <div v-if="displayDonationAmount" class="leaderboard-item__amount">{{ amount }}</div>
 
-        <div class="leaderboard-item__action">
+        <div v-if="canDonate" class="leaderboard-item__action">
             <a v-on:click.prevent="donate" href="#" class="btn btn--sm btn--green">Donate</a>
         </div>
     </div>
@@ -49,6 +49,9 @@
 			},
 			displayDonationAmount: function () {
 				return Settings.isDayOfEventOrAfter();
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
 			}
 		},
 		props: [

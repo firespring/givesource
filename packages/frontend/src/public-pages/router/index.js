@@ -178,6 +178,8 @@ const updateSettings = function () {
 	const settings = [
 		'ADMIN_PAGES_CLOUDFRONT_URL',
 		'CONTACT_PHONE',
+		'DATE_DONATIONS_END',
+		'DATE_DONATIONS_START',
 		'DATE_EVENT',
 		'DATE_REGISTRATIONS_END',
 		'DATE_REGISTRATIONS_START',

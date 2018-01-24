@@ -33,7 +33,7 @@
                                 </h3>
                             </div>
                             <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
                         </div>
                     </div>
 
@@ -59,6 +59,9 @@
 		computed: {
 			eventTitle: function () {
 				return Settings.eventTitle();
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
 			}
 		},
 		beforeMount: function () {
