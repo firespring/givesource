@@ -18,7 +18,7 @@
 <template>
     <div v-if="showLeaderboard" class="leaderboard">
 
-        <h2 class="leaderboard__title"><span>Give To Our City</span> Leaderboard</h2>
+        <h2 class="leaderboard__title"><span>{{ eventTitle }}</span> Leaderboard</h2>
 
         <div class="grid">
             <div class="grid-item" v-for="(column, columnIndex) in columns">
@@ -73,6 +73,9 @@
 		computed: {
 			showLeaderboard: function () {
 				return Settings.isDayOfEventOrAfter();
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
 			}
 		},
 		methods: {

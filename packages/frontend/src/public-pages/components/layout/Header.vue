@@ -19,7 +19,7 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <a href="/" title="Return to the homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png"></a>
+            <a href="/" title="Return to the homepage"><img :alt="logoTitle" src="/assets/temp/logo-event.png"></a>
         </div>
 
         <nav class="page-header__nav-menu items-center">
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -73,6 +75,9 @@
 	        displayToolkits: function () {
 		        return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
 	        },
+			logoTitle: function () {
+				return Settings.eventTitle() + ' Logo';
+			}
         },
 		created: function () {
 			const vue = this;

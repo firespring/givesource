@@ -48,7 +48,10 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+
+	const moment = require('moment-timezone');
 
 	module.exports = {
 		data: function () {
@@ -63,6 +66,15 @@
 				}
 			}
 		},
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			},
+			eventDate: function () {
+				var vue = this;
+				return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+			}
+		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				axios.get(API_URL + 'settings' + Utils.generateQueryString({
@@ -74,18 +86,18 @@
 						}
 					});
 					return axios.get(API_URL + 'contents' + Utils.generateQueryString({
-                        keys: [
-	                        'HOMEPAGE_TITLE',
-	                        'HOMEPAGE_MASTHEAD_TEXT',
-	                        'HOMEPAGE_MAIN_TEXT',
-	                        'HOMEPAGE_POST_EVENT_TEXT',
-	                        'HOMEPAGE_REGISTER_BUTTON',
-	                        'HOMEPAGE_REGISTER_DETAILS',
-	                        'HOMEPAGE_MATCH_IS_ENABLED',
-	                        'HOMEPAGE_MATCH_BUTTON',
-	                        'HOMEPAGE_MATCH_DETAILS',
-                        ],
-                    }));
+						keys: [
+							'HOMEPAGE_TITLE',
+							'HOMEPAGE_MASTHEAD_TEXT',
+							'HOMEPAGE_MAIN_TEXT',
+							'HOMEPAGE_POST_EVENT_TEXT',
+							'HOMEPAGE_REGISTER_BUTTON',
+							'HOMEPAGE_REGISTER_DETAILS',
+							'HOMEPAGE_MATCH_IS_ENABLED',
+							'HOMEPAGE_MATCH_BUTTON',
+							'HOMEPAGE_MATCH_DETAILS',
+						],
+					}));
 				}).then(function (response) {
 					vue.contents = response.data;
 				});
@@ -126,16 +138,16 @@
 			const vue = this;
 
 			vue.setBodyClasses('home', 'home--live');
-			vue.setPageTitle('Give To Our City - May 18th, 2018');
+			vue.setPageTitle(vue.eventTitle + ' - ' + vue.eventDate);
 		},
-        methods: {
+		methods: {
 			getContentValue: function (contentKey, defaultValue) {
 				const vue = this;
 
 				const content = _.find(vue.contents, {key: contentKey});
 				return content ? content.value : defaultValue ? defaultValue : null;
-            },
-        },
+			},
+		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),

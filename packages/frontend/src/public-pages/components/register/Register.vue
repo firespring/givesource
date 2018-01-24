@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Register for Give To Our City Day</h1>
+            <h1 slot="title">Register for {{ eventTitle }}</h1>
         </layout-hero>
 
         <main class="main">
@@ -223,8 +223,7 @@
 				return text ? text.value : null;
 			},
 			eventTitle: function () {
-				var vue = this;
-				return vue.$store.getters.setting('EVENT_TITLE');
+				return Settings.eventTitle();
 			},
 			registrationStartDate: function () {
 				var vue = this;
@@ -269,7 +268,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Register');
+			vue.setPageTitle(vue.eventTitle + ' - Register');
 		},
 		watch: {
 			formData: {

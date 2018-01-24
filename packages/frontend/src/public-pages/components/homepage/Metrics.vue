@@ -146,17 +146,16 @@
 			};
 		},
 		computed: {
-			dateEvent: function() {
+			dateEvent: function () {
 				const vue = this;
 				return vue.$store.getters.setting('DATE_EVENT');
-            },
-			eventTimezone: function() {
+			},
+			eventTimezone: function () {
 				const vue = this;
 				return vue.$store.getters.setting('EVENT_TIMEZONE');
-            },
-			eventTitle: function() {
-				const vue = this;
-				return vue.$store.getters.setting('EVENT_TITLE');
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
 			},
 			eventDateEndOfDay: function () {
 				if (this.dateEvent && this.eventTimezone) {

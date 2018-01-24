@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Thank You for Contacting Give To Our City</h1>
+            <h1 slot="title">Thank You for Contacting {{ eventTitle }}</h1>
         </layout-hero>
 
         <main class="main">
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../../helpers/settings';
 	import * as Utils from './../../../helpers/utils';
 
 	module.exports = {
@@ -48,6 +49,9 @@
 				const response = _.find(this.contents, {key: 'CONTACT_RESPONSE_TEXT'});
 				return response ? response.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -75,7 +79,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Thank You');
+			vue.setPageTitle(vue.eventTitle + ' - Thank You');
 		},
 		components: {
 			'layout-footer': require('./../../layout/Footer.vue'),

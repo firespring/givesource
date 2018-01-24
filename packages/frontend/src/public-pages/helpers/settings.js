@@ -123,7 +123,21 @@ const isDayOfEventOrAfter = function () {
 	return false;
 };
 
+/**
+ * Get event title
+ *
+ * @returns {String}
+ */
+const eventTitle = function () {
+	let title = store.getters.setting('EVENT_TITLE');
+	if (title === null || title === '') {
+		title = 'Give to Our City';
+	}
+	return title;
+};
+
 export {
+	eventTitle,
 	isAfterRegistrationEnd,
 	isBeforeRegistrationStart,
 	isDayOfEvent,

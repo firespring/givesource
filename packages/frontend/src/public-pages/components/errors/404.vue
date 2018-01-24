@@ -36,12 +36,19 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
+
 	module.exports = {
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Oops!');
+			vue.setPageTitle(vue.eventTitle + ' - Oops!');
+		},
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),

@@ -128,7 +128,7 @@
                                     <span>Yes, make my donation anonymous</span>
                                 </label>
                                 <div class="notes notes--below">
-                                    The nonprofit(s) you donate to won't receive your contact info but it will still be sent to Give To Our City for tax purposes.
+                                    The nonprofit(s) you donate to won't receive your contact info but it will still be sent to {{ eventTitle }} for tax purposes.
                                 </div>
                             </div>
                         </div>
@@ -219,6 +219,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -229,7 +230,7 @@
 
 				settings: [],
 				donations: [],
-                contents: [],
+				contents: [],
 
 				// Form Data
 				formData: {
@@ -267,12 +268,15 @@
 				}
 			};
 		},
-        computed: {
-	        text: function () {
-		        const text = _.find(this.contents, {key: 'CART_CHECKOUT_TEXT'});
-		        return text ? text.value : null;
-	        },
-        },
+		computed: {
+			text: function () {
+				const text = _.find(this.contents, {key: 'CART_CHECKOUT_TEXT'});
+				return text ? text.value : null;
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
+		},
 		created: function () {
 			const vue = this;
 
@@ -312,7 +316,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Your Donations');
+			vue.setPageTitle(vue.eventTitle + ' - Your Donations');
 		},
 		watch: {
 			donor: {
@@ -363,11 +367,11 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your email'
-                        },
+							message: 'Enter your email'
+						},
 						email: {
 							message: 'The email entered is not valid'
-                        },
+						},
 					},
 					firstName: {
 						presence: true,

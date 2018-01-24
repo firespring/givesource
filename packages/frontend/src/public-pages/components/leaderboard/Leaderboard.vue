@@ -52,14 +52,20 @@
 <script>
 	const numeral = require('numeral');
 	const PaginationMixin = require('./../../mixins/pagination');
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Leaderboard');
+			vue.setPageTitle(vue.eventTitle + ' - Leaderboard');
 		},
 		beforeRouteEnter: function (to, from, next) {
 			const options = _.extend({}, {size: '20', sort: 'active_subtotal_descending'}, to.query);
