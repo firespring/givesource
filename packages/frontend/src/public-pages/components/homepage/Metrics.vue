@@ -20,7 +20,7 @@
 
         <div class="main__spotlight wrapper text-c">
 
-            <div class="main-spotlight-section day-totals">
+            <div v-if="displayDonationTotals" class="main-spotlight-section day-totals">
                 <div>We’ve received</div>
                 <div class="day-totals__numbers">
                     <div v-for="digit in donationsCountArray" :class="metricClass(digit)">{{ digit }}</div>
@@ -186,6 +186,9 @@
 				}
 
 				return Settings.isRegistrationActive();
+			},
+			displayDonationTotals: function () {
+				return Settings.isDayOfEventOrAfter();
 			},
 			donationsCountArray: function () {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');

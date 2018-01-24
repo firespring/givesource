@@ -23,13 +23,15 @@
         </div>
 
         <div class="leaderboard-item__info">
-            <h3><router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link></h3>
+            <h3>
+                <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link>
+            </h3>
             <p>
                 {{ nonprofit.shortDescription }}
             </p>
         </div>
 
-        <div class="leaderboard-item__amount">{{ amount }}</div>
+        <div v-if="displayDonationAmount" class="leaderboard-item__amount">{{ amount }}</div>
 
         <div class="leaderboard-item__action">
             <a v-on:click.prevent="donate" href="#" class="btn btn--sm btn--green">Donate</a>
@@ -38,23 +40,28 @@
 </template>
 
 <script>
-    module.exports = {
-    	computed: {
-		    amount: function () {
-		    	return this.formatMoney(this.nonprofit.donationsSubtotal);
-		    }
-        },
-    	props: [
-    		'nonprofit'
-        ],
-	    methods: {
-		    donate: function () {
-			    const vue = this;
+	import * as Settings from './../../helpers/settings';
 
-			    vue.addModal('donation-tiers', {
-				    nonprofit: vue.nonprofit
-			    });
-		    }
-	    }
-    };
+	module.exports = {
+		computed: {
+			amount: function () {
+				return this.formatMoney(this.nonprofit.donationsSubtotal);
+			},
+			displayDonationAmount: function () {
+				return Settings.isDayOfEventOrAfter();
+			}
+		},
+		props: [
+			'nonprofit'
+		],
+		methods: {
+			donate: function () {
+				const vue = this;
+
+				vue.addModal('donation-tiers', {
+					nonprofit: vue.nonprofit
+				});
+			}
+		}
+	};
 </script>

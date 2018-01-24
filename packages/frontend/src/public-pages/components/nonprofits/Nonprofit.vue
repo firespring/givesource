@@ -31,7 +31,7 @@
                     <div class="nonprofit-campaign__header">
 
                         <div class="nonprofit-campaign__donation">
-                            <div class="donation-metrics">
+                            <div v-if="displayDonationMetrics" class="donation-metrics">
                                 <div class="donation-metrics__raised">
                                     <div class="num">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                                     <div class="caption">Raised</div>
@@ -115,6 +115,9 @@
 					title += ' to ' + vue.nonprofit.legalName;
 				}
 				return title;
+			},
+			displayDonationMetrics: function () {
+				return Settings.isDayOfEventOrAfter();
 			}
 		},
 		beforeMount: function () {
