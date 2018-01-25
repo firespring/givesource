@@ -82,7 +82,7 @@
                     </div>
                 </form>
 
-                <div class="nonprofit-search__love" v-if="displayMatchFund">
+                <div class="nonprofit-search__love" v-if="displayMatchFund && canDonate">
                     <div class="mb3">
                         <a href="#" class="btn btn--accent btn--lg">{{ matchFundButtonText }}</a>
                     </div>
@@ -195,6 +195,9 @@
 			},
 			donationsTotalArray: function () {
 				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
 			}
 		},
 		props: {
