@@ -56,7 +56,7 @@ NonprofitDonationTier.prototype.constraints = {
 		type: 'number',
 		numericality: {
 			onlyInteger: true,
-			greaterThan: 999,
+			greaterThanOrEqualTo: 1000,
 		}
 	},
 	description: {

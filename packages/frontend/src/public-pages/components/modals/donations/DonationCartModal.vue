@@ -26,7 +26,8 @@
 
                 <div class="donation-modal__content">
 
-                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount"></donation-cart-modal-list-table>
+                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount"
+                                                    v-on:hasError="hasDonationErrors"></donation-cart-modal-list-table>
 
                     <div class="donation-footer" v-if="displayCheckout">
                         <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></a>
@@ -43,62 +44,72 @@
 
 <script>
     module.exports = {
-    	data: function () {
-    		return {
-    			displayCheckout: true,
+        data: function () {
+            return {
+                displayCheckout: true,
+                formErrors: {}
             };
         },
-    	props: {
-    		data: {},
-		    zIndex: {
-			    type: [Number, String],
-			    default: 1000
-		    }
+        props: {
+            data: {},
+            zIndex: {
+                type: [Number, String],
+                default: 1000
+            }
         },
         created: function () {
-    		const vue = this;
+            const vue = this;
 
-	        vue.addBodyClasses('has-donation-overlay');
+            vue.addBodyClasses('has-donation-overlay');
         },
-    	mounted: function () {
-    		const vue = this;
+        mounted: function () {
+            const vue = this;
 
-    		$(vue.$refs.donationModalCart).fadeIn();
+            $(vue.$refs.donationModalCart).fadeIn();
         },
-    	methods: {
-		    close: function (event) {
-			    event.preventDefault();
-			    const vue = this;
+        methods: {
+            close: function (event) {
+                event.preventDefault();
+                const vue = this;
 
-			    $(vue.$refs.donationModalCart).fadeOut(function () {
-				    vue.removeModal('donation-cart');
-				    vue.removeBodyClasses('has-donation-overlay');
+                $(vue.$refs.donationModalCart).fadeOut(function () {
+                    vue.removeModal('donation-cart');
+                    vue.removeBodyClasses('has-donation-overlay');
                 });
-		    },
+            },
             checkoutBtn: function () {
-		    	const vue = this;
+                const vue = this;
+                if (!vue.formErrors) {
+                    $(vue.$refs.donationModalCart).hide();
+                    vue.removeModal('donation-cart');
+                    vue.removeBodyClasses('has-donation-overlay');
+                    vue.$router.push({name: 'cart'});
+                } else {
+                    vue.bus.$emit('validateDonationsBeforeOnModalCart');
+                }
 
-	            $(vue.$refs.donationModalCart).hide();
-	            vue.removeModal('donation-cart');
-	            vue.removeBodyClasses('has-donation-overlay');
-	            vue.$router.push({ name: 'cart' });
             },
             helpMoreBtn: function () {
-		    	const vue = this;
+                const vue = this;
 
-	            $(vue.$refs.donationModalCart).hide();
+                $(vue.$refs.donationModalCart).hide();
                 vue.removeModal('donation-cart');
-		        vue.removeBodyClasses('has-donation-overlay');
-		        vue.$router.push({ name: 'search-results' });
+                vue.removeBodyClasses('has-donation-overlay');
+                vue.$router.push({name: 'search-results'});
             },
-		    updateCartItemsCount: function (count) {
-		    	const vue = this;
+            updateCartItemsCount: function (count) {
+                const vue = this;
 
                 vue.displayCheckout = count;
+            },
+
+            hasDonationErrors: function (hasError) {
+                const vue = this;
+                vue.formErrors = hasError;
             }
         },
         components: {
-    		'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
+            'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
         }
     };
 </script>

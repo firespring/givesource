@@ -24,7 +24,6 @@
             <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                 Minimum amount is $10.00
             </div>
-            </div>
         </td>
         <td>
             <input v-model="localDescription" type="text" maxlength="100">
@@ -72,7 +71,8 @@
                 if (value === oldValue) {
                     return;
                 }
-                vue.error = (value < 10.00);
+                vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
+                vue.error = (Object.keys(vue.formErrors).length) ? true : false;
                 vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             },
@@ -84,6 +84,19 @@
                 vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             }
+        },
+        methods: {
+            getConstraints: function () {
+                return {
+                    amount: {
+                        presence: true,
+                        numericality: {
+                            onlyInteger: true,
+                            greaterThanOrEqualTo: 1000,
+                        }
+                    },
+                };
+            },
         }
 
     };

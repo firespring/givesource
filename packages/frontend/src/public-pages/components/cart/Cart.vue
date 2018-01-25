@@ -25,7 +25,7 @@
             <div class="wrapper wrapper--sm">
 
                 <form v-on:submit="submit">
-                    <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty"></cart-donations>
+                    <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty" v-on:hasError="donationHasErrors"></cart-donations>
 
                     <fieldset v-if="!isCartEmpty">
                         <legend>Your Contact & Billing Info</legend>
@@ -226,6 +226,7 @@
 			return {
 				isCartEmpty: true,
 				processing: false,
+                donationError: false,
 
 				settings: [],
 				donations: [],
@@ -454,7 +455,7 @@
 				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
 				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
-				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
+                if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length || vue.donationError) {
 					console.log(vue.formErrors);
 					vue.processing = false;
 				} else {
@@ -559,7 +560,11 @@
 						}
 					});
 				});
-			}
+			},
+            donationHasErrors: function (hasError){
+			    const vue = this;
+                vue.donationError = hasError;
+            }
 		},
 		components: {
 			'cart-donations': require('./CartDonations.vue'),

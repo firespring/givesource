@@ -22,7 +22,10 @@
         </td>
         <td class="donation">
             <div class="donation-amount">
-                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions">
+                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': error}">
+            </div>
+            <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                Minimum amount is $10.00
             </div>
         </td>
         <td class="actions nowrap">
@@ -34,57 +37,73 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				localAmount: this.amount,
+    module.exports = {
+        data: function () {
+            return {
+                localAmount: this.amount,
+                error: null,
 
-				currencyOptions: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				}
-			};
-		},
-		computed: {
-			donationAmount: function () {
-				return this.formatMoney(this.amount);
-			}
-		},
+                currencyOptions: {
+                    precision: 2,
+                    masked: true,
+                    thousands: '',
+                }
+            };
+        },
+        computed: {
+            donationAmount: function () {
+                return this.formatMoney(this.amount);
+            }
+        },
         props: [
-	        'amount',
-        	'nonprofit',
+            'amount',
+            'nonprofit',
             'timestamp'
         ],
-		watch: {
-			localAmount: function (value, oldValue) {
-				const vue = this;
+        watch: {
+            localAmount: function (value, oldValue) {
+                const vue = this;
 
-				if (value !== oldValue && vue.timestamp) {
-					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
-				}
-			},
-			amount: function (value, oldValue) {
-				const vue = this;
+                if (value !== oldValue && vue.timestamp) {
+                    vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+                }
+            },
+            amount: function (value, oldValue) {
+                const vue = this;
 
-				if (value === oldValue) {
-					return;
-				}
-				vue.localAmount = value;
-			}
-		},
-		methods: {
-			deleteCartItem: function (event) {
-				event.preventDefault();
-				const vue = this;
+                if (value === oldValue) {
+                    return;
+                }
+                vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
+                vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+                vue.$emit('hasError', vue.error);
 
-				vue.$store.commit('removeCartItem', vue.timestamp);
-				vue.$emit('removeCartItem', vue.timestamp);
+                vue.localAmount = value;
+            }
+        },
+        methods: {
+            getConstraints: function () {
+                return {
+                    amount: {
+                        presence: true,
+                        numericality: {
+                            onlyInteger: true,
+                            greaterThanOrEqualTo: 1000,
+                        }
+                    },
+                };
+            },
+            deleteCartItem: function (event) {
+                event.preventDefault();
+                const vue = this;
 
-				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
-			}
-		}
-	};
+                vue.$store.commit('removeCartItem', vue.timestamp);
+                vue.$emit('removeCartItem', vue.timestamp);
+
+                vue.bus.$emit('updateCartItems');
+                vue.bus.$emit('updateCartItemsCount');
+                vue.bus.$emit('updateCartItemsCounter');
+            }
+        }
+    };
 </script>

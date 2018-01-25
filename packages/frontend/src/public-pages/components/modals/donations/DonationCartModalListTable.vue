@@ -26,8 +26,9 @@
         </thead>
 
         <tbody v-if="cartItems.length">
-        <donation-cart-modal-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
-                                            v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></donation-cart-modal-list-table-row>
+        <donation-cart-modal-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit"
+                                            :key="index" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
+                                            v-on:hasError="hasError"></donation-cart-modal-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -47,55 +48,60 @@
 
 <script>
     module.exports = {
-	    data: function () {
-		    return {
-			    cartItems: [],
-		    };
-	    },
-	    created: function () {
-		    const vue = this;
+        data: function () {
+            return {
+                cartItems: [],
+            };
+        },
+        created: function () {
+            const vue = this;
 
-		    vue.cartItems = vue.$store.state.cartItems;
-		    vue.cartItems.sort(function (a, b) {
-			    return a.timestamp - b.timestamp;
-		    });
-	    },
+            vue.cartItems = vue.$store.state.cartItems;
+            vue.cartItems.sort(function (a, b) {
+                return a.timestamp - b.timestamp;
+            });
+        },
         watch: {
-	    	cartItems: function () {
-	    		this.$emit('updateCartItemsCount', this.cartItems.length);
+            cartItems: function () {
+                this.$emit('updateCartItemsCount', this.cartItems.length);
             }
         },
         methods: {
-    		removeCartItem: function (timestamp) {
-    			const vue = this;
-			    vue.cartItems = _.reject(vue.cartItems, { timestamp: timestamp });
+            removeCartItem: function (timestamp) {
+                const vue = this;
+                vue.cartItems = _.reject(vue.cartItems, {timestamp: timestamp});
             },
             updateCartItem: function (timestamp, amount) {
-    			const vue = this;
+                const vue = this;
 
-    			const cartItem = _.find(vue.cartItems, { timestamp: timestamp });
-    			cartItem.amount = amount;
+                const cartItem = _.find(vue.cartItems, {timestamp: timestamp});
+                cartItem.amount = amount;
 
-    			vue.$store.commit('updateCartItem', {
-    				timestamp: timestamp,
+                vue.$store.commit('updateCartItem', {
+                    timestamp: timestamp,
                     amount: amount
                 });
 
-	            vue.bus.$emit('updateCartItems');
-	            vue.bus.$emit('updateCartItemsCount');
-	            vue.bus.$emit('updateCartItemsCounter');
-            },
-	        findNonprofit: function () {
-		        const vue = this;
+                vue.bus.$emit('updateCartItems');
+                vue.bus.$emit('updateCartItemsCount');
+                vue.bus.$emit('updateCartItemsCounter');
 
-		        $(vue.$refs.donationModalCart).hide();
-		        vue.removeModal('donation-cart');
-		        vue.removeBodyClasses('has-donation-overlay');
-		        vue.$router.push({ name: 'search-results' });
-	        }
+            },
+            findNonprofit: function () {
+                const vue = this;
+
+                $(vue.$refs.donationModalCart).hide();
+                vue.removeModal('donation-cart');
+                vue.removeBodyClasses('has-donation-overlay');
+                vue.$router.push({name: 'search-results'});
+            },
+            hasError: function (hasError) {
+                const vue = this;
+                vue.$emit('hasError', hasError);
+            }
         },
         components: {
-    		'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')
+            'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')
         }
     };
 </script>

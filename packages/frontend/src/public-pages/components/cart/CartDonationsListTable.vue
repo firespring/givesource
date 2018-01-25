@@ -27,7 +27,7 @@
 
         <tbody v-if="cartItems.length">
         <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
-                                       v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></cart-donations-list-table-row>
+                                       v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem" v-on:hasError="hasError"></cart-donations-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -46,43 +46,48 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				cartItems: [],
-			};
-		},
-		created: function () {
-			const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                cartItems: [],
+            };
+        },
+        created: function () {
+            const vue = this;
 
-			vue.cartItems = vue.$store.state.cartItems;
-			vue.cartItems.sort(function (a, b) {
-				return a.timestamp - b.timestamp;
-			});
-		},
-		methods: {
-			removeCartItem: function (timestamp) {
-				const vue = this;
-				vue.cartItems = _.reject(vue.cartItems, { timestamp: timestamp });
-			},
-			updateCartItem: function (timestamp, amount) {
-				const vue = this;
+            vue.cartItems = vue.$store.state.cartItems;
+            vue.cartItems.sort(function (a, b) {
+                return a.timestamp - b.timestamp;
+            });
+        },
+        methods: {
+            removeCartItem: function (timestamp) {
+                const vue = this;
+                vue.cartItems = _.reject(vue.cartItems, {timestamp: timestamp});
+            },
+            updateCartItem: function (timestamp, amount) {
+                const vue = this;
 
-				const cartItem = _.find(vue.cartItems, { timestamp: timestamp });
-				cartItem.amount = amount;
+                const cartItem = _.find(vue.cartItems, {timestamp: timestamp});
+                cartItem.amount = amount;
 
-				vue.$store.commit('updateCartItem', {
-					timestamp: timestamp,
-					amount: amount
-				});
+                vue.$store.commit('updateCartItem', {
+                    timestamp: timestamp,
+                    amount: amount
+                });
 
-				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
-			}
-		},
+                vue.bus.$emit('updateCartItems');
+                vue.bus.$emit('updateCartItemsCount');
+                vue.bus.$emit('updateCartItemsCounter');
+            },
+            hasError: function (hasError) {
+                const vue = this;
+                vue.$emit('hasError', hasError);
+            },
+
+        },
         components: {
-        	'cart-donations-list-table-row': require('./CartDonationsListTableRow.vue')
+            'cart-donations-list-table-row': require('./CartDonationsListTableRow.vue')
         }
-	};
+    };
 </script>
