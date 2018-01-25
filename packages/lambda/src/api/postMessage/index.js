@@ -15,58 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const EmailHelper = require('./../../helpers/email');
 const HttpException = require('./../../exceptions/http');
 const Message = require('./../../models/message');
 const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
 const SES = require('./../../aws/ses');
 
 exports.handle = function (event, context, callback) {
 	const repository = new MessagesRepository();
 	const request = new Request(event, context);
-	const settingsRepository = new SettingsRepository();
 	const ses = new SES();
 
-	let to = null;
-	let from = null;
 	const message = new Message(request._body);
 
 	request.validate().then(function () {
 		return message.validate();
 	}).then(function () {
-		return settingsRepository.batchGet(['CONTACT_EMAIL', 'SENDER_EMAIL']);
-	}).then(function (settings) {
-		if (settings.length) {
-			to = getSettingValue(settings, 'CONTACT_EMAIL');
-			from = getSettingValue(settings, 'SENDER_EMAIL');
-		}
-		return ses.listIdentities();
+		return EmailHelper.getContactEmailAddresses();
 	}).then(function (response) {
-		const identities = response.hasOwnProperty('Identities') ? response.Identities : [];
-		if (identities.length) {
-			return ses.getIdentityVerificationAttributes(identities);
-		} else {
-			return Promise.resolve([]);
-		}
-	}).then(function (response) {
-		const results = [];
-		if (response.hasOwnProperty('VerificationAttributes')) {
-			Object.keys(response.VerificationAttributes).forEach(function (key) {
-				results.push({
-					email: key,
-					verified: response.VerificationAttributes[key].VerificationStatus === 'Success',
-				});
-			});
-		}
-		return Promise.resolve(results);
-	}).then(function (response) {
-		let emailSetting = null;
-		if (response.length && from) {
-			emailSetting = _.find(response, {email: from});
-		}
-		if (emailSetting && emailSetting.verified) {
-			return ses.sendEmail(message, [to], from);
+		if (response.to.email && response.from.email && response.from.verified) {
+			const bodyText = message.message;
+			const toAddresses = [response.to.email];
+			const replyToAddresses = [message.email];
+			return ses.sendEmail('New Message from Givesource', null, bodyText, response.from.email, toAddresses, replyToAddresses);
 		} else {
 			return Promise.resolve();
 		}

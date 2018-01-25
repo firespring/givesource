@@ -29,38 +29,48 @@ function SES() {
 /**
  * Send email message via AWS SES
  *
- * @param {Message} message
- * @param {Array} to
- * @param {String} from
+ * @param {String} subject
+ * @param {String} [bodyHtml]
+ * @param {String} [bodyText]
+ * @param {String} fromAddress
+ * @param {Array} toAddresses
  * @return {Promise}
  */
-SES.prototype.sendEmail = function (message, to, from) {
+SES.prototype.sendEmail = function (subject, bodyHtml, bodyText, fromAddress, toAddresses, replyToAddresses) {
 	const awsSES = new AWS.SES();
 	return new Promise(function (resolve, reject) {
-		if (!(message instanceof Message)) {
-			reject(new Error('invalid message model.'));
+		if (!bodyHtml && !bodyText) {
+			reject(new Error('email must contain a body'));
 		}
 
 		const params = {
 			Destination: {
-				ToAddresses: to,
+				ToAddresses: toAddresses,
 			},
 			Message: {
-				Body: {
-					Text: {
-						Charset: 'UTF-8',
-						Data: message.message,
-					}
-				},
+				Body: {},
 				Subject: {
-					Data: 'New Message from Givesource',
+					Data: subject,
 				}
 			},
-			Source: from,
-			ReplyToAddresses: [
-				message.email,
-			]
+			Source: fromAddress,
+			ReplyToAddresses: replyToAddresses,
 		};
+
+		if (bodyHtml) {
+			params.Message.Body.Html = {
+				Charset: 'UTF-8',
+				Data: bodyHtml
+			}
+		}
+
+		if (bodyText) {
+			params.Message.Body.Text = {
+				Charset: 'UTF-8',
+				Data: bodyText
+			};
+		}
+
 		awsSES.sendEmail(params, function (err, data) {
 			if (err) {
 				return reject(err);

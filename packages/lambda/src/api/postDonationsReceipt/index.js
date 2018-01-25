@@ -16,8 +16,10 @@
  */
 
 const _ = require('lodash');
+const Donation = require('./../../models/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const DonorsRepository = require('./../../repositories/donors');
+const EmailHelper = require('./../../helpers/email');
 const Lambda = require('./../../aws/lambda');
 const HttpException = require('./../../exceptions/http');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
@@ -35,13 +37,14 @@ exports.handle = function (event, context, callback) {
 
 	let donor = null;
 	let donations = [];
-	let paymentTransactions = {};
+	let receipt = '';
+	let transactions = [];
 
 	request.validate().then(function () {
 		return donorsRepository.queryEmail(request.get('email'));
 	}).then(function (response) {
 		if (response) {
-			donor = response;
+			donor = response.mutate();
 			const builder = new QueryBuilder('query');
 			builder.limit(100).index('donorUuidCreatedOnIndex').condition('donorUuid', '=', donor.uuid).condition('createdOn', '>', 0).scanIndexForward(false);
 			return donationsRepository.batchQuery(builder);
@@ -50,7 +53,10 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function (response) {
 		if (response.hasOwnProperty('Items')) {
-			donations = response.Items;
+			donations = response.Items.map(function (donation) {
+				const model = new Donation(donation);
+				return model.mutate();
+			});
 		}
 
 		const paymentTransactionUuids = donations.map(function (donation) {
@@ -64,20 +70,35 @@ exports.handle = function (event, context, callback) {
 			promise = promise.then(function () {
 				return paymentTransactionsRepository.get(uuid);
 			}).then(function (paymentTransaction) {
-				paymentTransactions[uuid] = paymentTransaction;
-				paymentTransactions[uuid].donations = _.filter(donations, {paymentTransactionUuid: uuid});
+				const transaction = paymentTransaction.mutate();
+				transaction.donations = _.filter(donations, {paymentTransactionUuid: uuid});
+				transactions.push(transaction);
 			});
 		});
 		return promise;
 	}).then(function () {
 		const body = {
 			template: 'emails.donation-receipt',
-			data: paymentTransactions,
+			data: {
+				donor: donor,
+				transactions: transactions
+			},
 		};
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-RenderTemplate', {body: body});
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-RenderTemplate', {body: body}, 'RequestResponse');
 	}).then(function (response) {
-		console.log(response);
-		// TODO: Send an email to the donor
+		if (response && response.Payload) {
+			receipt = JSON.parse(response.Payload);
+			return EmailHelper.getContactEmailAddresses();
+		} else {
+			return Promise.reject(new Error('unable to generate receipt email'));
+		}
+	}).then(function (response) {
+		if (response.from.email && response.from.verified) {
+			const toAddresses = [donor.email];
+			return ses.sendEmail('Tax receipt: Thank you for participating in Giving Day', receipt, null, response.from.email, toAddresses);
+		} else {
+			return Promise.reject(new Error('from contact email address missing or not verified'));
+		}
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

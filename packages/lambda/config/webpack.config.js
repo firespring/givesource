@@ -148,6 +148,10 @@ module.exports = function (env) {
 				{
 					test: /\.json$/,
 					loader: 'json-loader'
+				},
+				{
+					test: /\.mustache/,
+					loader: 'raw-loader'
 				}
 			]
 		},

@@ -144,11 +144,11 @@ exports.handle = function (event, context, callback) {
 			billingZip: response.data.zip,
 			creditCardExpirationMonth: parseInt(response.data.card_exp_month),
 			creditCardExpirationYear: parseInt(response.data.card_exp_year),
-			creditCardLast4: response.data.card_number.replace('*', ''),
+			creditCardLast4: response.data.card_number.replace(/\*/g, ''),
 			creditCardName: response.data.card_owner_name,
 			creditCardType: response.data.card_type,
 			isTestMode: request.get('payment').is_test_mode,
-			transactionAmountInCents: response.data.amount_settled,
+			transactionAmount: response.data.amount_settled,
 			transactionId: response.data.id,
 			transactionStatus: response.data.status
 		});

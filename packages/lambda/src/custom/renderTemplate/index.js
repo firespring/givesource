@@ -15,19 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const fs = require('fs');
 const mustache = require('mustache');
-const path = require('path');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).parameters(['template', 'data']);
 
 	request.validate().then(function () {
-		return getTemplate(request.get('template'));
-	}).then(function (template) {
-		return mustache.render(template, request.get('data', {}));
+		return render(request.get('template'), request.get('data', {}));
 	}).then(function (rendered) {
+		console.log(rendered);
 		callback(null, rendered);
 	}).catch(function (err) {
 		console.log('error: %j', err);
@@ -36,21 +33,22 @@ exports.handle = function (event, context, callback) {
 };
 
 /**
- * Get the template file
+ * Find and render the template
  *
  * @param {String} template
+ * @param {{}} data
  * @return {Promise}
  */
-const getTemplate = function (template) {
+const render = function (template, data) {
 	return new Promise(function (resolve, reject) {
 		let templatePath = template.replace(/\s/g, '').replace('.mustache', '').split('.').join('/');
-		templatePath = path.normalize('./../../templates/' + templatePath + '.mustache');
 
-		fs.readFile(templatePath, 'utf8', function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
+		try {
+			const content = require('./../../templates/' + templatePath + '.mustache');
+			const rendered = mustache.render(content, data);
+			resolve(rendered);
+		} catch (err) {
+			reject(err);
+		}
 	});
 };

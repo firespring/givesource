@@ -431,70 +431,44 @@
 
                                         <hr/>
 
-                                        {{#paymentTransactions}}
+                                        {{#transactions}}
                                             <p>
-                                                <strong>Total Donation Amount: {{ formattedTotal }} (includes covered fees)</strong><br/>
-                                                Method of Payment: Visa (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 9818)<br/>
-                                                Tracking Number: a2310453-23d5-4062-8c15-120ed94ccae6
+                                                <strong>Total Donation Amount: {{ transactionAmount }} (includes covered fees)</strong><br/>
+                                                Method of Payment: {{ creditCardType }} (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
+                                                &bull;&bull;&bull;&bull; {{ creditCardLast4 }})<br/>
+                                                Tracking Number: {{ transactionId }}
                                             </p>
 
                                             <p>
-                                                Date: Thursday, May 18, 2017 CDT<br/>
-                                                Donor: John Smith (<a href="mailto:john.smith@email.com">john.smith@email.com</a>)<br/>
+                                                Date: {{ createdOn }}<br/>
+                                                Donor: {{ donor.firstName }} {{ donor.lastName }} (<a href="mailto:{{ donor.email }}">{{ donor.email }}</a>)<br/>
                                                 Anonymous Donation: No
                                             </p>
 
                                             <table class="donations">
+                                                <thead>
+                                                <tr>
+                                                    <th class="expand">Organization</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                                </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td class="text-right">
-                                                        <strong>1.</strong>
-                                                    </td>
-                                                    <td class="organization expand">
-
-                                                        Nonprofit Hub<br/>
-                                                        211 N 14th St
-
-                                                    </td>
-                                                    <td class="amount text-right">
-                                                        $10.00
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="text-right">
-                                                        <strong>2.</strong>
-                                                    </td>
-                                                    <td class="organization expand">
-
-                                                        Launch Leadership<br/>
-                                                        211 N 14th St
-
-                                                    </td>
-                                                    <td class="amount text-right">
-                                                        $100.00
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="text-right">
-                                                        <strong>3.</strong>
-                                                    </td>
-                                                    <td class="organization expand">
-
-                                                        Love Them All<br/>
-                                                        215 Centennial Mall S Ste 100
-
-                                                    </td>
-                                                    <td class="amount text-right">
-                                                        $10.00
-                                                    </td>
-                                                </tr>
+                                                {{#donations}}
+                                                    <tr>
+                                                        <td class="organization expand">
+                                                            Nonprofit Hub<br/>
+                                                            211 N 14th St
+                                                        </td>
+                                                        <td class="amount text-right">
+                                                            {{total}}
+                                                        </td>
+                                                    </tr>
+                                                {{/donations}}
                                                 </tbody>
                                             </table>
 
                                             <hr/>
-                                        {{/paymentTransactions}}
+                                        {{/transactions}}
 
                                         <p>
                                             Your contribution is to the Firespring Foundation donor-advised fund (Tax ID 30-0358636), intended for the benefit of the charity you

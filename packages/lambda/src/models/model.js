@@ -48,6 +48,13 @@ Model.prototype.attributes = [];
 Model.prototype.constraints = {};
 
 /**
+ * Attribute mutators for this model
+ *
+ * @type {{}}
+ */
+Model.prototype.mutators = {};
+
+/**
  * Default values for this model
  *
  * @return {{}}
@@ -110,6 +117,19 @@ Model.prototype._constraints = {
 };
 
 /**
+ * Base model mutators
+ *
+ * @type {{}}
+ * @private
+ */
+Model.prototype._mutators = {
+	createdOn: function (value) {
+		const date = new Date(value);
+		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+	},
+};
+
+/**
  * Base Model defaults
  *
  * @type {{}}
@@ -139,6 +159,15 @@ Model.prototype.getAttributes = function () {
  */
 Model.prototype.getConstraints = function () {
 	return _.extend({}, this._constraints, this.constraints);
+};
+
+/**
+ * Get all mutators for this model
+ *
+ * @return {{}}
+ */
+Model.prototype.getMutators = function () {
+	return _.extend({}, this._mutators, this.mutators);
 };
 
 /**
@@ -255,6 +284,27 @@ Model.prototype.nonEmpty = function () {
 	return _.pick(all, Object.keys(all).filter(function (key) {
 		return (all[key] !== '' && all[key] !== null && all[key] !== undefined);
 	}));
+};
+
+/**
+ * Get the mutated version of this model
+ *
+ * @param {Array} [properties]
+ */
+Model.prototype.mutate = function (properties) {
+	properties = properties || this.getAttributes();
+
+	const mutated = {};
+	const mutators = this.getMutators();
+	const values = this.only(properties);
+
+	properties.forEach(function (property) {
+		if (values.hasOwnProperty(property)) {
+			mutated[property] = (mutators.hasOwnProperty(property) && typeof mutators[property] === 'function') ? mutators[property](values[property]) : values[property];
+		}
+	});
+
+	return mutated;
 };
 
 module.exports = Model;
