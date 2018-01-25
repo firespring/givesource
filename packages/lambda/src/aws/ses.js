@@ -35,6 +35,7 @@ function SES() {
  * @return {Promise}
  */
 SES.prototype.sendEmail = function (message, to, from) {
+	const ses = this;
 	const awsSES = new AWS.SES();
 	return new Promise(function (resolve, reject) {
 		if (!(message instanceof Message)) {
@@ -49,7 +50,7 @@ SES.prototype.sendEmail = function (message, to, from) {
 				Body: {
 					Text: {
 						Charset: 'UTF-8',
-						Data: message.message,
+						Data: ses.formatEmailMessage(message),
 					}
 				},
 				Subject: {
@@ -68,6 +69,25 @@ SES.prototype.sendEmail = function (message, to, from) {
 			resolve(data);
 		});
 	});
+};
+
+/**
+ * Format the email message
+ *
+ * @param {Message} message
+ */
+SES.prototype.formatEmailMessage = function (message) {
+	let formattedMessage = "";
+	if (message.name !== '') {
+		formattedMessage += 'Name: ' + message.name + "\n";
+	}
+	if (message.phone !== '') {
+		formattedMessage += 'Phone: ' + message.phone + "\n";
+	}
+	formattedMessage += "\n";
+	formattedMessage += message.message;
+
+	return formattedMessage;
 };
 
 /**
