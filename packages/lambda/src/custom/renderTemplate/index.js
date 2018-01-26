@@ -24,7 +24,6 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return render(request.get('template'), request.get('data', {}));
 	}).then(function (rendered) {
-		console.log(rendered);
 		callback(null, rendered);
 	}).catch(function (err) {
 		console.log('error: %j', err);
