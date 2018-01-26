@@ -43,7 +43,7 @@
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
-                <form v-on:submit="submit" class="nonprofit-search__name">
+                <form v-on:submit="submitSearch" class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitName">Search by Name</label>
@@ -103,6 +103,25 @@
                 <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
             </div>
 
+            <div class="main-spotlight-section wrapper wrapper--xs" v-if="displaySendReceiptForm">
+                <form v-on:submit="submitReceiptRequest" class="mb4">
+                    <div>
+                        <strong><label for="email">Enter your email and we'll send you a receipt for all of your donations this year.</label></strong>
+                    </div>
+                    <div class="grid justify-center items-center" style="max-width: 640px; margin: .5rem auto 0;">
+                        <div class="grid-item grid-item--expand">
+                            <input v-model="formData.email" type="text" name="email" id="email" placeholder="Your Email Address" :class="{'has-error': formErrors.email}">
+                            <div v-if="formErrors.email" class="notes notes--below notes--error">
+                                {{ formErrors.email }}
+                            </div>
+                        </div>
+                        <div class="grid-item grid-item--collapse">
+                            <button type="submit" class="btn btn--accent">Send Email</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
 
     </div>
@@ -122,7 +141,8 @@
 
 				// Form Data
 				formData: {
-					search: ''
+					email: '',
+					search: '',
 				},
 
 				// Errors
@@ -187,6 +207,9 @@
 
 				return Settings.acceptRegistrations();
 			},
+			displaySendReceiptForm: function () {
+				return Settings.isAfterEvent();
+			},
 			displayDonationTotals: function () {
 				return Settings.isDayOfEventOrAfter();
 			},
@@ -245,11 +268,15 @@
 				handler: function () {
 					const vue = this;
 					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+						if (vue.displaySendReceiptForm) {
+							vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
+						} else {
+							vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
+						}
 					}
 				},
 				deep: true
-			}
+			},
 		},
 		methods: {
 			displayEventCountdown: function () {
@@ -285,7 +312,15 @@
 					}
 				}, 1000);
 			},
-			getConstraints: function () {
+			getReceiptConstraints: function () {
+				return {
+					email: {
+						presence: true,
+						email: true,
+					}
+				};
+			},
+			getSearchConstraints: function () {
 				return {
 					search: {
 						presence: false,
@@ -295,14 +330,35 @@
 					},
 				};
 			},
-			submit: function (event) {
+			submitReceiptRequest: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				console.log('here');
+
+				vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
+				if (!Object.keys(vue.formErrors).length) {
+					vue.requestReceipt();
+				}
+			},
+			submitSearch: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
 				if (!Object.keys(vue.formErrors).length) {
 					vue.searchNonprofits();
 				}
+			},
+			requestReceipt: function () {
+				const vue = this;
+
+				axios.post(API_URL + 'donations/receipt', {
+					email: vue.formData.email,
+				}).then(function () {
+					vue.formData.email = '';
+					// TODO: redirect to thank-you page
+				});
 			},
 			searchNonprofits: function () {
 				const vue = this;
