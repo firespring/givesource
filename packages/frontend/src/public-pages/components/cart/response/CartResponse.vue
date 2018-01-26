@@ -32,19 +32,23 @@
 </template>
 
 <script>
+	import * as Settings from './../../../helpers/settings';
 	import * as Utils from './../../../helpers/utils';
 
 	module.exports = {
 		data: function () {
 			return {
 				contents: [],
-            };
-        },
+			};
+		},
 		computed: {
 			text: function () {
 				const text = _.find(this.contents, {key: 'CART_RESPONSE_TEXT'});
 				return text ? text.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -72,7 +76,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Thank You');
+			vue.setPageTitle(vue.eventTitle + ' - Thank You');
 		},
 		components: {
 			'layout-footer': require('./../../layout/Footer.vue'),

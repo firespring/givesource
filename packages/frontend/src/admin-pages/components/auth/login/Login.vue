@@ -32,12 +32,6 @@
                                v-on:setUserAttributes="setUserAttributes" v-bind:userAttributes="userAttributes"></component>
                 </section>
 
-                <section class="c-page-section" style="margin-top: 1rem; padding: 0 1rem;" v-if="displayLinks">
-                    <div class="c-notes c-page-section__main u-text-c">
-                        Other info and links can go here.
-                    </div>
-                </section>
-
             </div>
         </main>
     </div>

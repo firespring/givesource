@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Give To Our City Day Toolkits</h1>
+            <h1 slot="title">{{ eventTitle }} Toolkits</h1>
         </layout-hero>
 
         <main class="main">
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -66,6 +67,9 @@
 				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
 				return text ? text.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -130,7 +134,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Toolkits');
+			vue.setPageTitle(vue.eventTitle + ' - Toolkits');
 		},
 		methods: {
 			getResourceValue: function (resource, contentKey, defaultValue) {

@@ -62,6 +62,18 @@
                             </div>
                         </div>
 
+                        <div class="form-item">
+                            <div class="form-item__label">
+                                <label for="phone">Phone Number</label>
+                            </div>
+                            <div class="form-item__control">
+                                <input v-model="formData.phone" type="tel" name="phone" id="phone" :class="{'has-error': formErrors.phone}">
+                                <div v-if="formErrors.phone" class="notes notes--below notes--error">
+                                    {{ formErrors.phone }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-item form-item--required">
                             <div class="form-item__label">
                                 <label for="questions">Your Questions</label>
@@ -95,6 +107,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -107,6 +120,7 @@
 					email: '',
 					firstName: '',
 					lastName: '',
+					phone: '',
 					message: '',
 				},
 
@@ -121,6 +135,9 @@
 				const text = _.find(this.contents, {key: 'CONTACT_FORM_TEXT'});
 				return text ? text.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -148,7 +165,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Contact Us');
+			vue.setPageTitle(vue.eventTitle + ' - Contact Us');
 		},
 		watch: {
 			formData: {
@@ -168,7 +185,7 @@
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your email',
+							message: 'Enter your email',
 						},
 						email: {
 							message: 'The email entered is not valid'
@@ -180,12 +197,15 @@
 					lastName: {
 						presence: true,
 					},
+					phone: {
+						presence: false
+					},
 					message: {
 						label: '',
 						presence: {
 							allowEmpty: false,
-                            message: 'Enter your questions'
-                        },
+							message: 'Enter your questions'
+						},
 					}
 				}
 			},
@@ -207,6 +227,7 @@
 				axios.post(API_URL + 'messages', {
 					name: vue.formData.firstName + ' ' + vue.formData.lastName,
 					email: vue.formData.email,
+					phone: vue.formData.phone,
 					message: vue.formData.message,
 					type: 'CONTACT',
 				}).then(function (response) {

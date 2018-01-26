@@ -18,11 +18,11 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">Register for Give To Our City Day</h1>
+            <h1 slot="title">Register for {{ eventTitle }}</h1>
         </layout-hero>
 
         <main class="main">
-            <div class="wrapper wrapper--sm">
+            <div v-if="canRegister" class="wrapper wrapper--sm">
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
@@ -168,6 +168,16 @@
                     </div>
                 </form>
             </div>
+
+            <div v-if="!canRegister && isBeforeRegistrationStart" class="wrapper wrapper--sm">
+                Registration for {{ eventTitle }} will open on {{ registrationStartDate }}.
+                Thank you for your interest in making {{ eventTitle }} a big success!
+            </div>
+
+            <div v-if="!canRegister && isAfterRegistrationEnd" class="wrapper wrapper--sm">
+                Registration for {{ eventTitle }} is now closed.
+                Thank you for your help making {{ eventTitle }} a big success!
+            </div>
         </main>
 
         <layout-footer>
@@ -178,6 +188,9 @@
 
 <script>
 	import * as Utils from './../../helpers/utils';
+	import * as Settings from './../../helpers/settings';
+
+	const moment = require('moment-timezone');
 
 	module.exports = {
 		data: function () {
@@ -209,6 +222,25 @@
 				const text = _.find(this.contents, {key: 'REGISTER_FORM_TEXT'});
 				return text ? text.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			},
+			registrationStartDate: function () {
+				var vue = this;
+				return moment(new Date(Settings.registrationStartDate())).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo YYYY');
+			},
+			canRegister: function () {
+				const vue = this;
+				return Settings.acceptRegistrations(vue.settings);
+			},
+			isAfterRegistrationEnd: function () {
+				const vue = this;
+				return Settings.isAfterRegistrationEnd(vue.settings);
+			},
+			isBeforeRegistrationStart: function () {
+				const vue = this;
+				return Settings.isBeforeRegistrationStart(vue.settings);
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -236,7 +268,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Register');
+			vue.setPageTitle(vue.eventTitle + ' - Register');
 		},
 		watch: {
 			formData: {

@@ -32,31 +32,35 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
 		data: function () {
 			return {
 				contents: [],
-            };
-        },
-        computed: {
+			};
+		},
+		computed: {
 			terms: function () {
-                const terms = _.find(this.contents, {key: 'TERMS_TEXT'});
-                return terms ? terms.value : null;
-            },
-        },
+				const terms = _.find(this.contents, {key: 'TERMS_TEXT'});
+				return terms ? terms.value : null;
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
+		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
-                    keys: 'TERMS_TEXT'
-                })).then(function (response) {
-                	vue.contents = response.data;
-                });
-            });
-        },
+					keys: 'TERMS_TEXT'
+				})).then(function (response) {
+					vue.contents = response.data;
+				});
+			});
+		},
 		beforeRouteUpdate: function (to, from, next) {
-            const vue = this;
+			const vue = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: 'TERMS_TEXT'
@@ -66,13 +70,13 @@
 			}).catch(function (err) {
 				console.log(err);
 				next();
-            });
+			});
 		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Terms of Service');
+			vue.setPageTitle(vue.eventTitle + ' - Terms of Service');
 		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),

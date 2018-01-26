@@ -19,7 +19,7 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <a href="/" title="Return to the homepage"><img alt="Give To Our City Logo" src="/assets/temp/logo-event.png"></a>
+            <a href="/" title="Return to the homepage"><img :alt="logoTitle" src="/assets/temp/logo-event.png"></a>
         </div>
 
         <nav class="page-header__nav-menu items-center">
@@ -35,7 +35,7 @@
             </div>
         </form>
 
-        <div class="page-header__cart items-center">
+        <div v-if="canDonate" class="page-header__cart items-center">
             <router-link :to="{ name: 'cart' }" title="View your current donations">
                 <span class="fa-layers fa-fw" ref="shoppingBag">
                     <i class="fas fa-shopping-bag"></i>
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -63,17 +65,23 @@
 				formErrors: {},
 			};
 		},
-        computed: {
+		computed: {
 			displayAbout: function () {
 				return this.$store.getters.setting('PAGE_ABOUT_ENABLED') ? this.$store.getters.setting('PAGE_ABOUT_ENABLED') : false;
-            },
-	        displayFAQ: function () {
-		        return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
-	        },
-	        displayToolkits: function () {
-		        return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
-	        },
-        },
+			},
+			displayFAQ: function () {
+				return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
+			},
+			displayToolkits: function () {
+				return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
+			},
+			logoTitle: function () {
+				return Settings.eventTitle() + ' Logo';
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
+			}
+		},
 		created: function () {
 			const vue = this;
 
@@ -84,7 +92,7 @@
 
 			vue.bus.$on('navigate', function () {
 				vue.formData.search = '';
-            });
+			});
 		},
 		beforeDestroy: function () {
 			const vue = this;
@@ -92,17 +100,17 @@
 			vue.bus.$off('updateCartItemsCounter');
 			vue.bus.$off('navigate');
 		},
-        watch: {
-	        formData: {
-		        handler: function () {
-			        const vue = this;
-			        if (Object.keys(vue.formErrors).length) {
-				        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-			        }
-		        },
-		        deep: true
-	        }
-        },
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
 		methods: {
 			getConstraints: function () {
 				return {
@@ -112,8 +120,8 @@
 							minimum: 3
 						},
 					},
-                };
-            },
+				};
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
@@ -122,7 +130,7 @@
 				if (!Object.keys(vue.formErrors).length) {
 					vue.searchNonprofits();
 				}
-            },
+			},
 			searchNonprofits: function () {
 				const vue = this;
 

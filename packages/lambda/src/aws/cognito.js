@@ -34,12 +34,13 @@ function Cognito() {
  * @param {String} serviceName
  * @param {String} adminPageUrl
  * @param {String} snsCallerArn
+ * @param {String} cognitoCustomMessageArn
  * @return {Promise}
  */
-Cognito.prototype.createUserPool = function (poolName, serviceName, adminPageUrl, snsCallerArn) {
+Cognito.prototype.createUserPool = function (poolName, serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
-		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn);
+		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn);
 		params.PoolName = poolName;
 		params.Schema = [
 			{
@@ -71,12 +72,13 @@ Cognito.prototype.createUserPool = function (poolName, serviceName, adminPageUrl
  * @param {String} serviceName
  * @param {String} adminPageUrl
  * @param {String} snsCallerArn
+ * @param {String} cognitoCustomMessageArn
  * @return {Promise}
  */
-Cognito.prototype.updateUserPool = function (userPoolId, serviceName, adminPageUrl, snsCallerArn) {
+Cognito.prototype.updateUserPool = function (userPoolId, serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
-		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn);
+		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn);
 		params.UserPoolId = userPoolId;
 		cognito.awsCognito.updateUserPool(params, function (err, result) {
 			if (err) {
@@ -129,9 +131,10 @@ Cognito.prototype.describeUserPool = function (userPoolId) {
  * @param {String} serviceName
  * @param {String} adminPageUrl
  * @param {String} snsCallerArn
+ * @param {String} cognitoCustomMessageArn
  * @return {{}}
  */
-Cognito.prototype.buildUserPoolParameters = function (serviceName, adminPageUrl, snsCallerArn) {
+Cognito.prototype.buildUserPoolParameters = function (serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
 	return {
 		AdminCreateUserConfig: {
 			AllowAdminCreateUserOnly: true,
@@ -142,8 +145,9 @@ Cognito.prototype.buildUserPoolParameters = function (serviceName, adminPageUrl,
 			}
 		},
 		AutoVerifiedAttributes: ['email'],
-		EmailVerificationMessage: `Your verification code is {####}.`,
-		EmailVerificationSubject: `${serviceName} - Your verification code`,
+		LambdaConfig: {
+			CustomMessage: cognitoCustomMessageArn
+		},
 		MfaConfiguration: 'OPTIONAL',
 		Policies: {
 			PasswordPolicy: {
@@ -245,6 +249,29 @@ Cognito.prototype.createUser = function (userPoolId, userName, email) {
 			});
 		}).catch(function (err) {
 			reject(err);
+		});
+	});
+};
+
+/**
+ * Delete an AWS Cognito user
+ *
+ * @param {String} userPoolId
+ * @param {String} userName
+ * @return {Promise}
+ */
+Cognito.prototype.deleteUser = function (userPoolId, userName) {
+	const cognito = this;
+	return new Promise(function (resolve, reject) {
+		const params = {
+			UserPoolId: userPoolId,
+			Username: userName
+		};
+		cognito.awsCognito.adminDeleteUser(params, function (err, result) {
+			if (err) {
+				return reject(err);
+			}
+			resolve(result);
 		});
 	});
 };

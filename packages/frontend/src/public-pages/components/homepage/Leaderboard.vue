@@ -16,9 +16,9 @@
   -->
 
 <template>
-    <div class="leaderboard">
+    <div v-if="showLeaderboard" class="leaderboard">
 
-        <h2 class="leaderboard__title"><span>Give To Our City</span> Leaderboard</h2>
+        <h2 class="leaderboard__title"><span>{{ eventTitle }}</span> Leaderboard</h2>
 
         <div class="grid">
             <div class="grid-item" v-for="(column, columnIndex) in columns">
@@ -42,8 +42,9 @@
 </template>
 
 <script>
-    const numeral = require('numeral');
+	const numeral = require('numeral');
 	import * as Utils from './../../helpers/utils';
+	import * as Settings from './../../helpers/settings';
 
 	module.exports = {
 		data: function () {
@@ -60,7 +61,7 @@
 			})).then(function (response) {
 				if (response.data.hasOwnProperty('items')) {
 					vue.nonprofits = response.data.items;
-                }
+				}
 				const chunks = _.chunk(vue.nonprofits, Math.ceil(vue.nonprofits.length / 2));
 				chunks.forEach(function (chunk) {
 					vue.columns.push({
@@ -69,11 +70,19 @@
 				});
 			});
 		},
-        methods: {
+		computed: {
+			showLeaderboard: function () {
+				return Settings.isDayOfEventOrAfter();
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
+		},
+		methods: {
 			position: function (columnIndex, nonprofitIndex) {
 				const columnSize = Math.ceil(this.nonprofits.length / 2);
 				return numeral(columnIndex * columnSize + nonprofitIndex + 1).format('00');
-            }
-        }
+			}
+		}
 	};
 </script>

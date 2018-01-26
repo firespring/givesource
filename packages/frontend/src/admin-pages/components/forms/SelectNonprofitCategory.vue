@@ -69,7 +69,7 @@
 						{value: 1, text: 'Animal-Related'},
 						{value: 2, text: 'Arts, Culture & Humanities'},
 						{value: 3, text: 'Children & Families'},
-                        {value: 4, text: 'Civil Rights, Social Action & Advocacy'},
+						{value: 4, text: 'Civil Rights, Social Action & Advocacy'},
 						{value: 5, text: 'Community Improvement & Capacity Building'},
 						{value: 6, text: 'Crime & Legal-Related'},
 						{value: 7, text: 'Diseases, Disorders & Medical Disciplines'},

@@ -120,6 +120,39 @@ const forgotPassword = function (username, callbacks) {
 };
 
 /**
+ * Forgot password reset workflow
+ *
+ * @param {String} username
+ * @param {String} code
+ * @param {String} password
+ * @param {{}} callbacks
+ */
+const resetPassword = function (username, code, password, callbacks) {
+	const data = {
+		UserPoolId: store.getters.setting('USER_POOL_ID'),
+		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+	};
+	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+	const userData = {
+		Username: username,
+		Pool: userPool
+	};
+	const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+	cognitoUser.confirmPassword(code, password, {
+		onSuccess: function (result) {
+			if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
+				callbacks.onSuccess(result, cognitoUser);
+			}
+		},
+		onFailure: function (err) {
+			if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
+				callbacks.onFailure(err);
+			}
+		}
+	});
+};
+
+/**
  * Is CognitoUser authenticated?
  *
  * @return {boolean}
@@ -179,12 +212,28 @@ const getCognitoUser = function () {
 	return userPool.getCurrentUser();
 };
 
+/**
+ * Format Cognito error message
+ *
+ * @param {Error} err
+ * @returns {String}
+ */
+const formatCognitoErrorMessage = function (err) {
+	// Make Cognito error message consistent with the Cognito errors that are returned in other areas.
+	if (err.name === 'InvalidParameterException' && err.message.includes('Member must have length')) {
+		return 'Password does not conform to policy: Password not long enough';
+	}
+	return err.message;
+};
+
 export {
 	login,
 	logout,
 	isAuthenticated,
 	changePassword,
 	forgotPassword,
+	resetPassword,
 	refreshSession,
-	getCognitoUser
+	getCognitoUser,
+	formatCognitoErrorMessage
 }
