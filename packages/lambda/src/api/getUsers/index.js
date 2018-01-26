@@ -37,7 +37,9 @@ exports.handle = function (event, context, callback) {
 			let result = user.all();
 			promise = promise.then(function () {
 				return cognito.listGroupsForUser(userPoolId, user.uuid).then(function (response) {
-					result.group = _.get(response.Groups[0], 'GroupName', 'SuperAdmin');
+					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
+						return group.GroupName;
+					}) : [];
 					results.push(result);
 				});
 			});
