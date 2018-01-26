@@ -41,8 +41,8 @@
                                 <button class="btn"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                             </div>
                         </form>
-                        <div v-if="formErrors.customAmount" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                            Minimum amount is $10.00
+                        <div v-if="formErrors.customAmount" class="notes notes--below notes--error">
+                            A custom donation amount must be at least $10.00
                         </div>
                     </div>
                 </div>

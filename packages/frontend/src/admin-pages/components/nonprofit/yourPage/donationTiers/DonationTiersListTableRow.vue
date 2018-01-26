@@ -22,7 +22,7 @@
                 <input v-model.lazy="localAmount" type="text" style="width: 10rem;" v-money="currencyOptions" :class="{ 'has-error': error}">
             </div>
             <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                Minimum amount is $10.00
+                A donation amount must be at least $10.00
             </div>
         </td>
         <td>
@@ -91,8 +91,7 @@
                     amount: {
                         presence: true,
                         numericality: {
-                            onlyInteger: true,
-                            greaterThanOrEqualTo: 1000,
+                            greaterThanOrEqualTo: 10,
                         }
                     },
                 };

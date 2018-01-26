@@ -24,8 +24,8 @@
             <div class="donation-amount" :class="{ 'u-control-icon--has-error': formErrors.amount}">
                 <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': formErrors.amount}">
             </div>
-            <div v-if="error" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                Minimum amount is $10.00
+            <div v-if="error" class="notes notes--below notes--error">
+                A donation amount must be at least $10.00
             </div>
         </td>
         <td class="actions nowrap">
