@@ -43,10 +43,11 @@
             <div class="date">{{ date }}</div>
         </td>
         <td class="u-nowrap">
-            <a href="#" role="button" v-on:click="remove" v-if="superAdmin" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
+            <a href="#" role="button" v-on:click="remove" v-if="!superAdmin" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger"
+               rel="modal-confirm-remove-org-member">
                 <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove
             </a>
-            <a v-else>(Super Admin)</a>
+            <a v-else>(Administrator)</a>
         </td>
     </tr>
 </template>
@@ -64,7 +65,7 @@
                 return new Date(this.adminUser.createdOn).toLocaleDateString();
             },
             superAdmin: function () {
-                return (this.adminUser.group !== 'SuperAdmin');
+                return _.includes(this.adminUser.groups, 'SuperAdmin');
             }
         },
         props: [
