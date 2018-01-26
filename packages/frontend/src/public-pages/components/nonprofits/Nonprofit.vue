@@ -31,7 +31,7 @@
                     <div class="nonprofit-campaign__header">
 
                         <div class="nonprofit-campaign__donation">
-                            <div class="donation-metrics">
+                            <div v-if="displayDonationMetrics" class="donation-metrics">
                                 <div class="donation-metrics__raised">
                                     <div class="num">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                                     <div class="caption">Raised</div>
@@ -47,7 +47,7 @@
                                 {{ nonprofit.shortDescription }}
                             </div>
 
-                            <div class="donation-action">
+                            <div v-if="canDonate" class="donation-action">
                                 <a v-on:click="openDonations" href="#" class="btn btn--green btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
@@ -83,6 +83,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	require('fireSlider.js/dist/jquery.fireSlider.velocity');
@@ -94,21 +95,39 @@
 				nonprofit: {},
 				slides: [],
 
-                nonprofitLoaded: false,
+				nonprofitLoaded: false,
 			}
 		},
 		props: [
 			'slug'
 		],
-        computed: {
+		computed: {
 			donationsLabel: function () {
 				return this.nonprofit.donationsCount === 1 ? 'Donation' : 'Donations';
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			},
+			pageTitle: function () {
+				const vue = this;
+				let title = vue.eventTitle + ' - Donate';
+				if (vue.nonprofitLoaded) {
+					title += ' to ' + vue.nonprofit.legalName;
+				}
+				return title;
+			},
+			displayDonationMetrics: function () {
+				return Settings.isDayOfEventOrAfter();
+			},
+            canDonate: function() {
+				return Settings.acceptDonations();
             }
-        },
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('donation', 'donation--nonprofit');
+			vue.setPageTitle(vue.pageTitle);
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -117,14 +136,14 @@
 				if (to.meta.nonprofit !== null) {
 					vue.nonprofit = to.meta.nonprofit;
 					vue.nonprofitLoaded = true;
-                } else {
+				} else {
 					promise = promise.then(function () {
 						return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 							vue.nonprofit = response.data;
 							vue.nonprofitLoaded = true;
 						});
-                    });
-                }
+					});
+				}
 
 				promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
@@ -208,6 +227,15 @@
 				const vue = this;
 
 				vue.addModal('donation-tiers', {nonprofit: vue.nonprofit});
+			}
+		},
+		watch: {
+			nonprofit: {
+				handler: function () {
+					const vue = this;
+					vue.setPageTitle(vue.pageTitle);
+				},
+				deep: true
 			}
 		},
 		components: {

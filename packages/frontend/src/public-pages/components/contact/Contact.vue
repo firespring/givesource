@@ -107,6 +107,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -134,6 +135,9 @@
 				const text = _.find(this.contents, {key: 'CONTACT_FORM_TEXT'});
 				return text ? text.value : null;
 			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -161,7 +165,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Contact Us');
+			vue.setPageTitle(vue.eventTitle + ' - Contact Us');
 		},
 		watch: {
 			formData: {

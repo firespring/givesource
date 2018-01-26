@@ -47,6 +47,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -54,6 +55,11 @@
 			return {
 				contents: [],
 			};
+		},
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -87,7 +93,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Frequently Asked Questions');
+			vue.setPageTitle(vue.eventTitle + ' - Frequently Asked Questions');
 		},
 		methods: {
 			getContentValue: function (content, contentKey) {

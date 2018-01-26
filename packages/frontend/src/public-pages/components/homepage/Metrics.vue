@@ -20,7 +20,7 @@
 
         <div class="main__spotlight wrapper text-c">
 
-            <div class="main-spotlight-section day-totals">
+            <div v-if="displayDonationTotals" class="main-spotlight-section day-totals">
                 <div>We’ve received</div>
                 <div class="day-totals__numbers">
                     <div v-for="digit in donationsCountArray" :class="metricClass(digit)">{{ digit }}</div>
@@ -82,7 +82,7 @@
                     </div>
                 </form>
 
-                <div class="nonprofit-search__love" v-if="displayMatchFund">
+                <div class="nonprofit-search__love" v-if="displayMatchFund && canDonate">
                     <div class="mb3">
                         <a href="#" class="btn btn--accent btn--lg">{{ matchFundButtonText }}</a>
                     </div>
@@ -110,6 +110,7 @@
 
 <script>
 	import * as Utils from './../../helpers/utils';
+	import * as Settings from './../../helpers/settings';
 
 	const moment = require('moment-timezone');
 	const numeral = require('numeral');
@@ -145,6 +146,17 @@
 			};
 		},
 		computed: {
+			dateEvent: function () {
+				const vue = this;
+				return vue.$store.getters.setting('DATE_EVENT');
+			},
+			eventTimezone: function () {
+				const vue = this;
+				return vue.$store.getters.setting('EVENT_TIMEZONE');
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
+			},
 			eventDateEndOfDay: function () {
 				if (this.dateEvent && this.eventTimezone) {
 					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).endOf('day').format());
@@ -166,64 +178,49 @@
 				}
 				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
 			},
-            displayRegisterButton: function () {
-				return this.registerButtonText;
-            },donationsCountArray: function () {
-	            return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
-            },
-            donationsTotalArray: function () {
-	            return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
-            }
+			displayRegisterButton: function () {
+				const vue = this;
+
+				if (!vue.registerButtonText) {
+					return false;
+				}
+
+				return Settings.acceptRegistrations();
+			},
+			displayDonationTotals: function () {
+				return Settings.isDayOfEventOrAfter();
+			},
+			donationsCountArray: function () {
+				return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
+			},
+			donationsTotalArray: function () {
+				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
+			}
 		},
 		props: {
-			dateDonationsEnd: {
-				type: String,
-				default: null,
-			},
-			dateDonationsStart: {
-				type: String,
-				default: null,
-			},
-			dateEvent: {
-				type: String,
-				default: null,
-			},
-			dateRegistrationsEnd: {
-				type: String,
-				default: null,
-			},
-			dateRegistrationsStart: {
-				type: String,
-				default: null,
-			},
 			displayMatchFund: {
 				type: Boolean,
 				default: false,
 			},
-			eventTimezone: {
+			matchFundButtonText: {
 				type: String,
 				default: null,
 			},
-			eventTitle: {
+			matchFundDetails: {
 				type: String,
 				default: null,
 			},
-            matchFundButtonText: {
-	            type: String,
-	            default: null,
-            },
-            matchFundDetails: {
-	            type: String,
-	            default: null,
-            },
-            registerButtonText: {
+			registerButtonText: {
 				type: String,
-                default: null,
-            },
-            registerDetails: {
+				default: null,
+			},
+			registerDetails: {
 				type: String,
-                default: null,
-            }
+				default: null,
+			}
 		},
 		created: function () {
 			const vue = this;
@@ -234,14 +231,11 @@
 						vue.metrics[metric.key] = metric.value;
 					}
 				});
-			})
+			});
+
+			vue.initializeCountdown();
 		},
 		watch: {
-			eventDateEndOfDay: function (value) {
-				if (value && !this.loaded) {
-					this.initializeCountdown();
-				}
-			},
 			category: function (value) {
 				if (value) {
 					this.$router.push({name: 'search-results', query: {category: value}});

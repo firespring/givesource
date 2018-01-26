@@ -63,6 +63,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	const PaginationMixin = require('./../../mixins/pagination');
@@ -74,11 +75,16 @@
 				search: ''
 			}
 		},
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - Search');
+			vue.setPageTitle(vue.eventTitle + ' - Search');
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {

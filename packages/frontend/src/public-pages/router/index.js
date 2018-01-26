@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as Settings from './../helpers/settings';
 import * as Utils from './../helpers/utils';
 import store from './../store';
 import Vue from 'vue';
@@ -48,7 +49,7 @@ const router = new VueRouter({
 			component: require('./../components/about/About.vue'),
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.setting('PAGE_ABOUT_ENABLED')) {
-					next({name: '404'})
+					next({name: '404'});
 				} else {
 					next();
 				}
@@ -60,7 +61,7 @@ const router = new VueRouter({
 			component: require('./../components/toolkits/Toolkits.vue'),
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.setting('PAGE_TOOLKIT_ENABLED')) {
-					next({name: '404'})
+					next({name: '404'});
 				} else {
 					next();
 				}
@@ -72,7 +73,7 @@ const router = new VueRouter({
 			component: require('./../components/faq/FAQ.vue'),
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.setting('PAGE_FAQ_ENABLED')) {
-					next({name: '404'})
+					next({name: '404'});
 				} else {
 					next();
 				}
@@ -104,7 +105,7 @@ const router = new VueRouter({
 			component: require('./../components/terms/TermsOfService.vue'),
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.setting('PAGE_TERMS_ENABLED')) {
-					next({name: '404'})
+					next({name: '404'});
 				} else {
 					next();
 				}
@@ -113,7 +114,14 @@ const router = new VueRouter({
 		{
 			path: '/leaderboard',
 			name: 'leaderboard',
-			component: require('./../components/leaderboard/Leaderboard.vue')
+			component: require('./../components/leaderboard/Leaderboard.vue'),
+			beforeEnter: function (to, from, next) {
+				if (!Settings.isDayOfEventOrAfter()) {
+					next({name: '404'});
+				} else {
+					next();
+				}
+			}
 		},
 		{
 			path: '/search',
@@ -170,6 +178,13 @@ const updateSettings = function () {
 	const settings = [
 		'ADMIN_PAGES_CLOUDFRONT_URL',
 		'CONTACT_PHONE',
+		'DATE_DONATIONS_END',
+		'DATE_DONATIONS_START',
+		'DATE_EVENT',
+		'DATE_REGISTRATIONS_END',
+		'DATE_REGISTRATIONS_START',
+		'EVENT_TIMEZONE',
+		'EVENT_TITLE',
 		'PAGE_ABOUT_ENABLED',
 		'PAGE_FAQ_ENABLED',
 		'PAGE_TERMS_ENABLED',
