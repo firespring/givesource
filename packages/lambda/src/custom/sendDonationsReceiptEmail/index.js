@@ -136,7 +136,8 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		if (response.from.email && response.from.verified) {
 			const toAddresses = [donor.email];
-			return ses.sendEmail('Tax receipt: Thank you for participating in Giving Day', receipt, null, response.from.email, toAddresses);
+			const subject = settings.EVENT_TITLE ? 'Tax receipt: Thank you for participating in ' + settings.EVENT_TITLE : 'Tax receipt: Thank you for giving';
+			return ses.sendEmail(subject, receipt, null, response.from.email, toAddresses);
 		} else {
 			return Promise.reject(new Error('from contact email address missing or not verified'));
 		}

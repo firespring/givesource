@@ -15,46 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const EmailHelper = require('./../../helpers/email');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Message = require('./../../models/message');
 const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
-const SES = require('./../../aws/ses');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new MessagesRepository();
 	const request = new Request(event, context);
-	const ses = new SES();
 
-	const message = new Message(request._body);
-
+	let message = new Message(request._body);
 	request.validate().then(function () {
 		return message.validate();
 	}).then(function () {
-		return EmailHelper.getContactEmailAddresses();
-	}).then(function (response) {
-		if (response.to.email && response.from.email && response.from.verified) {
-			const bodyText = message.message;
-			const toAddresses = [response.to.email];
-			const replyToAddresses = [message.email];
-			return ses.sendEmail('New Message from Givesource', null, bodyText, response.from.email, toAddresses, replyToAddresses);
-		} else {
-			return Promise.resolve();
-		}
-	}).then(function () {
 		return repository.save(message);
-	}).then(function (model) {
-		callback(null, model.all());
+	}).then(function (response) {
+		message = response;
+		const body = {
+			message: message.mutate(),
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendContactMessageEmail', {body: body});
+	}).then(function () {
+		callback(null, message.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
-};
-
-const getSettingValue = function (settings, key) {
-	let result = null;
-	if (settings.length) {
-		result = _.find(settings, {key: key});
-	}
-	return result ? result.value : null;
 };
