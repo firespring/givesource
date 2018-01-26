@@ -22,6 +22,7 @@ const DonationsRepository = require('./../../repositories/donations');
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const MetricsHelper = require('./../../helpers/metrics');
 const MissingRequiredParameter = require('./../../exceptions/missingRequiredParameter');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
@@ -33,6 +34,7 @@ const SettingsRepository = require('./../../repositories/settings');
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new DonationsRepository();
 	const donorsRepository = new DonorsRepository();
+	const lambda = new Lambda();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 	const settingsRepository = new SettingsRepository();
@@ -182,6 +184,14 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return MetricsHelper.maxMetricAmount('TOP_DONATION', topDonation);
 	}).then(function () {
+		const body = {
+			donations: donations.map(function (donation) {
+				return donation.mutate();
+			}),
+			donor: donor.mutate(),
+			paymentTransaction: paymentTransaction.mutate()
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
 		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

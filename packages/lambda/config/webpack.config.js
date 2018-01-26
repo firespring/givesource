@@ -134,6 +134,7 @@ module.exports = function (env) {
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',
+			SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
 		},
 		output: {
 			path: path.resolve(__dirname, '../build/functions'),
