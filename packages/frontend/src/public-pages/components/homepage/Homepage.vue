@@ -71,8 +71,11 @@
 				return Settings.eventTitle();
 			},
 			eventDate: function () {
-				var vue = this;
-				return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+				const vue = this;
+				if (vue.$store.getters.setting('DATE_EVENT') && vue.$store.getters.setting('EVENT_TIMEZONE')) {
+					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+				}
+				return '';
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {

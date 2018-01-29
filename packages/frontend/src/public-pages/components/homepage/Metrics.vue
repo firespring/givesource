@@ -257,7 +257,9 @@
 				});
 			});
 
-			vue.initializeCountdown();
+			if(vue.displayEventCountdown()) {
+				vue.initializeCountdown();
+			}
 		},
 		watch: {
 			category: function (value) {
@@ -281,7 +283,7 @@
 		},
 		methods: {
 			displayEventCountdown: function () {
-				if (this.dateEvent && this.eventTimezone) {
+				if (this.dateEvent && this.eventTimezone && this.eventDateEndOfDay && this.eventDateStartOfDay) {
 					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
 				}
 				return false;
