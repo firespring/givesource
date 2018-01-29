@@ -49,7 +49,7 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
-                                        <router-link :to="{ name: 'settings-customize-appearance' }">Customize Appearance</router-link>
+                                        <router-link :to="{ name: 'site-appearance' }">Site Appearance</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">
                                         Modify your site's logo, colors, and other visual settings.

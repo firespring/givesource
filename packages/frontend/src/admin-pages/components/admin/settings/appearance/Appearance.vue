@@ -27,13 +27,13 @@
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'settings-list' }">Settings</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">Customize Appearance</h1>
+                        <h1 class="o-page-header-title">Site Appearance</h1>
                     </div>
                 </div>
 
                 <div class="o-app-main-content">
 
-                    <form>
+                    <form v-on:submit="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
 
                             <header class="c-page-section__header">
@@ -44,59 +44,45 @@
 
                             <div class="c-page-section__main">
 
-                                <div class="c-form-item c-form-item--file">
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
                                     <div class="c-form-item__label">
-                                        <label for="givingDayLogo" class="c-form-item-label-text">Your Giving Day Logo</label>
+                                        <label for="givingDayLogo" class="c-form-item-label-text">Giving Day Event Logo</label>
                                     </div>
-                                    <div class="c-form-item__control u-flex-wrap">
-                                        <input type="file" name="givingDayLogo" id="givingDayLogo" data-filenames="givingDayLogoFilenames">
-                                        <button type="button" class="c-btn c-btn--good" id="givingDayLogoTrigger" data-control="givingDayLogo" data-filenames="givingDayLogoFilenames">Select File</button>
-                                        <div class="filenames" id="givingDayLogoFilenames"></div>
-                                        <div class="c-notes c-notes--below u-width-100p">
-                                            Your Giving Day logo will be displayed on all pages. Logos are automatically resized as needed.
-                                        </div>
+                                    <forms-image-upload v-model="formData.EVENT_LOGO" name="givingDayLogo" id="givingDayLogo"></forms-image-upload>
+                                    <div class="c-notes c-notes--below u-width-100p">
+                                        Your Giving Day event's logo will be displayed on all pages. It will be automatically resized as needed.
+                                    </div>
+                                    <div v-if="formErrors.EVENT_LOGO" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.EVENT_LOGO }}
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--file">
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
                                     <div class="c-form-item__label">
                                         <label for="foundationLogo" class="c-form-item-label-text">Your Foundation's Logo</label>
                                     </div>
-                                    <div class="c-form-item__control u-flex-wrap">
-                                        <input type="file" name="foundationLogo" id="foundationLogo" data-filenames="foundationLogoFilenames">
-                                        <button type="button" class="c-btn c-btn--good" id="foundationLogoTrigger" data-control="foundationLogo" data-filenames="foundationLogoFilenames">Select File</button>
-                                        <div class="filenames" id="foundationLogoFilenames"></div>
-                                        <div class="c-notes c-notes--below u-width-100p">
-                                            Your foundation logo will be displayed in a "Presented By" slot throughout your Giving Day site. Logos are automatically resized as needed.
-                                        </div>
+                                    <forms-image-upload v-model="formData.FOUNDATION_LOGO" formItemControlClass="u-flex-wrap" name="foundationLogo"
+                                                        id="foundationLogo"></forms-image-upload>
+                                    <div class="c-notes c-notes--below u-width-100p">
+                                        Your foundation logo will be displayed in a "Presented By" slot throughout your Giving Day site. Logos are automatically resized as needed.
+                                    </div>
+                                    <div v-if="formErrors.FOUNDATION_LOGO" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.FOUNDATION_LOGO }}
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--file">
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
                                     <div class="c-form-item__label">
-                                        <label for="homepageSpotlight" class="c-form-item-label-text">Homepage Spotlight Image</label>
+                                        <label for="backgroundMasthead" class="c-form-item-label-text">Masthead Background</label>
                                     </div>
-                                    <div class="c-form-item__control u-flex-wrap">
-                                        <input type="file" name="homepageSpotlight" id="homepageSpotlight" data-filenames="homepageSpotlightFilenames">
-                                        <button type="button" class="c-btn c-btn--good" id="homepageSpotlightTrigger" data-control="homepageSpotlight" data-filenames="homepageSpotlightFilenames">Select File</button>
-                                        <div class="filenames" id="homepageSpotlightFilenames"></div>
-                                        <div class="c-notes c-notes--below u-width-100p">
-                                            This image will appear in the masthead of your homepage. If you've uploaded a background masthead image, this spotlight image will appear on top of it.
-                                        </div>
+                                    <forms-image-upload v-model="formData.MASTHEAD_IMAGE" formItemControlClass="u-flex-wrap" name="backgroundMasthead"
+                                                        id="backgroundMasthead"></forms-image-upload>
+                                    <div class="c-notes c-notes--below u-width-100p">
+                                        This image will appear in the masthead of your page as a background image. We recommend using an image that's 1200x1200 or larger. Grayscale
+                                        or duotone images work best.
                                     </div>
-                                </div>
-
-                                <div class="c-form-item c-form-item--file">
-                                    <div class="c-form-item__label">
-                                        <label for="backgroundMasthead" class="c-form-item-label-text">Background Masthead Image</label>
-                                    </div>
-                                    <div class="c-form-item__control u-flex-wrap">
-                                        <input type="file" name="backgroundMasthead" id="backgroundMasthead" data-filenames="backgroundMastheadFilenames">
-                                        <button type="button" class="c-btn c-btn--good" id="backgroundMastheadTrigger" data-control="backgroundMasthead" data-filenames="backgroundMastheadFilenames">Select File</button>
-                                        <div class="filenames" id="backgroundMastheadFilenames"></div>
-                                        <div class="c-notes c-notes--below u-width-100p">
-                                            This image will appear in the masthead of your page as a background image. We recommend using an image that's 1200x1200 or larger. Grayscale or duotone images work best.
-                                        </div>
+                                    <div v-if="formErrors.MASTHEAD_IMAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.MASTHEAD_IMAGE }}
                                     </div>
                                 </div>
 
@@ -105,7 +91,7 @@
                                         <label for="accentColor" class="c-form-item-label-text">Accent Color</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-color v-model="formData.accentColor" id="accentColor" name="accentColor"></forms-color>
+                                        <forms-color v-model="formData.ACCENT_COLOR" id="accentColor" name="accentColor"></forms-color>
                                         <div class="c-notes c-notes--below">
                                             Customize the look of your page with an accent color.
                                         </div>
@@ -128,19 +114,221 @@
 </template>
 
 <script>
-    module.exports = {
-    	data: function () {
-    		return {
 
-    			// Form Data
-                formData: {
-                	accentColor: '#0098d8',
-                }
+	module.exports = {
+		data: function () {
+			return {
+				settings: [],
 
-            };
-        },
-    	components: {
-    		'forms-color': require('./../../../forms/Color.vue')
-        }
-    };
+				// Form Data
+				formData: {
+					ACCENT_COLOR: '',
+					EVENT_LOGO: null,
+					FOUNDATION_LOGO: null,
+					MASTHEAD_IMAGE: null,
+				},
+
+				// Errors
+				formErrors: {}
+
+			};
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				vue.$request.get('settings', {
+					keys: Object.keys(vue.formData)
+				}).then(function (response) {
+					vue.settings = response.data;
+				});
+			});
+		},
+		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			},
+			settings: {
+				handler: function () {
+					const vue = this;
+					if (vue.settings.length) {
+						Object.keys(vue.formData).forEach(function (key) {
+							const setting = _.find(vue.settings, {key: key});
+							if (setting) {
+								if (!vue.isFileSetting(key)) {
+									vue.formData[key] = setting.value;
+								} else {
+									if (setting.value) {
+										vue.$request.get('files/' + setting.value).then(function (response) {
+											vue.formData[key] = response.data;
+										}).catch(function () {
+											vue.formData[key] = null;
+										});
+									}
+								}
+							}
+						});
+					}
+				},
+				deep: true
+			}
+		},
+		methods: {
+			getConstraints: function () {
+				return {
+					ACCENT_COLOR: {
+						label: 'Accent Color',
+					},
+					EVENT_LOGO: {
+						presence: false,
+						image: true,
+					},
+					FOUNDATION_LOGO: {
+						presence: false,
+						image: true,
+					},
+					MASTHEAD_IMAGE: {
+						presence: false,
+						image: true,
+					}
+				};
+			},
+			submit: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+				} else {
+					vue.updateSettings();
+				}
+			},
+			updateSettings: function () {
+				const vue = this;
+
+				vue.getSettingsToUpdate().then(function (settings) {
+					const toUpdate = _.reject(settings, function (setting) {
+						return (setting.value === '' || setting.value === null);
+					});
+					const toDelete = _.filter(settings, function (setting) {
+						return (setting.value === '' || setting.value === null);
+					});
+
+					vue.$request.patch('settings', {
+						settings: toUpdate
+					}).then(function (response) {
+						if (response.data.errorMessage) {
+							console.log(response.data);
+						}
+						return vue.$request.delete('settings', {
+							settings: toDelete
+						});
+					}).then(function (response) {
+						if (response.data.errorMessage) {
+							console.log(response.data);
+						}
+
+						// delete files that were replace or removed
+						const filesToDelete = [];
+						_.forEach(settings, function (setting) {
+							if (vue.isFileSetting(setting.key)) {
+								const originalSetting = _.find(vue.settings, {key: setting.key});
+								if (originalSetting && originalSetting.value !== setting.value && originalSetting.value !== '' && originalSetting.value !== null) {
+									filesToDelete.push(originalSetting.value);
+								}
+							}
+						});
+
+						if (filesToDelete.length > 0) {
+							return vue.$request.delete('files', {
+								files: filesToDelete
+							});
+						}
+
+						return Promise.resolve();
+					}).then(function () {
+						vue.clearModals();
+						vue.$router.push({name: 'settings-list'});
+					}).catch(function (err) {
+						vue.clearModals();
+						console.log(err);
+					});
+
+				});
+
+			},
+			getSettingsToUpdate: function () {
+				const vue = this;
+				const settings = [];
+				let promise = Promise.resolve();
+				Object.keys(vue.formData).forEach(function (key) {
+					if (vue.formData[key] instanceof File) {
+						promise = promise.then(function () {
+							return vue.uploadImage(key).then(function (uploadedFile) {
+								settings.push({
+									key: key,
+									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''
+								});
+							});
+						});
+					} else {
+						promise = promise.then(function () {
+							const settingValue = _.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid') ? vue.formData[key].uuid : vue.formData[key];
+							settings.push({
+								key: key,
+								value: settingValue
+							});
+						});
+					}
+				});
+
+				promise = promise.then(function () {
+					return settings;
+				});
+
+				return promise;
+			},
+			uploadImage: function (key) {
+				const vue = this;
+				let file = null;
+				let promise = Promise.resolve();
+				if (vue.formData[key]) {
+					promise = promise.then(function () {
+						return vue.$request.post('files', {
+							content_type: vue.formData[key].type,
+							filename: vue.formData[key].name
+						});
+					}).then(function (response) {
+						file = response.data.file;
+						const signedUrl = response.data.upload_url;
+
+						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
+						let instance = axios.create();
+						instance.defaults.headers.common['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						axios.defaults.headers = defaultHeaders;
+						return instance.put(signedUrl, vue.formData[key]);
+					}).then(function () {
+						return file;
+					});
+				}
+				return promise;
+			},
+			isFileSetting(settingKey) {
+				const fileKeys = ['EVENT_LOGO', 'FOUNDATION_LOGO', 'MASTHEAD_IMAGE'];
+				return _.includes(fileKeys, settingKey);
+			}
+		},
+		components: {
+			'forms-color': require('./../../../forms/Color.vue'),
+			'forms-image-upload': require('./../../../forms/ImageUpload.vue')
+		}
+	};
 </script>
