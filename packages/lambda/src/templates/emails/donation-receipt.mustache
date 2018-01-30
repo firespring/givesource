@@ -445,7 +445,7 @@
 
                                         {{#transactions}}
                                             <p>
-                                                <strong>Total Donation Amount: {{ transactionAmount }} (includes covered fees)</strong><br/>
+                                                <strong>Total Amount: {{ transactionAmount }}{{#isFeeCovered}} (includes covered fees){{/isFeeCovered}}</strong><br/>
                                                 Method of Payment: {{ creditCardType }}
                                                 (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; {{ creditCardLast4 }})<br/>
                                                 Tracking Number: {{ transactionId }}
@@ -460,7 +460,7 @@
                                             <table class="donations">
                                                 <thead>
                                                 <tr>
-                                                    <th class="expand">Organization</th>
+                                                    <th class="expand">Advised Charity</th>
                                                     <th>Amount</th>
                                                 </tr>
                                                 </thead>

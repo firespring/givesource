@@ -116,7 +116,7 @@
                             </div>
                         </div>
                         <div class="grid-item grid-item--collapse">
-                            <button type="submit" class="btn btn--accent">Send Email</button>
+                            <forms-submit :processing="processing" color="accent" :rounded="false" :hasIcon="false">Send Email</forms-submit>
                         </div>
                     </div>
                 </form>
@@ -138,6 +138,7 @@
 		data: function () {
 			return {
 				category: '',
+				processing: false,
 
 				// Form Data
 				formData: {
@@ -334,10 +335,9 @@
 				event.preventDefault();
 				const vue = this;
 
-				console.log('here');
-
 				vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
 				if (!Object.keys(vue.formErrors).length) {
+					vue.processing = true;
 					vue.requestReceipt();
 				}
 			},
@@ -357,7 +357,11 @@
 					email: vue.formData.email,
 				}).then(function () {
 					vue.formData.email = '';
+					vue.processing = false;
 					// TODO: redirect to thank-you page
+				}).catch(function (err) {
+					console.log(err);
+					vue.processing = false;
 				});
 			},
 			searchNonprofits: function () {
@@ -384,7 +388,8 @@
 			}
 		},
 		components: {
-			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue')
+			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue'),
+			'forms-submit': require('./../forms/Submit.vue')
 		}
 	};
 </script>

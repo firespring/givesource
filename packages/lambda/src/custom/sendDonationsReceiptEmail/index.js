@@ -89,6 +89,7 @@ exports.handle = function (event, context, callback) {
 			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate() : paymentTransaction;
 			transaction.donations = donations;
 			transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
+			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
 			transactions.push(transaction);
 		} else {
 			const paymentTransactionUuids = donations.map(function (donation) {
@@ -104,6 +105,7 @@ exports.handle = function (event, context, callback) {
 					const transaction = paymentTransaction.mutate();
 					transaction.donations = _.filter(donations, {paymentTransactionUuid: uuid});
 					transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
+					transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
 					transactions.push(transaction);
 				});
 			});
