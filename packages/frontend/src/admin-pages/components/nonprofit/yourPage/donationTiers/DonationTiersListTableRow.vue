@@ -72,7 +72,7 @@
                     return;
                 }
                 vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
-                vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+                vue.error = (Object.keys(vue.formErrors).length && vue.amount !=0) ? true : false;
                 vue.localAmount = vue.amount;
                 vue.localDescription = vue.description;
             },
