@@ -88,10 +88,19 @@
         methods: {
             getConstraints: function () {
                 return {
-                    amount: {
-                        presence: true,
-                        numericality: {
-                            greaterThanOrEqualTo: 10,
+                    amount: function (value) {
+                        if (value !== '0.00') {
+                            return {
+                                presence: true,
+                                numericality: {
+                                    greaterThanOrEqualTo: 10,
+                                }
+                            }
+                        } else {
+                            return {
+                                presence: false,
+
+                            }
                         }
                     },
                 };

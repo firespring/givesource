@@ -107,6 +107,7 @@
         methods: {
             submit: function () {
                 const vue = this;
+                console.log(vue.validateDonationTiers());
                 if (vue.validateDonationTiers()) {
                     vue.addModal('spinner');
                     vue.updateDonationTiers();
@@ -116,7 +117,7 @@
             validateDonationTiers: function () {
                 const vue = this;
                 const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
-                const emptyRows = _.filter(donationTiers, {amount: '0.00', description: ''}).length;
+                const emptyRows = _.filter(donationTiers, {amount: '0.00'}).length;
                 var donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
                     return donationTierRow.amount < 10;
                 }).length;
