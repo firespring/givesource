@@ -22,6 +22,7 @@ const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
+const numeral = require('numeral');
 const Report = require('./../../models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
@@ -108,9 +109,14 @@ const getDonationsData = function (report) {
 	}
 
 	promise = promise.then(function (donations) {
+		donations.forEach(function (donation) {
+			donation.amountForNonprofit = donation.total - donation.fees;
+			donation.totalChargedToCard = donation.isOfflineDonation ? donation.total : 0;
+		});
+
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				return transform(donation, DonationHelper.reportFields, ['isDeleted']);
+				return transform(donation, DonationHelper.reportFields);
 			}),
 			fields: DonationHelper.reportFields,
 		});
@@ -122,14 +128,11 @@ const getDonationsData = function (report) {
 /**
  * Transform fields for report
  *
- * @param {Model} model
+ * @param {{}} values
  * @param {[]} map
- * @param {[]} [excluded]
  * @return {{}}
  */
-const transform = function (model, map, excluded) {
-	excluded = excluded || [];
-	const values = model.except(excluded);
+const transform = function (values, map) {
 	const results = {};
 
 	Object.keys(values).forEach(function (key) {

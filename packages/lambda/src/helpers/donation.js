@@ -107,12 +107,19 @@ exports.reportFields = [
 		}
 	},
 	{
-		label: 'Donation Total',
-		value: 'total',
+		label: 'Subtotal Charged to Card',
+		value: 'totalChargedToCard',
 		transform: function (value) {
 			return numeral(value / 100).format('$0,0.00');
 		}
-	}
+	},
+	{
+		label: 'Amount for Nonprofit',
+		value: 'amountForNonprofit',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
+	},
 ];
 
 /**
