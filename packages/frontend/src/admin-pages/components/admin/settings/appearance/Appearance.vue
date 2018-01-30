@@ -61,8 +61,7 @@
                                     <div class="c-form-item__label">
                                         <label for="foundationLogo" class="c-form-item-label-text">Your Foundation's Logo</label>
                                     </div>
-                                    <forms-image-upload v-model="formData.FOUNDATION_LOGO" formItemControlClass="u-flex-wrap" name="foundationLogo"
-                                                        id="foundationLogo"></forms-image-upload>
+                                    <forms-image-upload v-model="formData.FOUNDATION_LOGO" name="foundationLogo" id="foundationLogo"></forms-image-upload>
                                     <div class="c-notes c-notes--below u-width-100p">
                                         Your foundation logo will be displayed in a "Presented By" slot throughout your Giving Day site. Logos are automatically resized as needed.
                                     </div>
@@ -75,8 +74,7 @@
                                     <div class="c-form-item__label">
                                         <label for="backgroundMasthead" class="c-form-item-label-text">Masthead Background</label>
                                     </div>
-                                    <forms-image-upload v-model="formData.MASTHEAD_IMAGE" formItemControlClass="u-flex-wrap" name="backgroundMasthead"
-                                                        id="backgroundMasthead"></forms-image-upload>
+                                    <forms-image-upload v-model="formData.MASTHEAD_IMAGE" name="backgroundMasthead" id="backgroundMasthead"></forms-image-upload>
                                     <div class="c-notes c-notes--below u-width-100p">
                                         This image will appear in the masthead of your page as a background image. We recommend using an image that's 1200x1200 or larger. Grayscale
                                         or duotone images work best.

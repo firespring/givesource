@@ -18,6 +18,8 @@
 <template>
     <div>
         <layout-hero :presentedBy="true" :wrap="true">
+            <img v-show="homepageSpotlightUrl" slot="logo" :alt="eventTitle" :src="homepageSpotlightUrl">
+
             <h1 slot="title">{{ getContentValue('HOMEPAGE_TITLE') }}</h1>
 
             <div v-html="getContentValue('HOMEPAGE_MASTHEAD_TEXT')"></div>
@@ -76,6 +78,15 @@
 					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
 				}
 				return '';
+			},
+			homepageSpotlightUrl: function () {
+				const vue = this;
+				let url = false;
+				let file = vue.getContentValue('HOMEPAGE_SPOTLIGHT', false);
+				if (_.isPlainObject(file) && file.hasOwnProperty('path')) {
+					url = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path;
+				}
+				return url;
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -99,10 +110,24 @@
 							'HOMEPAGE_MATCH_IS_ENABLED',
 							'HOMEPAGE_MATCH_BUTTON',
 							'HOMEPAGE_MATCH_DETAILS',
+							'HOMEPAGE_SPOTLIGHT'
 						],
 					}));
 				}).then(function (response) {
 					vue.contents = response.data;
+				}).then(function () {
+					let promise = Promise.resolve();
+					vue.contents.forEach(function (content) {
+						if (content.type === 'FILE') {
+							promise = promise.then(function () {
+								return axios.get(API_URL + 'files/' + content.value).then(function (response) {
+									content.value = response.data;
+								});
+							});
+						}
+					});
+
+					return promise;
 				});
 			});
 		},
@@ -128,10 +153,25 @@
 						'HOMEPAGE_MATCH_IS_ENABLED',
 						'HOMEPAGE_MATCH_BUTTON',
 						'HOMEPAGE_MATCH_DETAILS',
+						'HOMEPAGE_SPOTLIGHT'
 					],
 				}));
 			}).then(function (response) {
 				vue.contents = response.data;
+			}).then(function () {
+				let promise = Promise.resolve();
+				vue.contents.forEach(function (content) {
+					if (content.type === 'FILE') {
+						promise = promise.then(function () {
+							return axios.get(API_URL + 'files/' + content.value).then(function (response) {
+								content.value = response.data;
+							});
+						});
+					}
+				});
+
+				return promise;
+			}).then(function () {
 				next();
 			}).catch(function () {
 				next();

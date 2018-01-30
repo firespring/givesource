@@ -17,10 +17,11 @@
 
 <template>
     <div class="page-hero" :style="mastheadStyle">
+        <div class="page-hero__logo" v-if="hasLogoSlot">
+            <slot name="logo"></slot>
+        </div>
+
         <div class="page-hero__title" :class="{ wrapper: wrap, 'wrapper--sm': wrap }">
-            <div class="page-hero__logo" v-if="hasLogoSlot">
-                <slot name="logo"></slot>
-            </div>
             <slot name="title"></slot>
         </div>
 
