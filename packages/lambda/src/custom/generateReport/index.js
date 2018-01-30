@@ -137,7 +137,7 @@ const transform = function (values, map) {
 
 	Object.keys(values).forEach(function (key) {
 		const transformer = _.find(map, {value: key});
-		results[key] = transformer && transformer.transform ? transformer.transform(values[key]) : values[key];
+		results[key] = transformer && transformer.transform ? transformer.transform(values[key], values) : values[key];
 	});
 
 	return results;

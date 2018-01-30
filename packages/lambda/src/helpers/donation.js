@@ -52,10 +52,16 @@ exports.reportFields = [
 	{
 		label: 'Donor First Name',
 		value: 'donorFirstName',
+		transform: function (value, values) {
+			return values.isAnonymous ? 'Anonymous' : value;
+		}
 	},
 	{
 		label: 'Donor Last Name',
 		value: 'donorLastName',
+		transform: function (value, values) {
+			return values.isAnonymous ? 'Anonymous' : value;
+		}
 	},
 	{
 		label: 'Donor Address 1',
