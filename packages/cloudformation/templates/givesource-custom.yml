@@ -332,7 +332,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          AWS_S3_BUCKET_NAME: !Ref UploadsBucket
+          AWS_S3_BUCKET_NAME: !Ref UploadsS3
       FunctionName: !Sub |-
         ${StackName}-GenerateReport
       Handler: "index.handle"
