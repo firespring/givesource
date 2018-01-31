@@ -22,6 +22,7 @@ const S3 = require('./../../aws/s3');
 const SettingsRepository = require('./../../repositories/settings');
 const Request = require('./../../aws/request');
 const SettingHelper = require('./../../helpers/setting');
+const RenderHelper = require('./../../helpers/render');
 
 exports.handle = function (event, context, callback) {
 	logger.log('generateCustomFrontendCss event: %j', event);
@@ -32,7 +33,9 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.get(SettingHelper.SETTING_ACCENT_COLOR);
 	}).then(function (setting) {
-		return writeCssFile(generateCssBody(setting.value));
+		return generateCssBody(setting.value);
+	}).then(function (response) {
+		return writeCssFile(response);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
@@ -57,28 +60,9 @@ exports.handle = function (event, context, callback) {
 	 * @returns {String}
 	 */
 	const generateCssBody = function (color) {
-		const body =
-			"a:link,\n" +
-			"a:visited {\n" +
-			"  color: " + color + ";\n" +
-			"}\n" +
-			"a:hover,\n" +
-			"a:active {\n" +
-			"  color: #000;\n" +
-			"}\n" +
-			"\n" +
-			".btn--accent,\n" +
-			".btn--accent:link,\n" +
-			".btn--accent:visited {\n" +
-			"  background-color: " + color + ";\n" +
-			"  color: #fff;\n" +
-			" }\n" +
-			" .btn--accent:hover,\n" +
-			" .btn--accent:active {\n" +
-			"   background-color: #000;\n" +
-			"}";
-
-		return body;
+		return RenderHelper.renderTemplate('css/custom', {
+			color: color
+		});
 	};
 
 	/**
