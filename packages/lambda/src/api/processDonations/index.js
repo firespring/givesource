@@ -74,6 +74,12 @@ exports.handle = function (event, context, callback) {
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach(function (donation) {
+
+			const amount = donation.subtotal;
+			const transactionFlatFee = 30;
+			const transactionPercentFee = 0.029;
+			donation.fees = Math.floor(Math.round((amount + transactionFlatFee) / (1 - transactionPercentFee) - amount));
+
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
