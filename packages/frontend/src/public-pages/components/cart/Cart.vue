@@ -479,8 +479,7 @@
 				}).then(function (response) {
 					vue.processing = false;
 
-                    console.log('The result of the donation process', response);
-					if (response.data && response.data.errorMessage) {
+                    if (response.data && response.data.errorMessage) {
 						console.log(response.data);
 					} else {
 						vue.$store.commit('clearCartItems');
