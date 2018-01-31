@@ -43,6 +43,10 @@
 			name: {
 				type: String,
 				default: null
+			},
+			defaultColor: {
+				type: String,
+				default: null
 			}
 		},
 		mounted: function () {
@@ -53,8 +57,10 @@
 					change: function (value) {
 						vue.localValue = value;
 					},
-					defaultValue: '#0098d8'
 				};
+				if(vue.defaultColor) {
+					options.defaultValue = vue.defaultColor;
+                }
 				$(vue.$refs.input).minicolors(options);
 			}
 		},

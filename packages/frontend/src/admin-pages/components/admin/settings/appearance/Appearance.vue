@@ -89,7 +89,7 @@
                                         <label for="accentColor" class="c-form-item-label-text">Accent Color</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-color v-model="formData.ACCENT_COLOR" id="accentColor" name="accentColor"></forms-color>
+                                        <forms-color v-model="formData.ACCENT_COLOR" id="accentColor" name="accentColor" :defaultColor="defaultColor"></forms-color>
                                         <div class="c-notes c-notes--below">
                                             Customize the look of your page with an accent color.
                                         </div>
@@ -117,6 +117,8 @@
 		data: function () {
 			return {
 				settings: [],
+
+				defaultColor: '#0098d8',
 
 				// Form Data
 				formData: {
@@ -278,7 +280,12 @@
 						});
 					} else {
 						promise = promise.then(function () {
-							const settingValue = _.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid') ? vue.formData[key].uuid : vue.formData[key];
+							let settingValue = vue.formData[key];
+							if (key === 'ACCENT_COLOR' && vue.formData[key] === vue.defaultColor) {
+								settingValue = '';
+							} else if (_.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid')) {
+								settingValue = vue.formData[key].uuid;
+							}
 							settings.push({
 								key: key,
 								value: settingValue
