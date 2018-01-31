@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true">
-            <h1 slot="title">About Give To Our City Day</h1>
+            <h1 slot="title">About {{ eventTitle }}</h1>
         </layout-hero>
 
         <main class="main">
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
@@ -44,6 +45,9 @@
 			about: function () {
 				const about = _.find(this.contents, {key: 'ABOUT_TEXT'});
 				return about ? about.value : null;
+			},
+			eventTitle: function () {
+				return Settings.eventTitle();
 			},
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -72,12 +76,12 @@
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Give To Our City - About');
+			vue.setPageTitle(vue.eventTitle + ' - About');
 		},
 		components: {
 			'layout-footer': require('./../layout/Footer.vue'),
 			'layout-hero': require('../layout/Hero.vue'),
-            'layout-sponsors': require('../layout/Sponsors.vue'),
+			'layout-sponsors': require('../layout/Sponsors.vue'),
 		}
 	};
 </script>

@@ -22,7 +22,7 @@
 
             <div class="contact-info">
                 <div class="contact-info__copyright">
-                    &copy; {{ year }} <router-link :to="{ name: 'homepage' }">Give To Our City</router-link>
+                    &copy; {{ year }} <router-link :to="{ name: 'homepage' }">{{ eventTitle }}</router-link>
                 </div>
 
                 <div class="contact-info__contact">
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+	import * as Settings from './../../helpers/settings';
+
 	module.exports = {
         computed: {
 			adminPagesUrl: function () {
@@ -59,7 +61,10 @@
 	        },
             year: function () {
 				return new Date().getFullYear();
-            }
+            },
+			eventTitle: function () {
+				return Settings.eventTitle();
+			}
         }
     };
 </script>

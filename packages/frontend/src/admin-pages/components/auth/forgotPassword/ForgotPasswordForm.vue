@@ -65,11 +65,11 @@
 				// Form Data
 				formData: {
 					email: ''
-                },
+				},
 
-                // Errors
-                errors: [],
-                formErrors: {}
+				// Errors
+				errors: [],
+				formErrors: {}
 			}
 		},
 		watch: {
@@ -112,8 +112,7 @@
 				User.forgotPassword(vue.formData.email, {
 					onSuccess: function (data, cognitoUser) {
 						vue.clearModals();
-						vue.$emit('setCognitoUser', cognitoUser);
-						vue.$emit('setMainComponent', 'forgot-password-verify-form');
+						vue.$router.push({'name': 'forgot-password-request-sent'});
 					},
 					onFailure: function (err) {
 						vue.clearModals();

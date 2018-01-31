@@ -47,7 +47,8 @@
                                     <div class="c-form-item c-form-item--password c-form-item--required">
                                         <div class="c-form-item__control">
                                             <div class="u-control-icon u-control-icon--password has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                                <input v-model="formData.currentPassword" type="password" name="currentPassword" id="currentPassword" :class="{ 'has-error': formErrors.currentPassword }" v-auto-focus>
+                                                <input v-model="formData.currentPassword" type="password" name="currentPassword" id="currentPassword"
+                                                       :class="{ 'has-error': formErrors.currentPassword }" v-auto-focus>
                                                 <label for="currentPassword">Current Password</label>
                                             </div>
                                         </div>
@@ -69,7 +70,7 @@
                                                 {{ formErrors.password }}
                                             </div>
                                             <div class="c-notes c-notes--below">
-                                                Your password must be at least 8 characters long and contain both letters and numbers.
+                                                Your password must be at least 8 characters long and contain a combination of numbers and upper and lower case letters.
                                             </div>
                                         </div>
                                     </div>
@@ -77,7 +78,8 @@
                                     <div class="c-form-item c-form-item--password c-form-item--required">
                                         <div class="c-form-item__control">
                                             <div class="u-control-icon u-control-icon--password has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                                <input v-model="formData.passwordConfirm" type="password" name="passwordConfirm" id="passwordConfirm" :class="{ 'has-error': formErrors.passwordConfirm }">
+                                                <input v-model="formData.passwordConfirm" type="password" name="passwordConfirm" id="passwordConfirm"
+                                                       :class="{ 'has-error': formErrors.passwordConfirm }">
                                                 <label for="passwordConfirm">Confirm Password</label>
                                             </div>
                                             <div v-if="formErrors.passwordConfirm" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
@@ -114,13 +116,13 @@
 				// Form Data
 				formData: {
 					currentPassword: '',
-                    password: '',
-                    passwordConfirm: '',
-                },
+					password: '',
+					passwordConfirm: '',
+				},
 
-                // Errors
-                errors: [],
-                formErrors: {},
+				// Errors
+				errors: [],
+				formErrors: {},
 			}
 		},
 		watch: {
@@ -149,39 +151,39 @@
 					password: {
 						presence: true,
 					},
-                    passwordConfirm: {
+					passwordConfirm: {
 						label: 'Password confirmation',
 						presence: true,
-	                    equality: 'password'
-                    }
+						equality: 'password'
+					}
 				}
 			},
 			cancel: function () {
 				this.clearModals();
 			},
-            save: function () {
-			    const vue = this;
+			save: function () {
+				const vue = this;
 
-	            vue.addModal('spinner');
-	            vue.errors = [];
-	            vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-	            if (Object.keys(vue.formErrors).length) {
-		            vue.removeModal();
-	            } else {
-		            vue.changeUserPassword();
-	            }
-            },
+				vue.addModal('spinner');
+				vue.errors = [];
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.removeModal();
+				} else {
+					vue.changeUserPassword();
+				}
+			},
 			changeUserPassword: function () {
 				const vue = this;
 
-                User.changePassword(vue.formData.currentPassword, vue.formData.password, function (err) {
-	                vue.removeModal();
-                    if (err) {
-                        vue.errors.push('There was a problem changing your password, please try again.');
-                    } else {
-                    	vue.clearModals();
-                    }
-                });
+				User.changePassword(vue.formData.currentPassword, vue.formData.password, function (err) {
+					vue.removeModal();
+					if (err) {
+						vue.errors.push(User.formatCognitoErrorMessage(err));
+					} else {
+						vue.clearModals();
+					}
+				});
 			}
 		}
 	};

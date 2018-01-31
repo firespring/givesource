@@ -19,22 +19,6 @@
     <div class="c-page-section__main">
         <h4>Reset your password</h4>
 
-        <div class="c-alert c-alert--good c-alert--shadow u-flex u-justify-center" v-if="alert">
-            <div class="c-alert__body u-flex u-justify-between">
-                <div class="c-alert__icon">
-                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                </div>
-                <div class="c-alert__text">
-                    <p>
-                        Please check your email for your verification code.
-                    </p>
-                </div>
-                <div class="c-alert__close" v-alert-close>
-                    <button class="c-btn c-btn--xs c-btn--icon c-btn--reverse c-btn--text"><i class="fa fa-close" aria-hidden="true"></i>Close</button>
-                </div>
-            </div>
-        </div>
-
         <form v-on:submit="submit">
 
             <div class="c-alert c-alert--bad c-alert--shadow u-flex u-justify-center" v-if="errors.length">
@@ -50,7 +34,19 @@
                 </div>
             </div>
 
-            <div class="c-form-item c-form-item--required c-form-item--compact">
+            <div v-if="!hasEmail" class="c-form-item c-form-item--email c-form-item--required c-form-item--compact">
+                <div class="c-form-item__control">
+                    <div class="u-control-icon u-control-icon--email has-floating-label js-floating-label" v-floating-label>
+                        <input v-model="formData.email" type="email" name="email" id="email" :class="{ 'has-error': formErrors.email }" v-auto-focus>
+                        <label for="email">Email Address</label>
+                    </div>
+                    <div v-if="formErrors.email" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
+                        {{ formErrors.email }}
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!hasCode" class="c-form-item c-form-item--required c-form-item--compact">
                 <div class="c-form-item__control">
                     <div class="has-floating-label js-floating-label" v-floating-label>
                         <input v-model="formData.code" type="text" name="code" id="code" :class="{ 'has-error': formErrors.code }" v-auto-focus>
@@ -72,7 +68,7 @@
                         {{ formErrors.password }}
                     </div>
                     <div class="c-notes c-notes--below">
-                        Your password must be at least 8 characters long and contain both letters and numbers.
+                        Your password must be at least 8 characters long and contain a combination of numbers and upper and lower case letters.
                     </div>
                 </div>
             </div>
@@ -99,27 +95,40 @@
 </template>
 
 <script>
+	const User = require('../../../helpers/user');
+
 	module.exports = {
 		data: function () {
 			return {
 
 				formData: {
+					email: '',
 					code: '',
 					password: '',
 					passwordConfirm: ''
 				},
 
-                // Messages
+				// Messages
 				alert: true,
 
-                // Errors
+				// Errors
 				errors: [],
-                formErrors: {}
+				formErrors: {}
 			}
 		},
 		props: [
 			'cognitoUser'
 		],
+		computed: {
+			hasCode: function () {
+				const vue = this;
+				return vue.$route.query.code !== undefined
+			},
+			hasEmail: function () {
+				const vue = this;
+				return vue.$route.query.email !== undefined
+			},
+		},
 		watch: {
 			formData: {
 				handler: function () {
@@ -133,16 +142,22 @@
 		},
 		methods: {
 			getConstraints: function () {
+				var vue = this;
 				return {
-                    code: {
-                    	label: 'Verification code',
-	                    presence: true,
-                    },
+					email: {
+						label: 'Email address',
+						presence: (!vue.hasEmail),
+						email: true
+					},
+					code: {
+						label: 'Verification code',
+						presence: (!vue.hasCode)
+					},
 					password: {
 						presence: true,
 					},
 					passwordConfirm: {
-                    	label: 'Password confirmation',
+						label: 'Password confirmation',
 						presence: true,
 						equality: 'password'
 					}
@@ -165,18 +180,18 @@
 			verify: function () {
 				const vue = this;
 
-				if (vue.cognitoUser) {
-					vue.cognitoUser.confirmPassword(vue.formData.code, vue.formData.password, {
-						onSuccess: function () {
-							vue.clearModals();
-							vue.$router.push({name: 'login'});
-						},
-						onFailure: function (err) {
-							vue.clearModals();
-							vue.errors.push(err.message);
-						}
-					});
-				}
+				const email = vue.hasEmail ? vue.$route.query.email : vue.formData.email;
+				const code = vue.hasCode ? vue.$route.query.code : vue.formData.code;
+				User.resetPassword(email, code, vue.formData.password, {
+					onSuccess: function (data, cognitoUser) {
+						vue.clearModals();
+						vue.$router.push({name: 'login'});
+					},
+					onFailure: function (err) {
+						vue.clearModals();
+						vue.errors.push(User.formatCognitoErrorMessage(err));
+					}
+				});
 			}
 		}
 	}

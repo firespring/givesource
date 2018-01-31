@@ -33,7 +33,7 @@
                                 </h3>
                             </div>
                             <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
-                            <div class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
                         </div>
                     </div>
 
@@ -52,14 +52,23 @@
 <script>
 	const numeral = require('numeral');
 	const PaginationMixin = require('./../../mixins/pagination');
+	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
 	module.exports = {
+		computed: {
+			eventTitle: function () {
+				return Settings.eventTitle();
+			},
+			canDonate: function () {
+				return Settings.acceptDonations();
+			}
+		},
 		beforeMount: function () {
 			const vue = this;
 
 			vue.setBodyClasses('page');
-			vue.setPageTitle('Leaderboard');
+			vue.setPageTitle(vue.eventTitle + ' - Leaderboard');
 		},
 		beforeRouteEnter: function (to, from, next) {
 			const options = _.extend({}, {size: '20', sort: 'active_subtotal_descending'}, to.query);

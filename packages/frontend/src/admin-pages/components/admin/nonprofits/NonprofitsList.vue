@@ -55,6 +55,19 @@
 				next();
 			});
 		},
+		created: function () {
+			const vue = this;
+
+			vue.bus.$on('revokeNonprofit', function (nonprofitUuid) {
+				vue.updateNonprofit(nonprofitUuid);
+			});
+
+		},
+		beforeDestroy: function () {
+			const vue = this;
+
+			vue.bus.$off('revokeNonprofit');
+		},
 		mixins: [
 			PaginationMixin
 		],
