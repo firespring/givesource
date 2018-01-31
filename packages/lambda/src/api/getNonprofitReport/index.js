@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,19 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const ReportsRepository = require('./../../repositories/reports');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
+const NonprofitReportsRepository = require('./../../repositories/nonprofitReports');
 const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new ReportsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const repository = new NonprofitReportsRepository();
+	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.getAll();
-	}).then(function (reports) {
-		const results = reports.map(function (report) {
-			return report.all();
-		});
-		callback(null, results);
+		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('report_uuid'));
+	}).then(function (report) {
+		callback(null, report.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

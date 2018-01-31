@@ -48,7 +48,33 @@ Donation.prototype.attributes = [
 	'nonprofitUuid',
 	'paymentTransactionUuid',
 	'subtotal',
-	'total'
+	'total',
+
+	// Donor
+	'donorFirstName',
+	'donorLastName',
+	'donorEmail',
+	'donorPhone',
+	'donorAddress1',
+	'donorAddress2',
+	'donorCity',
+	'donorState',
+	'donorZip',
+
+	// Nonprofit
+	'nonprofitLegalName',
+
+	// Payment Transaction
+	'creditCardName',
+	'creditCardType',
+	'creditCardLast4',
+	'creditCardExpirationMonth',
+	'creditCardExpirationYear',
+	'creditCardZip',
+	'paymentTransactionId',
+	'paymentTransactionAmount',
+	'paymentTransactionIsTestMode',
+	'paymentTransactionStatus',
 ];
 
 /**
@@ -101,7 +127,103 @@ Donation.prototype.constraints = {
 	total: {
 		presence: true,
 		type: 'number'
-	}
+	},
+
+	// Donor
+	donorFirstName: {
+		presence: false,
+		type: 'string'
+	},
+	donorLastName: {
+		presence: false,
+		type: 'string'
+	},
+	donorEmail: {
+		presence: false,
+		email: true,
+		type: 'string',
+	},
+	donorPhone: {
+		presence: false,
+		type: 'string',
+	},
+	donorAddress1: {
+		presence: false,
+		type: 'string',
+	},
+	donorAddress2: {
+		presence: false,
+		type: 'string',
+	},
+	donorCity: {
+		presence: false,
+		type: 'string',
+	},
+	donorState: {
+		presence: false,
+		type: 'string'
+	},
+	donorZip: {
+		presence: false,
+		type: 'string'
+	},
+
+	// Nonprofit
+	nonprofitLegalName: {
+		presence: false,
+		type: 'string',
+	},
+
+	// Payment Transaction
+	creditCardName: {
+		presence: false,
+		type: 'string',
+	},
+	creditCardType: {
+		presence: false,
+		type: 'string',
+	},
+	creditCardLast4: {
+		presence: false,
+		type: 'string',
+	},
+	creditCardExpirationMonth: {
+		presence: false,
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
+	},
+	creditCardExpirationYear: {
+		presence: false,
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
+	},
+	creditCardZip: {
+		presence: false,
+		type: 'string'
+	},
+	paymentTransactionId: {
+		presence: false,
+		type: 'string'
+	},
+	paymentTransactionAmount: {
+		presence: false,
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
+	},
+	paymentTransactionIsTestMode: {
+		presence: false,
+		type: 'string',
+	},
+	paymentTransactionStatus: {
+		presence: false,
+		type: 'string'
+	},
 };
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
 
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
+const Report = require('./../models/report');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const User = require('./../models/user');
 
 /**
- * NonprofitUsersRepository constructor
+ * NonprofitReportsRepository constructor
  *
  * @constructor
  */
-function NonprofitUsersRepository() {
-	Repository.call(this, RepositoryHelper.UsersTable);
+function NonprofitReportsRepository() {
+	Repository.call(this, RepositoryHelper.ReportsTable);
 }
 
 /**
@@ -36,16 +36,16 @@ function NonprofitUsersRepository() {
  *
  * @type {Repository}
  */
-NonprofitUsersRepository.prototype = new Repository();
+NonprofitReportsRepository.prototype = new Repository();
 
 /**
- * Get a User
+ * Get a Report
  *
  * @param {String} nonprofitUuid
  * @param {String} uuid
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
+NonprofitReportsRepository.prototype.get = function (nonprofitUuid, uuid) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
@@ -54,9 +54,9 @@ NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
 			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
 			repository.query(builder).then(function (data) {
 				if (data.Items.length === 1) {
-					resolve(new User(data.Items[0]));
+					resolve(new Report(data.Items[0]));
 				}
-				reject(new ResourceNotFoundException('The specified user does not exist.'));
+				reject(new ResourceNotFoundException('The specified report does not exist.'));
 			}).catch(function (err) {
 				reject(err);
 			});
@@ -67,12 +67,12 @@ NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
 };
 
 /**
- * Get all Users for a Nonprofit
+ * Get all Reports for a Nonprofit
  *
  * @param {String} nonprofitUuid
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
+NonprofitReportsRepository.prototype.getAll = function (nonprofitUuid) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
@@ -83,7 +83,7 @@ NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {
-						results.push(new User(item));
+						results.push(new Report(item));
 					});
 				}
 				resolve(results);
@@ -97,13 +97,13 @@ NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
 };
 
 /**
- * Delete a User
+ * Delete a Report
  *
  * @param {String} nonprofitUuid
  * @param {String} uuid
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.delete = function (nonprofitUuid, uuid) {
+NonprofitReportsRepository.prototype.delete = function (nonprofitUuid, uuid) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
@@ -120,25 +120,25 @@ NonprofitUsersRepository.prototype.delete = function (nonprofitUuid, uuid) {
 };
 
 /**
- * Create or update a User
+ * Create or update a Report
  *
  * @param {String} nonprofitUuid
- * @param {User} model
+ * @param {Report} model
  */
-NonprofitUsersRepository.prototype.save = function (nonprofitUuid, model) {
+NonprofitReportsRepository.prototype.save = function (nonprofitUuid, model) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof User)) {
-				reject(new Error('invalid User model'));
+			if (!(model instanceof Report)) {
+				reject(new Error('invalid Report model'));
 			}
 			model.validate().then(function () {
 				const key = {
 					uuid: model.uuid
 				};
 				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new User(data.Attributes));
+					resolve(new Report(data.Attributes));
 				}).catch(function (err) {
 					reject(err);
 				});
@@ -151,4 +151,4 @@ NonprofitUsersRepository.prototype.save = function (nonprofitUuid, model) {
 	});
 };
 
-module.exports = NonprofitUsersRepository;
+module.exports = NonprofitReportsRepository;

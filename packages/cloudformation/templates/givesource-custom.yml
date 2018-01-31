@@ -91,7 +91,24 @@ Resources:
       RestApiId: !Ref RestApi
     DependsOn: AuthorizeUsersLambdaFunction
 
-  # Cognito User Pools
+  # CloudWatch Event Rules
+
+  HourlyScheduledEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub |-
+        ${StackName}-HourlyScheduledEvent
+      Description: Event scheduled once an hour
+      ScheduleExpression: rate(1 hour)
+      State: ENABLED
+      Targets:
+        -
+          Arn: !GetAtt DeleteReportsLambdaFunction.Arn
+          Id: DeleteReportsScheduledJob
+    DependsOn:
+      - DeleteReportsLambdaFunction
+
+  # Cognito User Pool Lambda Resources
 
   CognitoCreateUserPoolFunction:
     Type: AWS::Lambda::Function
@@ -198,119 +215,7 @@ Resources:
       - CognitoUserPool
       - CognitoCustomMessageFunction
 
-  # Save Settings Lambda Resources
-
-  SaveSettingsLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/SaveSettings.zip
-      Description: "Save stack settings"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-SaveSettings
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
-  # S3 Lambda Resources
-
-  S3PutObjectFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/S3PutObject.zip
-      Description: "Put an object into an AWS S3 bucket"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-S3PutObject
-      Handler: "index.handle"
-      Role: !Ref S3HandleFunctionRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
-  S3SyncObjectsFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/S3SyncObjects.zip
-      Description: "Sync S3 objects between two AWS S3 buckets"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-S3SyncObjects
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
-  AdminPagesSettingsJson:
-    Type: Custom::S3PutObject
-    Properties:
-      ServiceToken: !GetAtt S3PutObjectFunction.Arn
-      Region: !Sub |-
-        ${AWS::Region}
-      Bucket: !Ref AdminPagesS3
-      Key: "settings.json"
-      Body: !Sub |-
-        {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
-        }
-    DependsOn:
-      - S3PutObjectFunction
-      - CognitoUserPool
-      - CognitoUserPoolClient
-
-  AdminPagesDeploy:
-    Type: Custom::S3SyncObjects
-    Properties:
-      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
-      SourceBucket: {{awsReleaseBucket}}
-      SourceKey: admin-pages/{{version}}
-      DestinationRegion: !Sub |-
-        ${AWS::Region}
-      DestinationBucket: !Ref AdminPagesS3
-    DependsOn: S3SyncObjectsFunction
-
-  PublicPagesSettingsJson:
-    Type: Custom::S3PutObject
-    Properties:
-      ServiceToken: !GetAtt S3PutObjectFunction.Arn
-      Region: !Sub |-
-        ${AWS::Region}
-      Bucket: !Ref PublicPagesS3
-      Key: "settings.json"
-      Body: !Sub |-
-        {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
-        }
-    DependsOn:
-      - S3PutObjectFunction
-      - CognitoUserPool
-      - CognitoUserPoolClient
-
-  PublicPagesDeploy:
-    Type: Custom::S3SyncObjects
-    Properties:
-      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
-      SourceBucket: {{awsReleaseBucket}}
-      SourceKey: public-pages/{{version}}
-      DestinationRegion: !Sub |-
-        ${AWS::Region}
-      DestinationBucket: !Ref PublicPagesS3
-    DependsOn: S3SyncObjectsFunction
+  # Cognito User Pool Custom Resources
 
   CognitoUserPool:
     Type: Custom::CognitoUserPool
@@ -372,6 +277,178 @@ Resources:
     DependsOn:
       - CognitoUserPool
       - CognitoCreateUserGroupFunction
+
+  # Report Lambda Resources
+
+  GenerateReportLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GenerateReport.zip
+      Description: "Generate report"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref UploadsBucket
+      FunctionName: !Sub |-
+        ${StackName}-GenerateReport
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteReportsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteReports.zip
+      Description: "Delete expired reports"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref UploadsS3
+      FunctionName: !Sub |-
+        ${StackName}-DeleteReports
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteReportsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteReportsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt HourlyScheduledEventRule.Arn
+    DependsOn:
+      - DeleteReportsLambdaFunction
+      - HourlyScheduledEventRule
+
+  # Save Settings Lambda Resources
+
+  SaveSettingsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/SaveSettings.zip
+      Description: "Save stack settings"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-SaveSettings
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # S3 Lambda Resources
+
+  S3PutObjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3PutObject.zip
+      Description: "Put an object into an AWS S3 bucket"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-S3PutObject
+      Handler: "index.handle"
+      Role: !Ref S3HandleFunctionRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  S3SyncObjectsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/S3SyncObjects.zip
+      Description: "Sync S3 objects between two AWS S3 buckets"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-S3SyncObjects
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # S3 Admin Pages Deployment
+
+  AdminPagesSettingsJson:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref AdminPagesS3
+      Key: "settings.json"
+      Body: !Sub |-
+        {
+          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+        }
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
+
+  AdminPagesDeploy:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
+      SourceBucket: {{awsReleaseBucket}}
+      SourceKey: admin-pages/{{version}}
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
+      DestinationBucket: !Ref AdminPagesS3
+    DependsOn: S3SyncObjectsFunction
+
+  # S3 Public Pages Deployment
+
+  PublicPagesSettingsJson:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref PublicPagesS3
+      Key: "settings.json"
+      Body: !Sub |-
+        {
+          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+        }
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
+
+  PublicPagesDeploy:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken: !GetAtt S3SyncObjectsFunction.Arn
+      SourceBucket: {{awsReleaseBucket}}
+      SourceKey: public-pages/{{version}}
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
+      DestinationBucket: !Ref PublicPagesS3
+    DependsOn: S3SyncObjectsFunction
+
+  # Save Settings Custom Resources
 
   SaveInitialStackSettings:
     Type: Custom::Settings

@@ -18,6 +18,116 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
+const numeral = require('numeral');
+
+/**
+ * Get fields for Report
+ *
+ * @type {[]}
+ */
+exports.reportFields = [
+	{
+		label: 'ID',
+		value: 'uuid'
+	},
+	{
+		label: 'Date',
+		value: 'createdOn',
+		transform: function (value) {
+			const date = new Date(value);
+			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		}
+	},
+	{
+		label: 'Nonprofit',
+		value: 'nonprofitLegalName',
+	},
+	{
+		label: 'Is Offline',
+		value: 'isOfflineDonation',
+		transform: function (value) {
+			return value ? 'Yes' : 'No';
+		}
+	},
+	{
+		label: 'Donor First Name',
+		value: 'donorFirstName',
+		transform: function (value, values) {
+			return values.isAnonymous ? 'Anonymous' : value;
+		}
+	},
+	{
+		label: 'Donor Last Name',
+		value: 'donorLastName',
+		transform: function (value, values) {
+			return values.isAnonymous ? 'Anonymous' : value;
+		}
+	},
+	{
+		label: 'Donor Address 1',
+		value: 'donorAddress1',
+	},
+	{
+		label: 'Donor Address 2',
+		value: 'donorAddress2',
+	},
+	{
+		label: 'Donor City',
+		value: 'donorCity',
+	},
+	{
+		label: 'Donor State',
+		value: 'donorState',
+	},
+	{
+		label: 'Donor Zip',
+		value: 'donorZip',
+	},
+	{
+		label: 'Donor Email',
+		value: 'donorEmail',
+	},
+	{
+		label: 'Donor Phone Number',
+		value: 'donorPhone',
+	},
+	{
+		label: 'Donation Amount',
+		value: 'subtotal',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
+	},
+	{
+		label: 'Is Fee Covered',
+		value: 'isFeeCovered',
+		transform: function (value) {
+			return value ? 'Yes' : 'No';
+		}
+	},
+	{
+		label: 'Donation Fee',
+		value: 'fees',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
+	},
+	{
+		label: 'Subtotal Charged to Card',
+		value: 'totalChargedToCard',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
+	},
+	{
+		label: 'Amount for Nonprofit',
+		value: 'amountForNonprofit',
+		transform: function (value) {
+			return numeral(value / 100).format('$0,0.00');
+		}
+	},
+];
+
 /**
  * Calculate donation fees
  *

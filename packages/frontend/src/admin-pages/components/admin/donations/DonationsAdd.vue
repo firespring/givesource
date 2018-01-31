@@ -154,11 +154,11 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('nonprofits/search', {
-                    status: 'ACTIVE'
-                }).then(function (response) {
-                	vue.nonprofits = response.data;
-                	vue.loaded = true;
-                });
+					status: 'ACTIVE'
+				}).then(function (response) {
+					vue.nonprofits = response.data;
+					vue.loaded = true;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -172,7 +172,7 @@
 				next();
 			}).catch(function () {
 				next();
-            });
+			});
 		},
 		watch: {
 			formData: {
@@ -239,7 +239,12 @@
 				if (vue.formData.email) {
 					donor.email = vue.formData.email;
 				}
-				vue.$request.post('donors', donor).then(function (response) {
+
+				let nonprofit = {};
+				vue.$request.get('nonprofits/' + vue.formData.nonprofitUuid).then(function (response) {
+					nonprofit = response.data;
+					return vue.$request.post('donors', donor);
+				}).then(function (response) {
 					if (response.data.errorMessage) {
 						return Promise.reject(response.data);
 					}
@@ -249,11 +254,18 @@
 						isAnonymous: false,
 						isFeeCovered: false,
 						isOfflineDonation: true,
-						nonprofitUuid: vue.formData.nonprofitUuid,
 						subtotal: vue.getSubtotal(),
-						total: vue.getSubtotal()
+						total: vue.getSubtotal(),
+
+						// Donor
+						donorFirstName: response.data.firstName,
+						donorLastName: response.data.lastName,
+						donorEmail: response.data.email,
+
+						// Nonprofit
+						nonprofitLegalName: nonprofit.legalName,
 					};
-					return vue.$request.post('nonprofits/' + vue.formData.nonprofitUuid + '/donations', donation);
+					return vue.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
