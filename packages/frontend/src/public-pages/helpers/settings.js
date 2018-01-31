@@ -152,6 +152,25 @@ const isDayOfEventOrAfter = function () {
 };
 
 /**
+ * Is it after the event?
+ *
+ * @returns {boolean}
+ */
+const isAfterEvent = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEvent = store.getters.setting('DATE_EVENT');
+
+	if (eventTimezone && dateEvent) {
+		let now = moment().tz(eventTimezone);
+		if (now.isAfter(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/**
  * Get event title
  *
  * @returns {String}
@@ -191,6 +210,7 @@ const acceptDonations = function () {
 
 export {
 	eventTitle,
+	isAfterEvent,
 	isAfterRegistrationEnd,
 	isBeforeRegistrationStart,
 	isDayOfEvent,

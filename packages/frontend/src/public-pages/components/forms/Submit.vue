@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <button type="submit" class="btn btn--round btn--icon" :class="buttonClasses" :disabled="processing">
+    <button type="submit" class="btn" :class="buttonClasses" :disabled="processing">
         <slot>Submit</slot>
     </button>
 </template>
@@ -34,6 +34,12 @@
 					'btn--lite': this.color.toLowerCase() === 'lite',
 					'btn--red': this.color.toLowerCase() === 'red',
 					'btn--reverse': this.color.toLowerCase() === 'reverse',
+
+                    // Has Icon
+                    'btn--icon': this.hasIcon,
+
+					// Rounded
+                    'btn--round': this.rounded,
 
 					// Size
 					'btn--xs': this.size.toLowerCase() === 'xs',
@@ -59,7 +65,15 @@
 			size: {
 				type: String,
 				default: '',
-			}
+			},
+            rounded: {
+				type: Boolean,
+                default: true,
+            },
+            hasIcon: {
+				type: Boolean,
+                default: true,
+            }
 		},
 	};
 </script>

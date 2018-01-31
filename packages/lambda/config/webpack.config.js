@@ -103,6 +103,7 @@ module.exports = function (env) {
 			PatchUser: './src/api/patchUser/index.js',
 			PostContent: './src/api/postContent/index.js',
 			PostDonation: './src/api/postDonation/index.js',
+			PostDonationsReceipt: './src/api/postDonationsReceipt/index.js',
 			PostDonor: './src/api/postDonor/index.js',
 			PostFile: './src/api/postFile/index.js',
 			PostMessage: './src/api/postMessage/index.js',
@@ -132,9 +133,12 @@ module.exports = function (env) {
 			CognitoCustomMessage: './src/custom/cognitoCustomMessage/index.js',
 			DeleteReports: './src/custom/deleteReports/index.js',
 			GenerateReport: './src/custom/generateReport/index.js',
+			RenderTemplate: './src/custom/renderTemplate/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',
+			SendContactMessageEmail: './src/custom/sendContactMessageEmail/index.js',
+			SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
 		},
 		output: {
 			path: path.resolve(__dirname, '../build/functions'),
@@ -149,6 +153,10 @@ module.exports = function (env) {
 				{
 					test: /\.json$/,
 					loader: 'json-loader'
+				},
+				{
+					test: /\.mustache/,
+					loader: 'raw-loader'
 				}
 			]
 		},

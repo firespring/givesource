@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,30 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Message = require('./../../models/message');
-const MessagesRepository = require('./../../repositories/messages');
+const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
-	const repository = new MessagesRepository();
-	const request = new Request(event, context);
+	const request = new Request(event, context).parameters(['email']);
 
-	let message = new Message(request._body);
 	request.validate().then(function () {
-		return message.validate();
-	}).then(function () {
-		return repository.save(message);
-	}).then(function (response) {
-		message = response;
 		const body = {
-			message: message.mutate(),
+			email: request.get('email')
 		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendContactMessageEmail', {body: body});
-	}).then(function () {
-		callback(null, message.all());
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

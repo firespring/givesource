@@ -16,6 +16,7 @@
  */
 
 const Model = require('./model');
+const numeral = require('numeral');
 
 /**
  * Donation constructor
@@ -236,6 +237,23 @@ Donation.prototype.defaults = function () {
 		isFeeCovered: false,
 		isOfflineDonation: false
 	};
+};
+
+/**
+ * Attribute mutators for this model
+ *
+ * @type {{}}
+ */
+Donation.prototype.mutators = {
+	fees: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
+	subtotal: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
+	total: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
 };
 
 module.exports = Donation;

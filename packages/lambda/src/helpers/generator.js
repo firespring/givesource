@@ -256,7 +256,7 @@ Generator.prototype._generators = {
 			creditCardName: faker.name.findName(),
 			creditCardType: faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']),
 			isTestMode: faker.random.boolean(),
-			transactionAmountInCents: faker.random.number(),
+			transactionAmount: faker.random.number(),
 			transactionId: faker.random.alphaNumeric(10),
 			transactionStatus: 'test'
 		};
