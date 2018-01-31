@@ -21,11 +21,11 @@ const DonationsRepository = require('./../../repositories/donations');
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const EmailHelper = require('./../../helpers/email');
-const Lambda = require('./../../aws/lambda');
 const HttpException = require('./../../exceptions/http');
 const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const QueryBuilder = require('./../../aws/queryBuilder');
+const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
 const SettingsRepostiory = require('./../../repositories/settings');
@@ -33,7 +33,6 @@ const SettingsRepostiory = require('./../../repositories/settings');
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new DonationsRepository();
 	const donorsRepository = new DonorsRepository();
-	const lambda = new Lambda();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 	const request = new Request(event, context);
 	const ses = new SES();
@@ -43,7 +42,7 @@ exports.handle = function (event, context, callback) {
 	let donations = request.get('donations', []);
 	let paymentTransaction = request.get('paymentTransaction', null);
 
-	let receipt = '';
+	let html = '';
 	let settings = {
 		CONTACT_PHONE: null,
 		EVENT_URL: null,
@@ -51,8 +50,6 @@ exports.handle = function (event, context, callback) {
 		EVENT_LOGO: null,
 		PAGE_TERMS_ENABLED: null,
 	};
-	let transactions = [];
-
 	request.validate().then(function () {
 		if (donor) {
 			donor = (donor instanceof Donor) ? donor.mutate() : donor;
@@ -118,19 +115,14 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
-	}).then(function () {
-		const body = {
-			template: 'emails.donation-receipt',
-			data: {
-				donor: donor,
-				settings: settings,
-				transactions: transactions
-			},
-		};
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-RenderTemplate', {body: body}, 'RequestResponse');
+		return RenderHelper.renderTemplate('emails.donation-receipt', {
+			donor: donor,
+			settings: settings,
+			transactions: transactions
+		});
 	}).then(function (response) {
-		if (response && response.Payload) {
-			receipt = JSON.parse(response.Payload);
+		if (response) {
+			html = response;
 			return EmailHelper.getContactEmailAddresses();
 		} else {
 			return Promise.reject(new Error('unable to generate receipt email'));
@@ -139,7 +131,7 @@ exports.handle = function (event, context, callback) {
 		if (response.from.email && response.from.verified) {
 			const toAddresses = [donor.email];
 			const subject = settings.EVENT_TITLE ? 'Tax receipt: Thank you for participating in ' + settings.EVENT_TITLE : 'Tax receipt: Thank you for giving';
-			return ses.sendEmail(subject, receipt, null, response.from.email, toAddresses);
+			return ses.sendEmail(subject, html, null, response.from.email, toAddresses);
 		} else {
 			return Promise.reject(new Error('from contact email address missing or not verified'));
 		}
@@ -149,4 +141,6 @@ exports.handle = function (event, context, callback) {
 		console.log('Error: %j', err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
+
+	let transactions = [];
 };

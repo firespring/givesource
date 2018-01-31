@@ -124,7 +124,7 @@ module.exports = function (env) {
 			SearchNonprofits: './src/api/searchNonprofits/index.js',
 			VerifyEmail: './src/api/verifyEmail/index.js',
 
-			// CloudFormation Custom Lambda Functions
+			// Custom Lambda Functions
 			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',
 			CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
@@ -133,7 +133,6 @@ module.exports = function (env) {
 			CognitoCustomMessage: './src/custom/cognitoCustomMessage/index.js',
 			DeleteReports: './src/custom/deleteReports/index.js',
 			GenerateReport: './src/custom/generateReport/index.js',
-			RenderTemplate: './src/custom/renderTemplate/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',

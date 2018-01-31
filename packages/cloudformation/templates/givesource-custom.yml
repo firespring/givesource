@@ -278,26 +278,6 @@ Resources:
       - CognitoUserPool
       - CognitoCreateUserGroupFunction
 
-  # Render Template Lambda Resources
-
-  RenderTemplateLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/RenderTemplate.zip
-      Description: "Render a template"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-RenderTemplate
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
   # Report Lambda Resources
 
   GenerateReportLambdaFunction:

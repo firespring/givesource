@@ -16,34 +16,13 @@
  */
 
 const mustache = require('mustache');
-const Request = require('./../../aws/request');
 
-exports.handle = function (event, context, callback) {
-	const request = new Request(event, context).parameters(['template', 'data']);
-
-	request.validate().then(function () {
-		return render(request.get('template'), request.get('data', {}));
-	}).then(function (rendered) {
-		callback(null, rendered);
-	}).catch(function (err) {
-		console.log('error: %j', err);
-		callback(err);
-	})
-};
-
-/**
- * Find and render the template
- *
- * @param {String} template
- * @param {{}} data
- * @return {Promise}
- */
-const render = function (template, data) {
+const renderTemplate = function (template, data) {
 	return new Promise(function (resolve, reject) {
 		let templatePath = template.replace(/\s/g, '').replace('.mustache', '').split('.').join('/');
 
 		try {
-			const content = require('./../../templates/' + templatePath + '.mustache');
+			const content = require('./../templates/' + templatePath + '.mustache');
 			const rendered = mustache.render(content, data);
 			resolve(rendered);
 		} catch (err) {
@@ -51,3 +30,7 @@ const render = function (template, data) {
 		}
 	});
 };
+
+export {
+	renderTemplate,
+}
