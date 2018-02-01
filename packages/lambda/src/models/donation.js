@@ -41,6 +41,7 @@ Donation.prototype = new Model();
  * @type {[*]}
  */
 Donation.prototype.attributes = [
+	'amountForNonprofit',
 	'donorUuid',
 	'fees',
 	'isAnonymous',
@@ -49,6 +50,7 @@ Donation.prototype.attributes = [
 	'nonprofitUuid',
 	'paymentTransactionUuid',
 	'subtotal',
+	'subtotalChargedToCard',
 	'total',
 
 	// Donor
@@ -90,13 +92,23 @@ Donation.prototype.attributes = [
  * @type {{}}
  */
 Donation.prototype.constraints = {
+	amountForNonprofit: {
+		presence: true,
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
+	},
 	donorUuid: {
 		presence: false,
 		uuid: 4,
 	},
 	fees: {
 		presence: true,
-		type: 'number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 	isAnonymous: {
 		presence: true,
@@ -129,11 +141,17 @@ Donation.prototype.constraints = {
 	},
 	subtotal: {
 		presence: true,
-		type: 'number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 	total: {
 		presence: true,
-		type: 'number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
 	},
 
 	// Donor
@@ -255,6 +273,13 @@ Donation.prototype.constraints = {
 		presence: false,
 		type: 'string'
 	},
+	subtotalChargedToCard: {
+		presence: false,
+		type: 'number',
+		numericality: {
+			onlyInteger: true
+		}
+	},
 };
 
 /**
@@ -265,7 +290,8 @@ Donation.prototype.constraints = {
 Donation.prototype.defaults = function () {
 	return {
 		isFeeCovered: false,
-		isOfflineDonation: false
+		isOfflineDonation: false,
+		subtotalChargedToCard: 0,
 	};
 };
 
@@ -275,15 +301,43 @@ Donation.prototype.defaults = function () {
  * @type {{}}
  */
 Donation.prototype.mutators = {
+	amountForNonprofit: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
 	fees: function (value) {
 		return numeral(value / 100).format('$0,0.00');
 	},
+	isFeeCovered: function (value) {
+		return value ? 'Yes' : 'No';
+	},
+	isOfflineDonation: function (value) {
+		return value ? 'Yes' : 'No';
+	},
 	subtotal: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
+	subtotalChargedToCard: function (value) {
 		return numeral(value / 100).format('$0,0.00');
 	},
 	total: function (value) {
 		return numeral(value / 100).format('$0,0.00');
 	},
+};
+
+/**
+ * Event fired for this model before validation
+ */
+Donation.prototype.beforeValidate = function () {
+	this.amountForNonprofit = this.total - this.fees;
+	this.subtotalChargedToCard = this.isOfflineDonation ? 0 : this.total;
+};
+
+/**
+ * Event fired for this model before saving
+ */
+Donation.prototype.beforeSave = function () {
+	this.amountForNonprofit = this.total - this.fees;
+	this.subtotalChargedToCard = this.isOfflineDonation ? 0 : this.total;
 };
 
 module.exports = Donation;
