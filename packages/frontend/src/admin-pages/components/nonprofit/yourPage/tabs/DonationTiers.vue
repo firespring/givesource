@@ -17,6 +17,7 @@
 
 <template>
     <div class="c-page-section__content">
+        <api-error v-model="apiError"></api-error>
         <div class="c-alert c-alert--info c-alert--expand u-flex u-justify-center">
 
             <div class="c-alert__body u-flex u-justify-between">
@@ -67,6 +68,7 @@
 
                 donationTiers: [],
                 originalDonationTiers: [],
+                apiError: {}
             }
         },
         props: [
@@ -109,19 +111,19 @@
             submit: function () {
                 const vue = this;
 
-                if(vue.validateDonationTiers()){
+                if (vue.validateDonationTiers()) {
                     vue.addModal('spinner');
                     vue.updateDonationTiers();
                     vue.clearModals();
                 }
 
             },
-            validateDonationTiers: function() {
+            validateDonationTiers: function () {
                 return true;
                 const vue = this;
                 const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
                 const emptyRows = _.filter(donationTiers, {amount: '0.00', description: ''}).length;
-                var donationTiersLessThanTen = _.filter(donationTiers, function(donationTierRow){
+                var donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
                     return donationTierRow.amount < 10;
                 }).length;
 
@@ -147,38 +149,38 @@
                     }
                     return tier;
                 });
-
-                if (toUpdate.length && !toDelete.length) {
+                if (toUpdate.length) {
                     vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toUpdate
+                        donationtiers: toUpdate
                     }).then(function () {
                         vue.clearModals();
                     }).catch(function (err) {
+                        vue.apiError = err.response.data.errors;
                         vue.clearModals();
                         console.log(err);
                     });
-                } else if (toDelete.length && !toUpdate.length) {
-                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toDelete
-                    }).then(function () {
-                        vue.clearModals();
-                    }).catch(function (err) {
-                        vue.clearModals();
-                        console.log(err);
-                    });
-                } else if (toUpdate.length && toDelete.length) {
-                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toDelete
-                    }).then(function () {
-                        return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                            donation_tiers: toUpdate
-                        });
-                    }).then(function () {
-                        vue.clearModals();
-                    }).catch(function (err) {
-                        vue.clearModals();
-                        console.log(err);
-                    });
+//                } else if (toDelete.length && !toUpdate.length) {
+//                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+//                        donation_tiers: toDelete
+//                    }).then(function () {
+//                        vue.clearModals();
+//                    }).catch(function (err) {
+//                        vue.clearModals();
+//                        console.log(err);
+//                    });
+//                } else if (toUpdate.length && toDelete.length) {
+//                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+//                        donation_tiers: toDelete
+//                    }).then(function () {
+//                        return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+//                            donation_tiers: toUpdate
+//                        });
+//                    }).then(function () {
+//                        vue.clearModals();
+//                    }).catch(function (err) {
+//                        vue.clearModals();
+//                        console.log(err);
+//                    });
                 } else {
                     vue.clearModals();
                 }
