@@ -17,6 +17,7 @@
 
 import * as VueMoney from 'v-money';
 import AlertCloseDirective from './directives/alertClose';
+import ApiErrorComponent from './components/errors/ApiError.vue';
 import App from './components/App.vue';
 import AutoFocusDirective from './directives/autoFocus';
 import axios from 'axios';
@@ -50,6 +51,7 @@ Vue.directive('money', VueMoney.VMoney);
 Vue.directive('shave', ShaveDirective);
 
 // Register global components
+Vue.component('api-error', ApiErrorComponent);
 Vue.component('navigation', NavigationComponent);
 Vue.component('v-gravatar', GravatarComponent);
 Vue.component('vue-ckeditor', VueCkeditor);
