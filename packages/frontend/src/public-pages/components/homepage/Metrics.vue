@@ -98,7 +98,7 @@
 
             <div class="main-spotlight-section register wrapper wrapper--xs" v-if="displayRegisterButton">
                 <div class="register__action mb4">
-                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">{{ registerButtonText }}</router-link>
+                    <router-link :to="{ name: 'register' }" class="btn btn--accent btn--round btn--lg">{{ registerButtonText }}</router-link>
                 </div>
                 <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
             </div>

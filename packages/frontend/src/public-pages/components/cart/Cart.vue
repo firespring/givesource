@@ -205,7 +205,7 @@
                     <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
                     <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
-                        <forms-submit :processing="processing" color="green" size="lg">Complete Your Donation</forms-submit>
+                        <forms-submit :processing="processing" color="accent" size="lg">Complete Your Donation</forms-submit>
                     </div>
                 </form>
 

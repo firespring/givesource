@@ -48,7 +48,7 @@
                             </div>
 
                             <div v-if="canDonate" class="donation-action">
-                                <a v-on:click="openDonations" href="#" class="btn btn--green btn--lg btn--block donation-trigger">Donate</a>
+                                <a v-on:click="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
                             <div class="donation-share">
