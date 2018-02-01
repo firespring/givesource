@@ -20,6 +20,7 @@
         <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
+                <api-error v-model="apiError"></api-error>
                 <div class="o-app-main-content">
                     <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
                     </nonprofits-list-table-header>
@@ -36,11 +37,18 @@
 	const PaginationMixin = require('./../../../mixins/pagination');
 
 	module.exports = {
+	    data:function(){
+	        return {
+                apiError: {}
+            };
+        },
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('nonprofits', to.query).then(function (response) {
 					vue.setPaginationData(response.data);
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -51,8 +59,9 @@
 				vue.setPaginationData(response.data);
 				next();
 			}).catch(function (err) {
-				console.log(err);
-				next();
+			    console.log('error error here', err);
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
 		created: function () {
@@ -79,7 +88,9 @@
 					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
 						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
 					});
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
             },
             searchNonprofits: function (params) {
 				const vue = this;
@@ -102,6 +113,8 @@
                         total: 0,
                         items: response.data
                     });
+                }).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
                 });
             },
             resetPagination: function () {
@@ -110,7 +123,9 @@
 	            vue.resetPaginationData();
 	            vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
 		            vue.setPaginationData(response.data);
-	            });
+	            }).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
             }
         },
 		components: {
