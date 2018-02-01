@@ -24,7 +24,7 @@
                 <div class="o-app-main-content">
                     <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
                     </nonprofits-list-table-header>
-                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"></nonprofits-list-table>
+                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit" v-on:hasError="hasError"></nonprofits-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>
@@ -126,6 +126,10 @@
 	            }).catch(function (err) {
                     vue.apiError = err.response.data.errors;
                 });
+            },
+            hasError: function (err) {
+                const vue = this;
+                vue.apiError = err.response.data.errors;
             }
         },
 		components: {
