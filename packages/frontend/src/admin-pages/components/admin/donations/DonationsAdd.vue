@@ -264,6 +264,12 @@
 
 						// Nonprofit
 						nonprofitLegalName: nonprofit.legalName,
+						nonprofitAddress1: nonprofit.address1,
+						nonprofitAddress2: nonprofit.address2,
+						nonprofitAddress3: nonprofit.address3,
+						nonprofitCity: nonprofit.city,
+						nonprofitState: nonprofit.state,
+						nonprofitZip: nonprofit.zip,
 					};
 					return vue.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
 				}).then(function (response) {

@@ -64,6 +64,12 @@ Donation.prototype.attributes = [
 
 	// Nonprofit
 	'nonprofitLegalName',
+	'nonprofitAddress1',
+	'nonprofitAddress2',
+	'nonprofitAddress3',
+	'nonprofitCity',
+	'nonprofitState',
+	'nonprofitZip',
 
 	// Payment Transaction
 	'creditCardName',
@@ -173,6 +179,30 @@ Donation.prototype.constraints = {
 	nonprofitLegalName: {
 		presence: false,
 		type: 'string',
+	},
+	nonprofitAddress1: {
+		presence: false,
+		type: 'string'
+	},
+	nonprofitAddress2: {
+		presence: false,
+		type: 'string'
+	},
+	nonprofitAddress3: {
+		presence: false,
+		type: 'string'
+	},
+	nonprofitCity: {
+		presence: false,
+		type: 'string'
+	},
+	nonprofitState: {
+		presence: false,
+		type: 'string'
+	},
+	nonprofitZip: {
+		presence: false,
+		type: 'string'
 	},
 
 	// Payment Transaction
