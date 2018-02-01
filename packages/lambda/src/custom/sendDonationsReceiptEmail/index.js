@@ -141,6 +141,4 @@ exports.handle = function (event, context, callback) {
 		console.log('Error: %j', err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
-
-	let transactions = [];
 };
