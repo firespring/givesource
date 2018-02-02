@@ -34,7 +34,8 @@
             <div class="items-center">
                 Presented by
                 <div class="presented-by__logo">
-                    <a :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
+                    <a v-if="foundationUrl" :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
+                    <img v-else alt="Foundation Logo" :src="foundationLogoUrl">
                 </div>
             </div>
 
