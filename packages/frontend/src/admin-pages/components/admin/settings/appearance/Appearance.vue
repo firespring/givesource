@@ -70,6 +70,25 @@
                                     </div>
                                 </div>
 
+                                <div class="c-form-item c-form-item--url">
+                                    <div class="c-form-item__label">
+                                        <label for="foundationUrl" class="c-form-item-label-text">Foundation Logo Link</label>
+                                    </div>
+
+                                    <div class="c-form-item__control">
+                                        <div class="u-control-icon u-control-icon--url">
+                                            <input v-model="formData.FOUNDATION_URL" type="url" name="foundationUrl" id="foundationUrl" placeholder="http://">
+                                        </div>
+                                        <div class="c-notes c-notes--below">
+                                            Enter a URL that you want your foundation logo to link to (e.g., your foundation's website).
+                                        </div>
+                                        <div v-if="formErrors.FOUNDATION_URL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.FOUNDATION_URL }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
                                 <div class="c-form-item c-form-item--file c-form-item--file-picker">
                                     <div class="c-form-item__label">
                                         <label for="backgroundMasthead" class="c-form-item-label-text">Masthead Background</label>
@@ -125,6 +144,7 @@
 					ACCENT_COLOR: '',
 					EVENT_LOGO: null,
 					FOUNDATION_LOGO: null,
+					FOUNDATION_URL: '',
 					MASTHEAD_IMAGE: null,
 				},
 
@@ -190,6 +210,11 @@
 					FOUNDATION_LOGO: {
 						presence: false,
 						image: true,
+					},
+					FOUNDATION_URL: {
+						presence: false,
+						label: 'Foundation Logo Link',
+						url: true,
 					},
 					MASTHEAD_IMAGE: {
 						presence: false,
