@@ -67,7 +67,8 @@
 					contents: toUpdate
 				}).catch(function (err) {
 					console.log(err);
-				});
+                    vue.$emit('hasError', err);
+                });
 			}
 		},
 		components: {

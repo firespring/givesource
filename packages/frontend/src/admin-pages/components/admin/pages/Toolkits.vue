@@ -47,7 +47,7 @@
 
                             <div class="c-page-section__main">
 
-                                <toolkit-list-table :contents="resourceContents"></toolkit-list-table>
+                                <toolkit-list-table :contents="resourceContents" v-on:hasError="hasError"></toolkit-list-table>
 
                                 <div class="c-table-footer">
                                     <div class="c-table-footer__actions">
@@ -253,7 +253,11 @@
 				const vue = this;
 
 				vue.addModal('pages-toolkit-add-resource-modal');
-			}
+			},
+            hasError: function(err){
+			    const vue = this;
+                vue.apiError = err.response.data.errors;
+            },
 		},
 		components: {
 			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),
