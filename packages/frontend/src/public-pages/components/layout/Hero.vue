@@ -32,7 +32,8 @@
         <div class="presented-by" v-if="presentedBy && foundationLogoUrl">
 
             <div class="items-center">
-                Presented by <a href="#"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
+                Presented by
+                <a :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
             </div>
 
         </div>
@@ -67,6 +68,10 @@
 				const vue = this;
 				const logo = vue.$store.getters.setting('FOUNDATION_LOGO');
 				return logo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + logo : false;
+			},
+			foundationUrl: function () {
+				const vue = this;
+				return vue.$store.getters.setting('FOUNDATION_URL') ? vue.$store.getters.setting('FOUNDATION_URL') : false;
 			}
 		},
 		props: {

@@ -187,6 +187,7 @@ const updateSettings = function () {
 		'EVENT_TIMEZONE',
 		'EVENT_TITLE',
 		'FOUNDATION_LOGO',
+		'FOUNDATION_URL',
 		'MASTHEAD_IMAGE',
 		'PAGE_ABOUT_ENABLED',
 		'PAGE_FAQ_ENABLED',
