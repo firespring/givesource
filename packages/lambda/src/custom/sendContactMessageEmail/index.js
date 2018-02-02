@@ -16,13 +16,12 @@
  */
 
 const EmailHelper = require('./../../helpers/email');
-const Lambda = require('./../../aws/lambda');
+const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
 const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
 	const request = new Request(event, context).parameters(['message']);
 	const ses = new SES();
 	const settingsRepository = new SettingsRepository();
@@ -41,18 +40,13 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
-	}).then(function () {
-		const body = {
-			template: 'emails.contact-message',
-			data: {
-				message: message,
-				settings: settings,
-			},
-		};
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-RenderTemplate', {body: body}, 'RequestResponse');
+		return RenderHelper.renderTemplate('emails.contact-message', {
+			message: message,
+			settings: settings,
+		});
 	}).then(function (response) {
-		if (response && response.Payload) {
-			html = JSON.parse(response.Payload);
+		if (response) {
+			html = response;
 			return EmailHelper.getContactEmailAddresses();
 		} else {
 			return Promise.reject(new Error('unable to generate receipt email'));
