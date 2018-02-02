@@ -33,7 +33,9 @@
 
             <div class="items-center">
                 Presented by
-                <a :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
+                <div class="presented-by__logo">
+                    <a :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
+                </div>
             </div>
 
         </div>

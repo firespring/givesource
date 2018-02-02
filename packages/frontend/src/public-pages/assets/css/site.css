@@ -888,10 +888,13 @@ Presented by
 	border-radius: 100px;
 }
 
+.presented-by__logo {
+	margin: .5rem 0 0;
+}
+
 .presented-by a:link,
 .presented-by a:visited {
 	display: block;
-	margin: .5rem 0 0;
 	color: rgba(255,255,255,.7);
 	text-decoration: none;
 }
@@ -982,20 +985,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-	color: #9B9B97;
+	  color: #9B9B97;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-	color: #9B9B97;
-	opacity: 1;
+	 color: #9B9B97;
+   opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-	color: #9B9B97;
+	 color: #9B9B97;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-	color: #9B9B97;
+	 color: #9B9B97;
 }
 
 /* Page header user info
@@ -1339,7 +1342,7 @@ Page mobile nav
 
 .has-overlay .overlay {
 	visibility: visible;
-	opacity: 1;
+    opacity: 1;
 }
 
 .has-overlay .overlay__nav {
@@ -1984,8 +1987,7 @@ Global Media Queries
 		display: flex;
 	}
 
-	.presented-by a:link,
-	.presented-by a:visited {
+	.presented-by__logo {
 		margin: 0 0 0 .5rem;
 	}
 
@@ -2120,10 +2122,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-		-ms-flex-direction: column;
-		-webkit-box-orient: vertical;
-		-webkit-box-direction: normal;
-		flex-direction: column;
+	    -ms-flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
 	}
 
 	.nonprofit-search__category {
@@ -2210,10 +2212,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-		-ms-flex-direction: row;
-		-webkit-box-orient: horizontal;
-		-webkit-box-direction: normal;
-		flex-direction: row;
+	    -ms-flex-direction: row;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        flex-direction: row;
 	}
 
 	.nonprofit-search__name .grid-item--collapse {
