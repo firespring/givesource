@@ -66,7 +66,7 @@
 				vue.$request.patch('contents', {
 					contents: toUpdate
 				}).catch(function (err) {
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			}
 		},
