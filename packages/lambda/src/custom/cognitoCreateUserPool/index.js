@@ -19,11 +19,10 @@ const Cognito = require('./../../aws/cognito');
 const logger = require('./../../helpers/log');
 const response = require('cfn-response');
 
-exports.handle = function (event, context, callback) {
+exports.handle = function (event, context) {
 	logger.log('cognitoCreateUserPool event: %j', event);
 
 	const poolName = event.ResourceProperties.PoolName;
-	const adminPageUrl = event.ResourceProperties.AdminPagesUrl;
 	const snsCallerArn = event.ResourceProperties.SnsCallerArn;
 	const cognitoCustomMessageArn = process.env.COGNITO_CUSTOM_MESSAGE_FUNCTION_ARN;
 
@@ -45,7 +44,7 @@ exports.handle = function (event, context, callback) {
 		return;
 	}
 
-	cognito.createUserPool(poolName, 'Givesource', adminPageUrl, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
+	cognito.createUserPool(poolName, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
 		const userPoolId = userPool.UserPool.Id;
 		response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
 	}).catch(function (err) {

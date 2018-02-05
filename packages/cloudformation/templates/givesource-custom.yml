@@ -39,6 +39,9 @@ Parameters:
   UploadsCloudFrontUrl:
     Type: String
 
+  EventTitle:
+    Type: String
+
 Resources:
 
   # Api Gateway Authorizer Lambda Resources
@@ -196,6 +199,8 @@ Resources:
         Variables:
           AWS_STACK_NAME: !Ref StackName
           ADMIN_PAGES_CLOUD_FRONT_URL: !Ref AdminPagesCloudFrontUrl
+          PUBLIC_PAGES_CLOUD_FRONT_URL: !Ref PublicPagesCloudFrontUrl
+          EVENT_TITLE: !Ref EventTitle
       FunctionName: !Sub |-
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"
@@ -225,7 +230,6 @@ Resources:
         ${AWS::Region}
       PoolName: !Sub |-
         ${StackName}-Users
-      AdminPagesUrl: !Ref AdminPagesCloudFrontUrl
       SnsCallerArn: !Ref CognitoSnsCallerRoleArn
     DependsOn: CognitoCreateUserPoolFunction
 

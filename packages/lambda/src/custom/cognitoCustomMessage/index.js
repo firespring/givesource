@@ -17,19 +17,49 @@
 
 const logger = require('./../../helpers/log');
 const querystring = require('querystring');
+const RenderHelper = require('./../../helpers/render');
 
 exports.handle = function (event, context, callback) {
 	logger.log('cognitoCustomMessage event: %j', event);
+	let promise = Promise.resolve();
 
-	if (event.triggerSource === 'CustomMessage_ForgotPassword') {
-		const adminPageUrl = process.env.ADMIN_PAGES_CLOUD_FRONT_URL;
-		event.response.emailSubject = 'Givesource - Your password reset request';
+	if (event.triggerSource === 'CustomMessage_AdminCreateUser') {
+		const adminUrl = process.env.ADMIN_PAGES_CLOUD_FRONT_URL;
+		const eventUrl = process.env.PUBLIC_PAGES_CLOUD_FRONT_URL;
+		const eventTitle = process.env.EVENT_TITLE;
 
-		let qs = querystring.stringify({email: event.request.userAttributes.email});
-		qs += '&code=' + event.request.codeParameter;
-
-		event.response.emailMessage = 'Please <a href="' + adminPageUrl + '/forgot-password/reset?' + qs + '">click here</a> to reset your password.';
+		promise = promise.then(function () {
+			return RenderHelper.renderTemplate('emails/registration-verify', {
+				eventTitle: eventTitle,
+				eventUrl: eventUrl,
+				verificationUrl: adminUrl + '/login?id=' + event.request.usernameParameter + '&token=' + event.request.codeParameter,
+			}).then(function (response) {
+				event.response.emailSubject = `${eventTitle} - Verify your email address`;
+				event.response.emailMessage = response;
+			});
+		});
 	}
 
-	callback(null, event);
+	if (event.triggerSource === 'CustomMessage_ForgotPassword') {
+		const adminUrl = process.env.ADMIN_PAGES_CLOUD_FRONT_URL;
+		const eventUrl = process.env.PUBLIC_PAGES_CLOUD_FRONT_URL;
+		const eventTitle = process.env.EVENT_TITLE;
+
+		promise = promise.then(function () {
+			return RenderHelper.renderTemplate('emails/forgot-password', {
+				eventTitle: eventTitle,
+				eventUrl: eventUrl,
+				resetPasswordUrl: adminUrl + '/forgot-password/reset?' + querystring.stringify({email: event.request.userAttributes.email}) + '&code=' + event.request.codeParameter,
+			}).then(function (response) {
+				event.response.emailSubject = `${eventTitle} - Your password reset request`;
+				event.response.emailMessage = response;
+			});
+		});
+	}
+
+	promise.then(function () {
+		callback(null, event);
+	}).catch(function (err) {
+		callback(err);
+	});
 };
