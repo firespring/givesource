@@ -31,6 +31,7 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <form v-on:submit="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
@@ -207,7 +208,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 
 			};
 		},
@@ -354,9 +356,9 @@
 						vue.$router.push({name: 'settings-list'});
 					}
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
-				});
+                    vue.removeModal('spinner');
+                    vue.apiError = err.response.data.errors;
+                });
 			}
 		},
 		components: {
