@@ -158,9 +158,7 @@
 						value: vue.formData.CONTACT_EMAIL
 					});
 				}).catch(function (err) {
-//					vue.clearModals();
                     vue.removeModal('spinner');
-                    console.log(err);
                     vue.apiError = err.response.data.errors;
                 });
 			}
