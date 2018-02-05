@@ -306,7 +306,7 @@
 						vue.$router.push({name: 'settings-list'});
 					}
 				}).catch(function (err) {
-					vue.removeModal('spinner');
+					vue.clearModals();
                     vue.apiError = err.response.data.errors;
 				});
 			}
