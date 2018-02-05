@@ -93,6 +93,12 @@ const seedDonations = function () {
 
 				donation.nonprofitUuid = answers.nonprofit.uuid;
 				donation.nonprofitLegalName = answers.nonprofit.legalName;
+				donation.nonprofitAddress1 = answers.nonprofit.address1;
+				donation.nonprofitAddress2 = answers.nonprofit.address2;
+				donation.nonprofitAddress3 = answers.nonprofit.address3;
+				donation.nonprofitCity = answers.nonprofit.city;
+				donation.nonprofitState = answers.nonprofit.state;
+				donation.nonprofitZip = answers.nonprofit.zip;
 
 				donation.paymentTransactionUuid = paymentTransactions[i].uuid;
 				if (!donation.isOfflineDonation) {

@@ -60,7 +60,7 @@
 			},
 			color: {
 				type: String,
-				default: 'green'
+				default: 'accent'
 			},
 			size: {
 				type: String,

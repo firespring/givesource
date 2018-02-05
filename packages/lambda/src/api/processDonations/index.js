@@ -191,6 +191,12 @@ exports.handle = function (event, context, callback) {
 		nonprofits.forEach(function (nonprofit) {
 			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach(function (donation) {
 				donation.nonprofitLegalName = nonprofit.legalName;
+				donation.nonprofitAddress1 = nonprofit.address1;
+				donation.nonprofitAddress2 = nonprofit.address2;
+				donation.nonprofitAddress3 = nonprofit.address3;
+				donation.nonprofitCity = nonprofit.city;
+				donation.nonprofitState = nonprofit.state;
+				donation.nonprofitZip = nonprofit.zip;
 
 				nonprofit.donationsCount = nonprofit.donationsCount + 1;
 				nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
