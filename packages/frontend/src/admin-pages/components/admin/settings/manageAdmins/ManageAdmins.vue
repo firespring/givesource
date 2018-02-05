@@ -22,6 +22,7 @@
             <main class="o-app__main o-app__main--compact">
                 <div class="o-app_main-content o-app_main-content--md">
                     <div class="o-app-main-content">
+                        <api-error v-model="apiError"></api-error>
 
                         <div class="o-page-header">
                             <div class="o-page-header__text">
@@ -51,7 +52,7 @@
                             </div>
                         </div>
 
-                        <manage-admins-list-table></manage-admins-list-table>
+                        <manage-admins-list-table v-on:hasError="hasError"></manage-admins-list-table>
 
                         <div class="c-table-footer">
                             <div class="c-table-footer__rows-page">
@@ -88,6 +89,17 @@
 
 <script>
 	module.exports = {
+	    data: function(){
+	      return {
+	          apiError: {},
+          }
+        },
+        methods:{
+          hasError: function(err){
+              const vue = this;
+              vue.apiError = err.response.data.errors;
+          }
+        },
 		components: {
 			'manage-admins-list-table': require('./ManageAdminsListTable.vue')
 		},
