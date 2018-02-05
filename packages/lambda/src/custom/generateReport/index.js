@@ -109,36 +109,13 @@ const getDonationsData = function (report) {
 	}
 
 	promise = promise.then(function (donations) {
-		donations.forEach(function (donation) {
-			donation.amountForNonprofit = donation.total - donation.fees;
-			donation.totalChargedToCard = donation.isOfflineDonation ? donation.total : 0;
-		});
-
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				return transform(donation, DonationHelper.reportFields);
+				return donation.mutate();
 			}),
 			fields: DonationHelper.reportFields,
 		});
 	});
 
 	return promise;
-};
-
-/**
- * Transform fields for report
- *
- * @param {{}} values
- * @param {[]} map
- * @return {{}}
- */
-const transform = function (values, map) {
-	const results = {};
-
-	Object.keys(values).forEach(function (key) {
-		const transformer = _.find(map, {value: key});
-		results[key] = transformer && transformer.transform ? transformer.transform(values[key], values) : values[key];
-	});
-
-	return results;
 };

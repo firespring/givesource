@@ -34,7 +34,7 @@
                 <div>
                     <label class="checkbox-solo">
                         <input v-model="localValue" type="checkbox" name="coverDonationFees" id="coverDonationFees">
-                        <span>Yes, I'll donate an extra {{ fees }} to cover transaction fees</span>
+                        <span>I want to cover the <strong>{{ fees }}</strong> transaction cost so 100% of my donation goes to the organization(s).</span>
                     </label>
                 </div>
             </div>

@@ -468,8 +468,13 @@
                                                 {{#donations}}
                                                     <tr>
                                                         <td class="organization expand">
-                                                            Nonprofit Hub<br/>
-                                                            211 N 14th St
+                                                            {{nonprofitLegalName}}
+                                                            {{#nonprofitAddress1}}<br/>{{nonprofitAddress1}}{{/nonprofitAddress1}}
+                                                            {{#nonprofitAddress2}}<br/>{{nonprofitAddress2}}{{/nonprofitAddress2}}
+                                                            {{#nonprofitAddress3}}<br/>{{nonprofitAddress3}}{{/nonprofitAddress3}}
+                                                            {{#nonprofitCity}}{{#nonprofitState}}{{#nonprofitZip}}
+                                                                <br/>{{nonprofitCity}}, {{nonprofitState}} {{nonprofitZip}}
+                                                            {{/nonprofitZip}}{{/nonprofitState}}{{/nonprofitCity}}
                                                         </td>
                                                         <td class="amount text-right">
                                                             {{total}}

@@ -51,6 +51,11 @@ Generator.prototype._generators = {
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
 			nonprofitLegalName: faker.company.companyName(),
+			nonprofitAddress1: faker.address.streetAddress(false),
+			nonprofitAddress2: faker.address.secondaryAddress(),
+			nonprofitCity: faker.address.city(),
+			nonprofitState: faker.address.stateAbbr(),
+			nonprofitZip: faker.address.zipCode(),
 			subtotal: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 		};
 		donation.fees = DonationHelper.calculateFees(donation.subtotal, 30, 0.029);

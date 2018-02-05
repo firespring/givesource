@@ -18,8 +18,6 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
-const numeral = require('numeral');
-
 /**
  * Get fields for Report
  *
@@ -33,10 +31,6 @@ exports.reportFields = [
 	{
 		label: 'Date',
 		value: 'createdOn',
-		transform: function (value) {
-			const date = new Date(value);
-			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-		}
 	},
 	{
 		label: 'Nonprofit',
@@ -45,23 +39,14 @@ exports.reportFields = [
 	{
 		label: 'Is Offline',
 		value: 'isOfflineDonation',
-		transform: function (value) {
-			return value ? 'Yes' : 'No';
-		}
 	},
 	{
 		label: 'Donor First Name',
 		value: 'donorFirstName',
-		transform: function (value, values) {
-			return values.isAnonymous ? 'Anonymous' : value;
-		}
 	},
 	{
 		label: 'Donor Last Name',
 		value: 'donorLastName',
-		transform: function (value, values) {
-			return values.isAnonymous ? 'Anonymous' : value;
-		}
 	},
 	{
 		label: 'Donor Address 1',
@@ -94,37 +79,22 @@ exports.reportFields = [
 	{
 		label: 'Donation Amount',
 		value: 'subtotal',
-		transform: function (value) {
-			return numeral(value / 100).format('$0,0.00');
-		}
 	},
 	{
 		label: 'Is Fee Covered',
 		value: 'isFeeCovered',
-		transform: function (value) {
-			return value ? 'Yes' : 'No';
-		}
 	},
 	{
 		label: 'Donation Fee',
 		value: 'fees',
-		transform: function (value) {
-			return numeral(value / 100).format('$0,0.00');
-		}
 	},
 	{
 		label: 'Subtotal Charged to Card',
-		value: 'totalChargedToCard',
-		transform: function (value) {
-			return numeral(value / 100).format('$0,0.00');
-		}
+		value: 'subtotalChargedToCard',
 	},
 	{
 		label: 'Amount for Nonprofit',
 		value: 'amountForNonprofit',
-		transform: function (value) {
-			return numeral(value / 100).format('$0,0.00');
-		}
 	},
 ];
 
