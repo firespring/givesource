@@ -39,9 +39,6 @@ Parameters:
   UploadsCloudFrontUrl:
     Type: String
 
-  EventTitle:
-    Type: String
-
 Resources:
 
   # Api Gateway Authorizer Lambda Resources
@@ -199,7 +196,6 @@ Resources:
         Variables:
           AWS_STACK_NAME: !Ref StackName
           ADMIN_PAGES_CLOUD_FRONT_URL: !Ref AdminPagesCloudFrontUrl
-          EVENT_TITLE: !Ref EventTitle
           EVENT_URL: !Ref PublicPagesCloudFrontUrl
           UPLOADS_CLOUD_FRONT_URL: !Ref UploadsCloudFrontUrl
       FunctionName: !Sub |-
@@ -499,7 +495,6 @@ Resources:
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
           "ADMIN_PAGES_CLOUD_FRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",
-          "EVENT_TITLE": "${EventTitle}",
           "EVENT_URL": "${PublicPagesCloudFrontUrl}",
           "PUBLIC_PAGES_CLOUD_FRONT_URL": "${PublicPagesCloudFrontUrl}",
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",

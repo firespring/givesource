@@ -28,7 +28,6 @@ const awsRegion = process.env.AWS_REGION;
 const awsStackName = process.env.AWS_STACK_NAME;
 const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;
 const awsReleaseBucketRegion = process.env.AWS_RELEASE_BUCKET_REGION;
-const eventTitle = process.env.EVENT_TITLE;
 
 /**
  * Validate the incoming arguments
@@ -59,7 +58,6 @@ const validateEnv = function () {
 		AWS_STACK_NAME: awsStackName,
 		AWS_RELEASE_BUCKET: awsReleaseBucket,
 		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion,
-		EVENT_TITLE: eventTitle,
 	};
 	for (let key in required) {
 		if (typeof required[key] === 'undefined') {
@@ -81,8 +79,7 @@ const validateEnv = function () {
 const putStack = function (action) {
 	const url = `https://s3-${awsReleaseBucketRegion}.amazonaws.com/${awsReleaseBucket}/cf-templates/${packageJson.version}/givesource.yml`;
 	const command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
-		`--parameters ParameterKey=AdminEmail,ParameterValue=${adminEmail},UsePreviousValue=false ` +
-		`ParameterKey=EventTitle,ParameterValue="${eventTitle}",UsePreviousValue=false`;
+		`--parameters ParameterKey=AdminEmail,ParameterValue=${adminEmail},UsePreviousValue=false`;
 	const options = {
 		maxBuffer: 100 * 1024 * 1024,
 		stdio: [0, 1, 2]

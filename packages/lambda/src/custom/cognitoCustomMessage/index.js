@@ -31,7 +31,6 @@ exports.handle = function (event, context, callback) {
 		ADMIN_PAGES_CLOUD_FRONT_URL: process.env.ADMIN_PAGES_CLOUD_FRONT_URL,
 		CONTACT_PHONE: null,
 		EVENT_URL: process.env.EVENT_URL,
-		EVENT_TITLE: process.env.EVENT_TITLE,
 		EVENT_LOGO: null,
 		UPLOADS_CLOUD_FRONT_URL: process.env.UPLOADS_CLOUD_FRONT_URL,
 	};

@@ -8,10 +8,6 @@ Parameters:
     Type: String
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
 
-  EventTitle:
-    Description: The name of the giving day event.
-    Type: String
-
 Mappings:
   ApiGateway:
     IntegrationRequestTemplate:
@@ -320,7 +316,6 @@ Resources:
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
         UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
-        EventTitle: !Ref EventTitle
       TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
