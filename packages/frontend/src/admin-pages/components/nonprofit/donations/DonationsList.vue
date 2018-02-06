@@ -31,8 +31,8 @@
                         </div>
                     </div>
 
-                    <donations-list-table-header></donations-list-table-header>
-                    <donations-list-table :donations="pagination.items"></donations-list-table>
+                    <donations-list-table-header :nonprofit="nonprofit"></donations-list-table-header>
+                    <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
 
@@ -43,6 +43,7 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
+
 	const PaginationMixin = require('./../../../mixins/pagination');
 
 	module.exports = {
@@ -63,7 +64,7 @@
 			next(function (vue) {
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
-					return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations' , to.query);
+					return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations', to.query);
 				}).then(function (response) {
 					vue.setPaginationData(response.data);
 				});

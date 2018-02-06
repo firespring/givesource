@@ -231,10 +231,7 @@ Repository.prototype.batchWrite = function (requestItems, retries) {
 				RequestItems: {}
 			};
 			params.RequestItems[repository.table] = batch;
-			console.log('params: %j', params);
 			repository.dbClient.batchWrite(params, function (err, data) {
-				console.log('err: %j', err);
-				console.log('data: %j', data);
 				if (err) {
 					reject(new Error(err, 'DynamoDB'));
 				}

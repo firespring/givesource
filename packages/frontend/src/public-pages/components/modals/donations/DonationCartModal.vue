@@ -30,7 +30,7 @@
                                                     v-on:hasError="hasDonationErrors"></donation-cart-modal-list-table>
 
                     <div class="donation-footer" v-if="displayCheckout">
-                        <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--green"><strong>Begin Checking Out</strong></a>
+                        <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--accent"><strong>Begin Checking Out</strong></a>
                         <a v-on:click.prevent="helpMoreBtn" href="#" class="btn btn--lite"><strong>Help More Nonprofits</strong></a>
                     </div>
 

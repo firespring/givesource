@@ -34,7 +34,7 @@
         <div v-if="displayDonationAmount" class="leaderboard-item__amount">{{ amount }}</div>
 
         <div v-if="canDonate" class="leaderboard-item__action">
-            <a v-on:click.prevent="donate" href="#" class="btn btn--sm btn--green">Donate</a>
+            <a v-on:click.prevent="donate" href="#" class="btn btn--accent btn--sm">Donate</a>
         </div>
     </div>
 </template>

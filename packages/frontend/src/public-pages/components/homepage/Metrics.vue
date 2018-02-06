@@ -43,7 +43,7 @@
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
-                <form v-on:submit="submit" class="nonprofit-search__name">
+                <form v-on:submit="submitSearch" class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitName">Search by Name</label>
@@ -98,9 +98,28 @@
 
             <div class="main-spotlight-section register wrapper wrapper--xs" v-if="displayRegisterButton">
                 <div class="register__action mb4">
-                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">{{ registerButtonText }}</router-link>
+                    <router-link :to="{ name: 'register' }" class="btn btn--accent btn--round btn--lg">{{ registerButtonText }}</router-link>
                 </div>
                 <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
+            </div>
+
+            <div class="main-spotlight-section wrapper wrapper--xs" v-if="displaySendReceiptForm">
+                <form v-on:submit="submitReceiptRequest" class="mb4">
+                    <div>
+                        <strong><label for="email">Enter your email and we'll send you a receipt for all of your donations this year.</label></strong>
+                    </div>
+                    <div class="grid justify-center items-center" style="max-width: 640px; margin: .5rem auto 0;">
+                        <div class="grid-item grid-item--expand">
+                            <input v-model="formData.email" type="text" name="email" id="email" placeholder="Your Email Address" :class="{'has-error': formErrors.email}">
+                            <div v-if="formErrors.email" class="notes notes--below notes--error">
+                                {{ formErrors.email }}
+                            </div>
+                        </div>
+                        <div class="grid-item grid-item--collapse">
+                            <forms-submit :processing="processing" color="accent" :rounded="false" :hasIcon="false">Send Email</forms-submit>
+                        </div>
+                    </div>
+                </form>
             </div>
 
         </div>
@@ -119,10 +138,12 @@
 		data: function () {
 			return {
 				category: '',
+				processing: false,
 
 				// Form Data
 				formData: {
-					search: ''
+					email: '',
+					search: '',
 				},
 
 				// Errors
@@ -187,6 +208,9 @@
 
 				return Settings.acceptRegistrations();
 			},
+			displaySendReceiptForm: function () {
+				return Settings.isAfterEvent();
+			},
 			displayDonationTotals: function () {
 				return Settings.isDayOfEventOrAfter();
 			},
@@ -233,7 +257,9 @@
 				});
 			});
 
-			vue.initializeCountdown();
+			if(vue.displayEventCountdown()) {
+				vue.initializeCountdown();
+			}
 		},
 		watch: {
 			category: function (value) {
@@ -245,15 +271,19 @@
 				handler: function () {
 					const vue = this;
 					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+						if (vue.displaySendReceiptForm) {
+							vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
+						} else {
+							vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
+						}
 					}
 				},
 				deep: true
-			}
+			},
 		},
 		methods: {
 			displayEventCountdown: function () {
-				if (this.dateEvent && this.eventTimezone) {
+				if (this.dateEvent && this.eventTimezone && this.eventDateEndOfDay && this.eventDateStartOfDay) {
 					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
 				}
 				return false;
@@ -285,7 +315,15 @@
 					}
 				}, 1000);
 			},
-			getConstraints: function () {
+			getReceiptConstraints: function () {
+				return {
+					email: {
+						presence: true,
+						email: true,
+					}
+				};
+			},
+			getSearchConstraints: function () {
 				return {
 					search: {
 						presence: false,
@@ -295,14 +333,38 @@
 					},
 				};
 			},
-			submit: function (event) {
+			submitReceiptRequest: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
+				if (!Object.keys(vue.formErrors).length) {
+					vue.processing = true;
+					vue.requestReceipt();
+				}
+			},
+			submitSearch: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
 				if (!Object.keys(vue.formErrors).length) {
 					vue.searchNonprofits();
 				}
+			},
+			requestReceipt: function () {
+				const vue = this;
+
+				axios.post(API_URL + 'donations/receipt', {
+					email: vue.formData.email,
+				}).then(function () {
+					vue.formData.email = '';
+					vue.processing = false;
+					// TODO: redirect to thank-you page
+				}).catch(function (err) {
+					console.log(err);
+					vue.processing = false;
+				});
 			},
 			searchNonprofits: function () {
 				const vue = this;
@@ -328,7 +390,8 @@
 			}
 		},
 		components: {
-			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue')
+			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue'),
+			'forms-submit': require('./../forms/Submit.vue')
 		}
 	};
 </script>

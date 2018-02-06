@@ -120,12 +120,12 @@
 
                         <div class="form-item">
                             <div class="form-item__label">
-                                Do you want your donation to be anonymous?
+                                Do you want your gift(s) to be anonymous?
                             </div>
                             <div class="form-item__control">
                                 <label class="checkbox-solo">
                                     <input v-model="formData.isAnonymous" type="checkbox" name="coverDonationFees" id="coverDonationFees-1">
-                                    <span>Yes, make my donation anonymous</span>
+                                    <span>Yes, make my gift(s) anonymous</span>
                                 </label>
                                 <div class="notes notes--below">
                                     The nonprofit(s) you donate to won't receive your contact info but it will still be sent to {{ eventTitle }} for tax purposes.
@@ -205,7 +205,7 @@
                     <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
                     <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
-                        <forms-submit :processing="processing" color="green" size="lg">Complete Your Donation</forms-submit>
+                        <forms-submit :processing="processing" color="accent" size="lg">Complete Your Donation</forms-submit>
                     </div>
                 </form>
 

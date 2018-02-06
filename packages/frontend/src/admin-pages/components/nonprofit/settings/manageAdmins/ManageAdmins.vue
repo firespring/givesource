@@ -64,11 +64,6 @@
                         <manage-admins-list-table :nonprofitUuid="nonprofitUuid"></manage-admins-list-table>
 
                         <div class="c-table-footer">
-                            <div class="c-table-footer__actions">
-                                <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
-                                    <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove Selected
-                                </a>
-                            </div>
                             <div class="c-table-footer__rows-page">
                                 <span>Show</span>
                                 <select id="rowsPage" name="rowsPage" class="sm">

@@ -45,12 +45,13 @@
                                     <h4 class="u-margin-none">Contact Email</h4>
                                     <div class="u-break-word">{{ contactEmail }}{{ contactEmailVerificaitonMessage }}</div>
                                     <div class="c-notes c-notes--below">
-                                        All incoming messages (e.g., donation notifications) will be sent to this email address. However, it must be verified before it can be used
-                                        to receive any messages.
-                                        <a v-on:click.prevent="resendContactEmailVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
-                                           v-if="displayResendContactEmailVerificationLink">
-                                            Resend Verification Link
-                                        </a>
+                                        All incoming messages (e.g., contact us messages) will be sent to this email address.
+                                        <span v-if="displayResendContactEmailVerificationLink">
+                                            However, it must be verified before it can be used to receive any messages.
+                                            <a v-on:click.prevent="resendContactEmailVerification" href="#" class="js-modal-trigger">
+                                                Resend Verification Link
+                                            </a>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -69,12 +70,13 @@
                                     <h4 class="u-margin-none">Sender Email</h4>
                                     <div class="u-break-word">{{ senderEmail }}{{ senderEmailVerificaitonMessage }}</div>
                                     <div class="c-notes c-notes--below">
-                                        All outgoing messages (e.g., to participating nonprofits and donors) will be sent from this email address. However, it must be verified
-                                        before it can be used to send any messages.
-                                        <a v-on:click.prevent="resendSenderEmailVerification" href="#" class="js-modal-trigger" rel="modal-settings-resend-email-verification-link"
-                                           v-if="displayResendSenderEmailVerificationLink">
-                                            Resend Verification Link
-                                        </a>
+                                        All outgoing messages (e.g., to participating nonprofits and donors) will be sent from this email address.
+                                        <span v-if="displayResendSenderEmailVerificationLink">
+                                            However, it must be verified before it can be used to send any messages.
+                                            <a v-on:click.prevent="resendSenderEmailVerification" href="#" class="js-modal-trigger">
+                                                Resend Verification Link
+                                            </a>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -137,20 +139,20 @@
 				}
 				return setting ? setting.value : null;
 			},
-            contactEmailIsVerified: function () {
-	            let setting = null;
-	            if (this.settings.length && this.emailSettings.length && this.contactEmail) {
-		            setting = _.find(this.emailSettings, {email: this.contactEmail});
-	            }
-	            return setting ? setting.verified : false;
-            },
+			contactEmailIsVerified: function () {
+				let setting = null;
+				if (this.settings.length && this.emailSettings.length && this.contactEmail) {
+					setting = _.find(this.emailSettings, {email: this.contactEmail});
+				}
+				return setting ? setting.verified : false;
+			},
 			contactEmailVerificaitonMessage: function () {
 				let message = '';
 				if (this.settings.length && this.emailSettings.length) {
 					message = this.contactEmail && !this.contactEmailIsVerified ? ' (Awaiting Verification)' : '';
 				}
 				return message;
-            },
+			},
 			contactPhone: function () {
 				let setting = null;
 				if (this.settings.length) {

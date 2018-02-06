@@ -1,0 +1,63 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudWatch Events for Givesource
+Parameters:
+
+  StackName:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
+Resources:
+
+  # AWS CloudWatch Event Rules
+
+  HourlyScheduledEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: HourlyScheduledEvent
+      Description: Event scheduled once an hour
+      ScheduleExpression: rate(1 hour)
+      State: ENABLED
+      Targets:
+        -
+          Arn: !GetAtt DeleteReportsLambdaFunction.Arn
+          Id: DeleteReportsScheduledJob
+    DependsOn:
+      - DeleteReportsLambdaFunction
+
+  # AWS Lambda Scheduled Events
+
+  DeleteReportsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteReports.zip
+      Description: "Delete expired reports"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteReports
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  DeleteReportsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteReportsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt HourlyScheduledEventRule.Arn
+    DependsOn:
+      - DeleteReportsLambdaFunction
+      - HourlyScheduledEventRule
