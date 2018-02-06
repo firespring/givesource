@@ -18,6 +18,9 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
+const SettingsRepository = require('./../repositories/settings');
+const SettingHelper = require('./setting');
+
 /**
  * Get fields for Report
  *
@@ -108,4 +111,44 @@ exports.reportFields = [
  */
 exports.calculateFees = function (amount, transactionFlatFee, transactionPercentFee) {
 	return Math.floor(Math.round((amount + transactionFlatFee) / (1 - transactionPercentFee) - amount));
+};
+
+/**
+ * Retrieve the donation fee rates
+ *
+ * @param isOfflineDonation
+ */
+exports.getFeeRates = function (isOfflineDonation) {
+	let promise = Promise.resolve();
+	if (isOfflineDonation) {
+		promise = promise.then(function () {
+			const repo = new SettingsRepository();
+			return repo.batchGet([SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE, SettingHelper.SETTING_OOFFLINE_TRANSACTION_FEE_FLAT_RATE]).then(function (response) {
+				let percent = 0;
+				let flatRate = 0;
+				_.forEach(response, function (setting) {
+					if (setting.key === SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE) {
+						percent = parseFloat(setting.value);
+					} else if (setting.key === SettingHelper.SETTING_OOFFLINE_TRANSACTION_FEE_FLAT_RATE) {
+						flatRate = parseInt(setting.value);
+					}
+				});
+
+				return {
+					percent: percent,
+					flatRate: flatRate,
+				}
+			});
+		});
+
+	} else {
+		promise = promise.then(function () {
+			return {
+				percent: .029,
+				flatRate: 30,
+			}
+		});
+	}
+
+	return promise;
 };

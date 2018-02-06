@@ -22,6 +22,7 @@ const NonprofitDonationsRepository = require('./../../repositories/nonprofitDona
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const DonationHelper = require('./../../helpers/donation');
 
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new NonprofitDonationsRepository();
@@ -33,6 +34,12 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		donation.populate(request._body);
 		return donation.validate();
+	}).then(function() {
+		return DonationHelper.getFeeRates(donation.isOfflineDonation);
+	}).then(function(rates) {
+		donation.fees = DonationHelper.calculateFees(donation.subtotal, rates.flatRate, rates.percent);
+		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
+		donation.amountForNonprofit = donation.total - donation.fees;
 	}).then(function () {
 		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
 	}).then(function (response) {
