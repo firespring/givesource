@@ -53,9 +53,6 @@ exports.handle = function (event, context, callback) {
 		if (response) {
 			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
 		}
-
-		console.log('settings: %j', settings);
-
 		return RenderHelper.renderTemplate('emails.contact-message', {
 			message: message,
 			settings: settings,
