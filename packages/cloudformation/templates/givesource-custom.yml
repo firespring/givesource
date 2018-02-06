@@ -201,6 +201,7 @@ Resources:
           ADMIN_PAGES_CLOUD_FRONT_URL: !Ref AdminPagesCloudFrontUrl
           EVENT_TITLE: !Ref EventTitle
           EVENT_URL: !Ref PublicPagesCloudFrontUrl
+          UPLOADS_CLOUD_FRONT_URL: !Ref UploadsCloudFrontUrl
       FunctionName: !Sub |-
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"

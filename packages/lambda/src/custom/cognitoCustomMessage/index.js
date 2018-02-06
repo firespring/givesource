@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const FilesRepository = require('./../../repositories/files');
 const logger = require('./../../helpers/log');
 const querystring = require('querystring');
 const RenderHelper = require('./../../helpers/render');
@@ -22,6 +23,8 @@ const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	logger.log('cognitoCustomMessage event: %j', event);
+
+	const filesRepository = new FilesRepository();
 	const settingsRepository = new SettingsRepository();
 
 	let settings = {
@@ -30,6 +33,7 @@ exports.handle = function (event, context, callback) {
 		EVENT_URL: process.env.EVENT_URL,
 		EVENT_TITLE: process.env.EVENT_TITLE,
 		EVENT_LOGO: null,
+		UPLOADS_CLOUD_FRONT_URL: process.env.UPLOADS_CLOUD_FRONT_URL,
 	};
 
 	let promise = Promise.resolve();
@@ -39,6 +43,16 @@ exports.handle = function (event, context, callback) {
 				response.forEach(function (setting) {
 					settings[setting.key] = setting.value;
 				});
+			}).then(function () {
+				if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
+					return filesRepository.get(settings.EVENT_LOGO);
+				} else {
+					return Promise.resolve(null);
+				}
+			}).then(function (response) {
+				if (response) {
+					settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+				}
 			});
 		});
 	}
