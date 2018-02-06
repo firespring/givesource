@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="c-header-actions">
                         <div>
@@ -42,6 +43,7 @@
 		data: function () {
 			return {
 				sponsorTiers: [],
+                apiError: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -51,7 +53,9 @@
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.sponsorTiers = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -64,7 +68,7 @@
 				vue.sponsorTiers = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
