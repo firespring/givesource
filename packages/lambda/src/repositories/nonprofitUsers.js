@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const User = require('./../models/user');
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const User = require('./../models/user');
 
 /**
  * NonprofitUsersRepository constructor
@@ -39,7 +39,7 @@ function NonprofitUsersRepository() {
 NonprofitUsersRepository.prototype = new Repository();
 
 /**
- * Get a Donation
+ * Get a User
  *
  * @param {String} nonprofitUuid
  * @param {String} uuid
@@ -120,10 +120,10 @@ NonprofitUsersRepository.prototype.delete = function (nonprofitUuid, uuid) {
 };
 
 /**
- * Create or update a Donation
+ * Create or update a User
  *
  * @param {String} nonprofitUuid
- * @param {Donation} model
+ * @param {User} model
  */
 NonprofitUsersRepository.prototype.save = function (nonprofitUuid, model) {
 	const repository = this;
@@ -131,7 +131,7 @@ NonprofitUsersRepository.prototype.save = function (nonprofitUuid, model) {
 	return new Promise(function (resolve, reject) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			if (!(model instanceof User)) {
-				reject(new Error('invalid Donation model'));
+				reject(new Error('invalid User model'));
 			}
 			model.validate().then(function () {
 				const key = {

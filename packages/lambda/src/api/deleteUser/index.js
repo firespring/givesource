@@ -15,22 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
-const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
+const UsersRepository = require('./../../repositories/users');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new ReportsRepository();
+	const cognito = new Cognito();
+	const repository = new UsersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.getAll();
-	}).then(function (reports) {
-		const results = reports.map(function (report) {
-			return report.all();
-		});
-		callback(null, results);
+		return cognito.deleteUser(process.env.USER_POOL_ID, request.urlParam('user_uuid'));
+	}).then(function () {
+		return repository.delete(request.urlParam('user_uuid'));
+	}).then(function () {
+		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

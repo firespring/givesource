@@ -41,9 +41,10 @@ Report.prototype = new Model();
  * @type {[*]}
  */
 Report.prototype.attributes = [
+	'fileUuid',
+	'nonprofitUuid',
 	'status',
-	'type',
-	'url'
+	'type'
 ];
 
 /**
@@ -52,17 +53,21 @@ Report.prototype.attributes = [
  * @type {{}}
  */
 Report.prototype.constraints = {
+	fileUuid: {
+		presence: false,
+		uuid: 4
+	},
+	nonprofitUuid: {
+		presence: false,
+		uuid: 4,
+	},
 	status: {
 		presence: true,
 		inclusion: [ReportHelper.STATUS_FAILED, ReportHelper.STATUS_PENDING, ReportHelper.STATUS_SUCCESS]
 	},
 	type: {
 		presence: true,
-		inclusion: [ReportHelper.TYPE_ALL_DONATIONS, ReportHelper.TYPE_NONPROFIT_DONATIONS]
-	},
-	url: {
-		presence: true,
-		url: true
+		inclusion: [ReportHelper.TYPE_DONATIONS]
 	}
 };
 

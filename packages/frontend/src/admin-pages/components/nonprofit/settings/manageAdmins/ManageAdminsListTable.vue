@@ -19,12 +19,6 @@
     <table class="table-middle" :class="{ 'table-empty': !displayRows }">
         <thead>
         <tr>
-            <th class="input">
-                <div class="checkbox checkbox--sm">
-                    <input type="checkbox" name="checkAllRows" id="checkAllRows-1" class="check-all-rows js-check-all-rows" value="1">
-                    <label for="checkAllRows-1"></label>
-                </div>
-            </th>
             <th class="icon"><i class="fa fa-picture-o" aria-hidden="true"></i></th>
             <th class="u-width-100p sortable sortable--asc">
                 <a href="#">Name</a>
@@ -48,32 +42,70 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				nonprofitUsers: [],
-				loaded: false
-			};
-		},
-		computed: {
-			displayRows: function () {
-				return this.loaded && this.nonprofitUsers.length;
-			}
-		},
-		props: [
-			'nonprofitUuid'
-		],
-		created: function () {
-			const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                nonprofitUsers: [],
+                loaded: false
+            };
+        },
+        computed: {
+            displayRows: function () {
+                return this.loaded && this.nonprofitUsers.length;
+            }
+        },
+        props: [
+            'nonprofitUuid'
+        ],
+        created: function () {
+            const vue = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
-				vue.nonprofitUsers = response.data;
-				vue.loaded = true;
-			});
-		},
-		components: {
-			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
-			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
-		}
-	};
+            vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+                vue.nonprofitUsers = response.data;
+                vue.loaded = true;
+            });
+
+            vue.bus.$on('deleteUserNonprofit', function () {
+                vue.removeUser();
+            });
+
+            vue.bus.$on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
+                vue.selectedNonprofitUser = selectedNonprofitUser;
+                vue.deleteModal(selectedNonprofitUser);
+            });
+        },
+        beforeDestroy: function () {
+            const vue = this;
+            vue.bus.$off('deleteUserNonprofit');
+            vue.bus.$off('deleteUserNonprofitModal');
+        },
+        methods: {
+            deleteModal: function (selectedNonprofitUser) {
+                const vue = this;
+                vue.addModal('confirm-delete', {
+                    modalTitle: 'Remove Nonprofit User',
+                    modalText: 'Are you sure you want to remove ' + selectedNonprofitUser.email + ' ?',
+                    callback: 'deleteUserNonprofit',
+                });
+            },
+
+            removeUser: function () {
+                var vue = this;
+                vue.addModal('spinner');
+                vue.$request.delete('nonprofits/' + vue.selectedNonprofitUser.nonprofitUuid + '/users/' + vue.selectedNonprofitUser.uuid).then(function () {
+                    vue.nonprofitUsers = _.filter(vue.nonprofitUsers, function (nonprofitUser) {
+                        return nonprofitUser.uuid !== vue.selectedNonprofitUser.uuid;
+                    });
+                    vue.clearModals();
+                }).catch(function (err) {
+                    vue.clearModals();
+                    console.log(err);
+                });
+            }
+        },
+        components: {
+            'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
+            'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
+        }
+    };
 </script>

@@ -105,3 +105,27 @@ exports.deleteObjects = function (region, bucketName, objectKeys) {
 		});
 	});
 };
+
+/**
+ * Get an object from AWS S3
+ *
+ * @param {string} region
+ * @param {string} bucketName
+ * @param {string} objectName
+ * @return {Promise}
+ */
+exports.getObject = function (region, bucketName, objectName) {
+	const awsS3 = new AWS.S3({region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Bucket: bucketName,
+			Key: objectName
+		};
+		awsS3.getObject(params, function (err, result) {
+			if (err) {
+				reject(err);
+			}
+			resolve(result);
+		});
+	});
+};

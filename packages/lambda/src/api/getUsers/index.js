@@ -14,22 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const UsersRepository = require('./../../repositories/users');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const _ = require('lodash');
 
 exports.handle = function (event, context, callback) {
+	const cognito = new Cognito();
 	const repository = new UsersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const userPoolId = process.env.USER_POOL_ID;
 
+	let results = [];
 	request.validate().then(function () {
 		return repository.getAdminUsers();
 	}).then(function (users) {
-		const results = users.map(function (user) {
-			return user.all();
+		let promise = Promise.resolve();
+
+		users.forEach(function (user) {
+			let result = user.all();
+			promise = promise.then(function () {
+				return cognito.listGroupsForUser(userPoolId, user.uuid).then(function (response) {
+					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
+						return group.GroupName;
+					}) : [];
+					results.push(result);
+				});
+			});
 		});
+
+		return promise;
+	}).then(function () {
 		callback(null, results);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
