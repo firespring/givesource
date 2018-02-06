@@ -191,8 +191,8 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/settings/customize-appearance',
-			name: 'settings-customize-appearance',
+			path: '/settings/site-appearance',
+			name: 'site-appearance',
 			component: require('./../components/admin/settings/appearance/Appearance.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']

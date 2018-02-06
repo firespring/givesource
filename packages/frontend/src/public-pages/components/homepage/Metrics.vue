@@ -98,7 +98,7 @@
 
             <div class="main-spotlight-section register wrapper wrapper--xs" v-if="displayRegisterButton">
                 <div class="register__action mb4">
-                    <router-link :to="{ name: 'register' }" class="btn btn--green btn--round btn--lg">{{ registerButtonText }}</router-link>
+                    <router-link :to="{ name: 'register' }" class="btn btn--accent btn--round btn--lg">{{ registerButtonText }}</router-link>
                 </div>
                 <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
             </div>
@@ -257,7 +257,9 @@
 				});
 			});
 
-			vue.initializeCountdown();
+			if(vue.displayEventCountdown()) {
+				vue.initializeCountdown();
+			}
 		},
 		watch: {
 			category: function (value) {
@@ -281,7 +283,7 @@
 		},
 		methods: {
 			displayEventCountdown: function () {
-				if (this.dateEvent && this.eventTimezone) {
+				if (this.dateEvent && this.eventTimezone && this.eventDateEndOfDay && this.eventDateStartOfDay) {
 					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
 				}
 				return false;

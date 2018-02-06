@@ -183,8 +183,12 @@ const updateSettings = function () {
 		'DATE_EVENT',
 		'DATE_REGISTRATIONS_END',
 		'DATE_REGISTRATIONS_START',
+		'EVENT_LOGO',
 		'EVENT_TIMEZONE',
 		'EVENT_TITLE',
+		'FOUNDATION_LOGO',
+		'FOUNDATION_URL',
+		'MASTHEAD_IMAGE',
 		'PAGE_ABOUT_ENABLED',
 		'PAGE_FAQ_ENABLED',
 		'PAGE_TERMS_ENABLED',
@@ -199,13 +203,38 @@ const updateSettings = function () {
 		return axios.get(API_URL + 'settings' + Utils.generateQueryString({
 			keys: settings
 		})).then(function (response) {
+			const set = {};
 			if (response.data.length) {
 				response.data.forEach(function (setting) {
-					const set = {};
 					set[setting.key] = setting.value;
-					store.commit('settings', set);
 				});
 			}
+			return set;
+		}).then(function (settings) {
+			const fileKeys = ['EVENT_LOGO', 'MASTHEAD_IMAGE', 'FOUNDATION_LOGO'];
+			const fileSettings = _.pick(settings, fileKeys);
+			const fileUuids = _.values(fileSettings);
+			let promise = Promise.resolve();
+			if (fileUuids.length) {
+				promise = promise.then(function () {
+					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: fileUuids})).then(function (response) {
+						_.forEach(fileSettings, function (fileUuid, settingKey) {
+							const file = _.find(response.data, {uuid: fileUuid});
+							if (file && file.hasOwnProperty('path')) {
+								settings[settingKey] = file.path;
+							} else {
+								delete settings[settingKey];
+							}
+						})
+					});
+				});
+			}
+
+			promise = promise.then(function () {
+				store.commit('settings', settings);
+			});
+
+			return promise;
 		});
 	}).then(function () {
 		store.commit('updated');

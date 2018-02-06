@@ -282,6 +282,27 @@ Resources:
       - CognitoUserPool
       - CognitoCreateUserGroupFunction
 
+  # Generate Custom CSS for Frontend
+
+  GenerateCustomFrontendCssLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GenerateCustomFrontendCss.zip
+      Description: "Generate custom css for the frontend"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          PUBLIC_PAGES_S3_BUCKET: !Ref PublicPagesS3
+      FunctionName: !Sub |-
+        ${StackName}-GenerateCustomFrontendCss
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
   # Report Lambda Resources
 
   GenerateReportLambdaFunction:
@@ -423,6 +444,20 @@ Resources:
     DependsOn: S3SyncObjectsFunction
 
   # S3 Public Pages Deployment
+
+  PublicPagesCustomFrontendCss:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref PublicPagesS3
+      Key: "assets/css/custom.css"
+      Body: ""
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
 
   PublicPagesSettingsJson:
     Type: Custom::S3PutObject
