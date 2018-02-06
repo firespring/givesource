@@ -18,40 +18,50 @@
 const logger = require('./../../helpers/log');
 const querystring = require('querystring');
 const RenderHelper = require('./../../helpers/render');
+const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	logger.log('cognitoCustomMessage event: %j', event);
+	const settingsRepository = new SettingsRepository();
+
+	let settings = {
+		ADMIN_PAGES_CLOUD_FRONT_URL: process.env.ADMIN_PAGES_CLOUD_FRONT_URL,
+		CONTACT_PHONE: null,
+		EVENT_URL: process.env.EVENT_URL,
+		EVENT_TITLE: process.env.EVENT_TITLE,
+		EVENT_LOGO: null,
+	};
+
 	let promise = Promise.resolve();
+	if (event.triggerSource === 'CustomMessage_AdminCreateUser' || event.triggerSource === 'CustomMessage_ForgotPassword') {
+		promise = promise.then(function () {
+			return settingsRepository.batchGet(Object.keys(settings)).then(function (response) {
+				response.forEach(function (setting) {
+					settings[setting.key] = setting.value;
+				});
+			});
+		});
+	}
 
 	if (event.triggerSource === 'CustomMessage_AdminCreateUser') {
-		const adminUrl = process.env.ADMIN_PAGES_CLOUD_FRONT_URL;
-		const eventUrl = process.env.PUBLIC_PAGES_CLOUD_FRONT_URL;
-		const eventTitle = process.env.EVENT_TITLE;
-
 		promise = promise.then(function () {
-			return RenderHelper.renderTemplate('emails/registration-verify', {
-				eventTitle: eventTitle,
-				eventUrl: eventUrl,
-				verificationUrl: adminUrl + '/login?id=' + event.request.usernameParameter + '&token=' + event.request.codeParameter,
+			return RenderHelper.renderTemplate('emails.registration-verify', {
+				settings: settings,
+				verificationUrl: settings.ADMIN_PAGES_CLOUD_FRONT_URL + '/login?id=' + event.request.usernameParameter + '&token=' + event.request.codeParameter,
 			}).then(function (response) {
-				event.response.emailSubject = `${eventTitle} - Verify your email address`;
+				event.response.emailSubject = `${settings.EVENT_TITLE} - Verify your email address`;
 				event.response.emailMessage = response;
 			});
 		});
 	}
 
 	if (event.triggerSource === 'CustomMessage_ForgotPassword') {
-		const adminUrl = process.env.ADMIN_PAGES_CLOUD_FRONT_URL;
-		const eventUrl = process.env.PUBLIC_PAGES_CLOUD_FRONT_URL;
-		const eventTitle = process.env.EVENT_TITLE;
-
 		promise = promise.then(function () {
-			return RenderHelper.renderTemplate('emails/forgot-password', {
-				eventTitle: eventTitle,
-				eventUrl: eventUrl,
-				resetPasswordUrl: adminUrl + '/forgot-password/reset?' + querystring.stringify({email: event.request.userAttributes.email}) + '&code=' + event.request.codeParameter,
+			return RenderHelper.renderTemplate('emails.forgot-password', {
+				settings: settings,
+				resetPasswordUrl: settings.ADMIN_PAGES_CLOUD_FRONT_URL + '/forgot-password/reset?' + querystring.stringify({email: event.request.userAttributes.email}) + '&code=' + event.request.codeParameter,
 			}).then(function (response) {
-				event.response.emailSubject = `${eventTitle} - Your password reset request`;
+				event.response.emailSubject = `${settings.EVENT_TITLE} - Your password reset request`;
 				event.response.emailMessage = response;
 			});
 		});

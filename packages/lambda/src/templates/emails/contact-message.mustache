@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>HTML Email Template</title>
+    <title>{{#settings.EVENT_TITLE}}{{settings.EVENT_TITLE}} - {{/settings.EVENT_TITLE}}Contact Message Received</title>
     <style>
         /* -------------------------------------
 				GLOBAL RESETS
@@ -374,16 +374,19 @@
                     <tr>
                         <td class="wrapper">
 
-                            {{#settings.EVENT_LOGO}}
-                                <p class="campaign-logo text-center">
-                                    <img width="242" height="116"{{#settings.EVENT_TITLE}} alt="{{settings.EVENT_TITLE}}"{{/settings.EVENT_TITLE}} src="{{settings.EVENT_URL}}">
-                                </p>
-                            {{/settings.EVENT_LOGO}}
-                            {{^settings.EVENT_LOGO}}
-                                <div class="text-center">
-                                    <h1>{{settings.EVENT_TITLE}}</h1>
-                                </div>
-                            {{/settings.EVENT_LOGO}}
+                            {{#settings.EVENT_TITLE}}
+                                {{#settings.EVENT_LOGO}}
+                                    <p class="campaign-logo text-center">
+                                        <img width="242" height="116"{{#settings.EVENT_TITLE}} alt="{{settings.EVENT_TITLE}}"{{/settings.EVENT_TITLE}} src="{{settings.EVENT_LOGO}}">
+                                    </p>
+                                {{/settings.EVENT_LOGO}}
+                                {{^settings.EVENT_LOGO}}
+                                    <div class="text-center">
+                                        <h1>{{settings.EVENT_TITLE}}</h1>
+                                    </div>
+                                {{/settings.EVENT_LOGO}}
+                            {{/settings.EVENT_TITLE}}
+
                             <table border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>

@@ -138,6 +138,7 @@ module.exports = function (env) {
 			SaveSettings: './src/custom/saveSettings/index.js',
 			SendContactMessageEmail: './src/custom/sendContactMessageEmail/index.js',
 			SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
+			SendRegistrationPendingEmail: './src/custom/sendRegistrationPendingEmail/index.js',
 		},
 		output: {
 			path: path.resolve(__dirname, '../build/functions'),

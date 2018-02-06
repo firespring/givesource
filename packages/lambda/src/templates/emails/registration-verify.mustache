@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>{{#eventTitle}}{{eventTitle}} - {{/eventTitle}}Please Verify Your Email Address</title>
+    <title>{{#settings.EVENT_TITLE}}{{settings.EVENT_TITLE}} - {{/settings.EVENT_TITLE}}Please Verify Your Email Address</title>
     <style>
         /* -------------------------------------
 				GLOBAL RESETS
@@ -363,16 +363,24 @@
                     <tr>
                         <td class="wrapper">
 
-                            {{#eventTitle}}
-                                <div class="text-center">
-                                    <h1>{{eventTitle}}</h1>
-                                </div>
-                            {{/eventTitle}}
+                            {{#settings.EVENT_TITLE}}
+                                {{#settings.EVENT_LOGO}}
+                                    <p class="campaign-logo text-center">
+                                        <img width="242" height="116"{{#settings.EVENT_TITLE}}
+                                             alt="{{settings.EVENT_TITLE}}"{{/settings.EVENT_TITLE}} src="{{settings.EVENT_LOGO}}">
+                                    </p>
+                                {{/settings.EVENT_LOGO}}
+                                {{^settings.EVENT_LOGO}}
+                                    <div class="text-center">
+                                        <h1>{{settings.EVENT_TITLE}}</h1>
+                                    </div>
+                                {{/settings.EVENT_LOGO}}
+                            {{/settings.EVENT_TITLE}}
 
                             <table border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <h3>Welcome{{#eventTitle}} to {{eventTitle}}{{/eventTitle}}!</h3>
+                                        <h3>Welcome{{#settings.EVENT_TITLE}} to {{settings.EVENT_TITLE}}{{/settings.EVENT_TITLE}}!</h3>
 
                                         <p>To complete your account registration you must verify your email address. To verify your email address, click on the link below:</p>
 
@@ -407,11 +415,14 @@
                 <div class="footer">
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
-                            {{#eventTitle}}{{#eventUrl}}
-                                <td class="content-block">
-                                    <a href="{{eventUrl}}" target="_blank" rel="noreferrer noopener">{{eventTitle}}</a>
-                                </td>
-                            {{/eventUrl}}{{/eventTitle}}
+                            {{#settings.EVENT_URL}}
+                                {{#settings.EVENT_TITLE}}
+                                    <td class="content-block">
+                                        <a href="{{settings.EVENT_URL}}" target="_blank" rel="noreferrer noopener">{{settings.EVENT_TITLE}}</a>
+                                        {{#settings.CONTACT_PHONE}}- {{settings.CONTACT_PHONE}}{{/settings.CONTACT_PHONE}}
+                                    </td>
+                                {{/settings.EVENT_TITLE}}
+                            {{/settings.EVENT_URL}}
                         </tr>
                     </table>
                 </div>
