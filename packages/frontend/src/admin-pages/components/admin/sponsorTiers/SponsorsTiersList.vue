@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <sponsors-list-table :sponsorTiers="sponsorTiers"></sponsors-list-table>
+                    <sponsors-list-table :sponsorTiers="sponsorTiers" v-on:hasError="hasError"></sponsors-list-table>
 
                 </div>
             </div>
@@ -72,6 +72,12 @@
 				next();
 			});
 		},
+        methods: {
+		    hasError: function(err){
+		        const vue = this;
+                vue.apiError = err.response.data.errors;
+            }
+        },
 		components: {
 			'sponsors-list-table': require('./SponsorsTiersListTable.vue')
 		}
