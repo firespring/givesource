@@ -55,6 +55,7 @@ Nonprofit.prototype.attributes = [
 	'donationsTotal',
 	'legalName',
 	'legalNameSearch',
+	'logoFileUuid',
 	'longDescription',
 	'phone',
 	'shortDescription',
@@ -128,6 +129,10 @@ Nonprofit.prototype.constraints = {
 	legalNameSearch: {
 		presence: true,
 		type: 'string',
+	},
+	logoFileUuid: {
+		presence: false,
+		uuid: 4
 	},
 	longDescription: {
 		presence: false,
