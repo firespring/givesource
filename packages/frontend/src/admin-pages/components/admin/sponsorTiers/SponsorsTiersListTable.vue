@@ -78,7 +78,7 @@
 				vue.$request.patch('sponsor-tiers', {
 					sponsorTiers: toUpdate
 				}).catch(function (err) {
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			},
 			deleteSponsorTier: function (sponsorTierUuid) {
