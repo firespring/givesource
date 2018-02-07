@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero>
-            <div slot="logo" v-if="logoUrl" class="page-hero__logo">
+            <div slot="logo" v-if="nonprofitLogoLoaded && logoUrl" class="page-hero__logo">
                 <img width="320" height="140" :alt="nonprofit.legalName" :src="logoUrl">
             </div>
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
@@ -124,7 +124,8 @@
 				logo: null,
 
 				nonprofitLoaded: false,
-				nonprofitSlidesLoaded: false
+				nonprofitSlidesLoaded: false,
+				nonprofitLogoLoaded: false
 			}
 		},
 		props: [
@@ -153,7 +154,15 @@
 			},
 			logoUrl: function () {
 				const vue = this;
-				return vue.logo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.logo.path : '';
+				let logo = false;
+				if (vue.logo) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.logo.path;
+				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+				} else {
+					logo = '/assets/temp/logo-event.png';
+				}
+				return logo;
 			}
 		},
 		beforeMount: function () {
@@ -201,8 +210,11 @@
 						return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
 					}).then(function (response) {
 						vue.logo = response.data;
+						vue.nonprofitLogoLoaded = true;
 					});
-				}
+				} else {
+					vue.nonprofitLogoLoaded = true;
+                }
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
