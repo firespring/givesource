@@ -22,6 +22,7 @@
             <main class="o-app__main o-app__main--compact">
                 <div class="o-app_main-content o-app_main-content--md">
                     <div class="o-app-main-content">
+                        <api-error v-model="apiError"></api-error>
 
                         <div class="o-page-header" v-if="isAdmin">
                             <div class="o-page-header__text">
@@ -61,7 +62,7 @@
                             </div>
                         </div>
 
-                        <manage-admins-list-table :nonprofitUuid="nonprofitUuid"></manage-admins-list-table>
+                        <manage-admins-list-table :nonprofitUuid="nonprofitUuid" v-on:hasError="hasError"></manage-admins-list-table>
 
                         <div class="c-table-footer">
                             <div class="c-table-footer__rows-page">
@@ -100,7 +101,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				nonprofit: {}
+				nonprofit: {},
+                apiError: {},
 			}
 		},
 		computed: {
@@ -118,7 +120,10 @@
 			next(function (vue) {
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    next();
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -127,10 +132,17 @@
 			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
-			}).catch(function () {
-				next();
+			}).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
+        methods:{
+            hasError: function(err){
+                const vue = this;
+                vue.apiError = err.response.data.errors;
+            }
+        },
 		components: {
 			'manage-admins-list-table': require('./ManageAdminsListTable.vue')
 		}

@@ -20,6 +20,7 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+                <api-error v-model="apiError"></api-error>
 
                 <div class="o-page-header" v-if="isAdmin">
                     <div class="o-page-header__text">
@@ -99,7 +100,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			}
 		},
 		computed: {
@@ -114,7 +116,9 @@
 			next(function (vue) {
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
-				});
+				}).catch(function(err){
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -123,8 +127,9 @@
 			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
-			}).catch(function () {
-				next();
+			}).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
 		methods: {
@@ -162,7 +167,7 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			}
 		}
