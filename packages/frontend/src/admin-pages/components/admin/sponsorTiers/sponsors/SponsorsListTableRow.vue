@@ -78,7 +78,7 @@
 					vue.$emit('deleteSponsor', vue.sponsor.uuid);
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			}
 		}
