@@ -18,7 +18,9 @@
 <template>
     <div>
         <layout-hero>
-            <img slot="logo" width="320" height="140" alt="Cheshire County Hygiene Services logo" src="/assets/temp/sponsors/cheshire-county-hygiene-services.png">
+            <div slot="logo" v-if="logoUrl" class="page-hero__logo">
+                <img width="320" height="140" :alt="nonprofit.legalName" :src="logoUrl">
+            </div>
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
         </layout-hero>
 
@@ -119,9 +121,10 @@
 				files: [],
 				nonprofit: {},
 				slides: [],
+				logo: null,
 
 				nonprofitLoaded: false,
-                nonprofitSlidesLoaded: false
+				nonprofitSlidesLoaded: false
 			}
 		},
 		props: [
@@ -147,6 +150,10 @@
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();
+			},
+			logoUrl: function () {
+				const vue = this;
+				return vue.logo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.logo.path : '';
 			}
 		},
 		beforeMount: function () {
@@ -157,7 +164,6 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-
 				let promise = Promise.resolve();
 				if (to.meta.nonprofit !== null) {
 					vue.nonprofit = to.meta.nonprofit;
@@ -171,7 +177,7 @@
 					});
 				}
 
-				promise.then(function () {
+				promise = promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
@@ -189,6 +195,14 @@
 					vue.files = response.data;
 					vue.nonprofitSlidesLoaded = true;
 				});
+
+				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
+					promise = promise.then(function () {
+						return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
+					}).then(function (response) {
+						vue.logo = response.data;
+					});
+				}
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -224,6 +238,14 @@
 			}).then(function (response) {
 				vue.files = response.data;
 				vue.nonprofitSlidesLoaded = true;
+			}).then(function () {
+				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
+					return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
+				}
+			}).then(function (response) {
+				if (response.data) {
+					vue.logo = response.data;
+				}
 				next();
 			}).catch(function () {
 				next();
