@@ -66,7 +66,8 @@
         },
         methods: {
             updateNonprofit: function (nonprofitUuid) {
-                this.$emit('updateNonprofit', nonprofitUuid);
+                const vue = this;
+                vue.$emit('updateNonprofit', nonprofitUuid);
             },
 
             hasError: function (err) {
