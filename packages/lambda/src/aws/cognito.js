@@ -219,9 +219,11 @@ Cognito.prototype.createCognitoGroup = function (userPoolId, groupName, roleArn)
  * @param {String} userPoolId
  * @param {String} userName
  * @param {String} email
+ * @param {Boolean} [resendEmail]
+ *
  * @return {Promise}
  */
-Cognito.prototype.createUser = function (userPoolId, userName, email) {
+Cognito.prototype.createUser = function (userPoolId, userName, email, resendEmail) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
 		cognito.generateToken().then(function (token) {
@@ -241,6 +243,11 @@ Cognito.prototype.createUser = function (userPoolId, userName, email) {
 				],
 				TemporaryPassword: token
 			};
+
+			if (resendEmail) {
+				params['MessageAction'] = 'RESEND';
+			}
+
 			cognito.awsCognito.adminCreateUser(params, function (err, result) {
 				if (err) {
 					return reject(err);

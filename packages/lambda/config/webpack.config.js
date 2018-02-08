@@ -121,6 +121,7 @@ module.exports = function (env) {
 			PostUser: './src/api/postUser/index.js',
 			ProcessDonations: './src/api/processDonations/index.js',
 			RegisterNonprofit: './src/api/registerNonprofit/index.js',
+			ResendUserEmailVerification: './src/api/resendUserEmailVerification/index.js',
 			SearchNonprofits: './src/api/searchNonprofits/index.js',
 			VerifyEmail: './src/api/verifyEmail/index.js',
 

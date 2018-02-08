@@ -44,6 +44,7 @@ User.prototype.attributes = [
 	'email',
 	'lastName',
 	'firstName',
+	'isVerified',
 	'nonprofitUuid',
 ];
 
@@ -69,6 +70,10 @@ User.prototype.constraints = {
 		presence: false,
 		type: 'string'
 	},
+	isVerified: {
+		presence: false,
+		type: 'boolean'
+	},
 	nonprofitUuid: {
 		presence: false,
 		uuid: 4
@@ -81,7 +86,9 @@ User.prototype.constraints = {
  * @return {{}}
  */
 User.prototype.defaults = function () {
-	return {}
+	return {
+		isVerified: false,
+	};
 };
 
 module.exports = User;
