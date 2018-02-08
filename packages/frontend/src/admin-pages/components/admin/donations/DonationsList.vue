@@ -22,7 +22,7 @@
             <div class="o-app_main-content o-app_main-content">
 
                 <div class="o-app-main-content">
-                    <donations-metrics></donations-metrics>
+                    <donations-metrics v-on:hasError="hasError"></donations-metrics>
                     <api-error v-model="apiError"></api-error>
                     <donations-list-table-header></donations-list-table-header>
                     <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
@@ -48,8 +48,6 @@
             next(function (vue) {
                 vue.$request.get('donations', to.query).then(function (response) {
                     vue.setPaginationData(response.data)
-                }).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
                 });
             });
         },
@@ -68,6 +66,12 @@
         mixins: [
             PaginationMixin
         ],
+        methods: {
+           hasError: function(err) {
+               const vue = this;
+               vue.apiError = err.response.data.errors;
+           }
+        },
         components: {
             'donations-list-table': require('./DonationsListTable.vue'),
             'donations-list-table-header': require('./DonationsListTableHeader.vue'),
