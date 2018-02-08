@@ -46,9 +46,7 @@
 			next(function (vue) {
 				vue.$request.get('nonprofits', to.query).then(function (response) {
 					vue.setPaginationData(response.data);
-				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -58,10 +56,6 @@
 			vue.$request.get('nonprofits', to.query).then(function (response) {
 				vue.setPaginationData(response.data);
 				next();
-			}).catch(function (err) {
-			    console.log('error error here', err);
-                vue.apiError = err.response.data.errors;
-                next();
 			});
 		},
 		created: function () {
