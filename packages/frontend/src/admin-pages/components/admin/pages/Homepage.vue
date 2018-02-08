@@ -455,7 +455,7 @@
 						vue.$router.push({name: 'pages-list'});
 					}).catch(function (err) {
 						vue.clearModals();
-						console.log(err);
+                        vue.apiError = err.response.data.errors;
 					});
 
 				});
