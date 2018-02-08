@@ -26,9 +26,6 @@
                 <a href="#">Registered</a>
             </th>
             <th class="sortable u-nowrap">
-                <a href="#">Contact</a>
-            </th>
-            <th class="sortable u-nowrap">
                 <a href="#">$ Raised</a>
             </th>
             <th>

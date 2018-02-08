@@ -19,6 +19,86 @@ const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
 /**
+ * Get fields for Report
+ *
+ * @type {[]}
+ */
+exports.reportFields = [
+	{
+		label: 'ID',
+		value: 'uuid'
+	},
+	{
+		label: 'Date',
+		value: 'createdOn',
+	},
+	{
+		label: 'Nonprofit',
+		value: 'nonprofitLegalName',
+	},
+	{
+		label: 'Is Offline',
+		value: 'isOfflineDonation',
+	},
+	{
+		label: 'Donor First Name',
+		value: 'donorFirstName',
+	},
+	{
+		label: 'Donor Last Name',
+		value: 'donorLastName',
+	},
+	{
+		label: 'Donor Address 1',
+		value: 'donorAddress1',
+	},
+	{
+		label: 'Donor Address 2',
+		value: 'donorAddress2',
+	},
+	{
+		label: 'Donor City',
+		value: 'donorCity',
+	},
+	{
+		label: 'Donor State',
+		value: 'donorState',
+	},
+	{
+		label: 'Donor Zip',
+		value: 'donorZip',
+	},
+	{
+		label: 'Donor Email',
+		value: 'donorEmail',
+	},
+	{
+		label: 'Donor Phone Number',
+		value: 'donorPhone',
+	},
+	{
+		label: 'Donation Amount',
+		value: 'subtotal',
+	},
+	{
+		label: 'Is Fee Covered',
+		value: 'isFeeCovered',
+	},
+	{
+		label: 'Donation Fee',
+		value: 'fees',
+	},
+	{
+		label: 'Subtotal Charged to Card',
+		value: 'subtotalChargedToCard',
+	},
+	{
+		label: 'Amount for Nonprofit',
+		value: 'amountForNonprofit',
+	},
+];
+
+/**
  * Calculate donation fees
  *
  * @param {number} amount

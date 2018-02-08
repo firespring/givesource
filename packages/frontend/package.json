@@ -40,6 +40,7 @@
 		"lodash": "^4.17.4",
 		"moment-timezone": "^0.5.14",
 		"numeral": "^2.0.6",
+		"on-build-webpack": "^0.1.0",
 		"path": "^0.12.7",
 		"rimraf": "^2.6.1",
 		"shave": "^2.1.3",

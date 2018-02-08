@@ -42,19 +42,6 @@
             <div class="time">{{ time }}</div>
         </td>
 
-        <td class="u-nowrap">
-            <div class="c-user-strip u-flex u-items-center">
-                <div class="c-user-strip__content">
-                    <div class="c-user-strip__name">
-                        John Smith
-                    </div>
-                    <div class="c-user-strip__email u-icon u-flex u-items-center c-notes">
-                        <a href="mailto:john.smith@nonprofit.org">john.smith@nonprofit.org</a>
-                    </div>
-                </div>
-            </div>
-        </td>
-
         <td class="u-nowrap u-text-r" v-if="canAcceptDonations">
             <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ donationAmount }}</router-link>
         </td>

@@ -25,7 +25,7 @@
                     <donations-metrics></donations-metrics>
                     <api-error v-model="apiError"></api-error>
                     <donations-list-table-header></donations-list-table-header>
-                    <donations-list-table :donations="pagination.items"></donations-list-table>
+                    <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>

@@ -21,8 +21,11 @@ const Request = require('./../../aws/request');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Lambda = require('./../../aws/lambda');
+const SettingHelper = require('./../../helpers/setting');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
 
@@ -53,6 +56,16 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function () {
 		return repository.batchUpdate(settings);
+	}).then(function () {
+		let promise = Promise.resolve();
+		_.forEach(settings, function (setting) {
+			if (setting.key === SettingHelper.SETTING_ACCENT_COLOR) {
+				promise = promise.then(function () {
+					return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateCustomFrontendCss', {});
+				});
+			}
+		});
+		return promise;
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

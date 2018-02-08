@@ -34,12 +34,16 @@
                         <h2>Or Enter a Custom Amount</h2>
                         <form v-on:submit="customAmount">
                             <div class="input">
-                                <input v-model="formData.customAmount" type="text" name="customAmount" id="customAmount" placeholder="Enter Amount" v-money="currencyOptions">
+                                <input v-model="formData.customAmount" type="text" name="customAmount" id="customAmount" placeholder="Enter Amount" v-money="currencyOptions"
+                                       :class="{ 'has-error': formErrors.customAmount}">
                             </div>
                             <div class="action">
                                 <button class="btn"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                             </div>
                         </form>
+                        <div v-if="formErrors.customAmount" class="notes notes--below notes--error">
+                            A custom donation amount must be at least $10.00
+                        </div>
                     </div>
                 </div>
 
@@ -54,102 +58,125 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				donationTiers: [],
-				nonprofit: null,
-				loaded: false,
+    module.exports = {
+        data: function () {
+            return {
+                donationTiers: [],
+                nonprofit: null,
+                loaded: false,
 
-				// Form Data
-				formData: {
-					customAmount: '',
-				},
+                // Form Data
+                formData: {
+                    customAmount: '',
+                },
+                formErrors: {},
 
-				currencyOptions: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				}
-			};
-		},
-		props: {
-			data: {
-				type: Object,
-				default: {
-					nonprofit: null,
-				}
-			},
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			}
-		},
-		created: function () {
-			const vue = this;
+                currencyOptions: {
+                    precision: 2,
+                    masked: true,
+                    thousands: '',
+                }
+            };
+        },
+        props: {
+            data: {
+                type: Object,
+                default: {
+                    nonprofit: null,
+                }
+            },
+            zIndex: {
+                type: [Number, String],
+                default: 1000
+            }
+        },
+        created: function () {
+            const vue = this;
 
-			vue.addBodyClasses('has-donation-overlay');
-			vue.nonprofit = vue.data.nonprofit;
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
-				response.data.sort(function (a, b) {
-					return b.amount - a.amount;
-				});
-				vue.donationTiers = response.data;
-				vue.loaded = true;
-			});
-		},
-		methods: {
-			close: function (event) {
-				event.preventDefault();
-				const vue = this;
+            vue.addBodyClasses('has-donation-overlay');
+            vue.nonprofit = vue.data.nonprofit;
+            axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
+                response.data.sort(function (a, b) {
+                    return b.amount - a.amount;
+                });
+                vue.donationTiers = response.data;
+                vue.loaded = true;
+            });
+        },
+        watch: {
+            formData: {
+                handler: function () {
+                    const vue = this;
+                    if (Object.keys(vue.formErrors).length) {
+                        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+                    }
+                },
+                deep: true
+            }
+        },
+        methods: {
+            getConstraints: function () {
+                return {
+                    customAmount: {
+                        presence: true,
+                        numericality: {
+                            greaterThanOrEqualTo: 10,
+                        }
+                    },
+                };
+            },
+            close: function (event) {
+                event.preventDefault();
+                const vue = this;
 
-				vue.removeModal('donation-tiers');
-				vue.removeBodyClasses('has-donation-overlay');
-			},
-			selectTier: function (amount) {
-				const vue = this;
+                vue.removeModal('donation-tiers');
+                vue.removeBodyClasses('has-donation-overlay');
+            },
+            selectTier: function (amount) {
+                const vue = this;
 
-				vue.$store.commit('addCartItem', {
-					amount: amount,
-					nonprofit: vue.nonprofit
-				});
+                vue.$store.commit('addCartItem', {
+                    amount: amount,
+                    nonprofit: vue.nonprofit
+                });
 
-				vue.bus.$emit('updateCart');
+                vue.bus.$emit('updateCart');
 
-				$(vue.$refs.donationModalOptions).fadeOut(function () {
-					vue.removeModal('donation-tiers');
-					vue.removeBodyClasses('has-donation-overlay');
+                $(vue.$refs.donationModalOptions).fadeOut(function () {
+                    vue.removeModal('donation-tiers');
+                    vue.removeBodyClasses('has-donation-overlay');
+                    vue.addModal('donation-cart');
+                });
+            },
+            customAmount: function (event) {
+                event.preventDefault();
+                const vue = this;
 
-					vue.addModal('donation-cart');
-				});
-			},
-			customAmount: function (event) {
-				event.preventDefault();
-				const vue = this;
+                const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
+                vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 
-				const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
-				if (amount) {
-					vue.$store.commit('addCartItem', {
-						amount: amount,
-						nonprofit: vue.nonprofit
-					});
+                if (amount && !Object.keys(vue.formErrors).length) {
+                    vue.$store.commit('addCartItem', {
+                        amount: amount,
+                        nonprofit: vue.nonprofit
+                    });
 
-					vue.bus.$emit('updateCartItems');
-					vue.bus.$emit('updateCartItemsCount');
-					vue.bus.$emit('updateCartItemsCounter');
+                    vue.bus.$emit('updateCartItems');
+                    vue.bus.$emit('updateCartItemsCount');
+                    vue.bus.$emit('updateCartItemsCounter');
 
-					$(vue.$refs.donationModalOptions).fadeOut(function () {
-						vue.removeModal('donation-tiers');
-						vue.removeBodyClasses('has-donation-overlay');
+                    $(vue.$refs.donationModalOptions).fadeOut(function () {
+                        vue.removeModal('donation-tiers');
+                        vue.removeBodyClasses('has-donation-overlay');
 
-						vue.addModal('donation-cart');
-					});
-				}
-			}
-		},
-		components: {
-			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
+                        vue.addModal('donation-cart');
+                    });
+                }
+            }
+        },
+        components: {
+            'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
             'layout-spinner': require('./../../layout/Spinner.vue'),
-		}
-	}
+        }
+    }
 </script>

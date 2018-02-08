@@ -33,7 +33,7 @@
                                 </h3>
                             </div>
                             <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
-                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--xs btn--green">Donate</a></div>
+                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--accent btn--xs">Donate</a></div>
                         </div>
                     </div>
 

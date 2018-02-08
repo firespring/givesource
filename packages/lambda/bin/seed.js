@@ -49,13 +49,13 @@ const seedDonations = function () {
 			return Promise.reject(new Error('No nonprofits found in stack: ' + process.env.AWS_STACK_NAME));
 		}
 		const options = _.map(results, function (nonprofit) {
-			return {name: nonprofit.legalName, value: nonprofit.uuid}
+			return {name: nonprofit.legalName, value: nonprofit}
 		});
 		return inquirer.prompt([
 			{
 				type: 'list',
 				message: 'Select a nonprofit:',
-				name: 'nonprofitUuid',
+				name: 'nonprofit',
 				choices: options
 			},
 			{
@@ -79,8 +79,40 @@ const seedDonations = function () {
 			let paymentTotal = 0;
 			chunk.forEach(function (donation) {
 				donation.donorUuid = donors[i].uuid;
+				if (!donation.isAnonymous) {
+					donation.donorFirstName = donors[i].firstName;
+					donation.donorLastName = donors[i].lastName;
+					donation.donorEmail = donors[i].email;
+					donation.donorPhone = donors[i].phone;
+					donation.donorAddress1 = donors[i].address1;
+					donation.donorAddress2 = donors[i].address2;
+					donation.donorCity = donors[i].city;
+					donation.donorState = donors[i].state;
+					donation.donorZip = donors[i].zip;
+				}
+
+				donation.nonprofitUuid = answers.nonprofit.uuid;
+				donation.nonprofitLegalName = answers.nonprofit.legalName;
+				donation.nonprofitAddress1 = answers.nonprofit.address1;
+				donation.nonprofitAddress2 = answers.nonprofit.address2;
+				donation.nonprofitAddress3 = answers.nonprofit.address3;
+				donation.nonprofitCity = answers.nonprofit.city;
+				donation.nonprofitState = answers.nonprofit.state;
+				donation.nonprofitZip = answers.nonprofit.zip;
+
 				donation.paymentTransactionUuid = paymentTransactions[i].uuid;
-				donation.nonprofitUuid = answers.nonprofitUuid;
+				if (!donation.isOfflineDonation) {
+					donation.creditCardName = paymentTransactions[i].creditCardName;
+					donation.creditCardType = paymentTransactions[i].creditCardType;
+					donation.creditCardLast4 = paymentTransactions[i].creditCardLast4;
+					donation.creditCardExpirationMonth = paymentTransactions[i].creditCardExpirationMonth;
+					donation.creditCardExpirationYear = paymentTransactions[i].creditCardExpirationYear;
+					donation.creditCardZip = paymentTransactions[i].billingZip;
+					donation.paymentTransactionId = paymentTransactions[i].transactionId;
+					donation.paymentTransactionAmount = paymentTransactions[i].transactionAmountInCents;
+					donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode;
+					donation.paymentTransactionStatus = paymentTransactions[i].transactionStatus;
+				}
 
 				donationsFees += donation.fees;
 				donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
@@ -105,7 +137,7 @@ const seedDonations = function () {
 		}).then(function () {
 			return MetricsHelper.addAmountToMetric('TOP_DONATION', topDonation);
 		}).then(function () {
-			return nonprofitsRepository.get(answers.nonprofitUuid);
+			return nonprofitsRepository.get(answers.nonprofit.uuid);
 		}).then(function (nonprofit) {
 			nonprofit.donationsCount = nonprofit.donationsCount += count;
 			nonprofit.donationsFees = nonprofit.donationsFees + donationsFees;

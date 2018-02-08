@@ -62,6 +62,8 @@ Resources:
         AttributeType: N
       - AttributeName: subtotal
         AttributeType: N
+      - AttributeName: donorUuid
+        AttributeType: S
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -74,17 +76,6 @@ Resources:
         - AttributeName: isDeleted
           KeyType: HASH
         - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: isDeletedSubtotalIndex
-        KeySchema:
-        - AttributeName: isDeleted
-          KeyType: HASH
-        - AttributeName: subtotal
           KeyType: RANGE
         Projection:
           ProjectionType: ALL
@@ -117,6 +108,17 @@ Resources:
         KeySchema:
         - AttributeName: nonprofitUuid
           KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: donorUuidCreatedOnIndex
+        KeySchema:
+        - AttributeName: donorUuid
+          KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:

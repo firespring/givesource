@@ -50,13 +50,41 @@ Generator.prototype._generators = {
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
 			nonprofitUuid: faker.random.uuid(),
+			nonprofitLegalName: faker.company.companyName(),
+			nonprofitAddress1: faker.address.streetAddress(false),
+			nonprofitAddress2: faker.address.secondaryAddress(),
+			nonprofitCity: faker.address.city(),
+			nonprofitState: faker.address.stateAbbr(),
+			nonprofitZip: faker.address.zipCode(),
 			subtotal: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 		};
 		donation.fees = DonationHelper.calculateFees(donation.subtotal, 30, 0.029);
 		donation.total = donation.isFeeCovered ? donation.subtotal + donation.fees : donation.subtotal;
 
+		if (!donation.isAnonymous) {
+			donation.donorFirstName = faker.name.firstName();
+			donation.donorLastName = faker.name.lastName();
+			donation.donorEmail = faker.internet.email();
+			donation.donorPhone = faker.phone.phoneNumber();
+			donation.donorAddress1 = faker.address.streetAddress(false);
+			donation.donorAddress2 = faker.address.secondaryAddress();
+			donation.donorCity = faker.address.city();
+			donation.donorState = faker.address.stateAbbr();
+			donation.donorZip = faker.address.zipCode();
+		}
+
 		if (!donation.isOfflineDonation) {
 			donation.paymentTransactionUuid = faker.random.uuid();
+			donation.creditCardName = faker.name.findName();
+			donation.creditCardType = faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']);
+			donation.creditCardLast4 = '1234';
+			donation.creditCardExpirationMonth = new Date().getMonth();
+			donation.creditCardExpirationYear = new Date().getYear() + 1;
+			donation.creditCardZip = faker.address.zipCode();
+			donation.paymentTransactionId = faker.random.alphaNumeric(10);
+			donation.paymentTransactionAmount = faker.random.number();
+			donation.paymentTransactionIsTestMode = faker.random.boolean();
+			donation.paymentTransactionStatus = 'test';
 		}
 
 		return donation;
@@ -227,13 +255,13 @@ Generator.prototype._generators = {
 			createdOn: new Date().getTime(),
 			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
-			creditCardExpirationMonth: 12,
+			creditCardExpirationMonth: new Date().getMonth(),
 			creditCardExpirationYear: new Date().getFullYear() + 1,
 			creditCardLast4: '1234',
 			creditCardName: faker.name.findName(),
 			creditCardType: faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']),
 			isTestMode: faker.random.boolean(),
-			transactionAmountInCents: faker.random.number(),
+			transactionAmount: faker.random.number(),
 			transactionId: faker.random.alphaNumeric(10),
 			transactionStatus: 'test'
 		};

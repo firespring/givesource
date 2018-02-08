@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HttpException = require('./../../exceptions/http');
-const ReportsRepository = require('./../../repositories/reports');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
 
-exports.handle = function (event, context, callback) {
-	const repository = new ReportsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+const fs = require('fs');
+const path = require('path');
+const deployInfo = require('../config/deploy-info.json');
+const s3 = require('./aws/s3');
 
-	request.validate().then(function () {
-		return repository.delete(request.urlParam('report_uuid'));
-	}).then(function () {
-		callback();
+exports.fetch = function () {
+	s3.getObject(process.env.AWS_REGION, deployInfo.publicPagesS3BucketName, 'assets/css/custom.css').then(function (data) {
+		const configDir = path.normalize(`${__dirname}/../build/public-pages/assets/css`);
+		fs.writeFileSync(`${configDir}/custom.css`, data.Body);
+		console.log('custom.css downloaded from s3');
 	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+		console.error(err, err.stack);
 	});
 };

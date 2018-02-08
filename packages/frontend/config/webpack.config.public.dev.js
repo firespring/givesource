@@ -21,6 +21,9 @@ const BrowserSyncSpa = require('browser-sync-middleware-spa');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackOnBuildPlugin = require('on-build-webpack');
+const FetchCustomCss = require('./../bin/fetch-custom-css');
+
 
 module.exports = {
 	module: {
@@ -75,7 +78,7 @@ module.exports = {
 		}),
 		new BrowserSyncPlugin({
 			host: 'localhost',
-			port: 3000,
+			port: 3002,
 			server: {
 				baseDir: './../frontend/build/public-pages',
 				index: 'index.html',
@@ -86,5 +89,6 @@ module.exports = {
 			files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
 			open: false
 		}),
+		new WebpackOnBuildPlugin(FetchCustomCss.fetch),
 	]
 };

@@ -21,8 +21,11 @@
             <strong>{{ nonprofit.legalName }}</strong>
         </td>
         <td class="donation">
-            <div class="donation-amount">
-                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions">
+            <div class="donation-amount" :class="{ 'u-control-icon--has-error': formErrors.amount}">
+                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': formErrors.amount}">
+            </div>
+            <div v-if="error" class="notes notes--below notes--error">
+                A donation amount must be at least $10.00
             </div>
         </td>
         <td class="actions nowrap">
@@ -35,56 +38,102 @@
 
 <script>
     module.exports = {
-    	data: function () {
-    		return {
-    			localAmount: this.amount,
+        data: function () {
+            return {
+                localAmount: this.amount,
+                formErrors: {},
+                error: false,
 
-			    currencyOptions: {
-				    precision: 2,
-				    masked: true,
-				    thousands: '',
-			    }
+                currencyOptions: {
+                    precision: 2,
+                    masked: true,
+                    thousands: '',
+                }
             };
         },
-    	computed: {
-    		donationAmount: function () {
-    			return this.formatMoney(this.amount);
+        computed: {
+            donationAmount: function () {
+                return this.formatMoney(this.amount);
             }
         },
-    	props: [
-		    'amount',
-    		'nonprofit',
+        created: function () {
+            const vue = this;
+            vue.bus.$on('validateDonationsBeforeOnModalCart', function () {
+                vue.validateAmountsOnSubmit();
+            });
+        },
+        props: [
+            'amount',
+            'nonprofit',
             'timestamp'
         ],
-        watch: {
-    		localAmount: function (value, oldValue) {
-    			const vue = this;
+        beforeDestroy: function () {
+            const vue = this;
 
-    			if (value !== oldValue && vue.timestamp) {
-				    vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+            vue.bus.$off('validateDonationsBeforeOnModalCart');
+        },
+        watch: {
+            localAmount: function (value, oldValue) {
+                const vue = this;
+
+                if (value !== oldValue && vue.timestamp) {
+                    vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
                 }
             },
             amount: function (value, oldValue) {
-    			const vue = this;
+                const vue = this;
 
-    			if (value === oldValue) {
-    				return;
+                if (value === oldValue) {
+                    return;
                 }
+                vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
+                vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+                vue.$emit('hasError', vue.error);
+
                 vue.localAmount = value;
             }
         },
         methods: {
-    		deleteCartItem: function (event) {
-    			event.preventDefault();
-    			const vue = this;
+            getConstraints: function () {
+                return {
+                    amount: {
+                        presence: true,
+                        numericality: {
+                            onlyInteger: true,
+                            greaterThanOrEqualTo: 1000,
+                        }
+                    },
+                };
+            },
+            getSubmittedConstraints: function () {
+                return {
+                    amount: {
+                        presence: true,
+                        numericality: {
+                            greaterThanOrEqualTo: 10,
+                        }
+                    }
+                };
+            },
+            deleteCartItem: function (event) {
+                event.preventDefault();
+                const vue = this;
 
-    			vue.$store.commit('removeCartItem', vue.timestamp);
-    			vue.$emit('removeCartItem', vue.timestamp);
+                vue.$store.commit('removeCartItem', vue.timestamp);
+                vue.$emit('removeCartItem', vue.timestamp);
 
-			    vue.bus.$emit('updateCartItems');
-			    vue.bus.$emit('updateCartItemsCount');
-			    vue.bus.$emit('updateCartItemsCounter');
+                vue.bus.$emit('updateCartItems');
+                vue.bus.$emit('updateCartItemsCount');
+                vue.bus.$emit('updateCartItemsCounter');
+            },
+
+            validateAmountsOnSubmit: function () {
+                const vue = this;
+                vue.formErrors = vue.validate({amount: vue.localAmount}, vue.getSubmittedConstraints());
+                vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+                vue.$emit('hasError', vue.error);
             }
+
         }
     };
 </script>

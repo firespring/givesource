@@ -37,9 +37,10 @@
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
-                                    <h2 class="c-page-section-title">Primary Text</h2>
+                                    <h2 class="c-page-section-title">Primary Elements</h2>
                                     <div class="c-notes c-notes--below">
-                                        This is the text that will always appear in your homepage's masthead and main content areas. Customize it to reflect your event's different stages.
+                                        These elements will always appear in your homepage's masthead and main content areas. Customize them to reflect your event's different
+                                        stages.
                                     </div>
                                 </div>
                             </header>
@@ -51,6 +52,19 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <input v-model="formData.HOMEPAGE_TITLE.value" type="text" name="homepageTitle" id="homepageTitle">
+                                    </div>
+                                </div>
+
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
+                                    <div class="c-form-item__label">
+                                        <label for="homepageSpotlight" class="c-form-item-label-text">Homepage Spotlight Image</label>
+                                    </div>
+                                    <forms-image-upload v-model="formData.HOMEPAGE_SPOTLIGHT.value" name="homepageSpotlight" id="homepageSpotlight"></forms-image-upload>
+                                    <div class="c-notes c-notes--below u-width-100p">
+                                        This image will appear in your homepage's masthead. If you've uploaded a masthead background, this spotlight image will appear on top of it.
+                                    </div>
+                                    <div v-if="formErrors['HOMEPAGE_SPOTLIGHT.value']" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors['HOMEPAGE_SPOTLIGHT.value'] }}
                                     </div>
                                 </div>
 
@@ -228,6 +242,11 @@
 						type: 'TEXT',
 						value: ''
 					},
+					HOMEPAGE_SPOTLIGHT: {
+						key: 'HOMEPAGE_SPOTLIGHT',
+						type: 'FILE',
+						value: null
+					},
 					HOMEPAGE_MASTHEAD_TEXT: {
 						key: 'HOMEPAGE_MASTHEAD_TEXT',
 						type: 'RICH_TEXT',
@@ -308,14 +327,34 @@
 			});
 		},
 		watch: {
+			formData: {
+				handler: function () {
+					const vue = this;
+					if (Object.keys(vue.formErrors).length) {
+						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+					}
+				},
+				deep: true
+			},
 			contents: {
 				handler: function () {
 					const vue = this;
 					if (vue.contents.length) {
 						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.contents, {key: key});
+							const content = _.clone(_.find(vue.contents, {key: key}));
 							if (content) {
-								vue.formData[key] = content;
+								if (content.type === 'FILE') {
+									vue.$request.get('files/' + content.value).then(function (response) {
+										vue.formData[key] = content;
+										vue.formData[key].value = response.data;
+									}).catch(function () {
+										content.value = null;
+										vue.formData[key] = content;
+										vue.formData[key].value = null;
+									});
+								} else {
+									vue.formData[key] = content;
+								}
 							}
 						});
 					}
@@ -324,64 +363,161 @@
 			}
 		},
 		methods: {
+			getConstraints: function () {
+				return {
+					'HOMEPAGE_SPOTLIGHT.value': {
+						label: 'Homepage Spotlight Image',
+						presence: false,
+						image: true
+					}
+				};
+			},
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.updateContents();
+
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.clearModals();
+					vue.scrollToError();
+				} else {
+					vue.updateContents();
+				}
 			},
 			updateContents: function () {
 				const vue = this;
 
-				const created = [];
-				const changed = _.differenceWith(vue.contents, vue.original, _.isEqual);
-				const toUpdate = _.reject(changed, {value: ''});
-				const toDelete = _.filter(changed, {value: ''});
+				vue.getContentsToUpdate().then(function (contents) {
+
+					const toCreate = [];
+					const toUpdate = [];
+					const toDelete = [];
+					const filesToDelete = [];
+					_.forEach(contents, function (content, key) {
+						const original = _.find(vue.original, {key: key});
+						const newValue = content.value;
+						if (original) {
+							if (newValue === '' || newValue === null) {
+								toDelete.push(content);
+								if (content.type === 'FILE') {
+									filesToDelete.push(original.value);
+								}
+							} else if (!_.isEqual(newValue, original.value)) {
+								toUpdate.push(content);
+								if (content.type === 'FILE') {
+									filesToDelete.push(original.value);
+								}
+							}
+						} else if (!original && newValue !== '' && newValue !== null) {
+							toCreate.push(content);
+						}
+					});
+
+					let promise = Promise.resolve();
+					if (toCreate.length) {
+						toCreate.forEach(function (content) {
+							promise = promise.then(function () {
+								return vue.$request.post('contents', content);
+							});
+						});
+					}
+
+					if (toUpdate.length) {
+						promise = promise.then(function () {
+							return vue.$request.patch('contents', {
+								contents: toUpdate.map(function (content) {
+									return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+								}),
+							});
+						});
+					}
+
+					if (toDelete.length) {
+						promise = promise.then(function () {
+							return vue.$request.delete('contents', {
+								contents: toDelete
+							});
+						});
+					}
+
+					if (filesToDelete.length) {
+						promise = promise.then(function () {
+							return vue.$request.delete('files', {
+								files: filesToDelete
+							});
+						});
+					}
+
+					promise.then(function () {
+						vue.clearModals();
+						vue.$router.push({name: 'pages-list'});
+					}).catch(function (err) {
+						vue.clearModals();
+						console.log(err);
+					});
+
+				});
+
+			},
+			getContentsToUpdate: function () {
+				const vue = this;
+				let promise = Promise.resolve();
+				const contents = {};
 				Object.keys(vue.formData).forEach(function (key) {
-					if (!_.find(vue.original, {key: key}) && vue.formData[key].value !== '') {
-						created.push(vue.formData[key]);
+					if (vue.formData[key].value instanceof File) {
+						promise = promise.then(function () {
+							return vue.uploadFile(key).then(function (uploadedFile) {
+								contents[key] = _.cloneDeep(vue.formData[key]);
+								contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+							});
+						});
+					} else {
+						promise = promise.then(function () {
+							const contentValue = _.isPlainObject(vue.formData[key].value) && vue.formData[key].value.hasOwnProperty('uuid') ? vue.formData[key].value.uuid : vue.formData[key].value;
+							contents[key] = _.cloneDeep(vue.formData[key]);
+							contents[key].value = contentValue;
+						});
 					}
 				});
 
-				let promise = Promise.resolve();
-				if (created.length) {
-					created.forEach(function (content) {
-						promise = promise.then(function () {
-							return vue.$request.post('contents', content);
-						});
-					});
-				}
-
-				if (toUpdate.length) {
-					promise = promise.then(function () {
-						return vue.$request.patch('contents', {
-							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
-							}),
-						});
-					});
-				}
-
-				if (toDelete.length) {
-					promise = promise.then(function () {
-						return vue.$request.delete('contents', {
-							contents: toDelete
-						});
-					});
-				}
-
-				promise.then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'pages-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				promise = promise.then(function () {
+					return contents;
 				});
-			}
+
+				return promise;
+			},
+			uploadFile: function (key) {
+				const vue = this;
+				let file = null;
+				let promise = Promise.resolve();
+				if (vue.formData[key].value) {
+					promise = promise.then(function () {
+						return vue.$request.post('files', {
+							content_type: vue.formData[key].value.type,
+							filename: vue.formData[key].value.name
+						});
+					}).then(function (response) {
+						file = response.data.file;
+						const signedUrl = response.data.upload_url;
+
+						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
+						let instance = axios.create();
+						instance.defaults.headers.common['Content-Type'] = vue.formData[key].value.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vue.formData[key].value.type || 'application/octet-stream';
+						axios.defaults.headers = defaultHeaders;
+						return instance.put(signedUrl, vue.formData[key].value);
+					}).then(function () {
+						return file;
+					});
+				}
+				return promise;
+			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../forms/Ckeditor.vue')
+			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),
+			'forms-image-upload': require('./../../forms/ImageUpload.vue')
 		}
 	};
 </script>
