@@ -181,7 +181,7 @@
                     vue.clearModals();
                 }).catch(function (err) {
                     vue.clearModals();
-                    console.log(err);
+                    vue.apiError = err.response.data.errors;
                 });
 
             },
