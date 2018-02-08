@@ -17,6 +17,8 @@
 
 <template>
     <div class="c-page-section__content">
+        <api-error v-model="apiError"></api-error>
+
         <form v-on:submit="submit">
 
             <div class="c-form-item c-form-item--text">
@@ -102,7 +104,8 @@
 				},
 
                 // Errors
-                formErrors: {}
+                formErrors: {},
+                apiError: {},
 			}
 		},
         computed: {
@@ -184,7 +187,7 @@
 					vue.$emit('updateNonprofit', response.data);
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
             changeSlug: function (event) {
