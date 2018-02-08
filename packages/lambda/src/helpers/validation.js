@@ -17,7 +17,7 @@
 
 const validate = require('validate.js');
 const validateUuid = require('uuid-validate');
-const InvalidInputException = require('exceptions/invalidInput');
+const InvalidInputException = require('../exceptions/invalidInput');
 
 exports.loadCustom = function () {
 
