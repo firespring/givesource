@@ -75,9 +75,6 @@
                     <div v-if="formErrors.shortDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                         {{ formErrors.shortDescription }}
                     </div>
-                    <div class="c-notes c-notes--below">
-                        This text will be what appears when the donation page is shared on social media.
-                    </div>
                 </div>
             </div>
 
