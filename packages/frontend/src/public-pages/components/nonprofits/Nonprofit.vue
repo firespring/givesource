@@ -59,8 +59,7 @@
                                 <a v-on:click="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
-                            <social-sharing v-if="displaySocialSharing"
-                                            network-tag="a"
+                            <social-sharing network-tag="a"
                                             :url="pageUrl"
                                             :title="settings.SOCIAL_SHARING_DESCRIPTION"
                                             inline-template>
@@ -155,9 +154,6 @@
 					title += ' to ' + vue.nonprofit.legalName;
 				}
 				return title;
-			},
-			displaySocialSharing: function () {
-				return !Settings.isAfterEvent();
 			},
 			displayDonationMetrics: function () {
 				return Settings.isDayOfEventOrAfter();
