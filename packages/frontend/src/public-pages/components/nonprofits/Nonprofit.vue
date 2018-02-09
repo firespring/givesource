@@ -59,13 +59,20 @@
                                 <a v-on:click="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
-                            <div class="donation-share">
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fab fa-linkedin-in" aria-hidden="true"></i>Share</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fas fa-envelope" aria-hidden="true"></i>Email</a>
-                            </div>
-
+                            <social-sharing v-if="displaySocialSharing"
+                                            network-tag="a"
+                                            :url="pageUrl"
+                                            :title="settings.SOCIAL_SHARING_DESCRIPTION"
+                                            inline-template>
+                                <div class="donation-share">
+                                    <network network="facebook">
+                                        <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</span>
+                                    </network>
+                                    <network network="twitter">
+                                        <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</span>
+                                    </network>
+                                </div>
+                            </social-sharing>
                         </div>
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
@@ -122,6 +129,9 @@
 				nonprofit: {},
 				slides: [],
 				logo: null,
+				settings: {
+					SOCIAL_SHARING_DESCRIPTION: ''
+				},
 
 				nonprofitLoaded: false,
 				nonprofitSlidesLoaded: false,
@@ -146,6 +156,9 @@
 				}
 				return title;
 			},
+			displaySocialSharing: function () {
+				return !Settings.isAfterEvent();
+			},
 			displayDonationMetrics: function () {
 				return Settings.isDayOfEventOrAfter();
 			},
@@ -163,7 +176,10 @@
 					logo = '/assets/temp/logo-event.png';
 				}
 				return logo;
-			}
+			},
+			pageUrl: function () {
+				return document.location.href;
+			},
 		},
 		beforeMount: function () {
 			const vue = this;
@@ -214,7 +230,11 @@
 					});
 				} else {
 					vue.nonprofitLogoLoaded = true;
-                }
+				}
+
+				promise = promise.then(function () {
+					return vue.loadSettings();
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -258,6 +278,8 @@
 				if (response.data) {
 					vue.logo = response.data;
 				}
+				return vue.loadSettings();
+			}).then(function () {
 				next();
 			}).catch(function () {
 				next();
@@ -278,6 +300,18 @@
 			});
 		},
 		methods: {
+			loadSettings: function () {
+				const vue = this;
+				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+					keys: Object.keys(vue.settings)
+				})).then(function (response) {
+					response.data.forEach(function (setting) {
+						if (vue.settings.hasOwnProperty(setting.key)) {
+							vue.settings[setting.key] = setting.value;
+						}
+					});
+				});
+			},
 			getImageUrl: function (fileUuid) {
 				const vue = this;
 				const file = _.find(vue.files, {uuid: fileUuid});
