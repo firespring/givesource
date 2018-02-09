@@ -222,6 +222,14 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
+		{
+			path: '/settings/social-sharing',
+			name: 'settings-social-sharing',
+			component: require('./../components/admin/settings/socialSharing/SocialSharing.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
 
 		// Sponsors
 		{
