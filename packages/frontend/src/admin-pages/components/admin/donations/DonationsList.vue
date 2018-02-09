@@ -63,15 +63,15 @@
                 next();
             });
         },
-        mixins: [
-            PaginationMixin
-        ],
         methods: {
            hasError: function(err) {
                const vue = this;
                vue.apiError = err.response.data.errors;
            }
         },
+        mixins: [
+            PaginationMixin
+        ],
         components: {
             'donations-list-table': require('./DonationsListTable.vue'),
             'donations-list-table-header': require('./DonationsListTableHeader.vue'),

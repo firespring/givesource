@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="o-page-header" v-if="isAdmin">
                         <div class="o-page-header__text">
@@ -31,7 +32,7 @@
                         </div>
                     </div>
 
-                    <donations-list-table-header :nonprofit="nonprofit"></donations-list-table-header>
+                    <donations-list-table-header :nonprofit="nonprofit" v-on:hasError="hasError"></donations-list-table-header>
                     <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
@@ -50,6 +51,7 @@
 		data: function () {
 			return {
 				nonprofit: {},
+                apiError: {},
 			};
 		},
 		computed: {
@@ -84,6 +86,13 @@
 				next();
 			});
 		},
+        methods: {
+            hasError: function(err) {
+                console.log('we are in the donations list table ', err );
+                const vue = this;
+//                vue.apiError = err.response.data.errors;
+            }
+        },
 		mixins: [
 			PaginationMixin
 		],
