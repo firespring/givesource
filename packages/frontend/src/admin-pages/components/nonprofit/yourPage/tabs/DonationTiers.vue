@@ -88,7 +88,7 @@
                     vue.donationTiers = JSON.parse(JSON.stringify(response.data));
                 }
             }).catch(function (err) {
-                console.log(err);
+                vue.apiError = err.response.data.errors;
             });
         },
         watch: {
