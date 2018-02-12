@@ -31,9 +31,6 @@
             </div>
             <div class="cart-totals__transaction-fees">
                 <div>
-                    There are <strong>{{ fees }}</strong> in transaction fees associated with your donation. Will you cover them?
-                </div>
-                <div>
                     <label class="checkbox-solo">
                         <input v-model="localValue" type="checkbox" name="coverDonationFees" id="coverDonationFees">
                         <span>I want to cover the <strong>{{ fees }}</strong> transaction cost so 100% of my donation goes to the organization(s).</span>
@@ -41,7 +38,7 @@
                 </div>
             </div>
             <div class="cart-totals__total">
-                <strong>Your total donation will be {{ total }}.</strong>
+                <strong>Your total payment will be {{ total }}.</strong>
             </div>
         </div>
 

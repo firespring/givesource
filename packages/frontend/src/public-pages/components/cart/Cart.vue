@@ -128,7 +128,7 @@
                                     <span>Yes, make my gift(s) anonymous</span>
                                 </label>
                                 <div class="notes notes--below">
-                                    The nonprofit(s) you donate to won't receive your contact info but it will still be sent to {{ eventTitle }} for tax purposes.
+                                    Your name and contact information will not be shared with the designated nonprofits.
                                 </div>
                             </div>
                         </div>
