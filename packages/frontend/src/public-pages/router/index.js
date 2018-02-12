@@ -176,7 +176,7 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'ADMIN_PAGES_CLOUDFRONT_URL',
+		'ADMIN_PAGES_CLOUD_FRONT_URL',
 		'CONTACT_PHONE',
 		'DATE_DONATIONS_END',
 		'DATE_DONATIONS_START',
@@ -193,7 +193,7 @@ const updateSettings = function () {
 		'PAGE_FAQ_ENABLED',
 		'PAGE_TERMS_ENABLED',
 		'PAGE_TOOLKIT_ENABLED',
-		'UPLOADS_CLOUDFRONT_URL'
+		'UPLOADS_CLOUD_FRONT_URL'
 	];
 
 	return axios.get('/settings.json').then(function (response) {
