@@ -312,7 +312,7 @@
 				const vue = this;
 				const file = _.find(vue.files, {uuid: fileUuid});
 
-				return file ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : '';
+				return file ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
 			},
 			openDonations: function (event) {
 				event.preventDefault();

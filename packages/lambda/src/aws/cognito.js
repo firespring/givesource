@@ -31,16 +31,14 @@ function Cognito() {
  * Create an AWS Cognito user pool
  *
  * @param {String} poolName
- * @param {String} serviceName
- * @param {String} adminPageUrl
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
  * @return {Promise}
  */
-Cognito.prototype.createUserPool = function (poolName, serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
+Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCustomMessageArn) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
-		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn);
+		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn);
 		params.PoolName = poolName;
 		params.Schema = [
 			{
@@ -69,16 +67,14 @@ Cognito.prototype.createUserPool = function (poolName, serviceName, adminPageUrl
  * Update an AWS Cognito user pool
  *
  * @param {String} userPoolId
- * @param {String} serviceName
- * @param {String} adminPageUrl
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
  * @return {Promise}
  */
-Cognito.prototype.updateUserPool = function (userPoolId, serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
+Cognito.prototype.updateUserPool = function (userPoolId, snsCallerArn, cognitoCustomMessageArn) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
-		const params = cognito.buildUserPoolParameters(serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn);
+		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn);
 		params.UserPoolId = userPoolId;
 		cognito.awsCognito.updateUserPool(params, function (err, result) {
 			if (err) {
@@ -128,21 +124,15 @@ Cognito.prototype.describeUserPool = function (userPoolId) {
 /**
  * Build the parameters for an AWS Cognito user pool
  *
- * @param {String} serviceName
- * @param {String} adminPageUrl
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
  * @return {{}}
  */
-Cognito.prototype.buildUserPoolParameters = function (serviceName, adminPageUrl, snsCallerArn, cognitoCustomMessageArn) {
+Cognito.prototype.buildUserPoolParameters = function (snsCallerArn, cognitoCustomMessageArn) {
 	return {
 		AdminCreateUserConfig: {
 			AllowAdminCreateUserOnly: true,
 			UnusedAccountValidityDays: 7,
-			InviteMessageTemplate: {
-				EmailSubject: `${serviceName} - Verify your account`,
-				EmailMessage: 'Please <a href="' + adminPageUrl + '/login?id={username}&token={####}">Click here</a> to sign into the admin console.'
-			}
 		},
 		AutoVerifiedAttributes: ['email'],
 		LambdaConfig: {

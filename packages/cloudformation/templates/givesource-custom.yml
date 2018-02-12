@@ -196,6 +196,8 @@ Resources:
         Variables:
           AWS_STACK_NAME: !Ref StackName
           ADMIN_PAGES_CLOUD_FRONT_URL: !Ref AdminPagesCloudFrontUrl
+          EVENT_URL: !Ref PublicPagesCloudFrontUrl
+          UPLOADS_CLOUD_FRONT_URL: !Ref UploadsCloudFrontUrl
       FunctionName: !Sub |-
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"
@@ -225,7 +227,6 @@ Resources:
         ${AWS::Region}
       PoolName: !Sub |-
         ${StackName}-Users
-      AdminPagesUrl: !Ref AdminPagesCloudFrontUrl
       SnsCallerArn: !Ref CognitoSnsCallerRoleArn
     DependsOn: CognitoCreateUserPoolFunction
 
@@ -533,12 +534,12 @@ Resources:
       Settings: !Sub |-
         {
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
-          "ADMIN_PAGES_CLOUDFRONT_URL": "${AdminPagesCloudFrontUrl}",
+          "ADMIN_PAGES_CLOUD_FRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",
           "EVENT_URL": "${PublicPagesCloudFrontUrl}",
-          "PUBLIC_PAGES_CLOUDFRONT_URL": "${PublicPagesCloudFrontUrl}",
+          "PUBLIC_PAGES_CLOUD_FRONT_URL": "${PublicPagesCloudFrontUrl}",
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",
-          "UPLOADS_CLOUDFRONT_URL": "${UploadsCloudFrontUrl}",
+          "UPLOADS_CLOUD_FRONT_URL": "${UploadsCloudFrontUrl}",
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
           "USER_POOL_ID": "${CognitoUserPool.UserPoolId}",
@@ -586,6 +587,24 @@ Resources:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-SendContactMessageEmail
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  SendRegistrationPendingEmailLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/SendRegistrationPendingEmail.zip
+      Description: "Send a registration pending email"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-SendRegistrationPendingEmail
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"

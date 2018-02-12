@@ -210,7 +210,7 @@
 				return this.formData.DATE_DONATIONS_END ? this.formData.DATE_DONATIONS_END : false;
 			},
 			eventUrl: function () {
-				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL');
+				return this.$store.getters.setting('PUBLIC_PAGES_CLOUD_FRONT_URL');
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {

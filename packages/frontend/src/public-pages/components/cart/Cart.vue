@@ -128,7 +128,7 @@
                                     <span>Yes, make my gift(s) anonymous</span>
                                 </label>
                                 <div class="notes notes--below">
-                                    The nonprofit(s) you donate to won't receive your contact info but it will still be sent to {{ eventTitle }} for tax purposes.
+                                    Your name and contact information will not be shared with the designated nonprofits.
                                 </div>
                             </div>
                         </div>
@@ -227,7 +227,7 @@
 			return {
 				isCartEmpty: true,
 				processing: false,
-                donationError: false,
+				donationError: false,
 
 				settings: [],
 				donations: [],
@@ -459,7 +459,7 @@
 				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
 				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
-                if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length || vue.donationError) {
+				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length || vue.donationError) {
 					console.log(vue.formErrors);
 					vue.processing = false;
 				} else {
@@ -509,7 +509,8 @@
 						isOfflineDonation: false,
 						nonprofitUuid: cartItem.nonprofit.uuid,
 						subtotal: cartItem.amount,
-						total: total
+						total: total,
+						note: cartItem.note
 					});
 				});
 
@@ -565,10 +566,10 @@
 					});
 				});
 			},
-            donationHasErrors: function (hasError){
-			    const vue = this;
-                vue.donationError = hasError;
-            }
+			donationHasErrors: function (hasError) {
+				const vue = this;
+				vue.donationError = hasError;
+			}
 		},
 		components: {
 			'cart-donations': require('./CartDonations.vue'),

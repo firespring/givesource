@@ -99,6 +99,10 @@ exports.reportFields = [
 		label: 'Amount for Nonprofit',
 		value: 'amountForNonprofit',
 	},
+	{
+		label: 'Message',
+		value: 'note'
+	}
 ];
 
 /**

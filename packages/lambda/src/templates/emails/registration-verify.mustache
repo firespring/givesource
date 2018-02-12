@@ -3,12 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    {{#settings.EVENT_TITLE}}
-        <title>Thank you for donating to {{settings.EVENT_TITLE}}.</title>
-    {{/settings.EVENT_TITLE}}
-    {{^settings.EVENT_TITLE}}
-        <title>Thank you for your giving.</title>
-    {{/settings.EVENT_TITLE}}
+    <title>{{#settings.EVENT_TITLE}}{{settings.EVENT_TITLE}} - {{/settings.EVENT_TITLE}}Please Verify Your Email Address</title>
     <style>
         /* -------------------------------------
 				GLOBAL RESETS
@@ -43,41 +38,6 @@
             font-family: sans-serif;
             font-size: 14px;
             vertical-align: top;
-        }
-
-        table th {
-            font-family: sans-serif;
-            font-size: 14px;
-            vertical-align: top;
-            text-align: left;
-            background: #000;
-            color: #fff;
-            padding: 5px 8px;
-            white-space: nowrap;
-        }
-
-        table th.expand,
-        table td.expand {
-            width: 100%;
-        }
-
-        table.donations {
-            margin: 0 0 15px;
-            border-collapse: collapse;
-        }
-
-        table.donations td {
-            vertical-align: top;
-            background: #f6f6f6;
-            padding: 6px 8px;
-        }
-
-        table.donations td:first-child {
-            padding-right: 0;
-        }
-
-        table.donations tr:nth-child(even) td {
-            background: #ebebeb;
         }
 
         /* -------------------------------------
@@ -152,7 +112,7 @@
         h4 {
             color: #000000;
             font-family: sans-serif;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 1.4;
             margin: 0;
             Margin-bottom: 20px;
@@ -187,20 +147,6 @@
         a {
             color: #3498db;
             text-decoration: underline;
-        }
-
-        /* -------------------------------------
-				Cart
-		------------------------------------- */
-
-        table.cart {
-            margin: 20px 0;
-        }
-
-        table.cart td {
-            padding: 5px 8px;
-            border: 0;
-            border-bottom: 1px solid #f6f6f6;
         }
 
         /* -------------------------------------
@@ -409,12 +355,7 @@
             <div class="content">
 
                 <!-- START CENTERED WHITE CONTAINER -->
-                {{#settings.EVENT_TITLE}}
-                    <span class="preheader">Thank you for donating to {{settings.EVENT_TITLE}}.</span>
-                {{/settings.EVENT_TITLE}}
-                {{^settings.EVENT_TITLE}}
-                    <span class="preheader">Thank you for your giving.</span>
-                {{/settings.EVENT_TITLE}}
+                <span class="preheader">Please verify your email address.</span>
 
                 <table class="main">
 
@@ -438,91 +379,31 @@
                             <table border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
+                                        <h3>Welcome{{#settings.EVENT_TITLE}} to {{settings.EVENT_TITLE}}{{/settings.EVENT_TITLE}}!</h3>
 
-                                        {{#message}}
-                                            {{{ message }}}
-                                        {{/message}}
+                                        <p>To complete your account registration you must verify your email address. To verify your email address, click on the link below:</p>
 
-                                        <p>
-                                            <strong>Retain this receipt for your tax records.</strong> No goods or services were received for this donation so it is tax deductible
-                                            to the extent allowed by law.
-                                        </p>
-
-                                        <hr/>
-
-                                        {{#transactions}}
-                                            <p>
-                                                <strong>Total Amount: {{ transactionAmount }}{{#isFeeCovered}} (includes covered fees){{/isFeeCovered}}</strong><br/>
-                                                Method of Payment: {{ creditCardType }}
-                                                (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; {{ creditCardLast4 }})<br/>
-                                                Tracking Number: {{ transactionId }}
-                                            </p>
-
-                                            <p>
-                                                Date: {{ createdOn }}<br/>
-                                                Donor: {{ donor.firstName }} {{ donor.lastName }} (<a href="mailto:{{ donor.email }}">{{ donor.email }}</a>)<br/>
-                                                Anonymous Donation: {{#isAnonymous}}Yes{{/isAnonymous}}{{^isAnonymous}}No{{/isAnonymous}}
-                                            </p>
-
-                                            <table class="donations">
-                                                <thead>
-                                                <tr>
-                                                    <th class="expand">Advised Charity</th>
-                                                    <th>Amount</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {{#donations}}
-                                                    <tr>
-                                                        <td class="organization expand">
-                                                            {{nonprofitLegalName}}
-                                                            {{#nonprofitAddress1}}<br/>{{nonprofitAddress1}}{{/nonprofitAddress1}}
-                                                            {{#nonprofitAddress2}}<br/>{{nonprofitAddress2}}{{/nonprofitAddress2}}
-                                                            {{#nonprofitAddress3}}<br/>{{nonprofitAddress3}}{{/nonprofitAddress3}}
-                                                            {{#nonprofitCity}}{{#nonprofitState}}{{#nonprofitZip}}
-                                                                <br/>{{nonprofitCity}}, {{nonprofitState}} {{nonprofitZip}}
-                                                            {{/nonprofitZip}}{{/nonprofitState}}{{/nonprofitCity}}
-                                                        </td>
-                                                        <td class="amount text-right">
-                                                            {{total}}
-                                                        </td>
-                                                    </tr>
-                                                {{/donations}}
-                                                </tbody>
-                                            </table>
-
-                                            <hr/>
-                                        {{/transactions}}
-
-                                        <p>
-                                            Your contribution is to the Firespring Foundation donor-advised fund (Tax ID 30-0358636), intended for the benefit of the charity you
-                                            indicated. The Foundation makes every reasonable effort to respect the wishes of its donors. However, to comply with federal tax laws
-                                            and Internal Revenue Service regulations, the Foundation must retain the exclusive authority, discretion, and legal control over all
-                                            donated funds. In the rare event that the charity you have advised does not satisfy our criteria or otherwise enable us to pay them
-                                            (reasons for this include issues like: they don’t or cannot accept donations, are not recognized by the IRS as a public charity, or are
-                                            not in good standing with federal or state regulators, etc.), we may select an alternate charity to receive your donation funds.
-                                        </p>
-
-                                        <p>
-                                            Firespring Foundation’s standard practice is to regrant 97.1% less $0.30 of a donor-advised contribution to a qualifying tax-exempt
-                                            entity and/or cause advised by the donor, and to retain 2.9% plus $0.30 for credit card processing expenses. If you chose to cover the
-                                            fee, which is indicated on your receipt, you can make it possible for charities to receive 100% of the intended amount.
-                                        </p>
-
-                                        <p>
-                                            Firespring Foundation's distributions to or for the benefit of your advised charity and/or purpose must not be used for the personal
-                                            benefit of you, any other donor advisor, or any other purpose conferring impermissible private benefit.
-                                            {{#settings.EVENT_URL}}
-                                                {{#settings.PAGE_TERMS_ENABLED}}
-                                                    For the full story, please see our terms of use: {{ settings.EVENT_URL }}/terms
-                                                {{/settings.PAGE_TERMS_ENABLED}}
-                                            {{/settings.EVENT_URL}}
-                                        </p>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                            <tbody>
+                                            <tr>
+                                                <td align="left">
+                                                    <table border="0" cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="{{verificationUrl}}" target="_blank" rel="noreferrer noopener">Verify Email Address</a>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
 
                                     </td>
                                 </tr>
                             </table>
-
                         </td>
                     </tr>
 

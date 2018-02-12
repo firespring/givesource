@@ -24,12 +24,11 @@ const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	const filesRepository = new FilesRepository();
-	const request = new Request(event, context).parameters(['message']);
+	const request = new Request(event, context).parameters(['email']);
 	const ses = new SES();
 	const settingsRepository = new SettingsRepository();
 
 	let html = '';
-	const message = request.get('message');
 	let settings = {
 		CONTACT_PHONE: null,
 		EVENT_URL: null,
@@ -53,8 +52,7 @@ exports.handle = function (event, context, callback) {
 		if (response) {
 			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
 		}
-		return RenderHelper.renderTemplate('emails.contact-message', {
-			message: message,
+		return RenderHelper.renderTemplate('emails.registration-pending', {
 			settings: settings,
 		});
 	}).then(function (response) {
@@ -65,11 +63,10 @@ exports.handle = function (event, context, callback) {
 			return Promise.reject(new Error('unable to generate receipt email'));
 		}
 	}).then(function (response) {
-		if (response.to.email && response.from.email && response.from.verified) {
-			const subject = settings.EVENT_TITLE ? 'New contact message from ' + settings.EVENT_TITLE : 'New contact message';
-			const toAddresses = [response.to.email];
-			const replyToAddresses = [message.email];
-			return ses.sendEmail(subject, html, null, response.from.email, toAddresses, replyToAddresses);
+		if (response.from.email && response.from.verified) {
+			const subject = settings.EVENT_TITLE ? settings.EVENT_TITLE + ' - Application in review' : 'Application in review';
+			const toAddresses = [request.get('email')];
+			return ses.sendEmail(subject, html, null, response.from.email, toAddresses);
 		} else {
 			return Promise.resolve();
 		}
