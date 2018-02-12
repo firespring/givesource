@@ -51,7 +51,7 @@
 	module.exports = {
         computed: {
 			adminPagesUrl: function () {
-				return this.$store.getters.setting('ADMIN_PAGES_CLOUD_FRONT_URL') + '/login';
+				return this.$store.getters.setting('ADMIN_URL') + '/login';
             },
             contactPhone: function () {
 	            return this.$store.getters.setting('CONTACT_PHONE') || null;

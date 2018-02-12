@@ -534,6 +534,7 @@ Resources:
       Settings: !Sub |-
         {
           "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
+          "ADMIN_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_CLOUD_FRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",
           "EVENT_URL": "${PublicPagesCloudFrontUrl}",
