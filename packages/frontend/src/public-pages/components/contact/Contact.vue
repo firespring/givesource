@@ -23,6 +23,7 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
+            <api-error v-model="apiError"></api-error>
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
@@ -125,7 +126,8 @@
 				},
 
 				formErrors: {},
-			}
+                apiError: {},
+            }
 		},
 		computed: {
 			contactPhone: function () {
@@ -145,7 +147,10 @@
 					keys: 'CONTACT_FORM_TEXT'
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    next();
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -157,7 +162,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -238,8 +243,8 @@
 						vue.$router.push({name: 'contact-response'});
 					}
 				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
 					vue.processing = false;
-					console.log(err);
 				});
 			}
 		},
