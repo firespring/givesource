@@ -16,6 +16,7 @@
  */
 
 import * as VueMoney from "v-money";
+import ApiErrorComponent from './components/errors/ApiError.vue';
 import App from './components/App.vue';
 import axios from "axios";
 import EventBusMixin from './mixins/eventBus';
@@ -41,6 +42,9 @@ window._ = require('lodash');
 window.$ = window.jQuery = require('jquery');
 window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Register global components
+Vue.component('api-error', ApiErrorComponent);
 
 // Bootstrap the app
 const main = App;
