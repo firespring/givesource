@@ -95,7 +95,8 @@ exports.handle = function (event, context, callback) {
 					'isOfflineDonation',
 					'nonprofitUuid',
 					'subtotal',
-					'total'
+					'total',
+					'note'
 				]);
 			});
 		});
