@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
 const logger = require('./../../helpers/log');
 const HttpException = require('./../../exceptions/http');
 const S3 = require('./../../aws/s3');
