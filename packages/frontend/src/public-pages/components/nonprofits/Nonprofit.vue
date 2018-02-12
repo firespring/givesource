@@ -174,7 +174,7 @@
 				return logo;
 			},
 			pageUrl: function () {
-				return document.location.href;
+				return document.location.origin;
 			},
 		},
 		beforeMount: function () {
