@@ -133,6 +133,8 @@ module.exports = function (env) {
 			CognitoCustomMessage: './src/custom/cognitoCustomMessage/index.js',
 			DeleteReports: './src/custom/deleteReports/index.js',
 			GenerateCustomFrontendCss: './src/custom/generateCustomFrontendCss/index.js',
+			GenerateDynamicContent: './src/custom/generateDynamicContent/index.js',
+			GeneratePublicIndexFile: './src/custom/generatePublicIndexFile/index.js',
 			GenerateReport: './src/custom/generateReport/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',

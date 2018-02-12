@@ -31,4 +31,12 @@ exports.fetch = function () {
 	}).catch(function (err) {
 		console.error(err, err.stack);
 	});
+
+	s3.getObject(process.env.AWS_REGION, deployInfo.publicPagesS3BucketName, 'index.html').then(function (data) {
+		const configDir = path.normalize(`${__dirname}/../build/public-pages`);
+		fs.writeFileSync(`${configDir}/index.html`, data.Body);
+		console.log('index.html downloaded from s3');
+	}).catch(function (err) {
+		console.error(err, err.stack);
+	});
 };

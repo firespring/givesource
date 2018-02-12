@@ -22,8 +22,7 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackOnBuildPlugin = require('on-build-webpack');
-const FetchCustomCss = require('./../bin/fetch-custom-css');
-
+const FetchDynamicContent = require('./../bin/fetch-dynamic-content');
 
 module.exports = {
 	module: {
@@ -74,7 +73,8 @@ module.exports = {
 			]
 		}),
 		new HtmlWebpackPlugin({
-			template: 'src/public-pages/index.html'
+			template: 'src/public-pages/templates/index.mustache',
+			filename: 'templates/index.mustache'
 		}),
 		new BrowserSyncPlugin({
 			host: 'localhost',
@@ -89,6 +89,6 @@ module.exports = {
 			files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
 			open: false
 		}),
-		new WebpackOnBuildPlugin(FetchCustomCss.fetch),
+		new WebpackOnBuildPlugin(FetchDynamicContent.fetch),
 	]
 };

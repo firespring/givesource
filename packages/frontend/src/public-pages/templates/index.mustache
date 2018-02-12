@@ -20,7 +20,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Givesource</title>
+
+    <meta property="og:title" content="{{settings.EVENT_TITLE}}">
+    <meta property="og:url" content="{{{settings.EVENT_URL}}}">
+    <meta property="og:type" content="website">
+    {{#settings.SOCIAL_SHARING_DESCRIPTION}}<meta property="og:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">{{/settings.SOCIAL_SHARING_DESCRIPTION}}
+    {{#settings.SOCIAL_SHARING_IMAGE}}<meta property="og:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">{{/settings.SOCIAL_SHARING_IMAGE}}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{settings.EVENT_TITLE}}">
+    {{#settings.SOCIAL_SHARING_DESCRIPTION}}<meta name="twitter:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">{{/settings.SOCIAL_SHARING_DESCRIPTION}}
+    {{#settings.SOCIAL_SHARING_IMAGE}}<meta name="twitter:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">{{/settings.SOCIAL_SHARING_IMAGE}}
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700,700i,900,900i|Passion+One">
@@ -31,6 +40,8 @@
 
     <!-- Javascript -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
+
+    <title>{{settings.EVENT_TITLE}}</title>
 </head>
 <body>
 <div id="app"></div>

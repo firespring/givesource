@@ -299,6 +299,51 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
+  # Generate public index file
+
+  GeneratePublicIndexFileLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GeneratePublicIndexFile.zip
+      Description: "Generate index file for the public website"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          PUBLIC_PAGES_S3_BUCKET: !Ref PublicPagesS3
+      FunctionName: !Sub |-
+        ${StackName}-GeneratePublicIndexFile
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # Generate dynamic content
+
+  GenerateDynamicContentLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GenerateDynamicContent.zip
+      Description: "Generate dynamic content for the public website"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          PUBLIC_PAGES_S3_BUCKET: !Ref PublicPagesS3
+      FunctionName: !Sub |-
+        ${StackName}-GenerateDynamicContent
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+    DependsOn:
+      - GeneratePublicIndexFileLambdaFunction
+      - GenerateCustomFrontendCssLambdaFunction
+
   # Report Lambda Resources
 
   GenerateReportLambdaFunction:
@@ -441,19 +486,15 @@ Resources:
 
   # S3 Public Pages Deployment
 
-  PublicPagesCustomFrontendCss:
-    Type: Custom::S3PutObject
+  PublicPagesDynamicContentDeploy:
+    Type: Custom::DynamicContent
     Properties:
-      ServiceToken: !GetAtt S3PutObjectFunction.Arn
-      Region: !Sub |-
-        ${AWS::Region}
-      Bucket: !Ref PublicPagesS3
-      Key: "assets/css/custom.css"
-      Body: ""
+      ServiceToken: !GetAtt GenerateDynamicContentLambdaFunction.Arn
     DependsOn:
-      - S3PutObjectFunction
+      - GenerateDynamicContentLambdaFunction
       - CognitoUserPool
       - CognitoUserPoolClient
+      - SaveInitialStackSettings
 
   PublicPagesSettingsJson:
     Type: Custom::S3PutObject
@@ -500,7 +541,12 @@ Resources:
           "UPLOADS_CLOUDFRONT_URL": "${UploadsCloudFrontUrl}",
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
-          "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
+          "USER_POOL_ID": "${CognitoUserPool.UserPoolId}",
+          "PUBLIC_INDEX_TEMPLATE": {
+            "type": "S3",
+            "bucket": "{{awsReleaseBucket}}",
+            "path": "public-pages/{{version}}/templates/index.mustache"
+          }
         }
     DependsOn:
       - CognitoUserPool

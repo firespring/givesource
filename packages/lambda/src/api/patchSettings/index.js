@@ -22,7 +22,7 @@ const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const Lambda = require('./../../aws/lambda');
-const SettingHelper = require('./../../helpers/setting');
+const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
@@ -57,15 +57,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.batchUpdate(settings);
 	}).then(function () {
-		let promise = Promise.resolve();
-		_.forEach(settings, function (setting) {
-			if (setting.key === SettingHelper.SETTING_ACCENT_COLOR) {
-				promise = promise.then(function () {
-					return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateCustomFrontendCss', {});
-				});
-			}
-		});
-		return promise;
+		return DynamicContentHelper.regenerateDynamicContent(_.map(settings, 'key'), process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
