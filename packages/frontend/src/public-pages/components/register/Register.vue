@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div v-if="canRegister" class="wrapper wrapper--sm">
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
@@ -215,6 +216,7 @@
 				},
 
 				formErrors: {},
+                apiError: {},
 			}
 		},
 		computed: {
@@ -248,7 +250,10 @@
 					keys: 'REGISTER_FORM_TEXT'
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    next();
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -260,7 +265,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -405,7 +410,7 @@
 					}
 				}).catch(function (err) {
 					vue.processing = false;
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 		},
