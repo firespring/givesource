@@ -27,7 +27,8 @@
 
         <tbody v-if="cartItems.length">
         <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
-                                       v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"></cart-donations-list-table-row>
+                                       :note="cartItem.note" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
+                                       v-on:hasError="hasError"></cart-donations-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -63,26 +64,32 @@
 		methods: {
 			removeCartItem: function (timestamp) {
 				const vue = this;
-				vue.cartItems = _.reject(vue.cartItems, { timestamp: timestamp });
+				vue.cartItems = _.reject(vue.cartItems, {timestamp: timestamp});
 			},
-			updateCartItem: function (timestamp, amount) {
+			updateCartItem: function (timestamp, amount, note) {
 				const vue = this;
 
-				const cartItem = _.find(vue.cartItems, { timestamp: timestamp });
+				const cartItem = _.find(vue.cartItems, {timestamp: timestamp});
 				cartItem.amount = amount;
+				cartItem.note = note;
 
 				vue.$store.commit('updateCartItem', {
 					timestamp: timestamp,
-					amount: amount
+					amount: amount,
+					note: note
 				});
 
 				vue.bus.$emit('updateCartItems');
 				vue.bus.$emit('updateCartItemsCount');
 				vue.bus.$emit('updateCartItemsCounter');
+			},
+			hasError: function (hasError) {
+				const vue = this;
+				vue.$emit('hasError', hasError);
 			}
 		},
-        components: {
-        	'cart-donations-list-table-row': require('./CartDonationsListTableRow.vue')
-        }
+		components: {
+			'cart-donations-list-table-row': require('./CartDonationsListTableRow.vue')
+		}
 	};
 </script>

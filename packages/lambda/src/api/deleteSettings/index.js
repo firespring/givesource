@@ -20,10 +20,13 @@ const Request = require('./../../aws/request');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Lambda = require('./../../aws/lambda');
+const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
+	const lambda = new Lambda();
 
 	let settings = [];
 	request.validate().then(function () {
@@ -40,6 +43,8 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function () {
 		return repository.batchDeleteByKey(settings);
+	}).then(function () {
+		return DynamicContentHelper.regenerateDynamicContent(_.map(settings, 'key'), process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

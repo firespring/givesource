@@ -19,7 +19,7 @@
     <div class="c-header-actions">
 
         <div>
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
+            <a v-on:click="exportDonations" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
         </div>
 
         <div class="c-header-actions__search u-flex-expand">
@@ -36,3 +36,67 @@
 
     </div>
 </template>
+
+<script>
+	const slug = require('slug');
+
+	module.exports = {
+		data: function () {
+			return {
+				report: {},
+				file: {},
+
+				countdown: null,
+			};
+		},
+		props: {
+			nonprofit: {}
+		},
+		methods: {
+			exportDonations: function (event) {
+				event.preventDefault();
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				vue.$request.post('nonprofits/' + vue.nonprofit.uuid + '/reports' , {
+					type: 'DONATIONS',
+					nonprofitUuid: vue.nonprofit.uuid,
+					name: slug(vue.nonprofit.legalName),
+				}).then(function (response) {
+					vue.report = response.data;
+					vue.pollReport();
+				}).catch(function (err) {
+					vue.clearModals();
+					console.log(err);
+				});
+			},
+			pollReport: function () {
+				const vue = this;
+
+				vue.countdown = setInterval(function () {
+					vue.$request.get('nonprofits/' + vue.nonprofit.uuid + '/reports/' + vue.report.uuid).then(function (response) {
+						vue.report = response.data;
+						if (vue.report.status === 'SUCCESS') {
+							vue.clearModals();
+							clearTimeout(vue.countdown);
+							vue.downloadFile();
+						} else if (vue.report.status === 'FAILED') {
+							vue.clearModals();
+							clearTimeout(vue.countdown);
+							console.log('Report failed to generate');
+						}
+					});
+				}, 1000);
+			},
+			downloadFile: function () {
+				const vue = this;
+
+				vue.$request.get('files/' + vue.report.fileUuid).then(function (fileResponse) {
+					vue.file = fileResponse.data;
+					window.location.href = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path;
+				});
+			}
+		}
+	};
+</script>

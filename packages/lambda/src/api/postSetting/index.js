@@ -21,10 +21,13 @@ const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlrea
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Lambda = require('./../../aws/lambda');
+const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const lambda = new Lambda();
 
 	const setting = new Setting(request._body);
 	request.validate().then(function () {
@@ -39,6 +42,17 @@ exports.handle = function (event, context, callback) {
 		return setting.validate();
 	}).then(function () {
 		return repository.save(setting);
+	}).then(function (model) {
+		let promise = Promise.resolve();
+		promise = promise.then(function () {
+			return DynamicContentHelper.regenerateDynamicContent([model.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
+		});
+
+		promise = promise.then(function () {
+			return model;
+		});
+
+		return promise;
 	}).then(function (model) {
 		callback(null, model.all());
 	}).catch(function (err) {

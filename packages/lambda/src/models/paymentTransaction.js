@@ -16,6 +16,7 @@
  */
 
 const Model = require('./model');
+const numeral = require('numeral');
 
 /**
  * paymentTransaction constructor
@@ -47,7 +48,7 @@ PaymentTransaction.prototype.attributes = [
 	'creditCardName',
 	'creditCardType',
 	'isTestMode',
-	'transactionAmountInCents',
+	'transactionAmount',
 	'transactionId',
 	'transactionStatus'
 ];
@@ -92,7 +93,7 @@ PaymentTransaction.prototype.constraints = {
 		presence: true,
 		type: 'boolean'
 	},
-	transactionAmountInCents: {
+	transactionAmount: {
 		presence: true,
 		type: 'number',
 		numericality: {
@@ -107,6 +108,31 @@ PaymentTransaction.prototype.constraints = {
 		presence: false,
 		type: 'string'
 	}
+};
+
+/**
+ * Attribute mutators for this model
+ *
+ * @type {{}}
+ */
+PaymentTransaction.prototype.mutators = {
+	creditCardType: function (value) {
+		switch (value) {
+			case 'amex':
+				return 'American Express';
+			case 'discover':
+				return 'Discover';
+			case 'mastercard':
+				return 'MasterCard';
+			case 'visa':
+				return 'Visa';
+			default:
+				return value;
+		}
+	},
+	transactionAmount: function (value) {
+		return numeral(value / 100).format('$0,0.00');
+	},
 };
 
 module.exports = PaymentTransaction;

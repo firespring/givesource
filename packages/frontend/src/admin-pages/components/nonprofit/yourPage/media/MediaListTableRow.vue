@@ -99,7 +99,7 @@
 						return vue.slide.thumbnail;
 					case MediaHelper.TYPE_IMAGE:
 					default:
-						return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path;
+						return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path;
 				}
 			}
 		},

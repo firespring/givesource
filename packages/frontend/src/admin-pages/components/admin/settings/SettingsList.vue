@@ -49,7 +49,7 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
-                                        <router-link :to="{ name: 'settings-customize-appearance' }">Customize Appearance</router-link>
+                                        <router-link :to="{ name: 'site-appearance' }">Site Appearance</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">
                                         Modify your site's logo, colors, and other visual settings.
@@ -75,6 +75,17 @@
                                     </h3>
                                     <div class="c-notes c-notes--below">
                                         Invite additional admin users
+                                    </div>
+                                </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-social-sharing' }">Social Sharing Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Manage the text and image that is shared via the social media logos on donation pages.
                                     </div>
                                 </div>
 

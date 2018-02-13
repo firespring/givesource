@@ -47,6 +47,32 @@ Lambda.prototype.getFunction = function (functionName) {
 };
 
 /**
+ * Invoke an AWS Lambda function
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @param {{}} payload
+ * @param {String} [invocationType]
+ * @return {Promise}
+ */
+Lambda.prototype.invoke = function (region, functionName, payload, invocationType) {
+	const awsLambda = new AWS.Lambda({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			FunctionName: functionName,
+			Payload: JSON.stringify(payload),
+			InvocationType: invocationType || 'Event'
+		};
+		awsLambda.invoke(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
  * Update an AWS Lambda function's code
  *
  * @param {String} functionName

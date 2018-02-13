@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Lambda = require('./../../aws/lambda');
 const HttpException = require('./../../exceptions/http');
-const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new ReportsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const lambda = new Lambda();
+	const request = new Request(event, context).parameters(['email']);
 
 	request.validate().then(function () {
-		return repository.delete(request.urlParam('report_uuid'));
-	}).then(function () {
+		const body = {
+			email: request.get('email')
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
 		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

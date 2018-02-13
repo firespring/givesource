@@ -39,7 +39,8 @@
                                 <div class="c-page-section-header-text">
                                     <h2 class="c-page-section-title">PaymentSpring Keys</h2>
                                     <div class="c-notes c-notes--below">
-                                        If you don't know your PaymentSpring keys, <a href="https://manage.paymentspring.com/" target="_blank" rel="noreferrer noopener">log into your PaymentSpring account</a>
+                                        If you don't know your PaymentSpring keys, <a href="https://manage.paymentspring.com/" target="_blank" rel="noreferrer noopener">log into
+                                        your PaymentSpring account</a>
                                         to get them.
                                     </div>
                                 </div>
@@ -155,6 +156,52 @@
                             </div>
                         </section>
 
+                        <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
+                            <header class="c-page-section__header">
+                                <div class="c-page-section-header-text">
+                                    <h2 class="c-page-section-title">Offline Donation Fees</h2>
+                                </div>
+                            </header>
+
+                            <div class="c-page-section__main">
+
+                                <div class="c-form-item c-form-item--text" :class="{ 'c-form-item--has-error': formErrors.OFFLINE_TRANSACTION_FEE_PERCENTAGE }">
+                                    <div class="c-form-item__label">
+                                        <label for="offlineTransactionFeePercentage" class="c-form-item-label-text">Offline Fee Percentage</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <input v-model="formData.OFFLINE_TRANSACTION_FEE_PERCENTAGE" type="text" name="offlineTransactionFeePercentage"
+                                               id="offlineTransactionFeePercentage" :class="{ 'has-error': formErrors.OFFLINE_TRANSACTION_FEE_PERCENTAGE }">
+                                        <div v-if="formErrors.OFFLINE_TRANSACTION_FEE_PERCENTAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.OFFLINE_TRANSACTION_FEE_PERCENTAGE }}
+                                        </div>
+                                        <div class="c-notes c-notes--below">
+                                            If your foundation collects a percent fee from offline donations, enter that amount here.
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="c-form-item c-form-item--text" :class="{ 'c-form-item--has-error': formErrors.OFFLINE_TRANSACTION_FEE_FLAT_RATE }">
+                                    <div class="c-form-item__label">
+                                        <label for="offlineTransactionFeeFlatRate" class="c-form-item-label-text">Offline Fee Flat Rate</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <input v-model="formData.OFFLINE_TRANSACTION_FEE_FLAT_RATE" type="text" name="offlineTransactionFeeFlatRate"
+                                               id="offlineTransactionFeeFlatRate" :class="{ 'has-error': formErrors.OFFLINE_TRANSACTION_FEE_FLAT_RATE }">
+                                        <div v-if="formErrors.OFFLINE_TRANSACTION_FEE_FLAT_RATE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.OFFLINE_TRANSACTION_FEE_FLAT_RATE }}
+                                        </div>
+                                        <div class="c-notes c-notes--below">
+                                            If your foundation collects a flat rate fee from offline donations, enter that amount here.
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Save Changes</button>
                             <router-link :to="{ name: 'settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
@@ -168,7 +215,7 @@
 </template>
 
 <script>
-	import * as Utils from './../../../../helpers/utils';
+	import * as Transform from './../../../../helpers/transform';
 
 	module.exports = {
 		data: function () {
@@ -182,6 +229,8 @@
 					PAYMENT_SPRING_TEST_API_KEY: '',
 					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: '',
 					PAYMENT_SPRING_LIVE_MODE: false,
+					OFFLINE_TRANSACTION_FEE_PERCENTAGE: '0.0',
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: '0.00',
 				},
 
 				// Errors
@@ -226,7 +275,7 @@
 						Object.keys(vue.formData).forEach(function (key) {
 							const setting = _.find(vue.settings, {key: key});
 							if (setting) {
-								vue.formData[key] = setting.value;
+								vue.formData[key] = Transform.transform(setting.value, _.get(vue.getTransformers(), key), {method: 'onDisplay'});
 							}
 						});
 					}
@@ -259,7 +308,32 @@
 						label: 'This field',
 						presence: true,
 					},
+					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
+						label: 'Offline Fee Percentage',
+						numericality: {
+							greaterThanOrEqualTo: 0,
+							lessThanOrEqualTo: 100
+						}
+					},
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
+						label: 'Offline Fee Flat Rate',
+						numericality: {
+							greaterThanOrEqualTo: 0,
+						}
+					}
 				};
+			},
+			getTransformers: function () {
+				return {
+					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
+						onDisplay: ['fromPercent', 'percent'],
+						onSave: ['percent', 'toPercent', 'zeroToEmptyString']
+					},
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
+						onDisplay: ['fromCents', 'money'],
+						onSave: ['money', 'toCents', 'zeroToEmptyString']
+					}
+				}
 			},
 			submit: function (event) {
 				event.preventDefault();
@@ -270,6 +344,7 @@
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 				if (Object.keys(vue.formErrors).length) {
 					vue.clearModals();
+					vue.scrollToError();
 				} else {
 					vue.updateSettings();
 				}
@@ -277,11 +352,12 @@
 			updateSettings: function () {
 				const vue = this;
 
+				const transformedData = Transform.transformData(vue.formData, vue.getTransformers(), {method: 'onSave'});
 				const settings = [];
-				Object.keys(vue.formData).forEach(function (key) {
+				Object.keys(transformedData).forEach(function (key) {
 					settings.push({
 						key: key,
-						value: vue.formData[key]
+						value: transformedData[key]
 					})
 				});
 

@@ -34,6 +34,10 @@ import UtilsMixin from './mixins/utils';
 import ValidateMixin from './mixins/validate';
 import Vue from 'vue';
 import VueCkeditor from 'vueckeditor';
+import VueFilters from './filters';
+
+// Register filters
+Vue.use(VueFilters);
 
 // Register mixins
 Vue.mixin(EventBusMixin);

@@ -19,7 +19,7 @@
     <header class="page-header flex text-c">
 
         <div class="page-header__logo flex justify-center items-center">
-            <a href="/" title="Return to the homepage"><img :alt="logoTitle" src="/assets/temp/logo-event.png"></a>
+            <a href="/" title="Return to the homepage"><img :alt="logoTitle" :src="logoUrl"></a>
         </div>
 
         <nav class="page-header__nav-menu items-center">
@@ -77,6 +77,11 @@
 			},
 			logoTitle: function () {
 				return Settings.eventTitle() + ' Logo';
+			},
+			logoUrl: function () {
+				const vue = this;
+				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
+				return eventLogo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + eventLogo : '/assets/temp/logo-event.png';
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();

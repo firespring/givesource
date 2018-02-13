@@ -22,10 +22,13 @@ import EventBusMixin from './mixins/eventBus';
 import ModalsMixin from './mixins/modals';
 import router from './router';
 import store from './store';
+var SocialSharing = require('vue-social-sharing');
 import UtilsMixin from './mixins/utils';
 import ValidateMixin from './mixins/validate';
 import Vue from "vue";
 
+// Register plugins
+Vue.use(SocialSharing);
 
 // Register mixins
 Vue.mixin(EventBusMixin);

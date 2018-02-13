@@ -93,7 +93,6 @@
             donationTiers: {
                 handler: function () {
                     const vue = this;
-
                     const current = JSON.parse(JSON.stringify(vue.donationTiers));
                     const emptyRows = _.filter(current, {amount: '0.00', description: ''}).length;
                     if (emptyRows === 0 && current.length < 4) {
@@ -108,20 +107,18 @@
         methods: {
             submit: function () {
                 const vue = this;
-
-                if(vue.validateDonationTiers()){
+                console.log(vue.validateDonationTiers());
+                if (vue.validateDonationTiers()) {
                     vue.addModal('spinner');
                     vue.updateDonationTiers();
-                    vue.clearModals();
                 }
 
             },
-            validateDonationTiers: function() {
-                return true;
+            validateDonationTiers: function () {
                 const vue = this;
                 const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
-                const emptyRows = _.filter(donationTiers, {amount: '0.00', description: ''}).length;
-                var donationTiersLessThanTen = _.filter(donationTiers, function(donationTierRow){
+                const emptyRows = _.filter(donationTiers, {amount: '0.00'}).length;
+                var donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
                     return donationTierRow.amount < 10;
                 }).length;
 
@@ -130,59 +127,63 @@
                 } else if (emptyRows === 1 && donationTiers.length > 1 && donationTiersLessThanTen > 1) {
                     return false;
                 }
-
                 return true;
             },
             updateDonationTiers: function () {
                 const vue = this;
-                const original = JSON.parse(JSON.stringify(vue.originalDonationTiers));
-                const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
-                const filtered = _.reject(donationTiers, {amount: '0.00'});
-                const modified = _.differenceWith(filtered, original, _.isEqual);
+                const formatted = vue.format(JSON.parse(JSON.stringify(vue.donationTiers)));
+                let created = _.filter(formatted, function (donationTier) {
+                    return !donationTier.hasOwnProperty('uuid');
+                });
+                let changed = _.differenceWith(formatted, vue.originalDonationTiers, _.isEqual);
+                changed = _.reject(changed, {amount: 0});
 
-                const toDelete = _.differenceWith(original, filtered, _.isEqual);
-                const toUpdate = _.map(vue.format(_.reject(modified, {amount: '0.00'})), function (tier) {
-                    if (!tier.description) {
-                        delete tier.description;
-                    }
-                    return tier;
+                let toDelete = _.differenceWith(vue.originalDonationTiers, formatted, _.isEqual);
+                let toUpdate = _.filter(changed, function (donationTier) {
+                    return donationTier.hasOwnProperty('uuid');
+                });
+                created = _.reject(created, {amount: 0});
+                toUpdate = _.reject(toUpdate, {amount: 0});
+
+                let promise = Promise.resolve();
+                if (created.length) {
+                    created.forEach(function (donationTier) {
+                        promise = promise.then(function () {
+                            return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/tiers', donationTier);
+                        });
+                    });
+                }
+
+                if (toUpdate.length) {
+                    promise = promise.then(function () {
+                        return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                            donation_tiers: toUpdate.map(function (donationTier) {
+                                return _.pick(donationTier, ['uuid', 'amount', 'description']);
+                            }),
+                        });
+                    });
+                }
+                if (toDelete.length) {
+                    promise = promise.then(function () {
+                        return vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+                            donation_tiers: toDelete
+                        }).then(function () {
+                            vue.donationTiers = _.reject(vue.donationTiers, function (donationTier) {
+                                return _.find(toDelete, {uuid: donationTier.uuid});
+                            });
+                        })
+                    });
+                }
+
+                promise.then(function () {
+                    vue.clearModals();
+                }).catch(function (err) {
+                    vue.clearModals();
+                    console.log(err);
                 });
 
-                if (toUpdate.length && !toDelete.length) {
-                    vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toUpdate
-                    }).then(function () {
-                        vue.clearModals();
-                    }).catch(function (err) {
-                        vue.clearModals();
-                        console.log(err);
-                    });
-                } else if (toDelete.length && !toUpdate.length) {
-                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toDelete
-                    }).then(function () {
-                        vue.clearModals();
-                    }).catch(function (err) {
-                        vue.clearModals();
-                        console.log(err);
-                    });
-                } else if (toUpdate.length && toDelete.length) {
-                    vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                        donation_tiers: toDelete
-                    }).then(function () {
-                        return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
-                            donation_tiers: toUpdate
-                        });
-                    }).then(function () {
-                        vue.clearModals();
-                    }).catch(function (err) {
-                        vue.clearModals();
-                        console.log(err);
-                    });
-                } else {
-                    vue.clearModals();
-                }
             },
+
             format: function (donationTiers) {
                 const formatted = [];
                 donationTiers.forEach(function (donationTier, index) {
@@ -191,6 +192,7 @@
                 });
                 return formatted;
             },
+
             changeDonationTier: function (index, values) {
                 const vue = this;
 

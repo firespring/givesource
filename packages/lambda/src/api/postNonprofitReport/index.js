@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,25 +16,32 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
+const NonprofitReportsRepository = require('./../../repositories/nonprofitReports');
 const Report = require('./../../models/report');
-const ReportsRepository = require('./../../repositories/reports');
+const ReportHelper = require('./../../helpers/report');
 const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const repository = new ReportsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const lambda = new Lambda();
+	const repository = new NonprofitReportsRepository();
+	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
-	let report = null;
+	const report = new Report({nonprofitUuid: request.urlParam('nonprofit_uuid')});
 	request.validate().then(function () {
-		return repository.get(request.urlParam('report_uuid'));
-	}).then(function (result) {
-		report = new Report(result);
 		report.populate(request._body);
+		report.populate({status: ReportHelper.STATUS_PENDING});
 		return report.validate();
 	}).then(function () {
-		return repository.save(report);
+		return repository.save(request.urlParam('nonprofit_uuid'), report);
 	}).then(function (model) {
+		const body = model.all();
+		if (request.get('name', false)) {
+			body['name'] = request.get('name');
+		}
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateReport', {body: body});
 		callback(null, model.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

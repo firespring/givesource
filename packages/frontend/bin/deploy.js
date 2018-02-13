@@ -17,6 +17,8 @@
 
 const dotenv = require('dotenv');
 const deployInfo = require('../config/deploy-info.json');
+const fs = require('fs');
+const Lambda = require('./aws/lambda');
 const path = require('path');
 const S3 = require('./aws/s3');
 
@@ -52,16 +54,16 @@ const validateEnv = function () {
  * @param {String} src
  * @param {String} assetPath
  * @param {String} bucket
- *
+ * @param {array} exclude
  * @return {Promise}
  */
-const deploy = function (project, src, assetPath, bucket) {
+const deploy = function (project, src, assetPath, bucket, exclude) {
 	assetPath = assetPath ? `assets/${assetPath}/` : '';
 
 	return new Promise(function (resolve, reject) {
 		const path = `${assetPath}`;
 
-		S3.uploadDirectory(src, awsRegion, bucket, path).then(function () {
+		S3.uploadDirectory(src, awsRegion, bucket, path, exclude).then(function () {
 			resolve();
 		}).catch(function (err) {
 			reject(err);
@@ -78,6 +80,7 @@ if (validateEnv()) {
 	const publicPagesDir = path.normalize(`${__dirname}/../build/public-pages`);
 	const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
 	const publicPagesImgDir = path.normalize(`${publicPagesDir}/assets/img`);
+	const publicPagesIndexTemplateFile = path.normalize(`${publicPagesDir}/templates/index.mustache`);
 	const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
 	const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
 	const publicPagesBucket = deployInfo.publicPagesS3BucketName;
@@ -92,7 +95,7 @@ if (validateEnv()) {
 		console.log(err);
 	});
 
-	deploy('public-pages', publicPagesDir, '', publicPagesBucket).then(function () {
+	deploy('public-pages', publicPagesDir, '', publicPagesBucket, ['index.html']).then(function () {
 		return deploy('public-pages', publicPagesCssDir, 'css', publicPagesBucket);
 	}).then(function () {
 		return deploy('public-pages', publicPagesImgDir, 'img', publicPagesBucket);
@@ -105,4 +108,20 @@ if (validateEnv()) {
 	}).catch(function (err) {
 		console.log(err);
 	});
+
+	const lambda = new Lambda();
+	let lambdaRequestBody = {
+		ResourceProperties: {
+			Settings: JSON.stringify({PUBLIC_INDEX_TEMPLATE: fs.readFileSync(publicPagesIndexTemplateFile).toString()})
+		}
+	};
+
+	lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GeneratePublicIndexFile', {}, 'RequestResponse').then(function () {
+			console.log('Generated public-pages index.html');
+		});
+	}).catch(function (err) {
+		console.log(err);
+	});
+
 }

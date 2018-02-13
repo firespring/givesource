@@ -113,7 +113,7 @@
 				const vue = this;
 
 				const file = vue.files[fileUuid];
-				return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : false;
+				return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false;
 			}
 		}
 	};

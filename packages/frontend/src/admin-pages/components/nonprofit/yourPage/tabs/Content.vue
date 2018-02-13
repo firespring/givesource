@@ -47,6 +47,24 @@
                 </div>
             </div>
 
+            <div class="c-form-item c-form-item--file c-form-item--file-picker">
+
+                <div class="c-form-item__label">
+                    <label for="pageLogo" class="c-form-item-label-text">Page Logo</label>
+                </div>
+
+                <div class="c-form-item__control u-flex-wrap">
+                    <forms-image-upload v-model="formData.logo" name="pageLogo" id="pageLogo"></forms-image-upload>
+                    <div class="c-notes c-notes--below u-width-100p">
+                        Your logo will be automatically resized to fit the design.
+                    </div>
+                    <div v-if="formErrors.logo" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                        {{ formErrors.logo }}
+                    </div>
+                </div>
+
+            </div>
+
             <div class="c-form-item c-form-item--text">
                 <div class="c-form-item__label">
                     <label for="shortDescription" class="c-form-item-label-text">Short Description (Up to 200 characters)</label>
@@ -56,9 +74,6 @@
                            :class="{ 'has-error': formErrors.shortDescription }">
                     <div v-if="formErrors.shortDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                         {{ formErrors.shortDescription }}
-                    </div>
-                    <div class="c-notes c-notes--below">
-                        This text will be what appears when the donation page is shared on social media.
                     </div>
                 </div>
             </div>
@@ -86,38 +101,40 @@
 </template>
 
 <script>
-    const slug = require('slug');
+	const slug = require('slug');
 
 	module.exports = {
 		data: function () {
 			return {
-                loaded: false,
-                editSlug: false,
+				loaded: false,
+				editSlug: false,
 
 				// Form Data
 				formData: {
 					longDescription: '',
 					shortDescription: '',
 					slug: '',
+					logo: null,
+					logoFileUuid: ''
 				},
 
-                // Errors
-                formErrors: {}
+				// Errors
+				formErrors: {}
 			}
 		},
-        computed: {
+		computed: {
 			pageLink: function () {
-				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL') + '/nonprofits/'
-            }
-        },
-        props: {
+				return this.$store.getters.setting('PUBLIC_PAGES_CLOUD_FRONT_URL') + '/nonprofits/'
+			}
+		},
+		props: {
 			nonprofit: {
 				type: Object,
-                default: function () {
-                	return {};
-                }
-            }
-        },
+				default: function () {
+					return {};
+				}
+			}
+		},
 		watch: {
 			formData: {
 				handler: function () {
@@ -128,15 +145,24 @@
 				},
 				deep: true
 			},
-            nonprofit: {
+			nonprofit: {
 				handler: function () {
 					const vue = this;
 
 					vue.formData = vue.sync(vue.formData, vue.nonprofit);
+					if (!_.isEmpty(vue.formData.logoFileUuid)) {
+						vue.$request.get('files/' + vue.formData.logoFileUuid).then(function (response) {
+							vue.formData.logo = response.data;
+						}).catch(function () {
+							vue.formData.logo = null;
+						});
+					} else {
+						vue.formData.logo = null;
+					}
 					vue.loaded = true;
-                },
-                deep: true
-            }
+				},
+				deep: true
+			}
 		},
 		methods: {
 			getConstraints: function () {
@@ -148,9 +174,13 @@
 						presence: false,
 						length: 200,
 					},
-                    slug: {
+					slug: {
 						presence: true
-                    }
+					},
+					logo: {
+						presence: false,
+						image: true
+					}
 				}
 			},
 			submit: function (e) {
@@ -169,37 +199,102 @@
 			updateNonprofit: function () {
 				const vue = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
-				if (Object.keys(params).length === 0) {
-					vue.clearModals();
-					return;
-				}
+				vue.getUpdatedNonprofitParams().then(function (updatedParams) {
+					let promise = Promise.resolve();
+					const originalLogoFileUuid = vue.nonprofit.logoFileUuid;
 
-				vue.$request.patch('nonprofits/' + vue.nonprofit.uuid, params).then(function (response) {
-					vue.clearModals();
-					if (response.data.errorMessage) {
-						console.log(response.data);
+					if (Object.keys(updatedParams).length) {
+						promise = promise.then(function () {
+							return vue.$request.patch('nonprofits/' + vue.nonprofit.uuid, updatedParams).then(function (response) {
+								if (response.data.errorMessage) {
+									console.log(response.data);
+								}
+								vue.editSlug = false;
+								vue.$emit('updateNonprofit', response.data);
+							})
+						});
 					}
-					vue.editSlug = false;
-					vue.$emit('updateNonprofit', response.data);
+
+					if (updatedParams.hasOwnProperty('logoFileUuid') && !_.isEmpty(originalLogoFileUuid)) {
+						promise = promise.then(function () {
+							return vue.$request.delete('files/' + originalLogoFileUuid);
+						});
+					}
+
+					promise.then(function () {
+						vue.clearModals();
+					});
+
+					return promise;
 				}).catch(function (err) {
 					vue.clearModals();
 					console.log(err);
 				});
 			},
-            changeSlug: function (event) {
+			changeSlug: function (event) {
 				event.preventDefault();
 				const vue = this;
 
-                vue.editSlug = true;
-            },
-            slugMask: function (event) {
+				vue.editSlug = true;
+			},
+			slugMask: function (event) {
 				const vue = this;
 				vue.formData.slug = slug(event.target.value, {lower: true});
-            }
+			},
+			getUpdatedNonprofitParams: function () {
+				const vue = this;
+				let promise = Promise.resolve();
+
+				if (vue.formData.logo instanceof File) {
+					promise = promise.then(function () {
+						return vue.uploadFile('logo').then(function (uploadedFile) {
+							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+						});
+					});
+				} else if (_.isPlainObject(vue.formData.logo) && vue.formData.logo.hasOwnProperty('uuid')) {
+					vue.formData.logoFileUuid = vue.formData.logo.uuid;
+				} else {
+					vue.formData.logoFileUuid = '';
+				}
+
+				promise = promise.then(function () {
+					const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
+					delete params.logo;
+					return params;
+				});
+
+				return promise;
+			},
+			uploadFile: function (key) {
+				const vue = this;
+				let file = null;
+				let promise = Promise.resolve();
+				if (vue.formData[key]) {
+					promise = promise.then(function () {
+						return vue.$request.post('files', {
+							content_type: vue.formData[key].type,
+							filename: vue.formData[key].name
+						});
+					}).then(function (response) {
+						file = response.data.file;
+						const signedUrl = response.data.upload_url;
+
+						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
+						let instance = axios.create();
+						instance.defaults.headers.common['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						axios.defaults.headers = defaultHeaders;
+						return instance.put(signedUrl, vue.formData[key]);
+					}).then(function () {
+						return file;
+					});
+				}
+				return promise;
+			},
 		},
-        components: {
-			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
-        }
+		components: {
+			'forms-ckeditor': require('./../../../forms/Ckeditor.vue'),
+			'forms-image-upload': require('./../../../forms/ImageUpload.vue')
+		}
 	};
 </script>
