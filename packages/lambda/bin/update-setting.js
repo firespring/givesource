@@ -31,14 +31,14 @@ return inquirer.prompt([
 	{
 		type: 'input',
 		message: function (answers) {
-			return 'What should the new value of ' + answers.key + ' be?'
+			return 'What should the new value of ' + answers.key + ' be?';
 		},
 		name: 'value',
 	},
 	{
 		type: 'confirm',
 		message: function (answers) {
-			return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?'
+			return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?';
 		},
 		name: 'confirm',
 	}
