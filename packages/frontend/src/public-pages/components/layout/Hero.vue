@@ -17,11 +17,12 @@
 
 <template>
     <div class="page-hero" :style="mastheadStyle">
-        <div class="page-hero__logo" v-if="hasLogoSlot">
-            <slot name="logo"></slot>
+        <div class="page-hero__spotlight" v-if="hasSpotlightSlot">
+            <slot name="spotlight"></slot>
         </div>
 
         <div class="page-hero__title" :class="{ wrapper: wrap, 'wrapper--sm': wrap }">
+            <slot name="logo"></slot>
             <slot name="title"></slot>
         </div>
 
@@ -61,8 +62,8 @@
 				}
 				return url;
 			},
-			hasLogoSlot: function () {
-				return this.$slots.logo;
+			hasSpotlightSlot: function () {
+				return this.$slots.spotlight;
 			},
 			hasMessageSlot: function () {
 				return this.$slots.default;

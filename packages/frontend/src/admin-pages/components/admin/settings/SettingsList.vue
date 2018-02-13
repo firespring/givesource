@@ -78,6 +78,17 @@
                                     </div>
                                 </div>
 
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-social-sharing' }">Social Sharing Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Manage the text and image that is shared via the social media logos on donation pages.
+                                    </div>
+                                </div>
+
                             </div>
                         </section>
                     </div>

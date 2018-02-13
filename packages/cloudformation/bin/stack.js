@@ -57,7 +57,7 @@ const validateEnv = function () {
 		AWS_REGION: awsRegion,
 		AWS_STACK_NAME: awsStackName,
 		AWS_RELEASE_BUCKET: awsReleaseBucket,
-		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion
+		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion,
 	};
 	for (let key in required) {
 		if (typeof required[key] === 'undefined') {

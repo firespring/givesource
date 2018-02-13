@@ -222,6 +222,14 @@ const router = new VueRouter({
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
+		{
+			path: '/settings/social-sharing',
+			name: 'settings-social-sharing',
+			component: require('./../components/admin/settings/socialSharing/SocialSharing.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
 
 		// Sponsors
 		{
@@ -489,7 +497,7 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'PUBLIC_PAGES_CLOUDFRONT_URL',
+		'EVENT_URL',
 		'UPLOADS_CLOUDFRONT_URL',
 		'USER_POOL_CLIENT_ID',
 		'USER_POOL_ID'

@@ -15,20 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const numeral = require('numeral');
 
-const fs = require('fs');
-const path = require('path');
-const deployInfo = require('../config/deploy-info.json');
-const s3 = require('./aws/s3');
+/**
+ * Format the provided value into the standard format used for percents.
+ *
+ * @param {*} value
+ * @returns {*}
+ */
+function percent(value) {
+	return numeral(value).format('0.0[0000]');
+}
 
-exports.fetch = function () {
-	s3.getObject(process.env.AWS_REGION, deployInfo.publicPagesS3BucketName, 'assets/css/custom.css').then(function (data) {
-		const configDir = path.normalize(`${__dirname}/../build/public-pages/assets/css`);
-		fs.writeFileSync(`${configDir}/custom.css`, data.Body);
-		console.log('custom.css downloaded from s3');
-	}).catch(function (err) {
-		console.error(err, err.stack);
-	});
-};
+export default percent;

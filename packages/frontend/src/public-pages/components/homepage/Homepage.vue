@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero :presentedBy="true" :wrap="true">
-            <img v-show="homepageSpotlightUrl" slot="logo" :alt="eventTitle" :src="homepageSpotlightUrl">
+            <img v-show="homepageSpotlightUrl" slot="spotlight" :alt="eventTitle" :src="homepageSpotlightUrl">
 
             <h1 slot="title">{{ getContentValue('HOMEPAGE_TITLE') }}</h1>
 

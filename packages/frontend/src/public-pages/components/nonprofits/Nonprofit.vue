@@ -18,7 +18,9 @@
 <template>
     <div>
         <layout-hero>
-            <img slot="logo" width="320" height="140" alt="Cheshire County Hygiene Services logo" src="/assets/temp/sponsors/cheshire-county-hygiene-services.png">
+            <div slot="logo" v-if="nonprofitLogoLoaded && logoUrl" class="page-hero__logo">
+                <img width="320" height="140" :alt="nonprofit.legalName" :src="logoUrl">
+            </div>
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
         </layout-hero>
 
@@ -57,13 +59,19 @@
                                 <a v-on:click="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
-                            <div class="donation-share">
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon btn--linkedin"><i class="fab fa-linkedin-in" aria-hidden="true"></i>Share</a>
-                                <a href="#" class="btn btn--xs btn--dark btn--icon"><i class="fas fa-envelope" aria-hidden="true"></i>Email</a>
-                            </div>
-
+                            <social-sharing network-tag="a"
+                                            :url="pageUrl"
+                                            :title="settings.SOCIAL_SHARING_DESCRIPTION"
+                                            inline-template>
+                                <div class="donation-share">
+                                    <network network="facebook">
+                                        <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</span>
+                                    </network>
+                                    <network network="twitter">
+                                        <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</span>
+                                    </network>
+                                </div>
+                            </social-sharing>
                         </div>
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
@@ -119,9 +127,14 @@
 				files: [],
 				nonprofit: {},
 				slides: [],
+				logo: null,
+				settings: {
+					SOCIAL_SHARING_DESCRIPTION: ''
+				},
 
 				nonprofitLoaded: false,
-                nonprofitSlidesLoaded: false
+				nonprofitSlidesLoaded: false,
+				nonprofitLogoLoaded: false
 			}
 		},
 		props: [
@@ -147,7 +160,22 @@
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();
-			}
+			},
+			logoUrl: function () {
+				const vue = this;
+				let logo = false;
+				if (vue.logo) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.logo.path;
+				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+				} else {
+					logo = '/assets/temp/logo-event.png';
+				}
+				return logo;
+			},
+			pageUrl: function () {
+				return document.location.origin;
+			},
 		},
 		beforeMount: function () {
 			const vue = this;
@@ -157,7 +185,6 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-
 				let promise = Promise.resolve();
 				if (to.meta.nonprofit !== null) {
 					vue.nonprofit = to.meta.nonprofit;
@@ -171,7 +198,7 @@
 					});
 				}
 
-				promise.then(function () {
+				promise = promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
@@ -188,6 +215,21 @@
 				}).then(function (response) {
 					vue.files = response.data;
 					vue.nonprofitSlidesLoaded = true;
+				});
+
+				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
+					promise = promise.then(function () {
+						return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
+					}).then(function (response) {
+						vue.logo = response.data;
+						vue.nonprofitLogoLoaded = true;
+					});
+				} else {
+					vue.nonprofitLogoLoaded = true;
+				}
+
+				promise = promise.then(function () {
+					return vue.loadSettings();
 				});
 			});
 		},
@@ -224,6 +266,16 @@
 			}).then(function (response) {
 				vue.files = response.data;
 				vue.nonprofitSlidesLoaded = true;
+			}).then(function () {
+				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
+					return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
+				}
+			}).then(function (response) {
+				if (response.data) {
+					vue.logo = response.data;
+				}
+				return vue.loadSettings();
+			}).then(function () {
 				next();
 			}).catch(function () {
 				next();
@@ -244,11 +296,23 @@
 			});
 		},
 		methods: {
+			loadSettings: function () {
+				const vue = this;
+				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+					keys: Object.keys(vue.settings)
+				})).then(function (response) {
+					response.data.forEach(function (setting) {
+						if (vue.settings.hasOwnProperty(setting.key)) {
+							vue.settings[setting.key] = setting.value;
+						}
+					});
+				});
+			},
 			getImageUrl: function (fileUuid) {
 				const vue = this;
 				const file = _.find(vue.files, {uuid: fileUuid});
 
-				return file ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path : '';
+				return file ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
 			},
 			openDonations: function (event) {
 				event.preventDefault();

@@ -94,7 +94,7 @@
 
 				vue.$request.get('files/' + vue.report.fileUuid).then(function (fileResponse) {
 					vue.file = fileResponse.data;
-					window.location.href = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.file.path;
+					window.location.href = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path;
 				});
 			}
 		}

@@ -53,15 +53,15 @@ const validateEnv = function () {
  *
  * @param {String} project
  * @param {String} src
- * @param {String} [assetPath]
+ * @param {String} [relativePath]
  * @param {boolean} [force]
  */
-const release = function (project, src, assetPath, force) {
-	assetPath = assetPath ? `assets/${assetPath}/` : '';
+const release = function (project, src, relativePath, force) {
+	relativePath = relativePath ? `${relativePath}/` : '';
 	force = (typeof force === 'boolean') ? force : false;
 
 	return new Promise(function (resolve, reject) {
-		const path = `${project}/${packageJson.version}/${assetPath}`;
+		const path = `${project}/${packageJson.version}/${relativePath}`;
 
 		S3.listObjects(awsReleaseBucketRegion, awsReleaseBucket, path).then(function (objects) {
 			if (objects.length !== 0) {
@@ -71,7 +71,7 @@ const release = function (project, src, assetPath, force) {
 				S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, objects).then(function () {
 					return S3.uploadDirectory(src, awsReleaseBucketRegion, awsReleaseBucket, path);
 				}).then(function () {
-					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{ Key: `${project}/${packageJson.version}/settings.json` }]);
+					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{Key: `${project}/${packageJson.version}/settings.json`}]);
 				}).then(function () {
 					resolve();
 				}).catch(function (err) {
@@ -79,7 +79,7 @@ const release = function (project, src, assetPath, force) {
 				});
 			} else {
 				S3.uploadDirectory(src, awsReleaseBucketRegion, awsReleaseBucket, path).then(function () {
-					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{ Key: `${project}/${packageJson.version}/settings.json` }]);
+					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{Key: `${project}/${packageJson.version}/settings.json`}]);
 				}).then(function () {
 					resolve();
 				}).catch(function (err) {
@@ -101,12 +101,13 @@ if (validateEnv()) {
 	const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
 	const publicPagesImgDir = path.normalize(`${publicPagesDir}/assets/img`);
 	const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
+	const publicPagesTemplatesDir = path.normalize(`${publicPagesDir}/templates`);
 	const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
 
 	release('admin-pages', adminPagesDir, '', force).then(function () {
-		return release('admin-pages', adminPagesCssDir, 'css', force);
+		return release('admin-pages', adminPagesCssDir, 'assets/css', force);
 	}).then(function () {
-		return release('admin-pages', adminPagesImgDir, 'img', force);
+		return release('admin-pages', adminPagesImgDir, 'assets/img', force);
 	}).then(function () {
 		console.log('released admin-pages');
 	}).catch(function (err) {
@@ -114,13 +115,15 @@ if (validateEnv()) {
 	});
 
 	release('public-pages', publicPagesDir, '', force).then(function () {
-		return release('public-pages', publicPagesCssDir, 'css', force);
+		return release('public-pages', publicPagesCssDir, 'assets/css', force);
 	}).then(function () {
-		return release('public-pages', publicPagesImgDir, 'img', force);
+		return release('public-pages', publicPagesImgDir, 'assets/img', force);
 	}).then(function () {
-		return release('public-pages', publicPagesTempDir, 'temp', force);
+		return release('public-pages', publicPagesTempDir, 'assets/temp', force);
 	}).then(function () {
-		return release('public-pages', publicPagesSponsorsDir, 'temp/sponsors', force);
+		return release('public-pages', publicPagesSponsorsDir, 'assets/temp/sponsors', force);
+	}).then(function () {
+		return release('public-pages', publicPagesTemplatesDir, 'templates', force);
 	}).then(function () {
 		console.log('released public-pages');
 	}).catch(function (err) {

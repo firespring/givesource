@@ -16,6 +16,7 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
@@ -24,6 +25,7 @@ const User = require('./../../models/user');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 
@@ -41,6 +43,8 @@ exports.handle = function (event, context, callback) {
 		return nonprofitsRepository.save(nonprofit);
 	}).then(function () {
 		return usersRepository.save(user);
+	}).then(function () {
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendRegistrationPendingEmail', {body: {email: user.email}});
 	}).then(function () {
 		callback(null, {
 			nonprofit: nonprofit.all(),

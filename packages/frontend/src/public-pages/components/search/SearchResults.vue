@@ -103,12 +103,16 @@
 						response.data.sort(function (a, b) {
 							return Utils.sortAlphabetically(a, b, 'legalName');
 						});
-						vue.setPaginationData({items: response.data});
+						vue.fetchLogos(response.data).then(function () {
+							vue.setPaginationData({items: response.data});
+						});
 					});
 				} else {
 					options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 					axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
-						vue.setPaginationData(response.data);
+						vue.fetchLogos(response.data.items).then(function () {
+							vue.setPaginationData(response.data);
+						});
 					});
 				}
 			});
@@ -136,15 +140,33 @@
 					response.data.sort(function (a, b) {
 						return Utils.sortAlphabetically(a, b, 'legalName');
 					});
-					vue.setPaginationData({items: response.data});
-					next();
+					vue.fetchLogos(response.data).then(function () {
+						vue.setPaginationData({items: response.data});
+						next();
+					});
 				});
 			} else {
 				options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
-					vue.setPaginationData(response.data);
-					next();
+					vue.fetchLogos(response.data.items).then(function () {
+						vue.setPaginationData(response.data);
+						next();
+					});
 				});
+			}
+		},
+		methods: {
+			fetchLogos: function (nonprofits) {
+				let promise = Promise.resolve();
+				if (nonprofits) {
+					const logoUuids = _.filter(_.map(nonprofits, 'logoFileUuid'));
+					promise = axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: logoUuids})).then(function (response) {
+						_.forEach(nonprofits, function (nonprofit) {
+							nonprofit.logo = _.find(response.data, {uuid: nonprofit.logoFileUuid});
+						});
+					});
+				}
+				return promise;
 			}
 		},
 		mixins: [

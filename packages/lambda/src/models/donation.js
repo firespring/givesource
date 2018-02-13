@@ -52,6 +52,7 @@ Donation.prototype.attributes = [
 	'subtotal',
 	'subtotalChargedToCard',
 	'total',
+	'note',
 
 	// Donor
 	'donorFirstName',
@@ -152,6 +153,10 @@ Donation.prototype.constraints = {
 		numericality: {
 			onlyInteger: true
 		}
+	},
+	note: {
+		presence: false,
+		type: 'string',
 	},
 
 	// Donor

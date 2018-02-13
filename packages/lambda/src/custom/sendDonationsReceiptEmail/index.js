@@ -21,6 +21,7 @@ const DonationsRepository = require('./../../repositories/donations');
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const EmailHelper = require('./../../helpers/email');
+const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
@@ -33,6 +34,7 @@ const SettingsRepostiory = require('./../../repositories/settings');
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new DonationsRepository();
 	const donorsRepository = new DonorsRepository();
+	const filesRepository = new FilesRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 	const request = new Request(event, context);
 	const ses = new SES();
@@ -41,6 +43,7 @@ exports.handle = function (event, context, callback) {
 	let donor = request.get('donor', null);
 	let donations = request.get('donations', []);
 	let paymentTransaction = request.get('paymentTransaction', null);
+	let transactions = [];
 
 	let html = '';
 	let settings = {
@@ -49,6 +52,7 @@ exports.handle = function (event, context, callback) {
 		EVENT_TITLE: null,
 		EVENT_LOGO: null,
 		PAGE_TERMS_ENABLED: null,
+		UPLOADS_CLOUD_FRONT_URL: null,
 	};
 	request.validate().then(function () {
 		if (donor) {
@@ -115,6 +119,16 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
+	}).then(function () {
+		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
+			return filesRepository.get(settings.EVENT_LOGO);
+		} else {
+			return Promise.resolve(null);
+		}
+	}).then(function (response) {
+		if (response) {
+			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+		}
 		return RenderHelper.renderTemplate('emails.donation-receipt', {
 			donor: donor,
 			settings: settings,

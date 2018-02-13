@@ -154,7 +154,7 @@
 				const vue = this;
 
 				if (vue.getResourceType(resource) === 'FILE') {
-					return vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
+					return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
 				} else {
 					return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
 				}

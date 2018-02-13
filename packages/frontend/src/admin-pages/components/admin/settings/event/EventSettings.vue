@@ -69,21 +69,6 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--url c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.EVENT_URL }">
-                                    <div class="c-form-item__label">
-                                        <label for="eventUrl" class="c-form-item-label-text">Event URL</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.EVENT_URL" type="url" name="eventUrl" id="eventUrl" maxlength="200" placeholder="https://"
-                                                   :class="{ 'has-error': formErrors.EVENT_URL }">
-                                        </div>
-                                        <div v-if="formErrors.EVENT_URL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.EVENT_URL }}
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="c-form-item c-form-item--combobox c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.EVENT_TIMEZONE }">
                                     <div class="c-form-item__label">
                                         <label for="eventTimezone" class="c-form-item-label-text">Time Zone</label>
@@ -188,8 +173,7 @@
 					DATE_REGISTRATIONS_END: '',
 					DATE_REGISTRATIONS_START: '',
 					EVENT_TITLE: '',
-					EVENT_TIMEZONE: '',
-					EVENT_URL: '',
+					EVENT_TIMEZONE: ''
 				},
 
 				// Errors
@@ -210,9 +194,6 @@
 			},
 			dateAcceptDonationsMaxDate: function () {
 				return this.formData.DATE_DONATIONS_END ? this.formData.DATE_DONATIONS_END : false;
-			},
-			eventUrl: function () {
-				return this.$store.getters.setting('PUBLIC_PAGES_CLOUDFRONT_URL');
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -286,10 +267,6 @@
 					},
 					EVENT_TIMEZONE: {
 						label: 'Event timezone',
-						presence: true,
-					},
-					EVENT_URL: {
-						label: 'Event URL',
 						presence: true,
 					}
 				};

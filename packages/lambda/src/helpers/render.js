@@ -17,6 +17,13 @@
 
 const mustache = require('mustache');
 
+/**
+ * Load and render the provided template
+ *
+ * @param {String} template
+ * @param {Object} data
+ * @returns {Promise}
+ */
 const renderTemplate = function (template, data) {
 	return new Promise(function (resolve, reject) {
 		let templatePath = template.replace(/\s/g, '').replace('.mustache', '').split('.').join('/');
@@ -31,6 +38,25 @@ const renderTemplate = function (template, data) {
 	});
 };
 
+/**
+ * Render the provided template
+ *
+ * @param {String} template
+ * @param {Object} data
+ * @returns {Promise}
+ */
+const renderStringTemplate = function (template, data) {
+	return new Promise(function (resolve, reject) {
+		try {
+			const rendered = mustache.render(template, data);
+			resolve(rendered);
+		} catch (err) {
+			reject(err);
+		}
+	});
+};
+
 export {
 	renderTemplate,
+	renderStringTemplate
 }

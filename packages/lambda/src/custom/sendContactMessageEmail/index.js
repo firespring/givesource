@@ -16,12 +16,14 @@
  */
 
 const EmailHelper = require('./../../helpers/email');
+const FilesRepository = require('./../../repositories/files');
 const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
 const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
+	const filesRepository = new FilesRepository();
 	const request = new Request(event, context).parameters(['message']);
 	const ses = new SES();
 	const settingsRepository = new SettingsRepository();
@@ -33,6 +35,7 @@ exports.handle = function (event, context, callback) {
 		EVENT_URL: null,
 		EVENT_TITLE: null,
 		EVENT_LOGO: null,
+		UPLOADS_CLOUD_FRONT_URL: null,
 	};
 	request.validate().then(function () {
 		return settingsRepository.batchGet(Object.keys(settings));
@@ -40,6 +43,16 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
+	}).then(function () {
+		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
+			return filesRepository.get(settings.EVENT_LOGO);
+		} else {
+			return Promise.resolve(null);
+		}
+	}).then(function (response) {
+		if (response) {
+			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+		}
 		return RenderHelper.renderTemplate('emails.contact-message', {
 			message: message,
 			settings: settings,
