@@ -564,7 +564,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/reports/{report_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/reports
     DependsOn: PostNonprofitReportLambdaFunction
 
   # Nonprofit Slides Lambda Resources
