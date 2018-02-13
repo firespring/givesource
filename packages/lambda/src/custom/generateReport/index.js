@@ -28,12 +28,16 @@ const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
+const SettingsRepository = require('./../../repositories/settings');
+const SettingHelper = require('./../../helpers/setting');
 
 exports.handle = function (event, context, callback) {
 	const filesRepository = new FilesRepository();
 	const reportsRepository = new ReportsRepository();
 	const request = new Request(event, context);
 	const s3 = new S3();
+	const settingsRepository = new SettingsRepository();
+	let timezone = null;
 
 	const report = new Report(request._body);
 	const file = new File();
@@ -45,10 +49,16 @@ exports.handle = function (event, context, callback) {
 		});
 		return file.validate();
 	}).then(function () {
+		return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE);
+	}).then(function (setting) {
+		if (setting) {
+			timezone = setting.value;
+		}
+
 		if (report.status === ReportHelper.STATUS_PENDING) {
 			switch (report.type) {
 				case ReportHelper.TYPE_DONATIONS:
-					return getDonationsData(report);
+					return getDonationsData(report, timezone);
 
 				default:
 					return Promise.resolve();
@@ -91,9 +101,10 @@ const getFilenameTimestamp = function () {
  * Get donation data
  *
  * @param {Report} report
+ * @param {String} timezone
  * @return {Promise}
  */
-const getDonationsData = function (report) {
+const getDonationsData = function (report, timezone) {
 	const donationsRepository = new DonationsRepository();
 	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 
@@ -111,7 +122,7 @@ const getDonationsData = function (report) {
 	promise = promise.then(function (donations) {
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				return donation.mutate();
+				return donation.mutate(null, {timezone: timezone});
 			}),
 			fields: DonationHelper.reportFields,
 		});

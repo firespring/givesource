@@ -43,6 +43,7 @@
 		"mime": "^1.3.6",
 		"mocha": "^3.4.2",
 		"mocha-promise-me": "^1.0.3",
+		"moment-timezone": "^0.5.14",
 		"mustache": "^2.3.0",
 		"node-uuid": "^1.4.8",
 		"numeral": "^2.0.6",
