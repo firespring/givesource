@@ -486,7 +486,8 @@
 					vue.processing = false;
 					if (response.data && response.data.errorMessage) {
 						console.log(response.data);
-					} else {
+                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+                    } else {
 						vue.$store.commit('clearCartItems');
 						vue.bus.$emit('updateCartItems');
 						vue.bus.$emit('updateCartItemsCount');

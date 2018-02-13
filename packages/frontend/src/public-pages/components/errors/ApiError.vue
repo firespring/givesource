@@ -48,7 +48,6 @@
                 if (value === oldValue) {
                     return;
                 }
-                console.log('we aer int he APiError', vue.localValue);
                 vue.$emit('input', vue.localValue);
             },
             value: function (value, oldValue) {
