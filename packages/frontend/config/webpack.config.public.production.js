@@ -69,6 +69,7 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			$: 'jquery',
 			jQuery: 'jquery',
+			Promise: 'es6-promise-promise',
 			'window.jQuery': 'jquery'
 		}),
 		new UglifyJsPlugin(),

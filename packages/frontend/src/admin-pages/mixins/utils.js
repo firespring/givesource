@@ -2,6 +2,7 @@ const mixin = {
 	methods: {
 		sync: function (object, sources) {
 			object = JSON.parse(JSON.stringify(object));
+			sources = Array.isArray(sources) ? sources : [sources];
 			Object.keys(object).forEach(function (key) {
 				sources.forEach(function (source) {
 					source = JSON.parse(JSON.stringify(source));
@@ -17,6 +18,7 @@ const mixin = {
 
 			const params = {};
 			data = JSON.parse(JSON.stringify(data));
+			originals = Array.isArray(originals) ? originals : [originals];
 			Object.keys(data).forEach(function (key) {
 				originals.forEach(function (original) {
 					original = JSON.parse(JSON.stringify(original));
