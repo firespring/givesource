@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ nonprofitUser.email }`">{{ nonprofitUser.email }}</a>
+                        <a :href="'mailto:' + nonprofitUser.email">{{ nonprofitUser.email }}</a>
                     </div>
 
                 </div>
@@ -52,25 +52,25 @@
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                selectedNonprofitUser: this.nonprofitUser
-            }
-        },
-        computed: {
-            date: function () {
-                return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
-            }
-        },
-        props: [
-            'nonprofitUser'
-        ],
-        methods: {
-            remove: function () {
-                const vue = this;
-                vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);
-            },
-        }
-    };
+	module.exports = {
+		data: function () {
+			return {
+				selectedNonprofitUser: this.nonprofitUser
+			}
+		},
+		computed: {
+			date: function () {
+				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
+			}
+		},
+		props: [
+			'nonprofitUser'
+		],
+		methods: {
+			remove: function () {
+				const vue = this;
+				vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);
+			},
+		}
+	};
 </script>

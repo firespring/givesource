@@ -19,15 +19,17 @@ const numeral = require('numeral');
 
 const mixin = {
 	methods: {
-		addBodyClasses: function (...classes) {
-			document.body.classList.add(...classes);
+		addBodyClasses: function (classes) {
+			classes = Array.isArray(classes) ? classes : [classes];
+			document.body.classList.add(classes);
 		},
-		removeBodyClasses: function (...classes) {
-			document.body.classList.remove(...classes);
+		removeBodyClasses: function (classes) {
+			classes = Array.isArray(classes) ? classes : [classes];
+			document.body.classList.remove(classes);
 		},
-		setBodyClasses: function (...classes) {
+		setBodyClasses: function (classes) {
 			document.body.className = '';
-			document.body.classList.add(...classes);
+			this.addBodyClasses(classes);
 		},
 		setPageTitle: function (title) {
 			document.title = title;

@@ -40,7 +40,7 @@
             <div class="c-user-strip u-flex u-items-center" v-if="donation.donorEmail">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${donation.donorEmail}`">{{ donation.donorEmail }}</a>
+                        <a :href="'mailto:' + donation.donorEmail">{{ donation.donorEmail }}</a>
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ donation.donorEmail }`">{{ donation.donorEmail }}</a>
+                        <a :href="'mailto:' + donation.donorEmail">{{ donation.donorEmail }}</a>
                     </div>
                     <div class="c-user-strip__phone u-icon u-flex u-items-center">
                         {{ donation.donorPhone }}

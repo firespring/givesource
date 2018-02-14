@@ -180,7 +180,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			vue.setBodyClasses('donation', 'donation--nonprofit');
+			vue.setBodyClasses(['donation', 'donation--nonprofit']);
 			vue.setPageTitle(vue.pageTitle);
 		},
 		beforeRouteEnter: function (to, from, next) {

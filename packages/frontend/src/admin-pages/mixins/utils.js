@@ -1,6 +1,6 @@
 const mixin = {
 	methods: {
-		sync: function (object, ...sources) {
+		sync: function (object, sources) {
 			object = JSON.parse(JSON.stringify(object));
 			Object.keys(object).forEach(function (key) {
 				sources.forEach(function (source) {
@@ -12,7 +12,7 @@ const mixin = {
 			});
 			return object;
 		},
-		getUpdatedParameters: function (data, ...originals) {
+		getUpdatedParameters: function (data, originals) {
 			const mixin = this;
 
 			const params = {};

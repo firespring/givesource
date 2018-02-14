@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ adminUser.email }`">{{ adminUser.email }}</a>
+                        <a :href="'mailto:' + adminUser.email">{{ adminUser.email }}</a>
                     </div>
 
                 </div>
@@ -54,28 +54,28 @@
 
 <script>
 
-    module.exports = {
-        data: function () {
-            return {
-                selectedAdminUser: this.adminUser
-            }
-        },
-        computed: {
-            date: function () {
-                return new Date(this.adminUser.createdOn).toLocaleDateString();
-            },
-            superAdmin: function () {
-                return _.includes(this.adminUser.groups, 'SuperAdmin');
-            }
-        },
-        props: [
-            'adminUser'
-        ],
-        methods: {
-            remove: function () {
-                const vue = this;
-                vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);
-            },
-        }
-    };
+	module.exports = {
+		data: function () {
+			return {
+				selectedAdminUser: this.adminUser
+			}
+		},
+		computed: {
+			date: function () {
+				return new Date(this.adminUser.createdOn).toLocaleDateString();
+			},
+			superAdmin: function () {
+				return _.includes(this.adminUser.groups, 'SuperAdmin');
+			}
+		},
+		props: [
+			'adminUser'
+		],
+		methods: {
+			remove: function () {
+				const vue = this;
+				vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);
+			},
+		}
+	};
 </script>
