@@ -140,11 +140,12 @@
 					delete vue.userAttributes['email_verified'];
 					vue.cognitoUser.completeNewPasswordChallenge(vue.formData.password, vue.userAttributes, {
 						onSuccess: function () {
-							if (vue.$route.query.redirect) {
-								vue.$router.push(vue.$route.query.redirect);
-							} else {
-								vue.$router.push('/');
-							}
+							vue.$request.patch('users/' + vue.cognitoUser.username, {isVerified: true}).then(function () {
+								vue.redirectToIntendedUri();
+							}).catch(function (err) {
+								console.log(err);
+								vue.toggleAuthorizing(false);
+                            });
 						},
 						onFailure: function (err) {
 							vue.toggleAuthorizing(false);
@@ -170,7 +171,16 @@
 					vue.$emit('setDisplayHeader', true);
 					vue.$emit('setDisplayLinks', true);
 				}
-			}
+			},
+            redirectToIntendedUri: function () {
+				const vue = this;
+
+	            if (vue.$route.query.redirect) {
+		            vue.$router.push(vue.$route.query.redirect);
+	            } else {
+		            vue.$router.push('/');
+	            }
+            }
 		}
 	}
 </script>

@@ -30,7 +30,7 @@
                 <router-link :to="{ name: 'sponsors-list', params: {sponsorTierUuid: sponsorTier.uuid} }" role="button" class="c-btn c-btn--sm c-btn--icon">
                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Manage Tier
                 </router-link>
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger js-btn-dropdown-trigger"></a>
+                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
                         <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierUuid: sponsorTier.uuid }}">
