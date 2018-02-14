@@ -606,11 +606,16 @@
 				return new Promise(function (resolve, reject) {
 					const settings = [];
 					Object.keys(vue.formData.settings).forEach(function (key) {
+						let value = vue.formData.settings[key];
+						if (vue.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value === false) {
+							value = '';
+						}
 						settings.push({
 							key: key,
-							value: vue.formData.settings[key]
+							value: value
 						});
 					});
+
 					resolve(settings);
 				});
 			},
