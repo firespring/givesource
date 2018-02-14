@@ -55,7 +55,7 @@
 			}
 		},
 		created: function () {
-			this.addBodyClasses(['has-overlay', 'has-overlay--mobile-nav']);
+			this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
 		},
 		methods: {
 			close: function (event) {
@@ -63,7 +63,7 @@
 				const vue = this;
 
 				vue.removeModal('menu-overlay');
-				vue.removeBodyClasses(['has-overlay', 'has-overlay--mobile-nav']);
+				vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
 			}
 		}
 	};

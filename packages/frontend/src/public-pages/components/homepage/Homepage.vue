@@ -180,7 +180,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			vue.setBodyClasses(['home', 'home--live']);
+			vue.setBodyClasses('home', 'home--live');
 			vue.setPageTitle(vue.eventTitle + ' - ' + vue.eventDate);
 		},
 		methods: {

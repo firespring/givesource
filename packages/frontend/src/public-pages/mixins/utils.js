@@ -20,11 +20,9 @@ const numeral = require('numeral');
 const mixin = {
 	methods: {
 		addBodyClasses: function (classes) {
-			classes = Array.isArray(classes) ? classes : [classes];
 			document.body.classList.add(classes);
 		},
 		removeBodyClasses: function (classes) {
-			classes = Array.isArray(classes) ? classes : [classes];
 			document.body.classList.remove(classes);
 		},
 		setBodyClasses: function (classes) {
