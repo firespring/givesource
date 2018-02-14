@@ -83,7 +83,8 @@ module.exports = {
 			]
 		}),
 		new HtmlWebpackPlugin({
-			template: 'src/public-pages/index.html'
+			template: 'src/public-pages/templates/index.mustache',
+			filename: 'templates/index.mustache'
 		}),
 		new BrowserSyncPlugin({
 			host: 'localhost',

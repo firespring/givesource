@@ -28,6 +28,7 @@
 		"lambda:install": "cd packages/lambda && npm install",
 		"lambda:release": "cd packages/lambda && npm run release",
 		"lambda:seed": "cd packages/lambda && npm run seed",
+		"lambda:setting": "cd packages/lambda && npm run setting",
 		"lambda:release:force": "cd packages/lambda && npm run release:force",
 		"clean": "npm run cloudformation:clean && npm run frontend:clean && npm run lambda:clean",
 		"deploy": "npm run frontend:deploy && npm run lambda:deploy",

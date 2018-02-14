@@ -19,7 +19,7 @@
     <div class="leaderboard-item leaderboard-item--detailed">
 
         <div class="leaderboard-item__image">
-            <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"><img alt="" src="/assets/temp/thumbnail.jpg"></router-link>
+            <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"><img alt="" :src="logoUrl"></router-link>
         </div>
 
         <div class="leaderboard-item__info">
@@ -34,7 +34,7 @@
         <div v-if="displayDonationAmount" class="leaderboard-item__amount">{{ amount }}</div>
 
         <div v-if="canDonate" class="leaderboard-item__action">
-            <a v-on:click.prevent="donate" href="#" class="btn btn--sm btn--green">Donate</a>
+            <a v-on:click.prevent="donate" href="#" class="btn btn--accent btn--sm">Donate</a>
         </div>
     </div>
 </template>
@@ -52,6 +52,18 @@
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();
+			},
+			logoUrl: function () {
+				const vue = this;
+				let logo = false;
+				if (vue.nonprofit.logo) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path;
+				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
+					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+				} else {
+					logo = '/assets/temp/logo-event.png';
+				}
+				return logo;
 			}
 		},
 		props: [

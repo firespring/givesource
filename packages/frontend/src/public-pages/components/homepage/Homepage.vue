@@ -18,6 +18,8 @@
 <template>
     <div>
         <layout-hero :presentedBy="true" :wrap="true">
+            <img v-show="homepageSpotlightUrl" slot="spotlight" :alt="eventTitle" :src="homepageSpotlightUrl">
+
             <h1 slot="title">{{ getContentValue('HOMEPAGE_TITLE') }}</h1>
 
             <div v-html="getContentValue('HOMEPAGE_MASTHEAD_TEXT')"></div>
@@ -26,9 +28,10 @@
         <main class="main">
             <div class="wrapper">
 
-                <metrics :displayMatchFund="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"
+                <metrics :matchFundEnabled="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"
                          :matchFundButtonText="getContentValue('HOMEPAGE_MATCH_BUTTON', 'Love Them All')"
                          :matchFundDetails="getContentValue('HOMEPAGE_MATCH_DETAILS')"
+                         :matchFundNonprofit="matchFundNonprofit"
                          :registerButtonText="getContentValue('HOMEPAGE_REGISTER_BUTTON', 'Register Your Nonprofit Today')"
                          :registerDetails="getContentValue('HOMEPAGE_REGISTER_DETAILS')"></metrics>
 
@@ -53,16 +56,92 @@
 
 	const moment = require('moment-timezone');
 
+	const fetchData = function () {
+		let promise = Promise.resolve();
+		let settings = {};
+		let contents = [];
+		let matchFundNonprofit = null;
+
+		promise = promise.then(function () {
+			return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+				keys: [
+					'DATE_DONATIONS_END',
+					'DATE_DONATIONS_START',
+					'MATCH_FUND_NONPROFIT_UUID'
+				]
+			})).then(function (response) {
+				response.data.forEach(function (setting) {
+					settings[setting.key] = setting.value;
+				});
+			})
+		});
+
+		promise = promise.then(function () {
+			return axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: [
+					'HOMEPAGE_TITLE',
+					'HOMEPAGE_MASTHEAD_TEXT',
+					'HOMEPAGE_MAIN_TEXT',
+					'HOMEPAGE_POST_EVENT_TEXT',
+					'HOMEPAGE_REGISTER_BUTTON',
+					'HOMEPAGE_REGISTER_DETAILS',
+					'HOMEPAGE_MATCH_IS_ENABLED',
+					'HOMEPAGE_MATCH_BUTTON',
+					'HOMEPAGE_MATCH_DETAILS',
+					'HOMEPAGE_SPOTLIGHT'
+				],
+			})).then(function (response) {
+				contents = response.data;
+			});
+		});
+
+		promise = promise.then(function () {
+			let subPromise = Promise.resolve();
+			contents.forEach(function (content) {
+				if (content.type === 'FILE') {
+					subPromise = subPromise.then(function () {
+						return axios.get(API_URL + 'files/' + content.value).then(function (response) {
+							content.value = response.data;
+						});
+					});
+				}
+			});
+			return subPromise;
+		});
+
+		promise = promise.then(function () {
+			if (settings.MATCH_FUND_NONPROFIT_UUID) {
+				return axios.get(API_URL + 'nonprofits/' + settings.MATCH_FUND_NONPROFIT_UUID).then(function (response) {
+					matchFundNonprofit = response.data;
+				});
+			} else {
+				return Promise.resolve();
+			}
+		});
+
+		promise = promise.then(function () {
+			return {
+				contents: contents,
+				matchFundNonprofit: matchFundNonprofit,
+				settings: settings
+			};
+		});
+
+		return promise;
+	};
+
 	module.exports = {
 		data: function () {
 			return {
 				contents: [],
 				spotlightImage: '/assets/temp/logo-gtld.png',
 				nonprofits: [],
+				matchFundNonprofit: null,
 
 				settings: {
 					DATE_DONATIONS_END: null,
-					DATE_DONATIONS_START: null
+					DATE_DONATIONS_START: null,
+					MATCH_FUND_NONPROFIT_UUID: null
 				}
 			}
 		},
@@ -71,66 +150,38 @@
 				return Settings.eventTitle();
 			},
 			eventDate: function () {
-				var vue = this;
-				return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+				const vue = this;
+				if (vue.$store.getters.setting('DATE_EVENT') && vue.$store.getters.setting('EVENT_TIMEZONE')) {
+					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+				}
+				return '';
+			},
+			homepageSpotlightUrl: function () {
+				const vue = this;
+				let url = false;
+				let file = vue.getContentValue('HOMEPAGE_SPOTLIGHT', false);
+				if (_.isPlainObject(file) && file.hasOwnProperty('path')) {
+					url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path;
+				}
+				return url;
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				axios.get(API_URL + 'settings' + Utils.generateQueryString({
-					keys: Object.keys(vue.settings)
-				})).then(function (response) {
-					response.data.forEach(function (setting) {
-						if (vue.settings.hasOwnProperty(setting.key)) {
-							vue.settings[setting.key] = setting.value;
-						}
-					});
-					return axios.get(API_URL + 'contents' + Utils.generateQueryString({
-						keys: [
-							'HOMEPAGE_TITLE',
-							'HOMEPAGE_MASTHEAD_TEXT',
-							'HOMEPAGE_MAIN_TEXT',
-							'HOMEPAGE_POST_EVENT_TEXT',
-							'HOMEPAGE_REGISTER_BUTTON',
-							'HOMEPAGE_REGISTER_DETAILS',
-							'HOMEPAGE_MATCH_IS_ENABLED',
-							'HOMEPAGE_MATCH_BUTTON',
-							'HOMEPAGE_MATCH_DETAILS',
-						],
-					}));
-				}).then(function (response) {
-					vue.contents = response.data;
+			fetchData().then(function (data) {
+				next(function (vue) {
+					vue.settings = data.settings;
+					vue.contents = data.contents;
+					vue.matchFundNonprofit = data.matchFundNonprofit;
 				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			axios.get(API_URL + 'settings' + Utils.generateQueryString({
-				keys: Object.keys(vue.formData)
-			})).then(function (response) {
-				response.data.forEach(function (setting) {
-					if (vue.settings.hasOwnProperty(setting.key)) {
-						vue.settings[setting.key] = setting.value;
-					}
-				});
-				return axios.get(API_URL + 'contents' + Utils.generateQueryString({
-					keys: [
-						'HOMEPAGE_TITLE',
-						'HOMEPAGE_MASTHEAD_TEXT',
-						'HOMEPAGE_MAIN_TEXT',
-						'HOMEPAGE_POST_EVENT_TEXT',
-						'HOMEPAGE_REGISTER_BUTTON',
-						'HOMEPAGE_REGISTER_DETAILS',
-						'HOMEPAGE_MATCH_IS_ENABLED',
-						'HOMEPAGE_MATCH_BUTTON',
-						'HOMEPAGE_MATCH_DETAILS',
-					],
-				}));
-			}).then(function (response) {
-				vue.contents = response.data;
-				next();
-			}).catch(function () {
+			fetchData().then(function (data) {
+				vue.settings = data.settings;
+				vue.contents = data.contents;
+				vue.matchFundNonprofit = data.matchFundNonprofit;
 				next();
 			});
 		},

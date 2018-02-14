@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const _ = require('lodash');
 const Nonprofit = require('./../models/nonprofit');
 const NonprofitHelper = require('./../helpers/nonprofit');
 const QueryBuilder = require('./../aws/queryBuilder');
@@ -129,10 +130,26 @@ NonprofitsRepository.prototype.search = function (keys, search, filters) {
 		if (Object.keys(filters).length) {
 			params.FilterExpression = `(${params.FilterExpression})`;
 			Object.keys(filters).forEach(function (key) {
-				const query = isNaN(filters[key]) ? `contains(#${key}, :${key})` : `#${key} = :${key}`;
+				let filterConditional = '=';
+				let filterValue = filters[key];
+				if (_.isPlainObject(filterValue)) {
+					filterConditional = filterValue.conditional;
+					filterValue = filterValue.value;
+				} else if (isNaN(filterValue)) {
+					filterConditional = 'contains';
+				} else {
+					filterValue = parseInt(filterValue);
+				}
+
+				let query = `#${key} ${filterConditional} :${key}`;
+				if (filterConditional === '!=' || filterConditional.toLowerCase() === 'not') {
+					query = `NOT #${key} = :${key}`;
+				} else if (filterConditional === 'contains') {
+					query = `contains(#${key}, :${key})`;
+				}
 				params.FilterExpression = params.FilterExpression + ' AND ' + query;
 				params.ExpressionAttributeNames[`#${key}`] = key;
-				params.ExpressionAttributeValues[`:${key}`] = isNaN(filters[key]) ? filters[key] : parseInt(filters[key]);
+				params.ExpressionAttributeValues[`:${key}`] = filterValue;
 			});
 		}
 

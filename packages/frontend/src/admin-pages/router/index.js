@@ -191,8 +191,8 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/settings/customize-appearance',
-			name: 'settings-customize-appearance',
+			path: '/settings/site-appearance',
+			name: 'site-appearance',
 			component: require('./../components/admin/settings/appearance/Appearance.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
@@ -218,6 +218,14 @@ const router = new VueRouter({
 			path: '/settings/admins/invite',
 			name: 'settings-admins-invite',
 			component: require('./../components/admin/settings/manageAdmins/ManageAdminsInvite.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/social-sharing',
+			name: 'settings-social-sharing',
+			component: require('./../components/admin/settings/socialSharing/SocialSharing.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -489,8 +497,8 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'PUBLIC_PAGES_CLOUDFRONT_URL',
-		'UPLOADS_CLOUDFRONT_URL',
+		'EVENT_URL',
+		'UPLOADS_CLOUD_FRONT_URL',
 		'USER_POOL_CLIENT_ID',
 		'USER_POOL_ID'
 	];
@@ -562,8 +570,12 @@ const authMiddleware = function (to, from, next) {
 					params.query = {redirect: to.fullPath};
 				}
 				next(params);
+			} else {
+				next();
 			}
 		});
+	} else {
+		next();
 	}
 };
 
@@ -576,7 +588,7 @@ const authMiddleware = function (to, from, next) {
  * @return {Promise}
  */
 const nonprofitStatusMiddleware = function (to, from, next) {
-	if (to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
+	if (User.isAuthenticated() && to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
 		const request = new Request();
 		return request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 			const nonprofit = response.data;
@@ -584,11 +596,11 @@ const nonprofitStatusMiddleware = function (to, from, next) {
 			if (_.intersection(allowed, [nonprofit.status]).length === 0) {
 				next({name: '404'});
 			} else {
-				return Promise.resolve();
+				next();
 			}
 		});
 	} else {
-		return Promise.resolve();
+		next();
 	}
 };
 
@@ -600,10 +612,14 @@ const nonprofitStatusMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const nonprofitMiddleware = function (to, from, next) {
-	if (to.meta.hasOwnProperty('validateNonprofitUuid') && to.params.hasOwnProperty('nonprofitUuid')) {
+	if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitUuid') && to.params.hasOwnProperty('nonprofitUuid')) {
 		if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && router.app.user.nonprofitUuid !== to.params.nonprofitUuid) {
 			next({name: '404'});
+		} else {
+			next();
 		}
+	} else {
+		next();
 	}
 };
 
@@ -615,31 +631,57 @@ const nonprofitMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const groupsMiddleware = function (to, from, next) {
-	if (to.meta.hasOwnProperty('allowedGroups') && _.intersection(router.app.user.groups, to.meta.allowedGroups).length === 0) {
+	if (User.isAuthenticated() && to.meta.hasOwnProperty('allowedGroups') && _.intersection(router.app.user.groups, to.meta.allowedGroups).length === 0) {
 		next({name: '404'});
+	} else {
+		next();
 	}
+};
+
+/**
+ * Load user middleware
+ *
+ * @param {{}} to
+ * @param {{}} from
+ * @param {function} next
+ */
+const loadUserMiddleware = function (to, from, next) {
+	if (User.isAuthenticated()) {
+		loadUser().then(function () {
+			next();
+		}).catch(function (err) {
+			console.log(err);
+			next(false);
+		});
+	} else {
+		next();
+	}
+};
+
+/**
+ * Load settings middleware
+ *
+ * @param {{}} to
+ * @param {{}} from
+ * @param {function} next
+ */
+const loadSettingsMiddleware = function (to, from, next) {
+	loadSettings().then(function () {
+		next();
+	}).catch(function (err) {
+		console.log(err);
+		next(false);
+	});
 };
 
 /**
  * Route Middleware
  */
-router.beforeEach(function (to, from, next) {
-	loadSettings().then(function () {
-		authMiddleware(to, from, next);
-	}).then(function () {
-		if (User.isAuthenticated()) {
-			return loadUser().then(function () {
-				return nonprofitStatusMiddleware(to, from, next);
-			}).then(function () {
-				nonprofitMiddleware(to, from, next);
-				groupsMiddleware(to, from, next);
-			});
-		}
-	}).then(function () {
-		next();
-	}).catch(function (err) {
-		console.log(err);
-	});
-});
+router.beforeEach(loadSettingsMiddleware);
+router.beforeEach(authMiddleware);
+router.beforeEach(loadUserMiddleware);
+router.beforeEach(nonprofitStatusMiddleware);
+router.beforeEach(nonprofitMiddleware);
+router.beforeEach(groupsMiddleware);
 
 export default router;

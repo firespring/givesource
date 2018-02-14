@@ -17,12 +17,7 @@
 
 <template>
     <tr>
-        <td class="input">
-            <div class="checkbox checkbox--sm js-check-this-row">
-                <input type="checkbox" name="checkThisRow[]" id="checkThisRow-1" class="check-this-row" value="3">
-                <label for="checkThisRow-1"></label>
-            </div>
-        </td>
+
         <td class="image">
             <v-gravatar :email="nonprofitUser.email" :size="150" default-img="mm"></v-gravatar>
         </td>
@@ -49,7 +44,7 @@
             <div class="date">{{ date }}</div>
         </td>
         <td class="u-nowrap">
-            <a href="#" role="button" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
+            <a href="#" role="button" v-on:click="remove" class="c-btn c-btn--sm c-btn--flat c-btn--neutral c-btn--icon js-modal-trigger" rel="modal-confirm-remove-org-member">
                 <i class="fa fa-minus-circle" aria-hidden="true"></i>Remove
             </a>
         </td>
@@ -57,14 +52,25 @@
 </template>
 
 <script>
-	module.exports = {
-		computed: {
-			date: function () {
-				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
+    module.exports = {
+        data: function () {
+            return {
+                selectedNonprofitUser: this.nonprofitUser
             }
         },
-		props: [
-			'nonprofitUser'
-        ]
-	};
+        computed: {
+            date: function () {
+                return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
+            }
+        },
+        props: [
+            'nonprofitUser'
+        ],
+        methods: {
+            remove: function () {
+                const vue = this;
+                vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);
+            },
+        }
+    };
 </script>

@@ -20,26 +20,25 @@
         <legend>Your Current Donations</legend>
 
         <div class="form-item">
-            <cart-donations-list-table></cart-donations-list-table>
+            <cart-donations-list-table v-on:hasError="hasError"></cart-donations-list-table>
         </div>
 
         <div class="cart-totals" v-if="displayTotal">
             <div class="cart-totals__subtotal">
-                Your donation subtotal is <strong>{{ subtotal }}</strong>. (<router-link :to="{ name: 'search-results' }">Find another nonprofit to help</router-link>)
+                Your donation subtotal is <strong>{{ subtotal }}</strong>. (
+                <router-link :to="{ name: 'search-results' }">Find another nonprofit to help</router-link>
+                )
             </div>
             <div class="cart-totals__transaction-fees">
                 <div>
-                    There are <strong>{{ fees }}</strong> in transaction fees associated with your donation. Will you cover them?
-                </div>
-                <div>
                     <label class="checkbox-solo">
                         <input v-model="localValue" type="checkbox" name="coverDonationFees" id="coverDonationFees">
-                        <span>Yes, I'll donate an extra {{ fees }} to cover transaction fees</span>
+                        <span>I want to cover the <strong>{{ fees }}</strong> transaction cost so 100% of my donation goes to the organization(s).</span>
                     </label>
                 </div>
             </div>
             <div class="cart-totals__total">
-                <strong>Your total donation will be {{ total }}.</strong>
+                <strong>Your total payment will be {{ total }}.</strong>
             </div>
         </div>
 
@@ -48,88 +47,92 @@
 
 <script>
     module.exports = {
-    	data: function () {
-    		return {
-    			localValue: false,
+        data: function () {
+            return {
+                localValue: false,
 
-			    donationFees: 0,
+                donationFees: 0,
                 donationSubtotal: 0,
             };
         },
         computed: {
-	        donationTotal: function () {
-		        const vue = this;
+            donationTotal: function () {
+                const vue = this;
 
-		        if (vue.localValue) {
-			        return this.donationFees + this.donationSubtotal;
-		        } else {
-			        return this.donationSubtotal;
-		        }
-	        },
-    		fees: function () {
-    			const fees = JSON.parse(JSON.stringify(this.donationFees));
-			    return this.formatMoney(fees);
+                if (vue.localValue) {
+                    return this.donationFees + this.donationSubtotal;
+                } else {
+                    return this.donationSubtotal;
+                }
             },
-    		subtotal: function () {
-			    const subtotal = JSON.parse(JSON.stringify(this.donationSubtotal));
-    			return this.formatMoney(subtotal);
+            fees: function () {
+                const fees = JSON.parse(JSON.stringify(this.donationFees));
+                return this.formatMoney(fees);
+            },
+            subtotal: function () {
+                const subtotal = JSON.parse(JSON.stringify(this.donationSubtotal));
+                return this.formatMoney(subtotal);
             },
             total: function () {
-	            const total = JSON.parse(JSON.stringify(this.donationTotal));
-	            return this.formatMoney(total);
+                const total = JSON.parse(JSON.stringify(this.donationTotal));
+                return this.formatMoney(total);
             }
         },
         props: {
-    		value: {},
+            value: {},
             displayTotal: {
-    			type: Boolean,
+                type: Boolean,
                 default: false
             }
         },
-    	created: function () {
-    		const vue = this;
+        created: function () {
+            const vue = this;
 
-    		vue.updateDonationsSubtotal();
-    		vue.bus.$on('updateCartItems', function () {
-			    vue.updateDonationsSubtotal();
+            vue.updateDonationsSubtotal();
+            vue.bus.$on('updateCartItems', function () {
+                vue.updateDonationsSubtotal();
             });
         },
         beforeDestroy: function () {
-    		const vue = this;
+            const vue = this;
 
-    		vue.bus.$off('updateCartItems');
+            vue.bus.$off('updateCartItems');
         },
         watch: {
-	        localValue: function (value, oldValue) {
-		        const vue = this;
-		        if (value === oldValue) {
-			        return;
-		        }
-		        vue.$emit('input', value);
-	        },
-	        value: function (value, oldValue) {
-		        const vue = this;
-		        if (value === oldValue) {
-			        return;
-		        }
-		        vue.localValue = value;
-	        }
-        },
-        methods: {
-    		updateDonationsSubtotal: function () {
-    			const vue = this;
-
-			    const cartItems = vue.$store.getters.cartItems;
-
-                vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
-			    vue.donationSubtotal = 0;
-                cartItems.forEach(function (cartItem) {
-				    vue.donationSubtotal += cartItem.amount;
-			    });
+            localValue: function (value, oldValue) {
+                const vue = this;
+                if (value === oldValue) {
+                    return;
+                }
+                vue.$emit('input', value);
+            },
+            value: function (value, oldValue) {
+                const vue = this;
+                if (value === oldValue) {
+                    return;
+                }
+                vue.localValue = value;
             }
         },
+        methods: {
+            updateDonationsSubtotal: function () {
+                const vue = this;
+
+                const cartItems = vue.$store.getters.cartItems;
+
+                vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
+                vue.donationSubtotal = 0;
+                cartItems.forEach(function (cartItem) {
+                    vue.donationSubtotal += cartItem.amount;
+                });
+            },
+            hasError: function (hasError) {
+                const vue = this;
+                vue.$emit('hasError', hasError);
+            },
+        },
         components: {
-        	'cart-donations-list-table': require('./CartDonationsListTable.vue')
+            'cart-donations-list-table': require('./CartDonationsListTable.vue')
         }
     };
 </script>

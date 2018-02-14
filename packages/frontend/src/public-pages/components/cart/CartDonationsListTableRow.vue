@@ -19,10 +19,18 @@
     <tr>
         <td class="organization">
             <strong>{{ nonprofit.legalName }}</strong>
+            <div class="form-item mt2">
+                <div class="form-item__control">
+                    <input v-model="localNote" type="text" name="note1" class="sm" :placeholder="placeHolder" maxlength="200">
+                </div>
+            </div>
         </td>
         <td class="donation">
             <div class="donation-amount">
-                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions">
+                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': error}">
+            </div>
+            <div v-if="error" class="notes notes--below notes--error">
+                A donation amount must be at least $10.00
             </div>
         </td>
         <td class="actions nowrap">
@@ -38,6 +46,8 @@
 		data: function () {
 			return {
 				localAmount: this.amount,
+				localNote: this.note,
+				error: null,
 
 				currencyOptions: {
 					precision: 2,
@@ -49,19 +59,24 @@
 		computed: {
 			donationAmount: function () {
 				return this.formatMoney(this.amount);
+			},
+			placeHolder: function () {
+				const vue = this;
+				return "Leave " + vue.nonprofit.legalName + " a note with your donation";
 			}
 		},
-        props: [
-	        'amount',
-        	'nonprofit',
-            'timestamp'
-        ],
+		props: [
+			'amount',
+			'nonprofit',
+			'timestamp',
+			'note'
+		],
 		watch: {
 			localAmount: function (value, oldValue) {
 				const vue = this;
 
 				if (value !== oldValue && vue.timestamp) {
-					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount, vue.localNote);
 				}
 			},
 			amount: function (value, oldValue) {
@@ -70,10 +85,41 @@
 				if (value === oldValue) {
 					return;
 				}
+				vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
+				vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+				vue.$emit('hasError', vue.error);
+
 				vue.localAmount = value;
+			},
+			localNote: function (value, oldValue) {
+				const vue = this;
+
+				if (value !== oldValue && vue.timestamp) {
+					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount, vue.localNote);
+				}
+			},
+			note: function (value, oldValue) {
+				const vue = this;
+
+				if (value === oldValue) {
+					return;
+				}
+
+				vue.localNote = value;
 			}
 		},
 		methods: {
+			getConstraints: function () {
+				return {
+					amount: {
+						presence: true,
+						numericality: {
+							onlyInteger: true,
+							greaterThanOrEqualTo: 1000,
+						}
+					},
+				};
+			},
 			deleteCartItem: function (event) {
 				event.preventDefault();
 				const vue = this;

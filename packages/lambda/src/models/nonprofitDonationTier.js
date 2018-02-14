@@ -53,7 +53,11 @@ NonprofitDonationTier.prototype.attributes = [
 NonprofitDonationTier.prototype.constraints = {
 	amount: {
 		presence: true,
-		type: 'number'
+		type: 'number',
+		numericality: {
+			onlyInteger: true,
+			greaterThanOrEqualTo: 1000,
+		}
 	},
 	description: {
 		presence: false,
