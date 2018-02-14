@@ -87,6 +87,12 @@
 				vue.localValue = value;
 				$(vue.$refs.select).val(value);
 				$(vue.$refs.select).trigger("chosen:updated");
+			},
+			nonprofits: function () {
+				const vue = this;
+				vue.$nextTick(function () {
+					$(vue.$refs.select).trigger("chosen:updated");
+				});
 			}
 		}
 	};
