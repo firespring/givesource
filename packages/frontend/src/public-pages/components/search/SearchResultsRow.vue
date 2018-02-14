@@ -26,7 +26,7 @@
             <h3>
                 <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link>
             </h3>
-            <p>
+            <p v-if="nonprofit.shortDescription">
                 {{ nonprofit.shortDescription }}
             </p>
         </div>
