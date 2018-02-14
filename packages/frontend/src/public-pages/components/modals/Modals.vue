@@ -82,7 +82,7 @@
 		            vue.modals = [];
 		            vue.data = {};
 
-		            vue.removeBodyClasses(['has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay']);
+		            vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay');
                 }
             });
         },
