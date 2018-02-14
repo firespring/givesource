@@ -58,7 +58,7 @@
 				let url = '/assets/temp/hero.png';
 				const mastheadPath = vue.$store.getters.setting('MASTHEAD_IMAGE');
 				if (mastheadPath) {
-					url = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + mastheadPath;
+					url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + mastheadPath;
 				}
 				return url;
 			},
@@ -71,7 +71,7 @@
 			foundationLogoUrl: function () {
 				const vue = this;
 				const logo = vue.$store.getters.setting('FOUNDATION_LOGO');
-				return logo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + logo : false;
+				return logo ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + logo : false;
 			},
 			foundationUrl: function () {
 				const vue = this;

@@ -81,7 +81,7 @@
 			logoUrl: function () {
 				const vue = this;
 				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
-				return eventLogo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + eventLogo : '/assets/temp/logo-event.png';
+				return eventLogo ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + eventLogo : '/assets/temp/logo-event.png';
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();

@@ -84,7 +84,7 @@
 				let url = false;
 				let file = vue.getContentValue('HOMEPAGE_SPOTLIGHT', false);
 				if (_.isPlainObject(file) && file.hasOwnProperty('path')) {
-					url = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + file.path;
+					url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path;
 				}
 				return url;
 			}

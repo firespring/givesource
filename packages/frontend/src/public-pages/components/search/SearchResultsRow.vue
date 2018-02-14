@@ -57,9 +57,9 @@
 				const vue = this;
 				let logo = false;
 				if (vue.nonprofit.logo) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.nonprofit.logo.path;
+					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path;
 				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
 				} else {
 					logo = '/assets/temp/logo-event.png';
 				}

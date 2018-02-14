@@ -37,7 +37,7 @@ exports.handle = function (event, context, callback) {
 		PUBLIC_INDEX_TEMPLATE: null,
 		SOCIAL_SHARING_DESCRIPTION: null,
 		SOCIAL_SHARING_IMAGE: null,
-		UPLOADS_CLOUDFRONT_URL: null
+		UPLOADS_CLOUD_FRONT_URL: null
 	};
 	request.validate().then(function () {
 		return repository.batchGet(Object.keys(settings));
@@ -55,7 +55,7 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function (file) {
 		if (file) {
-			settings.SOCIAL_SHARING_IMAGE = (file) ? settings.UPLOADS_CLOUDFRONT_URL + '/' + file.path : null;
+			settings.SOCIAL_SHARING_IMAGE = (file) ? settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path : null;
 		}
 
 		return generateIndexBody(settings.PUBLIC_INDEX_TEMPLATE, _.omit(settings, 'PUBLIC_INDEX_TEMPLATE'));
