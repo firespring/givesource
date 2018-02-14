@@ -18,6 +18,7 @@
 const _ = require('lodash');
 const axios = require('axios');
 const Donation = require('./../../models/donation');
+const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
@@ -50,6 +51,7 @@ exports.handle = function (event, context, callback) {
 	let subtotal = 0;
 	let total = 0;
 	let topDonation = 0;
+	let fees = 0;
 	let settings = {
 		'EVENT_TIMEZONE': null,
 		'PAYMENT_SPRING_TEST_API_KEY': null,
@@ -86,6 +88,7 @@ exports.handle = function (event, context, callback) {
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach(function (donation) {
+			donation.fees = DonationHelper.calculateFees(donation.subtotal, 30, 0.029);
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
@@ -95,6 +98,10 @@ exports.handle = function (event, context, callback) {
 			}
 			if (model.subtotal) {
 				subtotal += model.subtotal;
+			}
+			if (model.isFeeCovered && model.fees){
+				total = subtotal + model.fees;
+				fees = model.fees;
 			}
 			donations.push(model);
 			promise = promise.then(function () {

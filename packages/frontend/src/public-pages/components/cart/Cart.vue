@@ -479,7 +479,8 @@
 					});
 				}).then(function (response) {
 					vue.processing = false;
-					if (response.data && response.data.errorMessage) {
+
+                    if (response.data && response.data.errorMessage) {
 						console.log(response.data);
 					} else {
 						vue.$store.commit('clearCartItems');
@@ -500,10 +501,10 @@
 				vue.donations = [];
 				const cartItems = vue.$store.getters.cartItems;
 				cartItems.forEach(function (cartItem) {
-					const fees = vue.calculateFees([cartItem], 30, 0.029);
+                    const fees = vue.calculateFees([cartItem], 30, 0.029);
 					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
 					vue.donations.push({
-						fees: fees,
+					    fees: fees,
 						isAnonymous: vue.formData.isAnonymous,
 						isFeeCovered: vue.formData.isFeeCovered,
 						isOfflineDonation: false,

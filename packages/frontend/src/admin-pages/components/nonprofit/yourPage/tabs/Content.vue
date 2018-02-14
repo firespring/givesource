@@ -124,7 +124,7 @@
 		},
 		computed: {
 			pageLink: function () {
-				return this.$store.getters.setting('PUBLIC_PAGES_CLOUD_FRONT_URL') + '/nonprofits/'
+				return this.$store.getters.setting('EVENT_URL') + '/nonprofits/';
 			}
 		},
 		props: {

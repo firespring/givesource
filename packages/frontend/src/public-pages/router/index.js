@@ -176,7 +176,7 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'ADMIN_PAGES_CLOUD_FRONT_URL',
+		'ADMIN_URL',
 		'CONTACT_PHONE',
 		'DATE_DONATIONS_END',
 		'DATE_DONATIONS_START',

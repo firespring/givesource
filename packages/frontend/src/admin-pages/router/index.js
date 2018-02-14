@@ -497,8 +497,8 @@ const router = new VueRouter({
  */
 const updateSettings = function () {
 	const settings = [
-		'PUBLIC_PAGES_CLOUD_FRONT_URL',
-		'UPLOADS_CLOUD_FRONT_URL',
+		'EVENT_URL',
+		'UPLOADS_CLOUDFRONT_URL',
 		'USER_POOL_CLIENT_ID',
 		'USER_POOL_ID'
 	];
