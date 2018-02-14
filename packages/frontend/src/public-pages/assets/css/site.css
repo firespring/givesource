@@ -108,7 +108,6 @@ Helper classes
 .has-overlay .overlay__nav,
 .leaderboard__actions,
 .leaderboard-item,
-.leaderboard-item--detailed .leaderboard-item__image,
 .list-radio label,
 .list-checkbox label,
 .main__spotlight .day-totals,
@@ -355,6 +354,11 @@ Alerts
 	-ms-flex: 1;
 	flex: 1;
 	padding-right: 1rem;
+}
+
+.alert__title {
+	margin: 0;
+	font-size: 1rem;
 }
 
 .alert__close:link,
@@ -985,20 +989,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-	  color: #9B9B97;
+	color: #9B9B97;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-	 color: #9B9B97;
-   opacity: 1;
+	color: #9B9B97;
+	opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-	 color: #9B9B97;
+	color: #9B9B97;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-	 color: #9B9B97;
+	color: #9B9B97;
 }
 
 /* Page header user info
@@ -1342,7 +1346,7 @@ Page mobile nav
 
 .has-overlay .overlay {
 	visibility: visible;
-    opacity: 1;
+	opacity: 1;
 }
 
 .has-overlay .overlay__nav {
@@ -1731,21 +1735,12 @@ Leaderboard
 }
 
 .leaderboard-item--detailed .leaderboard-item__image {
-	-ms-flex-align: center;
-	-webkit-box-align: center;
-	align-items: center;
-	-ms-flex-pack: center;
-	-webkit-box-pack: center;
-	justify-content: center;
-	-ms-flex: 1 0 100%;
-	-webkit-box-flex: 1;
-	flex: 1 0 100%;
-	max-width: 100%;
-}
-
-.leaderboard-item--detailed .leaderboard-item__image img {
+	display: block;
+	width: 100px;
+	height: 100px;
+	margin: 0 auto;
 	border-radius: 100%;
-	max-width: 100px;
+	background-size: cover;
 }
 
 .leaderboard-item--detailed .leaderboard-item__info {
@@ -1881,6 +1876,10 @@ Global Media Queries
 		text-align: left;
 	}
 
+	.leaderboard-item--detailed .leaderboard-item__image {
+		margin: 0;
+	}
+
 	.leaderboard-item__num {
 		font-size: 1rem;
 		transform: translateY(1px);
@@ -1897,13 +1896,6 @@ Global Media Queries
 
 	.leaderboard-item--detailed [class*='leaderboard-item__'] + [class*='leaderboard-item__'] {
 		margin: 0 0 0 1rem;
-	}
-
-	.leaderboard-item--detailed .leaderboard-item__image {
-		-ms-flex: 1 0 100px;
-		-webkit-box-flex: 1;
-		flex: 1 0 100px;
-		max-width: 100px;
 	}
 
 	.leaderboard-item--detailed .leaderboard-item__info {
@@ -2122,10 +2114,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-	    -ms-flex-direction: column;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
+		-ms-flex-direction: column;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		flex-direction: column;
 	}
 
 	.nonprofit-search__category {
@@ -2212,10 +2204,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-	    -ms-flex-direction: row;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        flex-direction: row;
+		-ms-flex-direction: row;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		flex-direction: row;
 	}
 
 	.nonprofit-search__name .grid-item--collapse {
