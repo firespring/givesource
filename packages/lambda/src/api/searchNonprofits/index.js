@@ -17,6 +17,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
+const ResourceNotFoundException = require('./../../exceptions/resourceNotFound');
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
@@ -33,7 +34,11 @@ exports.handle = function (event, context, callback) {
 			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(function (setting) {
 				matchFundNonprofitUuid = setting.value;
 			}).catch(function (err) {
-				console.log(err);
+				if (err instanceof ResourceNotFoundException) {
+					return Promise.resolve();
+				} else {
+					return Promise.reject(err);
+				}
 			});
 		}
 
