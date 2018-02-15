@@ -88,7 +88,7 @@ exports.handle = function (event, context, callback) {
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach(function (donation) {
-			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.subtotal, 30, 0.029);
+			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
