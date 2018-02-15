@@ -55,12 +55,7 @@
 			},
 			backgroundImageUrl: function () {
 				const vue = this;
-				let url = '/assets/temp/hero.png';
-				const mastheadPath = vue.$store.getters.setting('MASTHEAD_IMAGE');
-				if (mastheadPath) {
-					url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + mastheadPath;
-				}
-				return url;
+				return vue.$store.getters.setting('MASTHEAD_IMAGE') ? vue.$store.getters.setting('MASTHEAD_IMAGE') : '/assets/temp/hero.png';
 			},
 			hasSpotlightSlot: function () {
 				return this.$slots.spotlight;
@@ -70,8 +65,7 @@
 			},
 			foundationLogoUrl: function () {
 				const vue = this;
-				const logo = vue.$store.getters.setting('FOUNDATION_LOGO');
-				return logo ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + logo : false;
+				return vue.$store.getters.setting('FOUNDATION_LOGO') ? vue.$store.getters.setting('FOUNDATION_LOGO') : false;
 			},
 			foundationUrl: function () {
 				const vue = this;

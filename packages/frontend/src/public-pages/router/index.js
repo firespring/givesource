@@ -16,7 +16,6 @@
  */
 
 import * as Settings from './../helpers/settings';
-import * as Utils from './../helpers/utils';
 import store from './../store';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -48,7 +47,7 @@ const router = new VueRouter({
 			name: 'about',
 			component: require('./../components/about/About.vue'),
 			beforeEnter: function (to, from, next) {
-				if (!store.getters.setting('PAGE_ABOUT_ENABLED')) {
+				if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
 					next({name: '404'});
 				} else {
 					next();
@@ -60,7 +59,7 @@ const router = new VueRouter({
 			name: 'toolkits',
 			component: require('./../components/toolkits/Toolkits.vue'),
 			beforeEnter: function (to, from, next) {
-				if (!store.getters.setting('PAGE_TOOLKIT_ENABLED')) {
+				if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
 					next({name: '404'});
 				} else {
 					next();
@@ -72,7 +71,7 @@ const router = new VueRouter({
 			name: 'faq',
 			component: require('./../components/faq/FAQ.vue'),
 			beforeEnter: function (to, from, next) {
-				if (!store.getters.setting('PAGE_FAQ_ENABLED')) {
+				if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
 					next({name: '404'});
 				} else {
 					next();
@@ -104,7 +103,7 @@ const router = new VueRouter({
 			name: 'terms',
 			component: require('./../components/terms/TermsOfService.vue'),
 			beforeEnter: function (to, from, next) {
-				if (!store.getters.setting('PAGE_TERMS_ENABLED')) {
+				if (!store.getters.booleanSetting('PAGE_TERMS_ENABLED')) {
 					next({name: '404'});
 				} else {
 					next();
@@ -167,111 +166,6 @@ const router = new VueRouter({
 			component: require('./../components/errors/404.vue')
 		}
 	]
-});
-
-/**
- * Update app settings
- *
- * @return {Promise}
- */
-const updateSettings = function () {
-	const settings = [
-		'ADMIN_URL',
-		'CONTACT_PHONE',
-		'DATE_DONATIONS_END',
-		'DATE_DONATIONS_START',
-		'DATE_EVENT',
-		'DATE_REGISTRATIONS_END',
-		'DATE_REGISTRATIONS_START',
-		'EVENT_LOGO',
-		'EVENT_TIMEZONE',
-		'EVENT_TITLE',
-		'FOUNDATION_LOGO',
-		'FOUNDATION_URL',
-		'MASTHEAD_IMAGE',
-		'PAGE_ABOUT_ENABLED',
-		'PAGE_FAQ_ENABLED',
-		'PAGE_TERMS_ENABLED',
-		'PAGE_TOOLKIT_ENABLED',
-		'UPLOADS_CLOUD_FRONT_URL'
-	];
-
-	return axios.get('/settings.json').then(function (response) {
-		window.API_URL = response.data.API_URL;
-		store.commit('settings', {API_URL: response.data.API_URL});
-	}).then(function () {
-		return axios.get(API_URL + 'settings' + Utils.generateQueryString({
-			keys: settings
-		})).then(function (response) {
-			const set = {};
-			if (response.data.length) {
-				response.data.forEach(function (setting) {
-					set[setting.key] = setting.value;
-				});
-			}
-			return set;
-		}).then(function (settings) {
-			const fileKeys = ['EVENT_LOGO', 'MASTHEAD_IMAGE', 'FOUNDATION_LOGO'];
-			const fileSettings = _.pick(settings, fileKeys);
-			const fileUuids = _.values(fileSettings);
-			let promise = Promise.resolve();
-			if (fileUuids.length) {
-				promise = promise.then(function () {
-					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: fileUuids})).then(function (response) {
-						_.forEach(fileSettings, function (fileUuid, settingKey) {
-							const file = _.find(response.data, {uuid: fileUuid});
-							if (file && file.hasOwnProperty('path')) {
-								settings[settingKey] = file.path;
-							} else {
-								delete settings[settingKey];
-							}
-						})
-					});
-				});
-			}
-
-			promise = promise.then(function () {
-				store.commit('settings', settings);
-			});
-
-			return promise;
-		});
-	}).then(function () {
-		store.commit('updated');
-	});
-};
-
-/**
- * Load app settings
- *
- * @return {Promise}
- */
-const loadSettings = function () {
-	const date = new Date();
-	date.setMinutes(date.getMinutes() - 1);
-
-	const lastUpdated = store.getters.updated;
-	if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
-		return updateSettings();
-	} else {
-		window.API_URL = store.getters.setting('API_URL');
-		return Promise.resolve();
-	}
-};
-
-/**
- * Route Middleware
- */
-router.beforeEach(function (to, from, next) {
-	loadSettings().then(function () {
-		if (router.app.bus) {
-			router.app.bus.$emit('navigate');
-		}
-	}).then(function () {
-		next();
-	}).catch(function (err) {
-		console.log(err);
-	});
 });
 
 export default router;

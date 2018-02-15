@@ -49,6 +49,10 @@ window.$ = window.jQuery = require('jquery');
 window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
+// Load app settings
+window.API_URL = window.appSettings.API_URL;
+store.commit('settings', window.appSettings);
+
 // Bootstrap the app
 const main = App;
 main.router = router;

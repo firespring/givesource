@@ -35,13 +35,13 @@
 	module.exports = {
 		computed: {
 			displayAbout: function () {
-				return this.$store.getters.setting('PAGE_ABOUT_ENABLED') ? this.$store.getters.setting('PAGE_ABOUT_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
 			},
 			displayFAQ: function () {
-				return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED');
 			},
 			displayToolkits: function () {
-				return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED');
 			},
 			displayCart: function () {
 				return this.$store.getters.cartItems.length > 0;
