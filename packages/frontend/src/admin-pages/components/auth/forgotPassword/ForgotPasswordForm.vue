@@ -116,7 +116,7 @@
 					},
 					onFailure: function (err) {
 						vue.clearModals();
-						vue.errors.push(err.message);
+						vue.$router.push({'name': 'forgot-password-request-sent'});
 					}
 				});
 			}
