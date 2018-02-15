@@ -88,9 +88,8 @@
 		},
         methods: {
             hasError: function(err) {
-                console.log('we are in the donations list table ', err );
                 const vue = this;
-//                vue.apiError = err.response.data.errors;
+                vue.apiError = err.response.data.errors;
             }
         },
 		mixins: [
