@@ -73,15 +73,10 @@ module.exports = {
 		}),
 		new UglifyJsPlugin(),
 		new CopyWebpackPlugin([
-			{from: './config/**/*.json', to: '[name].[ext]'},
 			{from: './src/public-pages/assets/css', to: 'assets/css'},
 			{from: './src/public-pages/assets/img', to: 'assets/img'},
 			{from: './src/public-pages/assets/temp', to: 'assets/temp'}
-		], {
-			ignore: [
-				'deploy-info.json'
-			]
-		}),
+		]),
 		new HtmlWebpackPlugin({
 			template: 'src/public-pages/templates/index.mustache',
 			filename: 'templates/index.mustache'
@@ -96,7 +91,7 @@ module.exports = {
 					BrowserSyncSpa(/^[^\.]+$/, __dirname + '/../build/public-pages/index.html')
 				]
 			},
-			files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
+			files: ['bundle.js', 'assets/**/*.css'],
 			open: false
 		}),
 	]
