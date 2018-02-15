@@ -16,7 +16,6 @@
  */
 
 const AuthPolicy = require('./../aws/authPolicy');
-const Middleware = require('../middleware/middleware');
 
 /**
  * Authorizer constructor
