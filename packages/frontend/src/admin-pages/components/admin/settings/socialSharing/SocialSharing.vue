@@ -230,7 +230,6 @@
 				const vue = this;
 				const settings = [];
 				let promise = Promise.resolve();
-				console.log(vue.formData);
 				Object.keys(vue.formData).forEach(function (key) {
 					if (vue.formData[key] instanceof File) {
 						promise = promise.then(function () {
