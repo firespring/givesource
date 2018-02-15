@@ -16,7 +16,7 @@
   -->
 <template>
     <div v-if="hasError" id="api-error" class="c-alert c-alert--shadow c-alert--bad c-alert--expand u-flex u-justify-center">
-\        <div class="c-alert__body u-flex u-justify-between">
+        <div class="c-alert__body u-flex u-justify-between">
             <div class="c-alert__text">
                 <h3 class="c-alert-title">There was an error processing your request.</h3>
                 <ul>

@@ -120,11 +120,13 @@
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);
-					} else {
+                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+                    } else {
 						vue.$router.push({name: 'settings-admins-list'});
 					}
 				}).catch(function (err) {
                     vue.removeModal('spinner');
+                    console.log('we are here in the error and stuff');
                     vue.apiError = err.response.data.errors;
                 });
 			}
