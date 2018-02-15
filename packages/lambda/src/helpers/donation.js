@@ -109,13 +109,14 @@ exports.reportFields = [
  * Calculate donation fees
  *
  * @param {Boolean} isOfflineDonation
+ * @param {Boolean} isFeeCovered
  * @param {number} amount
  * @param {number} transactionFlatFee
  * @param {number} transactionPercentFee
  * @return {number}
  */
-exports.calculateFees = function (isOfflineDonation, amount, transactionFlatFee, transactionPercentFee) {
-	if(!isOfflineDonation) {
+exports.calculateFees = function (isOfflineDonation, isFeeCovered, amount, transactionFlatFee, transactionPercentFee) {
+	if(!isOfflineDonation && isFeeCovered) {
 		return Math.floor(Math.round((amount + transactionFlatFee) / (1 - transactionPercentFee) - amount));
 	}
 

@@ -57,7 +57,8 @@
 			const vue = this;
 			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString({
 				size: 20,
-				sort: 'active_subtotal_descending'
+				sort: 'active_subtotal_descending',
+                includeMatchFund: 0
 			})).then(function (response) {
 				if (response.data.hasOwnProperty('items')) {
 					vue.nonprofits = response.data.items;

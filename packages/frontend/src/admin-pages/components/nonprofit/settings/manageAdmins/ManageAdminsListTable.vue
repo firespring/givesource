@@ -42,70 +42,71 @@
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                nonprofitUsers: [],
-                loaded: false
-            };
-        },
-        computed: {
-            displayRows: function () {
-                return this.loaded && this.nonprofitUsers.length;
-            }
-        },
-        props: [
-            'nonprofitUuid'
-        ],
-        created: function () {
-            const vue = this;
+	module.exports = {
+		data: function () {
+			return {
+				nonprofitUsers: [],
+				loaded: false
+			};
+		},
+		computed: {
+			displayRows: function () {
+				return this.loaded && this.nonprofitUsers.length;
+			}
+		},
+		props: [
+			'nonprofitUuid'
+		],
+		created: function () {
+			const vue = this;
 
-            vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
-                vue.nonprofitUsers = response.data;
-                vue.loaded = true;
-            });
+			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+				vue.nonprofitUsers = response.data;
+				vue.loaded = true;
+			});
 
-            vue.bus.$on('deleteUserNonprofit', function () {
-                vue.removeUser();
-            });
+			vue.bus.$on('deleteUserNonprofit', function () {
+				vue.removeUser();
+			});
 
-            vue.bus.$on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
-                vue.selectedNonprofitUser = selectedNonprofitUser;
-                vue.deleteModal(selectedNonprofitUser);
-            });
-        },
-        beforeDestroy: function () {
-            const vue = this;
-            vue.bus.$off('deleteUserNonprofit');
-            vue.bus.$off('deleteUserNonprofitModal');
-        },
-        methods: {
-            deleteModal: function (selectedNonprofitUser) {
-                const vue = this;
-                vue.addModal('confirm-delete', {
-                    modalTitle: 'Remove Nonprofit User',
-                    modalText: 'Are you sure you want to remove ' + selectedNonprofitUser.email + ' ?',
-                    callback: 'deleteUserNonprofit',
-                });
-            },
+			vue.bus.$on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
+				vue.selectedNonprofitUser = selectedNonprofitUser;
+				vue.deleteModal(selectedNonprofitUser);
+			});
+		},
+		beforeDestroy: function () {
+			const vue = this;
+			vue.bus.$off('deleteUserNonprofit');
+			vue.bus.$off('deleteUserNonprofitModal');
+		},
+		methods: {
+			deleteModal: function (selectedNonprofitUser) {
+				const vue = this;
+				vue.addModal('confirm-delete', {
+					modalTitle: 'Remove Nonprofit User',
+					modalText: 'Are you sure you want to remove ' + selectedNonprofitUser.email + ' ?',
+					callback: 'deleteUserNonprofit',
+				});
+			},
 
-            removeUser: function () {
-                var vue = this;
-                vue.addModal('spinner');
-                vue.$request.delete('nonprofits/' + vue.selectedNonprofitUser.nonprofitUuid + '/users/' + vue.selectedNonprofitUser.uuid).then(function () {
-                    vue.nonprofitUsers = _.filter(vue.nonprofitUsers, function (nonprofitUser) {
-                        return nonprofitUser.uuid !== vue.selectedNonprofitUser.uuid;
-                    });
-                    vue.clearModals();
-                }).catch(function (err) {
+			removeUser: function () {
+				const vue = this;
+
+				vue.addModal('spinner');
+				vue.$request.delete('nonprofits/' + vue.selectedNonprofitUser.nonprofitUuid + '/users/' + vue.selectedNonprofitUser.uuid).then(function () {
+					vue.nonprofitUsers = _.filter(vue.nonprofitUsers, function (nonprofitUser) {
+						return nonprofitUser.uuid !== vue.selectedNonprofitUser.uuid;
+					});
+					vue.clearModals();
+				}).catch(function (err) {
                     vue.clearModals();
                     vue.$emit('hasError', err);
-                });
-            }
-        },
-        components: {
-            'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
-            'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
-        }
-    };
+				});
+			}
+		},
+		components: {
+			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
+			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
+		}
+	};
 </script>

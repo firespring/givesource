@@ -49,14 +49,37 @@ exports.handle = function (event, context, callback) {
 	let settings = {
 		CONTACT_PHONE: null,
 		EVENT_URL: null,
+		EVENT_TIMEZONE: null,
 		EVENT_TITLE: null,
 		EVENT_LOGO: null,
 		PAGE_TERMS_ENABLED: null,
 		UPLOADS_CLOUD_FRONT_URL: null,
 	};
 	request.validate().then(function () {
+		return settingsRepository.batchGet(Object.keys(settings));
+	}).then(function (response) {
+		response.forEach(function (setting) {
+			settings[setting.key] = setting.value;
+		});
+
+		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
+			return filesRepository.get(settings.EVENT_LOGO);
+		} else {
+			return Promise.resolve(null);
+		}
+	}).then(function () {
+		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
+			return filesRepository.get(settings.EVENT_LOGO);
+		} else {
+			return Promise.resolve(null);
+		}
+	}).then(function (response) {
+		if (response) {
+			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+		}
+
 		if (donor) {
-			donor = (donor instanceof Donor) ? donor.mutate() : donor;
+			donor = (donor instanceof Donor) ? donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donor;
 			return Promise.resolve();
 		} else if (request.get('email', false)) {
 			return donorsRepository.queryEmail(request.get('email'));
@@ -65,7 +88,7 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function (response) {
 		if (response) {
-			donor = response.mutate();
+			donor = response.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 		}
 		if (donor && donations.length === 0) {
 			const builder = new QueryBuilder('query');
@@ -77,17 +100,17 @@ exports.handle = function (event, context, callback) {
 		if (response.hasOwnProperty('Items')) {
 			donations = response.Items.map(function (donation) {
 				const model = new Donation(donation);
-				return model.mutate();
+				return model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 			});
 		}
 
 		let promise = Promise.resolve();
 		if (paymentTransaction && donations.length) {
 			donations = donations.map(function (donation) {
-				return (donation instanceof Donation) ? donation.mutate() : donation;
+				return (donation instanceof Donation) ? donation.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donation;
 			});
 
-			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate() : paymentTransaction;
+			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : paymentTransaction;
 			transaction.donations = donations;
 			transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
 			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
@@ -103,7 +126,7 @@ exports.handle = function (event, context, callback) {
 				promise = promise.then(function () {
 					return paymentTransactionsRepository.get(uuid);
 				}).then(function (paymentTransaction) {
-					const transaction = paymentTransaction.mutate();
+					const transaction = paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 					transaction.donations = _.filter(donations, {paymentTransactionUuid: uuid});
 					transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
 					transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
@@ -114,21 +137,6 @@ exports.handle = function (event, context, callback) {
 
 		return promise;
 	}).then(function () {
-		return settingsRepository.batchGet(Object.keys(settings));
-	}).then(function (response) {
-		response.forEach(function (setting) {
-			settings[setting.key] = setting.value;
-		});
-	}).then(function () {
-		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
-			return filesRepository.get(settings.EVENT_LOGO);
-		} else {
-			return Promise.resolve(null);
-		}
-	}).then(function (response) {
-		if (response) {
-			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
-		}
 		return RenderHelper.renderTemplate('emails.donation-receipt', {
 			donor: donor,
 			settings: settings,

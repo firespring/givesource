@@ -58,7 +58,7 @@ Generator.prototype._generators = {
 			nonprofitZip: faker.address.zipCode(),
 			subtotal: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 		};
-		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.subtotal, 30, 0.029);
+		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
 		donation.total = donation.isFeeCovered ? donation.subtotal + donation.fees : donation.subtotal;
 
 		if (!donation.isAnonymous) {

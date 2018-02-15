@@ -64,31 +64,6 @@
 
                         <manage-admins-list-table :nonprofitUuid="nonprofitUuid" v-on:hasError="hasError"></manage-admins-list-table>
 
-                        <div class="c-table-footer">
-                            <div class="c-table-footer__rows-page">
-                                <span>Show</span>
-                                <select id="rowsPage" name="rowsPage" class="sm">
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                                <span>rows/page</span>
-                            </div>
-                            <div class="c-table-footer__pagination">
-                                <nav class="c-pagination">
-                                    <span class="c-pagination__first"><i class="fa fa-angle-double-left" aria-hidden="true"></i></span>
-                                    <span class="c-pagination__prev"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
-                                    <strong class="c-pagination__here">1</strong>
-                                    <a href="#">2</a>
-                                    <a href="#">3</a>
-                                    <a href="#">4</a>
-                                    <a href="#">5</a>
-                                    <a href="#" class="c-pagination__next" title="Go to the next page"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                    <a href="#" class="c-pagination__last" title="Jump to the last page"><i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                                </nav>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
@@ -109,9 +84,9 @@
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-            canInviteUsers: function () {
+			canInviteUsers: function () {
 				return this.nonprofit.status === 'ACTIVE';
-            }
+			}
 		},
 		props: [
 			'nonprofitUuid'

@@ -18,10 +18,14 @@
 const HttpException = require('./../../exceptions/http');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const QueryBuilder = require('./../../aws/queryBuilder');
+const ResourceNotFoundException = require('./../../exceptions/resourceNotFound');
 const Request = require('./../../aws/request');
+const SettingsRepository = require('./../../repositories/settings');
+const SettingHelper = require('./../../helpers/setting');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
+	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
 
 	let total = 0;
@@ -30,15 +34,34 @@ exports.handle = function (event, context, callback) {
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', 'all_created_on_descending');
 	const start = request.queryParam('start', 0);
+	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
 
 	const index = getIndex(sort);
 	const hash = getHashCondition(sort);
 	const range = getRangeCondition(sort);
 	const scanIndexForward = getScanIndexForward(sort);
+	let matchFundNonprofitUuid = null;
 
 	request.validate().then(function () {
+		if (!includeMatchFund) {
+			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(function (setting) {
+				matchFundNonprofitUuid = setting.value;
+			}).catch(function (err) {
+				if (err instanceof ResourceNotFoundException) {
+					return Promise.resolve();
+				} else {
+					return Promise.reject(err);
+				}
+			});
+		}
+
+		return Promise.resolve();
+	}).then(function () {
 		const builder = new QueryBuilder('query');
 		builder.select('COUNT').limit(1000).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
+		if (matchFundNonprofitUuid) {
+			builder.filter('uuid', '!=', matchFundNonprofitUuid)
+		}
 
 		return repository.batchQuery(builder);
 	}).then(function (response) {
@@ -46,7 +69,9 @@ exports.handle = function (event, context, callback) {
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
 			builder.select('COUNT').limit(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-
+			if (matchFundNonprofitUuid) {
+				builder.filter('uuid', '!=', matchFundNonprofitUuid)
+			}
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
@@ -54,7 +79,9 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
 		builder.limit(size).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-
+		if (matchFundNonprofitUuid) {
+			builder.filter('uuid', '!=', matchFundNonprofitUuid)
+		}
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
 		}

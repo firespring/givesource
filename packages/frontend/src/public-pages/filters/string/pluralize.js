@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018  Firespring
+ * Copyright (C) 2017  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-exports.SETTING_ACCENT_COLOR = 'ACCENT_COLOR';
-exports.SETTING_EVENT_TIMEZONE = 'EVENT_TIMEZONE';
-exports.SETTING_EVENT_TITLE = 'EVENT_TITLE';
-exports.SETTING_EVENT_URL = 'EVENT_URL';
-exports.SETTING_MATCH_FUND_NONPROFIT_UUID = 'MATCH_FUND_NONPROFIT_UUID';
-exports.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE = 'OFFLINE_TRANSACTION_FEE_PERCENTAGE';
-exports.SETTING_OOFFLINE_TRANSACTION_FEE_FLAT_RATE = 'OFFLINE_TRANSACTION_FEE_FLAT_RATE';
-exports.SETTING_SOCIAL_SHARING_DESCRIPTION = 'SOCIAL_SHARING_DESCRIPTION';
-exports.SETTING_SOCIAL_SHARING_IMAGE = 'SOCIAL_SHARING_IMAGE';
+const _ = require('lodash');
+
+/**
+ * Pluralize a string
+ *
+ * @param {*} value
+ * @returns {*}
+ */
+function pluralize(value) {
+	let args = _.slice(_.toArray(arguments), 1);
+	return args.length > 1
+		? (args[value % 10 - 1] || args[args.length - 1])
+		: (args[0] + (value === 1 ? '' : 's'));
+}
+
+export default pluralize;

@@ -85,7 +85,7 @@
 
                 <div class="nonprofit-search__love" v-if="displayMatchFund && canDonate">
                     <div class="mb3">
-                        <a href="#" class="btn btn--accent btn--lg">{{ matchFundButtonText }}</a>
+                        <router-link class="btn btn--accent btn--lg" :to="{ name: 'nonprofit-landing-page', params: {slug: matchFundNonprofit.slug} }">{{ matchFundButtonText }}</router-link>
                     </div>
                     <div class="notes" v-if="matchFundDetails">
                         {{ matchFundDetails }}
@@ -224,10 +224,14 @@
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();
+			},
+			displayMatchFund: function () {
+				const vue = this;
+				return (vue.matchFundEnabled && vue.matchFundNonprofit);
 			}
 		},
 		props: {
-			displayMatchFund: {
+			matchFundEnabled: {
 				type: Boolean,
 				default: false,
 			},
@@ -237,6 +241,10 @@
 			},
 			matchFundDetails: {
 				type: String,
+				default: null,
+			},
+			matchFundNonprofit: {
+				type: Object,
 				default: null,
 			},
 			registerButtonText: {
@@ -261,7 +269,7 @@
                 vue.apiError = err.response.data.errors;
             });
 
-			if(vue.displayEventCountdown()) {
+			if (vue.displayEventCountdown()) {
 				vue.initializeCountdown();
 			}
 		},

@@ -51,7 +51,7 @@
                                         <label for="homepageTitle" class="c-form-item-label-text">Homepage Title</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.HOMEPAGE_TITLE.value" type="text" name="homepageTitle" id="homepageTitle">
+                                        <input v-model="formData.contents.HOMEPAGE_TITLE.value" type="text" name="homepageTitle" id="homepageTitle">
                                     </div>
                                 </div>
 
@@ -59,12 +59,12 @@
                                     <div class="c-form-item__label">
                                         <label for="homepageSpotlight" class="c-form-item-label-text">Homepage Spotlight Image</label>
                                     </div>
-                                    <forms-image-upload v-model="formData.HOMEPAGE_SPOTLIGHT.value" name="homepageSpotlight" id="homepageSpotlight"></forms-image-upload>
+                                    <forms-image-upload v-model="formData.contents.HOMEPAGE_SPOTLIGHT.value" name="homepageSpotlight" id="homepageSpotlight"></forms-image-upload>
                                     <div class="c-notes c-notes--below u-width-100p">
                                         This image will appear in your homepage's masthead. If you've uploaded a masthead background, this spotlight image will appear on top of it.
                                     </div>
-                                    <div v-if="formErrors['HOMEPAGE_SPOTLIGHT.value']" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                        {{ formErrors['HOMEPAGE_SPOTLIGHT.value'] }}
+                                    <div v-if="formErrors['contents.HOMEPAGE_SPOTLIGHT.value']" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors['contents.HOMEPAGE_SPOTLIGHT.value'] }}
                                     </div>
                                 </div>
 
@@ -76,7 +76,7 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.HOMEPAGE_MASTHEAD_TEXT.value" :loaded="loaded" :basic="true" id="headerText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MASTHEAD_TEXT.value" :loaded="loaded" :basic="true" id="headerText"></forms-ckeditor>
                                     </div>
                                 </div>
 
@@ -89,7 +89,7 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.HOMEPAGE_MAIN_TEXT.value" :loaded="loaded" :basic="true" id="mainText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MAIN_TEXT.value" :loaded="loaded" :basic="true" id="mainText"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <input v-model="formData.HOMEPAGE_REGISTER_BUTTON.value" type="text" name="nonprofitRegistrationButtonLabel"
+                                        <input v-model="formData.contents.HOMEPAGE_REGISTER_BUTTON.value" type="text" name="nonprofitRegistrationButtonLabel"
                                                id="nonprofitRegistrationButtonLabel">
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                                     </div>
 
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.HOMEPAGE_REGISTER_DETAILS.value" :loaded="loaded" :basic="true"
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_REGISTER_DETAILS.value" :loaded="loaded" :basic="true"
                                                         id="nonprofitDetailsText"></forms-ckeditor>
                                     </div>
                                 </div>
@@ -151,11 +151,27 @@
 
                                         <ul class="c-input-list c-input-list--checkbox" aria-labelledby="enableMatchFunds">
                                             <li class="has-sub-options" :class="{'has-sub-options--show': showMatchFundOptions}">
-                                                <input v-model="formData.HOMEPAGE_MATCH_IS_ENABLED.value" type="checkbox" name="enableMatchFunds"
+                                                <input v-model="formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value" type="checkbox" name="enableMatchFunds"
                                                        id="enableMatchFunds-1">
                                                 <label for="enableMatchFunds-1">Enable Match Funds for all Participating Nonprofits</label>
 
                                                 <div class="sub-options">
+
+                                                    <div class="c-form-item c-form-item--select c-form-item--combobox c-form-item--required"
+                                                         :class="{ 'c-form-item--has-error': formErrors['settings.MATCH_FUND_NONPROFIT_UUID'] }">
+                                                        <div class="c-form-item__label">
+                                                            <label for="matchFundNonprofitUuid" class="c-form-item-label-text">Match Fund Nonprofit</label>
+                                                        </div>
+                                                        <div class="c-form-item__control">
+                                                            <forms-select-nonprofit v-model="formData.settings.MATCH_FUND_NONPROFIT_UUID" id="matchFundNonprofitUuid"
+                                                                                    name="matchFundNonprofitUuid" :nonprofits="nonprofits"
+                                                                                    :hasError="formErrors.hasOwnProperty('settings.MATCH_FUND_NONPROFIT_UUID')"></forms-select-nonprofit>
+                                                            <div v-if="formErrors['settings.MATCH_FUND_NONPROFIT_UUID']"
+                                                                 class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                                {{ formErrors['settings.MATCH_FUND_NONPROFIT_UUID'] }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                     <div class="c-form-item c-form-item--text">
                                                         <div class="c-form-item__label">
@@ -165,7 +181,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="c-form-item__control">
-                                                            <input v-model="formData.HOMEPAGE_MATCH_BUTTON.value" type="text" name="matchFundButtonLabel" id="matchFundButtonLabel">
+                                                            <input v-model="formData.contents.HOMEPAGE_MATCH_BUTTON.value" type="text" name="matchFundButtonLabel"
+                                                                   id="matchFundButtonLabel">
                                                         </div>
                                                     </div>
 
@@ -177,7 +194,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="c-form-item__control">
-                                                            <input v-model="formData.HOMEPAGE_MATCH_DETAILS.value" type="text" name="matchFundDetails" id="matchFundDetails">
+                                                            <input v-model="formData.contents.HOMEPAGE_MATCH_DETAILS.value" type="text" name="matchFundDetails"
+                                                                   id="matchFundDetails">
                                                         </div>
                                                     </div>
 
@@ -209,7 +227,8 @@
                                     </div>
 
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.HOMEPAGE_POST_EVENT_TEXT.value" :loaded="loaded" :basic="true" id="postEventDetailsText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_POST_EVENT_TEXT.value" :loaded="loaded" :basic="true"
+                                                        id="postEventDetailsText"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -228,65 +247,74 @@
 </template>
 
 <script>
+	import Request from './../../../helpers/request';
+
 	module.exports = {
 		data: function () {
 			return {
+				nonprofits: [],
 				contents: [],
 				original: [],
+				settings: [],
 				loaded: false,
 
 				// Form Data
 				formData: {
-					HOMEPAGE_TITLE: {
-						key: 'HOMEPAGE_TITLE',
-						type: 'TEXT',
-						value: ''
+					contents: {
+						HOMEPAGE_TITLE: {
+							key: 'HOMEPAGE_TITLE',
+							type: 'TEXT',
+							value: ''
+						},
+						HOMEPAGE_SPOTLIGHT: {
+							key: 'HOMEPAGE_SPOTLIGHT',
+							type: 'FILE',
+							value: null
+						},
+						HOMEPAGE_MASTHEAD_TEXT: {
+							key: 'HOMEPAGE_MASTHEAD_TEXT',
+							type: 'RICH_TEXT',
+							value: ''
+						},
+						HOMEPAGE_MAIN_TEXT: {
+							key: 'HOMEPAGE_MAIN_TEXT',
+							type: 'RICH_TEXT',
+							value: ''
+						},
+						HOMEPAGE_POST_EVENT_TEXT: {
+							key: 'HOMEPAGE_POST_EVENT_TEXT',
+							type: 'RICH_TEXT',
+							value: ''
+						},
+						HOMEPAGE_REGISTER_BUTTON: {
+							key: 'HOMEPAGE_REGISTER_BUTTON',
+							type: 'TEXT',
+							value: 'Register Your Nonprofit Today'
+						},
+						HOMEPAGE_REGISTER_DETAILS: {
+							key: 'HOMEPAGE_REGISTER_DETAILS',
+							type: 'RICH_TEXT',
+							value: ''
+						},
+						HOMEPAGE_MATCH_IS_ENABLED: {
+							key: 'HOMEPAGE_MATCH_IS_ENABLED',
+							type: 'OPTION',
+							value: false
+						},
+						HOMEPAGE_MATCH_BUTTON: {
+							key: 'HOMEPAGE_MATCH_BUTTON',
+							type: 'TEXT',
+							value: 'Love Them All'
+						},
+						HOMEPAGE_MATCH_DETAILS: {
+							key: 'HOMEPAGE_MATCH_DETAILS',
+							type: 'TEXT',
+							value: ''
+						},
 					},
-					HOMEPAGE_SPOTLIGHT: {
-						key: 'HOMEPAGE_SPOTLIGHT',
-						type: 'FILE',
-						value: null
-					},
-					HOMEPAGE_MASTHEAD_TEXT: {
-						key: 'HOMEPAGE_MASTHEAD_TEXT',
-						type: 'RICH_TEXT',
-						value: ''
-					},
-					HOMEPAGE_MAIN_TEXT: {
-						key: 'HOMEPAGE_MAIN_TEXT',
-						type: 'RICH_TEXT',
-						value: ''
-					},
-					HOMEPAGE_POST_EVENT_TEXT: {
-						key: 'HOMEPAGE_POST_EVENT_TEXT',
-						type: 'RICH_TEXT',
-						value: ''
-					},
-					HOMEPAGE_REGISTER_BUTTON: {
-						key: 'HOMEPAGE_REGISTER_BUTTON',
-						type: 'TEXT',
-						value: 'Register Your Nonprofit Today'
-					},
-					HOMEPAGE_REGISTER_DETAILS: {
-						key: 'HOMEPAGE_REGISTER_DETAILS',
-						type: 'RICH_TEXT',
-						value: ''
-					},
-					HOMEPAGE_MATCH_IS_ENABLED: {
-						key: 'HOMEPAGE_MATCH_IS_ENABLED',
-						type: 'OPTION',
-						value: false
-					},
-					HOMEPAGE_MATCH_BUTTON: {
-						key: 'HOMEPAGE_MATCH_BUTTON',
-						type: 'TEXT',
-						value: 'Love Them All'
-					},
-					HOMEPAGE_MATCH_DETAILS: {
-						key: 'HOMEPAGE_MATCH_DETAILS',
-						type: 'TEXT',
-						value: ''
-					},
+					settings: {
+						MATCH_FUND_NONPROFIT_UUID: ''
+					}
 				},
 
 				// Errors
@@ -297,33 +325,84 @@
 		},
 		computed: {
 			showMatchFundOptions: function () {
-				return this.formData.HOMEPAGE_MATCH_IS_ENABLED.value;
+				return this.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value;
 			},
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('contents', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.contents = response.data;
-					vue.original = JSON.parse(JSON.stringify(response.data));
+			const fetchData = function () {
+				const request = new Request();
+				let contents = null;
+				let nonprofits = null;
+				let settings = null;
+				let promise = Promise.resolve();
+
+				promise = promise.then(function () {
+					return request.get('contents', {
+						keys: [
+							'HOMEPAGE_TITLE',
+							'HOMEPAGE_SPOTLIGHT',
+							'HOMEPAGE_MASTHEAD_TEXT',
+							'HOMEPAGE_MAIN_TEXT',
+							'HOMEPAGE_POST_EVENT_TEXT',
+							'HOMEPAGE_REGISTER_BUTTON',
+							'HOMEPAGE_REGISTER_DETAILS',
+							'HOMEPAGE_MATCH_IS_ENABLED',
+							'HOMEPAGE_MATCH_BUTTON',
+							'HOMEPAGE_MATCH_DETAILS'
+						]
+					}).then(function (response) {
+						contents = response.data;
+					});
+				});
+
+				promise = promise.then(function () {
+					return request.get('settings', {
+						keys: ['MATCH_FUND_NONPROFIT_UUID']
+					}).then(function (response) {
+						settings = response.data;
+					});
+				});
+
+				promise = promise.then(function () {
+					return request.get('nonprofits/search', {
+						status: 'ACTIVE'
+					}).then(function (response) {
+						nonprofits = response.data;
+					});
+				});
+
+				promise = promise.then(function () {
+					const spotlight = _.find(contents, {key: 'HOMEPAGE_SPOTLIGHT'});
+					if (spotlight) {
+						return request.get('files/' + spotlight.value).then(function (response) {
+							spotlight.file = response.data;
+						}).catch(function () {
+							spotlight.file = null;
+						});
+					} else {
+						return Promise.resolve();
+					}
+				});
+
+				promise = promise.then(function () {
+					return {
+						contents: contents,
+						nonprofits: nonprofits,
+						settings: settings
+					};
+				});
+
+				return promise;
+			};
+
+			fetchData().then(function (data) {
+				next(function (vue) {
+					vue.contents = data.contents;
+					vue.original = JSON.parse(JSON.stringify(data.contents));
+					vue.nonprofits = data.nonprofits;
+					vue.settings = data.settings;
 					vue.loaded = true;
 				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
-
-			vue.loaded = false;
-			vue.$request.get('contents', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.contents = response.data;
-				vue.original = JSON.parse(JSON.stringify(response.data));
-				vue.loaded = true;
-				next();
-			}).catch(function () {
-				next();
 			});
 		},
 		watch: {
@@ -340,21 +419,29 @@
 				handler: function () {
 					const vue = this;
 					if (vue.contents.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.clone(_.find(vue.contents, {key: key}));
+						Object.keys(vue.formData.contents).forEach(function (key) {
+							const content = _.cloneDeep(_.find(vue.contents, {key: key}));
 							if (content) {
-								if (content.type === 'FILE') {
-									vue.$request.get('files/' + content.value).then(function (response) {
-										vue.formData[key] = content;
-										vue.formData[key].value = response.data;
-									}).catch(function () {
-										content.value = null;
-										vue.formData[key] = content;
-										vue.formData[key].value = null;
-									});
+								if (content.type === 'FILE' && content.hasOwnProperty('file')) {
+									vue.formData.contents[key] = content;
+									vue.formData.contents[key].value = content.file;
 								} else {
-									vue.formData[key] = content;
+									vue.formData.contents[key] = content;
 								}
+							}
+						});
+					}
+				},
+				deep: true
+			},
+			settings: {
+				handler: function () {
+					const vue = this;
+					if (vue.settings.length) {
+						Object.keys(vue.formData.settings).forEach(function (key) {
+							const setting = _.find(vue.settings, {key: key});
+							if (setting) {
+								vue.formData.settings[key] = setting.value;
 							}
 						});
 					}
@@ -365,10 +452,16 @@
 		methods: {
 			getConstraints: function () {
 				return {
-					'HOMEPAGE_SPOTLIGHT.value': {
+					'contents.HOMEPAGE_SPOTLIGHT.value': {
 						label: 'Homepage Spotlight Image',
 						presence: false,
 						image: true
+					},
+					'settings.MATCH_FUND_NONPROFIT_UUID': {
+						label: 'Match Fund Nonprofit',
+						presence: function (value, data) {
+							return data.contents.HOMEPAGE_MATCH_IS_ENABLED.value;
+						}
 					}
 				};
 			},
@@ -390,7 +483,6 @@
 				const vue = this;
 
 				vue.getContentsToUpdate().then(function (contents) {
-
 					const toCreate = [];
 					const toUpdate = [];
 					const toDelete = [];
@@ -450,14 +542,37 @@
 						});
 					}
 
-					promise.then(function () {
-						vue.clearModals();
-						vue.$router.push({name: 'pages-list'});
-					}).catch(function (err) {
-						vue.clearModals();
-                        vue.apiError = err.response.data.errors;
-					});
+					return promise;
+				}).then(function () {
+					return vue.getSettingsToUpdate();
+				}).then(function (settings) {
+					let promise = Promise.resolve();
+					const toUpdate = _.reject(settings, {value: ''});
+					const toDelete = _.filter(settings, {value: ''});
 
+					if (toUpdate.length) {
+						promise = promise.then(function () {
+							return vue.$request.patch('settings', {
+								settings: toUpdate
+							});
+						});
+					}
+
+					if (toDelete.length) {
+						promise = promise.then(function () {
+							return vue.$request.delete('settings', {
+								settings: toDelete
+							});
+						})
+					}
+
+					return promise;
+				}).then(function () {
+					vue.clearModals();
+					vue.$router.push({name: 'pages-list'});
+				}).catch(function (err) {
+					vue.clearModals();
+                    vue.apiError = err.response.data.errors;
 				});
 
 			},
@@ -465,18 +580,19 @@
 				const vue = this;
 				let promise = Promise.resolve();
 				const contents = {};
-				Object.keys(vue.formData).forEach(function (key) {
-					if (vue.formData[key].value instanceof File) {
+
+				Object.keys(vue.formData.contents).forEach(function (key) {
+					if (vue.formData.contents[key].value instanceof File) {
 						promise = promise.then(function () {
-							return vue.uploadFile(key).then(function (uploadedFile) {
-								contents[key] = _.cloneDeep(vue.formData[key]);
+							return vue.uploadFile(vue.formData.contents[key]).then(function (uploadedFile) {
+								contents[key] = _.cloneDeep(vue.formData.contents[key]);
 								contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
 							});
 						});
 					} else {
 						promise = promise.then(function () {
-							const contentValue = _.isPlainObject(vue.formData[key].value) && vue.formData[key].value.hasOwnProperty('uuid') ? vue.formData[key].value.uuid : vue.formData[key].value;
-							contents[key] = _.cloneDeep(vue.formData[key]);
+							const contentValue = _.isPlainObject(vue.formData.contents[key].value) && vue.formData.contents[key].value.hasOwnProperty('uuid') ? vue.formData.contents[key].value.uuid : vue.formData.contents[key].value;
+							contents[key] = _.cloneDeep(vue.formData.contents[key]);
 							contents[key].value = contentValue;
 						});
 					}
@@ -488,15 +604,33 @@
 
 				return promise;
 			},
-			uploadFile: function (key) {
+			getSettingsToUpdate: function () {
+				const vue = this;
+				return new Promise(function (resolve, reject) {
+					const settings = [];
+					Object.keys(vue.formData.settings).forEach(function (key) {
+						let value = vue.formData.settings[key];
+						if (vue.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value === false) {
+							value = '';
+						}
+						settings.push({
+							key: key,
+							value: value
+						});
+					});
+
+					resolve(settings);
+				});
+			},
+			uploadFile: function (fileValue) {
 				const vue = this;
 				let file = null;
 				let promise = Promise.resolve();
-				if (vue.formData[key].value) {
+				if (fileValue.value) {
 					promise = promise.then(function () {
 						return vue.$request.post('files', {
-							content_type: vue.formData[key].value.type,
-							filename: vue.formData[key].value.name
+							content_type: fileValue.value.type,
+							filename: fileValue.value.name
 						});
 					}).then(function (response) {
 						file = response.data.file;
@@ -504,10 +638,10 @@
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData[key].value.type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData[key].value.type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = fileValue.value.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = fileValue.value.type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData[key].value);
+						return instance.put(signedUrl, fileValue.value);
 					}).then(function () {
 						return file;
 					});
@@ -517,7 +651,8 @@
 		},
 		components: {
 			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),
-			'forms-image-upload': require('./../../forms/ImageUpload.vue')
+			'forms-image-upload': require('./../../forms/ImageUpload.vue'),
+			'forms-select-nonprofit': require('./../../forms/SelectNonprofit.vue')
 		}
 	};
 </script>

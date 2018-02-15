@@ -31,6 +31,7 @@ const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
+const SettingHelper = require('./../../helpers/setting');
 
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new DonationsRepository();
@@ -51,6 +52,12 @@ exports.handle = function (event, context, callback) {
 	let total = 0;
 	let topDonation = 0;
 	let fees = 0;
+	let settings = {
+		'EVENT_TIMEZONE': null,
+		'PAYMENT_SPRING_TEST_API_KEY': null,
+		'PAYMENT_SPRING_API_KEY': null
+	};
+
 	request.validate().then(function () {
 		const paymentFields = [
 			'card_exp_month',
@@ -71,14 +78,17 @@ exports.handle = function (event, context, callback) {
 			}
 		});
 
-		const key = payment.is_test_mode ? 'PAYMENT_SPRING_TEST_API_KEY' : 'PAYMENT_SPRING_API_KEY';
-		return settingsRepository.get(key);
+		return settingsRepository.batchGet(Object.keys(settings));
 	}).then(function (response) {
-		apiKey = response.value;
+		response.forEach(function (setting) {
+			settings[setting.key] = setting.value;
+		});
+		const key = request.get('payment').is_test_mode ? 'PAYMENT_SPRING_TEST_API_KEY' : 'PAYMENT_SPRING_API_KEY';
+		apiKey = settings[key];
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach(function (donation) {
-			donation.fees = DonationHelper.calculateFees(donation.subtotal, 30, 0.029);
+			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
@@ -227,10 +237,10 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		const body = {
 			donations: donations.map(function (donation) {
-				return donation.mutate();
+				return donation.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 			}),
-			donor: donor.mutate(),
-			paymentTransaction: paymentTransaction.mutate()
+			donor: donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}),
+			paymentTransaction: paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE})
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
 		callback();
