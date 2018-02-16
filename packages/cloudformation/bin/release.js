@@ -16,12 +16,12 @@
  */
 
 const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 const path = require('path');
 const packageJson = require('./../../../package.json');
-
-dotenv.config({path: `${__dirname}/../../../.env`});
 
 const buildDirectory = path.normalize(`${__dirname}/../build/`);
 const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;

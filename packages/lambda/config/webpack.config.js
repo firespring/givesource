@@ -16,10 +16,11 @@
  */
 
 const dotenv = require('dotenv');
-const path = require('path');
-const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
-
 dotenv.config({path: `${__dirname}/../../../.env`});
+
+const path = require('path');
+const webpack = require('webpack');
+const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
 
 module.exports = function (env) {
 	return {
@@ -165,6 +166,11 @@ module.exports = function (env) {
 			]
 		},
 		plugins: [
+			new webpack.DefinePlugin({
+				'process.env': {
+					NODE_ENV: `"${process.env.NODE_ENV}"`,
+				}
+			}),
 			new WebpackBundlePlugin({
 				output: path.resolve(__dirname, '../build'),
 				assetName: function (asset) {

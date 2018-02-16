@@ -16,12 +16,10 @@
  */
 
 const dotenv = require('dotenv');
-const execSync = require('child_process').execSync;
-const fs = require('fs');
-const path = require('path');
-const packageJson = require('./../../../package.json');
-
 dotenv.config({path: `${__dirname}/../../../.env`});
+
+const execSync = require('child_process').execSync;
+const packageJson = require('./../../../package.json');
 
 const adminEmail = process.env.ADMIN_EMAIL;
 const awsRegion = process.env.AWS_REGION;
