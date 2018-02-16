@@ -55,7 +55,7 @@
 			},
 			backgroundImageUrl: function () {
 				const vue = this;
-				let url = '/assets/temp/hero.png';
+				let url = '/assets/temp/hero.jpg';
 				const mastheadPath = vue.$store.getters.setting('MASTHEAD_IMAGE');
 				if (mastheadPath) {
 					url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + mastheadPath;

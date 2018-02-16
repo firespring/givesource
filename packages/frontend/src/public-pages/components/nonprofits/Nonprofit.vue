@@ -83,7 +83,7 @@
                                 </div>
                             </template>
                             <div v-else-if="nonprofitSlidesLoaded" class="nonprofit-campaign__slider" style="overflow: hidden;">
-                                <img alt="" src="/assets/temp/slide1.jpg">
+                                <img alt="" src="/assets/temp/community.jpg">
                             </div>
                         </div>
                     </div>
