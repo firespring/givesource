@@ -20,7 +20,7 @@
         <h4>We need you to confirm your identity</h4>
 
         <p>
-            We have sent you an email with a link to reset your password.
+            If the email you entered matches our records, we have sent you an email with a link to reset your password.
         </p>
 
         <footer class="c-form-actions c-form-actions--compact">
