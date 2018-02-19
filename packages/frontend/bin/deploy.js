@@ -16,13 +16,14 @@
  */
 
 const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const deployInfo = require('../config/deploy-info.json');
 const fs = require('fs');
 const Lambda = require('./aws/lambda');
 const path = require('path');
 const S3 = require('./aws/s3');
 
-dotenv.config({path: `${__dirname}/../../../.env`});
 const awsRegion = process.env.AWS_REGION;
 
 /**

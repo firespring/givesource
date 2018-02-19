@@ -16,11 +16,11 @@
  */
 
 const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const packageJson = require('../../../package.json');
 const path = require('path');
 const S3 = require('./aws/s3');
-
-dotenv.config({path: `${__dirname}/../../../.env`});
 
 const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;
 const awsReleaseBucketRegion = process.env.AWS_RELEASE_BUCKET_REGION;

@@ -20,8 +20,10 @@ const webpack = require('webpack');
 const BrowserSyncSpa = require('browser-sync-middleware-spa');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const FetchDynamicContent = require('./../bin/fetch-dynamic-content');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const WebpackOnBuildPlugin = require('on-build-webpack');
 
 module.exports = {
 	module: {
@@ -66,6 +68,11 @@ module.exports = {
 		publicPath: '/',
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: `"${process.env.NODE_ENV}"`,
+			}
+		}),
 		new webpack.ProvidePlugin({
 			$: 'jquery',
 			jQuery: 'jquery',
@@ -94,5 +101,6 @@ module.exports = {
 			files: ['bundle.js', 'assets/**/*.css'],
 			open: false
 		}),
+		new WebpackOnBuildPlugin(FetchDynamicContent.fetch),
 	]
 };
