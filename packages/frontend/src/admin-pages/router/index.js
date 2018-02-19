@@ -327,16 +327,6 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/thank-you-message',
-			name: 'nonprofit-settings-thank-you-message',
-			props: true,
-			component: require('./../components/nonprofit/settings/thankYouMessage/ThankYouMessage.vue'),
-			meta: {
-				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
-			}
-		},
-		{
 			path: '/nonprofits/:nonprofitUuid/settings/notifications',
 			name: 'nonprofit-settings-notifications',
 			props: true,
