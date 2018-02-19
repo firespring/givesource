@@ -167,7 +167,7 @@
 				if (vue.logo) {
 					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.logo.path;
 				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+					logo = vue.$store.getters.setting('EVENT_LOGO');
 				} else {
 					logo = '/assets/temp/logo-event.png';
 				}

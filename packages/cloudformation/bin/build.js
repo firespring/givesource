@@ -16,13 +16,13 @@
  */
 
 const dotenv = require('dotenv');
+dotenv.config({path: `${__dirname}/../../../.env`});
+
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const mustache = require('mustache');
 const path = require('path');
 const packageJson = require('./../../../package.json');
-
-dotenv.config({path: `${__dirname}/../../../.env`});
 
 const cfDirectory = path.normalize(`${__dirname}/../`);
 const buildDirectory = path.normalize(`${cfDirectory}/build/`);

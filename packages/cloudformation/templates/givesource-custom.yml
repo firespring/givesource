@@ -497,23 +497,6 @@ Resources:
       - CognitoUserPoolClient
       - SaveInitialStackSettings
 
-  PublicPagesSettingsJson:
-    Type: Custom::S3PutObject
-    Properties:
-      ServiceToken: !GetAtt S3PutObjectFunction.Arn
-      Region: !Sub |-
-        ${AWS::Region}
-      Bucket: !Ref PublicPagesS3
-      Key: "settings.json"
-      Body: !Sub |-
-        {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
-        }
-    DependsOn:
-      - S3PutObjectFunction
-      - CognitoUserPool
-      - CognitoUserPoolClient
-
   PublicPagesDeploy:
     Type: Custom::S3SyncObjects
     Properties:

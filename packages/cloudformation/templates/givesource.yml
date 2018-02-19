@@ -66,13 +66,13 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
       TimeoutInMinutes: 20
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 20
 
   RestApi:
@@ -316,7 +316,7 @@ Resources:
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
         UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CognitoSnsCallerRole
@@ -338,7 +338,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -358,7 +358,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -378,7 +378,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -399,7 +399,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -420,7 +420,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -440,7 +440,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -461,7 +461,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -481,7 +481,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -502,7 +502,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -522,7 +522,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -542,7 +542,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -563,7 +563,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CustomStack
@@ -578,7 +578,7 @@ Resources:
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         RestApi: !Ref RestApi
-      TemplateURL: https://s3-{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-deploy.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-deploy.yml
       TimeoutInMinutes: 20
     DependsOn:
       - ApiContentsStack

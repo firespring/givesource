@@ -192,7 +192,7 @@ const router = new VueRouter({
 		},
 		{
 			path: '/settings/site-appearance',
-			name: 'site-appearance',
+			name: 'settings-site-appearance',
 			component: require('./../components/admin/settings/appearance/Appearance.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
@@ -204,6 +204,14 @@ const router = new VueRouter({
 			component: require('./../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin']
+			},
+		},
+		{
+			path: '/settings/google-analytics',
+			name: 'settings-analytics',
+			component: require('./../components/admin/settings/analytics/Analytics.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
 		{
