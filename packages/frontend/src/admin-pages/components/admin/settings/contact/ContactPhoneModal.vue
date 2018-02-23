@@ -22,7 +22,7 @@
                 <div class="c-modal-dialog__contents">
 
                     <div class="c-modal-header">
-                        <h1>Edit Contact Email Address</h1>
+                        <h1>Edit Contact Phone Number</h1>
                     </div>
 
                     <div class="c-modal-content">
