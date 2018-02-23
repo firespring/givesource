@@ -73,7 +73,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
 
   RestApi:
     Type: AWS::ApiGateway::RestApi
