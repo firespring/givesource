@@ -30,7 +30,12 @@ module.exports = {
 			{
 				test: /\.vue$/,
 				loader: 'vue-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
+				options: {
+					loaders: {
+						js: 'babel-loader'
+					}
+				}
 			},
 			{
 				test: /\.(jpe?g|png|gif|svg)$/i,
@@ -40,6 +45,11 @@ module.exports = {
 				test: /\.css$/,
 				loader: 'style-loader!css-loader'
 			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader'
+			}
 		]
 	},
 	resolve: {
