@@ -17,6 +17,7 @@
 
 const _ = require('lodash');
 const InvalidInputException = require('./../exceptions/invalidInput');
+const moment = require('moment-timezone');
 const UUID = require('node-uuid');
 const validate = require('validate.js');
 const ValidationHelper = require('./../helpers/validation');
@@ -123,9 +124,13 @@ Model.prototype._constraints = {
  * @private
  */
 Model.prototype._mutators = {
-	createdOn: function (value) {
+	createdOn: function (value, options) {
 		const date = new Date(value);
-		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		if (options.timezone) {
+			return moment(date).tz(options.timezone).format('M/D/YYYY h:mm:ss A');
+		} else {
+			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		}
 	},
 };
 
@@ -290,9 +295,11 @@ Model.prototype.nonEmpty = function () {
  * Get the mutated version of this model
  *
  * @param {Array} [properties]
+ * @param {Object} options
  */
-Model.prototype.mutate = function (properties) {
+Model.prototype.mutate = function (properties, options) {
 	properties = properties || this.getAttributes();
+	options = options || {};
 
 	const mutated = {};
 	const mutators = this.getMutators();
@@ -300,7 +307,7 @@ Model.prototype.mutate = function (properties) {
 
 	properties.forEach(function (property) {
 		if (values.hasOwnProperty(property)) {
-			mutated[property] = (mutators.hasOwnProperty(property) && typeof mutators[property] === 'function') ? mutators[property](values[property]) : values[property];
+			mutated[property] = (mutators.hasOwnProperty(property) && typeof mutators[property] === 'function') ? mutators[property](values[property], options) : values[property];
 		}
 	});
 

@@ -49,7 +49,7 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
-                                        <router-link :to="{ name: 'site-appearance' }">Site Appearance</router-link>
+                                        <router-link :to="{ name: 'settings-site-appearance' }">Site Appearance</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">
                                         Modify your site's logo, colors, and other visual settings.
@@ -64,6 +64,17 @@
                                     </h3>
                                     <div class="c-notes c-notes--below">
                                         Integrate with PaymentSpring to process credit cards.
+                                    </div>
+                                </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-analytics' }">Google Analytics Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Integrate with your Google Analytics account to track traffic to your site.
                                     </div>
                                 </div>
 

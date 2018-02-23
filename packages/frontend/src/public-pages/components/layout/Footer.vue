@@ -57,7 +57,7 @@
 	            return this.$store.getters.setting('CONTACT_PHONE') || null;
             },
 	        displayTerms: function () {
-		        return this.$store.getters.setting('PAGE_TERMS_ENABLED') ? this.$store.getters.setting('PAGE_TERMS_ENABLED') : false;
+		        return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED');
 	        },
             year: function () {
 				return new Date().getFullYear();

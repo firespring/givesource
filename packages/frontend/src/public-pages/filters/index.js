@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+import pluralize from './string/pluralize'
 
-module.exports = function () {
-	const env = process.env.NODE_ENV || 'development';
-	return require(`./webpack.config.admin.${env}.js`);
+const VueFilters = {
+	install: function (Vue) {
+		Vue.filter('pluralize', pluralize);
+	}
 };
+
+export default VueFilters;

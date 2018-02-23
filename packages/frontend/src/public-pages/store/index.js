@@ -23,7 +23,6 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
-		updated: 0,
 		settings: {},
 		cartItems: []
 	},
@@ -75,9 +74,6 @@ const store = new Vuex.Store({
 			Object.keys(settings).forEach(function (key) {
 				state.settings[key] = settings[key];
 			});
-		},
-		updated: function (state) {
-			state.updated = new Date().getTime();
 		}
 	},
 	getters: {
@@ -92,8 +88,12 @@ const store = new Vuex.Store({
 				return state.settings.hasOwnProperty(key) ? state.settings[key] : null;
 			}
 		},
-		updated: function (state) {
-			return state.updated;
+		booleanSetting: function (state) {
+			return function (key, defaultValue) {
+				defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue;
+				let value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue;
+				return value === '1' || value === 1 || value === true || value.toLowerCase() === 'true';
+			}
 		}
 	},
 	plugins: [

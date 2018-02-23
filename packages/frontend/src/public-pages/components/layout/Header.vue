@@ -67,13 +67,13 @@
 		},
 		computed: {
 			displayAbout: function () {
-				return this.$store.getters.setting('PAGE_ABOUT_ENABLED') ? this.$store.getters.setting('PAGE_ABOUT_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
 			},
 			displayFAQ: function () {
-				return this.$store.getters.setting('PAGE_FAQ_ENABLED') ? this.$store.getters.setting('PAGE_FAQ_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED');
 			},
 			displayToolkits: function () {
-				return this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') ? this.$store.getters.setting('PAGE_TOOLKIT_ENABLED') : false;
+				return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED');
 			},
 			logoTitle: function () {
 				return Settings.eventTitle() + ' Logo';
@@ -81,7 +81,7 @@
 			logoUrl: function () {
 				const vue = this;
 				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
-				return eventLogo ? vue.$store.getters.setting('UPLOADS_CLOUDFRONT_URL') + '/' + eventLogo : '/assets/temp/logo-event.png';
+				return eventLogo ? eventLogo : '/assets/temp/logo-event.png';
 			},
 			canDonate: function () {
 				return Settings.acceptDonations();

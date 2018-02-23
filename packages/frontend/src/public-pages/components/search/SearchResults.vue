@@ -27,7 +27,7 @@
                 <search-results-header :category="category" :search="search"></search-results-header>
 
                 <p class="mt3 mb3 text-c" v-if="search && pagination.loaded">
-                    <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} results.</strong>
+                    <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} {{ pagination.items.length | pluralize('result') }}.</strong>
                 </p>
 
                 <div class="leaderboard" v-if="pagination.loaded && pagination.items.length">
@@ -99,6 +99,7 @@
 				}
 				if (Object.keys(options).length) {
 					options.status = 'ACTIVE';
+					options.includeMatchFund = 0;
 					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
 						response.data.sort(function (a, b) {
 							return Utils.sortAlphabetically(a, b, 'legalName');
@@ -108,7 +109,7 @@
 						});
 					});
 				} else {
-					options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+					options = _.extend({includeMatchFund: 0}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 					axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 						vue.fetchLogos(response.data.items).then(function () {
 							vue.setPaginationData(response.data);
@@ -136,6 +137,7 @@
 			}
 			if (Object.keys(options).length) {
 				options.status = 'ACTIVE';
+				options.includeMatchFund = 0;
 				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
 					response.data.sort(function (a, b) {
 						return Utils.sortAlphabetically(a, b, 'legalName');
@@ -146,7 +148,7 @@
 					});
 				});
 			} else {
-				options = _.extend({}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
+				options = _.extend({includeMatchFund: 0}, {size: '10', sort: 'active_legal_name_ascending'}, to.query);
 				axios.get(API_URL + 'nonprofits' + Utils.generateQueryString(options)).then(function (response) {
 					vue.fetchLogos(response.data.items).then(function () {
 						vue.setPaginationData(response.data);

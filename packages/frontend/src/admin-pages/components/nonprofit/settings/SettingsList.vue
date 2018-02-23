@@ -47,17 +47,6 @@
 
                             <div class="c-page-section-segment">
                                 <h3 class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-thank-you-message' }">Thank You Message</router-link>
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Configure the thank you message that your donors will receive.
-                                </div>
-                            </div>
-
-                            <hr class="expand">
-
-                            <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
                                     <router-link :to="{ name: 'nonprofit-settings-notifications' }">Donation Notifications</router-link>
                                 </h3>
                                 <div class="c-notes c-notes--below">

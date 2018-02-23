@@ -53,6 +53,7 @@
 		"v-money": "^0.8.0",
 		"validate.js": "0.10.0",
 		"vue": "^2.4.1",
+		"vue-analytics": "^5.8.0",
 		"vue-cropperjs": "github:Agontuk/vue-cropperjs#d40cd3d334268f6e01ba2b20f072ae2d6a0ff59e",
 		"vue-gravatar": "^1.1.3",
 		"vue-loader": "^12.2.2",

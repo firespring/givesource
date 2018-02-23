@@ -37,7 +37,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function() {
 		return DonationHelper.getFeeRates(donation.isOfflineDonation);
 	}).then(function(rates) {
-		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.subtotal, rates.flatRate, rates.percent);
+		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, rates.flatRate, rates.percent);
 		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
 		donation.amountForNonprofit = donation.total - donation.fees;
 	}).then(function () {

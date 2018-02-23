@@ -15,10 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const _ = require('lodash');
 
-module.exports = function () {
-	const env = process.env.NODE_ENV || 'development';
-	return require(`./webpack.config.admin.${env}.js`);
-};
+/**
+ * Pluralize a string
+ *
+ * @param {*} value
+ * @returns {*}
+ */
+function pluralize(value) {
+	let args = _.slice(_.toArray(arguments), 1);
+	return args.length > 1
+		? (args[value % 10 - 1] || args[args.length - 1])
+		: (args[0] + (value === 1 ? '' : 's'));
+}
+
+export default pluralize;

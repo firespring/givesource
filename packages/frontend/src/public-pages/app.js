@@ -22,10 +22,15 @@ import EventBusMixin from './mixins/eventBus';
 import ModalsMixin from './mixins/modals';
 import router from './router';
 import store from './store';
-var SocialSharing = require('vue-social-sharing');
+import SocialSharing from 'vue-social-sharing';
 import UtilsMixin from './mixins/utils';
 import ValidateMixin from './mixins/validate';
+import VueAnalytics from 'vue-analytics';
 import Vue from "vue";
+import VueFilters from './filters';
+
+// Register filters
+Vue.use(VueFilters);
 
 // Register plugins
 Vue.use(SocialSharing);
@@ -44,6 +49,20 @@ window._ = require('lodash');
 window.$ = window.jQuery = require('jquery');
 window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Load app settings
+window.API_URL = window.appSettings.API_URL;
+store.commit('settings', window.appSettings);
+
+Vue.use(VueAnalytics, {
+	id: function () {
+		return store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID');
+	},
+	router,
+	autoTracking: {
+		pageviewOnLoad: false
+	}
+});
 
 // Bootstrap the app
 const main = App;

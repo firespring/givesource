@@ -192,7 +192,7 @@ const router = new VueRouter({
 		},
 		{
 			path: '/settings/site-appearance',
-			name: 'site-appearance',
+			name: 'settings-site-appearance',
 			component: require('./../components/admin/settings/appearance/Appearance.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
@@ -204,6 +204,14 @@ const router = new VueRouter({
 			component: require('./../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue'),
 			meta: {
 				allowedGroups: ['SuperAdmin']
+			},
+		},
+		{
+			path: '/settings/google-analytics',
+			name: 'settings-analytics',
+			component: require('./../components/admin/settings/analytics/Analytics.vue'),
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
 			},
 		},
 		{
@@ -313,16 +321,6 @@ const router = new VueRouter({
 			name: 'nonprofit-settings-manage-organization',
 			props: true,
 			component: require('./../components/nonprofit/settings/manageOrganization/ManageOrganization.vue'),
-			meta: {
-				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
-			}
-		},
-		{
-			path: '/nonprofits/:nonprofitUuid/settings/thank-you-message',
-			name: 'nonprofit-settings-thank-you-message',
-			props: true,
-			component: require('./../components/nonprofit/settings/thankYouMessage/ThankYouMessage.vue'),
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
 				validateNonprofitUuid: true
@@ -498,7 +496,7 @@ const router = new VueRouter({
 const updateSettings = function () {
 	const settings = [
 		'EVENT_URL',
-		'UPLOADS_CLOUDFRONT_URL',
+		'UPLOADS_CLOUD_FRONT_URL',
 		'USER_POOL_CLIENT_ID',
 		'USER_POOL_ID'
 	];

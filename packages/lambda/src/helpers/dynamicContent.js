@@ -53,10 +53,30 @@ exports.regenerateCustomCss = function (updatedSettings, awsRegion, awsStackName
  */
 exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackName, force) {
 	const settings = [
+		SettingHelper.SETTING_ADMIN_URL,
+		SettingHelper.SETTING_API_URL,
+		SettingHelper.SETTING_CONTACT_PHONE,
+		SettingHelper.SETTING_DATE_DONATIONS_END,
+		SettingHelper.SETTING_DATE_DONATIONS_START,
+		SettingHelper.SETTING_DATE_EVENT,
+		SettingHelper.SETTING_DATE_REGISTRATIONS_END,
+		SettingHelper.SETTING_DATE_REGISTRATIONS_START,
+		SettingHelper.SETTING_EVENT_LOGO,
+		SettingHelper.SETTING_EVENT_TIMEZONE,
 		SettingHelper.SETTING_EVENT_TITLE,
 		SettingHelper.SETTING_EVENT_URL,
+		SettingHelper.SETTING_FOUNDATION_LOGO,
+		SettingHelper.SETTING_FOUNDATION_URL,
+		SettingHelper.SETTING_GOOGLE_ANALYTICS_TRACKING_ID,
+		SettingHelper.SETTING_MASTHEAD_IMAGE,
+		SettingHelper.SETTING_PAGE_ABOUT_ENABLED,
+		SettingHelper.SETTING_PAGE_FAQ_ENABLED,
+		SettingHelper.SETTING_PAGE_TERMS_ENABLED,
+		SettingHelper.SETTING_PAGE_TOOLKIT_ENABLED,
+		SettingHelper.SETTING_PUBLIC_INDEX_TEMPLATE,
 		SettingHelper.SETTING_SOCIAL_SHARING_DESCRIPTION,
 		SettingHelper.SETTING_SOCIAL_SHARING_IMAGE,
+		SettingHelper.SETTING_UPLOADS_CLOUD_FRONT_URL,
 	];
 	const changedSettings = _.intersection(settings, updatedSettings);
 	let promise = Promise.resolve();
