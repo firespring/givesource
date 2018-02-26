@@ -79,7 +79,7 @@
             },
             checkoutBtn: function () {
                 const vue = this;
-                if (!vue.formErrors) {
+                if (!Object.keys(vue.formErrors).length) {
                     $(vue.$refs.donationModalCart).hide();
                     vue.removeModal('donation-cart');
                     vue.removeBodyClasses('has-donation-overlay');
