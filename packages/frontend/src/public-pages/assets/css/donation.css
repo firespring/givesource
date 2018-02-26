@@ -257,6 +257,7 @@ Donation options overlay
 
 .donation-modal {
 	position: relative;
+	width: 100%;
 	max-width: 770px;
 	background: #fff;
 	padding: 1.5rem 1rem;
@@ -284,7 +285,7 @@ Donation options overlay
 }
 
 .donation-modal__content {
-	padding: 1rem;
+	padding: 0 1rem 1rem;
 }
 
 .donation-option a:link,
@@ -331,10 +332,13 @@ Donation options overlay
 	opacity: .5;
 	transition: color linear .2s;
 }
+
+.donation-options + .donation-options-custom {
+	margin: 3rem 0 0;
+}
 	
 .donation-options-custom {
 	position: relative;
-	margin: 3rem 0 0;
 }
 	
 .donation-options-custom h2 {
@@ -829,8 +833,8 @@ Global Media queries
 	.donation-modal__title {
 		font-size: 2.3125rem;
 	}
-	
-	.donation-options-custom {
+
+	.donation-options + .donation-options-custom {
 		margin: 4.25rem 0 0;
 	}
 	
