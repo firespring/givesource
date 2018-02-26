@@ -179,7 +179,6 @@
 					$(vue.$refs.donationModalOptions).fadeOut(function () {
 						vue.removeModal('donation-tiers');
 						vue.removeBodyClasses('has-donation-overlay');
-
 						vue.addModal('donation-cart');
 					});
 				}
