@@ -50,12 +50,12 @@
                                 </div>
                             </div>
 
-                            <div class="c-form-item c-form-item--textarea" :class="{ 'c-form-item--has-error': formErrors.changeReasons }">
+                            <div class="c-form-item c-form-item--textarea" :class="{ 'c-form-item--has-error': formErrors.changeReason }">
                                 <div class="c-form-item__label">
                                     <label for="changeReasons" class="c-form-item-label-text">Reasons for Name Change</label>
                                 </div>
                                 <div class="c-form-item__control">
-                                    <textarea name="changeReasons" id="changeReasons" :class="{ 'has-error': formErrors.changeReasons }"></textarea>
+                                    <textarea v-model="formData.changeReason" name="changeReasons" id="changeReasons" :class="{ 'has-error': formErrors.changeReason }"></textarea>
                                     <div v-if="formErrors.changeReason" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.changeReason }}
                                     </div>
@@ -83,15 +83,15 @@
 				nonprofit: {},
 
 				// Form Data
-                formData: {
-	                requestedName: '',
-                    changeReason: ''
-                },
+				formData: {
+					requestedName: '',
+					changeReason: ''
+				},
 
 				// Errors
-                formErrors: {}
-            };
-        },
+				formErrors: {}
+			};
+		},
 		props: [
 			'nonprofitUuid'
 		],
@@ -131,7 +131,7 @@
 					},
 					changeReason: {
 						presence: false,
-                    }
+					}
 				};
 			},
 			submit: function (event) {
@@ -150,8 +150,27 @@
 			submitRequest: function () {
 				const vue = this;
 
-				vue.clearModals();
-				vue.$router.push({ name: 'nonprofit-settings-list' });
+				const name = (vue.user.firstName && vue.user.lastName) ? vue.user.firstName + ' ' + vue.user.lastName : vue.nonprofit.legalName;
+				vue.$request.post('messages', {
+					name: name,
+					email: vue.user.email,
+					message: vue.formatMessage(),
+					type: 'NAME_CHANGE'
+				}).then(function () {
+					vue.clearModals();
+					vue.$router.push({name: 'nonprofit-settings-list'});
+				}).catch(function (err) {
+					console.log(err);
+				});
+			},
+			formatMessage: function () {
+				const vue = this;
+
+				let message = '<strong>Original Name:</strong> ' + vue.nonprofit.legalName + '<br>';
+				message += '<strong>Requested Name:</strong> ' + vue.formData.requestedName + '<br>';
+				message += '<strong>Reason:</strong> ' + vue.formData.changeReason;
+
+				return message;
 			}
 		}
 	};
