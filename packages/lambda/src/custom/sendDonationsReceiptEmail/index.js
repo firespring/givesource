@@ -48,6 +48,8 @@ exports.handle = function (event, context, callback) {
 	let html = '';
 	let settings = {
 		CONTACT_PHONE: null,
+		EMAILS_DONATION_RECEIPT_AFTER_LIST: null,
+		EMAILS_DONATION_RECEIPT_BEFORE_LIST: null,
 		EVENT_URL: null,
 		EVENT_TIMEZONE: null,
 		EVENT_TITLE: null,

@@ -393,9 +393,15 @@
                                         {{/settings.EVENT_URL}}{{/settings.EVENT_TITLE}}
 
                                         <p>After your application has been approved, you will receive instructions for logging in and creating your donation page.</p>
+
                                     </td>
                                 </tr>
                             </table>
+
+                            {{#settings.EMAILS_USER_REGISTRATION_PENDING}}
+                                {{{ settings.EMAILS_USER_REGISTRATION_PENDING }}}
+                            {{/settings.EMAILS_USER_REGISTRATION_PENDING}}
+
                         </td>
                     </tr>
 

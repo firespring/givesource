@@ -56,6 +56,17 @@
                                     </div>
                                 </div>
 
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-emails' }">Emails</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Customize the content of various emails that your site sends out.
+                                    </div>
+                                </div>
+
                                 <hr class="expand" v-if="isSuperAdmin">
 
                                 <div class="c-page-section-segment" v-if="isSuperAdmin">

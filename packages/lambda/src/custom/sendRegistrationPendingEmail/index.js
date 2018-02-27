@@ -31,6 +31,7 @@ exports.handle = function (event, context, callback) {
 	let html = '';
 	let settings = {
 		CONTACT_PHONE: null,
+		EMAILS_USER_REGISTRATION_PENDING: null,
 		EVENT_URL: null,
 		EVENT_TITLE: null,
 		EVENT_LOGO: null,

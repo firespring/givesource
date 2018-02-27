@@ -30,6 +30,7 @@ exports.handle = function (event, context, callback) {
 	let settings = {
 		ADMIN_PAGES_CLOUD_FRONT_URL: process.env.ADMIN_PAGES_CLOUD_FRONT_URL,
 		CONTACT_PHONE: null,
+		EMAILS_USER_REGISTRATION_ACTIVATED: null,
 		EVENT_LOGO: null,
 		EVENT_TITLE: null,
 		EVENT_URL: process.env.EVENT_URL,
