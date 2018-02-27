@@ -72,7 +72,7 @@ Message.prototype.constraints = {
 	},
 	type: {
 		presence: true,
-		inclusion: [MessageHelper.TYPE_CONTACT, MessageHelper.TYPE_FEEDBACK]
+		inclusion: [MessageHelper.TYPE_CONTACT, MessageHelper.TYPE_FEEDBACK, MessageHelper.TYPE_NAME_CHANGE]
 	}
 };
 
