@@ -25,19 +25,24 @@
     <meta property="og:url" content="{{{settings.EVENT_URL}}}">
     <meta property="og:type" content="website">
     {{#settings.SOCIAL_SHARING_DESCRIPTION}}
-    <meta property="og:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">
+        <meta property="og:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">
     {{/settings.SOCIAL_SHARING_DESCRIPTION}}
     {{#settings.SOCIAL_SHARING_IMAGE}}
-    <meta property="og:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">
+        <meta property="og:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">
     {{/settings.SOCIAL_SHARING_IMAGE}}
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{settings.EVENT_TITLE}}">
     {{#settings.SOCIAL_SHARING_DESCRIPTION}}
-    <meta name="twitter:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">
+        <meta name="twitter:description" content="{{settings.SOCIAL_SHARING_DESCRIPTION}}">
     {{/settings.SOCIAL_SHARING_DESCRIPTION}}
     {{#settings.SOCIAL_SHARING_IMAGE}}
-    <meta name="twitter:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">
+        <meta name="twitter:image" content="{{{settings.SOCIAL_SHARING_IMAGE}}}">
     {{/settings.SOCIAL_SHARING_IMAGE}}
+
+    <!-- Favicon -->
+    {{#settings.FAVICON}}
+        <link rel="icon" type="image/png" href="{{settings.FAVICON}}"/>
+    {{/settings.FAVICON}}
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700,700i,900,900i|Passion+One">
@@ -48,28 +53,29 @@
 
     <!-- Javascript -->
     <script>
-		window.appSettings = {
-			ADMIN_URL: "{{#e}}{{{settings.ADMIN_URL}}}{{/e}}",
-			API_URL: "{{#e}}{{{settings.API_URL}}}{{/e}}",
-			CONTACT_PHONE: "{{#e}}{{{settings.CONTACT_PHONE}}}{{/e}}",
-			DATE_DONATIONS_END: "{{#e}}{{{settings.DATE_DONATIONS_END}}}{{/e}}",
-			DATE_DONATIONS_START: "{{#e}}{{{settings.DATE_DONATIONS_START}}}{{/e}}",
-			DATE_EVENT: "{{#e}}{{{settings.DATE_EVENT}}}{{/e}}",
-			DATE_REGISTRATIONS_END: "{{#e}}{{{settings.DATE_REGISTRATIONS_END}}}{{/e}}",
-			DATE_REGISTRATIONS_START: "{{#e}}{{{settings.DATE_REGISTRATIONS_START}}}{{/e}}",
-			EVENT_LOGO: "{{#e}}{{{settings.EVENT_LOGO}}}{{/e}}",
-			EVENT_TIMEZONE: "{{#e}}{{{settings.EVENT_TIMEZONE}}}{{/e}}",
-			EVENT_TITLE: "{{#e}}{{{settings.EVENT_TITLE}}}{{/e}}",
-			FOUNDATION_LOGO: "{{#e}}{{{settings.FOUNDATION_LOGO}}}{{/e}}",
-			FOUNDATION_URL: "{{#e}}{{{settings.FOUNDATION_URL}}}{{/e}}",
+        window.appSettings = {
+            ADMIN_URL: "{{#e}}{{{settings.ADMIN_URL}}}{{/e}}",
+            API_URL: "{{#e}}{{{settings.API_URL}}}{{/e}}",
+            CONTACT_PHONE: "{{#e}}{{{settings.CONTACT_PHONE}}}{{/e}}",
+            DATE_DONATIONS_END: "{{#e}}{{{settings.DATE_DONATIONS_END}}}{{/e}}",
+            DATE_DONATIONS_START: "{{#e}}{{{settings.DATE_DONATIONS_START}}}{{/e}}",
+            DATE_EVENT: "{{#e}}{{{settings.DATE_EVENT}}}{{/e}}",
+            DATE_REGISTRATIONS_END: "{{#e}}{{{settings.DATE_REGISTRATIONS_END}}}{{/e}}",
+            DATE_REGISTRATIONS_START: "{{#e}}{{{settings.DATE_REGISTRATIONS_START}}}{{/e}}",
+            EVENT_LOGO: "{{#e}}{{{settings.EVENT_LOGO}}}{{/e}}",
+            EVENT_TIMEZONE: "{{#e}}{{{settings.EVENT_TIMEZONE}}}{{/e}}",
+            EVENT_TITLE: "{{#e}}{{{settings.EVENT_TITLE}}}{{/e}}",
+            FAVICON: "{{#e}}{{{settings.FAVICON}}}{{/e}}",
+            FOUNDATION_LOGO: "{{#e}}{{{settings.FOUNDATION_LOGO}}}{{/e}}",
+            FOUNDATION_URL: "{{#e}}{{{settings.FOUNDATION_URL}}}{{/e}}",
             GOOGLE_ANALYTICS_TRACKING_ID: "{{#e}}{{{settings.GOOGLE_ANALYTICS_TRACKING_ID}}}{{/e}}",
-			MASTHEAD_IMAGE: "{{#e}}{{{settings.MASTHEAD_IMAGE}}}{{/e}}",
-			PAGE_ABOUT_ENABLED: "{{#e}}{{{settings.PAGE_ABOUT_ENABLED}}}{{/e}}",
-			PAGE_FAQ_ENABLED: "{{#e}}{{{settings.PAGE_FAQ_ENABLED}}}{{/e}}",
-			PAGE_TERMS_ENABLED: "{{#e}}{{{settings.PAGE_TERMS_ENABLED}}}{{/e}}",
-			PAGE_TOOLKIT_ENABLED: "{{#e}}{{{settings.PAGE_TOOLKIT_ENABLED}}}{{/e}}",
-			UPLOADS_CLOUD_FRONT_URL: "{{#e}}{{{settings.UPLOADS_CLOUD_FRONT_URL}}}{{/e}}"
-		};
+            MASTHEAD_IMAGE: "{{#e}}{{{settings.MASTHEAD_IMAGE}}}{{/e}}",
+            PAGE_ABOUT_ENABLED: "{{#e}}{{{settings.PAGE_ABOUT_ENABLED}}}{{/e}}",
+            PAGE_FAQ_ENABLED: "{{#e}}{{{settings.PAGE_FAQ_ENABLED}}}{{/e}}",
+            PAGE_TERMS_ENABLED: "{{#e}}{{{settings.PAGE_TERMS_ENABLED}}}{{/e}}",
+            PAGE_TOOLKIT_ENABLED: "{{#e}}{{{settings.PAGE_TOOLKIT_ENABLED}}}{{/e}}",
+            UPLOADS_CLOUD_FRONT_URL: "{{#e}}{{{settings.UPLOADS_CLOUD_FRONT_URL}}}{{/e}}"
+        };
     </script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
 

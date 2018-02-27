@@ -21,13 +21,11 @@ const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlrea
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
-const Lambda = require('./../../aws/lambda');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
-	const lambda = new Lambda();
 
 	const setting = new Setting(request._body);
 	request.validate().then(function () {

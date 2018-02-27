@@ -19,13 +19,11 @@ const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
-const Lambda = require('./../../aws/lambda');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
-	const lambda = new Lambda();
 
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('key'));

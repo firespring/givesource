@@ -35,8 +35,28 @@ validate.validators.image = function (value, options) {
 		extensions = options;
 	}
 
-	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop()) < 0)) {
+	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
 		return 'is not a valid image.';
+	}
+
+	return null;
+};
+
+// Add favicon validator
+validate.validators.favicon = function (value, options) {
+	let extensions = ['gif', 'ico', 'png'];
+	options = options || true;
+
+	if (!value || value === false || typeof value === 'undefined' || value === null) {
+		return null;
+	}
+
+	if (Array.isArray(options)) {
+		extensions = options;
+	}
+
+	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
+		return 'is not a valid favicon.';
 	}
 
 	return null;

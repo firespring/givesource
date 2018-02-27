@@ -86,7 +86,6 @@
                                             {{ formErrors.FOUNDATION_URL }}
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="c-form-item c-form-item--file c-form-item--file-picker">
@@ -100,6 +99,21 @@
                                     </div>
                                     <div v-if="formErrors.MASTHEAD_IMAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.MASTHEAD_IMAGE }}
+                                    </div>
+                                </div>
+
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
+                                    <div class="c-form-item__label">
+                                        <label for="faviconImage" class="c-form-item-label-text">Favicon</label>
+                                    </div>
+                                    <forms-image-upload v-model="formData.FAVICON" name="faviconImage" id="faviconImage"></forms-image-upload>
+                                    <div class="c-notes c-notes--below u-width-100p">
+                                        This image will appear next to the website's title in the user's browser, as well as in their bookmarks list. Favicons should be 64x64.
+                                        For more information on creating a favicon,
+                                        <a href="http://blog.teamtreehouse.com/how-to-make-a-favicon" target="_blank" rel="noreferrer noopener">click here</a>.
+                                    </div>
+                                    <div v-if="formErrors.FAVICON" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                        {{ formErrors.FAVICON }}
                                     </div>
                                 </div>
 
@@ -143,6 +157,7 @@
 				formData: {
 					ACCENT_COLOR: '',
 					EVENT_LOGO: null,
+					FAVICON: null,
 					FOUNDATION_LOGO: null,
 					FOUNDATION_URL: '',
 					MASTHEAD_IMAGE: null,
@@ -207,6 +222,10 @@
 						presence: false,
 						image: true,
 					},
+					FAVICON: {
+						presence: false,
+						favicon: true,
+                    },
 					FOUNDATION_LOGO: {
 						presence: false,
 						image: true,
@@ -352,7 +371,7 @@
 				return promise;
 			},
 			isFileSetting(settingKey) {
-				const fileKeys = ['EVENT_LOGO', 'FOUNDATION_LOGO', 'MASTHEAD_IMAGE'];
+				const fileKeys = ['EVENT_LOGO', 'FAVICON', 'FOUNDATION_LOGO', 'MASTHEAD_IMAGE'];
 				return _.includes(fileKeys, settingKey);
 			}
 		},

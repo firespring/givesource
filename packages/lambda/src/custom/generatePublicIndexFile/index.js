@@ -45,6 +45,7 @@ exports.handle = function (event, context, callback) {
 		EVENT_TIMEZONE: null,
 		EVENT_TITLE: null,
 		EVENT_URL: null,
+		FAVICON: null,
 		FOUNDATION_LOGO: null,
 		FOUNDATION_URL: null,
 		GOOGLE_ANALYTICS_TRACKING_ID: null,
@@ -61,6 +62,7 @@ exports.handle = function (event, context, callback) {
 
 	const fileKeys = [
 		'EVENT_LOGO',
+		'FAVICON',
 		'FOUNDATION_LOGO',
 		'MASTHEAD_IMAGE',
 		'SOCIAL_SHARING_IMAGE',

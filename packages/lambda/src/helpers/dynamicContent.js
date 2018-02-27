@@ -65,6 +65,7 @@ exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackNa
 		SettingHelper.SETTING_EVENT_TIMEZONE,
 		SettingHelper.SETTING_EVENT_TITLE,
 		SettingHelper.SETTING_EVENT_URL,
+		SettingHelper.SETTING_FAVICON,
 		SettingHelper.SETTING_FOUNDATION_LOGO,
 		SettingHelper.SETTING_FOUNDATION_URL,
 		SettingHelper.SETTING_GOOGLE_ANALYTICS_TRACKING_ID,
