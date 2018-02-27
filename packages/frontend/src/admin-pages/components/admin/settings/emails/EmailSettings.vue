@@ -56,6 +56,9 @@
                                         <div class="c-notes c-notes--below">
                                             This text will appear above the list of donations that the receipt is for.
                                         </div>
+                                        <div v-if="formErrors.EMAILS_DONATION_RECEIPT_BEFORE_LIST" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_DONATION_RECEIPT_BEFORE_LIST }}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -67,6 +70,9 @@
                                         <forms-ckeditor v-model="formData.EMAILS_DONATION_RECEIPT_AFTER_LIST" :loaded="loaded" id="donationReceiptTextAfter"></forms-ckeditor>
                                         <div class="c-notes c-notes--below">
                                             This text will appear below the list of donations that the receipt is for.
+                                        </div>
+                                        <div v-if="formErrors.EMAILS_DONATION_RECEIPT_AFTER_LIST" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_DONATION_RECEIPT_AFTER_LIST }}
                                         </div>
                                     </div>
                                 </div>
@@ -93,6 +99,9 @@
                                         <div class="c-notes c-notes--below">
                                             This text will appear after a brief thank-you message.
                                         </div>
+                                        <div v-if="formErrors.EMAILS_USER_REGISTRATION_PENDING" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_USER_REGISTRATION_PENDING }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -117,6 +126,9 @@
                                         <forms-ckeditor v-model="formData.EMAILS_USER_REGISTRATION_ACTIVATED" :loaded="loaded" id="userRegistrationActivated"></forms-ckeditor>
                                         <div class="c-notes c-notes--below">
                                             This text will appear after the button to verify the user's account.
+                                        </div>
+                                        <div v-if="formErrors.EMAILS_USER_REGISTRATION_ACTIVATED" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_USER_REGISTRATION_ACTIVATED }}
                                         </div>
                                     </div>
                                 </div>
