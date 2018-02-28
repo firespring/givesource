@@ -108,7 +108,6 @@ Helper classes
 .has-overlay .overlay__nav,
 .leaderboard__actions,
 .leaderboard-item,
-.leaderboard-item--detailed .leaderboard-item__image,
 .list-radio label,
 .list-checkbox label,
 .main__spotlight .day-totals,
@@ -358,8 +357,8 @@ Alerts
 }
 
 .alert__title {
- 	margin: 0;
- 	font-size: 1rem;
+	margin: 0;
+	font-size: 1rem;
 }
 
 .alert__close:link,
@@ -1736,21 +1735,12 @@ Leaderboard
 }
 
 .leaderboard-item--detailed .leaderboard-item__image {
-	-ms-flex-align: center;
-	-webkit-box-align: center;
-	align-items: center;
-	-ms-flex-pack: center;
-	-webkit-box-pack: center;
-	justify-content: center;
-	-ms-flex: 1 0 100%;
-	-webkit-box-flex: 1;
-	flex: 1 0 100%;
-	max-width: 100%;
-}
-
-.leaderboard-item--detailed .leaderboard-item__image img {
+	display: block;
+	width: 100px;
+	height: 100px;
+	margin: 0 auto;
 	border-radius: 100%;
-	max-width: 100px;
+	background-size: cover;
 }
 
 .leaderboard-item--detailed .leaderboard-item__info {
@@ -1886,6 +1876,10 @@ Global Media Queries
 		text-align: left;
 	}
 
+	.leaderboard-item--detailed .leaderboard-item__image {
+		margin: 0;
+	}
+
 	.leaderboard-item__num {
 		font-size: 1rem;
 		transform: translateY(1px);
@@ -1902,13 +1896,6 @@ Global Media Queries
 
 	.leaderboard-item--detailed [class*='leaderboard-item__'] + [class*='leaderboard-item__'] {
 		margin: 0 0 0 1rem;
-	}
-
-	.leaderboard-item--detailed .leaderboard-item__image {
-		-ms-flex: 1 0 100px;
-		-webkit-box-flex: 1;
-		flex: 1 0 100px;
-		max-width: 100px;
 	}
 
 	.leaderboard-item--detailed .leaderboard-item__info {

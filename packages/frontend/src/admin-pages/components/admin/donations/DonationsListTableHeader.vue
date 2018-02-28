@@ -17,26 +17,12 @@
 
 <template>
     <div class="c-header-actions">
-
         <div>
             <router-link :to="{ name: 'donations-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
                 <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations
             </router-link>
             <a v-on:click="exportDonations" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
         </div>
-
-        <div class="c-header-actions__search u-flex-expand">
-            <form>
-                <div class="c-form-control-grid">
-                    <div class="c-form-control-grid__item">
-                        <div class="u-control-icon u-control-icon--search">
-                            <input type="search" name="nameGroupDefaultLastName" id="nameGroupDefaultLastName" class="sm" placeholder="Search donations">
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-
     </div>
 </template>
 

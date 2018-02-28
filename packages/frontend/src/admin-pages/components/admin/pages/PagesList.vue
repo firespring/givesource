@@ -114,7 +114,7 @@
                                         <div class="c-switch-control">
                                             <div>
                                                 <input v-model="formData.PAGE_ABOUT_ENABLED" v-on:change="updateSetting('PAGE_ABOUT_ENABLED')" type="checkbox"
-                                                       name="pageAbout" id="pageAbout">
+                                                       name="pageAbout" id="pageAbout" :disabled="isSettingUpdating('PAGE_ABOUT_ENABLED')">
                                                 <label for="pageAbout" class="c-switch-lever"></label>
                                             </div>
                                         </div>
@@ -142,7 +142,7 @@
                                         <div class="c-switch-control">
                                             <div>
                                                 <input v-model="formData.PAGE_TOOLKIT_ENABLED" v-on:change="updateSetting('PAGE_TOOLKIT_ENABLED')" type="checkbox"
-                                                       name="pageToolkit" id="pageToolkit">
+                                                       name="pageToolkit" id="pageToolkit" :disabled="isSettingUpdating('PAGE_TOOLKIT_ENABLED')">
                                                 <label for="pageToolkit" class="c-switch-lever"></label>
                                             </div>
                                         </div>
@@ -170,7 +170,7 @@
                                         <div class="c-switch-control">
                                             <div>
                                                 <input v-model="formData.PAGE_FAQ_ENABLED" v-on:change="updateSetting('PAGE_FAQ_ENABLED')" type="checkbox" name="pageFaq"
-                                                       id="pageFaq">
+                                                       id="pageFaq" :disabled="isSettingUpdating('PAGE_FAQ_ENABLED')">
                                                 <label for="pageFaq" class="c-switch-lever"></label>
                                             </div>
                                         </div>
@@ -198,7 +198,7 @@
                                         <div class="c-switch-control">
                                             <div>
                                                 <input v-model="formData.PAGE_TERMS_ENABLED" v-on:change="updateSetting('PAGE_TERMS_ENABLED')" type="checkbox" name="pageTerms"
-                                                       id="pageTerms">
+                                                       id="pageTerms" :disabled="isSettingUpdating('PAGE_TERMS_ENABLED')">
                                                 <label for="pageTerms" class="c-switch-lever"></label>
                                             </div>
                                         </div>
@@ -219,6 +219,7 @@
 		data: function () {
 			return {
 				settings: [],
+				updating: [],
 
 				// Form Data
 				formData: {
@@ -272,24 +273,51 @@
 			}
 		},
 		methods: {
+			settingUpdateInProgress: function (key) {
+				if (!this.isSettingUpdating(key)) {
+					this.updating.push(key);
+				}
+			},
+			settingUpdateFinished: function (key) {
+				this.updating = this.updating.filter(function (k) {
+					return k !== key;
+				});
+			},
+			isSettingUpdating: function (key) {
+				return this.updating.indexOf(key) > -1;
+			},
 			getPageUrl: function (relativeLink) {
 				return this.formData.EVENT_URL + relativeLink;
 			},
 			updateSetting: function (key) {
 				const vue = this;
 
+				if (vue.isSettingUpdating(key)) {
+					return;
+				}
+
+				vue.settingUpdateInProgress(key);
+
+				vue.updating.push(key);
 				if (_.find(vue.settings, {key: key})) {
 					vue.$request.patch('settings/' + key, {
 						value: vue.formData[key]
+					}).then(function () {
+						vue.settingUpdateFinished(key);
 					}).catch(function (err) {
                         vue.apiError = err.response.data.errors;
+						vue.settingUpdateFinished(key);
 					});
 				} else {
 					vue.$request.post('settings', {
 						key: key,
 						value: vue.formData[key]
+					}).then(function (response) {
+						vue.settings.push(response.data);
+						vue.settingUpdateFinished(key);
 					}).catch(function (err) {
                         vue.apiError = err.response.data.errors;
+						vue.settingUpdateFinished(key);
 					});
 				}
 			},

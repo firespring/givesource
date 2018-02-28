@@ -33,7 +33,7 @@
 			value: {},
 			id: {
 				type: String,
-				default: 'editor'
+				default: ''
 			},
 			loaded: {
 				type: Boolean,

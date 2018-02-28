@@ -152,7 +152,7 @@
 			eventDate: function () {
 				const vue = this;
 				if (vue.$store.getters.setting('DATE_EVENT') && vue.$store.getters.setting('EVENT_TIMEZONE')) {
-					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo, YYYY');
+					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM Do, YYYY');
 				}
 				return '';
 			},

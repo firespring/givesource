@@ -18,6 +18,7 @@
 const _ = require('lodash');
 const logger = require('./../../helpers/log');
 const HttpException = require('./../../exceptions/http');
+const jsStringEscape = require('js-string-escape');
 const S3 = require('./../../aws/s3');
 const SettingsRepository = require('./../../repositories/settings');
 const FileRepository = require('./../../repositories/files');
@@ -32,13 +33,39 @@ exports.handle = function (event, context, callback) {
 	const fileRepository = new FileRepository();
 
 	const settings = {
+		ADMIN_URL: null,
+		API_URL: null,
+		CONTACT_PHONE: null,
+		DATE_DONATIONS_END: null,
+		DATE_DONATIONS_START: null,
+		DATE_EVENT: null,
+		DATE_REGISTRATIONS_END: null,
+		DATE_REGISTRATIONS_START: null,
+		EVENT_LOGO: null,
+		EVENT_TIMEZONE: null,
 		EVENT_TITLE: null,
 		EVENT_URL: null,
+		FOUNDATION_LOGO: null,
+		FOUNDATION_URL: null,
+		GOOGLE_ANALYTICS_TRACKING_ID: null,
+		MASTHEAD_IMAGE: null,
+		PAGE_ABOUT_ENABLED: null,
+		PAGE_FAQ_ENABLED: null,
+		PAGE_TERMS_ENABLED: null,
+		PAGE_TOOLKIT_ENABLED: null,
 		PUBLIC_INDEX_TEMPLATE: null,
 		SOCIAL_SHARING_DESCRIPTION: null,
 		SOCIAL_SHARING_IMAGE: null,
 		UPLOADS_CLOUD_FRONT_URL: null
 	};
+
+	const fileKeys = [
+		'EVENT_LOGO',
+		'FOUNDATION_LOGO',
+		'MASTHEAD_IMAGE',
+		'SOCIAL_SHARING_IMAGE',
+	];
+
 	request.validate().then(function () {
 		return repository.batchGet(Object.keys(settings));
 	}).then(function (response) {
@@ -49,14 +76,18 @@ exports.handle = function (event, context, callback) {
 		});
 
 		let promise = Promise.resolve();
-		if (settings.SOCIAL_SHARING_IMAGE) {
-			promise = fileRepository.get(settings.SOCIAL_SHARING_IMAGE);
+		const fileUuids = _.filter(_.values(_.pick(settings, fileKeys)));
+		if (fileUuids.length) {
+			promise = fileRepository.batchGet(fileUuids);
 		}
 		return promise;
-	}).then(function (file) {
-		if (file) {
-			settings.SOCIAL_SHARING_IMAGE = (file) ? settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path : null;
-		}
+	}).then(function (files) {
+		fileKeys.forEach(function (settingKey) {
+			if (!_.isEmpty(settings[settingKey])) {
+				const file = _.find(files, {uuid: settings[settingKey]});
+				settings[settingKey] = (file) ? settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path : null;
+			}
+		});
 
 		return generateIndexBody(settings.PUBLIC_INDEX_TEMPLATE, _.omit(settings, 'PUBLIC_INDEX_TEMPLATE'));
 	}).then(function (response) {
@@ -75,7 +106,15 @@ exports.handle = function (event, context, callback) {
 	 * @returns {Promise}
 	 */
 	const generateIndexBody = function (template, settings) {
-		return RenderHelper.renderStringTemplate(template, {settings: settings});
+		const data = {
+			settings: settings,
+			e: function () {
+				return function (text, render) {
+					return jsStringEscape(render(text));
+				}
+			}
+		};
+		return RenderHelper.renderStringTemplate(template, data);
 	};
 
 	/**

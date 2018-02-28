@@ -26,8 +26,8 @@
 
                 <div class="donation-modal__content">
 
-                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount"
-                                                    v-on:hasError="hasDonationErrors"></donation-cart-modal-list-table>
+                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount" v-on:hasError="hasDonationErrors">
+                    </donation-cart-modal-list-table>
 
                     <div class="donation-footer" v-if="displayCheckout">
                         <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--accent"><strong>Begin Checking Out</strong></a>
@@ -36,80 +36,75 @@
 
                 </div>
 
-                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
+                <a v-on:click.prevent="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                displayCheckout: true,
-                formErrors: {}
-            };
-        },
-        props: {
-            data: {},
-            zIndex: {
-                type: [Number, String],
-                default: 1000
-            }
-        },
-        created: function () {
-            const vue = this;
+	module.exports = {
+		data: function () {
+			return {
+				displayCheckout: true,
+				hasError: false,
+			};
+		},
+		props: {
+			data: {},
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			}
+		},
+		created: function () {
+			const vue = this;
+			vue.addBodyClasses('has-donation-overlay');
+		},
+		mounted: function () {
+			const vue = this;
+			$(vue.$refs.donationModalCart).fadeIn();
+		},
+		methods: {
+			close: function () {
+				const vue = this;
 
-            vue.addBodyClasses('has-donation-overlay');
-        },
-        mounted: function () {
-            const vue = this;
+				$(vue.$refs.donationModalCart).fadeOut(function () {
+					vue.removeModal('donation-cart');
+					vue.removeBodyClasses('has-donation-overlay');
+				});
+			},
+			checkoutBtn: function () {
+				const vue = this;
 
-            $(vue.$refs.donationModalCart).fadeIn();
-        },
-        methods: {
-            close: function (event) {
-                event.preventDefault();
-                const vue = this;
+				if (!vue.hasError) {
+					$(vue.$refs.donationModalCart).hide();
+					vue.removeModal('donation-cart');
+					vue.removeBodyClasses('has-donation-overlay');
+					vue.$router.push({name: 'cart'});
+				}
+			},
+			helpMoreBtn: function () {
+				const vue = this;
 
-                $(vue.$refs.donationModalCart).fadeOut(function () {
-                    vue.removeModal('donation-cart');
-                    vue.removeBodyClasses('has-donation-overlay');
-                });
-            },
-            checkoutBtn: function () {
-                const vue = this;
-                if (!vue.formErrors) {
-                    $(vue.$refs.donationModalCart).hide();
-                    vue.removeModal('donation-cart');
-                    vue.removeBodyClasses('has-donation-overlay');
-                    vue.$router.push({name: 'cart'});
-                } else {
-                    vue.bus.$emit('validateDonationsBeforeOnModalCart');
-                }
-
-            },
-            helpMoreBtn: function () {
-                const vue = this;
-
-                $(vue.$refs.donationModalCart).hide();
-                vue.removeModal('donation-cart');
-                vue.removeBodyClasses('has-donation-overlay');
-                vue.$router.push({name: 'search-results'});
-            },
-            updateCartItemsCount: function (count) {
-                const vue = this;
-
-                vue.displayCheckout = count;
-            },
-
-            hasDonationErrors: function (hasError) {
-                const vue = this;
-                vue.formErrors = hasError;
-            }
-        },
-        components: {
-            'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
-        }
-    };
+				if (!vue.hasError) {
+					$(vue.$refs.donationModalCart).hide();
+					vue.removeModal('donation-cart');
+					vue.removeBodyClasses('has-donation-overlay');
+					vue.$router.push({name: 'search-results'});
+				}
+			},
+			updateCartItemsCount: function (count) {
+				const vue = this;
+				vue.displayCheckout = count;
+			},
+			hasDonationErrors: function (hasError) {
+				const vue = this;
+				vue.hasError = hasError;
+			}
+		},
+		components: {
+			'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
+		}
+	};
 </script>

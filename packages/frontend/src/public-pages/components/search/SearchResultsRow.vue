@@ -18,9 +18,8 @@
 <template>
     <div class="leaderboard-item leaderboard-item--detailed">
 
-        <div class="leaderboard-item__image">
-            <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"><img alt="" :src="logoUrl"></router-link>
-        </div>
+        <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }" class="leaderboard-item__image" :style="'background-image: url(' + logoUrl + ')'">
+        </router-link>
 
         <div class="leaderboard-item__info">
             <h3>
@@ -59,7 +58,7 @@
 				if (vue.nonprofit.logo) {
 					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path;
 				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+					logo = vue.$store.getters.setting('EVENT_LOGO');
 				} else {
 					logo = '/assets/temp/logo-event.png';
 				}

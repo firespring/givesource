@@ -27,7 +27,7 @@
                         <strong>{{ adminUser.firstName }} {{ adminUser.lastName }}</strong>
                     </div>
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="`mailto:${ adminUser.email }`">{{ adminUser.email }}</a>
+                        <a :href="'mailto:' + adminUser.email">{{ adminUser.email }}</a>
                     </div>
                 </div>
             </div>
@@ -57,27 +57,26 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
-				displayingMenu: false,
-				selectedAdminUser: this.adminUser,
-                timer: null,
-			}
-		},
-		computed: {
-			formattedDate: function () {
-				return new Date(this.adminUser.createdOn).toLocaleDateString();
-			},
-			isSuperAdmin: function () {
-				return _.includes(this.adminUser.groups, 'SuperAdmin');
-			}
-		},
-		props: [
-			'adminUser'
-		],
-		methods: {
-			toggleMenu: function (event) {
+
+    module.exports = {
+        data: function () {
+            return {
+                displayingMenu: false,selectedAdminUser: this.adminUser,
+            timer: null,}
+        },
+        computed: {
+            formattedDate: function () {
+                return new Date(this.adminUser.createdOn).toLocaleDateString();
+            },
+            isSuperAdmin: function () {
+                return _.includes(this.adminUser.groups, 'SuperAdmin');
+            }
+        },
+        props: [
+            'adminUser'
+        ],
+        methods: {
+            toggleMenu: function (event) {
 				event.preventDefault();
 				const vue = this;
 				if (vue.displayingMenu) {
@@ -102,9 +101,8 @@
 				clearTimeout(vue.timer);
 			},
 			removeUser: function () {
-				const vue = this;
-				vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);
-			},
+                const vue = this;
+                vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);},
 			resendVerificationEmail: function () {
 				const vue = this;
 
@@ -115,7 +113,7 @@
 					console.log(err);
 					vue.clearModals();
 				});
-			},
-		}
-	};
+            },
+        }
+    };
 </script>

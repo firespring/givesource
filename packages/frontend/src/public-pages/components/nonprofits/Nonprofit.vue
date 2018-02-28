@@ -85,7 +85,7 @@
                                 </div>
                             </template>
                             <div v-else-if="nonprofitSlidesLoaded" class="nonprofit-campaign__slider" style="overflow: hidden;">
-                                <img alt="" src="/assets/temp/slide1.jpg">
+                                <img alt="" src="/assets/temp/community.jpg">
                             </div>
                         </div>
                     </div>
@@ -170,7 +170,7 @@
 				if (vue.logo) {
 					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.logo.path;
 				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.$store.getters.setting('EVENT_LOGO');
+					logo = vue.$store.getters.setting('EVENT_LOGO');
 				} else {
 					logo = '/assets/temp/logo-event.png';
 				}

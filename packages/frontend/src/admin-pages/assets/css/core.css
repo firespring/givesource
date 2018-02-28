@@ -2932,7 +2932,7 @@ General
   flex-direction: column; }
 
 .o-app--no-nav .o-app__main {
-  padding: 1.7778rem; }
+  padding: 0 1.7778rem; }
 
 .o-app--centered {
   justify-content: center;
@@ -3018,13 +3018,14 @@ General
   position: relative;
   flex: 1;
   overflow: auto;
-  padding: 1.7778rem;
+  padding: 0 1.7778rem;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: none; }
 
 .o-app_main-content {
   position: relative;
-  width: 100%; }
+  width: 100%;
+  padding: 1.7778rem 0; }
 
 .o-app__main--compact .o-app_main-content {
   max-width: 66.6667rem;
@@ -3055,9 +3056,11 @@ General
     z-index: 0;
     margin-left: 0; }
   .o-app__main {
-    padding: 2.6667rem; }
+    padding: 0 2.6667rem; }
   .o-app--no-nav .o-app__main {
-    padding: 2.6667rem; } }
+    padding: 0 2.6667rem; }
+  .o-app_main-content {
+    padding: 2.6667rem 0; } }
 
 /**
 * @desc			Pagination navigation (global settings)
@@ -7656,7 +7659,7 @@ a.c-chip__value {
 
 /**
  * DEFAULT STYLE OF THE SIDETIP PLUGIN
- *
+ * 
  * All styles are "namespaced" with .tooltipster-sidetip to prevent
  * conflicts between plugins.
  */

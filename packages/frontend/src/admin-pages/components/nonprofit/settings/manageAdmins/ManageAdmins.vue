@@ -49,17 +49,6 @@
                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>Invite Admins
                                 </router-link>
                             </div>
-                            <div class="c-header-actions__search u-flex-expand">
-                                <form>
-                                    <div class="c-form-control-grid">
-                                        <div class="c-form-control-grid__item">
-                                            <div class="u-control-icon u-control-icon--search">
-                                                <input type="search" name="nameGroupDefaultLastName" id="nameGroupDefaultLastName" class="sm" placeholder="Search admins">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
                         </div>
 
                         <manage-admins-list-table :nonprofitUuid="nonprofitUuid" v-on:hasError="hasError"></manage-admins-list-table>

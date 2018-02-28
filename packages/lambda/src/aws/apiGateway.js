@@ -37,8 +37,8 @@ ApiGateway.prototype.deploy = function (restApiId, stageName) {
 	const gateway = this;
 	return new Promise(function (resolve, reject) {
 		const params = {
-			RestApiId: restApiId,
-			StageName: stageName
+			restApiId: restApiId,
+			stageName: stageName
 		};
 		gateway.apiGateway.createDeployment(params, function (err, result) {
 			if (err) {

@@ -29,7 +29,7 @@ exports.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.c
  */
 exports.getVideoData = function (videoUrl) {
 	const media = this;
-	return new Promise (function (resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		videoUrl.match(media.VIDEO_REGEX);
 
 		if (RegExp.$3.indexOf('youtu') > -1) {
@@ -55,13 +55,13 @@ exports.getVideoData = function (videoUrl) {
 exports.getVimeoData = function (vimeoId) {
 	const media = this;
 	return new Promise(function (resolve, reject) {
-		axios.get(`https://vimeo.com/api/v2/video/${vimeoId}.json`).then(function (response) {
+		axios.get('https://vimeo.com/api/v2/video/' + vimeoId + '.json').then(function (response) {
 			const data = response.data[0];
 			resolve({
-				id: `${data.id}`,
+				id: data.id,
 				type: media.TYPE_VIMEO,
 				thumbnail: data.thumbnail_large,
-				embedUrl: `https://player.vimeo.com/video/${data.id}`
+				embedUrl: 'https://player.vimeo.com/video/' + data.id
 			});
 		}).catch(function (err) {
 			reject(err);
@@ -73,14 +73,14 @@ exports.getVimeoData = function (vimeoId) {
  * Get data from this Youtube id
  *
  * @param {String} youtubeId
- * @return {{id: string, type: string, thumbnail: string, embedUrl: string}}
+ * @return {{}}
  */
 exports.getYoutubeData = function (youtubeId) {
 	const media = this;
 	return {
-		id: `${youtubeId}`,
+		id: youtubeId,
 		type: media.TYPE_YOUTUBE,
-		thumbnail: `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`,
-		embedUrl: `https://www.youtube.com/embed/${youtubeId}?autoplay=0&modestbranding=1`
+		thumbnail: 'https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg',
+		embedUrl: 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=0&modestbranding=1',
 	};
 };
