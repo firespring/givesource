@@ -252,7 +252,6 @@
 					vue.contents = response.data;
 				}).catch(function (err) {
                     vue.apiError = err.response.data.errors;
-                    next();
                 });
 			});
 		},
