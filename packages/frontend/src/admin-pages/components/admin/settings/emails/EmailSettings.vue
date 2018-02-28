@@ -92,12 +92,12 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--textarea">
                                     <div class="c-form-item__label">
-                                        <label for="userRegistrationPending" class="c-form-item-label-text">Additional Message</label>
+                                        <label for="userRegistrationPending" class="c-form-item-label-text">Message</label>
                                     </div>
                                     <div class="c-form-item__control">
                                         <forms-ckeditor v-model="formData.EMAILS_USER_REGISTRATION_PENDING" :loaded="loaded" id="userRegistrationPending"></forms-ckeditor>
                                         <div class="c-notes c-notes--below">
-                                            This text will appear after a brief thank-you message.
+                                            This text will replace the default message.
                                         </div>
                                         <div v-if="formErrors.EMAILS_USER_REGISTRATION_PENDING" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.EMAILS_USER_REGISTRATION_PENDING }}

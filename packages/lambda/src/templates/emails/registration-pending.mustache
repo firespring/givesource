@@ -376,30 +376,37 @@
                                 {{/settings.EVENT_LOGO}}
                             {{/settings.EVENT_TITLE}}
 
-                            <table border="0" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td>
-                                        {{#settings.EVENT_TITLE}}{{#settings.EVENT_URL}}
-                                            <p>
-                                                Thanks for registering to be part of
-                                                <a href="{{settings.EVENT_URL}}" target="_blank" rel="noreferrer noopener">{{settings.EVENT_TITLE}}</a>.
-                                                Your application has been received and will reviewed by one of our representatives as soon as possible.
-                                            </p>
-                                        {{/settings.EVENT_URL}}{{/settings.EVENT_TITLE}}
-                                        {{^settings.EVENT_TITLE}}{{^settings.EVENT_URL}}
-                                            <p>
-                                                Thanks for registering. Your application has been received and will reviewed by one of our representatives as soon as possible.
-                                            </p>
-                                        {{/settings.EVENT_URL}}{{/settings.EVENT_TITLE}}
-
-                                        <p>After your application has been approved, you will receive instructions for logging in and creating your donation page.</p>
-
-                                    </td>
-                                </tr>
-                            </table>
-
                             {{#settings.EMAILS_USER_REGISTRATION_PENDING}}
-                                {{{ settings.EMAILS_USER_REGISTRATION_PENDING }}}
+                                <table border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            {{{ settings.EMAILS_USER_REGISTRATION_PENDING }}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/settings.EMAILS_USER_REGISTRATION_PENDING}}
+
+                            {{^settings.EMAILS_USER_REGISTRATION_PENDING}}
+                                <table border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            {{#settings.EVENT_TITLE}}{{#settings.EVENT_URL}}
+                                                <p>
+                                                    Thanks for registering to be part of
+                                                    <a href="{{settings.EVENT_URL}}" target="_blank" rel="noreferrer noopener">{{settings.EVENT_TITLE}}</a>.
+                                                    Your application has been received and will reviewed by one of our representatives as soon as possible.
+                                                </p>
+                                            {{/settings.EVENT_URL}}{{/settings.EVENT_TITLE}}
+                                            {{^settings.EVENT_TITLE}}{{^settings.EVENT_URL}}
+                                                <p>
+                                                    Thanks for registering. Your application has been received and will reviewed by one of our representatives as soon as possible.
+                                                </p>
+                                            {{/settings.EVENT_URL}}{{/settings.EVENT_TITLE}}
+
+                                            <p>After your application has been approved, you will receive instructions for logging in and creating your donation page.</p>
+                                        </td>
+                                    </tr>
+                                </table>
                             {{/settings.EMAILS_USER_REGISTRATION_PENDING}}
 
                         </td>
