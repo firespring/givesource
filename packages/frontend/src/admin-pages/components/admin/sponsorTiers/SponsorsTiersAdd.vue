@@ -66,7 +66,7 @@
                                             </li>
                                             <li>
                                                 <input v-model="formData.size" type="radio" name="logoSize" id="logoSize-2" value="DEFAULT">
-                                                <label for="logoSize-2">Default</label>
+                                                <label for="logoSize-2">Medium</label>
                                             </li>
                                             <li>
                                                 <input v-model="formData.size" type="radio" name="logoSize" id="logoSize-3" value="SMALL">
