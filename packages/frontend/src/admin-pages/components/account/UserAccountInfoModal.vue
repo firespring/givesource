@@ -26,6 +26,7 @@
                     </div>
 
                     <div class="c-modal-content">
+                        <api-error v-model="apiError"></api-error>
                         <div class="c-page-section">
                             <div class="c-page-section__main">
                                 <fieldset class="c-page-section__fieldset" aria-labelledby="section-your-info">
@@ -73,84 +74,85 @@
 </template>
 
 <script>
-	module.exports = {
-		data: function () {
-			return {
+    module.exports = {
+        data: function () {
+            return {
 
-				// Form Data
-				formData: {
-					firstName: this.user.firstName,
-					lastName: this.user.lastName
-				},
+                // Form Data
+                formData: {
+                    firstName: this.user.firstName,
+                    lastName: this.user.lastName
+                },
 
-				// Errors
-				formErrors: {}
-			}
-		},
-		watch: {
-			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-					}
-				},
-				deep: true
-			}
-		},
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			}
-		},
-		methods: {
-			getConstraints: function () {
-				return {
-					firstName: {
-						presence: true,
-					},
-					lastName: {
-						presence: true,
-					}
-				}
-			},
-			cancel: function () {
-				this.clearModals();
-			},
-			save: function () {
-				const vue = this;
+                // Errors
+                formErrors: {},
+                apiError: {}
+            }
+        },
+        watch: {
+            formData: {
+                handler: function () {
+                    const vue = this;
+                    if (Object.keys(vue.formErrors).length) {
+                        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+                    }
+                },
+                deep: true
+            }
+        },
+        props: {
+            zIndex: {
+                type: [Number, String],
+                default: 1000
+            }
+        },
+        methods: {
+            getConstraints: function () {
+                return {
+                    firstName: {
+                        presence: true,
+                    },
+                    lastName: {
+                        presence: true,
+                    }
+                }
+            },
+            cancel: function () {
+                this.clearModals();
+            },
+            save: function () {
+                const vue = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
-				} else {
-					vue.updateUser();
-				}
-			},
-			updateUser: function () {
-				const vue = this;
+                vue.addModal('spinner');
+                vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+                if (Object.keys(vue.formErrors).length) {
+                    vue.removeModal();
+                } else {
+                    vue.updateUser();
+                }
+            },
+            updateUser: function () {
+                const vue = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.user);
-				if (Object.keys(params).length === 0) {
-					vue.clearModals();
-					return;
-				}
+                const params = vue.getUpdatedParameters(vue.formData, vue.user);
+                if (Object.keys(params).length === 0) {
+                    vue.clearModals();
+                    return;
+                }
 
-				vue.$request.patch('users/' + vue.user.uuid, params).then(function (response) {
-					vue.removeModal();
-					if (response.data.errorMessage) {
-						console.log(response.data);
-					} else {
-						vue.clearModals();
-						vue.bus.$emit('userAccountUpdateInfo', response.data);
-					}
-				}).catch(function (err) {
-					vue.removeModal();
-					console.log(err);
-				});
-			}
-		}
-	};
+                vue.$request.patch('users/' + vue.user.uuid, params).then(function (response) {
+                    vue.removeModal();
+                    if (response.data.errorMessage) {
+                        console.log(response.data);
+                    } else {
+                        vue.clearModals();
+                        vue.bus.$emit('userAccountUpdateInfo', response.data);
+                    }
+                }).catch(function (err) {
+                    vue.removeModal();
+                    vue.apiError = err.response.data.errors;
+                });
+            }
+        }
+    };
 </script>

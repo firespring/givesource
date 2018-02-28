@@ -99,8 +99,8 @@
 					});
 					vue.clearModals();
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
+                    vue.clearModals();
+                    vue.$emit('hasError', err);
 				});
 			}
 		},

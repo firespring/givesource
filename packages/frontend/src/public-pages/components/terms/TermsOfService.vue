@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm" v-html="terms"></div>
         </main>
 
@@ -39,6 +40,7 @@
 		data: function () {
 			return {
 				contents: [],
+                apiError: {},
 			};
 		},
 		computed: {
@@ -56,7 +58,9 @@
 					keys: 'TERMS_TEXT'
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -68,7 +72,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},

@@ -22,6 +22,7 @@ const Request = require('./../../aws/request');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
+const User = require('./../../models/user');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();

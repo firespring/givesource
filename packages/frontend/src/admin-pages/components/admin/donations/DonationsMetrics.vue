@@ -92,7 +92,9 @@
 						vue.metrics[metric.key] = metric.value;
 					}
 				});
-			});
+			}).catch(function (err) {
+                vue.$emit('hasError', err);
+            });
 		}
 	};
 </script>

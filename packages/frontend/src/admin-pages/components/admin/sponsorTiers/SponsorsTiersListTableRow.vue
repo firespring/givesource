@@ -123,7 +123,7 @@
 					vue.$emit('deleteSponsorTier', vue.sponsorTier.uuid);
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			}
 		}

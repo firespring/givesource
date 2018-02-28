@@ -98,8 +98,8 @@
 					});
 					vue.clearModals();
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
+                    vue.removeModal('spinner');
+                    vue.$emit('hasError', err);
 				});
 			}
 		},

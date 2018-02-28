@@ -27,7 +27,8 @@
         </thead>
 
         <draggable v-model="localSponsors" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileUuid)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.uuid">
+            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileUuid)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.uuid"
+                                     :v-on:hasError="hasError">
             </sponsors-list-table-row>
         </draggable>
     </table>
@@ -89,7 +90,7 @@
 				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors', {
 					sponsors: toUpdate
 				}).catch(function (err) {
-					console.log(err);
+				    vue.$emit('hasError', err);
 				});
 			},
 			deleteSponsor: function (sponsorUuid) {
@@ -98,6 +99,10 @@
 				vue.localSponsors = _.filter(vue.localSponsors, function(sponsor) {
 					return sponsor.uuid !== sponsorUuid;
 				});
+            },
+            hasError: function (err){
+                const vue = this;
+                vue.$emit('hasError', err);
             }
 		},
 		components: {
