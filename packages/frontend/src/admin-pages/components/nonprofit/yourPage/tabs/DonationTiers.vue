@@ -17,6 +17,7 @@
 
 <template>
     <div class="c-page-section__content">
+        <api-error v-model="apiError"></api-error>
         <div class="c-alert c-alert--info c-alert--expand u-flex u-justify-center">
 
             <div class="c-alert__body u-flex u-justify-between">
@@ -67,6 +68,7 @@
 
                 donationTiers: [],
                 originalDonationTiers: [],
+                apiError: {}
             }
         },
         props: [
@@ -86,7 +88,7 @@
                     vue.donationTiers = JSON.parse(JSON.stringify(response.data));
                 }
             }).catch(function (err) {
-                console.log(err);
+                vue.apiError = err.response.data.errors;
             });
         },
         watch: {
@@ -107,7 +109,7 @@
         methods: {
             submit: function () {
                 const vue = this;
-                console.log(vue.validateDonationTiers());
+
                 if (vue.validateDonationTiers()) {
                     vue.addModal('spinner');
                     vue.updateDonationTiers();
@@ -179,7 +181,7 @@
                     vue.clearModals();
                 }).catch(function (err) {
                     vue.clearModals();
-                    console.log(err);
+                    vue.apiError = err.response.data.errors;
                 });
 
             },

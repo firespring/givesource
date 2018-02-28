@@ -20,9 +20,11 @@
         <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
+
                 <div class="o-app-main-content">
-                    <donations-metrics></donations-metrics>
-                    <donations-list-table-header></donations-list-table-header>
+                    <donations-metrics v-on:hasError="hasError"></donations-metrics>
+                    <api-error v-model="apiError"></api-error>
+                    <donations-list-table-header v-on:hasError="hasError"></donations-list-table-header>
                     <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
@@ -32,38 +34,49 @@
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
+    import * as Utils from './../../../helpers/utils';
 
-	const PaginationMixin = require('./../../../mixins/pagination');
+    const PaginationMixin = require('./../../../mixins/pagination');
 
-	module.exports = {
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('donations', to.query).then(function (response) {
-					vue.setPaginationData(response.data)
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                apiError: {}
+            };
+        },
+        beforeRouteEnter: function (to, from, next) {
+            next(function (vue) {
+                vue.$request.get('donations', to.query).then(function (response) {
+                    vue.setPaginationData(response.data)
+                });
+            });
+        },
+        beforeRouteUpdate: function (to, from, next) {
+            const vue = this;
 
-			vue.resetPaginationData();
-			vue.$request.get('donations', to.query).then(function (response) {
-				vue.setPaginationData(response.data);
-				next();
-			}).catch(function (err) {
-				console.log(err);
-				next();
-			});
-		},
-		mixins: [
-			PaginationMixin
-		],
-		components: {
-			'donations-list-table': require('./DonationsListTable.vue'),
-			'donations-list-table-header': require('./DonationsListTableHeader.vue'),
-			'donations-metrics': require('./DonationsMetrics.vue'),
+            vue.resetPaginationData();
+            vue.$request.get('donations', to.query).then(function (response) {
+                vue.setPaginationData(response.data);
+                next();
+            }).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+                next();
+            });
+        },
+        methods: {
+           hasError: function(err) {
+               const vue = this;
+               vue.apiError = err.response.data.errors;
+           }
+        },
+        mixins: [
+            PaginationMixin
+        ],
+        components: {
+            'donations-list-table': require('./DonationsListTable.vue'),
+            'donations-list-table-header': require('./DonationsListTableHeader.vue'),
+            'donations-metrics': require('./DonationsMetrics.vue'),
             'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
-		}
-	};
+        }
+    };
 </script>

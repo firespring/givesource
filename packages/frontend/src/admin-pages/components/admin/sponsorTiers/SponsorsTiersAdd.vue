@@ -31,6 +31,7 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
                     <form v-on:submit="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
@@ -103,7 +104,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		watch: {
@@ -164,7 +166,7 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			}
 		}

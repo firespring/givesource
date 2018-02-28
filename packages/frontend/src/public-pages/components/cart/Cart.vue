@@ -23,6 +23,7 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
+            <api-error v-model="apiError"></api-error>
 
                 <form v-on:submit="submit">
                     <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty" v-on:hasError="donationHasErrors"></cart-donations>
@@ -266,7 +267,8 @@
 					donor: {},
 					formData: {},
 					paymentDetails: {},
-				}
+				},
+                apiError: {},
 			};
 		},
 		computed: {
@@ -292,7 +294,9 @@
 					keys: 'CART_CHECKOUT_TEXT',
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -304,7 +308,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -482,7 +486,8 @@
 
                     if (response.data && response.data.errorMessage) {
 						console.log(response.data);
-					} else {
+                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+                    } else {
 						vue.$store.commit('clearCartItems');
 						vue.bus.$emit('updateCartItems');
 						vue.bus.$emit('updateCartItemsCount');
@@ -491,7 +496,7 @@
 						vue.$router.push({name: 'cart-response'});
 					}
 				}).catch(function (err) {
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 					vue.processing = false;
 				});
 			},
@@ -543,7 +548,9 @@
 					}
 
 					return Promise.reject(new Error('There was an error processing your payment.'));
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			},
 			getPaymentToken: function () {
 				const vue = this;

@@ -56,7 +56,7 @@
 					vue.pollReport();
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			},
 			pollReport: function () {
@@ -74,7 +74,10 @@
 							clearTimeout(vue.countdown);
 							console.log('Report failed to generate');
 						}
-					});
+					}).catch(function (err) {
+                        vue.clearModals();
+                        vue.$emit('hasError', err);
+                    });
 				}, 1000);
 			},
 			downloadFile: function () {

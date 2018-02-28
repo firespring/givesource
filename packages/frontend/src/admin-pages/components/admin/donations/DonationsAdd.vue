@@ -31,6 +31,8 @@
                         </div>
                     </div>
 
+                    <api-error v-model="apiError"></api-error>
+
                     <form v-on:submit="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <layout-spinner v-if="!loaded" height="496px"></layout-spinner>
@@ -148,7 +150,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {}
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -291,8 +294,8 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
-				});
+                    vue.apiError = err.response.data.errors;
+                });
 			},
 			getSubtotal: function () {
 				return this.formData.subtotal * 100;

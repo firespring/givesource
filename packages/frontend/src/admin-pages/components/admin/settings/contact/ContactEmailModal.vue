@@ -28,6 +28,7 @@
                     <div class="c-modal-content">
                         <div class="c-page-section">
                             <div class="c-page-section__main">
+                                <api-error v-model="apiError"></api-error>
                                 <fieldset class="c-page-section__fieldset" aria-labelledby="section-sender-email">
                                     <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
                                         <input v-model="formData.CONTACT_EMAIL" type="email" name="contactEmail" id="contactEmail"
@@ -69,7 +70,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		props: {
@@ -156,9 +158,9 @@
 						value: vue.formData.CONTACT_EMAIL
 					});
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
-				});
+                    vue.removeModal('spinner');
+                    vue.apiError = err.response.data.errors;
+                });
 			}
 		}
 	};

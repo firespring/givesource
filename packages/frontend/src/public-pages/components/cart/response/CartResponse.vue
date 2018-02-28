@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm" v-html="text"></div>
         </main>
 
@@ -39,7 +40,8 @@
 		data: function () {
 			return {
 				contents: [],
-			};
+                apiError: {},
+            };
 		},
 		computed: {
 			text: function () {
@@ -56,7 +58,9 @@
 					keys: 'CART_RESPONSE_TEXT',
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -68,7 +72,8 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+			    const vue = this;
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},

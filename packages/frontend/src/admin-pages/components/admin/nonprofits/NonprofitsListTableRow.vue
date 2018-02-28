@@ -89,7 +89,8 @@
 			return {
 				displayingMenu: false,
 				timer: null,
-			};
+                apiError: {}
+            };
 		},
 		computed: {
 			date: function () {
@@ -199,7 +200,7 @@
 					vue.$emit('updateNonprofit', vue.nonprofit.uuid);
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.$emit('hasError', err);
 				})
 			},
 			revokeNonprofit: function () {
