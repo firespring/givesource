@@ -25,8 +25,8 @@
                         <h1>Do you want to revoke this Nonprofit? This can't be undone.</h1>
                     </div>
 
-
                     <div class="c-modal-content">
+                        <api-error v-model="apiError"></api-error>
                         <div class="c-page-section">
                             <div class="c-page-section__main">
                                 <p>
@@ -51,39 +51,44 @@
 </template>
 
 <script>
-	module.exports = {
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			},
-			data: {
-				type: Object,
-				default: {
-					nonprofit: {}
-				}
-			}
-		},
-		methods: {
-			cancel: function () {
-				this.clearModals();
-			},
-			revokeNonprofit: function () {
-				const vue = this;
+    module.exports = {
+        data: function () {
+            return {
+                apiError: {}
+            };
+        },
+        props: {
+            zIndex: {
+                type: [Number, String],
+                default: 1000
+            },
+            data: {
+                type: Object,
+                default: {
+                    nonprofit: {}
+                }
+            }
+        },
+        methods: {
+            cancel: function () {
+                this.clearModals();
+            },
+            revokeNonprofit: function () {
+                const vue = this;
 
-				vue.addModal('spinner');
+                vue.addModal('spinner');
 
-				vue.$request.patch('nonprofits/' + vue.data.nonprofit.uuid + '/status', {
-					status: 'REVOKED'
-				}).then(function () {
-					vue.clearModals();
-					vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.uuid);
-				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
-				});
+                vue.$request.patch('nonprofits/' + vue.data.nonprofit.uuid + '/status', {
+                    status: 'REVOKED'
+                }).then(function () {
+                    vue.clearModals();
+                    vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.uuid);
+                }).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    vue.removeModal('spinner');
+                });
 
-			},
-		}
-	};
+            },
+        }
+    };
 </script>

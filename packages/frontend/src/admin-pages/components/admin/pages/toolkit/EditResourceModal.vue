@@ -28,6 +28,7 @@
                     <div class="c-modal-content">
                         <div class="c-page-section">
                             <div class="c-page-section__main">
+                                <api-error v-model="apiError"></api-error>
 
                                 <div class="c-form-item c-form-item--text c-form-item--required">
                                     <div class="c-form-item__label">
@@ -170,7 +171,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		props: {
@@ -355,8 +357,8 @@
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.removeModal('spinner');
-					console.log(err);
-				});
+                    vue.apiError = err.response.data.errors;
+                });
 			},
 		},
 		components: {

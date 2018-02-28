@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm">
                 <div v-html="response" style="margin: 0 0 1.5rem;"></div>
                 <router-link :to="{ name: 'homepage' }"> Click here to return to the home page.</router-link>
@@ -42,6 +43,7 @@
 		data: function () {
 			return {
 				contents: [],
+                apiError: {},
 			};
 		},
 		computed: {
@@ -59,7 +61,9 @@
 					keys: 'REGISTER_RESPONSE_TEXT'
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -71,8 +75,8 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
-				next();
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
 		beforeMount: function () {

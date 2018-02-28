@@ -30,6 +30,8 @@
             <div class="wrapper">
 
                 <div class="donation-wrapper nonprofit-campaign">
+                <api-error v-model="apiError"></api-error>
+
                     <div class="nonprofit-campaign__header">
 
                         <div class="nonprofit-campaign__donation">
@@ -134,8 +136,9 @@
 
 				nonprofitLoaded: false,
 				nonprofitSlidesLoaded: false,
-				nonprofitLogoLoaded: false
-			}
+				nonprofitLogoLoaded: false,
+                apiError: {},
+            }
 		},
 		props: [
 			'slug'
@@ -306,7 +309,9 @@
 							vue.settings[setting.key] = setting.value;
 						}
 					});
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			},
 			getImageUrl: function (fileUuid) {
 				const vue = this;

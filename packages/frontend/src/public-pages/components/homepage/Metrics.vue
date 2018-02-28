@@ -17,6 +17,7 @@
 
 <template>
     <div class="main__metrics">
+        <api-error v-model="apiError"></api-error>
 
         <div class="main__spotlight wrapper text-c">
 
@@ -148,6 +149,7 @@
 
 				// Errors
 				formErrors: {},
+                apiError: {},
 
 				countdown: {
 					loaded: false,
@@ -263,7 +265,9 @@
 						vue.metrics[metric.key] = metric.value;
 					}
 				});
-			});
+			}).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+            });
 
 			if (vue.displayEventCountdown()) {
 				vue.initializeCountdown();
@@ -370,7 +374,7 @@
 					vue.processing = false;
 					// TODO: redirect to thank-you page
 				}).catch(function (err) {
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 					vue.processing = false;
 				});
 			},

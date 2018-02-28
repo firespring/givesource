@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="o-page-header">
                         <div class="o-page-header__text">
@@ -80,7 +81,8 @@
 
 				// Errors
 				formErrors: {},
-			};
+                apiError: {}
+            };
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -177,8 +179,8 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
-				});
+                    vue.apiError = err.response.data.errors;
+                });
 			}
 		},
 		components: {

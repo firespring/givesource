@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="o-page-header">
                         <div class="o-page-header__text">
@@ -46,7 +47,7 @@
 
                             <div class="c-page-section__main">
 
-                                <toolkit-list-table :contents="resourceContents"></toolkit-list-table>
+                                <toolkit-list-table :contents="resourceContents" v-on:hasError="hasError"></toolkit-list-table>
 
                                 <div class="c-table-footer">
                                     <div class="c-table-footer__actions">
@@ -109,7 +110,8 @@
 
 				// Errors
 				formErrors: {},
-			};
+                apiError: {},
+            };
 		},
 		computed: {
 			resourceContents: function () {
@@ -127,7 +129,9 @@
 					vue.contents = response.data;
 					vue.original = JSON.parse(JSON.stringify(response.data));
 					vue.loaded = true;
-				});
+				}).catch(function (err){
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -144,8 +148,9 @@
 				vue.original = JSON.parse(JSON.stringify(response.data));
 				vue.loaded = true;
 				next();
-			}).catch(function () {
-				next();
+			}).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
 		created: function () {
@@ -240,7 +245,7 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 			addResource: function (event) {
@@ -248,7 +253,11 @@
 				const vue = this;
 
 				vue.addModal('pages-toolkit-add-resource-modal');
-			}
+			},
+            hasError: function(err){
+			    const vue = this;
+                vue.apiError = err.response.data.errors;
+            },
 		},
 		components: {
 			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),

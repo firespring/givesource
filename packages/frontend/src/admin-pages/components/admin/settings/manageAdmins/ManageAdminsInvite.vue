@@ -20,6 +20,7 @@
         <navigation></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+                <api-error v-model="apiError"></api-error>
 
                 <div class="o-page-header">
                     <div class="o-page-header__text">
@@ -85,7 +86,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			}
 		},
 		methods: {
@@ -118,13 +120,14 @@
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);
-					} else {
+                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+                    } else {
 						vue.$router.push({name: 'settings-admins-list'});
 					}
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
-				});
+                    vue.removeModal('spinner');
+                    vue.apiError = err.response.data.errors;
+                });
 			}
 		}
 	};

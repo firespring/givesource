@@ -28,6 +28,7 @@
                     <div class="c-modal-content">
                         <div class="c-page-section">
                             <div class="c-page-section__main">
+                                <api-error v-model="apiError"></api-error>
                                 <fieldset class="c-page-section__fieldset" aria-labelledby="section-contact-phone">
                                     <div class="c-form-item c-form-item--email c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.CONTACT_PHONE }">
                                         <div class="c-form-item__control">
@@ -69,7 +70,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		props: {
@@ -144,9 +146,9 @@
 						value: vue.formData.CONTACT_PHONE
 					});
 				}).catch(function (err) {
-					vue.clearModals();
-					console.log(err);
-				});
+                    vue.removeModal('spinner');
+                    vue.apiError = err.response.data.errors;
+                });
 			}
 		}
 	};

@@ -17,6 +17,8 @@
 
 <template>
     <div class="c-page-section__content">
+        <api-error v-model="apiError"></api-error>
+
         <form v-on:submit="submit">
 
             <div class="c-form-item c-form-item--text">
@@ -118,8 +120,9 @@
 					logoFileUuid: ''
 				},
 
-				// Errors
-				formErrors: {}
+                // Errors
+                formErrors: {},
+                apiError: {},
 			}
 		},
 		computed: {
@@ -228,7 +231,7 @@
 					return promise;
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 			changeSlug: function (event) {

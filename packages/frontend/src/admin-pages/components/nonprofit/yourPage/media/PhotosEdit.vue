@@ -20,6 +20,7 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+                <api-error v-model="apiError"></api-error>
 
                 <div class="o-page-header" v-if="isAdmin">
                     <div class="o-page-header__text">
@@ -115,7 +116,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		computed: {
@@ -164,7 +166,10 @@
 					if (response) {
 						vue.file = response.data;
 					}
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    next();
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -186,7 +191,7 @@
 				}
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -239,7 +244,7 @@
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 					}).catch(function (err) {
 						vue.clearModals();
-						console.log(err);
+                        vue.apiError = err.response.data.errors;
 					});
 				} else {
 					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
@@ -253,7 +258,7 @@
 					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
 						vue.newFile = null;
 					}).catch(function (err) {
-						console.log(err);
+                        vue.apiError = err.response.data.errors;
 					});
 				}
 
@@ -297,7 +302,7 @@
 					vue.file = vue.newFile;
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 			updateNonprofitSlide: function () {
@@ -326,7 +331,7 @@
 					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 		}
