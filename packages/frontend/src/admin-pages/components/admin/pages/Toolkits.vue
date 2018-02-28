@@ -34,6 +34,25 @@
                     <form v-on:submit="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow">
+                            <header class="c-page-section__header">
+                                <div class="c-page-section-header-text">
+                                    <h2 class="c-page-section-title">Leading Text</h2>
+                                    <div class="c-notes c-notes--below">
+                                        Add leading text to the toolkits page.
+                                    </div>
+                                </div>
+                            </header>
+
+                            <div class="c-page-section__main">
+                                <div class="c-form-item c-form-item--rich-text">
+                                    <div class="c-form-item__control">
+                                        <forms-ckeditor v-model="formData.TOOLKIT_LEADING_TEXT.value" :loaded="loaded" id="additionalTextAbove"></forms-ckeditor>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="c-page-section c-page-section--border c-page-section--shadow">
 
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
@@ -104,7 +123,12 @@
 						key: 'TOOLKIT_ADDITIONAL_TEXT',
 						type: 'RICH_TEXT',
 						value: ''
-					}
+					},
+					TOOLKIT_LEADING_TEXT: {
+                        key: 'TOOLKIT_LEADING_TEXT',
+                        type: 'RICH_TEXT',
+                        value: ''
+					},
 				},
 
 				// Errors
@@ -119,7 +143,7 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('contents', {
-					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
 				}).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
@@ -135,7 +159,7 @@
 
 			vue.loaded = false;
 			vue.$request.get('contents', {
-				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
 			}).then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;

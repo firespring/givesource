@@ -24,6 +24,8 @@
         <main class="main">
             <div class="wrapper wrapper--sm">
 
+                <div v-html="leadingText" style="margin: 0 0 1.5rem;"></div>
+
                 <ul class="toolkit">
                     <li v-for="resource in resources" :key="resource.uuid"
                         :class="{'toolkit__file': getResourceType(resource) === 'FILE', 'toolkit__link': getResourceType(resource) === 'LINK'}">
@@ -38,7 +40,7 @@
                     </li>
                 </ul>
 
-                <div v-html="text" style="margin: 0 0 1.5rem;"></div>
+                <div v-html="additionalText" style="margin: 0 0 1.5rem;"></div>
 
             </div>
         </main>
@@ -63,7 +65,11 @@
 			resources: function () {
 				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
 			},
-			text: function () {
+            leadingText: function () {
+	            const text = _.find(this.contents, {key: 'TOOLKIT_LEADING_TEXT'});
+	            return text ? text.value : null;
+            },
+			additionalText: function () {
 				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
 				return text ? text.value : null;
 			},
@@ -74,7 +80,7 @@
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
-					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
 				})).then(function (response) {
 					response.data.sort(function (a, b) {
 						return a.sortOrder - b.sortOrder;
@@ -102,7 +108,7 @@
 			const vue = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
-				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_ADDITIONAL_TEXT']
+				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
 			})).then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
