@@ -126,7 +126,6 @@
 					}
 				}).catch(function (err) {
                     vue.removeModal('spinner');
-                    console.log('we are here in the error and stuff');
                     vue.apiError = err.response.data.errors;
                 });
 			}
