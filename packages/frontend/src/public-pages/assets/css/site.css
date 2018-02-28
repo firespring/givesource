@@ -2150,7 +2150,7 @@ Global Media Queries
 	}
 
 	.sponsors__tier--lg .sponsor img {
-		max-height: 70px;
+		max-height: 80px;
 	}
 
 	.sponsors__tier--lg .sponsor--no-logo {
@@ -2158,7 +2158,7 @@ Global Media Queries
 	}
 
 	.sponsors__tier--md .sponsor img {
-		max-height: 40px;
+		max-height: 35px;
 	}
 
 	.sponsors__tier--md .sponsor--no-logo {
@@ -2166,7 +2166,7 @@ Global Media Queries
 	}
 
 	.sponsors__tier--sm .sponsor img {
-		max-height: 30px;
+		max-height: 25px;
 	}
 
 }
