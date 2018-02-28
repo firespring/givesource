@@ -17,6 +17,7 @@
 
 <template>
     <div class="c-page-section__content">
+        <api-error v-model="apiError"></api-error>
         <div class="c-header-actions">
             <div>
                 <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*" :disabled="disableAddButton">
@@ -66,7 +67,9 @@
 					handle: '.c-drag-handle',
 					ghostClass: 'reorder-placeholder',
 					draggable: 'tr',
-				}
+				},
+
+				apiError: {},
 			}
 		},
 		props: [
@@ -109,7 +112,7 @@
 				}
 				vue.loadedSlides = true;
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 			});
 		},
 		created: function () {
@@ -141,7 +144,7 @@
 				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
 					slides: toUpdate
 				}).catch(function (err) {
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 			onTrigger: function (event) {
@@ -199,7 +202,7 @@
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			},
 			deleteSlide: function (slide) {
@@ -216,7 +219,7 @@
 						vue.updateSortOrder();
 					}).catch(function (err) {
 						vue.clearModals();
-						console.log(err);
+                        vue.apiError = err.response.data.errors;
 					});
 				} else {
 					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
@@ -226,7 +229,7 @@
 						vue.updateSortOrder();
 					}).catch(function (err) {
 						vue.clearModals();
-						console.log(err);
+                        vue.apiError = err.response.data.errors;
 					});
 				}
 			}

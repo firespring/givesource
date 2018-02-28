@@ -31,6 +31,7 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
                     <div class="c-header-actions">
                         <div>
                             <router-link :to="{ name: 'sponsors-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
@@ -38,7 +39,7 @@
                             </router-link>
                         </div>
                     </div>
-                    <sponsors-list-table :sponsors="sponsors" :files="files" :sponsorTierUuid="sponsorTierUuid"></sponsors-list-table>
+                    <sponsors-list-table :sponsors="sponsors" :files="files" :sponsorTierUuid="sponsorTierUuid" v-on:hasError="hasError"></sponsors-list-table>
                 </div>
 
             </div>
@@ -55,6 +56,7 @@
 				files: [],
 				sponsors: [],
 				sponsorTier: {},
+                apiError: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -109,13 +111,19 @@
 				vue.files = response ? response.data : [];
                 next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		props: [
 			'sponsorTierUuid'
 		],
+        methods: {
+		  hasError: function(err){
+		      const vue = this;
+              vue.apiError = err.response.data.errors;
+          }
+        },
 		components: {
 			'sponsors-list-table': require('./SponsorsListTable.vue')
 		}

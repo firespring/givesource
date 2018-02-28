@@ -17,6 +17,7 @@
 
 const validate = require('validate.js');
 const validateUuid = require('uuid-validate');
+const InvalidInputException = require('../exceptions/invalidInput');
 
 exports.loadCustom = function () {
 
@@ -54,7 +55,7 @@ exports.loadCustom = function () {
 
 		if (!isValid) {
 			let message = types.join(', ');
-			return `is not one of the expected types: ${message}`;
+			throw new InvalidInputException(`${key} is not one of the expected types: ${message}`);
 		}
 
 		return null;
@@ -74,7 +75,7 @@ exports.loadCustom = function () {
 		}
 
 		if (!isValid) {
-			return 'is an invalid uuid';
+			throw new InvalidInputException(`${key} is an invalid uuid`);
 		}
 
 		return null;

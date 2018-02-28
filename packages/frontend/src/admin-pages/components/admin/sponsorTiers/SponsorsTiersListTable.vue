@@ -26,7 +26,8 @@
         </thead>
 
         <draggable v-model="localSponsorTiers" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-            <sponsors-list-table-row v-for="sponsorTier in localSponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.uuid" v-on:deleteSponsorTier="deleteSponsorTier">
+            <sponsors-list-table-row v-for="sponsorTier in localSponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.uuid" v-on:deleteSponsorTier="deleteSponsorTier"
+                                     v-on:hasError="hasError">
             </sponsors-list-table-row>
         </draggable>
     </table>
@@ -43,7 +44,9 @@
 					handle: '.c-drag-handle',
 					ghostClass: 'reorder-placeholder',
 					draggable: 'tr',
-				}
+				},
+
+                apiError:{},
 			};
 		},
 		props: {
@@ -75,7 +78,7 @@
 				vue.$request.patch('sponsor-tiers', {
 					sponsorTiers: toUpdate
 				}).catch(function (err) {
-					console.log(err);
+                    vue.$emit('hasError', err);
 				});
 			},
 			deleteSponsorTier: function (sponsorTierUuid) {
@@ -84,7 +87,11 @@
 				vue.localSponsorTiers = _.filter(vue.localSponsorTiers, function (sponsorTier) {
 					return sponsorTier.uuid !== sponsorTierUuid;
 				});
-			}
+			},
+            hasError: function (err) {
+                const vue = this;
+                vue.$emit('hasError', err);
+            },
 		},
 		components: {
 			'draggable': require('vuedraggable'),

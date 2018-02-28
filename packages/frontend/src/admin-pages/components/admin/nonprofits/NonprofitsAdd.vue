@@ -35,6 +35,7 @@
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
+                                <api-error v-model="apiError"></api-error>
 
                                 <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.legalName }">
                                     <div class="c-form-item__label">
@@ -307,7 +308,8 @@
 					{value: 31, text: 'Youth Development'}
 				],
 
-				formErrors: {}
+				formErrors: {},
+                apiError: {}
 			}
 		},
 		computed: {
@@ -470,8 +472,8 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
-				});
+                    vue.apiError = err.response.data.errors;
+                });
 			},
 			registerAndActivateNonprofit: function () {
 				const vue = this;
@@ -505,7 +507,7 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			}
 		},

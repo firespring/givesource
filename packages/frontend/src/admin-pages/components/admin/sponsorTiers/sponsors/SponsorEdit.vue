@@ -33,6 +33,7 @@
 
                 <div class="o-app-main-content">
                     <form v-on:submit="submit">
+                        <api-error v-model="apiError"></api-error>
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
@@ -122,7 +123,8 @@
 				},
 
 				// Errors
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			};
 		},
 		props: {
@@ -145,7 +147,9 @@
 					if (response) {
 						vue.file = response.data;
 					}
-				});
+				}).catch(function(err){
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -167,7 +171,7 @@
 				}
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -265,7 +269,7 @@
 					vue.$router.push({name: 'sponsors-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-					console.log(err);
+                    vue.apiError = err.response.data.errors;
 				});
 			}
 		},

@@ -20,6 +20,7 @@
         <navigation :nonprofitUuid="nonprofitUuid"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
+                <api-error v-model="apiError"></api-error>
 
                 <div class="o-page-header" v-if="isAdmin">
                     <div class="o-page-header__text">
@@ -112,7 +113,8 @@
 					caption: '',
 				},
 
-				formErrors: {}
+				formErrors: {},
+                apiError: {},
 			}
 		},
 		props: [
@@ -146,7 +148,10 @@
 			next(function (vue) {
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                    next();
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -155,8 +160,9 @@
 			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
-			}).catch(function () {
-				next();
+			}).catch(function (err) {
+                vue.apiError = err.response.data.errors;
+                next();
 			});
 		},
 		beforeMount: function () {
@@ -170,7 +176,7 @@
 					vue.loadedSlides = true;
 				}
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 			});
 		},
 		methods: {
@@ -234,7 +240,8 @@
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
                     }
                 }).catch(function (err) {
-                	console.log(err);
+                    vue.clearModals();
+                    vue.apiError = err.response.data.errors;
                 });
 			}
 		}

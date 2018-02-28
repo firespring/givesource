@@ -16,6 +16,7 @@
  */
 
 import * as VueMoney from "v-money";
+import ApiErrorComponent from './components/errors/ApiError.vue';
 import App from './components/App.vue';
 import axios from "axios";
 import EventBusMixin from './mixins/eventBus';
@@ -43,6 +44,9 @@ Vue.mixin(ValidateMixin);
 
 // Register directives
 Vue.directive('money', VueMoney.VMoney);
+
+// Register global components
+Vue.component('api-error', ApiErrorComponent);
 
 // Register window globals
 window._ = require('lodash');

@@ -21,6 +21,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="o-page-header">
                         <div class="o-page-header__text">
@@ -44,7 +45,7 @@
 
                         <div class="c-page-section__main">
 
-                            <faq-list-table :contents="contents"></faq-list-table>
+                            <faq-list-table :contents="contents" v-on:hasError="hasError"></faq-list-table>
 
                             <div class="c-table-footer">
                                 <div class="c-table-footer__actions">
@@ -68,7 +69,8 @@
 			return {
 				contents: [],
 				loaded: false,
-			};
+                apiError: {},
+            };
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -129,7 +131,11 @@
 				const vue = this;
 
 				vue.addModal('pages-faq-add-question-modal');
-			}
+			},
+            hasError: function (err) {
+                const vue = this;
+                vue.apiError = err.response.data.errors;
+            },
 		},
 		components: {
 			'faq-list-table': require('./faq/FAQListTable.vue')

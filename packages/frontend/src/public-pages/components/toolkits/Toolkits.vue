@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm">
 
                 <div v-html="leadingText" style="margin: 0 0 1.5rem;"></div>
@@ -59,6 +60,7 @@
 		data: function () {
 			return {
 				contents: [],
+                apiError: {},
 			};
 		},
 		computed: {
@@ -101,7 +103,9 @@
 						}
 					});
 					return promise;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -132,7 +136,7 @@
 			}).then(function () {
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},

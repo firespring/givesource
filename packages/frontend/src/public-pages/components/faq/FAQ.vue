@@ -22,6 +22,7 @@
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm">
 
                 <ol>
@@ -54,6 +55,7 @@
 		data: function () {
 			return {
 				contents: [],
+                apiError: {},
 			};
 		},
 		computed: {
@@ -70,7 +72,9 @@
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.contents = response.data;
-				});
+				}).catch(function (err) {
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -85,8 +89,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
-				next();
+                vue.apiError = err.response.data.errors;
 			});
 		},
 		beforeMount: function () {

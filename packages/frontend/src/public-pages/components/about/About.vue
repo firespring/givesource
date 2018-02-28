@@ -17,11 +17,13 @@
 
 <template>
     <div>
+
         <layout-hero :presentedBy="true">
             <h1 slot="title">About {{ eventTitle }}</h1>
         </layout-hero>
 
         <main class="main">
+            <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm" v-html="about"></div>
         </main>
 
@@ -39,6 +41,7 @@
 		data: function () {
 			return {
 				contents: [],
+                apiError: {},
 			};
 		},
 		computed: {
@@ -56,7 +59,9 @@
 					keys: 'ABOUT_TEXT'
 				})).then(function (response) {
 					vue.contents = response.data;
-				});
+				}).catch(function (err){
+                    vue.apiError = err.response.data.errors;
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -68,7 +73,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-				console.log(err);
+                vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
