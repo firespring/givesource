@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,39 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
+const SES = require('./../../aws/ses');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
-const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email']);
 	const cognito = new Cognito();
-	const repository = new UsersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
+	const ses = new SES();
 
-	let user = null;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
-	}).then(function (result) {
-		user = new User(result);
-		user.populate(request._body);
-		return user.validate();
-	}).then(function () {
-		return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email, true).catch(function (err) {
-			if (err.code === 'UserNotFoundException') {
-				return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email);
-			} else {
-				return Promise.reject(err);
+	const cognitoCustomMessageArn = process.env.COGNITO_CUSTOM_MESSAGE_FUNCTION_ARN;
+	const snsCallerRoleArn = process.env.COGNITO_SNS_CALLER_ROLE_ARN;
+	const fromEmailAddressArn = `arn:aws:ses:${process.env.AWS_REGION}:${process.env.AWS_ACCOUNT_ID}:identity/${request.get('email')}`;
+	const policy = {
+		Version: '2008-10-17',
+		Statement: [
+			{
+				Sid: 'stmnt' + new Date().getTime(),
+				Effect: 'Allow',
+				Principal: {
+					Service: 'cognito-idp.amazonaws.com'
+				},
+				Action: [
+					'ses:SendEmail',
+					'ses:SendRawEmail',
+				],
+				Resource: fromEmailAddressArn,
 			}
-		});
+		]
+	};
+
+	request.validate().then(function () {
+		return ses.updatePolicy(fromEmailAddressArn, JSON.stringify(policy), process.env.AWS_STACK_NAME + '-SendEmailPolicy');
+	}).then(function () {
+		return cognito.updateUserPool(process.env.USER_POOL_ID, snsCallerRoleArn, cognitoCustomMessageArn, fromEmailAddressArn);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

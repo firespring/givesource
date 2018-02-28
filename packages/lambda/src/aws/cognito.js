@@ -69,20 +69,22 @@ Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCust
  * @param {String} userPoolId
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
+ * @param {String} [fromEmailAddressArn]
+ * @param {String} [replyToAddress]
  * @return {Promise}
  */
-Cognito.prototype.updateUserPool = function (userPoolId, snsCallerArn, cognitoCustomMessageArn) {
+Cognito.prototype.updateUserPool = function (userPoolId, snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress) {
 	const cognito = this;
 	return new Promise(function (resolve, reject) {
-		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn);
+		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress);
 		params.UserPoolId = userPoolId;
 		cognito.awsCognito.updateUserPool(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
 			resolve(result);
-		})
-	})
+		});
+	});
 };
 
 /**
@@ -126,10 +128,12 @@ Cognito.prototype.describeUserPool = function (userPoolId) {
  *
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
+ * @param {String} [fromEmailAddressArn]
+ * @param {String} [replyToAddress]
  * @return {{}}
  */
-Cognito.prototype.buildUserPoolParameters = function (snsCallerArn, cognitoCustomMessageArn) {
-	return {
+Cognito.prototype.buildUserPoolParameters = function (snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress) {
+	const params = {
 		AdminCreateUserConfig: {
 			AllowAdminCreateUserOnly: true,
 			UnusedAccountValidityDays: 7,
@@ -153,6 +157,20 @@ Cognito.prototype.buildUserPoolParameters = function (snsCallerArn, cognitoCusto
 			ExternalId: snsCallerArn
 		}
 	};
+
+	if (fromEmailAddressArn || replyToAddress) {
+		params.EmailConfiguration = {};
+
+		if (fromEmailAddressArn) {
+			params.EmailConfiguration.SourceArn = fromEmailAddressArn;
+		}
+
+		if (replyToAddress) {
+			params.EmailConfiguration.ReplyToEmailAddress = replyToAddress;
+		}
+	}
+
+	return params;
 };
 
 /**

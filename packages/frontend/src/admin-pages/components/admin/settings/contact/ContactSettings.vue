@@ -48,7 +48,7 @@
                                         All incoming messages (e.g., contact us messages) will be sent to this email address.
                                         <span v-if="displayResendContactEmailVerificationLink">
                                             However, it must be verified before it can be used to receive any messages.
-                                            <a v-on:click.prevent="resendContactEmailVerification" href="#" class="js-modal-trigger">
+                                            <a v-on:click.prevent="resendContactEmailVerification" href="#">
                                                 Resend Verification Link
                                             </a>
                                         </span>
@@ -56,8 +56,7 @@
                                 </div>
 
                                 <div class="o-grid-col o-grid-col--sm-shrink">
-                                    <a v-on:click.prevent="editContactEmail" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger"
-                                       rel="modal-settings-edit-contact-email-address">
+                                    <a v-on:click.prevent="editContactEmail" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </a>
                                 </div>
@@ -69,20 +68,30 @@
                                 <div class="o-grid-col o-grid-col--sm-expand">
                                     <h4 class="u-margin-none">Sender Email</h4>
                                     <div class="u-break-word">{{ senderEmail }}{{ senderEmailVerificaitonMessage }}</div>
+
                                     <div class="c-notes c-notes--below">
                                         All outgoing messages (e.g., to participating nonprofits and donors) will be sent from this email address.
                                         <span v-if="displayResendSenderEmailVerificationLink">
                                             However, it must be verified before it can be used to send any messages.
-                                            <a v-on:click.prevent="resendSenderEmailVerification" href="#" class="js-modal-trigger">
+                                            <a v-on:click.prevent="resendSenderEmailVerification" href="#">
                                                 Resend Verification Link
                                             </a>
+                                        </span>
+                                    </div>
+
+                                    <div class="c-notes c-notes--below" v-if="senderEmailIsVerified && this.cognitoSenderEmailAddress">
+                                        <a v-if="!isCognitoSenderEmailAddress" v-on:click.prevent="setCognitoSenderEmail" href="#">
+                                            Use this email address for user registration and forgot password emails.
+                                        </a>
+                                        <span v-else>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                            This email address is currently being used to send user registration and forgot password emails.
                                         </span>
                                     </div>
                                 </div>
 
                                 <div class="o-grid-col o-grid-col--sm-shrink">
-                                    <a v-on:click.prevent="editSenderEmail" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger"
-                                       rel="modal-settings-edit-sender-email-address">
+                                    <a v-on:click.prevent="editSenderEmail" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </a>
                                 </div>
@@ -100,8 +109,7 @@
                                 </div>
 
                                 <div class="o-grid-col o-grid-col--sm-shrink">
-                                    <a v-on:click.prevent="editContactPhone" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon js-modal-trigger"
-                                       rel="modal-settings-edit-contact-phone">
+                                    <a v-on:click.prevent="editContactPhone" href="#" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </a>
                                 </div>
@@ -123,6 +131,7 @@
 			return {
 				settings: [],
 				emailSettings: [],
+				cognitoSenderEmailAddress: null,
 			};
 		},
 		computed: {
@@ -160,6 +169,9 @@
 				}
 				return setting ? setting.value : null;
 			},
+			isCognitoSenderEmailAddress: function () {
+                return this.senderEmail === this.cognitoSenderEmailAddress;
+			},
 			senderEmail: function () {
 				let setting = null;
 				if (this.settings.length) {
@@ -180,7 +192,7 @@
 					message = this.senderEmail && !this.senderEmailIsVerified ? ' (Awaiting Verification)' : '';
 				}
 				return message;
-			}
+			},
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -191,6 +203,11 @@
 					return vue.$request.get('settings/email');
 				}).then(function (response) {
 					vue.emailSettings = response.data;
+					return vue.$request.get('settings/email/sender');
+				}).then(function (response) {
+					if (response.data && response.data.email) {
+						vue.cognitoSenderEmailAddress = response.data.email;
+					}
 				});
 			});
 		},
@@ -204,6 +221,11 @@
 				return vue.$request.get('settings/email');
 			}).then(function (response) {
 				vue.emailSettings = response.data;
+				return vue.$request.get('settings/email/sender');
+			}).then(function (response) {
+				if (response.data && response.data.email) {
+					vue.cognitoSenderEmailAddress = response.data.email;
+				}
 				next();
 			}).catch(function () {
 				next();
@@ -241,6 +263,25 @@
 			resendSenderEmailVerification: function () {
 				const vue = this;
 				vue.addModal('settings-resend-verify-email', {email: vue.senderEmail});
+			},
+			setCognitoSenderEmail: function () {
+				const vue = this;
+
+				vue.addModal('spinner');
+
+				vue.$request.patch('settings/email/sender', {
+					email: vue.senderEmail
+				}).then(function () {
+					return vue.$request.get('settings/email/sender');
+				}).then(function (response) {
+					if (response.data && response.data.email) {
+						vue.cognitoSenderEmailAddress = response.data.email;
+					}
+					vue.removeModal('spinner');
+				}).catch(function (err) {
+					vue.removeModal('spinner');
+					console.log(err);
+				});
 			}
 		}
 	};

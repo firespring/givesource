@@ -602,6 +602,9 @@ Outputs:
   CognitoCreateUserFunctionArn:
     Value: !GetAtt CognitoCreateUserFunction.Arn
 
+  CognitoCustomMessageFunctionArn:
+    Value: !GetAtt CognitoCustomMessageFunction.Arn
+
   CognitoUserPoolId:
     Value: !GetAtt CognitoUserPool.UserPoolId
 

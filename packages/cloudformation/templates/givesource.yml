@@ -522,6 +522,9 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        CognitoCustomMessageFunctionArn: !GetAtt CustomStack.Outputs.CognitoCustomMessageFunctionArn
+        CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
+        UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
     DependsOn:

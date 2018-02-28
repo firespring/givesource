@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright (C) 2018  Firespring
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,32 +18,26 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
-const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 	const cognito = new Cognito();
-	const repository = new UsersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
 
-	let user = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
-	}).then(function (result) {
-		user = new User(result);
-		user.populate(request._body);
-		return user.validate();
-	}).then(function () {
-		return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email, true).catch(function (err) {
-			if (err.code === 'UserNotFoundException') {
-				return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email);
-			} else {
-				return Promise.reject(err);
+		return cognito.describeUserPool(process.env.USER_POOL_ID);
+	}).then(function (response) {
+		let email = 'no-reply@verificationemail.com';
+		if (response.hasOwnProperty('EmailConfiguration') && response.EmailConfiguration.hasOwnProperty('SourceArn')) {
+			const fromEmailAddressArn = response.EmailConfiguration.SourceArn;
+			const parts = fromEmailAddressArn.split('identity/');
+			if (parts.length > 1) {
+				email = parts[parts.length - 1];
 			}
-		});
-	}).then(function () {
-		callback();
+		}
+		return Promise.resolve(email);
+	}).then(function (response) {
+		callback(null, {email: response});
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

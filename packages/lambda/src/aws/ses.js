@@ -16,7 +16,6 @@
  */
 
 const AWS = require('aws-sdk');
-const Message = require('./../models/message');
 
 /**
  * SES constructor
@@ -34,6 +33,7 @@ function SES() {
  * @param {String} [bodyText]
  * @param {String} fromAddress
  * @param {Array} toAddresses
+ * @param {Array} replyToAddresses
  * @return {Promise}
  */
 SES.prototype.sendEmail = function (subject, bodyHtml, bodyText, fromAddress, toAddresses, replyToAddresses) {
@@ -155,6 +155,31 @@ SES.prototype.deleteIdentity = function (identity) {
 			Identity: identity
 		};
 		awsSES.deleteIdentity(params, function (err, data) {
+			if (err) {
+				return reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
+ * Update an identity policy
+ *
+ * @param {String} identity
+ * @param {String} policy
+ * @param {String} policyName
+ * @return {Promise}
+ */
+SES.prototype.updatePolicy = function (identity, policy, policyName) {
+	const awsSES = new AWS.SES();
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Identity: identity,
+			Policy: policy,
+			PolicyName: policyName,
+		};
+		awsSES.putIdentityPolicy(params, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
