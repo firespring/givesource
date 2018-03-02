@@ -18,7 +18,7 @@
 <template>
     <div>
         <layout-hero>
-            <div slot="logo" v-if="nonprofitLogoLoaded && logoUrl" class="page-hero__logo">
+            <div slot="logo" v-if="logoUrl" class="page-hero__logo">
                 <img width="320" height="140" :alt="nonprofit.legalName" :src="logoUrl">
             </div>
             <h1 slot="title">{{ nonprofit.legalName }}</h1>
@@ -26,7 +26,6 @@
 
         <!-- BEGIN page main -->
         <main class="main">
-
             <div class="wrapper">
 
                 <div class="donation-wrapper nonprofit-campaign">
@@ -41,7 +40,7 @@
                                     <div class="caption">Raised</div>
                                 </div>
 
-                                <div class="donation-metrics__donations" v-if="nonprofitLoaded">
+                                <div class="donation-metrics__donations">
                                     <div class="num">{{ nonprofit.donationsCount }}</div>
                                     <div class="caption">{{ donationsLabel }}</div>
                                 </div>
@@ -77,14 +76,14 @@
                         </div>
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
-                            <template v-if="slides.length && nonprofitSlidesLoaded">
+                            <template v-if="slides.length">
                                 <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;">
                                     <img v-if="slide.type === 'IMAGE'" alt="" :src="getImageUrl(slide.fileUuid)">
                                     <iframe v-else :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
                                             allowfullscreen></iframe>
                                 </div>
                             </template>
-                            <div v-else-if="nonprofitSlidesLoaded" class="nonprofit-campaign__slider" style="overflow: hidden;">
+                            <div v-else class="nonprofit-campaign__slider" style="overflow: hidden;">
                                 <img alt="" src="/assets/temp/community.jpg">
                             </div>
                         </div>
@@ -127,16 +126,14 @@
 		data: function () {
 			return {
 				files: [],
+				logo: null,
 				nonprofit: {},
 				slides: [],
-				logo: null,
+
 				settings: {
 					SOCIAL_SHARING_DESCRIPTION: ''
 				},
 
-				nonprofitLoaded: false,
-				nonprofitSlidesLoaded: false,
-				nonprofitLogoLoaded: false,
                 apiError: {},
             }
 		},
@@ -187,102 +184,61 @@
 			vue.setPageTitle(vue.pageTitle);
 		},
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				let promise = Promise.resolve();
-				if (to.meta.nonprofit !== null) {
-					vue.nonprofit = to.meta.nonprofit;
-					vue.nonprofitLoaded = true;
-				} else {
-					promise = promise.then(function () {
-						return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
-							vue.nonprofit = response.data;
-							vue.nonprofitLoaded = true;
-						});
-					});
-				}
-
-				promise = promise.then(function () {
-					return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
-						return a.sortOrder - b.sortOrder;
-					});
-					vue.slides = response.data;
-					const uuids = [];
-					vue.slides.forEach(function (slide) {
-						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
-							uuids.push(slide.fileUuid);
-						}
-					});
-					return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
-				}).then(function (response) {
-					vue.files = response.data;
-					vue.nonprofitSlidesLoaded = true;
-				});
-
-				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
-					promise = promise.then(function () {
-						return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
-					}).then(function (response) {
-						vue.logo = response.data;
-						vue.nonprofitLogoLoaded = true;
-					});
-				} else {
-					vue.nonprofitLogoLoaded = true;
-				}
-
-				promise = promise.then(function () {
-					return vue.loadSettings();
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+			let files = [];
+			let logo = null;
+			let slides = [];
+			let nonprofit = null;
 
 			let promise = Promise.resolve();
 			if (to.meta.nonprofit !== null) {
-				vue.nonprofit = to.meta.nonprofit;
-				vue.nonprofitLoaded = true;
-			} else {
+				nonprofit = to.meta.nonprofit;
+            } else {
 				promise = promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
-						vue.nonprofit = response.data;
-						vue.nonprofitLoaded = true;
+						nonprofit = response.data;
 					});
-				});
-			}
+                });
+            }
 
-			promise.then(function () {
-				return axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/slides');
+			promise = promise.then(function () {
+				return axios.get(API_URL + 'nonprofits/' + nonprofit.uuid + '/slides');
 			}).then(function (response) {
 				response.data.sort(function (a, b) {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.slides = response.data;
+				slides = response.data;
 				const uuids = [];
-				vue.slides.forEach(function (slide) {
+				slides.forEach(function (slide) {
 					if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
 						uuids.push(slide.fileUuid);
 					}
 				});
 				return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
 			}).then(function (response) {
-				vue.files = response.data;
-				vue.nonprofitSlidesLoaded = true;
-			}).then(function () {
-				if (!_.isEmpty(vue.nonprofit.logoFileUuid)) {
-					return axios.get(API_URL + 'files/' + vue.nonprofit.logoFileUuid);
+				if (response && response.data) {
+					files = response.data;
 				}
-			}).then(function (response) {
-				if (response.data) {
-					vue.logo = response.data;
-				}
-				return vue.loadSettings();
-			}).then(function () {
-				next();
-			}).catch(function () {
-				next();
 			});
+
+			if (!_.isEmpty(nonprofit.logoFileUuid)) {
+				promise = promise.then(function () {
+					return axios.get(API_URL + 'files/' + nonprofit.logoFileUuid);
+                }).then(function (response) {
+					if (response && response.data) {
+						logo = response.data;
+					}
+                });
+            }
+
+            promise.then(function () {
+                next(function (vue) {
+                	vue.files = files;
+                	vue.logo = logo;
+                	vue.nonprofit = nonprofit;
+                	vue.slides = slides;
+                    return vue.loadSettings();
+                });
+            });
 		},
 		mounted: function () {
 			const vue = this;

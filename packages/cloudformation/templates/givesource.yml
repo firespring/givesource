@@ -67,7 +67,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
