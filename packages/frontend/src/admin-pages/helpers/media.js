@@ -35,11 +35,7 @@ exports.getVideoData = function (videoUrl) {
 		if (RegExp.$3.indexOf('youtu') > -1) {
 			resolve(media.getYoutubeData(RegExp.$6));
 		} else if (RegExp.$3.indexOf('vimeo') > -1) {
-			media.getVimeoData(RegExp.$6).then(function (response) {
-				resolve(response);
-			}).catch(function (err) {
-				reject(err);
-			});
+			resolve(media.getVimeoData(RegExp.$6));
 		} else {
 			reject(new Error('Video URL must be a Youtube or Vimeo URL.'));
 		}
