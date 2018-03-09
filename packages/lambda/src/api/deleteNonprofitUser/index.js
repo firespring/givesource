@@ -17,31 +17,20 @@
 
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
-const Nonprofit = require('./../../models/nonprofit');
 const Request = require('./../../aws/request');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const UsersRepository = require('./../../repositories/users');
-const User = require('./../../models/user');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
-	const nonprofitsRepository = new NonprofitsRepository();
-	const usersRepository = new UsersRepository();
-
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['nonprofit', 'user']);
-	const user = new User(request.get('user'));
-	const nonprofit = new Nonprofit(request.get('nonprofit'));
-	const userPoolId = process.env.USER_POOL_ID;
+	const repository = new UsersRepository();
+	const request = new Request(event, context);
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return nonprofitsRepository.generateUniqueSlug(nonprofit);
+		return cognito.deleteUser(process.env.USER_POOL_ID, request.urlParam('user_uuid'));
 	}).then(function () {
-		return nonprofit.validate();
-	}).then(function () {
-		return cognito.deleteUser(userPoolId, request.urlParam('user_uuid'));
-	}).then(function () {
-		return usersRepository.delete(request.urlParam('user_uuid'));
+		return repository.delete(request.urlParam('user_uuid'));
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
