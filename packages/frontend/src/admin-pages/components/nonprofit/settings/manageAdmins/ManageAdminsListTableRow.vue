@@ -62,7 +62,8 @@
 	module.exports = {
 		data: function () {
 			return {
-				displayingMenu: false, selectedNonprofitUser: this.nonprofitUser,
+				displayingMenu: false,
+                selectedNonprofitUser: this.nonprofitUser,
 				timer: null,
 			};
 		},
