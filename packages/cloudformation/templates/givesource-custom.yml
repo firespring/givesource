@@ -24,13 +24,22 @@ Parameters:
   AdminPagesS3:
     Type: String
 
+  AdminPagesCloudFrontDistribution:
+    Type: String
+
   AdminPagesCloudFrontUrl:
     Type: String
 
   PublicPagesS3:
     Type: String
 
+  PublicPagesCloudFrontDistribution:
+    Type: String
+
   PublicPagesCloudFrontUrl:
+    Type: String
+
+  UploadsCloudFrontDistribution:
     Type: String
 
   UploadsS3:
@@ -345,6 +354,108 @@ Resources:
       - GeneratePublicIndexFileLambdaFunction
       - GenerateCustomFrontendCssLambdaFunction
 
+  # Lambda@Edge Function Resources
+
+  CreateLambdaEdgeFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: CloudWatchLogs
+        PolicyDocument:
+          Statement:
+            - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Effect: Allow
+              Resource: arn:aws:logs:*:*:*
+      - PolicyName: CloudFront
+        PolicyDocument:
+          Statement:
+            - Action:
+              - cloudfront:GetDistributionConfig
+              - cloudfront:UpdateDistribution
+              Effect: Allow
+              Resource: '*'
+      - PolicyName: IAM
+        PolicyDocument:
+          Statement:
+            - Action:
+              - iam:GetRole
+              - iam:PassRole
+              Effect: Allow
+              Resource: '*'
+      - PolicyName: Lambda
+        PolicyDocument:
+          Statement:
+            - Action:
+              - lambda:CreateFunction
+              - lambda:DeleteFunction
+              - lambda:PublishVersion
+              - lambda:UpdateFunctionCode
+              Effect: Allow
+              Resource: !Sub |-
+                arn:aws:lambda:us-east-1:${AWS::AccountId}:function:*
+      - PolicyName: S3
+        PolicyDocument:
+          Statement:
+            - Action:
+              - s3:GetObject
+              Effect: Allow
+              Resource: !Sub |-
+                arn:aws:s3:::{{awsLambdaReleaseBucketPrefix}}-${AWS::Region}/*
+
+  LambdaEdgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: CloudWatchLogs
+        PolicyDocument:
+          Statement:
+            - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Effect: Allow
+              Resource: arn:aws:logs:*:*:*
+
+  CreateLambdaEdgeFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CreateLambdaEdgeFunction.zip
+      Description: "Create an AWS Lambda@Edge function"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-CreateLambdaEdgeFunction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+    DependsOn: CreateLambdaEdgeFunctionRole
+
   # Report Lambda Resources
 
   GenerateReportLambdaFunction:
@@ -454,6 +565,124 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+
+  # Create Lambda@Edge Functions
+
+  CreateSecurityHeadersAdminPages:
+    Type: Custom::LambdaEdgeSecurityHeaders
+    Properties:
+      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+      CloudFrontDistribution: !Ref AdminPagesCloudFrontDistribution
+      EventType: origin-response
+      FunctionName: SecurityHeadersAdminPages
+      Code: !Sub |-
+         exports.handle = function (event, context, callback) {
+
+         	//Get contents of response
+         	const response = event.Records[0].cf.response;
+         	const headers = response.headers;
+
+         	//Set new headers
+         	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+         	headers['content-security-policy'] = [{
+         		key: 'Content-Security-Policy',
+         		value: "default-src 'none'; " +
+         		"base-uri 'none'; " +
+         		"connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com; " +
+         		"font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+         		"form-action 'self'; " +
+                "frame-ancestors 'self'; " +
+         		"img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
+         		"script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+         		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; " +
+         		"object-src 'none'"
+         	}];
+         	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+         	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+         	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+         	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+
+         	//Return modified response
+         	callback(null, response);
+         };
+      Role: !GetAtt LambdaEdgeRole.Arn
+    DependsOn:
+      - CreateLambdaEdgeFunction
+      - LambdaEdgeRole
+
+  CreateSecurityHeadersPublicPages:
+    Type: Custom::LambdaEdgeSecurityHeaders
+    Properties:
+      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+      CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
+      EventType: origin-response
+      FunctionName: SecurityHeadersPublicPages
+      Code: !Sub |-
+         exports.handle = function (event, context, callback) {
+         	//Get contents of response
+         	const response = event.Records[0].cf.response;
+         	const headers = response.headers;
+
+         	//Set new headers
+         	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+         	headers['content-security-policy'] = [{
+         		key: 'Content-Security-Policy',
+         		value: "default-src 'none'; " +
+         		"base-uri 'none'; " +
+         		"connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com; " +
+         		"font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+         		"form-action 'self'; " +
+         		"frame-ancestors 'self'; " +
+         		"img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
+         		"script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+         		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+         		"object-src 'none'"
+         	}];
+         	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+         	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+         	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+         	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+
+         	//Return modified response
+         	callback(null, response);
+         };
+      Role: !GetAtt LambdaEdgeRole.Arn
+    DependsOn:
+      - CreateLambdaEdgeFunction
+      - LambdaEdgeRole
+
+  CreateSecurityHeadersUploads:
+    Type: Custom::LambdaEdgeSecurityHeaders
+    Properties:
+      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+      CloudFrontDistribution: !Ref UploadsCloudFrontDistribution
+      EventType: origin-response
+      FunctionName: SecurityHeadersUploads
+      Code: !Sub |-
+        exports.handle = function (event, context, callback) {
+
+        	//Get contents of response
+        	const response = event.Records[0].cf.response;
+        	const headers = response.headers;
+
+        	//Set new headers
+        	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+        	headers['content-security-policy'] = [{
+        		key: 'Content-Security-Policy',
+        		value: "default-src 'none'; img-src 'self'; script-src 'none'; font-src 'self'; style-src 'self'; object-src 'none';"
+        	}];
+        	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+        	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+        	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+        	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+
+        	//Return modified response
+        	callback(null, response);
+        };
+      Role: !GetAtt LambdaEdgeRole.Arn
+    DependsOn:
+      - CreateLambdaEdgeFunction
+      - LambdaEdgeRole
 
   # S3 Admin Pages Deployment
 

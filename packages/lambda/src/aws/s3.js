@@ -35,7 +35,7 @@ function S3() {
  * @return {Promise}
  */
 S3.prototype.getObject = function (region, bucketName, objectName) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			Bucket: bucketName,
@@ -62,7 +62,7 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
  * @return {Promise}
  */
 S3.prototype.putObject = function (region, bucketName, objectName, body, contentType, contentDisposition) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		contentType = contentType ? contentType : mime.lookup(objectName);
 		const params = {
@@ -95,7 +95,7 @@ S3.prototype.putObject = function (region, bucketName, objectName, body, content
  */
 
 S3.prototype.deleteObject = function (region, bucketName, objectName) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			Bucket: bucketName,
@@ -119,7 +119,7 @@ S3.prototype.deleteObject = function (region, bucketName, objectName) {
  * @return {Promise}
  */
 S3.prototype.listObjects = function (region, bucketName, prefix) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			Bucket: bucketName,
@@ -145,7 +145,7 @@ S3.prototype.listObjects = function (region, bucketName, prefix) {
  * @return {Promise}
  */
 S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBucketName, destObjectName) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const contentType = mime.lookup(destObjectName);
 		const params = {
@@ -174,7 +174,7 @@ S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBu
  * @return {Promise}
  */
 S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType) {
-	const awsS3 = new AWS.S3({region});
+	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			Bucket: bucketName,

@@ -311,10 +311,13 @@ Resources:
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
+        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
         AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
         PublicPagesS3: !GetAtt S3Stack.Outputs.PublicPagesS3
+        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
         PublicPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
         UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
+        UploadsCloudFrontDistribution: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20

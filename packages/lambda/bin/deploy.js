@@ -42,7 +42,7 @@ const deploy = function (functionName) {
 		const filepath = `${buildDirectory}/${functionName}.zip`;
 		const data = fs.readFileSync(filepath);
 		const zipFile = new Buffer(data, 'binary');
-		return lambda.updateFunctionCode(deployedFunctionName, zipFile);
+		return lambda.updateFunctionCode(process.env.AWS_REGION, deployedFunctionName, zipFile);
 	}).catch(function (err) {
 		console.log(err);
 	});

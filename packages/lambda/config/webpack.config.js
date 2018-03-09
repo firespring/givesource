@@ -135,6 +135,7 @@ module.exports = function (env) {
 			CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',
 			CognitoCreateUserPoolClient: './src/custom/cognitoCreateUserPoolClient/index.js',
 			CognitoCustomMessage: './src/custom/cognitoCustomMessage/index.js',
+			CreateLambdaEdgeFunction: './src/custom/createLambdaEdgeFunction/index.js',
 			DeleteReports: './src/custom/deleteReports/index.js',
 			GenerateCustomFrontendCss: './src/custom/generateCustomFrontendCss/index.js',
 			GenerateDynamicContent: './src/custom/generateDynamicContent/index.js',

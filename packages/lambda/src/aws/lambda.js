@@ -26,6 +26,66 @@ function Lambda() {
 }
 
 /**
+ * Create a new AWS Lambda function
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @param {String} handler
+ * @param {String} role
+ * @param {String} runtime
+ * @param {{}} code
+ * @param {{}} [env]
+ * @return {Promise}
+ */
+Lambda.prototype.createFunction = function (region, functionName, handler, role, runtime, code, env) {
+	const awsLambda = new AWS.Lambda({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Code: code,
+			FunctionName: functionName,
+			Handler: handler,
+			Role: role,
+			Runtime: runtime,
+		};
+
+		env = env || {};
+		if (Object.keys(env).length) {
+			params.Environment = {};
+			params.Environment.Variables = env;
+		}
+
+		awsLambda.createFunction(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
+ * Delete an AWS Lambda function
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @return {Promise}
+ */
+Lambda.prototype.deleteFunction = function (region, functionName) {
+	const awsLambda = new AWS.Lambda({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			FunctionName: functionName
+		};
+		awsLambda.deleteFunction(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
  * Get an AWS Lambda function
  *
  * @param {String} functionName
@@ -73,14 +133,37 @@ Lambda.prototype.invoke = function (region, functionName, payload, invocationTyp
 };
 
 /**
- * Update an AWS Lambda function's code
+ * Publish a new AWS Lambda function version
  *
+ * @param {String} region
  * @param {String} functionName
- * @param {Buffer} zipFile
  * @return {Promise}
  */
-Lambda.prototype.updateFunctionCode = function (functionName, zipFile) {
-	const awsLambda = new AWS.Lambda({region: process.env.AWS_REGION});
+Lambda.prototype.publishVersion = function (region, functionName) {
+	const awsLambda = new AWS.Lambda({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			FunctionName: functionName
+		};
+		awsLambda.publishVersion(params, function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
+ * Update an AWS Lambda function's code
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @param {*} zipFile
+ * @return {Promise}
+ */
+Lambda.prototype.updateFunctionCode = function (region, functionName, zipFile) {
+	const awsLambda = new AWS.Lambda({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			FunctionName: functionName,

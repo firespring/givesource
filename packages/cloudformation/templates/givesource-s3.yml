@@ -3,6 +3,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: AWS S3 resources for Givesource
 Resources:
 
+  # AWS S3 Resources
+
   AdminPagesS3:
     Type: AWS::S3::Bucket
     Properties:
@@ -22,36 +24,6 @@ Resources:
             Resource: !Sub |-
               arn:aws:s3:::${AdminPagesS3}/*
 
-  AdminPagesDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
-            Id: !Ref AdminPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
-        Enabled: true
-        Comment: Distribution for Givsource admin pages S3 bucket
-        DefaultRootObject: index.html
-        DefaultCacheBehavior:
-          DefaultTTL: 0
-          TargetOriginId: !Ref AdminPagesS3
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-          ViewerProtocolPolicy: allow-all
-        PriceClass: PriceClass_200
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 0
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-
   PublicPagesS3:
     Type: AWS::S3::Bucket
     Properties:
@@ -70,36 +42,6 @@ Resources:
             Principal: "*"
             Resource: !Sub |-
               arn:aws:s3:::${PublicPagesS3}/*
-
-  PublicPagesDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
-            Id: !Ref PublicPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
-        Enabled: true
-        Comment: Distribution for Givesource public pages S3 bucket
-        DefaultRootObject: index.html
-        DefaultCacheBehavior:
-          DefaultTTL: 0
-          TargetOriginId: !Ref PublicPagesS3
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-          ViewerProtocolPolicy: allow-all
-        PriceClass: PriceClass_200
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 0
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
 
   UploadsS3:
     Type: AWS::S3::Bucket
@@ -131,6 +73,70 @@ Resources:
             Resource: !Sub |-
               arn:aws:s3:::${UploadsS3}/*
 
+  # AWS CloudFront Resources
+
+  AdminPagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
+            Id: !Ref AdminPagesS3
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        Enabled: true
+        Comment: Distribution for Givsource admin pages S3 bucket
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          TargetOriginId: !Ref AdminPagesS3
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_200
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+    DependsOn: AdminPagesS3
+
+  PublicPagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
+            Id: !Ref PublicPagesS3
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        Enabled: true
+        Comment: Distribution for Givesource public pages S3 bucket
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          TargetOriginId: !Ref PublicPagesS3
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_200
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+    DependsOn: PublicPagesS3
+
   UploadsDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -146,11 +152,11 @@ Resources:
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
-          TargetOriginId: !Ref UploadsS3
           ForwardedValues:
             QueryString: false
             Cookies:
               Forward: none
+          TargetOriginId: !Ref UploadsS3
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:
@@ -160,8 +166,12 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+    DependsOn: UploadsS3
 
 Outputs:
+
+  AdminPagesCloudFrontDistribution:
+    Value: !Ref AdminPagesDistribution
 
   AdminPagesCloudFrontUrl:
     Value: !Sub |-
@@ -173,6 +183,9 @@ Outputs:
   AdminPagesS3BucketUrl:
     Value: !GetAtt AdminPagesS3.WebsiteURL
 
+  PublicPagesCloudFrontDistribution:
+    Value: !Ref PublicPagesDistribution
+
   PublicPagesCloudFrontUrl:
     Value: !Sub |-
       https://${PublicPagesDistribution.DomainName}
@@ -182,6 +195,9 @@ Outputs:
 
   PublicPagesS3BucketUrl:
     Value: !GetAtt PublicPagesS3.WebsiteURL
+
+  UploadsCloudFrontDistribution:
+    Value: !Ref UploadsDistribution
 
   UploadsCloudFrontUrl:
     Value: !Sub |-
