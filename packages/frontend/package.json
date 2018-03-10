@@ -2,6 +2,7 @@
 	"name": "givesource-frontend",
 	"description": "",
 	"scripts": {
+		"cache": "node bin/clear-cache",
 		"clean": "rimraf build",
 		"build": "npm run clean && npm run fetch && npm run webpack",
 		"deploy": "npm run build && node bin/deploy.js",
@@ -37,6 +38,7 @@
 		"file-loader": "^0.11.2",
 		"fireSlider.js": "github:mmonkey/fireSlider",
 		"html-webpack-plugin": "^2.30.1",
+		"inquirer": "^5.1.0",
 		"jquery": "^3.2.1",
 		"jquery-datetimepicker": "^2.5.4",
 		"lodash": "^4.17.4",

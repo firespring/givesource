@@ -16,6 +16,7 @@
 		"cloudformation:release": "cd packages/cloudformation && npm run release",
 		"cloudformation:update": "cd packages/cloudformation && npm run stack update",
 		"frontend:build": "cd packages/frontend && npm run build",
+		"frontend:cache": "cd packages/frontend && npm run cache",
 		"frontend:clean": "cd packages/frontend && npm run clean",
 		"frontend:deploy": "cd packages/frontend && npm run deploy",
 		"frontend:dev": "cd packages/frontend && npm run dev",

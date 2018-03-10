@@ -24,7 +24,7 @@ const deployInfo = require('../config/deploy-info.json');
 const s3 = require('./aws/s3');
 
 exports.fetch = function () {
-	s3.getObject(process.env.AWS_REGION, deployInfo.publicPagesS3BucketName, 'assets/css/custom.css').then(function (data) {
+	s3.getObject(process.env.AWS_REGION, deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(function (data) {
 		const configDir = path.normalize(`${__dirname}/../build/public-pages/assets/css`);
 		fs.writeFileSync(`${configDir}/custom.css`, data.Body);
 		console.log('custom.css downloaded from s3');
@@ -32,7 +32,7 @@ exports.fetch = function () {
 		console.error(err, err.stack);
 	});
 
-	s3.getObject(process.env.AWS_REGION, deployInfo.publicPagesS3BucketName, 'index.html').then(function (data) {
+	s3.getObject(process.env.AWS_REGION, deployInfo.PublicPagesS3BucketName, 'index.html').then(function (data) {
 		const configDir = path.normalize(`${__dirname}/../build/public-pages`);
 		fs.writeFileSync(`${configDir}/index.html`, data.Body);
 		console.log('index.html downloaded from s3');

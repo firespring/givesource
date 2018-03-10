@@ -615,6 +615,9 @@ Resources:
 
 Outputs:
 
+  AdminPagesCloudFrontDistribution:
+    Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
+
   AdminPagesCloudFrontUrl:
     Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
 
@@ -631,6 +634,9 @@ Outputs:
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
 
+  PublicPagesCloudFrontDistribution:
+    Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
+
   PublicPagesCloudFrontUrl:
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
 
@@ -639,6 +645,9 @@ Outputs:
 
   PublicPagesS3BucketUrl:
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
+
+  UploadsCloudFrontDistribution:
+    Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
 
   UploadsCloudFrontUrl:
     Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl

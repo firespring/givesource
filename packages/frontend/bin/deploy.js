@@ -76,7 +76,7 @@ if (validateEnv()) {
 	const adminPagesDir = path.normalize(`${__dirname}/../build/admin-pages`);
 	const adminPagesCssDir = path.normalize(`${adminPagesDir}/assets/css`);
 	const adminPagesImgDir = path.normalize(`${adminPagesDir}/assets/img`);
-	const adminPagesBucket = deployInfo.adminPagesS3BucketName;
+	const adminPagesBucket = deployInfo.AdminPagesS3BucketName;
 
 	const publicPagesDir = path.normalize(`${__dirname}/../build/public-pages`);
 	const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
@@ -84,7 +84,7 @@ if (validateEnv()) {
 	const publicPagesIndexTemplateFile = path.normalize(`${publicPagesDir}/templates/index.mustache`);
 	const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
 	const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
-	const publicPagesBucket = deployInfo.publicPagesS3BucketName;
+	const publicPagesBucket = deployInfo.PublicPagesS3BucketName;
 
 	deploy('admin-pages', adminPagesDir, '', adminPagesBucket).then(function () {
 		return deploy('admin-pages', adminPagesCssDir, 'css', adminPagesBucket);

@@ -399,6 +399,8 @@ Resources:
             - Action:
               - lambda:CreateFunction
               - lambda:DeleteFunction
+              - lambda:EnableReplication
+              - lambda:GetFunction
               - lambda:PublishVersion
               - lambda:UpdateFunctionCode
               Effect: Allow
@@ -585,17 +587,18 @@ Resources:
          	//Set new headers
          	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
          	headers['content-security-policy'] = [{
-         		key: 'Content-Security-Policy',
-         		value: "default-src 'none'; " +
-         		"base-uri 'none'; " +
-         		"connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com; " +
-         		"font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
-         		"form-action 'self'; " +
+                key: 'Content-Security-Policy',
+                value: "default-src 'none'; " +
+                "base-uri 'none'; " +
+                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://vimeo.com; " +
+                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+                "form-action 'self'; " +
                 "frame-ancestors 'self'; " +
-         		"img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
-         		"script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
-         		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; " +
-         		"object-src 'none'"
+                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
+                "img-src 'self' www.google-analytics.com https://www.gravatar.com ${UploadsCloudFrontUrl} https://img.youtube.com; " +
+                "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+                "object-src 'none'"
          	}];
          	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
          	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
@@ -626,17 +629,18 @@ Resources:
          	//Set new headers
          	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
          	headers['content-security-policy'] = [{
-         		key: 'Content-Security-Policy',
-         		value: "default-src 'none'; " +
-         		"base-uri 'none'; " +
-         		"connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com; " +
-         		"font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
-         		"form-action 'self'; " +
-         		"frame-ancestors 'self'; " +
-         		"img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
-         		"script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
-         		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-         		"object-src 'none'"
+                key: 'Content-Security-Policy',
+                value: "default-src 'none'; " +
+                "base-uri 'none'; " +
+                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com; " +
+                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+                "form-action 'self'; " +
+                "frame-ancestors 'self'; " +
+                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
+                "img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
+                "script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                "object-src 'none'"
          	}];
          	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
          	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];

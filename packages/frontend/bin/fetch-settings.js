@@ -18,95 +18,90 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../.env`});
 
-const AWS = require('aws-sdk');
+const _ = require('lodash');
+const CloudFormation = require('./aws/cloudFormation');
 const fs = require('fs');
 const path = require('path');
 
-const describeStack = function (cloudFormation, stackName) {
-	return new Promise(function (resolve, reject) {
-		const params = {
-			StackName: stackName
-		};
-		cloudFormation.describeStacks(params, (error, data) => {
-			if (error) {
-				return reject(error);
-			}
-			if (!data) {
-				return reject(new Error('describeStacks returned no data'));
-			}
-			const stacks = data.Stacks;
-			if (!stacks || stacks.length !== 1) {
-				return reject(new Error('describeStacks unexpected number of stacks'));
-			}
-			resolve(stacks[0]);
-		})
-	});
-};
-
+/**
+ * Get output key from stack
+ *
+ * @param {{}} outputs
+ * @param {String} outputKey
+ * @return {*}
+ */
 const findOutputKey = function (outputs, outputKey) {
-	let value = null;
-	outputs.forEach((output) => {
-		if (output.OutputKey === outputKey) {
-			value = output.OutputValue;
-		}
-	});
-	if (value === null) {
+	const output = _.find(outputs, {OutputKey: outputKey});
+	if (output && output.OutputValue) {
+		return output.OutputValue;
+	} else {
 		throw new Error(outputKey + ' not found');
 	}
-	return value;
 };
 
+/**
+ * Get Stack settings
+ *
+ * @return {Promise}
+ */
 const getSettings = function () {
-	return new Promise(function (resolve, reject) {
-		const stackName = process.env.AWS_STACK_NAME;
-		const awsRegion = process.env.AWS_REGION;
-		const cloudFormation = new AWS.CloudFormation({region: awsRegion});
-
-		describeStack(cloudFormation, stackName).then(function (stack) {
-			resolve({
-				API_URL: findOutputKey(stack.Outputs, 'ApiUrl')
+	const cloudFormation = new CloudFormation();
+	return cloudFormation.describeStacks(process.env.AWS_REGION, process.env.AWS_STACK_NAME).then(function (stacks) {
+		if (stacks.length !== 1) {
+			return Promise.reject(new Error('unexpected number of stacks'));
+		} else {
+			const stack = stacks[0];
+			return Promise.resolve({
+				API_URL: findOutputKey(stack.Outputs, 'ApiUrl'),
+				AdminPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'AdminPagesCloudFrontDistribution'),
+				AdminPagesS3BucketName: findOutputKey(stack.Outputs, 'AdminPagesS3BucketName'),
+				AdminPagesS3BucketUrl: findOutputKey(stack.Outputs, 'AdminPagesS3BucketUrl'),
+				PublicPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'PublicPagesCloudFrontDistribution'),
+				PublicPagesS3BucketName: findOutputKey(stack.Outputs, 'PublicPagesS3BucketName'),
+				PublicPagesS3BucketUrl: findOutputKey(stack.Outputs, 'PublicPagesS3BucketUrl'),
+				UploadsCloudFrontDistribution: findOutputKey(stack.Outputs, 'UploadsCloudFrontDistribution'),
 			});
-		}).catch(function (err) {
-			reject(err);
-		});
+		}
 	});
 };
 
-const getBucketInfo = function () {
-	return new Promise(function (resolve, reject) {
-		const stackName = process.env.AWS_STACK_NAME;
-		const awsRegion = process.env.AWS_REGION;
-		const cloudFormation = new AWS.CloudFormation({region: awsRegion});
-
-		describeStack(cloudFormation, stackName).then(function (stack) {
-			resolve({
-				adminPagesS3BucketName: findOutputKey(stack.Outputs, 'AdminPagesS3BucketName'),
-				adminPagesS3BucketUrl: findOutputKey(stack.Outputs, 'AdminPagesS3BucketUrl'),
-				publicPagesS3BucketName: findOutputKey(stack.Outputs, 'PublicPagesS3BucketName'),
-				publicPagesS3BucketUrl: findOutputKey(stack.Outputs, 'PublicPagesS3BucketUrl'),
-			});
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
+/**
+ * Write config file
+ *
+ * @param {String} filename
+ * @param {{}} data
+ */
+const writeConfig = function (filename, data) {
+	const jsonData = JSON.stringify(data, null, 2);
+	const filePath = path.normalize(__dirname + '/../config/' + filename);
+	fs.writeFileSync(filePath, jsonData);
+	console.log(filename + ' created');
 };
 
 getSettings().then(function (data) {
-	const json = JSON.stringify(data, null, 2);
-	const configDir = path.normalize(`${__dirname}/../config`);
-	fs.writeFileSync(`${configDir}/settings.json`, json);
-	console.log('settings.json created');
-}).catch(function (err) {
-	console.error(err, err.stack);
-	process.exit(1);
-});
+	const settings = {
+		API_URL: null
+	};
+	const deployInfo = {
+		AdminPagesCloudFrontDistribution: null,
+		AdminPagesS3BucketName: null,
+		AdminPagesS3BucketUrl: null,
+		PublicPagesCloudFrontDistribution: null,
+		PublicPagesS3BucketName: null,
+		PublicPagesS3BucketUrl: null,
+		UploadsCloudFrontDistribution: null,
+	};
+	Object.keys(data).forEach(function (key) {
+		if (settings.hasOwnProperty(key)) {
+			settings[key] = data[key];
+		}
+		if (deployInfo.hasOwnProperty(key)) {
+			deployInfo[key] = data[key];
+		}
+	});
 
-getBucketInfo().then(function (data) {
-	const json = JSON.stringify(data, null, 2);
-	const configDir = path.normalize(`${__dirname}/../config`);
-	fs.writeFileSync(`${configDir}/deploy-info.json`, json);
-	console.log('deploy-info.json created');
+	writeConfig('settings.json', settings);
+	writeConfig('deploy-info.json', deployInfo);
 }).catch(function (err) {
-	console.error(err, err.stack);
-	process.exit(1);
+	console.log(err);
 });
