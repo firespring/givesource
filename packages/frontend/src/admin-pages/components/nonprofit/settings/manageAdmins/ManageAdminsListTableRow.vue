@@ -59,22 +59,24 @@
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                displayingMenu: false,selectedNonprofitUser: this.nonprofitUser,
-            timer: null,};
-        },
-        computed: {
-            formattedDate: function () {
-                return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
-            }
-        },
-        props: [
-            'nonprofitUser'
-        ],
-        methods: {
-            toggleMenu: function (event) {
+	module.exports = {
+		data: function () {
+			return {
+				displayingMenu: false,
+                selectedNonprofitUser: this.nonprofitUser,
+				timer: null,
+			};
+		},
+		computed: {
+			formattedDate: function () {
+				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
+			}
+		},
+		props: [
+			'nonprofitUser'
+		],
+		methods: {
+			toggleMenu: function (event) {
 				event.preventDefault();
 				const vue = this;
 				if (vue.displayingMenu) {
@@ -99,8 +101,9 @@
 				clearTimeout(vue.timer);
 			},
 			removeUser: function () {
-                const vue = this;
-                vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);},
+				const vue = this;
+				vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);
+			},
 			resendVerificationEmail: function () {
 				const vue = this;
 
@@ -111,7 +114,7 @@
 					console.log(err);
 					vue.clearModals();
 				});
-            },
-        }
-    };
+			},
+		}
+	};
 </script>

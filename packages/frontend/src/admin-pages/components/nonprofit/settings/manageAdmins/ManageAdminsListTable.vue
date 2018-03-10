@@ -88,7 +88,6 @@
 					callback: 'deleteUserNonprofit',
 				});
 			},
-
 			removeUser: function () {
 				const vue = this;
 

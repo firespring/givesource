@@ -71,7 +71,7 @@ NonprofitSlide.prototype.constraints = {
 	},
 	externalId: {
 		presence: false,
-		type: 'string'
+		type: 'string|number'
 	},
 	fileUuid: {
 		presence: false,
