@@ -15,23 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Copyright (C) 2018  Firespring
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 const archiver = require('archiver');
 const CloudFront = require('./../../aws/cloudFront');
 const fs = require('fs');
@@ -63,8 +46,8 @@ exports.handle = function (event, context, callback) {
 				const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
 				if (associations.Quantity && associations.Items) {
 					associations.Items.forEach(function (item, index) {
-						if (item.LambdaFunctionARN.indexOf(functionName) > -1) {
-							associations.Items[index] = {};
+						if (item.LambdaFunctionARN === event.PhysicalResourceId) {
+							associations.Items.splice(index, 1);
 							associations.Quantity = associations.Quantity - 1;
 						}
 					});
@@ -72,12 +55,12 @@ exports.handle = function (event, context, callback) {
 			}
 			return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config);
 		}).then(function () {
-			return lambda.deleteFunction(region, functionName);
+			return lambda.deleteFunction(region, event.PhysicalResourceId);
 		}).then(function () {
 			response.send(event, context, response.SUCCESS);
 		}).catch(function (err) {
 			logger.log(err);
-			response.send(event, context, response.FAILED);
+			response.send(event, context, response.SUCCESS);
 		});
 		return;
 	}
@@ -160,8 +143,8 @@ exports.handle = function (event, context, callback) {
 		const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
 		if (associations.Quantity && associations.Items) {
 			associations.Items.forEach(function (item, index) {
-				if (item.LambdaFunctionARN.indexOf(functionName) > -1) {
-					associations.Items[index] = {};
+				if (item.LambdaFunctionARN === event.PhysicalResourceId) {
+					associations.Items.splice(index, 1);
 					associations.Quantity = associations.Quantity - 1;
 				}
 			});
@@ -175,7 +158,7 @@ exports.handle = function (event, context, callback) {
 
 		return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config);
 	}).then(function () {
-		response.send(event, context, response.SUCCESS);
+		response.send(event, context, response.SUCCESS, {LambdaFunctionARN: lambdaFunctionArn}, lambdaFunctionArn);
 	}).catch(function (err) {
 		logger.log(err);
 		response.send(event, context, response.FAILED);

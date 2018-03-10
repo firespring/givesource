@@ -48,9 +48,6 @@ const deploy = function (functionName) {
 	});
 };
 
-
-
-
 /**
  * Batch deploy all lambda functions
  *
