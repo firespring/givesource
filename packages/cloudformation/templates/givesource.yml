@@ -81,204 +81,156 @@ Resources:
       Name: !Sub |-
         ${AWS::StackName}
 
-  LambdaRole:
-    Type: AWS::IAM::Role
+  ApiGatewayManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
     Properties:
-      AssumeRolePolicyDocument:
+      PolicyDocument:
+        Version: 2012-10-17
         Statement:
           - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
+            Action: apigateway:POST
+            Resource: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
+          - Effect: Allow
+            Action: apigateway:*
+            Resource:
+              - !Sub arn:aws:apigateway:${AWS::Region}::/apikeys
+              - !Sub arn:aws:apigateway:${AWS::Region}::/apikeys/*
+    DependsOn: RestApi
+
+  CloudFormationManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: cloudformation:DescribeStacks
+            Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
+
+  CloudWatchLogsManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
             Action:
-              - sts:AssumeRole
-      Policies:
-      - PolicyName: Lambda
-        PolicyDocument:
-          Statement:
-            - Action:
-              - lambda:InvokeFunction
-              Effect: Allow
-              Resource: !Sub |-
-                arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*
-      - PolicyName: CloudWatchLogs
-        PolicyDocument:
-          Statement:
-            - Action:
               - logs:CreateLogGroup
               - logs:CreateLogStream
               - logs:PutLogEvents
-              Effect: Allow
-              Resource: arn:aws:logs:*:*:*
-      - PolicyName: DynamoDB
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action: dynamodb:*
-              Resource:
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}/index/*
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
-                - !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
-      - PolicyName: CloudFormation
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action: cloudformation:DescribeStacks
-              Resource: !Sub |-
-                arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
-      - PolicyName: S3
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - s3:ListBucket
-              Resource:
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
-                - arn:aws:s3:::{{awsReleaseBucket}}
-            - Effect: Allow
-              Action:
-                - s3:Delete*
-                - s3:Put*
-                - s3:Get*
-              Resource:
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
-                - !Sub |-
-                  arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
-                - arn:aws:s3:::{{awsReleaseBucket}}/*
-      - PolicyName: Cognito
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - cognito-idp:*
-                - iam:PassRole
-              Resource: '*'
-      - PolicyName: APIGateway
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - apigateway:POST
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys
-            - Effect: Allow
-              Action:
-                - apigateway:*
-              Resource: !Sub |-
-                arn:aws:apigateway:${AWS::Region}::/apikeys/*
-      - PolicyName: SES
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - ses:*
-              Resource: '*'
-    DependsOn:
-      - DynamoDbStack
-      - RestApi
-      - S3Stack
+            Resource: arn:aws:logs:*:*:*
 
-  S3HandleFunctionRole:
-    Type: AWS::IAM::Role
+  CognitoManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
     Properties:
-      AssumeRolePolicyDocument:
+      PolicyDocument:
+        Version: 2012-10-17
         Statement:
           - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
             Action:
-              - sts:AssumeRole
-      Policies:
-      - PolicyName: WriteS3
-        PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:DeleteObject
-                  - s3:ListBucket
-                  - s3:PutObject
-                  - s3:GetObject
-                Resource: arn:aws:s3:::*
-      - PolicyName: WriteCloudWatchLogs
-        PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
+              - cognito-idp:*
+              - iam:PassRole
+            Resource: '*'
+
+  DynamoDbManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource:
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}/index/*
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
+    DependsOn: DynamoDbStack
+
+  LambdaManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: lambda:InvokeFunction
+            Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*
+
+  S3ManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: s3:ListBucket
+            Resource:
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
+              - arn:aws:s3:::{{awsReleaseBucket}}
+          - Effect: Allow
+            Action: s3:Get*
+            Resource:
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+              - arn:aws:s3:::{{awsReleaseBucket}}/*
+          - Effect: Allow
+            Action:
+              - s3:Delete*
+              - s3:Put*
+            Resource:
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+
+  SESManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: ses:*
+            Resource: '*'
+
+  SNSManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sns:publish
+            Resource: '*'
 
   CognitoSnsCallerRole:
     Type: AWS::IAM::Role
@@ -286,19 +238,32 @@ Resources:
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
+            Action: sts:AssumeRole
             Principal:
               Service:
                 - cognito-idp.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-      - PolicyName: SNSPublish
-        PolicyDocument:
-          Statement:
-            - Effect: Allow
-              Action:
-                - sns:publish
-              Resource: '*'
+      ManagedPolicyArns:
+        - !Ref SNSManagedPolicy
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref ApiGatewayManagedPolicy
+        - !Ref CloudFormationManagedPolicy
+        - !Ref CloudWatchLogsManagedPolicy
+        - !Ref CognitoManagedPolicy
+        - !Ref DynamoDbManagedPolicy
+        - !Ref LambdaManagedPolicy
+        - !Ref S3ManagedPolicy
+        - !Ref SESManagedPolicy
 
   CustomStack:
     Type: AWS::CloudFormation::Stack
@@ -309,7 +274,6 @@ Resources:
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
-        S3HandleFunctionRoleArn: !GetAtt S3HandleFunctionRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
         AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
         AdminPagesCloudFrontUrl: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
@@ -325,8 +289,79 @@ Resources:
       - CognitoSnsCallerRole
       - DynamoDbStack
       - LambdaRole
-      - S3HandleFunctionRole
       - S3Stack
+
+  KMSManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:Get*
+              - kms:Put*
+            Resource: '*'
+
+  SecureSettingsEncryptManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Encrypt
+            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
+    DependsOn: CustomStack
+
+  SecureSettingsDecryptManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Decrypt
+            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
+    DependsOn: CustomStack
+
+  SecureSettingsLambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref CloudWatchLogsManagedPolicy
+        - !Ref KMSManagedPolicy
+        - !Ref SecureSettingsEncryptManagedPolicy
+    DependsOn: SecureSettingsEncryptManagedPolicy
+
+  SecureLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref ApiGatewayManagedPolicy
+        - !Ref CloudFormationManagedPolicy
+        - !Ref CloudWatchLogsManagedPolicy
+        - !Ref CognitoManagedPolicy
+        - !Ref DynamoDbManagedPolicy
+        - !Ref KMSManagedPolicy
+        - !Ref LambdaManagedPolicy
+        - !Ref S3ManagedPolicy
+        - !Ref SESManagedPolicy
+        - !Ref SecureSettingsDecryptManagedPolicy
 
   ApiContentsStack:
     Type: AWS::CloudFormation::Stack
@@ -354,6 +389,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        SecureLambdaRoleArn: !GetAtt SecureLambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -528,6 +564,8 @@ Resources:
         CognitoCustomMessageFunctionArn: !GetAtt CustomStack.Outputs.CognitoCustomMessageFunctionArn
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
+        SecureSettingsKeyAlias: !GetAtt CustomStack.Outputs.SecureSettingsKeyAlias
+        SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
     DependsOn:

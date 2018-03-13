@@ -31,7 +31,7 @@ const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
-const SettingHelper = require('./../../helpers/setting');
+const SSM = require('./../../aws/ssm');
 
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new DonationsRepository();
@@ -40,6 +40,7 @@ exports.handle = function (event, context, callback) {
 	const nonprofitsRepository = new NonprofitsRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 	const settingsRepository = new SettingsRepository();
+	const ssm = new SSM();
 	const request = new Request(event, context).parameters(['donor', 'donations', 'payment']);
 
 	let donations = [];
@@ -83,8 +84,13 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
-		const key = request.get('payment').is_test_mode ? 'PAYMENT_SPRING_TEST_API_KEY' : 'PAYMENT_SPRING_API_KEY';
-		apiKey = settings[key];
+		let key = process.env.AWS_STACK_NAME + '/settings/secure/';
+		key = request.get('payment').is_test_mode ? key + 'payment-spring-test-api-key' : key + 'payment-spring-api-key';
+		return ssm.getParameter(process.env.AWS_REGION, key, true);
+	}).then(function (response) {
+		if (response && response.Parameter) {
+			apiKey = response.Parameter.Value;
+		}
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach(function (donation) {
