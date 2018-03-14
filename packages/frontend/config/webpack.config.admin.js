@@ -84,6 +84,7 @@ module.exports = function () {
 			}),
 			new CopyWebpackPlugin([
 				{from: './config/**/*.json', to: '[name].[ext]'},
+				{from: './config/robots-deny.txt', to: 'robots.txt'},
 				{from: './src/admin-pages/assets/css', to: 'assets/css'},
 				{from: './src/admin-pages/assets/img', to: 'assets/img'}
 			], {

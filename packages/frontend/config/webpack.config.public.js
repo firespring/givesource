@@ -85,6 +85,7 @@ module.exports = function () {
 				'window.jQuery': 'jquery'
 			}),
 			new CopyWebpackPlugin([
+				{from: './config/robots-allow.txt', to: 'robots.txt'},
 				{from: './src/public-pages/assets/css', to: 'assets/css'},
 				{from: './src/public-pages/assets/img', to: 'assets/img'},
 				{from: './src/public-pages/assets/temp', to: 'assets/temp'}
