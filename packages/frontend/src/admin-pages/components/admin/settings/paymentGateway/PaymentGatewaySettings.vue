@@ -81,31 +81,22 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="c-form-item c-form-item--text c-form-item--required"
-                                                     :class="{ 'c-form-item--has-error': formErrors.PAYMENT_SPRING_API_KEY }">
+                                                <div class="c-form-item c-form-item--text c-form-item--required">
                                                     <div class="c-form-item__label">
                                                         <label for="key" class="c-form-item-label-text">API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <input v-model="formData.PAYMENT_SPRING_API_KEY" type="text" name="key" id="key" maxlength="200"
-                                                               :class="{ 'has-error': formErrors.PAYMENT_SPRING_API_KEY }">
-                                                        <div v-if="formErrors.PAYMENT_SPRING_API_KEY" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                            {{ formErrors.PAYMENT_SPRING_API_KEY }}
-                                                        </div>
+                                                        <forms-secure-text secureKey="payment-spring-api-key" type="text" name="key" id="key" maxlength="200"></forms-secure-text>
                                                     </div>
                                                 </div>
 
-                                                <div class="c-form-item c-form-item--text c-form-item--required"
-                                                     :class="{ 'c-form-item--has-error': formErrors.PAYMENT_SPRING_PUBLIC_API_KEY }">
+                                                <div class="c-form-item c-form-item--text c-form-item--required">
                                                     <div class="c-form-item__label">
                                                         <label for="keyPublic" class="c-form-item-label-text">Public API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <input v-model="formData.PAYMENT_SPRING_PUBLIC_API_KEY" type="text" name="keyPublic" id="keyPublic" maxlength="200"
-                                                               :class="{ 'has-error': formErrors.PAYMENT_SPRING_PUBLIC_API_KEY }">
-                                                        <div v-if="formErrors.PAYMENT_SPRING_PUBLIC_API_KEY" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                            {{ formErrors.PAYMENT_SPRING_PUBLIC_API_KEY }}
-                                                        </div>
+                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_PUBLIC_API_KEY" type="text" name="keyPublic" id="keyPublic"
+                                                                           maxlength="200"></forms-secure-text>
                                                     </div>
                                                 </div>
                                             </div>
@@ -121,31 +112,22 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="c-form-item c-form-item--text c-form-item--required"
-                                                     :class="{ 'c-form-item--has-error': formErrors.PAYMENT_SPRING_TEST_API_KEY }">
+                                                <div class="c-form-item c-form-item--text c-form-item--required">
                                                     <div class="c-form-item__label">
                                                         <label for="testKey" class="c-form-item-label-text">Test API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <input v-model="formData.PAYMENT_SPRING_TEST_API_KEY" type="text" name="testKey" id="testKey" maxlength="200"
-                                                               :class="{ 'has-error': formErrors.PAYMENT_SPRING_TEST_API_KEY }">
-                                                        <div v-if="formErrors.PAYMENT_SPRING_TEST_API_KEY" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                            {{ formErrors.PAYMENT_SPRING_TEST_API_KEY }}
-                                                        </div>
+                                                        <forms-secure-text secureKey="payment-spring-test-api-key" name="testKey" id="testKey" maxlength="200"></forms-secure-text>
                                                     </div>
                                                 </div>
 
-                                                <div class="c-form-item c-form-item--text c-form-item--required"
-                                                     :class="{ 'c-form-item--has-error': formErrors.PAYMENT_SPRING_TEST_PUBLIC_API_KEY }">
+                                                <div class="c-form-item c-form-item--text c-form-item--required">
                                                     <div class="c-form-item__label">
                                                         <label for="testKeyPublic" class="c-form-item-label-text">Test Public API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <input v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" type="text" name="testKeyPublic" id="testKeyPublic"
-                                                               maxlength="200" :class="{ 'has-error': formErrors.PAYMENT_SPRING_TEST_PUBLIC_API_KEY }">
-                                                        <div v-if="formErrors.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                            {{ formErrors.PAYMENT_SPRING_TEST_PUBLIC_API_KEY }}
-                                                        </div>
+                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" name="testKeyPublic" id="testKeyPublic"
+                                                                           maxlength="200"></forms-secure-text>
                                                     </div>
                                                 </div>
 
@@ -224,9 +206,7 @@
 
 				// Form Data
 				formData: {
-					PAYMENT_SPRING_API_KEY: '',
 					PAYMENT_SPRING_PUBLIC_API_KEY: '',
-					PAYMENT_SPRING_TEST_API_KEY: '',
 					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: '',
 					PAYMENT_SPRING_LIVE_MODE: false,
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: '0.0',
@@ -235,7 +215,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -244,7 +224,7 @@
 					keys: Object.keys(vue.formData)
 				}).then(function (response) {
 					vue.settings = response.data;
-				});
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -286,25 +266,7 @@
 		},
 		methods: {
 			getConstraints: function () {
-				const vue = this;
-
 				return {
-					PAYMENT_SPRING_API_KEY: {
-						label: 'API key',
-						presence: vue.formData.PAYMENT_SPRING_LIVE_MODE,
-					},
-					PAYMENT_SPRING_PUBLIC_API_KEY: {
-						label: 'Public API key',
-						presence: vue.formData.PAYMENT_SPRING_LIVE_MODE,
-					},
-					PAYMENT_SPRING_TEST_API_KEY: {
-						label: 'Test API key',
-						presence: !vue.formData.PAYMENT_SPRING_LIVE_MODE,
-					},
-					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
-						label: 'Test public API key',
-						presence: !vue.formData.PAYMENT_SPRING_LIVE_MODE,
-					},
 					PAYMENT_SPRING_LIVE_MODE: {
 						label: 'This field',
 						presence: true,
@@ -347,6 +309,7 @@
 					vue.clearModals();
 					vue.scrollToError();
 				} else {
+					vue.$emit('save');
 					vue.updateSettings();
 				}
 			},
@@ -383,9 +346,12 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
-			}
+			},
+		},
+		components: {
+			'forms-secure-text': require('./../../../forms/SecureText.vue')
 		}
 	};
 </script>

@@ -291,7 +291,7 @@ Resources:
       - LambdaRole
       - S3Stack
 
-  KMSManagedPolicy:
+  SSMManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       PolicyDocument:
@@ -299,8 +299,8 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - kms:Get*
-              - kms:Put*
+              - ssm:GetParameter
+              - ssm:PutParameter
             Resource: '*'
 
   SecureSettingsEncryptManagedPolicy:
@@ -337,7 +337,7 @@ Resources:
                 - lambda.amazonaws.com
       ManagedPolicyArns:
         - !Ref CloudWatchLogsManagedPolicy
-        - !Ref KMSManagedPolicy
+        - !Ref SSMManagedPolicy
         - !Ref SecureSettingsEncryptManagedPolicy
     DependsOn: SecureSettingsEncryptManagedPolicy
 
@@ -357,7 +357,7 @@ Resources:
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref CognitoManagedPolicy
         - !Ref DynamoDbManagedPolicy
-        - !Ref KMSManagedPolicy
+        - !Ref SSMManagedPolicy
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
         - !Ref SESManagedPolicy

@@ -55,8 +55,7 @@ exports.handle = function (event, context, callback) {
 	let fees = 0;
 	let settings = {
 		'EVENT_TIMEZONE': null,
-		'PAYMENT_SPRING_TEST_API_KEY': null,
-		'PAYMENT_SPRING_API_KEY': null
+		'PAYMENT_SPRING_LIVE_MODE': false,
 	};
 
 	request.validate().then(function () {
@@ -84,12 +83,14 @@ exports.handle = function (event, context, callback) {
 		response.forEach(function (setting) {
 			settings[setting.key] = setting.value;
 		});
-		let key = process.env.AWS_STACK_NAME + '/settings/secure/';
-		key = request.get('payment').is_test_mode ? key + 'payment-spring-test-api-key' : key + 'payment-spring-api-key';
+		let key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/';
+		key = settings.PAYMENT_SPRING_LIVE_MODE ? key + 'payment-spring-api-key' : key + 'payment-spring-test-api-key';
 		return ssm.getParameter(process.env.AWS_REGION, key, true);
 	}).then(function (response) {
 		if (response && response.Parameter) {
 			apiKey = response.Parameter.Value;
+		} else {
+			return Promise.reject(new HttpException('invalid payment gateway settings'));
 		}
 
 		let promise = Promise.resolve();
@@ -105,7 +106,7 @@ exports.handle = function (event, context, callback) {
 			if (model.subtotal) {
 				subtotal += model.subtotal;
 			}
-			if (model.isFeeCovered && model.fees){
+			if (model.isFeeCovered && model.fees) {
 				total = subtotal + model.fees;
 				fees = model.fees;
 			}

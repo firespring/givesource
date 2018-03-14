@@ -42,7 +42,8 @@ exports.handle = function (event, context, callback) {
 	const ssm = new SSM();
 
 	request.validate().then(function () {
-		return ssm.getParameter(process.env.AWS_REGION, request.urlParam('key'), false);
+		const key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/' + request.urlParam('key');
+		return ssm.getParameter(process.env.AWS_REGION, key, false);
 	}).then(function (response) {
 		let setting = {};
 		if (response && response.Parameter) {
