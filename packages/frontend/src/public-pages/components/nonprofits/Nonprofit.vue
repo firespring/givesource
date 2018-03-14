@@ -29,7 +29,7 @@
             <div class="wrapper">
 
                 <div class="donation-wrapper nonprofit-campaign">
-                <api-error v-model="apiError"></api-error>
+                    <api-error v-model="apiError"></api-error>
 
                     <div class="nonprofit-campaign__header">
 
@@ -129,14 +129,14 @@
 				logo: null,
 				nonprofit: {},
 				slides: [],
-                hovering: false,
+				hovering: false,
 
 				settings: {
 					SOCIAL_SHARING_DESCRIPTION: ''
 				},
 
-                apiError: {},
-            }
+				apiError: {},
+			}
 		},
 		props: [
 			'slug'
@@ -193,13 +193,13 @@
 			let promise = Promise.resolve();
 			if (to.meta.nonprofit !== null) {
 				nonprofit = to.meta.nonprofit;
-            } else {
+			} else {
 				promise = promise.then(function () {
 					return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 						nonprofit = response.data;
 					});
-                });
-            }
+				});
+			}
 
 			promise = promise.then(function () {
 				return axios.get(API_URL + 'nonprofits/' + nonprofit.uuid + '/slides');
@@ -224,22 +224,22 @@
 			if (!_.isEmpty(nonprofit.logoFileUuid)) {
 				promise = promise.then(function () {
 					return axios.get(API_URL + 'files/' + nonprofit.logoFileUuid);
-                }).then(function (response) {
+				}).then(function (response) {
 					if (response && response.data) {
 						logo = response.data;
 					}
-                });
-            }
+				});
+			}
 
-            promise.then(function () {
-                next(function (vue) {
-                	vue.files = files;
-                	vue.logo = logo;
-                	vue.nonprofit = nonprofit;
-                	vue.slides = slides;
-                    return vue.loadSettings();
-                });
-            });
+			promise.then(function () {
+				next(function (vue) {
+					vue.files = files;
+					vue.logo = logo;
+					vue.nonprofit = nonprofit;
+					vue.slides = slides;
+					return vue.loadSettings();
+				});
+			});
 		},
 		mounted: function () {
 			const vue = this;
@@ -268,12 +268,12 @@
 
 				slider.data('fireSlider').slides.on('click', function () {
 					slider.data('fireSlider').pause();
-                });
+				});
 
 				// Resume playing slider if we interact with the pager
 				slider.data('fireSlider').pages.on('click', function () {
 					slider.data('fireSlider').play();
-                });
+				});
 			});
 		},
 		methods: {
@@ -288,8 +288,8 @@
 						}
 					});
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			},
 			getImageUrl: function (fileUuid) {
 				const vue = this;
