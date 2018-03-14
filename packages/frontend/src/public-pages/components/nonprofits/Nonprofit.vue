@@ -129,6 +129,7 @@
 				logo: null,
 				nonprofit: {},
 				slides: [],
+                hovering: false,
 
 				settings: {
 					SOCIAL_SHARING_DESCRIPTION: ''
@@ -244,14 +245,35 @@
 			const vue = this;
 
 			$(document).ready(function () {
-				$(vue.$refs.slider).data({
+				const slider = $(vue.$refs.slider).data({
 					pager: $(vue.$refs.sliderNav)
 				}).fireSlider({
 					activePagerClass: 'current',
-					hoverPause: true,
 					pagerTemplate: '<a href="#"></a>',
 					slide: 'div.slide',
 				});
+
+				slider.on('mouseenter mouseover touchenter touchstart', function () {
+					vue.hover = true;
+				}).on('mouseelave mouseout touchleave touchend', function () {
+					vue.hover = false;
+				});
+
+				// Pause slider if we interact with a slide (including videos)
+				window.addEventListener('blur', function () {
+					if (vue.hover) {
+						slider.data('fireSlider').pause();
+					}
+				});
+
+				slider.data('fireSlider').slides.on('click', function () {
+					slider.data('fireSlider').pause();
+                });
+
+				// Resume playing slider if we interact with the pager
+				slider.data('fireSlider').pages.on('click', function () {
+					slider.data('fireSlider').play();
+                });
 			});
 		},
 		methods: {
