@@ -1,6 +1,6 @@
 # Givesource
 
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Givesource&templateURL=https://s3-us-west-2.amazonaws.com/givesource-cj/cf-templates/0.0.1/givesource.yml)
+[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Givesource&templateURL=https://s3-us-east-1.amazonaws.com/givesource/cf-templates/1.1.1/givesource.yml)
 
 Givesource is a new platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
 Leveraging Amazon Web Services, Givesource was built using a serverless architecture to support high site traffic and donor activity.
@@ -17,7 +17,7 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 1. Click on the Launch Stack button.
 
-	[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Givesource&templateURL=https://s3-us-west-2.amazonaws.com/givesource-cj/cf-templates/0.0.1/givesource.yml)
+	[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Givesource&templateURL=https://s3-us-east-1.amazonaws.com/givesource/cf-templates/1.1.1/givesource.yml)
 
 2. AWS CloudFormation should open in a new window, with the "Specify an Amazon S3 template URL" option checked, click next.
 
