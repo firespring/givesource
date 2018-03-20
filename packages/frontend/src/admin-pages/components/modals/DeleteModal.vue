@@ -1,19 +1,19 @@
 <!--
-  ~ Copyright (C) 2017  Firespring
+  ~ Copyright 2018 Firespring, Inc.
   ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
   ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
+  ~     http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
+
 <template>
     <div id="modal-confirm-delete" class="c-modal c-modal--warning c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
         <div class="c-modal__contents">
@@ -53,39 +53,39 @@
     </div>
 </template>
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                modalTitle: this.data.modalTitle,
-                modalText: this.data.modalText,
-                callback: this.data.callback
-            }
-        },
-        props: {
-            zIndex: {
-                type: [Number, String],
-                default: 1000
-            },
-            data: {
-                type: Object,
-                default: {
-                    modalTitle: 'Delete Confirmation',
-                    modalText: 'Are you sure you want to delete item(s)?',
-                    callback: String
-                }
-            }
-        },
-        methods: {
-            cancel: function () {
-                const vue = this;
-                vue.clearModals();
-            },
+	module.exports = {
+		data: function () {
+			return {
+				modalTitle: this.data.modalTitle,
+				modalText: this.data.modalText,
+				callback: this.data.callback
+			}
+		},
+		props: {
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			},
+			data: {
+				type: Object,
+				default: {
+					modalTitle: 'Delete Confirmation',
+					modalText: 'Are you sure you want to delete item(s)?',
+					callback: String
+				}
+			}
+		},
+		methods: {
+			cancel: function () {
+				const vue = this;
+				vue.clearModals();
+			},
 
-            remove: function () {
-                const vue = this;
-                vue.clearModals();
-                vue.bus.$emit(vue.callback);
-            }
-        }
-    }
+			remove: function () {
+				const vue = this;
+				vue.clearModals();
+				vue.bus.$emit(vue.callback);
+			}
+		}
+	}
 </script>

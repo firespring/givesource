@@ -39,6 +39,6 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 ## License
 
-Copyright 2017 Firespring.
+Copyright 2018 Firespring, Inc.
 
-Licensed under the GNU General Public License, Version 3.0: [https://www.gnu.org/licenses/gpl-3.0](https://www.gnu.org/licenses/gpl-3.0)
+Licensed under the Apache License, Version 2.0: [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)

@@ -8,7 +8,7 @@
 		"stack": "node bin/stack.js"
 	},
 	"author": "Firespring",
-	"license": "GPL-3.0",
+	"license": "Apache-2.0",
 	"devDependencies": {
 		"dotenv": "^4.0.0",
 		"mkdirp": "^0.5.1",
