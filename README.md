@@ -15,7 +15,7 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 1. Click on the Launch Stack button.
 
-	[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Givesource&templateURL=https://s3-us-east-1.amazonaws.com/givesource/cf-templates/1.1.1/givesource.yml)
+	[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Givesource&templateURL=https://s3.amazonaws.com/givesource/cf-templates/1.1.1/givesource.yml)
 
 2. AWS CloudFormation should open in a new window, with the "Specify an Amazon S3 template URL" option checked, click next.
 
