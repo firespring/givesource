@@ -27,8 +27,6 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit'])).parameters(['content_type', 'filename']);
 
 	let file = null;
-	const bucket = process.env.UPLOADS_BUCKET;
-
 	request.validate().then(function () {
 		file = new File({filename: request.get('filename')});
 		file.populate({path: `uploads/${file.uuid}`});
@@ -37,7 +35,7 @@ exports.handle = function (event, context, callback) {
 		return repository.save(file);
 	}).then(function (model) {
 		file = model;
-		return s3.getSignedUrl(process.env.AWS_REGION, bucket, file.path, request.get('content_type'));
+		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.path, request.get('content_type'));
 	}).then(function (url) {
 		callback(null, {
 			upload_url: url,

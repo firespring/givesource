@@ -498,6 +498,7 @@ Resources:
         SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml

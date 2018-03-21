@@ -1,6 +1,6 @@
 # Givesource
 
-Givesource is a new platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
+Givesource is a platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
 Leveraging Amazon Web Services, Givesource was built using a serverless architecture to support high site traffic and donor activity.
 This means you have unlimited capacity to help nonprofits fundraise and grow your community without managing expensive servers.
 

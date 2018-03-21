@@ -27,13 +27,12 @@ exports.handle = function (event, context, callback) {
 	const s3 = new S3();
 
 	let files = [];
-	const bucket = process.env.UPLOADS_BUCKET;
 	request.validate().then(function () {
 		let promise = Promise.resolve();
 		request.get('files', []).forEach(function (file) {
 			files.push(new File(file));
 			promise = promise.then(function () {
-				return s3.deleteObject(process.env.AWS_REGION, bucket, `uploads/${file.uuid}`);
+				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);
 			});
 		});
 		return promise;

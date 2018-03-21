@@ -111,7 +111,7 @@
 				}
 				vue.loadedSlides = true;
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 			});
 		},
 		created: function () {
@@ -143,7 +143,7 @@
 				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
 					slides: toUpdate
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			},
 			onTrigger: function (event) {
@@ -201,36 +201,22 @@
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			},
 			deleteSlide: function (slide) {
 				const vue = this;
 
 				vue.addModal('spinner');
-				if (slide.fileUuid) {
-					vue.$request.delete('files/' + slide.fileUuid).then(function () {
-						return vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid);
-					}).then(function () {
-						const current = JSON.parse(JSON.stringify(vue.slides));
-						vue.slides = _.reject(current, {uuid: slide.uuid});
-						vue.clearModals();
-						vue.updateSortOrder();
-					}).catch(function (err) {
-						vue.clearModals();
-                        vue.apiError = err.response.data.errors;
-					});
-				} else {
-					vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
-						const current = JSON.parse(JSON.stringify(vue.slides));
-						vue.slides = _.reject(current, {uuid: slide.uuid});
-						vue.clearModals();
-						vue.updateSortOrder();
-					}).catch(function (err) {
-						vue.clearModals();
-                        vue.apiError = err.response.data.errors;
-					});
-				}
+				vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
+					const current = JSON.parse(JSON.stringify(vue.slides));
+					vue.slides = _.reject(current, {uuid: slide.uuid});
+					vue.clearModals();
+					vue.updateSortOrder();
+				}).catch(function (err) {
+					vue.clearModals();
+					vue.apiError = err.response.data.errors;
+				});
 			}
 		},
 		components: {
