@@ -73,7 +73,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
-      TimeoutInMinutes: 30
+      TimeoutInMinutes: 40
 
   RestApi:
     Type: AWS::ApiGateway::RestApi
@@ -498,6 +498,7 @@ Resources:
         SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml

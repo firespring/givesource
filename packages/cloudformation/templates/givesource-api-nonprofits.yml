@@ -27,6 +27,9 @@ Parameters:
   RestApiRootResourceId:
     Type: String
 
+  UploadsBucket:
+    Type: String
+
   UserPoolId:
     Type: String
 
@@ -725,6 +728,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET: !Ref UploadsBucket
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitSlide
       Handler: "index.handle"
