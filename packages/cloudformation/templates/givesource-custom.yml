@@ -378,6 +378,7 @@ Resources:
         PolicyDocument:
           Statement:
             - Action:
+              - cloudfront:CreateDistribution
               - cloudfront:GetDistributionConfig
               - cloudfront:UpdateDistribution
               Effect: Allow
@@ -386,6 +387,7 @@ Resources:
         PolicyDocument:
           Statement:
             - Action:
+              - iam:CreateServiceLinkedRole
               - iam:GetRole
               - iam:PassRole
               Effect: Allow
