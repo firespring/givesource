@@ -75,8 +75,23 @@ const validateEnv = function () {
  */
 const putStack = function (action) {
 	const url = `https://s3.${awsReleaseBucketRegion}.amazonaws.com/${awsReleaseBucket}/cf-templates/${packageJson.version}/givesource.yml`;
-	const command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
+	let command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
 		`--parameters ParameterKey=AdminEmail,ParameterValue=${adminEmail},UsePreviousValue=false`;
+
+	const optionalParams = {
+		ADMIN_PAGES_CNAMES: 'AdminPagesCNAMEs',
+		ADMIN_PAGES_SSL_CERTIFICATE_ARN: 'AdminPagesSSLCertificateArn',
+		PUBLIC_PAGES_CNAMES: 'PublicPagesCNAMEs',
+		PUBLIC_PAGES_SSL_CERTIFICATE_ARN: 'PublicPagesSSLCertificateArn',
+	};
+	Object.keys(optionalParams).forEach(function (key) {
+		if (process.env.hasOwnProperty(key) && process.env[key]) {
+			let value = Array.isArray(process.env[key]) ? process.env[key].join(',') : process.env[key];
+			value = (value.indexOf(',') > -1) ? '\\\"' + value + '\\\"' : value;
+			command = command + ` ParameterKey=${optionalParams[key]},ParameterValue=${value},UsePreviousValue=false`;
+		}
+	});
+
 	const options = {
 		maxBuffer: 100 * 1024 * 1024,
 		stdio: [0, 1, 2]
