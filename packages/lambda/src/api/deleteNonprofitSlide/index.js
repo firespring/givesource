@@ -1,31 +1,50 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright 2018 Firespring, Inc.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 const HttpException = require('./../../exceptions/http');
+const FileRepository = require('./../../repositories/files');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
+const S3 = require('./../../aws/s3');
 
 exports.handle = function (event, context, callback) {
+	const fileRepository = new FileRepository();
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	const s3 = new S3();
 
+	let slide = null;
 	request.validate().then(function () {
+		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
+	}).then(function (response) {
+		slide = response;
+		if (slide.fileUuid) {
+			let file = null;
+			return fileRepository.get(slide.fileUuid).then(function (response) {
+				file = response;
+				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);
+			}).then(function () {
+				return fileRepository.delete(file.uuid);
+			});
+		} else {
+			return Promise.resolve();
+		}
+	}).then(function () {
 		return repository.delete(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
 	}).then(function () {
 		callback();

@@ -15,7 +15,7 @@
 		"webpack": "webpack --config config/webpack.config.js --hide-modules"
 	},
 	"author": "Firespring",
-	"license": "GPL-3.0",
+	"license": "Apache-2.0",
 	"dependencies": {
 		"aws-sdk": "^2.65.0",
 		"dotenv": "^4.0.0",

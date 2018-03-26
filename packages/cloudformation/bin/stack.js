@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2017  Firespring
+ * Copyright 2018 Firespring, Inc.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 const dotenv = require('dotenv');
@@ -76,8 +75,23 @@ const validateEnv = function () {
  */
 const putStack = function (action) {
 	const url = `https://s3.${awsReleaseBucketRegion}.amazonaws.com/${awsReleaseBucket}/cf-templates/${packageJson.version}/givesource.yml`;
-	const command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
+	let command = `aws cloudformation ${action} --region ${awsRegion} --stack-name ${awsStackName} --template-url ${url} --capabilities CAPABILITY_IAM ` +
 		`--parameters ParameterKey=AdminEmail,ParameterValue=${adminEmail},UsePreviousValue=false`;
+
+	const optionalParams = {
+		ADMIN_PAGES_CNAMES: 'AdminPagesCNAMEs',
+		ADMIN_PAGES_SSL_CERTIFICATE_ARN: 'AdminPagesSSLCertificateArn',
+		PUBLIC_PAGES_CNAMES: 'PublicPagesCNAMEs',
+		PUBLIC_PAGES_SSL_CERTIFICATE_ARN: 'PublicPagesSSLCertificateArn',
+	};
+	Object.keys(optionalParams).forEach(function (key) {
+		if (process.env.hasOwnProperty(key) && process.env[key]) {
+			let value = Array.isArray(process.env[key]) ? process.env[key].join(',') : process.env[key];
+			value = (value.indexOf(',') > -1) ? '\\\"' + value + '\\\"' : value;
+			command = command + ` ParameterKey=${optionalParams[key]},ParameterValue=${value},UsePreviousValue=false`;
+		}
+	});
+
 	const options = {
 		maxBuffer: 100 * 1024 * 1024,
 		stdio: [0, 1, 2]

@@ -1,6 +1,30 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS S3 resources for Givesource
+Parameters:
+
+  AdminPagesCNAMEs:
+    Type: CommaDelimitedList
+
+  AdminPagesSSLCertificateArn:
+    Type: String
+
+  PublicPagesCNAMEs:
+    Type: CommaDelimitedList
+
+  PublicPagesSSLCertificateArn:
+    Type: String
+
+Conditions:
+
+  HasAdminPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref AdminPagesCNAMEs ] ] ]
+
+  HasAdminPagesSSLCertificateArn: !Not [!Equals ["", !Ref AdminPagesSSLCertificateArn]]
+
+  HasPublicPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref PublicPagesCNAMEs ] ] ]
+
+  HasPublicPagesSSLCertificateArn: !Not [!Equals ["", !Ref PublicPagesSSLCertificateArn]]
+
 Resources:
 
   # AWS S3 Resources
@@ -79,6 +103,7 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Aliases: !If [HasAdminPagesCNAMEs, !Ref AdminPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
           - DomainName:
               !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
@@ -98,7 +123,10 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !If [HasAdminPagesSSLCertificateArn, !Ref AdminPagesSSLCertificateArn, !Ref "AWS::NoValue"]
+          CloudFrontDefaultCertificate: !If [HasAdminPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
+          MinimumProtocolVersion: !If [HasAdminPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          SslSupportMethod: !If [HasAdminPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
@@ -110,6 +138,7 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Aliases: !If [HasPublicPagesCNAMEs, !Ref PublicPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
           - DomainName:
               !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
@@ -129,7 +158,10 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
+          CloudFrontDefaultCertificate: !If [HasPublicPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
+          MinimumProtocolVersion: !If [HasPublicPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          SslSupportMethod: !If [HasPublicPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
