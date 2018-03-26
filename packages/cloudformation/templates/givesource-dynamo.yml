@@ -64,6 +64,8 @@ Resources:
         AttributeType: N
       - AttributeName: donorUuid
         AttributeType: S
+      - AttributeName: paymentTransactionIsTestMode
+        AttributeType: N
       KeySchema:
       - AttributeName: uuid
         KeyType: HASH
@@ -104,10 +106,12 @@ Resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      - IndexName: nonprofitUuidIndex
+      - IndexName: paymentTransactionIsTestModeCreatedOnIndex
         KeySchema:
-        - AttributeName: nonprofitUuid
+        - AttributeName: paymentTransactionIsTestMode
           KeyType: HASH
+        - AttributeName: createdOn
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:

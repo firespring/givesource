@@ -179,9 +179,41 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
+                        </section>
 
+                        <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
+                            <header class="c-page-section__header">
+                                <div class="c-page-section-header-text">
+                                    <h2 class="c-page-section-title">Display Settings</h2>
+                                </div>
+                            </header>
+
+                            <div class="c-page-section__main">
+                                <div class="c-form-item c-form-item--radio" :class="{ 'c-form-item--has-error': formErrors.TEST_PAYMENTS_DISPLAY }">
+                                    <div class="c-form-item__label">
+                                        <div class="c-form-item-label-text" id="displayTestPayments">Display test payment information?</div>
+                                        <div class="c-notes c-notes--below">
+                                            Should payments made in test mode display in exports, the dashboard, the leaderboard, etc.?
+                                        </div>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <ul class="c-input-list c-input-list--radio c-input-list--inline" aria-labelledby="displayTestPayments">
+                                            <li>
+                                                <input v-model="formData.TEST_PAYMENTS_DISPLAY" type="radio" name="displayTestPayments" id="displayTestPayments-1" :value="true">
+                                                <label for="displayTestPayments-1">Yes</label>
+                                            </li>
+                                            <li>
+                                                <input v-model="formData.TEST_PAYMENTS_DISPLAY" type="radio" name="displayTestPayments" id="displayTestPayments-0" :value="false">
+                                                <label for="displayTestPayments-0">No</label>
+                                            </li>
+                                        </ul>
+                                        <div v-if="formErrors.TEST_PAYMENTS_DISPLAY" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.TEST_PAYMENTS_DISPLAY }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </section>
 
                         <footer class="c-form-actions">
@@ -209,6 +241,7 @@
 					PAYMENT_SPRING_PUBLIC_API_KEY: '',
 					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: '',
 					PAYMENT_SPRING_LIVE_MODE: false,
+					TEST_PAYMENTS_DISPLAY: false,
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: '0.0',
 					OFFLINE_TRANSACTION_FEE_FLAT_RATE: '0.00',
 				},
@@ -267,10 +300,22 @@
 		methods: {
 			getConstraints: function () {
 				return {
+					PAYMENT_SPRING_PUBLIC_API_KEY: {
+						label: 'Public API Key',
+						presence: false,
+                    },
+					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
+						label: 'Test Public API Key',
+						presence: false,
+					},
 					PAYMENT_SPRING_LIVE_MODE: {
 						label: 'This field',
 						presence: true,
 					},
+					TEST_PAYMENTS_DISPLAY: {
+						label: 'This field',
+						presence: true,
+                    },
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
 						label: 'Offline Fee Percentage',
 						numericality: {
