@@ -21,7 +21,6 @@ const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
-const numeral = require('numeral');
 const Report = require('./../../models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
@@ -106,8 +105,18 @@ const getFilenameTimestamp = function () {
 const getDonationsData = function (report, timezone) {
 	const donationsRepository = new DonationsRepository();
 	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
+	const settingsRepository = new SettingsRepository();
 
+	let displayTestPayments = false;
 	let promise = Promise.resolve();
+	promise = promise.then(function () {
+		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).then(function (setting) {
+			if (setting) {
+				displayTestPayments = setting.value;
+			}
+		});
+	});
+
 	if (report.nonprofitUuid) {
 		promise = promise.then(function () {
 			return nonprofitDonationsRepository.getAll(report.nonprofitUuid);
@@ -119,6 +128,11 @@ const getDonationsData = function (report, timezone) {
 	}
 
 	promise = promise.then(function (donations) {
+		if (!displayTestPayments) {
+			donations = donations.filter(function (donation) {
+				return !donation.paymentTransactionIsTestMode;
+			});
+		}
 		return Promise.resolve({
 			data: donations.map(function (donation) {
 				return donation.mutate(null, {timezone: timezone});

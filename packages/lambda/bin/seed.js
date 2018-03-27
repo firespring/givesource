@@ -19,17 +19,14 @@ dotenv.config({path: `${__dirname}/../../../.env`});
 
 const _ = require('lodash');
 const fuzzy = require('fuzzy');
-const DonorsRepository = require('./../src/repositories/donors');
 const Generator = require('./../src/helpers/generator');
 const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
 const MessagesRepository = require('./../src/repositories/messages');
-const MetricsHelper = require('./../src/helpers/metrics');
 const NonprofitsRepository = require('./../src/repositories/nonprofits');
 const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
 const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
 const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
-const PaymentTransactionsRepository = require('./../src/repositories/paymentTransactions');
 
 /**
  * Seed Donations
@@ -38,10 +35,8 @@ const PaymentTransactionsRepository = require('./../src/repositories/paymentTran
  */
 const seedDonations = function () {
 	const generator = new Generator();
-	const donorsRepository = new DonorsRepository();
 	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const nonprofitsRepository = new NonprofitsRepository();
-	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 
 	return nonprofitsRepository.getAll().then(function (results) {
 		if (!results || results.length === 0) {
@@ -68,9 +63,9 @@ const seedDonations = function () {
 		const count = parseInt(answers.count);
 		const chunkSize = Math.floor(Math.random() * 3) + 1;
 
-		const donations = _.chunk(generator.modelCollection('donation', count), chunkSize);
+		const donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
 		const donors = generator.modelCollection('donor', donations.length);
-		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length);
+		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
 
 		let nonprofitDonations = [];
 		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
@@ -109,7 +104,7 @@ const seedDonations = function () {
 					donation.creditCardZip = paymentTransactions[i].billingZip;
 					donation.paymentTransactionId = paymentTransactions[i].transactionId;
 					donation.paymentTransactionAmount = paymentTransactions[i].transactionAmountInCents;
-					donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode;
+					donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode ? 1 : 0;
 					donation.paymentTransactionStatus = paymentTransactions[i].transactionStatus;
 				}
 
@@ -123,28 +118,7 @@ const seedDonations = function () {
 			paymentTransactions[i].total = paymentTotal;
 			nonprofitDonations = nonprofitDonations.concat(chunk);
 		});
-		return donorsRepository.batchUpdate(donors).then(function () {
-			return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
-		}).then(function () {
-			return paymentTransactionsRepository.batchUpdate(paymentTransactions);
-		}).then(function () {
-			return MetricsHelper.addAmountToMetric('DONORS_COUNT', donors.length);
-		}).then(function () {
-			return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', count);
-		}).then(function () {
-			return MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', donationsSubtotal);
-		}).then(function () {
-			return MetricsHelper.addAmountToMetric('TOP_DONATION', topDonation);
-		}).then(function () {
-			return nonprofitsRepository.get(answers.nonprofit.uuid);
-		}).then(function (nonprofit) {
-			nonprofit.donationsCount = nonprofit.donationsCount += count;
-			nonprofit.donationsFees = nonprofit.donationsFees + donationsFees;
-			nonprofit.donationsFeesCovered = nonprofit.donationsFeesCovered + donationsFeesCovered;
-			nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donationsSubtotal;
-			nonprofit.donationsTotal = nonprofit.donationsTotal + donationsTotal;
-			return nonprofitsRepository.save(nonprofit);
-		});
+		return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
 	}).then(function () {
 		console.log('seeded donations');
 	});

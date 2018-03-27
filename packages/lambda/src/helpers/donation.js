@@ -17,6 +17,7 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../../.env`});
 
+const MissingRequiredParameter = require('./../exceptions/missingRequiredParameter');
 const SettingsRepository = require('./../repositories/settings');
 const SettingHelper = require('./setting');
 
@@ -115,7 +116,7 @@ exports.reportFields = [
  * @return {number}
  */
 exports.calculateFees = function (isOfflineDonation, isFeeCovered, amount, transactionFlatFee, transactionPercentFee) {
-	if(!isOfflineDonation && isFeeCovered) {
+	if (!isOfflineDonation && isFeeCovered) {
 		return Math.floor(Math.round((amount + transactionFlatFee) / (1 - transactionPercentFee) - amount));
 	}
 
@@ -160,4 +161,34 @@ exports.getFeeRates = function (isOfflineDonation) {
 	}
 
 	return promise;
+};
+
+/**
+ * Validate PaymentSpring payment
+ *
+ * @param {{}} data
+ * @return {Promise}
+ */
+exports.validatePaymentSpringPayment = function (data) {
+	return new Promise(function (resolve, reject) {
+		const paymentFields = [
+			'card_exp_month',
+			'card_exp_year',
+			'card_owner_name',
+			'card_type',
+			'class',
+			'id',
+			'is_test_mode',
+			'last_4',
+			'token_type'
+		];
+
+		paymentFields.forEach(function (param) {
+			if (!data.hasOwnProperty(param)) {
+				reject(new MissingRequiredParameter('Missing required parameter: payment.' + param));
+			}
+		});
+
+		resolve();
+	});
 };

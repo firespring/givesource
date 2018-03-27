@@ -19,9 +19,11 @@ const NonprofitDonationsRepository = require('./../../repositories/donations');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
+const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationsRepository();
+	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
@@ -32,15 +34,26 @@ exports.handle = function (event, context, callback) {
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);
 
+	let allowTestPayments = false;
 	request.validate().then(function () {
+		return settingsRepository.get('TEST_PAYMENTS_DISPLAY');
+	}).then(function (response) {
+		allowTestPayments = response.value;
+	}).then(function () {
 		const builder = new QueryBuilder('query');
 		builder.select('COUNT').limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+		if (!allowTestPayments) {
+			builder.filter('paymentTransactionIsTestMode', '=', 0);
+		}
 		return repository.batchQuery(builder);
 	}).then(function (response) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
 			builder.select('COUNT').limit(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+			if (!allowTestPayments) {
+				builder.filter('paymentTransactionIsTestMode', '=', 0);
+			}
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
@@ -49,6 +62,9 @@ exports.handle = function (event, context, callback) {
 		const builder = new QueryBuilder('query');
 		builder.limit(size).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
 
+		if (!allowTestPayments) {
+			builder.filter('paymentTransactionIsTestMode', '=', 0);
+		}
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
 		}

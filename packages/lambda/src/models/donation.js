@@ -270,8 +270,13 @@ Donation.prototype.constraints = {
 		}
 	},
 	paymentTransactionIsTestMode: {
-		presence: false,
-		type: 'string',
+		presence: true,
+		type: 'number',
+		numericality: {
+			onlyInteger: true,
+			greaterThanOrEqualTo: 0,
+			lessThanOrEqualTo: 1
+		}
 	},
 	paymentTransactionStatus: {
 		presence: false,
@@ -334,6 +339,7 @@ Donation.prototype.mutators = {
 Donation.prototype.beforeValidate = function () {
 	this.amountForNonprofit = this.total - this.fees;
 	this.subtotalChargedToCard = this.isOfflineDonation ? 0 : this.total;
+	this.paymentTransactionIsTestMode = this.paymentTransactionIsTestMode ? 1 : 0;
 };
 
 /**
@@ -342,6 +348,7 @@ Donation.prototype.beforeValidate = function () {
 Donation.prototype.beforeSave = function () {
 	this.amountForNonprofit = this.total - this.fees;
 	this.subtotalChargedToCard = this.isOfflineDonation ? 0 : this.total;
+	this.paymentTransactionIsTestMode = this.paymentTransactionIsTestMode ? 1 : 0;
 };
 
 module.exports = Donation;

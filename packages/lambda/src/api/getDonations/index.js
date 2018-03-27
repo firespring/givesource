@@ -18,10 +18,12 @@ const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
+const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
 	const repository = new DonationsRepository();
+	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let total = 0;
@@ -29,23 +31,30 @@ exports.handle = function (event, context, callback) {
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);
+	let hashKey = 'isDeleted';
+	let index = 'isDeletedCreatedOnIndex';
 
 	request.validate().then(function () {
+		return settingsRepository.get('TEST_PAYMENTS_DISPLAY');
+	}).then(function (response) {
+		hashKey = !response.value ? 'paymentTransactionIsTestMode' : hashKey;
+		index = !response.value ? 'paymentTransactionIsTestModeCreatedOnIndex' : index;
+	}).then(function () {
 		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.select('COUNT').limit(1000).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 		return repository.batchQuery(builder);
 	}).then(function (response) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.select('COUNT').limit(start).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 			return repository.query(builder);
 		} else {
 			return Promise.resolve({});
 		}
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
-		builder.limit(size).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.limit(size).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
 
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);

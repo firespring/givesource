@@ -25,6 +25,7 @@
 		"frontend:release:force": "cd packages/frontend && npm run release:force",
 		"lambda:build": "cd packages/lambda && npm run build",
 		"lambda:clean": "cd packages/lambda && npm run clean",
+		"lambda:delete-test-payments": "cd packages/lambda && npm run delete-test-payments",
 		"lambda:deploy": "cd packages/lambda && npm run deploy",
 		"lambda:install": "cd packages/lambda && npm install",
 		"lambda:release": "cd packages/lambda && npm run release",
