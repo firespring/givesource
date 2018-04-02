@@ -15,8 +15,23 @@
   -->
 
 <template>
-    <input v-if="displayTextInput" type="text" v-model="localValue" :name="name" :id="id" :placeholder="placeholder" autocomplete="off" ref="input">
-    <input v-else type="password" v-model="displayValue" :name="name" :id="id" :placeholder="placeholder" autocomplete="off" ref="input">
+    <div class="c-form-control-grid u-items-center" v-if="displayTextInput" >
+        <div class="c-form-control-grid__item u-flex-collapse">
+            <input type="text" v-model="localValue" :name="name" :id="id" :placeholder="placeholder" autocomplete="off" ref="input">
+        </div>
+        <div class="c-form-control-grid__item u-flex-collapse">
+            <a v-on:click.prevent="cancel" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--warning">Cancel</a>
+        </div>
+    </div>
+
+    <div class="c-form-control-grid u-items-center" v-else>
+        <div class="c-form-control-grid__item u-flex-collapse">
+            ***********
+        </div>
+        <div class="c-form-control-grid__item u-flex-collapse">
+            <a v-on:click.prevent="edit" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--warning">Edit</a>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -24,8 +39,8 @@
 		data: function () {
 			return {
 				localValue: this.value ? this.value : '',
-                displayValue: 'xxxxxxxxxx',
-				displayTextInput: true
+				displayTextInput: true,
+                original: null,
 			};
 		},
 		props: {
@@ -35,29 +50,30 @@
 			secureKey: '',
 			value: {},
 		},
-        created: function () {
+		created: function () {
 			const vue = this;
 
 			if (vue.secureKey) {
-                vue.$request.get('settings/secure/' + vue.secureKey).then(function (response) {
-                	if (response.data.errorMessage) {
-                		return Promise.resolve();
-                    }
-                    return Promise.resolve(response.data);
-                }).then(function (response) {
-                	if (response) {
-		                vue.localValue = response.value;
-		                vue.displayTextInput = false;
-                    }
+				vue.$request.get('settings/secure/' + vue.secureKey).then(function (response) {
+					if (response.data.errorMessage) {
+						return Promise.resolve();
+					}
+					return Promise.resolve(response.data);
+				}).then(function (response) {
+					if (response) {
+						vue.original = response.value;
+						vue.localValue = response.value;
+						vue.displayTextInput = false;
+					}
 
-	                vue.$emit('loaded');
-                });
+					vue.$emit('loaded');
+				});
 
-                vue.$parent.$on('save', this.save);
-            } else {
+				vue.$parent.$on('save', this.save);
+			} else {
 				vue.$emit('loaded');
-            }
-        },
+			}
+		},
 		watch: {
 			value: function (newVal) {
 				if (this.localValue !== newVal) {
@@ -67,33 +83,35 @@
 			},
 			localValue: function () {
 				this.$emit('input', this.localValue);
-			},
-            displayValue: function (newVal) {
-				if (newVal.length === 0) {
-					this.localValue = '';
-					this.displayTextInput = true;
-                }
-            },
-            displayTextInput: function (newVal, oldVal) {
-				if (newVal !== oldVal && newVal === true) {
-					this.$nextTick(function () {
-						$(this.$refs.input).focus();
-                    });
-                }
-            }
+			}
 		},
-        methods: {
+		methods: {
 			save: function () {
 				const vue = this;
 
-				if (vue.localValue !== vue.value && vue.secureKey) {
+				if (vue.localValue !== vue.original && vue.secureKey) {
 					vue.$request.patch('settings/secure/' + vue.secureKey, {
 						value: this.localValue
-                    }).catch(function (err) {
-                    	console.log(err);
-                    });
-                }
+					}).catch(function (err) {
+						console.log(err);
+					});
+				}
+			},
+			edit: function () {
+				const vue = this;
+
+				vue.localValue = '';
+				vue.displayTextInput = true;
+				this.$nextTick(function () {
+					$(this.$refs.input).focus();
+				});
+			},
+            cancel: function () {
+				const vue = this;
+
+				vue.displayTextInput = false;
+				vue.localValue = vue.original;
             }
-        }
+		}
 	};
 </script>
