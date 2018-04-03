@@ -38,23 +38,23 @@ Mappings:
           #set($user = 'null')
         #end
         {
-          "body":$input.json('$'),
+          "body": $input.json('$'),
           "headers":{
             #foreach($param in $input.params().header.keySet())
-            "$param": "$util.escapeJavaScript($input.params().header.get($param))"
+            "$param": "$util.escapeJavaScript($input.params().header.get($param)).replaceAll(\"\\'\",\"'\")"
             #if($foreach.hasNext),#end
             #end
           },
           "method": "$context.httpMethod",
-          "params":{
+          "params": {
             #foreach($param in $input.params().path.keySet())
-            "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+            "$param": "$util.escapeJavaScript($input.params().path.get($param)).replaceAll(\"\\'\",\"'\")"
             #if($foreach.hasNext),#end
             #end
           },
-          "query":{
+          "query": {
             #foreach($param in $input.params().querystring.keySet())
-            "$param": "$util.escapeJavaScript($input.params().querystring.get($param))"
+            "$param": "$util.escapeJavaScript($input.params().querystring.get($param)).replaceAll(\"\\'\",\"'\")"
             #if($foreach.hasNext),#end
             #end
           },
