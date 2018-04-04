@@ -366,7 +366,7 @@
                             {{#settings.EVENT_TITLE}}
                                 {{#settings.EVENT_LOGO}}
                                     <p class="campaign-logo text-center">
-                                        <img width="242" height="116" alt="{{settings.EVENT_TITLE}}" src="{{settings.EVENT_LOGO}}">
+                                        <img width="242" height="116" alt="{{settings.EVENT_TITLE}}" src="{{{ settings.EVENT_LOGO }}}">
                                     </p>
                                 {{/settings.EVENT_LOGO}}
                                 {{^settings.EVENT_LOGO}}
@@ -391,7 +391,7 @@
                                                         <tbody>
                                                         <tr>
                                                             <td>
-                                                                <a href="{{verificationUrl}}" target="_blank" rel="noreferrer noopener">Verify Email Address</a>
+                                                                <a href="{{{ verificationUrl }}}" target="_blank" rel="noreferrer noopener">Verify Email Address</a>
                                                             </td>
                                                         </tr>
                                                         </tbody>
@@ -422,7 +422,7 @@
                             {{#settings.EVENT_URL}}
                                 {{#settings.EVENT_TITLE}}
                                     <td class="content-block">
-                                        <a href="{{settings.EVENT_URL}}" target="_blank" rel="noreferrer noopener">{{settings.EVENT_TITLE}}</a>
+                                        <a href="{{{ settings.EVENT_URL }}}" target="_blank" rel="noreferrer noopener">{{settings.EVENT_TITLE}}</a>
                                         {{#settings.CONTACT_PHONE}}- {{settings.CONTACT_PHONE}}{{/settings.CONTACT_PHONE}}
                                     </td>
                                 {{/settings.EVENT_TITLE}}
