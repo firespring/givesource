@@ -28,8 +28,8 @@ const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
-const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
+const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
 	const filesRepository = new FilesRepository();
@@ -37,8 +37,8 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	const s3 = new S3();
 	const settingsRepository = new SettingsRepository();
-	let timezone = null;
 
+	let timezone = 'UTC';
 	const report = new Report(request._body);
 	const file = new File();
 	const filename = request.get('name', 'report') + '-' + getFilenameTimestamp() + '.csv';
@@ -49,13 +49,18 @@ exports.handle = function (event, context, callback) {
 		});
 		return file.validate();
 	}).then(function () {
-		return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE);
-	}).then(function (setting) {
-		if (setting) {
-			timezone = setting.value;
-		}
-
+		return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE).then(function (response) {
+			if (response && response.hasOwnProperty('value')) {
+				timezone = response.value;
+			}
+		}).catch(function () {
+			return Promise.resolve();
+		});
+	}).then(function () {
 		if (report.status === ReportHelper.STATUS_PENDING) {
+
+			console.log('here');
+
 			switch (report.type) {
 				case ReportHelper.TYPE_DONATIONS:
 					return getDonationsData(report, timezone);
@@ -118,6 +123,8 @@ const getDonationsData = function (report, timezone) {
 		if (response && response.hasOwnProperty('value')) {
 			displayTestPayments = response.value;
 		}
+	}).catch(function () {
+		return Promise.resolve();
 	});
 
 	if (report.nonprofitUuid) {

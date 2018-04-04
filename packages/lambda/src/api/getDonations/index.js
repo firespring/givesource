@@ -18,6 +18,7 @@ const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
+const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
@@ -35,7 +36,9 @@ exports.handle = function (event, context, callback) {
 	let index = 'isDeletedCreatedOnIndex';
 
 	request.validate().then(function () {
-		return settingsRepository.get('TEST_PAYMENTS_DISPLAY');
+		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).catch(function () {
+			return Promise.resolve({});
+		});
 	}).then(function (response) {
 		hashKey = !response.value ? 'paymentTransactionIsTestMode' : hashKey;
 		index = !response.value ? 'paymentTransactionIsTestModeCreatedOnIndex' : index;

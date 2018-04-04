@@ -19,6 +19,7 @@ const NonprofitDonationsRepository = require('./../../repositories/donations');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
+const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
@@ -36,9 +37,13 @@ exports.handle = function (event, context, callback) {
 
 	let allowTestPayments = false;
 	request.validate().then(function () {
-		return settingsRepository.get('TEST_PAYMENTS_DISPLAY');
+		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).catch(function () {
+			return Promise.resolve({});
+		});
 	}).then(function (response) {
-		allowTestPayments = response.value;
+		if (response && response.hasOwnProperty('value')) {
+			allowTestPayments = response.value;
+		}
 	}).then(function () {
 		const builder = new QueryBuilder('query');
 		builder.select('COUNT').limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
