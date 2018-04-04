@@ -15,12 +15,14 @@
  */
 
 const _ = require('lodash');
+const Donation = require('./../../models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
+const QueryBuilder = require('./../../aws/queryBuilder');
 const Report = require('./../../models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
@@ -103,6 +105,7 @@ const getFilenameTimestamp = function () {
  * @return {Promise}
  */
 const getDonationsData = function (report, timezone) {
+	const builder = new QueryBuilder('query');
 	const donationsRepository = new DonationsRepository();
 	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const settingsRepository = new SettingsRepository();
@@ -110,24 +113,30 @@ const getDonationsData = function (report, timezone) {
 	let displayTestPayments = false;
 	let promise = Promise.resolve();
 	promise = promise.then(function () {
-		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).then(function (setting) {
-			if (setting) {
-				displayTestPayments = setting.value;
-			}
-		});
+		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY);
+	}).then(function (response) {
+		if (response && response.hasOwnProperty('value')) {
+			displayTestPayments = response.value;
+		}
 	});
 
 	if (report.nonprofitUuid) {
 		promise = promise.then(function () {
-			return nonprofitDonationsRepository.getAll(report.nonprofitUuid);
+			builder.limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', report.nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(true);
+			return nonprofitDonationsRepository.batchQuery(builder);
 		});
 	} else {
 		promise = promise.then(function () {
-			return donationsRepository.getAll();
+			builder.limit(1000).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(true);
+			return donationsRepository.batchQuery(builder);
 		});
 	}
 
-	promise = promise.then(function (donations) {
+	promise = promise.then(function (response) {
+		const items = response.hasOwnProperty('Items') ? response.Items : [];
+		let donations = items.map(function (donation) {
+			return new Donation(donation);
+		});
 		if (!displayTestPayments) {
 			donations = donations.filter(function (donation) {
 				return !donation.paymentTransactionIsTestMode;
