@@ -535,7 +535,7 @@ const updateSettings = function () {
  */
 const loadSettings = function () {
 	const date = new Date();
-	date.setHours(date.getHours() - 1);
+	date.setHours(date.getMinutes() - 1);
 
 	const lastUpdated = store.getters.updated;
 	if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
