@@ -41,7 +41,7 @@ Mappings:
           "body": $input.json('$'),
           "headers":{
             #foreach($param in $input.params().header.keySet())
-            #set($p = $util.escapeJavaScript($input.params().header.get($param)).replace("\\'", "'"))
+            #set($p = $util.escapeJavaScript($input.params().header.get($param)).replaceAll("\\'", "'"))
             "$param": "$p"
             #if($foreach.hasNext),#end
             #end
@@ -49,14 +49,14 @@ Mappings:
           "method": "$context.httpMethod",
           "params": {
             #foreach($param in $input.params().path.keySet())
-            #set($p = $util.escapeJavaScript($input.params().path.get($param)).replace("\\'", "'"))
+            #set($p = $util.escapeJavaScript($input.params().path.get($param)).replaceAll("\\'", "'"))
             "$param": "$p"
             #if($foreach.hasNext),#end
             #end
           },
           "query": {
             #foreach($param in $input.params().querystring.keySet())
-            #set($p = $util.escapeJavaScript($input.params().querystring.get($param)).replace("\\'", "'"))
+            #set($p = $util.escapeJavaScript($input.params().querystring.get($param)).replaceAll("\\'", "'"))
             "$param": "$p"
             #if($foreach.hasNext),#end
             #end
