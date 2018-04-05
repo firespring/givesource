@@ -94,7 +94,9 @@ exports.handle = function (event, context, callback) {
 						callback();
 					}
 				}).then(function (response) {
-					nonprofits[donation.nonprofitUuid].users = response;
+					nonprofits[donation.nonprofitUuid].users = response.filter(function (user) {
+						return user.isVerified;
+					});
 				});
 			}
 			nonprofits[donation.nonprofitUuid].donations.push(donation);
