@@ -19,7 +19,7 @@
         <div class="c-form-control-grid__item u-flex-collapse">
             <input type="text" v-model="localValue" :name="name" :id="id" :placeholder="placeholder" autocomplete="off" ref="input">
         </div>
-        <div class="c-form-control-grid__item u-flex-collapse">
+        <div class="c-form-control-grid__item u-flex-collapse" v-if="original">
             <a v-on:click.prevent="cancel" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--warning">Cancel</a>
         </div>
     </div>
