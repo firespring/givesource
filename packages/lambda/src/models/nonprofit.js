@@ -57,6 +57,7 @@ Nonprofit.prototype.attributes = [
 	'logoFileUuid',
 	'longDescription',
 	'phone',
+	'receiveDonationNotifications',
 	'shortDescription',
 	'slug',
 	'state',
@@ -141,6 +142,10 @@ Nonprofit.prototype.constraints = {
 		presence: false,
 		type: 'string|number'
 	},
+	receiveDonationNotifications: {
+		presence: false,
+		type: 'boolean',
+	},
 	shortDescription: {
 		presence: false,
 		type: 'string'
@@ -179,6 +184,7 @@ Nonprofit.prototype.defaults = function () {
 		donationsFeesCovered: 0,
 		donationsSubtotal: 0,
 		donationsTotal: 0,
+		receiveDonationNotifications: true,
 		status: NonprofitHelper.STATUS_PENDING
 	};
 };

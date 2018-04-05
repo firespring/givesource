@@ -46,6 +46,17 @@
 
                             <div class="c-page-section-segment">
                                 <h3 class="c-page-section-segment__title">
+                                    <router-link :to="{ name: 'nonprofit-settings-donation-notifications' }">Donation Notifications</router-link>
+                                </h3>
+                                <div class="c-notes c-notes--below">
+                                    Control how often you receive donation notifications.
+                                </div>
+                            </div>
+
+                            <hr class="expand">
+
+                            <div class="c-page-section-segment">
+                                <h3 class="c-page-section-segment__title">
                                     <router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admins</router-link>
                                 </h3>
                                 <div class="c-notes c-notes--below">

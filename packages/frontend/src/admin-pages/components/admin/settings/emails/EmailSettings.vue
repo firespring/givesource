@@ -38,6 +38,49 @@
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
+                                    <h2 class="c-page-section-title">Donation Notifications</h2>
+                                    <div class="c-notes c-notes--below">
+                                        The donation notification email is sent to nonprofits.
+                                    </div>
+                                </div>
+                            </header>
+
+                            <div class="c-page-section__main">
+                                <div class="c-form-item c-form-item--textarea">
+                                    <div class="c-form-item__label">
+                                        <label for="donationNotificationTextBefore" class="c-form-item-label-text">Text Before Donation Details</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_BEFORE" :loaded="loaded" id="donationNotificationTextBefore"></forms-ckeditor>
+                                        <div class="c-notes c-notes--below">
+                                            This text will appear above the donation details.
+                                        </div>
+                                        <div v-if="formErrors.EMAILS_DONATION_NOTIFICATION_BEFORE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_DONATION_NOTIFICATION_BEFORE }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="c-form-item c-form-item--textarea">
+                                    <div class="c-form-item__label">
+                                        <label for="donationNotificationTextAfter" class="c-form-item-label-text">Text After Donation Details</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_AFTER" :loaded="loaded" id="donationNotificationTextAfter"></forms-ckeditor>
+                                        <div class="c-notes c-notes--below">
+                                            This text will appear below donation details.
+                                        </div>
+                                        <div v-if="formErrors.EMAILS_DONATION_NOTIFICATION_AFTER" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.EMAILS_DONATION_NOTIFICATION_AFTER }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
+                            <header class="c-page-section__header">
+                                <div class="c-page-section-header-text">
                                     <h2 class="c-page-section-title">Donation Receipt</h2>
                                     <div class="c-notes c-notes--below">
                                         The donation receipt email is sent to donors.
@@ -157,6 +200,8 @@
 
 				// Form Data
 				formData: {
+					EMAILS_DONATION_NOTIFICATION_BEFORE: '',
+					EMAILS_DONATION_NOTIFICATION_AFTER: '',
 					EMAILS_DONATION_RECEIPT_AFTER_LIST: '',
 					EMAILS_DONATION_RECEIPT_BEFORE_LIST: '',
 					EMAILS_USER_REGISTRATION_ACTIVATED: '',
@@ -176,6 +221,8 @@
 				promise = promise.then(function () {
 					return request.get('settings', {
 						keys: [
+							'EMAILS_DONATION_NOTIFICATION_BEFORE',
+							'EMAILS_DONATION_NOTIFICATION_AFTER',
 							'EMAILS_DONATION_RECEIPT_AFTER_LIST',
 							'EMAILS_DONATION_RECEIPT_BEFORE_LIST',
 							'EMAILS_USER_REGISTRATION_ACTIVATED',
@@ -230,12 +277,20 @@
 		methods: {
 			getConstraints: function () {
 				return {
+					EMAILS_DONATION_NOTIFICATION_BEFORE: {
+						label: 'Text before donation details',
+						presence: false
+					},
+					EMAILS_DONATION_NOTIFICATION_AFTER: {
+						label: 'Text after donation details',
+						presence: false
+					},
 					EMAILS_DONATION_RECEIPT_AFTER_LIST: {
-						label: 'Text after donation list',
+						label: 'Text after donations list',
 						presence: false
 					},
 					EMAILS_DONATION_RECEIPT_BEFORE_LIST: {
-						label: 'Text before donation list',
+						label: 'Text before donations list',
 						presence: false
 					},
 					EMAILS_USER_REGISTRATION_ACTIVATED: {

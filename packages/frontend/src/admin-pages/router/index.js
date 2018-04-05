@@ -334,6 +334,16 @@ const router = new VueRouter({
 			}
 		},
 		{
+			path: '/nonprofits/:nonprofitUuid/settings/donation-notifications',
+			name: 'nonprofit-settings-donation-notifications',
+			props: true,
+			component: require('./../components/nonprofit/settings/donationNotifications/DonationNotifications.vue'),
+			meta: {
+				nonprofitStatus: ['ACTIVE', 'PENDING'],
+				validateNonprofitUuid: true
+			}
+		},
+		{
 			path: '/nonprofits/:nonprofitUuid/settings/admins',
 			name: 'nonprofit-settings-admins-list',
 			props: true,

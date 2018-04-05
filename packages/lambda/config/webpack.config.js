@@ -146,6 +146,7 @@ module.exports = function (env) {
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',
 			SendContactMessageEmail: './src/custom/sendContactMessageEmail/index.js',
+			SendDonationNotificationEmail: './src/custom/sendDonationNotificationEmail/index.js',
 			SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
 			SendRegistrationPendingEmail: './src/custom/sendRegistrationPendingEmail/index.js',
 		},

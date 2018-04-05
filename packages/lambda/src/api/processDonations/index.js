@@ -229,6 +229,13 @@ exports.handle = function (event, context, callback) {
 			paymentTransaction: paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE})
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
+	}).then(function () {
+		const body = {
+			donations: donations.map(function (donation) {
+				return donation.all();
+			})
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

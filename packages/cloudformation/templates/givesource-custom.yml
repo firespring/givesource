@@ -809,6 +809,24 @@ Resources:
 
   # Send Email Lambda Resources
 
+  SendDonationNotificationEmailLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/SendDonationNotificationEmail.zip
+      Description: "Send a donation notification email"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-SendDonationNotificationEmail
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+
   SendDonationsReceiptEmailLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
