@@ -85,7 +85,7 @@
                                                         <label for="key" class="c-form-item-label-text">API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <forms-secure-text secureKey="payment-spring-api-key" type="text" name="key" id="key" maxlength="200"></forms-secure-text>
+                                                        <forms-secure-text secureKey="payment-spring-api-key" name="key" id="key"></forms-secure-text>
                                                     </div>
                                                 </div>
 
@@ -94,8 +94,7 @@
                                                         <label for="keyPublic" class="c-form-item-label-text">Public API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_PUBLIC_API_KEY" type="text" name="keyPublic" id="keyPublic"
-                                                                           maxlength="200"></forms-secure-text>
+                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_PUBLIC_API_KEY" name="keyPublic" id="keyPublic"></forms-secure-text>
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,7 +115,7 @@
                                                         <label for="testKey" class="c-form-item-label-text">Test API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <forms-secure-text secureKey="payment-spring-test-api-key" name="testKey" id="testKey" maxlength="200"></forms-secure-text>
+                                                        <forms-secure-text secureKey="payment-spring-test-api-key" name="testKey" id="testKey"></forms-secure-text>
                                                     </div>
                                                 </div>
 
@@ -125,8 +124,7 @@
                                                         <label for="testKeyPublic" class="c-form-item-label-text">Test Public API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" name="testKeyPublic" id="testKeyPublic"
-                                                                           maxlength="200"></forms-secure-text>
+                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" name="testKeyPublic" id="testKeyPublic"></forms-secure-text>
                                                     </div>
                                                 </div>
 
