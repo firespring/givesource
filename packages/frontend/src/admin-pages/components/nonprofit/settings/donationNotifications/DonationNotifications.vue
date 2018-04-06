@@ -61,11 +61,13 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="c-notes u-margin-top-thick">
-                                These settings will apply to all of
-                                <router-link :to="{name: 'nonprofit-settings-admins-list'}">your donation page's admins</router-link>
-                                . Donation
-                                notifications will be sent from notifications@domain.com. Add that email address to your whitelist so that notifications aren't marked as spam.
+                            <div class="c-notes u-margin-top-thick" v-if="settings.SENDER_EMAIL">
+                                These settings will apply to all of <router-link :to="{name: 'nonprofit-settings-admins-list'}">your donation page's admins</router-link>.
+                                Donation notifications will be sent from {{settings.SENDER_EMAIL}}.
+                                Add that email address to your whitelist so that notifications aren't marked as spam.
+                            </div>
+                            <div class="c-notes u-margin-top-thick" v-else>
+                                These settings will apply to all of <router-link :to="{name: 'nonprofit-settings-admins-list'}">your donation page's admins</router-link>.
                             </div>
                         </div>
                     </section>
@@ -91,6 +93,10 @@
 					receiveDonationNotifications: true,
 				},
 
+                settings: {
+					SENDER_EMAIL: null,
+                },
+
 				// Errors
 				formErrors: {},
 				apiError: {},
@@ -108,7 +114,12 @@
 			next(function (vue) {
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
-				});
+					return vue.$request.get('settings/SENDER_EMAIL');
+				}).then(function (response) {
+					if (response.data && response.data.value) {
+						vue.settings.SENDER_EMAIL = response.data.value;
+                    }
+                });
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -116,6 +127,11 @@
 
 			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 				vue.nonprofit = response.data;
+				return vue.$request.get('settings/SENDER_EMAIL');
+			}).then(function (response) {
+				if (response.data && response.data.value) {
+					vue.settings.SENDER_EMAIL = response.data.value;
+				}
 				next();
 			}).catch(function () {
 				next();
