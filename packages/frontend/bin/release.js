@@ -15,117 +15,99 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
-
-const packageJson = require('../../../package.json');
 const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+
+const config = require('config');
+const fs = require('fs');
+const packageJson = require('../../../package.json');
 const S3 = require('./aws/s3');
 
-const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;
-const awsReleaseBucketRegion = process.env.AWS_RELEASE_BUCKET_REGION;
-
 /**
- * Validate the environment variables
+ * Check if assets already exist for this version
  *
- * @return {boolean}
+ * @return {Promise}
  */
-const validateEnv = function () {
-	const missing = [];
-	const required = {
-		AWS_RELEASE_BUCKET: awsReleaseBucket,
-		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion
-	};
-	for (let key in required) {
-		if (typeof required[key] === 'undefined') {
-			missing.push(key);
-		}
-	}
-	if (missing.length > 0) {
-		console.error(`Missing env variables: ${JSON.stringify(missing)}`);
-		process.exit(1);
-	}
-	return true;
-};
-
-/**
- * Create a release
- *
- * @param {String} project
- * @param {String} src
- * @param {String} [relativePath]
- * @param {boolean} [force]
- */
-const release = function (project, src, relativePath, force) {
-	relativePath = relativePath ? `${relativePath}/` : '';
-	force = (typeof force === 'boolean') ? force : false;
-
+const versionExists = function (project) {
 	return new Promise(function (resolve, reject) {
-		const path = `${project}/${packageJson.version}/${relativePath}`;
-
-		S3.listObjects(awsReleaseBucketRegion, awsReleaseBucket, path).then(function (objects) {
-			if (objects.length !== 0) {
-				if (!force) {
-					return reject(new Error(`object already exist under ${path}`));
-				}
-				S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, objects).then(function () {
-					return S3.uploadDirectory(src, awsReleaseBucketRegion, awsReleaseBucket, path);
-				}).then(function () {
-					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{Key: `${project}/${packageJson.version}/settings.json`}]);
-				}).then(function () {
-					resolve();
-				}).catch(function (err) {
-					reject(err);
-				});
-			} else {
-				S3.uploadDirectory(src, awsReleaseBucketRegion, awsReleaseBucket, path).then(function () {
-					return S3.deleteObjects(awsReleaseBucketRegion, awsReleaseBucket, [{Key: `${project}/${packageJson.version}/settings.json`}]);
-				}).then(function () {
-					resolve();
-				}).catch(function (err) {
-					reject(err);
-				});
+		const s3 = new S3();
+		const bucketName = config.get('release.AWS_RELEASE_BUCKET');
+		const keyName = project + '/' + packageJson.version;
+		s3.listObjects(config.get('release.AWS_RELEASE_BUCKET_REGION'), bucketName, keyName).then(function (objects) {
+			if (objects.length) {
+				reject(new Error('a release already exists: s3://' + bucketName + '/' + keyName));
 			}
+			resolve();
 		});
 	});
 };
 
-if (validateEnv()) {
-	const force = (process.argv[2] === '--force' || process.argv[2] === '-F');
-
-	const adminPagesDir = path.normalize(`${__dirname}/../build/admin-pages`);
-	const adminPagesCssDir = path.normalize(`${adminPagesDir}/assets/css`);
-	const adminPagesImgDir = path.normalize(`${adminPagesDir}/assets/img`);
-
-	const publicPagesDir = path.normalize(`${__dirname}/../build/public-pages`);
-	const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
-	const publicPagesImgDir = path.normalize(`${publicPagesDir}/assets/img`);
-	const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
-	const publicPagesTemplatesDir = path.normalize(`${publicPagesDir}/templates`);
-	const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
-
-	release('admin-pages', adminPagesDir, '', force).then(function () {
-		return release('admin-pages', adminPagesCssDir, 'assets/css', force);
-	}).then(function () {
-		return release('admin-pages', adminPagesImgDir, 'assets/img', force);
-	}).then(function () {
-		console.log('released admin-pages');
-	}).catch(function (err) {
-		console.log(err);
+/**
+ * Upload frontend assets to the release S3 bucket
+ *
+ * @param {String} sourcePath
+ * @param {String} destinationPath
+ * @param {[]} [exclude]
+ * @return {Promise}
+ */
+const release = function (sourcePath, destinationPath, exclude) {
+	exclude = Array.isArray(exclude) ? exclude : [];
+	destinationPath = destinationPath.endsWith('/') ? destinationPath : destinationPath + '/';
+	sourcePath = sourcePath.endsWith('/') ? sourcePath : sourcePath + '/';
+	const files = fs.readdirSync(sourcePath, 'utf8').filter(function (filename) {
+		return (filename.indexOf('.') > -1 && exclude.indexOf(filename) < 0);
 	});
 
-	release('public-pages', publicPagesDir, '', force).then(function () {
-		return release('public-pages', publicPagesCssDir, 'assets/css', force);
+	const s3 = new S3();
+	let promise = Promise.resolve();
+	files.forEach(function (filename) {
+		const filepath = path.join(sourcePath, filename);
+		const objectName = destinationPath + filename;
+		const body = fs.readFileSync(filepath);
+		promise = promise.then(function () {
+			return s3.putObject(config.get('release.AWS_RELEASE_BUCKET_REGION'), config.get('release.AWS_RELEASE_BUCKET'), objectName, body).then(function () {
+				console.log('uploaded: s3://' + config.get('release.AWS_RELEASE_BUCKET') + '/' + objectName);
+			});
+		});
+	});
+
+	return promise;
+};
+
+let promise = Promise.resolve();
+if (process.argv[2] !== '--force' && process.argv[2] !== '-F') {
+	promise = promise.then(function () {
+		return versionExists('admin-pages');
 	}).then(function () {
-		return release('public-pages', publicPagesImgDir, 'assets/img', force);
-	}).then(function () {
-		return release('public-pages', publicPagesTempDir, 'assets/temp', force);
-	}).then(function () {
-		return release('public-pages', publicPagesSponsorsDir, 'assets/temp/sponsors', force);
-	}).then(function () {
-		return release('public-pages', publicPagesTemplatesDir, 'templates', force);
-	}).then(function () {
-		console.log('released public-pages');
-	}).catch(function (err) {
-		console.log(err);
+		return versionExists('public-pages');
 	});
 }
+
+const adminSource = path.resolve(__dirname, './../build/admin-pages') + '/';
+const adminDestination = 'admin-pages/' + packageJson.version + '/';
+const publicSource = path.resolve(__dirname, './../build/public-pages') + '/';
+const publicDestination = 'public-pages/' + packageJson.version + '/';
+promise = promise.then(function () {
+	return release(adminSource, adminDestination, ['settings.json']);
+}).then(function () {
+	return release(adminSource + 'assets/css/', adminDestination + 'assets/css/');
+}).then(function () {
+	return release(adminSource + 'assets/img/', adminDestination + 'assets/img/');
+}).then(function () {
+	return release(publicSource, publicDestination, ['settings.json']);
+}).then(function () {
+	return release(publicSource + 'assets/css/', publicDestination + 'assets/css/');
+}).then(function () {
+	return release(publicSource + 'assets/img/', publicDestination + 'assets/img/');
+}).then(function () {
+	return release(publicSource + 'assets/temp/', publicDestination + 'assets/temp/');
+}).then(function () {
+	return release(publicSource + 'assets/temp/sponsors/', publicDestination + 'assets/temp/sponsors/');
+}).then(function () {
+	return release(publicSource + 'templates/', publicDestination + 'templates/');
+}).then(function () {
+	console.log('CloudFormation release complete.');
+}).catch(function (err) {
+	console.log(err);
+});

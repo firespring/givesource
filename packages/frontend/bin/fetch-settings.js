@@ -15,12 +15,14 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
 const _ = require('lodash');
+const config = require('config');
 const CloudFormation = require('./aws/cloudFormation');
 const fs = require('fs');
-const path = require('path');
 
 /**
  * Get output key from stack
@@ -45,7 +47,7 @@ const findOutputKey = function (outputs, outputKey) {
  */
 const getSettings = function () {
 	const cloudFormation = new CloudFormation();
-	return cloudFormation.describeStacks(process.env.AWS_REGION, process.env.AWS_STACK_NAME).then(function (stacks) {
+	return cloudFormation.describeStacks(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')).then(function (stacks) {
 		if (stacks.length !== 1) {
 			return Promise.reject(new Error('unexpected number of stacks'));
 		} else {
@@ -72,7 +74,7 @@ const getSettings = function () {
  */
 const writeConfig = function (filename, data) {
 	const jsonData = JSON.stringify(data, null, 2);
-	const filePath = path.normalize(__dirname + '/../config/' + filename);
+	const filePath = path.resolve(__dirname, './../config/' + filename);
 	fs.writeFileSync(filePath, jsonData);
 	console.log(filename + ' created');
 };

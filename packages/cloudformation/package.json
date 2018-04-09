@@ -2,10 +2,13 @@
 	"name": "givesource-cloudformation",
 	"description": "AWS CloudFormation setup for Givesource",
 	"scripts": {
-		"clean": "rimraf build",
 		"build": "npm run clean && node bin/build.js",
+		"clean": "rimraf build",
+		"create": "node bin/create.js",
+		"delete": "node bin/delete.js",
 		"release": "npm run build && node bin/release.js",
-		"stack": "node bin/stack.js"
+		"release:force": "npm run release -- --force",
+		"update": "node bin/update.js"
 	},
 	"author": "Firespring",
 	"license": "Apache-2.0",
@@ -14,5 +17,10 @@
 		"mkdirp": "^0.5.1",
 		"mustache": "^2.3.0",
 		"rimraf": "^2.6.1"
+	},
+	"dependencies": {
+		"aws-sdk": "^2.222.1",
+		"config": "^1.30.0",
+		"mime": "^2.2.2"
 	}
 }

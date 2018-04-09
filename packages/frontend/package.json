@@ -16,7 +16,9 @@
 	"author": "Firespring",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"jquery.payment": "^3.0.0"
+		"config": "^1.30.0",
+		"jquery.payment": "^3.0.0",
+		"mime": "^2.2.2"
 	},
 	"devDependencies": {
 		"@claviska/jquery-minicolors": "^2.2.6",

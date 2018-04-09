@@ -15,66 +15,38 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname,  './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
+const config = require('config');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const mustache = require('mustache');
-const path = require('path');
 const packageJson = require('./../../../package.json');
-
-const cfDirectory = path.normalize(`${__dirname}/../`);
-const buildDirectory = path.normalize(`${cfDirectory}/build/`);
-const templatesDirectory = path.normalize(`${cfDirectory}/templates/`);
-const awsReleaseBucket = process.env.AWS_RELEASE_BUCKET;
-const awsReleaseBucketRegion = process.env.AWS_RELEASE_BUCKET_REGION;
-const awsLambdaReleaseBucketPrefix = process.env.AWS_LAMBDA_RELEASE_BUCKET_PREFIX;
-
-/**
- * Validate the environment variables
- *
- * @return {boolean}
- */
-const validateEnv = function () {
-	const missing = [];
-	const required = {
-		AWS_RELEASE_BUCKET: awsReleaseBucket,
-		AWS_RELEASE_BUCKET_REGION: awsReleaseBucketRegion,
-		AWS_LAMBDA_RELEASE_BUCKET_PREFIX: awsLambdaReleaseBucketPrefix,
-	};
-	for (let key in required) {
-		if (typeof required[key] === 'undefined') {
-			missing.push(key);
-		}
-	}
-	if (missing.length > 0) {
-		console.error(`Missing env variables: ${JSON.stringify(missing)}`);
-		process.exit(1);
-	}
-	return true;
-};
 
 /**
  * Create CloudFormation yaml file from templates
  */
-const createCloudFormationYaml = function () {
+const build = function () {
 	const data = {
 		version: packageJson.version,
-		awsReleaseBucket: awsReleaseBucket,
-		awsReleaseBucketRegion: awsReleaseBucketRegion,
-		awsLambdaReleaseBucketPrefix: awsLambdaReleaseBucketPrefix,
+		awsReleaseBucket: config.get('release.AWS_RELEASE_BUCKET'),
+		awsReleaseBucketRegion: config.get('release.AWS_RELEASE_BUCKET_REGION'),
+		awsLambdaReleaseBucketPrefix: config.get('release.AWS_LAMBDA_RELEASE_BUCKET_PREFIX'),
 	};
-	const templates = fs.readdirSync(templatesDirectory, 'utf8').filter(function (filename) {
+	const buildDir = path.resolve(__dirname, './../build');
+	const templatesDir = path.resolve(__dirname, './../templates/');
+	const templates = fs.readdirSync(templatesDir, 'utf8').filter(function (filename) {
 		return filename.indexOf('.') > -1;
 	});
+
+	mkdirp.sync(buildDir);
 	templates.forEach(function (filename) {
-		const template = fs.readFileSync(`${templatesDirectory}/${filename}`, 'utf8');
+		const template = fs.readFileSync(templatesDir + '/' + filename, 'utf8');
 		const rendered = mustache.render(template, data);
-		fs.writeFileSync(`${buildDirectory}/${filename}`, rendered);
+		fs.writeFileSync(buildDir + '/' + filename, rendered);
 	});
 };
 
-if (validateEnv()) {
-	mkdirp.sync(buildDirectory);
-	createCloudFormationYaml();
-}
+build();

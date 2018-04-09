@@ -15,36 +15,35 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
+const _ = require('lodash');
+const config = require('config');
 const deployInfo = require('../config/deploy-info.json');
 const fs = require('fs');
 const Lambda = require('./aws/lambda');
-const path = require('path');
 const S3 = require('./aws/s3');
 
-const awsRegion = process.env.AWS_REGION;
+const uploadDirectory = function (directory, region, bucketName, objectNamePrefix, exclude) {
+	const s3 = new S3();
+	exclude = Array.isArray(exclude) ? exclude : [];
+	objectNamePrefix = objectNamePrefix || '';
+	const files = fs.readdirSync(directory, 'utf8').filter(function (filename) {
+		return (filename.indexOf('.') > -1 && _.indexOf(exclude, filename) === -1);
+	});
+	let promise = Promise.resolve();
+	files.forEach(function (filename) {
+		const filepath = path.join(directory, filename);
+		const objectName = objectNamePrefix + filename;
+		const body = fs.readFileSync(filepath);
+		promise = promise.then(function () {
+			return s3.putObject(region, bucketName, objectName, body);
+		});
+	});
 
-/**
- * Validate the environment variables
- *
- * @return {boolean}
- */
-const validateEnv = function () {
-	const missing = [];
-	const required = {
-		AWS_REGION: awsRegion,
-	};
-	for (let key in required) {
-		if (typeof required[key] === 'undefined') {
-			missing.push(key);
-		}
-	}
-	if (missing.length > 0) {
-		console.error(`Missing env variables: ${JSON.stringify(missing)}`);
-		process.exit(1);
-	}
-	return true;
+	return promise;
 };
 
 /**
@@ -58,70 +57,58 @@ const validateEnv = function () {
  * @return {Promise}
  */
 const deploy = function (project, src, assetPath, bucket, exclude) {
-	assetPath = assetPath ? `assets/${assetPath}/` : '';
-
-	return new Promise(function (resolve, reject) {
-		const path = `${assetPath}`;
-
-		S3.uploadDirectory(src, awsRegion, bucket, path, exclude).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
+	assetPath = assetPath ? 'assets/' + assetPath + '/' : '';
+	return uploadDirectory(src, config.get('stack.AWS_REGION'), bucket, assetPath, exclude);
 };
 
-if (validateEnv()) {
-	const adminPagesDir = path.normalize(`${__dirname}/../build/admin-pages`);
-	const adminPagesCssDir = path.normalize(`${adminPagesDir}/assets/css`);
-	const adminPagesImgDir = path.normalize(`${adminPagesDir}/assets/img`);
-	const adminPagesBucket = deployInfo.AdminPagesS3BucketName;
+const adminPagesDir = path.normalize(`${__dirname}/../build/admin-pages`);
+const adminPagesCssDir = path.normalize(`${adminPagesDir}/assets/css`);
+const adminPagesImgDir = path.normalize(`${adminPagesDir}/assets/img`);
+const adminPagesBucket = deployInfo.AdminPagesS3BucketName;
 
-	const publicPagesDir = path.normalize(`${__dirname}/../build/public-pages`);
-	const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
-	const publicPagesImgDir = path.normalize(`${publicPagesDir}/assets/img`);
-	const publicPagesIndexTemplateFile = path.normalize(`${publicPagesDir}/templates/index.mustache`);
-	const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
-	const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
-	const publicPagesBucket = deployInfo.PublicPagesS3BucketName;
+const publicPagesDir = path.normalize(`${__dirname}/../build/public-pages`);
+const publicPagesCssDir = path.normalize(`${publicPagesDir}/assets/css`);
+const publicPagesImgDir = path.normalize(`${publicPagesDir}/assets/img`);
+const publicPagesIndexTemplateFile = path.normalize(`${publicPagesDir}/templates/index.mustache`);
+const publicPagesTempDir = path.normalize(`${publicPagesDir}/assets/temp`);
+const publicPagesSponsorsDir = path.normalize(`${publicPagesDir}/assets/temp/sponsors`);
+const publicPagesBucket = deployInfo.PublicPagesS3BucketName;
 
-	deploy('admin-pages', adminPagesDir, '', adminPagesBucket).then(function () {
-		return deploy('admin-pages', adminPagesCssDir, 'css', adminPagesBucket);
-	}).then(function () {
-		return deploy('admin-pages', adminPagesImgDir, 'img', adminPagesBucket);
-	}).then(function () {
-		console.log('deployed admin-pages');
-	}).catch(function (err) {
-		console.log(err);
-	});
+deploy('admin-pages', adminPagesDir, '', adminPagesBucket).then(function () {
+	return deploy('admin-pages', adminPagesCssDir, 'css', adminPagesBucket);
+}).then(function () {
+	return deploy('admin-pages', adminPagesImgDir, 'img', adminPagesBucket);
+}).then(function () {
+	console.log('deployed admin-pages');
+}).catch(function (err) {
+	console.log(err);
+});
 
-	deploy('public-pages', publicPagesDir, '', publicPagesBucket, ['index.html']).then(function () {
-		return deploy('public-pages', publicPagesCssDir, 'css', publicPagesBucket);
-	}).then(function () {
-		return deploy('public-pages', publicPagesImgDir, 'img', publicPagesBucket);
-	}).then(function () {
-		return deploy('public-pages', publicPagesTempDir, 'temp', publicPagesBucket);
-	}).then(function () {
-		return deploy('public-pages', publicPagesSponsorsDir, 'temp/sponsors', publicPagesBucket);
-	}).then(function () {
-		console.log('deployed public-pages');
-	}).catch(function (err) {
-		console.log(err);
-	});
+deploy('public-pages', publicPagesDir, '', publicPagesBucket, ['index.html']).then(function () {
+	return deploy('public-pages', publicPagesCssDir, 'css', publicPagesBucket);
+}).then(function () {
+	return deploy('public-pages', publicPagesImgDir, 'img', publicPagesBucket);
+}).then(function () {
+	return deploy('public-pages', publicPagesTempDir, 'temp', publicPagesBucket);
+}).then(function () {
+	return deploy('public-pages', publicPagesSponsorsDir, 'temp/sponsors', publicPagesBucket);
+}).then(function () {
+	console.log('deployed public-pages');
+}).catch(function (err) {
+	console.log(err);
+});
 
-	const lambda = new Lambda();
-	let lambdaRequestBody = {
-		ResourceProperties: {
-			Settings: JSON.stringify({PUBLIC_INDEX_TEMPLATE: fs.readFileSync(publicPagesIndexTemplateFile).toString()})
-		}
-	};
+const lambda = new Lambda();
+let lambdaRequestBody = {
+	ResourceProperties: {
+		Settings: JSON.stringify({PUBLIC_INDEX_TEMPLATE: fs.readFileSync(publicPagesIndexTemplateFile).toString()})
+	}
+};
 
-	lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GeneratePublicIndexFile', {}, 'RequestResponse').then(function () {
-			console.log('Generated public-pages index.html');
-		});
-	}).catch(function (err) {
-		console.log(err);
-	});
-
-}
+lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
+	return lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-GeneratePublicIndexFile', {}, 'RequestResponse');
+}).then(function () {
+	console.log('Generated public-pages index.html');
+}).catch(function (err) {
+	console.log(err);
+});

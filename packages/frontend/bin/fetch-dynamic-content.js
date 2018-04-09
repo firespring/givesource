@@ -15,27 +15,30 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
-
-const fs = require('fs');
 const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+
+const config = require('config');
 const deployInfo = require('../config/deploy-info.json');
-const s3 = require('./aws/s3');
+const fs = require('fs');
+const S3 = require('./aws/s3');
 
 exports.fetch = function () {
-	s3.getObject(process.env.AWS_REGION, deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(function (data) {
-		const configDir = path.normalize(`${__dirname}/../build/public-pages/assets/css`);
-		fs.writeFileSync(`${configDir}/custom.css`, data.Body);
-		console.log('custom.css downloaded from s3');
+	const s3 = new S3();
+	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(function (response) {
+		const configDir = path.resolve(__dirname, './../build/public-pages/assets/css');
+		fs.writeFileSync(configDir + '/custom.css', response.Body);
+		console.log('custom.css downloaded from S3');
 	}).catch(function (err) {
-		console.error(err, err.stack);
+		console.log(err);
 	});
 
-	s3.getObject(process.env.AWS_REGION, deployInfo.PublicPagesS3BucketName, 'index.html').then(function (data) {
-		const configDir = path.normalize(`${__dirname}/../build/public-pages`);
-		fs.writeFileSync(`${configDir}/index.html`, data.Body);
-		console.log('index.html downloaded from s3');
+	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'index.html').then(function (response) {
+		const configDir = path.resolve(__dirname, './../build/public-pages');
+		fs.writeFileSync(configDir + '/index.html', response.Body);
+		console.log('index.html downloaded from S3');
 	}).catch(function (err) {
-		console.error(err, err.stack);
+		console.log(err);
 	});
 };

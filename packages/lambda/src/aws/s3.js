@@ -63,7 +63,7 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
 S3.prototype.putObject = function (region, bucketName, objectName, body, contentType, contentDisposition) {
 	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
-		contentType = contentType ? contentType : mime.lookup(objectName);
+		contentType = contentType ? contentType : mime.getType(objectName);
 		const params = {
 			Bucket: bucketName,
 			Body: body,
@@ -146,7 +146,7 @@ S3.prototype.listObjects = function (region, bucketName, prefix) {
 S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBucketName, destObjectName) {
 	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
-		const contentType = mime.lookup(destObjectName);
+		const contentType = mime.getType(destObjectName);
 		const params = {
 			Bucket: destBucketName,
 			Key: destObjectName,
