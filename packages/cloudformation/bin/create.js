@@ -28,7 +28,7 @@ const packageJson = require('./../../../package.json');
  */
 const createStack = function () {
 	const cloudFormation = new CloudFormation();
-	const url = 'https://s3.' + config.get('stack.AWS_REGION') + '.amazonaws.com/' + config.get('stack.AWS_RELEASE_BUCKET') + '/cf/' + packageJson.version + '/givesource.yml';
+	const url = 'https://s3.' + config.get('stack.AWS_REGION') + '.amazonaws.com/' + config.get('release.AWS_RELEASE_BUCKET') + '/cf-templates/' + packageJson.version + '/givesource.yml';
 	const parameters = [
 		{
 			ParameterKey: 'AdminEmail',
@@ -58,7 +58,7 @@ const createStack = function () {
 };
 
 createStack().then(function (response) {
-	console.log(response);
+	console.log('Stack create in progress: ' + response.StackId);
 }).catch(function (err) {
 	console.log(err);
 });

@@ -16,22 +16,17 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({path: path.resolve(__dirname, './../../../.env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+dotenv.config({path: path.resolve(__dirname, './../../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../../config/');
 
-const CloudFormation = require('./aws/cloudFormation');
 const config = require('config');
 
-/**
- * Delete an AWS CloudFormation stack
- */
-const deleteStack = function () {
-	const cloudFormation = new CloudFormation();
-	return cloudFormation.deleteStack(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME'));
-};
+exports.bootstrap = function () {
+	const stackSettings = config.get('stack');
 
-deleteStack().then(function () {
-	console.log('Stack delete in progress: ' + config.get('stack.AWS_STACK_NAME'));
-}).catch(function (err) {
-	console.log(err);
-});
+	Object.keys(stackSettings).forEach(function (key) {
+		if (!process.env.hasOwnProperty(key)) {
+			process.env[key] = stackSettings[key];
+		}
+	});
+};

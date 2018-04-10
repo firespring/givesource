@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, './../../../../.env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../../config/');
-
-const config = require('config');
-const stackName = process.env.hasOwnProperty('AWS_STACK_NAME') ? process.env.AWS_STACK_NAME : config.get('stack.AWS_STACK_NAME');
+const stackName = process.env.AWS_STACK_NAME;
 
 exports.ContentsTable = `${stackName}-Contents`;
 exports.DonationsTable = `${stackName}-Donations`;

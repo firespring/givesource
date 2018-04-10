@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, './../../../.env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+require('./config/bootstrap').bootstrap();
 
 const config = require('config');
 const fs = require('fs');
 const fuzzy = require('fuzzy');
 const inquirer = require('inquirer');
 const Lambda = require('./../src/aws/lambda');
+const path = require('path');
 
 /**
  * Deploy a lambda function

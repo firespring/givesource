@@ -37,7 +37,7 @@ CloudFormation.prototype.createStack = function (region, stackName, templateUrl,
 	const awsCloudformation = new AWS.CloudFormation({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
-			Capabilities: 'CAPABILITY_IAM',
+			Capabilities: ['CAPABILITY_IAM'],
 			StackName: stackName,
 			TemplateURL: templateUrl
 		};
@@ -88,7 +88,7 @@ CloudFormation.prototype.updateStack = function (region, stackName, templateUrl,
 	const awsCloudformation = new AWS.CloudFormation({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
-			Capabilities: 'CAPABILITY_IAM',
+			Capabilities: ['CAPABILITY_IAM'],
 			StackName: stackName,
 			TemplateURL: templateUrl
 		};

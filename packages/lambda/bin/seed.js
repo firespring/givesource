@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, './../../../.env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+require('./config/bootstrap').bootstrap();
 
 const _ = require('lodash');
 const config = require('config');
