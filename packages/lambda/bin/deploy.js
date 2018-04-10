@@ -15,17 +15,15 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
+const config = require('config');
 const fs = require('fs');
 const fuzzy = require('fuzzy');
 const inquirer = require('inquirer');
 const Lambda = require('./../src/aws/lambda');
-const path = require('path');
-
-const stackName = process.env.AWS_STACK_NAME;
-const buildDirectory = path.normalize(`${__dirname}/../build`);
-const functionsDirectory = path.normalize(`${buildDirectory}/functions`);
 
 /**
  * Deploy a lambda function
@@ -35,15 +33,15 @@ const functionsDirectory = path.normalize(`${buildDirectory}/functions`);
  */
 const deploy = function (functionName) {
 	const lambda = new Lambda();
-	const deployedFunctionName = `${stackName}-${functionName}`;
 
-	return lambda.getFunction(deployedFunctionName).then(function () {
-		const filepath = `${buildDirectory}/${functionName}.zip`;
-		const data = fs.readFileSync(filepath);
-		const zipFile = new Buffer(data, 'binary');
-		return lambda.updateFunctionCode(process.env.AWS_REGION, deployedFunctionName, zipFile);
-	}).catch(function (err) {
-		console.log(err);
+	const buildDir = path.resolve(__dirname, './../build');
+	const name = config.get('stack.AWS_STACK_NAME') + '-' + functionName;
+
+	return lambda.getFunction(config.get('stack.AWS_REGION'), name).then(function () {
+		const filepath = buildDir + '/' + functionName + '.zip';
+		const body = fs.readFileSync(filepath);
+		const zip = new Buffer(body, 'binary');
+		return lambda.updateFunctionCode(config.get('stack.AWS_REGION'), name, zip);
 	});
 };
 
@@ -62,8 +60,9 @@ const batchDeploy = function (functions, retries) {
 		functions.forEach(function (func) {
 			promise = promise.then(function () {
 				return deploy(func).then(function () {
-					console.log(`deployed ${func}`);
-				}).catch(function () {
+					console.log('deployed ' + func);
+				}).catch(function (err) {
+					console.log(err);
 					failed.push(func);
 				});
 			});
@@ -74,7 +73,7 @@ const batchDeploy = function (functions, retries) {
 					retries = retries - 1;
 					return batchDeploy(failed, retries);
 				} else {
-					reject(new Error(`Failed to deploy: ${JSON.stringify(failed)}`));
+					reject(new Error('Failed to deploy: ' + JSON.stringify(failed)));
 				}
 			} else {
 				resolve();
@@ -83,7 +82,8 @@ const batchDeploy = function (functions, retries) {
 	});
 };
 
-const list = fs.readdirSync(functionsDirectory);
+const functionsDir = path.resolve(__dirname, './../build/functions');
+const list = fs.readdirSync(functionsDir);
 const choices = ['All'].concat(list);
 
 const searchFunctions = function (answers, input) {
@@ -112,10 +112,7 @@ inquirer.prompt([
 	}
 ]).then(function (answer) {
 	const functions = (answer.selected === 'All') ? list : [answer.selected];
-	console.log('deploying...');
-	batchDeploy(functions).catch(function (err) {
-		console.log(err);
-	});
+	return batchDeploy(functions);
 }).catch(function (err) {
 	console.log(err);
 });

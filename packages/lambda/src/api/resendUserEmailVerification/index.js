@@ -34,9 +34,9 @@ exports.handle = function (event, context, callback) {
 		user.populate(request._body);
 		return user.validate();
 	}).then(function () {
-		return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email, true).catch(function (err) {
+		return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email, true).catch(function (err) {
 			if (err.code === 'UserNotFoundException') {
-				return cognito.createUser(process.env.USER_POOL_ID, user.uuid, user.email);
+				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email);
 			} else {
 				return Promise.reject(err);
 			}

@@ -24,7 +24,7 @@ exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 
 	request.validate().then(function () {
-		return cognito.describeUserPool(process.env.USER_POOL_ID);
+		return cognito.describeUserPool(process.env.AWS_REGION, process.env.USER_POOL_ID);
 	}).then(function (response) {
 		let email = 'no-reply@verificationemail.com';
 		if (response.hasOwnProperty('EmailConfiguration') && response.EmailConfiguration.hasOwnProperty('SourceArn')) {

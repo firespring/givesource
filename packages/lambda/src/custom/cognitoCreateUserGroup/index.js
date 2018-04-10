@@ -31,7 +31,7 @@ exports.handle = function (event, context, callback) {
 	const groupName = event.ResourceProperties.GroupName;
 	const roleArn = event.ResourceProperties.RoleArn;
 
-	cognito.createCognitoGroup(userPoolId, groupName, roleArn).then(function (group) {
+	cognito.createCognitoGroup(process.env.AWS_REGION, userPoolId, groupName, roleArn).then(function (group) {
 		logger.log(group);
 		response.send(event, context, response.SUCCESS);
 	}).catch(function (err) {

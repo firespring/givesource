@@ -87,11 +87,12 @@ Lambda.prototype.deleteFunction = function (region, functionName) {
 /**
  * Get an AWS Lambda function
  *
+ * @param {String} region
  * @param {String} functionName
  * @return {Promise}
  */
-Lambda.prototype.getFunction = function (functionName) {
-	const awsLambda = new AWS.Lambda({region: process.env.AWS_REGION});
+Lambda.prototype.getFunction = function (region, functionName) {
+	const awsLambda = new AWS.Lambda({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			FunctionName: functionName

@@ -15,9 +15,12 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
 const _ = require('lodash');
+const config = require('config');
 const fuzzy = require('fuzzy');
 const Generator = require('./../src/helpers/generator');
 const inquirer = require('inquirer');
@@ -40,7 +43,7 @@ const seedDonations = function () {
 
 	return nonprofitsRepository.getAll().then(function (results) {
 		if (!results || results.length === 0) {
-			return Promise.reject(new Error('No nonprofits found in stack: ' + process.env.AWS_STACK_NAME));
+			return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('AWS_STACK_NAME')));
 		}
 		const options = _.map(results, function (nonprofit) {
 			return {name: nonprofit.legalName, value: nonprofit}

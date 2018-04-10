@@ -30,7 +30,7 @@ exports.handle = function (event, context, callback) {
 	const restApiId = event.ResourceProperties.RestApiId;
 	const stageName = event.ResourceProperties.StageName;
 
-	apiGateway.deploy(restApiId, stageName).then(function () {
+	apiGateway.deploy(process.env.AWS_REGION, restApiId, stageName).then(function () {
 		response.send(event, context, response.SUCCESS);
 	}).catch(function (err) {
 		logger.log(err);

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+const dotenv = require('dotenv');
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../../config/');
+
 const _ = require('lodash');
+const config = require('config');
 const AWS = require('aws-sdk');
 const Model = require('./../models/model');
 const QueryBuilder = require('./../aws/queryBuilder');
@@ -25,7 +31,7 @@ const QueryBuilder = require('./../aws/queryBuilder');
  * @constructor
  */
 function Repository(table) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.hasOwnProperty('AWS_REGION') ? process.env.AWS_REGION : config.get('stack.AWS_REGION');
 	this.dbClient = new AWS.DynamoDB.DocumentClient({region: region});
 	this.table = table || null;
 }

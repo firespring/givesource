@@ -23,19 +23,20 @@ const randomstring = require('randomstring');
  * @constructor
  */
 function Cognito() {
-	this.awsCognito = new AWS.CognitoIdentityServiceProvider({apiVersion: '2016-04-18', region: process.env.AWS_REGION});
 }
 
 /**
  * Create an AWS Cognito user pool
  *
+ * @param {String} region
  * @param {String} poolName
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
  * @return {Promise}
  */
-Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCustomMessageArn) {
+Cognito.prototype.createUserPool = function (region, poolName, snsCallerArn, cognitoCustomMessageArn) {
 	const cognito = this;
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn);
 		params.PoolName = poolName;
@@ -53,7 +54,7 @@ Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCust
 			}
 		];
 		params.AliasAttributes = ['email'];
-		cognito.awsCognito.createUserPool(params, function (err, result) {
+		awsCognito.createUserPool(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -65,6 +66,7 @@ Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCust
 /**
  * Update an AWS Cognito user pool
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} snsCallerArn
  * @param {String} cognitoCustomMessageArn
@@ -72,12 +74,13 @@ Cognito.prototype.createUserPool = function (poolName, snsCallerArn, cognitoCust
  * @param {String} [replyToAddress]
  * @return {Promise}
  */
-Cognito.prototype.updateUserPool = function (userPoolId, snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress) {
+Cognito.prototype.updateUserPool = function (region, userPoolId, snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress) {
 	const cognito = this;
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = cognito.buildUserPoolParameters(snsCallerArn, cognitoCustomMessageArn, fromEmailAddressArn, replyToAddress);
 		params.UserPoolId = userPoolId;
-		cognito.awsCognito.updateUserPool(params, function (err, result) {
+		awsCognito.updateUserPool(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -89,13 +92,14 @@ Cognito.prototype.updateUserPool = function (userPoolId, snsCallerArn, cognitoCu
 /**
  * Delete an AWS Cognito user pool
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @return {Promise}
  */
-Cognito.prototype.deleteUserPool = function (userPoolId) {
-	const cognito = this;
+Cognito.prototype.deleteUserPool = function (region, userPoolId) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
-		cognito.awsCognito.deleteUserPool({UserPoolId: userPoolId}, function (err, result) {
+		awsCognito.deleteUserPool({UserPoolId: userPoolId}, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -107,13 +111,14 @@ Cognito.prototype.deleteUserPool = function (userPoolId) {
 /**
  * Describe an AWS Cognito user pool
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @return {Promise}
  */
-Cognito.prototype.describeUserPool = function (userPoolId) {
-	const cognito = this;
+Cognito.prototype.describeUserPool = function (region, userPoolId) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
-		cognito.awsCognito.describeUserPool({UserPoolId: userPoolId}, function (err, result) {
+		awsCognito.describeUserPool({UserPoolId: userPoolId}, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -175,18 +180,19 @@ Cognito.prototype.buildUserPoolParameters = function (snsCallerArn, cognitoCusto
 /**
  * Create an AWS Cognito user pool client
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} clientName
  * @return {Promise}
  */
-Cognito.prototype.createUserPoolClient = function (userPoolId, clientName) {
-	const cognito = this;
+Cognito.prototype.createUserPoolClient = function (region, userPoolId, clientName) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			UserPoolId: userPoolId,
 			ClientName: clientName
 		};
-		cognito.awsCognito.createUserPoolClient(params, function (err, result) {
+		awsCognito.createUserPoolClient(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -198,20 +204,21 @@ Cognito.prototype.createUserPoolClient = function (userPoolId, clientName) {
 /**
  * Create an group in the specific user pool.
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} groupName
  * @param {String} roleArn
  * @return {Promise}
  */
-Cognito.prototype.createCognitoGroup = function (userPoolId, groupName, roleArn) {
-	const cognito = this;
+Cognito.prototype.createCognitoGroup = function (region, userPoolId, groupName, roleArn) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			GroupName: groupName,
 			UserPoolId: userPoolId,
 			RoleArn: roleArn
 		};
-		cognito.awsCognito.createGroup(params, function (err, result) {
+		awsCognito.createGroup(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -223,6 +230,7 @@ Cognito.prototype.createCognitoGroup = function (userPoolId, groupName, roleArn)
 /**
  * Create an AWS Cognito user
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} userName
  * @param {String} email
@@ -230,8 +238,9 @@ Cognito.prototype.createCognitoGroup = function (userPoolId, groupName, roleArn)
  *
  * @return {Promise}
  */
-Cognito.prototype.createUser = function (userPoolId, userName, email, resendEmail) {
+Cognito.prototype.createUser = function (region, userPoolId, userName, email, resendEmail) {
 	const cognito = this;
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		cognito.generateToken().then(function (token) {
 			const params = {
@@ -255,7 +264,7 @@ Cognito.prototype.createUser = function (userPoolId, userName, email, resendEmai
 				params['MessageAction'] = 'RESEND';
 			}
 
-			cognito.awsCognito.adminCreateUser(params, function (err, result) {
+			awsCognito.adminCreateUser(params, function (err, result) {
 				if (err) {
 					return reject(err);
 				}
@@ -270,18 +279,19 @@ Cognito.prototype.createUser = function (userPoolId, userName, email, resendEmai
 /**
  * Delete an AWS Cognito user
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} userName
  * @return {Promise}
  */
-Cognito.prototype.deleteUser = function (userPoolId, userName) {
-	const cognito = this;
+Cognito.prototype.deleteUser = function (region, userPoolId, userName) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			UserPoolId: userPoolId,
 			Username: userName
 		};
-		cognito.awsCognito.adminDeleteUser(params, function (err, result) {
+		awsCognito.adminDeleteUser(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}
@@ -293,18 +303,19 @@ Cognito.prototype.deleteUser = function (userPoolId, userName) {
 /**
  * Get a list of AWS Cognito User Groups for an AWS Cognito User
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} userName
  * @return {Promise}
  */
-Cognito.prototype.listGroupsForUser = function (userPoolId, userName) {
-	const cognito = this;
+Cognito.prototype.listGroupsForUser = function (region, userPoolId, userName) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			UserPoolId: userPoolId,
 			Username: userName
 		};
-		cognito.awsCognito.adminListGroupsForUser(params, function (err, groups) {
+		awsCognito.adminListGroupsForUser(params, function (err, groups) {
 			if (err) {
 				return reject(err);
 			}
@@ -316,20 +327,21 @@ Cognito.prototype.listGroupsForUser = function (userPoolId, userName) {
 /**
  * Assign an AWS Cognito user to a AWS Cognito group
  *
+ * @param {String} region
  * @param {String} userPoolId
  * @param {String} userName
  * @param {String} groupName
  * @return {Promise}
  */
-Cognito.prototype.assignUserToGroup = function (userPoolId, userName, groupName) {
-	const cognito = this;
+Cognito.prototype.assignUserToGroup = function (region, userPoolId, userName, groupName) {
+	const awsCognito = new AWS.CognitoIdentityServiceProvider({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			UserPoolId: userPoolId,
 			Username: userName,
 			GroupName: groupName
 		};
-		cognito.awsCognito.adminAddUserToGroup(params, function (err, result) {
+		awsCognito.adminAddUserToGroup(params, function (err, result) {
 			if (err) {
 				return reject(err);
 			}

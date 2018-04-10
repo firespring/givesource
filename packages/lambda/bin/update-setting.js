@@ -15,8 +15,11 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
+const config = require('config');
 const inquirer = require('inquirer');
 const Lambda = require('./../src/aws/lambda');
 
@@ -53,7 +56,7 @@ return inquirer.prompt([
 				Settings: JSON.stringify(settings)
 			}
 		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
+		lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
 			console.log('Setting updated');
 		}).catch(function (err) {
 			console.log(err);

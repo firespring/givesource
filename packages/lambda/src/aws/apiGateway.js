@@ -22,28 +22,28 @@ const AWS = require('aws-sdk');
  * @constructor
  */
 function ApiGateway() {
-	this.apiGateway = new AWS.APIGateway({region: process.env.AWS_REGION});
 }
 
 /**
  * Deploy an AWS API Gateway
  *
+ * @param {String} region
  * @param {String} restApiId
  * @param {String} stageName
  * @return {Promise}
  */
-ApiGateway.prototype.deploy = function (restApiId, stageName) {
-	const gateway = this;
+ApiGateway.prototype.deploy = function (region, restApiId, stageName) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			restApiId: restApiId,
 			stageName: stageName
 		};
-		gateway.apiGateway.createDeployment(params, function (err, result) {
+		awsApiGateway.createDeployment(params, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
-			resolve();
+			resolve(data);
 		});
 	});
 };
@@ -51,21 +51,22 @@ ApiGateway.prototype.deploy = function (restApiId, stageName) {
 /**
  * Get the api keys of an AWS API Gateway
  *
+ * @param {String} region
  * @param {String} nameQuery
  * @return {Promise}
  */
-ApiGateway.prototype.getApiKeys = function (nameQuery) {
-	const gateway = this;
+ApiGateway.prototype.getApiKeys = function (region, nameQuery) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			nameQuery: nameQuery,
 			includeValues: true
 		};
-		gateway.apiGateway.getApiKeys(params, function (err, result) {
+		awsApiGateway.getApiKeys(params, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
-			resolve(result.items);
+			resolve(data.items);
 		});
 	});
 };
@@ -73,17 +74,18 @@ ApiGateway.prototype.getApiKeys = function (nameQuery) {
 /**
  * Get an AWS API Gateway api key
  *
+ * @param {String} region
  * @param {String} id
  * @return {Promise}
  */
-ApiGateway.prototype.getApiKey = function (id) {
-	const gateway = this;
+ApiGateway.prototype.getApiKey = function (region, id) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
 	return new Promise(function (resolve, reject) {
-		gateway.apiGateway.getApiKey({apiKey: id}, function (err, result) {
+		awsApiGateway.getApiKey({apiKey: id}, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
-			resolve(result);
+			resolve(data);
 		});
 	});
 };
@@ -91,21 +93,22 @@ ApiGateway.prototype.getApiKey = function (id) {
 /**
  * Create an AWS API Gateway api key
  *
+ * @param {String} region
  * @param {String} name
  * @return {Promise}
  */
-ApiGateway.prototype.createApiKey = function (name) {
-	const gateway = this;
+ApiGateway.prototype.createApiKey = function (region, name) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
 			name: name,
 			enabled: true
 		};
-		gateway.apiGateway.createApiKey(params, function (err, result) {
+		awsApiGateway.createApiKey(params, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
-			resolve(result);
+			resolve(data);
 		});
 	});
 };
@@ -113,17 +116,18 @@ ApiGateway.prototype.createApiKey = function (name) {
 /**
  * Delete an AWS API Gateway api key
  *
+ * @param {String} region
  * @param {String} id
  * @return {Promise}
  */
-ApiGateway.prototype.deleteApiKey = function (id) {
-	const gateway = this;
+ApiGateway.prototype.deleteApiKey = function (region, id) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
 	return new Promise(function (resolve, reject) {
-		gateway.apiGateway.deleteApiKey({apiKey: id}, function (err, result) {
+		awsApiGateway.deleteApiKey({apiKey: id}, function (err, data) {
 			if (err) {
 				return reject(err);
 			}
-			resolve();
+			resolve(data);
 		});
 	});
 };

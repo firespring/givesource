@@ -36,7 +36,7 @@ exports.handle = function (event, context, callback) {
 	const user = new User({email: email});
 
 	user.validate(['uuid', 'createdOn', 'email']).then(function () {
-		return cognito.createUser(userPoolId, user.uuid, user.email);
+		return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
 	}).then(function (cognitoUser) {
 		logger.log(JSON.stringify(cognitoUser));
 		cognitoUser.User.Attributes.forEach(function (attribute) {
@@ -45,7 +45,7 @@ exports.handle = function (event, context, callback) {
 			}
 		});
 	}).then(function () {
-		return cognito.assignUserToGroup(userPoolId, user.uuid, 'SuperAdmin');
+		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'SuperAdmin');
 	}).then(function () {
 		return user.validate();
 	}).then(function () {

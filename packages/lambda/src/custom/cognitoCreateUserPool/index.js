@@ -28,7 +28,7 @@ exports.handle = function (event, context) {
 	const cognito = new Cognito();
 	if (event.RequestType === 'Delete') {
 		const userPoolId = event.PhysicalResourceId.UserPoolId;
-		cognito.deleteUserPool(userPoolId).then(function () {
+		cognito.deleteUserPool(process.env.AWS_REGION, userPoolId).then(function () {
 			response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
 		}).catch(function (err) {
 			logger.log(err);
@@ -43,7 +43,7 @@ exports.handle = function (event, context) {
 		return;
 	}
 
-	cognito.createUserPool(poolName, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
+	cognito.createUserPool(process.env.AWS_REGION, poolName, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
 		const userPoolId = userPool.UserPool.Id;
 		response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
 	}).catch(function (err) {

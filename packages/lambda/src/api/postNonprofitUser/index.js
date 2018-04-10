@@ -42,7 +42,7 @@ exports.handle = function (event, context, callback) {
 				const user = new User({email: email, nonprofitUuid: nonprofit.uuid});
 				promise = promise.then(function () {
 					return user.validate(['uuid', 'createdOn', 'email']).then(function () {
-						return cognito.createUser(userPoolId, user.uuid, user.email);
+						return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
 					}).then(function (cognitoUser) {
 						cognitoUser.User.Attributes.forEach(function (attribute) {
 							if (attribute.Name === 'sub') {
@@ -50,7 +50,7 @@ exports.handle = function (event, context, callback) {
 							}
 						});
 					}).then(function () {
-						return cognito.assignUserToGroup(userPoolId, user.uuid, 'Nonprofit');
+						return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'Nonprofit');
 					}).then(function () {
 						return user.validate();
 					}).then(function () {

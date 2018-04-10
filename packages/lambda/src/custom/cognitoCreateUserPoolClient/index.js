@@ -30,7 +30,7 @@ exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const userPoolId = event.ResourceProperties.UserPoolId;
 	const clientName = event.ResourceProperties.ClientName;
-	cognito.createUserPoolClient(userPoolId, clientName).then(function (userPoolClient) {
+	cognito.createUserPoolClient(process.env.AWS_REGION, userPoolId, clientName).then(function (userPoolClient) {
 		const userPoolClientId = userPoolClient.UserPoolClient.ClientId;
 		response.send(event, context, response.SUCCESS, {UserPoolClientId: userPoolClientId}, userPoolClientId);
 	}).catch(function (err) {

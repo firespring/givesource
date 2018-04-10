@@ -92,13 +92,12 @@ exports.handle = function (event, context, callback) {
 const deleteNonprofitUsers = function (nonprofit) {
 	const cognito = new Cognito();
 	const nonprofitUsersRepository = new NonprofitUsersRepository();
-	const userPoolId = process.env.USER_POOL_ID;
 
 	return nonprofitUsersRepository.getAll(nonprofit.uuid).then(function (users) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
 			promise = promise.then(function () {
-				return cognito.deleteUser(userPoolId, user.uuid)
+				return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid)
 			}).then(function () {
 				return nonprofitUsersRepository.delete(nonprofit.uuid, user.uuid);
 			});
@@ -118,19 +117,18 @@ const addNonprofitCognitoUsers = function (nonprofit) {
 	const nonprofitUsersRepository = new NonprofitUsersRepository();
 	const usersRepository = new UsersRepository();
 
-	const userPoolId = process.env.USER_POOL_ID;
 	return nonprofitUsersRepository.getAll(nonprofit.uuid).then(function (users) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
 			promise = promise.then(function () {
-				return cognito.createUser(userPoolId, user.uuid, user.email).then(function (cognitoUser) {
+				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email).then(function (cognitoUser) {
 					cognitoUser.User.Attributes.forEach(function (attribute) {
 						if (attribute.Name === 'sub') {
 							user.cognitoUuid = attribute.Value;
 						}
 					});
 				}).then(function () {
-					return cognito.assignUserToGroup(userPoolId, user.uuid, 'Nonprofit');
+					return cognito.assignUserToGroup(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, 'Nonprofit');
 				}).then(function () {
 					return user.validate();
 				}).then(function () {

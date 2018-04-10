@@ -15,8 +15,11 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+const path = require('path');
+dotenv.config({path: path.resolve(__dirname, './../../../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
 
+const config = require('config');
 const Donation = require('./../src/models/donation');
 const DonationsRepository = require('./../src/repositories/donations');
 const inquirer = require('inquirer');
@@ -26,7 +29,7 @@ return inquirer.prompt([
 	{
 		type: 'confirm',
 		message: function () {
-			return 'Are you sure you want to delete test payments for stack: ' + process.env.AWS_STACK_NAME + '?';
+			return 'Are you sure you want to delete test payments for stack: ' + config.get('stack.AWS_STACK_NAME') + '?';
 		},
 		name: 'confirm',
 	}

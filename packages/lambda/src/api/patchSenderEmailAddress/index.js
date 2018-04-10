@@ -49,7 +49,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return ses.updatePolicy(fromEmailAddressArn, JSON.stringify(policy), process.env.AWS_STACK_NAME + '-SendEmailPolicy');
 	}).then(function () {
-		return cognito.updateUserPool(process.env.USER_POOL_ID, snsCallerRoleArn, cognitoCustomMessageArn, fromEmailAddressArn);
+		return cognito.updateUserPool(process.env.AWS_REGION, process.env.USER_POOL_ID, snsCallerRoleArn, cognitoCustomMessageArn, fromEmailAddressArn);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
