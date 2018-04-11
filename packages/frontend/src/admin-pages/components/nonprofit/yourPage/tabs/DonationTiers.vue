@@ -189,7 +189,7 @@
                 const formatted = [];
                 donationTiers.forEach(function (donationTier, index) {
                     formatted.push(donationTier);
-                    formatted[index].amount = Math.round(Number.parseFloat(donationTier.amount) * 100);
+                    formatted[index].amount = Math.round(parseFloat(donationTier.amount) * 100);
                 });
                 return formatted;
             },

@@ -30,7 +30,7 @@ const store = new Vuex.Store({
 			if (payload.amount && payload.nonprofit !== null) {
 				let amount = payload.amount;
 				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
-					amount = Math.round(Number.parseFloat(payload.amount) * 100);
+					amount = Math.round(parseFloat(payload.amount) * 100);
 				}
 
 				let isNew = true;
@@ -59,7 +59,7 @@ const store = new Vuex.Store({
 
 				let amount = payload.amount;
 				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
-					amount = Math.round(Number.parseFloat(payload.amount) * 100);
+					amount = Math.round(parseFloat(payload.amount) * 100);
 				}
 
 				const cartItem = _.find(state.cartItems, {timestamp: payload.timestamp});

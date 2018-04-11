@@ -162,7 +162,7 @@
 				event.preventDefault();
 				const vue = this;
 
-				const amount = Math.round(Number.parseFloat(vue.formData.customAmount) * 100);
+				const amount = Math.round(parseFloat(vue.formData.customAmount) * 100);
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
 
 				if (amount && !Object.keys(vue.formErrors).length) {
