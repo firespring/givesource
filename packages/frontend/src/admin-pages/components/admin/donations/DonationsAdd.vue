@@ -66,46 +66,87 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--text c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }">
+                                <div class="c-form-item c-form-item--radio">
                                     <div class="c-form-item__label">
-                                        <label for="donorNameFirst" class="c-form-item-label-text">Donor Name</label>
+                                        <div class="c-form-item-label-text" id="radioSubOptionInline">Donation Type</div>
                                     </div>
-                                    <div class="c-form-item__control">
-                                        <div class="c-form-control-grid">
-                                            <div class="c-form-control-grid__item">
-                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                    <input v-model="formData.firstName" type="text" name="donorNameFirst" id="donorNameFirst"
-                                                           :class="{ 'has-error': formErrors.firstName }">
-                                                    <label for="donorNameFirst">First Name</label>
-                                                </div>
-                                                <div v-if="formErrors.firstName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                    {{ formErrors.firstName }}
-                                                </div>
-                                            </div>
-                                            <div class="c-form-control-grid__item">
-                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                    <input v-model="formData.lastName" type="text" name="donorNameLast" id="donorNameLast"
-                                                           :class="{ 'has-error': formErrors.lastName }">
-                                                    <label for="donorNameLast">Last Name</label>
-                                                </div>
-                                                <div v-if="formErrors.lastName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                    {{ formErrors.lastName }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="c-form-item c-form-item--email" :class="{ 'c-form-item--has-error': formErrors.email }">
-                                    <div class="c-form-item__label">
-                                        <label for="donorEmail" class="c-form-item-label-text">Donor Email</label>
-                                    </div>
                                     <div class="c-form-item__control">
-                                        <div class="u-control-icon u-control-icon--email">
-                                            <input v-model="formData.email" type="email" name="donorEmail" id="donorEmail" :class="{ 'has-error': formErrors.email }">
-                                        </div>
-                                        <div v-if="formErrors.email" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.email }}
+                                        <ul class="c-input-list c-input-list--radio c-input-list--inline has-sub-options--show" aria-labelledby="radioSubOptionInline">
+                                            <li class="has-sub-options has-sub-options--show">
+                                                <input v-model="formData.type" type="radio" name="donationType" id="donationType-1" value="BULK">
+                                                <label for="donationType-1">Bulk Donation</label>
+                                            </li>
+                                            <li class="has-sub-options">
+                                                <input v-model="formData.type" type="radio" name="donationType" id="donationType-2" value="SINGLE">
+                                                <label for="donationType-2">Single Donor</label>
+                                            </li>
+                                        </ul>
+
+                                        <div class="sub-options-inline-wrapper sub-options-inline-wrapper--show">
+                                            <div id="donationType-1-sub-options" class="sub-options-inline" :class="{'sub-options-inline--show': formData.type === 'BULK'}">
+                                                <div class="c-form-item c-form-item--number c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.count}">
+                                                    <div class="c-form-item__label">
+                                                        <label for="donationNum" class="c-form-item-label-text"># of Donations</label>
+                                                    </div>
+                                                    <div class="c-form-item__control">
+                                                        <input v-model="formData.count" type="number" name="donationNum" id="donationNum"
+                                                               :class="{ 'has-error': formErrors.count }">
+                                                    </div>
+                                                    <div v-if="formErrors.count" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                        {{ formErrors.count }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="donationType-2-sub-options" class="sub-options-inline" :class="{'sub-options-inline--show': formData.type === 'SINGLE'}">
+                                                <div class="c-form-item c-form-item--text c-form-item--required"
+                                                     :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }">
+                                                    <div class="c-form-item__label">
+                                                        <label for="donorNameFirst" class="c-form-item-label-text">Donor Name</label>
+                                                    </div>
+                                                    <div class="c-form-item__control">
+                                                        <div class="c-form-control-grid">
+                                                            <div class="c-form-control-grid__item">
+                                                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                                                    <input v-model="formData.firstName" type="text" name="donorNameFirst" id="donorNameFirst"
+                                                                           :class="{ 'has-error': formErrors.firstName }">
+                                                                    <label for="donorNameFirst">First Name</label>
+                                                                </div>
+                                                                <div v-if="formErrors.firstName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                                    {{ formErrors.firstName }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="c-form-control-grid__item">
+                                                                <div class="has-floating-label js-floating-label" v-floating-label>
+                                                                    <input v-model="formData.lastName" type="text" name="donorNameLast" id="donorNameLast"
+                                                                           :class="{ 'has-error': formErrors.lastName }">
+                                                                    <label for="donorNameLast">Last Name</label>
+                                                                </div>
+                                                                <div v-if="formErrors.lastName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                                    {{ formErrors.lastName }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="c-form-item c-form-item--email" :class="{ 'c-form-item--has-error': formErrors.email }">
+                                                    <div class="c-form-item__label">
+                                                        <label for="donorEmail" class="c-form-item-label-text">Donor Email</label>
+                                                    </div>
+                                                    <div class="c-form-item__control">
+                                                        <div class="u-control-icon u-control-icon--email">
+                                                            <input v-model="formData.email" type="email" name="donorEmail" id="donorEmail"
+                                                                   :class="{ 'has-error': formErrors.email }">
+                                                        </div>
+                                                        <div v-if="formErrors.email" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                                            {{ formErrors.email }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -141,16 +182,18 @@
 
 				// Form Data
 				formData: {
-					subtotal: 0,
+					count: '',
 					email: '',
 					firstName: '',
 					lastName: '',
 					nonprofitUuid: '',
+					subtotal: 0,
+					type: 'BULK',
 				},
 
 				// Errors
 				formErrors: {},
-                apiError: {}
+				apiError: {}
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -189,7 +232,9 @@
 		},
 		methods: {
 			getConstraints: function () {
-				return {
+				const vue = this;
+
+				const constraints = {
 					subtotal: {
 						label: 'Donation amount',
 						presence: true,
@@ -197,24 +242,41 @@
 							greaterThan: 0,
 						}
 					},
-					email: {
-						label: 'Donor email address',
-						presence: false,
-						email: true,
-					},
-					firstName: {
-						label: 'Donor first name',
-						presence: true,
-					},
-					lastName: {
-						label: 'Donor last name',
-						presence: true,
-					},
 					nonprofitUuid: {
 						label: 'Related nonprofit',
 						presence: true,
-					},
+					}
 				};
+
+				if (vue.formData.type === 'BULK') {
+					constraints['count'] = {
+						label: 'Number of donations',
+						presence: true,
+						numericality: {
+							greaterThan: 0,
+						}
+					};
+				}
+
+				if (vue.formData.type === 'SINGLE') {
+					constraints['email'] = {
+						label: 'Donor email address',
+						presence: false,
+						email: true,
+					};
+
+					constraints['firstName'] = {
+						label: 'Donor first name',
+						presence: true,
+					};
+
+					constraints['lastName'] = {
+						label: 'Donor last name',
+						presence: true,
+					};
+				}
+
+				return constraints;
 			},
 			submit: function (event) {
 				event.preventDefault();
@@ -234,58 +296,71 @@
 			addDonation: function (action) {
 				const vue = this;
 
-				const donor = {
-					firstName: vue.formData.firstName,
-					lastName: vue.formData.lastName,
+				const donation = {
+					isAnonymous: false,
+					isFeeCovered: false,
+					isOfflineDonation: true,
+					subtotal: vue.getSubtotal(),
+					total: vue.getSubtotal(),
+					type: vue.formData.type,
 				};
-				if (vue.formData.email) {
-					donor.email = vue.formData.email;
-				}
 
 				let nonprofit = {};
-				vue.$request.get('nonprofits/' + vue.formData.nonprofitUuid).then(function (response) {
+				let promise = Promise.resolve();
+				promise = promise.then(function () {
+					return vue.$request.get('nonprofits/' + vue.formData.nonprofitUuid);
+				}).then(function (response) {
 					nonprofit = response.data;
-					return vue.$request.post('donors', donor);
-				}).then(function (response) {
-					if (response.data.errorMessage) {
-						return Promise.reject(response.data);
-					}
-					const donation = {
-						donorUuid: response.data.uuid,
-						fees: 0,
-						isAnonymous: false,
-						isFeeCovered: false,
-						isOfflineDonation: true,
-						subtotal: vue.getSubtotal(),
-						total: vue.getSubtotal(),
+					donation['nonprofitLegalName'] = nonprofit.legalName;
+					donation['nonprofitAddress1'] = nonprofit.address1;
+					donation['nonprofitAddress2'] = nonprofit.address2;
+					donation['nonprofitAddress3'] = nonprofit.address3;
+					donation['nonprofitCity'] = nonprofit.city;
+					donation['nonprofitState'] = nonprofit.state;
+					donation['nonprofitZip'] = nonprofit.zip;
+				});
 
-						// Donor
-						donorFirstName: response.data.firstName,
-						donorLastName: response.data.lastName,
-						donorEmail: response.data.email,
+				if (vue.formData.type === 'BULK') {
+					promise = promise.then(function () {
+						donation['count'] = parseInt(vue.formData.count);
+						return vue.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
+					});
+				}
 
-						// Nonprofit
-						nonprofitLegalName: nonprofit.legalName,
-						nonprofitAddress1: nonprofit.address1,
-						nonprofitAddress2: nonprofit.address2,
-						nonprofitAddress3: nonprofit.address3,
-						nonprofitCity: nonprofit.city,
-						nonprofitState: nonprofit.state,
-						nonprofitZip: nonprofit.zip,
-					};
-					return vue.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
-				}).then(function (response) {
+				if (vue.formData.type === 'SINGLE') {
+					promise = promise.then(function () {
+						const donor = {
+							firstName: vue.formData.firstName,
+							lastName: vue.formData.lastName,
+						};
+
+						if (vue.formData.email) {
+							donor.email = vue.formData.email;
+						}
+
+						return vue.$request.post('donors', donor);
+					}).then(function (response) {
+						donation['donorFirstName'] = response.data.firstName;
+						donation['donorLastName'] = response.data.lastName;
+						donation['donorEmail'] = response.data.email;
+						return vue.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
+					});
+				}
+
+				promise.then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
 						if (action === 'add') {
 							vue.formData = {
-								subtotal: 0,
+								count: '',
 								email: '',
 								firstName: '',
 								lastName: '',
-								nonprofitUuid: ''
+								nonprofitUuid: '',
+								subtotal: 0,
+                                type: vue.formData.type,
 							};
 						} else {
 							vue.$router.push({name: 'donations-list'});
@@ -293,8 +368,8 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			},
 			getSubtotal: function () {
 				return this.formData.subtotal * 100;
