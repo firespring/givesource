@@ -21,6 +21,16 @@
             <div class="time">{{ formattedTime }}</div>
         </td>
 
+        <td class="u-nowrap" v-if="isOfflineBulk">
+            Offline ({{ donation.count }})
+        </td>
+        <td class="u-nowrap" v-else-if="isOffline">
+            Offline
+        </td>
+        <td class="u-nowrap" v-else>
+            Online
+        </td>
+
         <td class="u-text-r">
             {{ formattedAmount }}
         </td>
@@ -29,45 +39,26 @@
             <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: donation.nonprofitUuid } }">{{ donation.nonprofitLegalName }}</router-link>
         </td>
 
-        <td v-if="donation.isAnonymous">
-            Anonymous
-        </td>
-
+        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous"></td>
         <td v-else>
             {{ donation.donorFirstName }} {{ donation.donorLastName }}
         </td>
 
-        <td v-if="donation.isAnonymous"></td>
-
-        <td v-else-if="donation.isOfflineDonation">
-            <div class="c-user-strip u-flex u-items-center" v-if="donation.donorEmail">
-                <div class="c-user-strip__content">
-                    <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="'mailto:' + donation.donorEmail">{{ donation.donorEmail }}</a>
-                    </div>
-                </div>
-            </div>
-        </td>
-
+        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous || !donation.donorEmail"></td>
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
                         <a :href="'mailto:' + donation.donorEmail">{{ donation.donorEmail }}</a>
                     </div>
-                    <div class="c-user-strip__phone u-icon u-flex u-items-center">
+                    <div class="c-user-strip__phone u-icon u-flex u-items-center" v-if="donation.donorPhone">
                         {{ donation.donorPhone }}
                     </div>
                 </div>
             </div>
         </td>
 
-        <td v-if="donation.isAnonymous"></td>
-
-        <td v-else-if="donation.isOfflineDonation">
-            Offline Donation
-        </td>
-
+        <td class="u-nowrap empty" v-if="isOffline || isAnonymous"></td>
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
@@ -79,7 +70,6 @@
                 </div>
             </div>
         </td>
-
     </tr>
 </template>
 
@@ -88,6 +78,15 @@
 
 	module.exports = {
 		computed: {
+			isAnonymous: function () {
+				return this.donation.isAnonymous;
+            },
+			isOffline: function () {
+				return this.donation.isOfflineDonation;
+            },
+            isOfflineBulk: function () {
+				return this.isOffline && this.donation.type === 'BULK';
+            },
 			formattedAmount: function () {
 				return numeral(this.donation.subtotal / 100).format('$0,00.00');
 			},

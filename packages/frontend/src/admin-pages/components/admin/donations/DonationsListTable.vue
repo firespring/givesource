@@ -22,6 +22,9 @@
                 <a href="#">Date</a>
             </th>
             <th class="sortable">
+                <a href="#">Type</a>
+            </th>
+            <th class="sortable">
                 <a href="#">$</a>
             </th>
             <th class="u-width-25p sortable">
@@ -40,7 +43,7 @@
         </tbody>
 
         <tbody v-else>
-        <layout-empty-table-row :loaded="loaded" :colspan="6" message="There are no donations."></layout-empty-table-row>
+        <layout-empty-table-row :loaded="loaded" :colspan="7" message="There are no donations."></layout-empty-table-row>
         </tbody>
     </table>
 </template>
