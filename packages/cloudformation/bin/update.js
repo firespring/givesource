@@ -28,7 +28,7 @@ const packageJson = require('./../../../package.json');
  */
 const updateStack = function () {
 	const cloudFormation = new CloudFormation();
-	const url = 'https://s3.' + config.get('stack.AWS_REGION') + '.amazonaws.com/' + config.get('release.AWS_RELEASE_BUCKET') + '/cf-templates/' + packageJson.version + '/givesource.yml';
+	const url = 'https://s3.' + config.get('release.AWS_RELEASE_BUCKET_REGION') + '.amazonaws.com/' + config.get('release.AWS_RELEASE_BUCKET') + '/cf-templates/' + packageJson.version + '/givesource.yml';
 	const parameters = [
 		{
 			ParameterKey: 'AdminEmail',
