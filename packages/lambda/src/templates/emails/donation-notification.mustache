@@ -402,12 +402,18 @@
 
                                             <p>
                                                 Date: {{ createdOn }}<br/>
-                                                {{#isAnonymous}}
-                                                    Donor: Anonymous <br/>
-                                                {{/isAnonymous}}
-                                                {{^isAnonymous}}
-                                                    Donor: {{donorFirstName}} {{donorLastName}} (<a href="mailto:{{{donorEmail}}}">{{{donorEmail}}}</a>)<br/>
-                                                {{/isAnonymous}}
+                                                {{#isOfflineDonation}}
+                                                    Type: Offline {{#isOfflineBulk}}({{count}}){{/isOfflineBulk}}<br/>
+                                                {{/isOfflineDonation}}
+                                                {{^isOfflineDonation}}
+                                                    Type: Online<br/>
+                                                    {{#isAnonymous}}
+                                                        Donor: Anonymous <br/>
+                                                    {{/isAnonymous}}
+                                                    {{^isAnonymous}}
+                                                        Donor: {{donorFirstName}} {{donorLastName}} (<a href="mailto:{{{donorEmail}}}">{{{donorEmail}}}</a>)<br/>
+                                                    {{/isAnonymous}}
+                                                {{/isOfflineDonation}}
                                                 {{#note}}
                                                     Note: {{ note }}
                                                 {{/note}}

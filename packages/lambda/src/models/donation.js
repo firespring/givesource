@@ -314,6 +314,7 @@ Donation.prototype.constraints = {
 Donation.prototype.defaults = function () {
 	return {
 		count: 1,
+		fees: 0,
 		isFeeCovered: false,
 		isOfflineDonation: false,
 		subtotalChargedToCard: 0,

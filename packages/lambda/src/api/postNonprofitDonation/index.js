@@ -15,16 +15,18 @@
  */
 
 const Donation = require('./../../models/donation');
+const DonationHelper = require('./../../helpers/donation');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const MetricsHelper = require('./../../helpers/metrics');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
-const DonationHelper = require('./../../helpers/donation');
 
 exports.handle = function (event, context, callback) {
 	const donationsRepository = new NonprofitDonationsRepository();
+	const lambda = new Lambda();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
@@ -33,9 +35,9 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		donation.populate(request._body);
 		return donation.validate();
-	}).then(function() {
+	}).then(function () {
 		return DonationHelper.getFeeRates(donation.isOfflineDonation);
-	}).then(function(rates) {
+	}).then(function (rates) {
 		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, rates.flatRate, rates.percent);
 		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
 		donation.amountForNonprofit = donation.total - donation.fees;
@@ -43,7 +45,7 @@ exports.handle = function (event, context, callback) {
 		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
 	}).then(function (response) {
 		nonprofit = response;
-		nonprofit.donationsCount = nonprofit.donationsCount + 1;
+		nonprofit.donationsCount = nonprofit.donationsCount + (donation.count || 1);
 		nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
 		nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
 		nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
@@ -55,11 +57,20 @@ exports.handle = function (event, context, callback) {
 		donation = response;
 		return nonprofitsRepository.save(nonprofit);
 	}).then(function () {
-		return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', 1);
+		return MetricsHelper.addAmountToMetric('DONATIONS_COUNT', (donation.count || 1));
 	}).then(function () {
 		return MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', donation.subtotal);
 	}).then(function () {
-		return MetricsHelper.maxMetricAmount('TOP_DONATION', donation.subtotal);
+		if (donation.type === 'BULK') {
+			return MetricsHelper.addAmountToMetric('DONORS_COUNT', (donation.count || 1))
+		} else {
+			return MetricsHelper.maxMetricAmount('TOP_DONATION', donation.subtotal);
+		}
+	}).then(function () {
+		const body = {
+			donations: [donation.all()]
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 	}).then(function () {
 		callback(null, donation.all());
 	}).catch(function (err) {

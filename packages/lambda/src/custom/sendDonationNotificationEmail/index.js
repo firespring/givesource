@@ -116,7 +116,10 @@ exports.handle = function (event, context, callback) {
 		Object.keys(nonprofits).forEach(function (nonprofitUuid) {
 			promise = promise.then(function () {
 				return RenderHelper.renderTemplate('emails.donation-notification', {
-					donations: nonprofits[nonprofitUuid].donations,
+					donations: nonprofits[nonprofitUuid].donations.map(function (donation) {
+						donation['isOfflineBulk'] = donation.type === 'BULK' && donation.isOfflineDonation;
+						return donation;
+					}),
 					settings: settings
 				});
 			}).then(function (response) {
