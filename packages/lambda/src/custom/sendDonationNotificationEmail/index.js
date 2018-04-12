@@ -91,11 +91,11 @@ exports.handle = function (event, context, callback) {
 					if (response.receiveDonationNotifications) {
 						return nonprofitUsersRepository.getAll(donation.nonprofitUuid);
 					} else {
-						callback();
+						return Promise.resolve([]);
 					}
 				}).then(function (response) {
 					nonprofits[donation.nonprofitUuid].users = response.filter(function (user) {
-						return user.isVerified;
+						return (user && user.isVerified);
 					});
 				});
 			}
@@ -127,9 +127,15 @@ exports.handle = function (event, context, callback) {
 					return user.email;
 				});
 				const subject = 'Your organization just received a donation.';
-				return ses.sendEmail(subject, response, null, fromAddress, toAddresses);
+				if (toAddresses.length) {
+					return ses.sendEmail(subject, response, null, fromAddress, toAddresses);
+				} else {
+					return Promise.resolve();
+				}
 			});
 		});
+
+		return promise;
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
