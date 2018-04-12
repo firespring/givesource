@@ -21,6 +21,9 @@ const MissingRequiredParameter = require('./../exceptions/missingRequiredParamet
 const SettingsRepository = require('./../repositories/settings');
 const SettingHelper = require('./setting');
 
+exports.TYPE_BULK = 'BULK';
+exports.TYPE_SINGLE = 'SINGLE';
+
 /**
  * Get fields for Report
  *

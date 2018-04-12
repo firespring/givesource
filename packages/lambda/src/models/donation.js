@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+const DonationHelper = require('./../helpers/donation');
 const Model = require('./model');
 const numeral = require('numeral');
 
@@ -41,6 +42,7 @@ Donation.prototype = new Model();
  */
 Donation.prototype.attributes = [
 	'amountForNonprofit',
+	'count',
 	'donorUuid',
 	'fees',
 	'isAnonymous',
@@ -51,6 +53,7 @@ Donation.prototype.attributes = [
 	'subtotal',
 	'subtotalChargedToCard',
 	'total',
+	'type',
 	'note',
 
 	// Donor
@@ -97,6 +100,14 @@ Donation.prototype.constraints = {
 		type: 'number',
 		numericality: {
 			onlyInteger: true
+		}
+	},
+	count: {
+		presence: true,
+		type: 'number',
+		numericality: {
+			onlyInteger: true,
+			greaterThanOrEqualTo: 1
 		}
 	},
 	donorUuid: {
@@ -152,6 +163,10 @@ Donation.prototype.constraints = {
 		numericality: {
 			onlyInteger: true
 		}
+	},
+	type: {
+		presence: true,
+		inclusion: [DonationHelper.TYPE_BULK, DonationHelper.TYPE_SINGLE]
 	},
 	note: {
 		presence: false,
@@ -298,9 +313,11 @@ Donation.prototype.constraints = {
  */
 Donation.prototype.defaults = function () {
 	return {
+		count: 1,
 		isFeeCovered: false,
 		isOfflineDonation: false,
 		subtotalChargedToCard: 0,
+		type: DonationHelper.TYPE_SINGLE,
 	};
 };
 
