@@ -161,11 +161,13 @@
 				let promise = Promise.resolve();
 				if (nonprofits) {
 					const logoUuids = _.filter(_.map(nonprofits, 'logoFileUuid'));
-					promise = axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: logoUuids})).then(function (response) {
-						_.forEach(nonprofits, function (nonprofit) {
-							nonprofit.logo = _.find(response.data, {uuid: nonprofit.logoFileUuid});
+					if (logoUuids.length) {
+						promise = axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: logoUuids})).then(function (response) {
+							_.forEach(nonprofits, function (nonprofit) {
+								nonprofit.logo = _.find(response.data, {uuid: nonprofit.logoFileUuid});
+							});
 						});
-					});
+					}
 				}
 				return promise;
 			}

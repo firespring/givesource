@@ -3,51 +3,50 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: AWS API Gateway Deployment resources for Givesource
 Parameters:
 
-  StackName:
-    Type: String
-
-  LambdaRoleArn:
-    Type: String
-
-  DefaultLambdaFunctionTimeout:
-    Type: Number
-
   RestApi:
     Type: String
 
 Resources:
 
-  ApiGatewayDeployFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/ApiGatewayDeploy.zip
-      Description: "Deploy the API Gateway"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-      FunctionName: !Sub |-
-        ${StackName}-ApiGatewayDeploy
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
   ApiDeployment:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref RestApi
-      StageName: "prod"
 
-  ApiGatewayDeploy:
-    Type: Custom::ApiGatewayDeploy
+  ApiProdStage:
+    Type: AWS::ApiGateway::Stage
     Properties:
-      ServiceToken: !GetAtt ApiGatewayDeployFunction.Arn
+      CacheClusterEnabled: true
+      CacheClusterSize: 0.5
+      DeploymentId: !Ref ApiDeployment
       RestApiId: !Ref RestApi
       StageName: "prod"
-      Version: {{version}}
-    DependsOn:
-      - ApiGatewayDeployFunction
-      - ApiDeployment
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 0
+          CachingEnabled: true
+          ThrottlingBurstLimit: 5000
+          ThrottlingRateLimit: 10000
+        - ResourcePath: "/donations"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/files"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/metrics"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/nonprofits"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/settings"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/sponsor-tiers"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60
+        - ResourcePath: "/sponsor-tiers/{sponsor_tier_uuid}/sponsors"
+          HttpMethod: GET
+          CacheTtlInSeconds: 60

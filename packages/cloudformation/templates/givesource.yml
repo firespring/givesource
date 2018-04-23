@@ -90,7 +90,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
-      TimeoutInMinutes: 30
+      TimeoutInMinutes: 40
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -647,9 +647,6 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        StackName: !Ref AWS::StackName
-        LambdaRoleArn: !GetAtt LambdaRole.Arn
-        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         RestApi: !Ref RestApi
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-deploy.yml
       TimeoutInMinutes: 20

@@ -32,7 +32,7 @@
                                     <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
                                         <input v-model="formData.CONTACT_EMAIL" type="email" name="contactEmail" id="contactEmail"
                                                :class="{ 'has-error': formErrors.CONTACT_EMAIL }" v-auto-focus>
-                                        <label for="contactEmail">Sender Email Address</label>
+                                        <label for="contactEmail">Contact Email Address</label>
                                     </div>
                                     <div v-if="formErrors.CONTACT_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.CONTACT_EMAIL }}

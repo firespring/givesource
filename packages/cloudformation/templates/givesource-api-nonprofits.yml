@@ -988,10 +988,16 @@ Resources:
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.path.nonprofit_uuid: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.path.nonprofit_uuid
+        CacheNamespace: !Sub |-
+          ${StackName}-GetNonprofitApiMethod
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
@@ -1060,10 +1066,20 @@ Resources:
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.size: false
+        method.request.querystring.sort: false
+        method.request.querystring.start: false
+        method.request.querystring.includeMatchFund: false
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.size
+          - method.request.querystring.sort
+          - method.request.querystring.start
+          - method.request.querystring.includeMatchFund
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
@@ -1501,10 +1517,19 @@ Resources:
       ApiKeyRequired: false
       RequestParameters:
         method.request.header.Authorization: true
+        method.request.querystring.size: false
+        method.request.querystring.sort: false
+        method.request.querystring.start: false
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.size
+          - method.request.querystring.sort
+          - method.request.querystring.start
+        CacheNamespace: !Sub |-
+          ${StackName}-GetNonprofitDonationsApiMethod
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
@@ -2299,10 +2324,16 @@ Resources:
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.path.slug: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.path.slug
+        CacheNamespace: !Sub |-
+          ${StackName}-GetNonprofitPageApiMethod
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
@@ -3644,10 +3675,20 @@ Resources:
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.category: false
+        method.request.querystring.legalName: false
+        method.request.querystring.status: false
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.category
+          - method.request.querystring.legalName
+          - method.request.querystring.status
+        CacheNamespace: !Sub |-
+          ${StackName}-SearchNonprofitsApiMethod
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub

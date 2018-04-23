@@ -281,10 +281,14 @@ Resources:
       HttpMethod: GET
       AuthorizationType: NONE
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.uuids: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.uuids
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
