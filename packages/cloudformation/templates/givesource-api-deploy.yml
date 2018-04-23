@@ -12,6 +12,7 @@ Resources:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref RestApi
+      StageName: "prod"
 
   ApiProdStage:
     Type: AWS::ApiGateway::Stage

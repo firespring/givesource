@@ -130,7 +130,6 @@ module.exports = function (env) {
 			VerifyEmail: './src/api/verifyEmail/index.js',
 
 			// Custom Lambda Functions
-			ApiGatewayDeploy: './src/custom/apiGatewayDeploy/index.js',
 			CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
 			CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
 			CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',
