@@ -16,6 +16,7 @@
 
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
@@ -26,6 +27,7 @@ const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
+	const lambda = new Lambda();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 
@@ -59,6 +61,8 @@ exports.handle = function (event, context, callback) {
 		return nonprofitsRepository.save(nonprofit);
 	}).then(function () {
 		return usersRepository.save(user);
+	}).then(function () {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback(null, {
 			nonprofit: nonprofit.all(),

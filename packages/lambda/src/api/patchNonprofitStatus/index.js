@@ -18,6 +18,7 @@ const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const InvalidInputException = require('./../../exceptions/invalidInput');
 const InvalidStatusException = require('./../../exceptions/invalidStatus');
+const Lambda = require('./../../aws/lambda');
 const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
@@ -27,6 +28,7 @@ const Request = require('./../../aws/request');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).parameters(['status']);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
@@ -70,6 +72,8 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function () {
 		return repository.save(nonprofit);
+	}).then(function () {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		if (status === NonprofitHelper.STATUS_DENIED || status === NonprofitHelper.STATUS_REVOKED) {
 			return deleteNonprofitUsers(nonprofit);

@@ -54,6 +54,11 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 60
           CachingEnabled: true
+        - ResourcePath: "/nonprofits/{nonprofit_uuid}"
+          HttpMethod: GET
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/settings"
           HttpMethod: GET
           CacheDataEncrypted: true
