@@ -63,14 +63,21 @@ p,
 ul,
 ol,
 blockquote {
-	margin: 0 0 1.5rem;
+	margin-top: 0;
+	margin-bottom: 1.5rem;
 }
 
 p:last-child,
 ul:last-child,
 ol:last-child,
 blockquote:last-child {
-	margin: 0;
+	margin-bottom: 0;
+}
+
+blockquote {
+	font-style: italic;
+	margin-left: 40px;
+	margin-right: 40px;
 }
 
 .list-plain {
@@ -988,20 +995,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-	  color: #9B9B97;
+	color: #9B9B97;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-	 color: #9B9B97;
-   opacity: 1;
+	color: #9B9B97;
+	opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-	 color: #9B9B97;
+	color: #9B9B97;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-	 color: #9B9B97;
+	color: #9B9B97;
 }
 
 /* Page header user info
@@ -1267,20 +1274,24 @@ Page footer
 	line-height: 1;
 }
 
+.contact-info * {
+	font-size: .9rem;
+}
+
 .contact-info__copyright {
 	font-weight: 700;
 }
 
-[class*='contact-info__'] [class*=fa-] {
-	margin: 0 .25rem 0 0;
-}
-
-[class*='contact-info__']:not(:first-child) {
+.contact-info__item {
 	margin: .75rem 0 0;
 }
 
-.contact-info * {
-	font-size: .9rem;
+.contact-info__item [class*=fa-] {
+	margin: 0 .25rem 0 0;
+}
+
+.contact-info__copyright {
+	margin: 0;
 }
 
 /* ----------------------------------------------------------------------------
@@ -1345,7 +1356,7 @@ Page mobile nav
 
 .has-overlay .overlay {
 	visibility: visible;
-    opacity: 1;
+	opacity: 1;
 }
 
 .has-overlay .overlay__nav {
@@ -1826,14 +1837,26 @@ Global Media Queries
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 		flex-direction: row;
+		justify-content: center;
+		flex-wrap: wrap;
 	}
 
-	[class*='contact-info__']:not(:first-child) {
-		margin: 0 0 0 1.25rem
+	.contact-info__item {
+		margin: 0 .625rem
+	}
+
+	.contact-info__copyright,
+	.contact-info__login {
+		width: 100%;
+		text-align: center;
 	}
 
 	.contact-info__copyright {
-		margin-right: auto;
+		margin: 0 0 .75rem;
+	}
+
+	.contact-info__login {
+		margin: .75rem 0 0;
 	}
 
 	.form-item--address .city-state-zip {
@@ -2113,10 +2136,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-	    -ms-flex-direction: column;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
+		-ms-flex-direction: column;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		flex-direction: column;
 	}
 
 	.nonprofit-search__category {
@@ -2168,6 +2191,20 @@ Global Media Queries
 		max-height: 25px;
 	}
 
+	.contact-info__item,
+	.contact-info__login {
+		margin: 0 0 0 1.25rem
+	}
+
+	.contact-info__copyright,
+	.contact-info__login {
+		width: auto;
+	}
+
+	.contact-info__copyright {
+		margin: 0 auto 0 0;
+	}
+
 }
 
 @media (min-width: 1100px) {
@@ -2203,10 +2240,10 @@ Global Media Queries
 	}
 
 	.nonprofit-search__name .grid {
-	    -ms-flex-direction: row;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        flex-direction: row;
+		-ms-flex-direction: row;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		flex-direction: row;
 	}
 
 	.nonprofit-search__name .grid-item--collapse {

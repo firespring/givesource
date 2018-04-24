@@ -92,7 +92,7 @@
 			}
 		},
 		methods: {
-			onTrigger: function (event) {
+			onTrigger: function () {
 				const vue = this;
 				vue.$refs.input.click();
 			},
@@ -103,7 +103,7 @@
 					vue.localValue = files[0];
 				}
 			},
-			removeFile: function (event) {
+			removeFile: function () {
 				const vue = this;
 				$(vue.$refs.input).val('');
 				vue.localValue = null;
