@@ -116,13 +116,12 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Effect: Allow
-            Action: apigateway:POST
-            Resource: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
-          - Effect: Allow
             Action: apigateway:*
             Resource:
               - !Sub arn:aws:apigateway:${AWS::Region}::/apikeys
               - !Sub arn:aws:apigateway:${AWS::Region}::/apikeys/*
+              - !Sub arn:aws:apigateway:${AWS::Region}::/restapis/*/stages
+              - !Sub arn:aws:apigateway:${AWS::Region}::/restapis/*/stages/*
     DependsOn: RestApi
 
   CloudFormationManagedPolicy:

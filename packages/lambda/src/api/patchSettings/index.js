@@ -16,6 +16,7 @@
 
 const _ = require('lodash');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
@@ -23,6 +24,7 @@ const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
 
@@ -53,6 +55,8 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function () {
 		return repository.batchUpdate(settings);
+	}).then(function () {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return DynamicContentHelper.regenerateDynamicContent(_.map(settings, 'key'), process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {

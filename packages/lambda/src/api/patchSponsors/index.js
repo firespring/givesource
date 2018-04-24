@@ -15,12 +15,14 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const Sponsor = require('./../../models/sponsor');
 const SponsorsRepository = require('./../../repositories/sponsors');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new SponsorsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsors']);
 
@@ -39,6 +41,8 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function () {
 		return repository.batchSave(request.urlParam('sponsor_tier_uuid'), sponsors);
+	}).then(function () {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

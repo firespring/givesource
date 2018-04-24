@@ -49,6 +49,30 @@ ApiGateway.prototype.deploy = function (region, restApiId, stageName) {
 };
 
 /**
+ * Flush the cache for an AWS API Gateway stage
+ *
+ * @param {String} region
+ * @param {String} restApiId
+ * @param {String} stageName
+ * @return {Promise}
+ */
+ApiGateway.prototype.flushStageCache = function (region, restApiId, stageName) {
+	const awsApiGateway = new AWS.APIGateway({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			restApiId: restApiId,
+			stageName: stageName
+		};
+		awsApiGateway.flushStageCache(params, function (err, data) {
+			if (err) {
+				return reject(err);
+			}
+			resolve(data);
+		});
+	});
+};
+
+/**
  * Get the api keys of an AWS API Gateway
  *
  * @param {String} region

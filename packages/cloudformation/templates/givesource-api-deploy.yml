@@ -8,18 +8,17 @@ Parameters:
 
 Resources:
 
-  ApiDeployment:
+  ApiProdDeployment:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref RestApi
-      StageName: "prod"
 
   ApiProdStage:
     Type: AWS::ApiGateway::Stage
     Properties:
       CacheClusterEnabled: true
       CacheClusterSize: 0.5
-      DeploymentId: !Ref ApiDeployment
+      DeploymentId: !Ref ApiProdDeployment
       RestApiId: !Ref RestApi
       StageName: "prod"
       MethodSettings:
@@ -30,24 +29,43 @@ Resources:
           CachingEnabled: true
           ThrottlingBurstLimit: 5000
           ThrottlingRateLimit: 10000
+        - ResourcePath: "/contents"
+          HttpMethod: GET
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 300
+          CachingEnabled: true
         - ResourcePath: "/donations"
           HttpMethod: GET
+          CacheDataEncrypted: true
           CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/files"
           HttpMethod: GET
-          CacheTtlInSeconds: 60
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 300
+          CachingEnabled: true
         - ResourcePath: "/metrics"
           HttpMethod: GET
+          CacheDataEncrypted: true
           CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/nonprofits"
           HttpMethod: GET
+          CacheDataEncrypted: true
           CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/settings"
           HttpMethod: GET
-          CacheTtlInSeconds: 60
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 300
+          CachingEnabled: true
         - ResourcePath: "/sponsor-tiers"
           HttpMethod: GET
-          CacheTtlInSeconds: 60
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 300
+          CachingEnabled: true
         - ResourcePath: "/sponsor-tiers/{sponsor_tier_uuid}/sponsors"
           HttpMethod: GET
-          CacheTtlInSeconds: 60
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 300
+          CachingEnabled: true

@@ -15,16 +15,18 @@
  */
 
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const SponsorTier = require('./../../models/sponsorTier');
 const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new SponsorTiersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	const sponsorTier = new SponsorTier(request._body);
+	let sponsorTier = new SponsorTier(request._body);
 	request.validate().then(function () {
 		return repository.getCount();
 	}).then(function (count) {
@@ -32,8 +34,11 @@ exports.handle = function (event, context, callback) {
 		return sponsorTier.validate();
 	}).then(function () {
 		return repository.save(sponsorTier);
-	}).then(function (model) {
-		callback(null, model.all());
+	}).then(function (response) {
+		sponsorTier = response;
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
+	}).then(function () {
+		callback(null, sponsorTier.all());
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -17,14 +17,16 @@
 const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const s3 = new S3();
+	const lambda = new Lambda();
 	const repository = new FilesRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit'])).parameters(['content_type', 'filename']);
+	const s3 = new S3();
 
 	let file = null;
 	request.validate().then(function () {
@@ -35,6 +37,8 @@ exports.handle = function (event, context, callback) {
 		return repository.save(file);
 	}).then(function (model) {
 		file = model;
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
+	}).then(function () {
 		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.path, request.get('content_type'));
 	}).then(function (url) {
 		callback(null, {

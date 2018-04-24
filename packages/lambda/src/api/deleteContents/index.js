@@ -19,10 +19,12 @@ const Content = require('./../../models/content');
 const ContentHelper = require('./../../helpers/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
+	const lambda = new Lambda();
 	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
 
@@ -49,6 +51,8 @@ exports.handle = function (event, context, callback) {
 		return promise;
 	}).then(function () {
 		return repository.batchDelete(contents);
+	}).then(function () {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

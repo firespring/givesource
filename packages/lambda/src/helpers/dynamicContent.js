@@ -98,16 +98,9 @@ exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackNa
  * @returns {Promise}
  */
 exports.regenerateDynamicContent = function (updatedSettings, awsRegion, awsStackName, force) {
-	let promise = Promise.resolve();
 	const helper = this;
 
-	promise = promise.then(function () {
-		return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force);
-	});
-
-	promise = promise.then(function () {
+	return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force).then(function () {
 		return helper.regeneratePublicIndex(updatedSettings, awsRegion, awsStackName, force);
 	});
-
-	return promise;
 };

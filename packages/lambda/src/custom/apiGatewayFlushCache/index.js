@@ -14,32 +14,20 @@
  * limitations under the License.
  */
 
-const FilesRepository = require('./../../repositories/files');
+const ApiGateway = require('./../../aws/apiGateway');
 const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const S3 = require('./../../aws/s3');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new FilesRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
-	const s3 = new S3();
+	const apiGateway = new ApiGateway();
+	const request = new Request(event, context);
 
-	let file = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('file_uuid'));
-	}).then(function (model) {
-		file = model;
-		return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);
-	}).then(function () {
-		return repository.delete(file.uuid);
-	}).then(function () {
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
+		return apiGateway.flushStageCache(process.env.AWS_REGION, process.env.REST_API_ID, 'prod');
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
+		console.log('Error: %j', err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 };
