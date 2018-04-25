@@ -47,12 +47,12 @@ exports.handle = function (event, context, callback) {
 			return Promise.reject(new Error('Missing required query parameter: category, legalName or status'));
 		}
 		if (request.queryParam('category', false)) {
-			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category']), matchFundNonprofitUuid));
+			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category', 'c']), matchFundNonprofitUuid));
 		}
 		if (request.queryParam('legalName', false)) {
-			return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName']), matchFundNonprofitUuid));
+			return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName', 'c']), matchFundNonprofitUuid));
 		}
-		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status']), matchFundNonprofitUuid));
+		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status', 'c']), matchFundNonprofitUuid));
 	}).then(function (response) {
 		const results = response.map(function (model) {
 			return model.all();
