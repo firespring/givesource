@@ -20,23 +20,23 @@
             <slot></slot>
 
             <div class="contact-info">
-                <div class="contact-info__copyright">
+                <div class="contact-info__item contact-info__copyright">
                     &copy; {{ year }} <router-link :to="{ name: 'homepage' }">{{ eventTitle }}</router-link>
                 </div>
 
-                <div class="contact-info__contact">
+                <div class="contact-info__item contact-info__contact">
                     <router-link :to="{ name: 'contact' }"><i class="fas fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
                 </div>
 
-                <div class="contact-info__contact" v-if="contactPhone">
+                <div class="contact-info__item contact-info__contact" v-if="contactPhone">
                     <i class="fas fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
                 </div>
 
-                <div class="contact-info__terms" v-if="displayTerms">
+                <div class="contact-info__item contact-info__terms" v-if="displayTerms">
                     <router-link :to="{ name: 'terms' }">Terms of Service</router-link>
                 </div>
 
-                <div class="contact-info__login">
+                <div class="contact-info__item contact-info__login">
                     <a :href="adminPagesUrl"><i class="fas fa-sign-in-alt" aria-hidden="true"></i><span>Admin Log In</span></a>
                 </div>
             </div>
