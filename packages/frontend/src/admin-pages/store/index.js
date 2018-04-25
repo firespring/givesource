@@ -22,10 +22,14 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
-		updated: 0,
-		settings: {}
+		cacheKey: 0,
+		settings: {},
+		updated: 0
 	},
 	mutations: {
+		generateCacheKey: function (state) {
+			state.cacheKey = new Date().getTime();
+		},
 		settings: function (state, settings) {
 			Object.keys(settings).forEach(function (key) {
 				state.settings[key] = settings[key];
@@ -36,6 +40,12 @@ const store = new Vuex.Store({
 		}
 	},
 	getters: {
+		cacheKey: function (state) {
+			if (!state.cacheKey) {
+				state.cacheKey = new Date().getTime();
+			}
+			return state.cacheKey;
+		},
 		settings: function (state) {
 			return state.settings;
 		},

@@ -179,7 +179,7 @@
 
                         <footer class="c-form-actions">
                             <button type="submit" class="c-btn">Save Changes</button>
-                            <a href="index.php" class="c-btn c-btn--neutral c-btn--text">Cancel</a>
+                            <router-link :to="{ name: 'settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
                         </footer>
                     </form>
 

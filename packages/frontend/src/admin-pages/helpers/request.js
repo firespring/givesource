@@ -39,6 +39,7 @@ Request.prototype.delete = function (uri, data, headers) {
 	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		const config = data ? {data: data, headers: response} : {headers: response};
+		store.commit('generateCacheKey');
 		return axios.delete(apiUrl + uri, config);
 	});
 };
@@ -70,6 +71,7 @@ Request.prototype.patch = function (uri, body, headers) {
 	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
+		store.commit('generateCacheKey');
 		return axios.patch(apiUrl + uri, body, {headers: response});
 	});
 };
@@ -86,6 +88,7 @@ Request.prototype.post = function (uri, body, headers) {
 	const apiUrl = store.getters.setting('API_URL');
 	return request.buildHeaders(headers).then(function (response) {
 		body = body || {};
+		store.commit('generateCacheKey');
 		return axios.post(apiUrl + uri, body, {headers: response});
 	});
 };
@@ -98,12 +101,16 @@ Request.prototype.post = function (uri, body, headers) {
  */
 Request.prototype.buildQuery = function (query) {
 	const params = [];
+	query = query || {};
+
+	if (!query.hasOwnProperty('c')) {
+		query['c'] = store.getters.cacheKey;
+	}
+
 	if (query) {
 		Object.keys(query).forEach(function (key) {
-			if (query.hasOwnProperty(key)) {
-				const value = encodeURIComponent(query[key]);
-				params.push(key + '=' + value);
-			}
+			const value = encodeURIComponent(query[key]);
+			params.push(key + '=' + value);
 		});
 		return params.length ? '?' + params.join('&') : '';
 	}
