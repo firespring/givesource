@@ -45,7 +45,6 @@ const updateStack = function () {
 	Object.keys(optionalParams).forEach(function (key) {
 		if (config.app.hasOwnProperty(key) && config.app[key]) {
 			let value = Array.isArray(config.app[key]) ? config.app[key].join(',') : config.app[key];
-			value = (value.indexOf(',') > -1) ? '\\\"' + value + '\\\"' : value;
 			parameters.push({
 				ParameterKey: optionalParams[key],
 				ParameterValue: value,
