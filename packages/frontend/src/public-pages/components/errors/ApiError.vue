@@ -15,7 +15,7 @@
   -->
 
 <template>
-    <div v-if="hasError" class="alert alert--bad">
+    <div v-if="hasError" class="alert alert--bad" ref="alert">
         <div class="alert__message">
             <h3 class="alert__title">There was an error processing your request.</h3>
             <ul>
@@ -65,7 +65,15 @@
 					value = value[0];
 				}
 				vue.localValue = value;
-			}
+			},
+            hasError: function (value) {
+				const vue = this;
+				if (value) {
+					vue.$nextTick(function () {
+						vue.$refs.alert.scrollIntoView(true);
+					});
+                }
+            }
 		},
 		methods: {
 			close: function () {
