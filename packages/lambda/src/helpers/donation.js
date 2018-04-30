@@ -47,6 +47,10 @@ exports.reportFields = [
 		value: 'isOfflineDonation',
 	},
 	{
+		label: 'Donations Count',
+		value: 'count',
+	},
+	{
 		label: 'Donor First Name',
 		value: 'donorFirstName',
 	},
