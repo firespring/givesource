@@ -18,18 +18,10 @@
     <table :class="{ 'table-empty': !displayRows }">
         <thead>
         <tr>
-            <th class="u-width-99p sortable sortable--desc u-nowrap">
-                <a href="#">Name</a>
-            </th>
-            <th class="sortable u-nowrap">
-                <a href="#">Registered</a>
-            </th>
-            <th class="sortable u-nowrap">
-                <a href="#">$ Raised</a>
-            </th>
-            <th>
-
-            </th>
+            <th class="u-width-99p u-nowrap">Name</th>
+            <th class="u-nowrap">Registered</th>
+            <th class="u-nowrap">$ Raised</th>
+            <th></th>
         </tr>
         </thead>
 

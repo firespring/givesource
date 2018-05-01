@@ -19,12 +19,8 @@
         <thead>
         <tr>
             <th class="icon"><i class="fa fa-picture-o" aria-hidden="true"></i></th>
-            <th class="u-width-100p sortable sortable--asc">
-                <a href="#">Name</a>
-            </th>
-            <th class="sortable">
-                <a href="#">Added</a>
-            </th>
+            <th class="u-width-100p">Name</th>
+            <th>Added</th>
             <th></th>
         </tr>
         </thead>
