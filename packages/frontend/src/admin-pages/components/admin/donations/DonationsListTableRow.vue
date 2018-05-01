@@ -39,7 +39,10 @@
             <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: donation.nonprofitUuid } }">{{ donation.nonprofitLegalName }}</router-link>
         </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous"></td>
+        <td class="u-nowrap empty" v-if="isOfflineBulk"></td>
+        <td v-else-if="isAnonymous">
+            Anonymous
+        </td>
         <td v-else>
             {{ donation.donorFirstName }} {{ donation.donorLastName }}
         </td>

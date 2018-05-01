@@ -35,7 +35,10 @@
             {{ formattedAmount }}
         </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous"></td>
+        <td class="u-nowrap empty" v-if="isOfflineBulk"></td>
+        <td v-else-if="isAnonymous">
+            Anonymous
+        </td>
         <td v-else>
             {{ donation.donorFirstName }} {{ donation.donorLastName }}
         </td>
