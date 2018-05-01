@@ -18,18 +18,10 @@
     <table :class="{ 'table=-empty': !displayRows }">
         <thead>
         <tr>
-            <th class="sortable sortable--desc">
-                <a href="#">Date</a>
-            </th>
-            <th class="sortable">
-                <a href="#">Type</a>
-            </th>
-            <th class="sortable">
-                <a href="#">$</a>
-            </th>
-            <th class="u-width-33p sortable">
-                <a href="#">Donor</a>
-            </th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>$</th>
+            <th class="u-width-33p">Donor</th>
             <th class="u-width-33p">Contact Info</th>
             <th class="u-width-33p">Billing Address</th>
         </tr>
