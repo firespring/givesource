@@ -101,14 +101,20 @@ exports.handle = function (event, context, callback) {
 		if (response.hasOwnProperty('Items')) {
 			donations = response.Items.map(function (donation) {
 				const model = new Donation(donation);
-				return model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
+				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
+				return data;
 			});
 		}
 
 		let promise = Promise.resolve();
 		if (paymentTransaction && donations.length) {
 			donations = donations.map(function (donation) {
-				return (donation instanceof Donation) ? donation.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donation;
+				const data =  (donation instanceof Donation) ? donation.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donation;
+				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
+				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
+				return data;
 			});
 
 			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : paymentTransaction;

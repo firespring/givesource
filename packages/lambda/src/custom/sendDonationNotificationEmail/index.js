@@ -73,7 +73,10 @@ exports.handle = function (event, context, callback) {
 		if (donations.length) {
 			donations = donations.map(function (donation) {
 				const model = new Donation(donation);
-				return model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
+				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
+				return data;
 			});
 		}
 
