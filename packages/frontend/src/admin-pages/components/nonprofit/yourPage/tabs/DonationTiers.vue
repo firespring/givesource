@@ -70,24 +70,7 @@
 		],
 		beforeMount: function () {
 			const vue = this;
-
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
-				if (response.data.errorMessage) {
-					console.log(response.data);
-				} else {
-					response.data.sort(function (a, b) {
-						return a.amount - b.amount;
-					});
-					response.data = response.data.map(function (tier) {
-						tier.description = tier.description === null ? '' : tier.description;
-						return tier;
-					});
-					vue.original = JSON.parse(JSON.stringify(response.data));
-					vue.donationTiers = JSON.parse(JSON.stringify(response.data));
-				}
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
-			});
+			vue.fetchDonationTiers();
 		},
 		watch: {
 			donationTiers: {
@@ -105,6 +88,27 @@
 			}
 		},
 		methods: {
+			fetchDonationTiers: function () {
+				const vue = this;
+
+				return vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
+					if (response.data.errorMessage) {
+						console.log(response.data);
+					} else {
+						response.data.sort(function (a, b) {
+							return a.amount - b.amount;
+						});
+						response.data = response.data.map(function (tier) {
+							tier.description = tier.description === null ? '' : tier.description;
+							return tier;
+						});
+						vue.original = JSON.parse(JSON.stringify(response.data));
+						vue.donationTiers = JSON.parse(JSON.stringify(response.data));
+					}
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
+			},
 			submit: function () {
 				const vue = this;
 
@@ -112,13 +116,12 @@
 					vue.addModal('spinner');
 					vue.updateDonationTiers();
 				}
-
 			},
 			validateDonationTiers: function () {
 				const vue = this;
 				const donationTiers = JSON.parse(JSON.stringify(vue.donationTiers));
 				const emptyRows = _.filter(donationTiers, {amount: '0.00'}).length;
-				var donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
+				const donationTiersLessThanTen = _.filter(donationTiers, function (donationTierRow) {
 					return donationTierRow.amount < 10;
 				}).length;
 
@@ -184,6 +187,8 @@
 				}
 
 				promise.then(function () {
+					return vue.fetchDonationTiers();
+				}).then(function () {
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.clearModals();
