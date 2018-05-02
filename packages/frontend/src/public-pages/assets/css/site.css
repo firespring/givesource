@@ -995,20 +995,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-	color: #9B9B97;
+	  color: #9B9B97;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-	color: #9B9B97;
-	opacity: 1;
+	 color: #9B9B97;
+   opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-	color: #9B9B97;
+	 color: #9B9B97;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-	color: #9B9B97;
+	 color: #9B9B97;
 }
 
 /* Page header user info
@@ -1356,7 +1356,7 @@ Page mobile nav
 
 .has-overlay .overlay {
 	visibility: visible;
-	opacity: 1;
+    opacity: 1;
 }
 
 .has-overlay .overlay__nav {
@@ -1837,24 +1837,27 @@ Global Media Queries
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 		flex-direction: row;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
 		justify-content: center;
+		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
 	}
-
+	
 	.contact-info__item {
 		margin: 0 .625rem
 	}
-
+	
 	.contact-info__copyright,
 	.contact-info__login {
 		width: 100%;
 		text-align: center;
 	}
-
+	
 	.contact-info__copyright {
 		margin: 0 0 .75rem;
 	}
-
+	
 	.contact-info__login {
 		margin: .75rem 0 0;
 	}
@@ -1897,7 +1900,7 @@ Global Media Queries
 		font-size: 1.25rem;
 		text-align: left;
 	}
-
+	
 	.leaderboard-item--detailed .leaderboard-item__image {
 		margin: 0;
 	}
@@ -1906,7 +1909,7 @@ Global Media Queries
 		font-size: 1rem;
 		transform: translateY(1px);
 	}
-
+	
 	.leaderboard-item__amount,
 	.leaderboard-item__action {
 		padding: 0;
@@ -1919,7 +1922,7 @@ Global Media Queries
 	.leaderboard-item--detailed [class*='leaderboard-item__'] + [class*='leaderboard-item__'] {
 		margin: 0 0 0 1rem;
 	}
-
+	
 	.leaderboard-item--detailed .leaderboard-item__info {
 		padding: 0;
 		-ms-flex: 1;
@@ -1987,7 +1990,7 @@ Global Media Queries
 		max-width: 100px;
 		max-height: 60px;
 	}
-
+	
 	.page-header__nav-toggle {
 		display: none;
 	}
@@ -2000,11 +2003,11 @@ Global Media Queries
 		display: -webkit-box;
 		display: flex;
 	}
-
+	
 	.presented-by__logo {
 		margin: 0 0 0 .5rem;
 	}
-
+	
 	.page-header__nav-menu {
 		font-weight: 700;
 	}
@@ -2081,15 +2084,15 @@ Global Media Queries
 	.grid-item:not(:first-child) {
 		margin-top: 0;
 	}
-
+	
 	.grid--compact {
 		margin: 0;
 	}
-
+	
 	.grid--compact .grid-item {
 		margin: 0;
 	}
-
+	
 	.grid--compact .grid-item:not(:first-child) {
 		margin: 0 0 0 15px;
 	}
@@ -2134,14 +2137,14 @@ Global Media Queries
 	[class*=nonprofit-search__] {
 		padding: 1rem 2.5rem 1.5rem;
 	}
-
+	
 	.nonprofit-search__name .grid {
-		-ms-flex-direction: column;
-		-webkit-box-orient: vertical;
-		-webkit-box-direction: normal;
-		flex-direction: column;
+	    -ms-flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
 	}
-
+	
 	.nonprofit-search__category {
 		padding: 1rem 2.5rem 1.5rem;
 	}
@@ -2158,7 +2161,7 @@ Global Media Queries
 		left: 0;
 		padding: .75rem 0 1rem;
 	}
-
+	
 	.nonprofit-search__see-all {
 		-ms-flex: 1 0 100%;
 		-webkit-box-flex: 1;
@@ -2190,19 +2193,23 @@ Global Media Queries
 	.sponsors__tier--sm .sponsor img {
 		max-height: 25px;
 	}
-
+	
 	.contact-info__item,
 	.contact-info__login {
 		margin: 0 0 0 1.25rem
 	}
-
+	
 	.contact-info__copyright,
 	.contact-info__login {
 		width: auto;
 	}
-
+	
 	.contact-info__copyright {
-		margin: 0 auto 0 0;
+		-ms-flex: 1;
+		-webkit-box-flex: 1;
+		flex: 1;
+		margin: 0;
+		text-align: left;
 	}
 
 }
@@ -2230,22 +2237,22 @@ Global Media Queries
 	[class*=nonprofit-search__] {
 		padding: 2rem 3rem 1.5rem;
 	}
-
+	
 	.nonprofit-search__name {
 		padding-right: 3.5rem;
 	}
-
+	
 	.nonprofit-search__love {
 		padding-left: 3.5rem;
 	}
-
+	
 	.nonprofit-search__name .grid {
-		-ms-flex-direction: row;
-		-webkit-box-orient: horizontal;
-		-webkit-box-direction: normal;
-		flex-direction: row;
+	    -ms-flex-direction: row;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        flex-direction: row;
 	}
-
+	
 	.nonprofit-search__name .grid-item--collapse {
 		padding-top: 0;
 	}
@@ -2289,7 +2296,7 @@ Global Media Queries
 		margin: 0 1.25rem 0 2rem;
 		padding: 0 2rem;
 	}
-
+	
 	.page-header__search:before {
 		font-size: 1.5rem;
 	}
