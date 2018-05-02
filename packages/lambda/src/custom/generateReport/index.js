@@ -58,9 +58,6 @@ exports.handle = function (event, context, callback) {
 		});
 	}).then(function () {
 		if (report.status === ReportHelper.STATUS_PENDING) {
-
-			console.log('here');
-
 			switch (report.type) {
 				case ReportHelper.TYPE_DONATIONS:
 					return getDonationsData(report, timezone);
@@ -151,7 +148,9 @@ const getDonationsData = function (report, timezone) {
 		}
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				return donation.mutate(null, {timezone: timezone});
+				const data = donation.mutate(null, {timezone: timezone});
+				data.donorFirstName = data.isAnonymous ? 'Anonymous' : data.donorFirstName;
+				return data;
 			}),
 			fields: DonationHelper.reportFields,
 		});
