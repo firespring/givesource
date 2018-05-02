@@ -1,6 +1,6 @@
 {
 	"name": "givesource",
-	"version": "1.1.6",
+	"version": "1.1.7",
 	"description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
 	"license": "Apache-2.0",
 	"repository": {
