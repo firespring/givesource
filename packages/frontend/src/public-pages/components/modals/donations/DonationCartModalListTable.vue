@@ -46,17 +46,18 @@
 </template>
 
 <script>
+	import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
-			const vue = this;
-
 			return {
-				cartItems: vue.$store.state.cartItems,
+				cartItems: [],
 			};
 		},
 		created: function () {
 			const vue = this;
 
+			vue.cartItems = vue.$store.state.cartItems;
 			vue.cartItems.sort(function (a, b) {
 				return a.timestamp - b.timestamp;
 			});
@@ -78,7 +79,9 @@
                     amount: item.amount
                 });
 
-				vue.bus.$emit('updateCartItems');
+                if (!Utils.isInternetExplorer()) {
+	                vue.bus.$emit('updateCartItems');
+                }
 			},
 			findNonprofit: function () {
 				const vue = this;

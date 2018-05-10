@@ -46,6 +46,8 @@
 </template>
 
 <script>
+    import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -79,7 +81,9 @@
 					note: item.note
 				});
 
-				vue.bus.$emit('updateCartItems');
+				if (!Utils.isInternetExplorer()) {
+					vue.bus.$emit('updateCartItems');
+				}
 			},
 			hasError: function (hasError) {
 				const vue = this;

@@ -477,7 +477,9 @@
                         vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
                     } else {
 						vue.$store.commit('clearCartItems');
-						vue.bus.$emit('updateCartItems');
+	                    if (!Utils.isInternetExplorer()) {
+		                    vue.bus.$emit('updateCartItems');
+	                    }
 						vue.$router.push({name: 'cart-response'});
 					}
 				}).catch(function (err) {

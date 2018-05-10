@@ -20,6 +20,7 @@
 </template>
 
 <script>
+	import * as Utils from './../../helpers/utils';
 	const numeral = require('numeral');
 
 	module.exports = {
@@ -36,7 +37,7 @@
 		},
 		computed: {
 			isInternetExplorer: function () {
-				return (navigator.appVersion.indexOf("MSIE 10") > -1) || (navigator.userAgent.indexOf("Trident") > -1 && navigator.userAgent.indexOf("rv:11") > -1);
+				return Utils.isInternetExplorer();
 			}
 		},
 		props: {
@@ -63,7 +64,7 @@
 			},
 			localValue: function () {
 				this.$emit('input', this.localValue);
-				this.$refs.moneyInput.dispatchEvent(new Event('input'));
+				this.$refs.input.dispatchEvent(new Event('input'));
 			}
 		},
 		methods: {

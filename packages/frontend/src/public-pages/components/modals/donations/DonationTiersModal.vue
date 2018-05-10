@@ -63,6 +63,8 @@
 </template>
 
 <script>
+    import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -169,7 +171,9 @@
 						nonprofit: vue.nonprofit
 					});
 
-					vue.bus.$emit('updateCartItems');
+					if (!Utils.isInternetExplorer()) {
+						vue.bus.$emit('updateCartItems');
+                    }
 
 					$(vue.$refs.donationModalOptions).fadeOut(function () {
 						vue.removeModal('donation-tiers');

@@ -36,6 +36,8 @@
 </template>
 
 <script>
+    import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -91,7 +93,9 @@
 				vue.$store.commit('removeCartItem', vue.timestamp);
 				vue.$emit('removeCartItem', vue.index);
 
-				vue.bus.$emit('updateCartItems');
+				if (!Utils.isInternetExplorer()) {
+					vue.bus.$emit('updateCartItems');
+				}
 			}
 		},
 		components: {
