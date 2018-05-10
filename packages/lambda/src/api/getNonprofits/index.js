@@ -177,7 +177,7 @@ const getRangeCondition = function (sort) {
 		case 'pending_legal_name_descending':
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
-			return ['legalName', '>', ' '];
+			return ['legalNameSearch', '>', ' '];
 
 		case 'all_created_on_ascending':
 		case 'all_created_on_descending':

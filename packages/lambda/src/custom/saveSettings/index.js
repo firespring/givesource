@@ -24,7 +24,7 @@ const S3 = require('./../../aws/s3');
 exports.handle = function (event, context, callback) {
 	logger.log('saveSettings event: %j', event);
 
-	if (event.RequestType === 'Delete') {
+	if (event.RequestType === 'Delete' || event.RequestType === 'Update') {
 		response.send(event, context, response.SUCCESS);
 		return;
 	}
