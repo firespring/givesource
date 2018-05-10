@@ -21,7 +21,7 @@
         </td>
         <td class="donation">
             <div class="donation-amount" :class="{ 'u-control-icon--has-error': formErrors.amount}">
-                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': formErrors.amount}">
+                <forms-money v-model="localAmount" name="amount" :hasError="formErrors.hasOwnProperty('amount')"></forms-money>
             </div>
             <div v-if="formErrors.amount" class="notes notes--below notes--error">
                 A donation amount must be at least $10.00
@@ -41,12 +41,6 @@
 			return {
 				localAmount: this.amount,
 				formErrors: {},
-
-				currencyOptions: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				}
 			};
 		},
 		computed: {
@@ -57,14 +51,15 @@
 		props: [
 			'amount',
 			'nonprofit',
-			'timestamp'
+			'timestamp',
+            'index'
 		],
 		watch: {
 			localAmount: function (value, oldValue) {
 				const vue = this;
 
-				if (value !== oldValue && vue.timestamp) {
-					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount);
+				if (value !== oldValue) {
+					vue.$emit('updateCartItem', vue.index, vue.localAmount);
 				}
 			},
 			amount: function (value, oldValue) {
@@ -94,12 +89,13 @@
 				const vue = this;
 
 				vue.$store.commit('removeCartItem', vue.timestamp);
-				vue.$emit('removeCartItem', vue.timestamp);
+				vue.$emit('removeCartItem', vue.index);
 
 				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
-			},
+			}
+		},
+		components: {
+			'forms-money': require('./../../forms/Money.vue')
 		}
 	};
 </script>

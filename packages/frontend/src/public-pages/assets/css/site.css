@@ -1020,6 +1020,10 @@ Page header
 	font-size: 2.75rem;
 }
 
+.page-header__cart .fa-layers-text {
+	font-size: .875rem;
+}
+
 .page-header__cart [class*=fa-] {
 	margin: 0 .4rem 0 0;
 }

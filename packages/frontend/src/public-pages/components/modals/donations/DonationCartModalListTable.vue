@@ -26,7 +26,7 @@
 
         <tbody v-if="cartItems.length">
         <donation-cart-modal-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit"
-                                            :key="index" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
+                                            :key="cartItem.timestamp" :index="index" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
                                             v-on:hasError="hasError"></donation-cart-modal-list-table-row>
         </tbody>
 
@@ -46,61 +46,51 @@
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                cartItems: [],
-            };
-        },
-        created: function () {
-            const vue = this;
+	module.exports = {
+		data: function () {
+			const vue = this;
 
-            vue.cartItems = vue.$store.state.cartItems;
-            vue.cartItems.sort(function (a, b) {
-                return a.timestamp - b.timestamp;
-            });
-        },
-        watch: {
-            cartItems: function () {
-                this.$emit('updateCartItemsCount', this.cartItems.length);
-            }
-        },
-        methods: {
-            removeCartItem: function (timestamp) {
-                const vue = this;
-                vue.cartItems = _.reject(vue.cartItems, {timestamp: timestamp});
-            },
-            updateCartItem: function (timestamp, amount) {
-                const vue = this;
+			return {
+				cartItems: vue.$store.state.cartItems,
+			};
+		},
+		created: function () {
+			const vue = this;
 
-                const cartItem = _.find(vue.cartItems, {timestamp: timestamp});
-                cartItem.amount = amount;
+			vue.cartItems.sort(function (a, b) {
+				return a.timestamp - b.timestamp;
+			});
+		},
+		methods: {
+			removeCartItem: function (index) {
+				const vue = this;
+				vue.cartItems.splice(index, 1);
+			},
+			updateCartItem: function (index, amount) {
+				const vue = this;
 
+				const item = vue.cartItems[index];
+				item.amount = amount;
+
+				vue.$set(vue.cartItems, index, item);
                 vue.$store.commit('updateCartItem', {
-                    timestamp: timestamp,
-                    amount: amount
+                	timestamp: item.timestamp,
+                    amount: item.amount
                 });
 
-                vue.bus.$emit('updateCartItems');
-                vue.bus.$emit('updateCartItemsCount');
-                vue.bus.$emit('updateCartItemsCounter');
-
-            },
-            findNonprofit: function () {
-                const vue = this;
-
-                $(vue.$refs.donationModalCart).hide();
-                vue.removeModal('donation-cart');
-                vue.removeBodyClasses('has-donation-overlay');
-                vue.$router.push({name: 'search-results'});
-            },
-            hasError: function (hasError) {
-                const vue = this;
-                vue.$emit('hasError', hasError);
-            }
-        },
-        components: {
-            'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')
-        }
-    };
+				vue.bus.$emit('updateCartItems');
+			},
+			findNonprofit: function () {
+				const vue = this;
+				vue.$emit('findNonprofit');
+			},
+			hasError: function (hasError) {
+				const vue = this;
+				vue.$emit('hasError', hasError);
+			}
+		},
+		components: {
+			'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')
+		}
+	};
 </script>

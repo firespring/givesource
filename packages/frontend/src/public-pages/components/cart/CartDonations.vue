@@ -118,12 +118,16 @@
                 const vue = this;
 
                 const cartItems = vue.$store.getters.cartItems;
-
-                vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
-                vue.donationSubtotal = 0;
-                cartItems.forEach(function (cartItem) {
-                    vue.donationSubtotal += cartItem.amount;
-                });
+                if (cartItems.length) {
+	                vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
+	                vue.donationSubtotal = 0;
+	                cartItems.forEach(function (cartItem) {
+		                vue.donationSubtotal += cartItem.amount;
+	                });
+                } else {
+                	vue.donationFees = 0;
+                	vue.donationSubtotal = 0;
+                }
             },
             hasError: function (hasError) {
                 const vue = this;

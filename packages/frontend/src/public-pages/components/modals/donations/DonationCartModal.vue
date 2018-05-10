@@ -25,10 +25,9 @@
 
                 <div class="donation-modal__content">
 
-                    <donation-cart-modal-list-table v-on:close="close" v-on:updateCartItemsCount="updateCartItemsCount" v-on:hasError="hasDonationErrors">
-                    </donation-cart-modal-list-table>
+                    <donation-cart-modal-list-table v-on:close="close" v-on:findNonprofit="findNonprofit" v-on:hasError="hasDonationErrors"></donation-cart-modal-list-table>
 
-                    <div class="donation-footer" v-if="displayCheckout">
+                    <div class="donation-footer" v-if="!isCartEmpty">
                         <a v-on:click.prevent="checkoutBtn" href="#" class="btn btn--lg btn--accent"><strong>Begin Checking Out</strong></a>
                         <a v-on:click.prevent="helpMoreBtn" href="#" class="btn btn--lite"><strong>Help More Nonprofits</strong></a>
                     </div>
@@ -45,7 +44,6 @@
 	module.exports = {
 		data: function () {
 			return {
-				displayCheckout: true,
 				hasError: false,
 			};
 		},
@@ -56,6 +54,11 @@
 				default: 1000
 			}
 		},
+        computed: {
+	        isCartEmpty : function () {
+		        return this.$store.state.cartItems.length === 0;
+	        }
+        },
 		created: function () {
 			const vue = this;
 			vue.addBodyClasses('has-donation-overlay');
@@ -93,9 +96,13 @@
 					vue.$router.push({name: 'search-results'});
 				}
 			},
-			updateCartItemsCount: function (count) {
+			findNonprofit: function () {
 				const vue = this;
-				vue.displayCheckout = count;
+
+				$(vue.$refs.donationModalCart).hide();
+				vue.removeModal('donation-cart');
+				vue.removeBodyClasses('has-donation-overlay');
+				vue.$router.push({name: 'search-results'});
 			},
 			hasDonationErrors: function (hasError) {
 				const vue = this;

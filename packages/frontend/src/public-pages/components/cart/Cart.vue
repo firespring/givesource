@@ -225,7 +225,6 @@
 	module.exports = {
 		data: function () {
 			return {
-				isCartEmpty: true,
 				processing: false,
 				donationError: false,
 
@@ -277,15 +276,10 @@
 			},
 			eventTitle: function () {
 				return Settings.eventTitle();
-			}
-		},
-		created: function () {
-			const vue = this;
-
-			vue.isCartEmpty = !vue.$store.state.cartItems.length;
-			vue.bus.$on('updateCartItemsCount', function () {
-				vue.isCartEmpty = !vue.$store.state.cartItems.length;
-			});
+			},
+            isCartEmpty : function () {
+				return this.$store.state.cartItems.length === 0;
+            }
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -310,11 +304,6 @@
                 vue.apiError = err.response.data.errors;
 				next();
 			});
-		},
-		beforeDestroy: function () {
-			const vue = this;
-
-			vue.bus.$off('updateCartItemsCount');
 		},
 		beforeMount: function () {
 			const vue = this;
@@ -489,9 +478,6 @@
                     } else {
 						vue.$store.commit('clearCartItems');
 						vue.bus.$emit('updateCartItems');
-						vue.bus.$emit('updateCartItemsCount');
-						vue.bus.$emit('updateCartItemsCounter');
-
 						vue.$router.push({name: 'cart-response'});
 					}
 				}).catch(function (err) {

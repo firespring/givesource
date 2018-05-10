@@ -25,8 +25,8 @@
         </thead>
 
         <tbody v-if="cartItems.length">
-        <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit" :key="index"
-                                       :note="cartItem.note" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
+        <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit"
+                                       :key="cartItem.timestamp" :note="cartItem.note" :index="index" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
                                        v-on:hasError="hasError"></cart-donations-list-table-row>
         </tbody>
 
@@ -61,26 +61,25 @@
 			});
 		},
 		methods: {
-			removeCartItem: function (timestamp) {
+			removeCartItem: function (index) {
 				const vue = this;
-				vue.cartItems = _.reject(vue.cartItems, {timestamp: timestamp});
+				vue.cartItems.splice(index, 1);
 			},
-			updateCartItem: function (timestamp, amount, note) {
+			updateCartItem: function (index, amount, note) {
 				const vue = this;
 
-				const cartItem = _.find(vue.cartItems, {timestamp: timestamp});
-				cartItem.amount = amount;
-				cartItem.note = note;
+				const item = vue.cartItems[index];
+				item.amount = amount;
+				item.note = note;
 
+				vue.$set(vue.cartItems, index, item);
 				vue.$store.commit('updateCartItem', {
-					timestamp: timestamp,
-					amount: amount,
-					note: note
+					timestamp: item.timestamp,
+					amount: item.amount,
+					note: item.note
 				});
 
 				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
 			},
 			hasError: function (hasError) {
 				const vue = this;
