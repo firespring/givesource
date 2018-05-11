@@ -166,7 +166,12 @@
 					});
 					vue.$refs.fileInput.value = '';
 					vue.addModal('spinner');
-				}
+				} else {
+					vue.addModal('error', {
+						title: 'Invalid Image Type',
+                        message: 'The following image types are supported: .gif, .jpg or .png'
+                    });
+                }
 			},
 			uploadFile: function (fileData, file) {
 				const vue = this;

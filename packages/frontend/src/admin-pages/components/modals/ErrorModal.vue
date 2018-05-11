@@ -15,52 +15,38 @@
   -->
 
 <template>
-    <div id="modal-confirm-delete" class="c-modal c-modal--warning c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
+    <div id="modal-error" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
         <div class="c-modal__contents">
-            <!-- BEGIN modal-dialog -->
             <div class="c-modal-dialog">
-                <!-- BEGIN modal-dialog__contents -->
                 <div class="c-modal-dialog__contents">
-                    <!-- BEGIN modal-header -->
-                    <div class="c-modal-header">
-                        <h1>{{modalTitle}}</h1>
-                    </div>
-                    <!-- END modal-header -->
 
-                    <!-- BEGIN modal-content -->
+                    <div class="c-modal-header" v-if="data.title">
+                        <h1>{{ data.title }}</h1>
+                    </div>
+
                     <div class="c-modal-content">
                         <div class="c-page-section">
                             <div class="c-page-section__main">
-                                <p>
-                                    {{modalText}}
-                                </p>
+                                <p>{{ data.message }}</p>
                             </div>
                         </div>
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="remove" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep Them</button>
+                                <button v-on:click.prevent="close" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Close</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- END modal-dialog__contents -->
             </div>
-            <!-- END modal-dialog -->
         </div>
-        <!-- END modal__contents -->
     </div>
 </template>
 
 <script>
 	module.exports = {
 		data: function () {
-			return {
-				modalTitle: this.data.modalTitle,
-				modalText: this.data.modalText,
-				callback: this.data.callback
-			}
+			return {};
 		},
 		props: {
 			zIndex: {
@@ -70,21 +56,15 @@
 			data: {
 				type: Object,
 				default: {
-					modalTitle: 'Delete Confirmation',
-					modalText: 'Are you sure you want to delete item(s)?',
-					callback: String
+					title: 'There was an error',
+					message: 'There was an error with that request. Please try again.',
 				}
 			}
 		},
 		methods: {
-			cancel: function () {
+			close: function () {
 				const vue = this;
-				vue.clearModals();
-			},
-			remove: function () {
-				const vue = this;
-				vue.clearModals();
-				vue.bus.$emit(vue.callback);
+				vue.removeModal('error');
 			}
 		}
 	}
