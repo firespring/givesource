@@ -78,10 +78,8 @@
 
             $(document).keyup(function (event) {
             	if (vue.modals.length && event.keyCode === 27) {
-		            vue.modals = [];
-		            vue.data = {};
-
-		            vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay');
+		            vue.clearModals();
+                    vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay');
                 }
             });
         },
