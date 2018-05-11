@@ -52,7 +52,7 @@ const store = new Vuex.Store({
 			}
 		},
 		removeCartItem: function (state, timestamp) {
-			_.remove(state.cartItems, {timestamp: timestamp});
+			state.cartItems = _.reject(state.cartItems, {timestamp: timestamp});
 		},
 		updateCartItem: function (state, payload) {
 			if (payload.amount && payload.timestamp) {

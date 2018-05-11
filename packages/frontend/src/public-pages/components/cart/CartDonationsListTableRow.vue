@@ -26,14 +26,14 @@
         </td>
         <td class="donation">
             <div class="donation-amount">
-                <input v-model.lazy="localAmount" type="text" name="amount" required v-money="currencyOptions" :class="{ 'has-error': error}">
+                <forms-money v-model="localAmount" name="amount" :hasError="formErrors.hasOwnProperty('amount')" required></forms-money>
             </div>
             <div v-if="error" class="notes notes--below notes--error">
                 A donation amount must be at least $10.00
             </div>
         </td>
         <td class="actions nowrap">
-            <a v-on:click="deleteCartItem" href="#" class="btn btn--sm btn--icon btn--red">
+            <a v-on:click.prevent="deleteCartItem" href="#" class="btn btn--sm btn--icon btn--red">
                 <i class="fas fa-trash-alt" aria-hidden="true"></i>Delete
             </a>
         </td>
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+    import * as Utils from './../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -48,11 +50,7 @@
 				localNote: this.note,
 				error: null,
 
-				currencyOptions: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				}
+				formErrors: {},
 			};
 		},
 		computed: {
@@ -68,14 +66,15 @@
 			'amount',
 			'nonprofit',
 			'timestamp',
-			'note'
+			'note',
+			'index'
 		],
 		watch: {
 			localAmount: function (value, oldValue) {
 				const vue = this;
 
-				if (value !== oldValue && vue.timestamp) {
-					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount, vue.localNote);
+				if (value !== oldValue) {
+					vue.$emit('updateCartItem', vue.index, vue.localAmount, vue.localNote);
 				}
 			},
 			amount: function (value, oldValue) {
@@ -85,7 +84,7 @@
 					return;
 				}
 				vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
-				vue.error = (Object.keys(vue.formErrors).length) ? true : false;
+				vue.error = !!Object.keys(vue.formErrors).length;
 				vue.$emit('hasError', vue.error);
 
 				vue.localAmount = value;
@@ -93,8 +92,8 @@
 			localNote: function (value, oldValue) {
 				const vue = this;
 
-				if (value !== oldValue && vue.timestamp) {
-					vue.$emit('updateCartItem', vue.timestamp, vue.localAmount, vue.localNote);
+				if (value !== oldValue) {
+					vue.$emit('updateCartItem', vue.index, vue.localAmount, vue.localNote);
 				}
 			},
 			note: function (value, oldValue) {
@@ -119,17 +118,19 @@
 					},
 				};
 			},
-			deleteCartItem: function (event) {
-				event.preventDefault();
+			deleteCartItem: function () {
 				const vue = this;
 
 				vue.$store.commit('removeCartItem', vue.timestamp);
-				vue.$emit('removeCartItem', vue.timestamp);
+				vue.$emit('removeCartItem', vue.index);
 
-				vue.bus.$emit('updateCartItems');
-				vue.bus.$emit('updateCartItemsCount');
-				vue.bus.$emit('updateCartItemsCounter');
+				if (!Utils.isInternetExplorer()) {
+					vue.bus.$emit('updateCartItems');
+				}
 			}
+		},
+		components: {
+			'forms-money': require('./../forms/Money.vue')
 		}
 	};
 </script>

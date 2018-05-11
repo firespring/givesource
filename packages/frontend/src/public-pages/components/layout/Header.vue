@@ -36,9 +36,9 @@
 
         <div v-if="canDonate" class="page-header__cart items-center">
             <router-link :to="{ name: 'cart' }" title="View your current donations">
-                <span class="fa-layers fa-fw" ref="shoppingBag">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-10 down-3">{{ cartItemsCount }}</span>
+                <span class="fa-layers fa-fw" ref="shoppingCart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="fa-layers-text fa-inverse" data-fa-transform="right-4 up-6">{{ cartItemsCount }}</span>
                 </span>
             </router-link>
         </div>
@@ -65,6 +65,9 @@
 			};
 		},
 		computed: {
+			canDonate: function () {
+				return Settings.acceptDonations();
+			},
 			displayAbout: function () {
 				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
 			},
@@ -82,16 +85,14 @@
 				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
 				return eventLogo ? eventLogo : '/assets/temp/logo-event.png';
 			},
-			canDonate: function () {
-				return Settings.acceptDonations();
-			}
 		},
 		created: function () {
 			const vue = this;
 
-			vue.updateCartItemsCount();
-			vue.bus.$on('updateCartItemsCounter', function () {
-				vue.updateCartItemsCount();
+			vue.cartItemsCount = vue.$store.state.cartItems.length;
+			vue.bus.$on('updateCartItems', function () {
+				vue.cartItemsCount = vue.$store.state.cartItems.length;
+				$(vue.$refs.shoppingCart).find('span.fa-layers-text').text(vue.cartItemsCount);
 			});
 
 			vue.bus.$on('navigate', function () {
@@ -101,7 +102,7 @@
 		beforeDestroy: function () {
 			const vue = this;
 
-			vue.bus.$off('updateCartItemsCounter');
+			vue.bus.$off('updateCartItems');
 			vue.bus.$off('navigate');
 		},
 		watch: {
@@ -139,12 +140,6 @@
 				const vue = this;
 
 				vue.$router.push(vue.generatePageLink({search: vue.formData.search}));
-			},
-			updateCartItemsCount: function () {
-				const vue = this;
-
-				vue.cartItemsCount = vue.$store.state.cartItems.length;
-				$(vue.$refs.shoppingBag).find('span[data-fa-processed]').text(vue.cartItemsCount);
 			},
 			openMenu: function (event) {
 				event.preventDefault();

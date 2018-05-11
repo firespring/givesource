@@ -38,8 +38,8 @@
                         <h2 v-if="displayDonationTiers">Or Enter a Custom Amount</h2>
                         <form v-on:submit="customAmount">
                             <div class="input">
-                                <input v-model="formData.customAmount" type="text" name="customAmount" id="customAmount" placeholder="Enter Amount" v-money="currencyOptions"
-                                       :class="{ 'has-error': formErrors.customAmount}">
+                                <forms-money v-model="formData.customAmount" name="customAmount" id="customAmount" placeholder="Enter Amount"
+                                             :hasError="formErrors.hasOwnProperty('customAmount')"></forms-money>
                             </div>
                             <div class="action">
                                 <button class="btn"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
@@ -63,6 +63,8 @@
 </template>
 
 <script>
+    import * as Utils from './../../../helpers/utils';
+
 	module.exports = {
 		data: function () {
 			return {
@@ -150,8 +152,6 @@
 					nonprofit: vue.nonprofit
 				});
 
-				vue.bus.$emit('updateCart');
-
 				$(vue.$refs.donationModalOptions).fadeOut(function () {
 					vue.removeModal('donation-tiers');
 					vue.removeBodyClasses('has-donation-overlay');
@@ -171,9 +171,9 @@
 						nonprofit: vue.nonprofit
 					});
 
-					vue.bus.$emit('updateCartItems');
-					vue.bus.$emit('updateCartItemsCount');
-					vue.bus.$emit('updateCartItemsCounter');
+					if (!Utils.isInternetExplorer()) {
+						vue.bus.$emit('updateCartItems');
+                    }
 
 					$(vue.$refs.donationModalOptions).fadeOut(function () {
 						vue.removeModal('donation-tiers');
@@ -185,6 +185,7 @@
 		},
 		components: {
 			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
+			'forms-money': require('./../../forms/Money.vue'),
 			'layout-spinner': require('./../../layout/Spinner.vue'),
 		}
 	}

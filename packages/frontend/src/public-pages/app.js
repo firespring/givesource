@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as VueMoney from "v-money";
+import * as VueMoney from 'v-money';
 import ApiErrorComponent from './components/errors/ApiError.vue';
 import App from './components/App.vue';
 import axios from "axios";
