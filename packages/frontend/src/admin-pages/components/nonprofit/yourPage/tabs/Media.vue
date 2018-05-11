@@ -155,7 +155,7 @@
 			onFileChange: function (event) {
 				const vue = this;
 
-				const extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
+				const extensions = ['gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
                     vue.addModal('photo-editor', {

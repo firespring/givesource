@@ -23,7 +23,7 @@ validate.validators.label = function () {
 
 // Add image validator
 validate.validators.image = function (value, options) {
-	let extensions = ['bmp', 'gif', 'jpeg', 'jpg', 'png'];
+	let extensions = ['gif', 'jpeg', 'jpg', 'png'];
 	options = options || true;
 
 	if (!value || value === false || typeof value === 'undefined' || value === null) {
