@@ -81,15 +81,11 @@ exports.handle = function (event, context, callback) {
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);
 			}
-			if (model.total) {
-				total += model.total;
-			}
 			if (model.subtotal) {
 				subtotal += model.subtotal;
 			}
 			if (model.isFeeCovered && model.fees) {
-				total = subtotal + model.fees;
-				fees = model.fees;
+				fees += model.fees;
 			}
 			donations.push(model);
 			promise = promise.then(function () {
@@ -107,6 +103,8 @@ exports.handle = function (event, context, callback) {
 		});
 		return promise;
 	}).then(function () {
+		total = subtotal + fees;
+
 		let promise = Promise.resolve();
 		nonprofitUuids.forEach(function (nonprofitUuid) {
 			promise = promise.then(function () {
