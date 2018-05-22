@@ -131,8 +131,7 @@ const getDonationsData = function (report, timezone) {
 		});
 	} else {
 		promise = promise.then(function () {
-			builder.limit(1000).index('isDeletedCreatedOnIndex').condition('isDeleted', '=', 0).condition('createdOn', '>', 0).scanIndexForward(true);
-			return donationsRepository.batchQuery(builder);
+			return donationsRepository.batchScan();
 		});
 	}
 
@@ -154,6 +153,8 @@ const getDonationsData = function (report, timezone) {
 			}),
 			fields: DonationHelper.reportFields,
 		});
+	}).catch(function (err) {
+		console.log(err);
 	});
 
 	return promise;
