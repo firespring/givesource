@@ -62,6 +62,7 @@
 				const vue = this;
 
 				vue.countdown = setInterval(function () {
+					vue.$store.commit('generateCacheKey');
 					vue.$request.get('nonprofits/' + vue.nonprofit.uuid + '/reports/' + vue.report.uuid).then(function (response) {
 						vue.report = response.data;
 						if (vue.report.status === 'SUCCESS') {
