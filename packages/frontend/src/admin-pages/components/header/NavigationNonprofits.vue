@@ -27,24 +27,47 @@
             <router-link tag="li" :to="{ name: 'nonprofit-settings-list', params: { nonprofitUuid: nonprofitUuid } }">
                 <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
             </router-link>
-            <!--<router-link tag="li" :to="{ name: 'nonprofit-help', params: { nonprofitUuid: nonprofitUuid } }">-->
-                <!--<a><i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>Help</a>-->
-            <!--</router-link>-->
         </ul>
 
-        <select class="js-menubar-nav-select">
-            <option value="#" selected>Donations</option>
-            <option value="#">Your Page</option>
-            <option value="#">Settings</option>
+        <select v-on:change="mobileSelect" v-model="selected">
+            <option disabled value="">Navigation</option>
+            <option value="nonprofit-donations-list" selected>Donations</option>
+            <option value="nonprofit-your-page">Your Page</option>
+            <option value="nonprofit-settings-list">Settings</option>
         </select>
 
     </div>
 </template>
 
 <script>
-    module.exports = {
-    	props: [
-    		'nonprofitUuid'
-        ]
-    }
+	module.exports = {
+		data: function () {
+			return {
+				selected: ''
+			};
+		},
+		created: function () {
+			this.setSelected();
+		},
+		props: [
+			'nonprofitUuid'
+		],
+		methods: {
+			setSelected: function () {
+				const vue = this;
+
+				if (vue.$route.path.indexOf('/donations') === 0) {
+					vue.selected = 'nonprofit-donations-list';
+				} else if (vue.$route.path.indexOf('/your-page') === 0) {
+					vue.selected = 'nonprofit-your-page';
+				} else if (vue.$route.path.indexOf('/settings') === 0) {
+					vue.selected = 'nonprofit-settings-list';
+				}
+			},
+			mobileSelect: function () {
+				const vue = this;
+				vue.$router.push({name: vue.selected});
+			}
+		}
+	}
 </script>
