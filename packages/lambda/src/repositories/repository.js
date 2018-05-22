@@ -201,7 +201,7 @@ Repository.prototype.batchScan = function (params, results) {
 				results.Items = results.Items.concat(data.Items);
 			}
 			if (data.LastEvaluatedKey) {
-				params.LastEvaluatedKey = data.LastEvaluatedKey;
+				params.ExclusiveStartKey = data.LastEvaluatedKey;
 				resolve(repository.batchScan(params, results));
 			}
 			resolve(results);
