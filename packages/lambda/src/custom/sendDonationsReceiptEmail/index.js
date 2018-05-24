@@ -93,7 +93,7 @@ exports.handle = function (event, context, callback) {
 		}
 		if (donor && donations.length === 0) {
 			const builder = new QueryBuilder('query');
-			builder.limit(100).index('donorUuidCreatedOnIndex').condition('donorUuid', '=', donor.uuid).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.limit(1000).index('donorUuidCreatedOnIndex').condition('donorUuid', '=', donor.uuid).condition('createdOn', '>', 0).scanIndexForward(false);
 			return donationsRepository.batchQuery(builder);
 		}
 		return Promise.resolve({});

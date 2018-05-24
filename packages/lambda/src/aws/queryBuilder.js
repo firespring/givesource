@@ -28,6 +28,7 @@ function QueryBuilder(type) {
 	this._select = null;
 	this._start = null;
 	this._limit = 1000;
+	this._max = 0;
 	this._keyConditions = [];
 	this._filters = [];
 	this._filterExpression = '';
@@ -109,6 +110,17 @@ QueryBuilder.prototype.start = function (exclusiveStartKey) {
  */
 QueryBuilder.prototype.limit = function (limit) {
 	this._limit = limit;
+	return this;
+};
+
+/**
+ * Query max
+ *
+ * @param {int} max
+ * @return {QueryBuilder}
+ */
+QueryBuilder.prototype.max = function (max) {
+	this._max = max;
 	return this;
 };
 
@@ -241,7 +253,7 @@ QueryBuilder.prototype.build = function () {
 	}
 
 	if (this._limit) {
-		params['Limit'] = this._limit;
+		params['Limit'] = (this._max && this._max < this._limit) ? this._max : this._limit;
 	}
 
 	if (this._select) {

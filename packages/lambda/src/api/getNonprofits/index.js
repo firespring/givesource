@@ -67,11 +67,11 @@ exports.handle = function (event, context, callback) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
+			builder.select('COUNT').limit(start).max(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
 			if (matchFundNonprofitUuid) {
 				builder.filter('uuid', '!=', matchFundNonprofitUuid)
 			}
-			return repository.query(builder);
+			return repository.batchQuery(builder);
 		} else {
 			return Promise.resolve({});
 		}

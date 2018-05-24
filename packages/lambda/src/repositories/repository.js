@@ -374,18 +374,28 @@ Repository.prototype.query = function (builder) {
  */
 Repository.prototype.batchQuery = function (builder, results) {
 	const repository = this;
-	results = results || {Count: 0, Items: []};
+	results = results || {Count: 0, Items: [], LastEvaluatedKey: false};
 	return new Promise(function (resolve, reject) {
 		repository.query(builder).then(function (data) {
+			let numResults = 0;
 			if (data.Count) {
 				results.Count += data.Count;
+				numResults = results.Count;
 			}
 			if (data.Items) {
 				results.Items = results.Items.concat(data.Items);
+				numResults = results.Items.length;
 			}
 			if (data.LastEvaluatedKey) {
-				builder.start(data.LastEvaluatedKey);
-				resolve(repository.batchQuery(builder, results));
+				results.LastEvaluatedKey = data.LastEvaluatedKey;
+				if (builder._max === 0) {
+					builder.start(data.LastEvaluatedKey);
+					resolve(repository.batchQuery(builder, results));
+				}
+				if (builder._max > 0 && numResults < builder._max) {
+					builder.start(data.LastEvaluatedKey).limit(builder._max - numResults);
+					resolve(repository.batchQuery(builder, results));
+				}
 			}
 			resolve(results);
 		}).catch(function (err) {

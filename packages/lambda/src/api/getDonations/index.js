@@ -50,8 +50,8 @@ exports.handle = function (event, context, callback) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
-			return repository.query(builder);
+			builder.select('COUNT').limit(start).max(start).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
+			return repository.batchQuery(builder);
 		} else {
 			return Promise.resolve({});
 		}

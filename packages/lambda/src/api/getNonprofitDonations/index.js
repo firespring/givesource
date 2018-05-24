@@ -55,11 +55,11 @@ exports.handle = function (event, context, callback) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.select('COUNT').limit(start).max(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
 			if (!allowTestPayments) {
 				builder.filter('paymentTransactionIsTestMode', '=', 0);
 			}
-			return repository.query(builder);
+			return repository.batchQuery(builder);
 		} else {
 			return Promise.resolve({});
 		}
