@@ -140,6 +140,9 @@ const getDonationsData = function (report, timezone) {
 		let donations = items.map(function (donation) {
 			return new Donation(donation);
 		});
+		donations.sort(function (a, b) {
+			return  b.createdOn - a.createdOn;
+		});
 		if (!displayTestPayments) {
 			donations = donations.filter(function (donation) {
 				return !donation.paymentTransactionIsTestMode;
