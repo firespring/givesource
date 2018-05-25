@@ -88,14 +88,6 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref UploadsS3
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${UploadsS3}/*
 
   # AWS CloudFront Resources
 

@@ -60,7 +60,7 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
  * @param {String} [contentDisposition]
  * @return {Promise}
  */
-S3.prototype.putObject = function (region, bucketName, objectName, body, contentType, contentDisposition) {
+S3.prototype.putObject = function (region, bucketName, objectName, body, acl, contentType, contentDisposition) {
 	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		contentType = contentType ? contentType : mime.getType(objectName);
@@ -70,6 +70,10 @@ S3.prototype.putObject = function (region, bucketName, objectName, body, content
 			Key: objectName,
 			ContentType: contentType
 		};
+
+		if (acl) {
+			params['ACL'] = acl;
+		}
 
 		if (contentDisposition) {
 			params['ContentDisposition'] = contentDisposition;
@@ -170,9 +174,10 @@ S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBu
  * @param {string} bucketName
  * @param {string} filePath
  * @param {string} contentType
+ * @param {string} [acl]
  * @return {Promise}
  */
-S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType) {
+S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType, acl) {
 	const awsS3 = new AWS.S3({region: region});
 	return new Promise(function (resolve, reject) {
 		const params = {
@@ -181,6 +186,9 @@ S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType)
 			Expires: 3600,
 			ContentType: contentType
 		};
+		if (acl) {
+			params['ACL'] = acl;
+		}
 		awsS3.getSignedUrl('putObject', params, function (err, url) {
 			if (err) {
 				reject(err);
