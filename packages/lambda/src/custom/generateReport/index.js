@@ -141,7 +141,7 @@ const getDonationsData = function (report, timezone) {
 			return new Donation(donation);
 		});
 		donations.sort(function (a, b) {
-			return  b.createdOn - a.createdOn;
+			return  a.createdOn - b.createdOn;
 		});
 		if (!displayTestPayments) {
 			donations = donations.filter(function (donation) {
