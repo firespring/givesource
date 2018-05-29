@@ -250,6 +250,7 @@
 				if (vue.formData.logo instanceof File) {
 					promise = promise.then(function () {
 						return vue.uploadFile('logo').then(function (uploadedFile) {
+							vue.$store.commit('generateCacheKey');
 							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
 						});
 					});

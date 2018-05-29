@@ -326,6 +326,7 @@
 						return vue.$request.delete('files/' + vue.slide.fileUuid);
 					}
 				}).then(function () {
+					vue.$store.commit('generateCacheKey');
 					vue.clearModals();
 					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 				}).catch(function (err) {

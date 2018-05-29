@@ -264,6 +264,7 @@
 
 					return vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid, params);
 				}).then(function () {
+					vue.$store.commit('generateCacheKey');
 					vue.clearModals();
 					vue.$router.push({name: 'sponsors-list'});
 				}).catch(function (err) {

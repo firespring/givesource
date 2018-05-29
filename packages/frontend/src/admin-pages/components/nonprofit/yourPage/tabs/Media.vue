@@ -197,6 +197,7 @@
 						type: MediaHelper.TYPE_IMAGE
 					});
 				}).then(function (response) {
+					vue.$store.commit('generateCacheKey');
 					vue.$router.push({
 						name: 'nonprofit-your-page-media-photos-edit',
 						params: {

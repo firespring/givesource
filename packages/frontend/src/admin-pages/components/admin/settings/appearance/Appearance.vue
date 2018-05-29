@@ -317,6 +317,7 @@
 					if (vue.formData[key] instanceof File) {
 						promise = promise.then(function () {
 							return vue.uploadImage(key).then(function (uploadedFile) {
+								vue.$store.commit('generateCacheKey');
 								settings.push({
 									key: key,
 									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''

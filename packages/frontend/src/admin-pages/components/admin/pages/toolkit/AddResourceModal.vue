@@ -289,6 +289,7 @@
 						}),
 					});
 				}).then(function () {
+					vue.$store.commit('generateCacheKey');
 					toolkitResourceListContent.value = Object.keys(vue.formData).map(function (key) {
 						return vue.formData[key];
 					});
