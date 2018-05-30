@@ -22,7 +22,7 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
-            <api-error v-model="apiError"></api-error>
+                <api-error v-model="apiError"></api-error>
 
                 <form v-on:submit="submit">
                     <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty" v-on:hasError="donationHasErrors"></cart-donations>
@@ -143,7 +143,7 @@
                             </div>
                             <div class="form-item__control">
                                 <forms-payment-cc-number v-model="paymentDetails.ccNumber" name="cc_num" id="cc_num"
-                                                         :hasError="formErrors.paymentDetails.ccNumber"></forms-payment-cc-number>
+                                                         :hasError="formErrors.paymentDetails.hasOwnProperty('ccNumber')"></forms-payment-cc-number>
                                 <div v-if="formErrors.paymentDetails.ccNumber" class="notes notes--below notes--error">
                                     {{ formErrors.paymentDetails.ccNumber }}
                                 </div>
@@ -155,7 +155,8 @@
                                 <label for="cc_name">Name on Card</label>
                             </div>
                             <div class="form-item__control">
-                                <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name" :class="{'has-error': formErrors.paymentDetails.ccName}">
+                                <input v-model="paymentDetails.ccName" type="text" name="cc_name" id="cc_name"
+                                       :class="{'has-error': formErrors.paymentDetails.hasOwnProperty('ccName')}">
                                 <div v-if="formErrors.paymentDetails.ccName" class="notes notes--below notes--error">
                                     {{ formErrors.paymentDetails.ccName }}
                                 </div>
@@ -189,7 +190,7 @@
                                         </div>
                                         <div class="form-item__control">
                                             <forms-payment-cc-security-code v-model="paymentDetails.ccCvv" name="cc_csc" id="cc_csc"
-                                                                            :hasError="formErrors.paymentDetails.ccCvv"></forms-payment-cc-security-code>
+                                                                            :hasError="formErrors.paymentDetails.hasOwnProperty('ccCvv')"></forms-payment-cc-security-code>
                                             <div v-if="formErrors.paymentDetails.ccCvv" class="notes notes--below notes--error">
                                                 {{ formErrors.paymentDetails.ccCvv }}
                                             </div>
@@ -266,7 +267,7 @@
 					formData: {},
 					paymentDetails: {},
 				},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		computed: {
@@ -277,9 +278,9 @@
 			eventTitle: function () {
 				return Settings.eventTitle();
 			},
-            isCartEmpty : function () {
+			isCartEmpty: function () {
 				return this.$store.state.cartItems.length === 0;
-            }
+			}
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -288,8 +289,8 @@
 				})).then(function (response) {
 					vue.contents = response.data;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -301,7 +302,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -451,8 +452,11 @@
 				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
 				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
 
-				if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length || vue.donationError) {
-					console.log(vue.formErrors);
+				if (vue.donationError) {
+					$('table.table-donations')[0].scrollIntoView(true);
+					vue.processing = false;
+                } else if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
+					vue.scrollToError();
 					vue.processing = false;
 				} else {
 					vue.processDonations();
@@ -472,18 +476,18 @@
 				}).then(function (response) {
 					vue.processing = false;
 
-                    if (response.data && response.data.errorMessage) {
+					if (response.data && response.data.errorMessage) {
 						console.log(response.data);
-                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
-                    } else {
+						vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+					} else {
 						vue.$store.commit('clearCartItems');
-	                    if (!Utils.isInternetExplorer()) {
-		                    vue.bus.$emit('updateCartItems');
-	                    }
+						if (!Utils.isInternetExplorer()) {
+							vue.bus.$emit('updateCartItems');
+						}
 						vue.$router.push({name: 'cart-response'});
 					}
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 					vue.processing = false;
 				});
 			},
@@ -493,10 +497,10 @@
 				vue.donations = [];
 				const cartItems = vue.$store.getters.cartItems;
 				cartItems.forEach(function (cartItem) {
-                    const fees = vue.calculateFees([cartItem], 30, 0.029);
+					const fees = vue.calculateFees([cartItem], 30, 0.029);
 					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
 					vue.donations.push({
-					    fees: fees,
+						fees: fees,
 						isAnonymous: vue.formData.isAnonymous,
 						isFeeCovered: vue.formData.isFeeCovered,
 						isOfflineDonation: false,
@@ -536,8 +540,8 @@
 
 					return Promise.reject(new Error('There was an error processing your payment.'));
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			},
 			getPaymentToken: function () {
 				const vue = this;

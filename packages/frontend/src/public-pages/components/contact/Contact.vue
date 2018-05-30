@@ -218,7 +218,9 @@
 
 				vue.processing = true;
 				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+
 				if (Object.keys(vue.formErrors).length) {
+					vue.scrollToError();
 					vue.processing = false;
 				} else {
 					vue.sendMessage();

@@ -76,6 +76,11 @@ const mixin = {
 				}
 			}
 			return validationErrors;
+		},
+		scrollToError: function () {
+			this.$nextTick(function () {
+				$('.has-error:first').closest('.form-item').first('.form-item__label')[0].scrollIntoView(true);
+			});
 		}
 	}
 };
