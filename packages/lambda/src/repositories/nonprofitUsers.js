@@ -51,7 +51,7 @@ NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			const builder = new QueryBuilder('query');
 			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				if (data.Items.length === 1) {
 					resolve(new User(data.Items[0]));
 				}
@@ -78,7 +78,7 @@ NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			const builder = new QueryBuilder('scan');
 			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {

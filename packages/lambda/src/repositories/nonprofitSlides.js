@@ -51,7 +51,7 @@ NonprofitSlidesRepository.prototype.get = function (nonprofitUuid, uuid) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			const builder = new QueryBuilder('query');
 			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				if (data.Items.length === 1) {
 					resolve(new NonprofitSlide(data.Items[0]));
 				}
@@ -78,7 +78,7 @@ NonprofitSlidesRepository.prototype.getAll = function (nonprofitUuid) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			const builder = new QueryBuilder('scan');
 			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {
@@ -108,7 +108,7 @@ NonprofitSlidesRepository.prototype.getCount = function (nonprofitUuid) {
 		nonprofitRepository.get(nonprofitUuid).then(function () {
 			const builder = new QueryBuilder('scan');
 			builder.filter('nonprofitUuid', '=', nonprofitUuid).select('COUNT');
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				resolve(data.Count);
 			}).catch(function (err) {
 				reject(err);

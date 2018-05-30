@@ -156,7 +156,7 @@ ContentsRepository.prototype.getCountByKey = function (key) {
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('query');
 		builder.index('keyIndex').condition('key', '=', key).select('COUNT');
-		repository.query(builder).then(function (data) {
+		repository.batchQuery(builder).then(function (data) {
 			resolve(data.Count);
 		}).catch(function (err) {
 			reject(err);

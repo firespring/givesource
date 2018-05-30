@@ -133,7 +133,7 @@ DonorsRepository.prototype.queryEmail = function (email) {
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('scan');
 		builder.filter('email', '=', email);
-		repository.query(builder).then(function (data) {
+		repository.batchQuery(builder).then(function (data) {
 			if (data.Items.length === 1) {
 				resolve(new Donor(data.Items[0]));
 			}

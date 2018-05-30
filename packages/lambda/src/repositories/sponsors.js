@@ -51,7 +51,7 @@ SponsorsRepository.prototype.get = function (sponsorTierUuid, uuid) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
 			const builder = new QueryBuilder('query');
 			builder.condition('uuid', '=', uuid).filter('sponsorTierUuid', '=', sponsorTierUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				if (data.Items.length === 1) {
 					resolve(new Sponsor(data.Items[0]));
 				}
@@ -78,7 +78,7 @@ SponsorsRepository.prototype.getAll = function (sponsorTierUuid) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
 			const builder = new QueryBuilder('query');
 			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid);
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				const results = [];
 				if (data.Items) {
 					data.Items.forEach(function (item) {
@@ -108,7 +108,7 @@ SponsorsRepository.prototype.getCount = function (sponsorTierUuid) {
 		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
 			const builder = new QueryBuilder('query');
 			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid).select('COUNT');
-			repository.query(builder).then(function (data) {
+			repository.batchQuery(builder).then(function (data) {
 				resolve(data.Count);
 			}).catch(function (err) {
 				reject(err);

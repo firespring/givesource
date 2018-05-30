@@ -88,7 +88,7 @@ SponsorTiersRepository.prototype.getCount = function () {
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('scan');
 		builder.select('COUNT');
-		repository.query(builder).then(function (data) {
+		repository.batchQuery(builder).then(function (data) {
 			resolve(data.Count);
 		}).catch(function (err) {
 			reject(err);

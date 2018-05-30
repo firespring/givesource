@@ -69,7 +69,7 @@ NonprofitsRepository.prototype.getBySlug = function (slug) {
 	return new Promise(function (resolve, reject) {
 		const builder = new QueryBuilder('query');
 		builder.index('slugIndex').condition('slug', '=', slug);
-		repository.query(builder).then(function (results) {
+		repository.batchQuery(builder).then(function (results) {
 			if (results.hasOwnProperty('Count') && results.hasOwnProperty('Items') && results.Count === 1) {
 				resolve(new Nonprofit(results.Items[0]));
 			}
@@ -264,7 +264,7 @@ NonprofitsRepository.prototype.validateSlugUniqueness = function (model) {
 		}
 		const builder = new QueryBuilder('query');
 		builder.index('slugIndex').condition('slug', '=', model.slug).filter('uuid', '!=', model.uuid);
-		repository.query(builder).then(function (results) {
+		repository.batchQuery(builder).then(function (results) {
 			if (results.hasOwnProperty('Count') && results.hasOwnProperty('Items') && results.Count > 0) {
 				results.Items.forEach(function (data) {
 					if (data.uuid !== model.uuid) {
