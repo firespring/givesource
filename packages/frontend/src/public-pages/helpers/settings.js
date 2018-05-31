@@ -197,8 +197,8 @@ const acceptDonations = function () {
 		const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END') ? store.getters.setting('DATE_DONATIONS_END') : dateEvent;
 
 		const now = moment().tz(eventTimezone);
-		const start = moment(new Date(dateDonationsStart)).tz(eventTimezone);
-		const end = moment(new Date(dateDonationsEnd)).tz(eventTimezone);
+		const start = moment(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone);
+		const end = moment(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone);
 		if (now.isBetween(start, end, 'day', '[]')) {
 			return true;
 		}
