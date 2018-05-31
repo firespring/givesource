@@ -79,7 +79,7 @@ exports.handle = function (event, context, callback) {
 		const builder = new QueryBuilder('query');
 		builder.limit(size).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
 		if (matchFundNonprofitUuid) {
-			builder.filter('uuid', '!=', matchFundNonprofitUuid)
+			builder.filter('uuid', '!=', matchFundNonprofitUuid).limit(parseInt(size) + 1);
 		}
 		if (response.hasOwnProperty('LastEvaluatedKey')) {
 			builder.start(response.LastEvaluatedKey);
@@ -88,6 +88,9 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		if (response.hasOwnProperty('Items')) {
 			items = response.Items;
+		}
+		if (matchFundNonprofitUuid && items.length > size) {
+			items.pop();
 		}
 		callback(null, {
 			items: items,
