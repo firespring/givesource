@@ -196,9 +196,9 @@ const acceptDonations = function () {
 		const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START') ? store.getters.setting('DATE_DONATIONS_START') : dateEvent;
 		const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END') ? store.getters.setting('DATE_DONATIONS_END') : dateEvent;
 
-		const now = moment().tz(eventTimezone);
-		const start = moment(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone);
-		const end = moment(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone);
+		const now = moment().utc().tz(eventTimezone);
+		const start = moment(new Date(dateDonationsStart)).utc().startOf('day').tz(eventTimezone);
+		const end = moment(new Date(dateDonationsEnd)).utc().endOf('day').tz(eventTimezone);
 		if (now.isBetween(start, end, 'day', '[]')) {
 			return true;
 		}
