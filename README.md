@@ -1,4 +1,5 @@
-![Logo](https://cdn.firespring.com/images/34d653fd-3153-4af8-940e-c230bd5d8b4c.png)
+![Logo](https://github.com/firespring/givesource/wiki/images/givesource-logo-colors-on-dark.png)
+
 
 Givesource is a platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
 Leveraging Amazon Web Services, Givesource was built using a serverless architecture to support high site traffic and donor activity.
