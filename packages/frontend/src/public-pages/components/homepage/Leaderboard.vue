@@ -72,7 +72,7 @@
 		},
 		computed: {
 			showLeaderboard: function () {
-				return Settings.isDayOfEventOrAfter();
+				return Settings.isDuringEventOrAfter();
 			},
 			eventTitle: function () {
 				return Settings.eventTitle();

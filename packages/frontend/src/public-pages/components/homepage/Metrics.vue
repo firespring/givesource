@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="main-spotlight-section countdown" v-if="displayEventCountdown() && countdown.loaded">
+            <div class="main-spotlight-section countdown" v-if="displayEventCountdown && countdown.loaded">
                 {{ countdownPrefix }}
                 <span class="countdown__timer">
                     <span v-if="countdown.days > 0">{{ countdown.days }} days,</span>
@@ -84,7 +84,8 @@
 
                 <div class="nonprofit-search__love" v-if="displayMatchFund && canDonate">
                     <div class="mb3">
-                        <router-link class="btn btn--accent btn--lg" :to="{ name: 'nonprofit-landing-page', params: {slug: matchFundNonprofit.slug} }">{{ matchFundButtonText }}</router-link>
+                        <router-link class="btn btn--accent btn--lg" :to="{ name: 'nonprofit-landing-page', params: {slug: matchFundNonprofit.slug} }">{{ matchFundButtonText }}
+                        </router-link>
                     </div>
                     <div class="notes" v-if="matchFundDetails">
                         {{ matchFundDetails }}
@@ -131,7 +132,6 @@
 	import * as Utils from './../../helpers/utils';
 	import * as Settings from './../../helpers/settings';
 
-	const moment = require('moment-timezone');
 	const numeral = require('numeral');
 
 	module.exports = {
@@ -148,12 +148,12 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 
 				countdown: {
 					loaded: false,
 					timer: 0,
-					type: 'preEvent',
+					type: null,
 
 					days: null,
 					hours: null,
@@ -168,28 +168,8 @@
 			};
 		},
 		computed: {
-			dateEvent: function () {
-				const vue = this;
-				return vue.$store.getters.setting('DATE_EVENT');
-			},
-			eventTimezone: function () {
-				const vue = this;
-				return vue.$store.getters.setting('EVENT_TIMEZONE');
-			},
 			eventTitle: function () {
 				return Settings.eventTitle();
-			},
-			eventDateEndOfDay: function () {
-				if (this.dateEvent && this.eventTimezone) {
-					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).endOf('day').format());
-				}
-				return '';
-			},
-			eventDateStartOfDay: function () {
-				if (this.dateEvent && this.eventTimezone) {
-					return new Date(moment(new Date(this.dateEvent)).tz(this.eventTimezone).startOf('day').format());
-				}
-				return '';
 			},
 			countdownPrefix: function () {
 				return this.countdown.type === 'event' ? 'You have' : 'There are';
@@ -200,6 +180,9 @@
 				}
 				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
 			},
+			displayEventCountdown: function () {
+				return Settings.isBeforeEvent() || Settings.isDuringEvent();
+			},
 			displayRegisterButton: function () {
 				const vue = this;
 
@@ -207,13 +190,13 @@
 					return false;
 				}
 
-				return Settings.acceptRegistrations();
+				return Settings.isDuringRegistrations();
 			},
 			displaySendReceiptForm: function () {
 				return Settings.isAfterEvent();
 			},
 			displayDonationTotals: function () {
-				return Settings.isDayOfEventOrAfter();
+				return Settings.isDuringEventOrAfter();
 			},
 			donationsCountArray: function () {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
@@ -222,7 +205,7 @@
 				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
 			},
 			canDonate: function () {
-				return Settings.acceptDonations();
+				return Settings.isDuringDonations();
 			},
 			displayMatchFund: function () {
 				const vue = this;
@@ -265,10 +248,10 @@
 					}
 				});
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-            });
+				vue.apiError = err.response.data.errors;
+			});
 
-			if (vue.displayEventCountdown()) {
+			if (vue.displayEventCountdown) {
 				vue.initializeCountdown();
 			}
 		},
@@ -293,37 +276,32 @@
 			},
 		},
 		methods: {
-			displayEventCountdown: function () {
-				if (this.dateEvent && this.eventTimezone && this.eventDateEndOfDay && this.eventDateStartOfDay) {
-					return new Date().getTime() <= this.eventDateEndOfDay.getTime();
-				}
-				return false;
-			},
 			initializeCountdown: function () {
 				const vue = this;
 
-				const end = this.eventDateEndOfDay.getTime();
-				const start = this.eventDateStartOfDay.getTime();
-
+				let countdown = {};
 				vue.countdown.timer = setInterval(function () {
-					const now = new Date().getTime();
-
-					let distance = start - now;
-					if (distance < 0) {
-						distance = end - now;
-						vue.countdown.type = 'event';
-					}
-
-					vue.countdown.days = Math.floor(distance / (1000 * 60 * 60 * 24));
-					vue.countdown.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-					vue.countdown.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-					vue.countdown.seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-					vue.countdown.loaded = true;
-					if (distance <= 0) {
+					if (Settings.isAfterEvent()) {
 						vue.countdown.loaded = false;
 						clearInterval(vue.countdown.timer);
 					}
+
+					if (Settings.isBeforeEvent()) {
+						vue.countdown.type = 'preEvent';
+						countdown = Settings.countdownUntilEventStart();
+					}
+
+					if (Settings.isDuringEvent()) {
+						vue.countdown.type = 'event';
+						countdown = Settings.countdownUntilEventEnd();
+					}
+
+					vue.countdown.days = countdown.days;
+					vue.countdown.hours = countdown.hours;
+					vue.countdown.minutes = countdown.minutes;
+					vue.countdown.seconds = countdown.seconds;
+					vue.countdown.loaded = true;
+
 				}, 1000);
 			},
 			getReceiptConstraints: function () {
@@ -373,7 +351,7 @@
 					vue.processing = false;
 					// TODO: redirect to thank-you page
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 					vue.processing = false;
 				});
 			},

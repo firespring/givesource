@@ -169,12 +169,12 @@
                 </form>
             </div>
 
-            <div v-if="!canRegister && isBeforeRegistrationStart" class="wrapper wrapper--sm">
+            <div v-if="!canRegister && isBeforeRegistrations" class="wrapper wrapper--sm">
                 Registration for {{ eventTitle }} will open on {{ registrationStartDate }}.
                 Thank you for your interest in making {{ eventTitle }} a big success!
             </div>
 
-            <div v-if="!canRegister && isAfterRegistrationEnd" class="wrapper wrapper--sm">
+            <div v-if="!canRegister && isAfterRegistrations" class="wrapper wrapper--sm">
                 Registration for {{ eventTitle }} is now closed.
                 Thank you for your help making {{ eventTitle }} a big success!
             </div>
@@ -189,8 +189,6 @@
 <script>
 	import * as Utils from './../../helpers/utils';
 	import * as Settings from './../../helpers/settings';
-
-	const moment = require('moment-timezone');
 
 	module.exports = {
 		data: function () {
@@ -227,20 +225,16 @@
 				return Settings.eventTitle();
 			},
 			registrationStartDate: function () {
-				var vue = this;
-				return moment(new Date(Settings.registrationStartDate())).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM DDDo YYYY');
+				return Settings.registrationStartDate().format('MMMM DDDo YYYY');
 			},
 			canRegister: function () {
-				const vue = this;
-				return Settings.acceptRegistrations(vue.settings);
+				return Settings.isDuringRegistrations();
 			},
-			isAfterRegistrationEnd: function () {
-				const vue = this;
-				return Settings.isAfterRegistrationEnd(vue.settings);
+			isAfterRegistrations: function () {
+				return Settings.isAfterRegistrations();
 			},
-			isBeforeRegistrationStart: function () {
-				const vue = this;
-				return Settings.isBeforeRegistrationStart(vue.settings);
+			isBeforeRegistrations: function () {
+				return Settings.isBeforeRegistrations();
 			}
 		},
 		beforeRouteEnter: function (to, from, next) {

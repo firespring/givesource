@@ -122,7 +122,7 @@ const router = new VueRouter({
 			name: 'leaderboard',
 			component: require('./../components/leaderboard/Leaderboard.vue'),
 			beforeEnter: function (to, from, next) {
-				if (!Settings.isDayOfEventOrAfter()) {
+				if (!Settings.isDuringEventOrAfter()) {
 					next({name: '404'});
 				} else {
 					next();

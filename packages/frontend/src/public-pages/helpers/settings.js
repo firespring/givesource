@@ -13,161 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import store from './../store';
 
 const moment = require('moment-timezone');
-
-/**
- * Is nonprofit registration active?
- * Registration is considered active if an event timezone or start/end dates have not been configured.
- *
- * @returns {boolean}
- */
-const acceptRegistrations = function () {
-
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-	if (eventTimezone && dateEvent) {
-		const now = moment().tz(eventTimezone);
-		const start = moment(new Date(registrationStartDate())).tz(eventTimezone);
-		const end = moment(new Date(registrationEndDate())).tz(eventTimezone);
-		if (now.isBetween(start, end, 'day', '[]')) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-/**
- * Get registration start date
- *
- * @returns {String|null}
- */
-const registrationStartDate = function () {
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-	let dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START');
-	if (!dateRegistrationsStart && eventTimezone && dateEvent) {
-		dateRegistrationsStart = moment(new Date(dateEvent)).tz(eventTimezone).subtract(30, 'days').format('MM/DD/YYYY');
-	}
-
-	return dateRegistrationsStart;
-};
-
-/**
- * Get registration end date
- *
- * @returns {String|null}
- */
-const registrationEndDate = function () {
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-	let dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END');
-	if (!dateRegistrationsEnd && eventTimezone && dateEvent) {
-		dateRegistrationsEnd = moment(new Date(dateEvent)).tz(eventTimezone).subtract(1, 'days').format('MM/DD/YYYY');
-	}
-
-	return dateRegistrationsEnd;
-};
-
-/**
- * Has nonprofit registration started yet?
- *
- * @returns {boolean}
- */
-const isBeforeRegistrationStart = function () {
-
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateRegistrationsStart = registrationStartDate();
-
-	if (eventTimezone && dateRegistrationsStart) {
-		let now = moment().tz(eventTimezone);
-		if (now.isBefore(moment(new Date(dateRegistrationsStart)).tz(eventTimezone).startOf('day'))) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-/**
- * Has nonprofit registration ended?
- *
- * @returns {boolean}
- */
-const isAfterRegistrationEnd = function () {
-
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateRegistrationsEnd = registrationEndDate();
-
-	if (eventTimezone && dateRegistrationsEnd) {
-		let now = moment().tz(eventTimezone);
-		if (now.isAfter(moment(new Date(dateRegistrationsEnd)).tz(eventTimezone).endOf('day'))) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-/**
- * Is it the day of the event?
- *
- * @returns {boolean}
- */
-const isDayOfEvent = function () {
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-
-	if (eventTimezone && dateEvent) {
-		let now = moment().tz(eventTimezone);
-		if (now.isSame(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-/**
- * Is it the day of the event or after?
- *
- * @returns {boolean}
- */
-const isDayOfEventOrAfter = function () {
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-
-	if (eventTimezone && dateEvent) {
-		let now = moment().tz(eventTimezone);
-		if (now.isSameOrAfter(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
-/**
- * Is it after the event?
- *
- * @returns {boolean}
- */
-const isAfterEvent = function () {
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-
-	if (eventTimezone && dateEvent) {
-		let now = moment().tz(eventTimezone);
-		if (now.isAfter(moment(new Date(dateEvent)).tz(eventTimezone), 'day')) {
-			return true;
-		}
-	}
-
-	return false;
-};
 
 /**
  * Get event title
@@ -183,38 +31,292 @@ const eventTitle = function () {
 };
 
 /**
- * Can donations be submitted?
+ * Get Event start date
+ *
+ * @return {Object|null}
+ */
+const eventStartDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEventStart = store.getters.setting('DATE_EVENT_START');
+
+	if (dateEventStart && eventTimezone) {
+		return moment(new Date(dateEventStart)).startOf('day').tz(eventTimezone, true);
+	}
+
+	return null;
+};
+
+/**
+ * Get Event end date
+ *
+ * @return {Object|null}
+ */
+const eventEndDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEventEnd = store.getters.setting('DATE_EVENT_END');
+
+	if (dateEventEnd && eventTimezone) {
+		return moment(new Date(dateEventEnd)).endOf('day').tz(eventTimezone, true);
+	}
+
+	return null;
+};
+
+/**
+ * Is it before the event?
  *
  * @returns {boolean}
  */
-const acceptDonations = function () {
+const isBeforeEvent = function () {
+	const start = eventStartDate();
 
-	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
-	const dateEvent = store.getters.setting('DATE_EVENT');
-
-	if (eventTimezone && dateEvent) {
-		const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START') ? store.getters.setting('DATE_DONATIONS_START') : dateEvent;
-		const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END') ? store.getters.setting('DATE_DONATIONS_END') : dateEvent;
-
-		const now = moment().utc().tz(eventTimezone);
-		const start = moment(new Date(dateDonationsStart)).utc().startOf('day').tz(eventTimezone);
-		const end = moment(new Date(dateDonationsEnd)).utc().endOf('day').tz(eventTimezone);
-		if (now.isBetween(start, end, 'day', '[]')) {
-			return true;
-		}
+	if (start) {
+		let now = moment();
+		return now.isBefore(start, 'day');
 	}
 
 	return false;
 };
 
+/**
+ * Is it the during the event?
+ *
+ * @returns {boolean}
+ */
+const isDuringEvent = function () {
+	const start = eventStartDate();
+	const end = eventEndDate();
+
+	if (start && end) {
+		const now = moment();
+		return now.isBetween(start, end, 'day', '[]');
+	}
+
+	return false;
+};
+
+/**
+ * Is it after the event?
+ *
+ * @returns {boolean}
+ */
+const isAfterEvent = function () {
+	const end = eventEndDate();
+
+	if (end) {
+		let now = moment();
+		return now.isAfter(end, 'day');
+	}
+
+	return false;
+};
+
+/**
+ * Is it the during the event or after?
+ *
+ * @returns {boolean}
+ */
+const isDuringEventOrAfter = function () {
+	return isDuringEvent() || isAfterEvent();
+};
+
+/**
+ * Get countdown until event start
+ *
+ * @returns {Object}
+ */
+const countdownUntilEventStart = function () {
+	return _getCountdown(eventStartDate());
+};
+
+/**
+ * Get countdown until event end
+ *
+ * @returns {Object}
+ */
+const countdownUntilEventEnd = function () {
+	return _getCountdown(eventEndDate());
+};
+
+/**
+ * Get registration start date
+ *
+ * @returns {Object|null}
+ */
+const registrationStartDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEventStart = eventStartDate();
+	const dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START');
+
+	if (dateRegistrationsStart) {
+		return moment(new Date(dateRegistrationsStart)).startOf('day').tz(eventTimezone, true);
+	} else if (eventTimezone && dateEventStart) {
+		return dateEventStart.subtract(30, 'days');
+	}
+
+	return null;
+};
+
+/**
+ * Get registration end date
+ *
+ * @returns {Object|null}
+ */
+const registrationEndDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateEventStart = eventStartDate();
+	const dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END');
+
+	if (dateRegistrationsEnd) {
+		return moment(new Date(dateRegistrationsEnd)).endOf('day').tz(eventTimezone, true);
+	} else if (eventTimezone && dateEventStart) {
+		return dateEventStart.subtract(1, 'days').endOf('day');
+	}
+
+	return null;
+};
+
+/**
+ * Has nonprofit registration started?
+ *
+ * @returns {boolean}
+ */
+const isBeforeRegistrations = function () {
+	const start = registrationStartDate();
+
+	if (start) {
+		let now = moment();
+		return now.isBefore(start, 'day');
+	}
+
+	return false;
+};
+
+/**
+ * Is nonprofit registration active?
+ *
+ * @returns {boolean}
+ */
+const isDuringRegistrations = function () {
+	const start = registrationStartDate();
+	const end = registrationEndDate();
+
+	if (start && end) {
+		const now = moment();
+		return now.isBetween(start, end, 'day', '[]');
+	}
+
+	return false;
+};
+
+/**
+ * Has nonprofit registration ended?
+ *
+ * @returns {boolean}
+ */
+const isAfterRegistrations = function () {
+	const end = registrationEndDate();
+
+	if (end) {
+		let now = moment();
+		return now.isAfter(end, 'day');
+	}
+
+	return false;
+};
+
+/**
+ * Get donations start date
+ *
+ * @return {Object|null}
+ */
+const donationsStartDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START');
+
+	if (dateDonationsStart && eventTimezone) {
+		return moment(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone, true);
+	}
+
+	return null;
+};
+
+/**
+ * Get donations end date
+ *
+ * @return {Object|null}
+ */
+const donationsEndDate = function () {
+	const eventTimezone = store.getters.setting('EVENT_TIMEZONE');
+	const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END');
+
+	if (dateDonationsEnd && eventTimezone) {
+		return moment(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone, true);
+	}
+
+	return null;
+};
+
+/**
+ * Can donations be submitted?
+ *
+ * @returns {boolean}
+ */
+const isDuringDonations = function () {
+	const eventStart = eventStartDate();
+	const eventEnd = eventEndDate();
+	const donationsStart = donationsStartDate();
+	const donationsEnd = donationsEndDate();
+
+	if ((eventStart && eventEnd) || (donationsStart && donationsEnd)) {
+		const now = moment();
+		const start = donationsStart ? donationsStart : eventStart;
+		const end = donationsEnd ? donationsEnd : eventEnd;
+
+		return now.isBetween(start, end, 'day', '[]');
+	}
+
+	return false;
+};
+
+/**
+ * Get an object representing a countdown until a certain date
+ *
+ * @param {Object} date
+ * @return {{days: number, hours: number, minutes: number, seconds: number}}
+ * @private
+ */
+const _getCountdown = function (date) {
+	const countdown = {days: 0, hours: 0, minutes: 0, seconds: 0};
+
+	if (date) {
+		const now = moment();
+		const distance = date.diff(now);
+
+		countdown.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+		countdown.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		countdown.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		countdown.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	}
+
+	return countdown;
+};
+
 export {
+	donationsEndDate,
+	donationsStartDate,
+	countdownUntilEventEnd,
+	countdownUntilEventStart,
+	eventEndDate,
+	eventStartDate,
 	eventTitle,
 	isAfterEvent,
-	isAfterRegistrationEnd,
-	isBeforeRegistrationStart,
-	isDayOfEvent,
-	isDayOfEventOrAfter,
-	acceptRegistrations,
-	acceptDonations,
-	registrationStartDate
+	isAfterRegistrations,
+	isBeforeEvent,
+	isBeforeRegistrations,
+	isDuringDonations,
+	isDuringEvent,
+	isDuringEventOrAfter,
+	isDuringRegistrations,
+	registrationStartDate,
 }

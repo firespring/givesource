@@ -60,7 +60,7 @@
 				return Settings.eventTitle();
 			},
 			canDonate: function () {
-				return Settings.acceptDonations();
+				return Settings.isDuringDonations();
 			}
 		},
 		beforeMount: function () {

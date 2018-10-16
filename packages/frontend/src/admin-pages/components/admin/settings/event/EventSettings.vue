@@ -55,15 +55,28 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--date c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.DATE_EVENT }">
+                                <div class="c-form-item c-form-item--date c-form-item--date-range c-form-item--required"
+                                     :class="{ 'c-form-item--has-error': formErrors.DATE_EVENT_START || formErrors.DATE_EVENT_END }">
                                     <div class="c-form-item__label">
-                                        <label for="dateEvent" class="c-form-item-label-text">Event Date</label>
+                                        <label for="dateEventStart" class="c-form-item-label-text">Event Date</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-datetime v-model="formData.DATE_EVENT" name="dateEvent" id="dateEvent"
-                                                        :hasError="formErrors.hasOwnProperty('DATE_EVENT')"></forms-datetime>
-                                        <div v-if="formErrors.DATE_EVENT" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.DATE_EVENT }}
+                                        <div class="c-form-control-grid u-items-center">
+                                            <div class="c-form-control-grid__item u-flex-collapse">
+                                                <forms-datetime v-model="formData.DATE_EVENT_START" name="dateEventStart" id="dateEventStart" placeholder="Start"
+                                                                :maxDate="dateEventMaxDate" :hasError="formErrors.hasOwnProperty('DATE_EVENT_START')"></forms-datetime>
+                                            </div>
+                                            <div class="c-form-control-grid__separator">
+                                                to
+                                            </div>
+                                            <div class="c-form-control-grid__item u-flex-collapse">
+                                                <forms-datetime v-model="formData.DATE_EVENT_END" name="dateEventEnd" id="dateEventEnd" placeholder="End"
+                                                                :minDate="dateEventMinDate" :hasError="formErrors.hasOwnProperty('DATE_EVENT_END')"></forms-datetime>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="formErrors.DATE_EVENT_START || formErrors.DATE_EVENT_END" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            Please enter a valid event date range.
                                         </div>
                                     </div>
                                 </div>
@@ -168,7 +181,8 @@
 				formData: {
 					DATE_DONATIONS_END: '',
 					DATE_DONATIONS_START: '',
-					DATE_EVENT: '',
+					DATE_EVENT_END: '',
+					DATE_EVENT_START: '',
 					DATE_REGISTRATIONS_END: '',
 					DATE_REGISTRATIONS_START: '',
 					EVENT_TITLE: '',
@@ -177,11 +191,17 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 
 			};
 		},
 		computed: {
+			dateEventMinDate: function () {
+				return this.formData.DATE_EVENT_START ? this.formData.DATE_EVENT_START : false;
+			},
+			dateEventMaxDate: function () {
+				return this.formData.DATE_EVENT_END ? this.formData.DATE_EVENT_END : false;
+			},
 			dateRegistrationsMinDate: function () {
 				return this.formData.DATE_REGISTRATIONS_START ? this.formData.DATE_REGISTRATIONS_START : false;
 			},
@@ -245,13 +265,17 @@
 			getConstraints: function () {
 				return {
 					DATE_DONATIONS_END: {
-						label: 'Donations start date',
+						label: 'Donations end date',
 					},
 					DATE_DONATIONS_START: {
 						label: 'Donations start date',
 					},
-					DATE_EVENT: {
-						label: 'Event date',
+					DATE_EVENT_END: {
+						label: 'Event end date',
+						presence: true,
+					},
+					DATE_EVENT_START: {
+						label: 'Event start date',
 						presence: true,
 					},
 					DATE_REGISTRATIONS_END: {
@@ -314,9 +338,9 @@
 						vue.$router.push({name: 'settings-list'});
 					}
 				}).catch(function (err) {
-                    vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.removeModal('spinner');
+					vue.apiError = err.response.data.errors;
+				});
 			}
 		},
 		components: {

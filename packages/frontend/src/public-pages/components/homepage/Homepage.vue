@@ -53,8 +53,6 @@
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 
-	const moment = require('moment-timezone');
-
 	const fetchData = function () {
 		let promise = Promise.resolve();
 		let settings = {};
@@ -148,13 +146,6 @@
 			eventTitle: function () {
 				return Settings.eventTitle();
 			},
-			eventDate: function () {
-				const vue = this;
-				if (vue.$store.getters.setting('DATE_EVENT') && vue.$store.getters.setting('EVENT_TIMEZONE')) {
-					return moment(new Date(vue.$store.getters.setting('DATE_EVENT'))).tz(vue.$store.getters.setting('EVENT_TIMEZONE')).format('MMMM Do, YYYY');
-				}
-				return '';
-			},
 			homepageSpotlightUrl: function () {
 				const vue = this;
 				let url = false;
@@ -188,7 +179,7 @@
 			const vue = this;
 
 			vue.setBodyClasses('home', 'home--live');
-			vue.setPageTitle(vue.eventTitle + ' - ' + vue.eventDate);
+			vue.setPageTitle(vue.eventTitle);
 		},
 		methods: {
 			getContentValue: function (contentKey, defaultValue) {

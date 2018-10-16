@@ -156,10 +156,10 @@
 				return title;
 			},
 			displayDonationMetrics: function () {
-				return Settings.isDayOfEventOrAfter();
+				return Settings.isDuringEventOrAfter();
 			},
 			canDonate: function () {
-				return Settings.acceptDonations();
+				return Settings.isDuringDonations();
 			},
 			logoUrl: function () {
 				const vue = this;
