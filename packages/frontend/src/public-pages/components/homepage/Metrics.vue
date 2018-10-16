@@ -196,7 +196,7 @@
 				return Settings.isAfterEvent();
 			},
 			displayDonationTotals: function () {
-				return Settings.isDuringEventOrAfter();
+				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
 			donationsCountArray: function () {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');

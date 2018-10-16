@@ -156,7 +156,7 @@
 				return title;
 			},
 			displayDonationMetrics: function () {
-				return Settings.isDuringEventOrAfter();
+				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
 			canDonate: function () {
 				return Settings.isDuringDonations();

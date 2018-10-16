@@ -112,15 +112,6 @@ const isAfterEvent = function () {
 };
 
 /**
- * Is it the during the event or after?
- *
- * @returns {boolean}
- */
-const isDuringEventOrAfter = function () {
-	return isDuringEvent() || isAfterEvent();
-};
-
-/**
  * Get countdown until event start
  *
  * @returns {Object}
@@ -316,7 +307,6 @@ export {
 	isBeforeRegistrations,
 	isDuringDonations,
 	isDuringEvent,
-	isDuringEventOrAfter,
 	isDuringRegistrations,
 	registrationStartDate,
 }

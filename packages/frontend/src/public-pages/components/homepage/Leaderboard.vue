@@ -57,7 +57,7 @@
 			axios.get(API_URL + 'nonprofits' + Utils.generateQueryString({
 				size: 20,
 				sort: 'active_subtotal_descending',
-                includeMatchFund: 0
+				includeMatchFund: 0
 			})).then(function (response) {
 				if (response.data.hasOwnProperty('items')) {
 					vue.nonprofits = response.data.items;
@@ -72,7 +72,7 @@
 		},
 		computed: {
 			showLeaderboard: function () {
-				return Settings.isDuringEventOrAfter();
+				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
 			eventTitle: function () {
 				return Settings.eventTitle();
