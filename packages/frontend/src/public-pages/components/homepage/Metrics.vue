@@ -104,7 +104,7 @@
                 <div class="register__details" v-html="registerDetails" v-if="registerDetails"></div>
             </div>
 
-            <div class="main-spotlight-section wrapper wrapper--xs" v-if="displaySendReceiptForm">
+            <div class="main-spotlight-section wrapper wrapper--xs" v-if="displaySendReceiptForm || eventEnded">
                 <form v-on:submit="submitReceiptRequest" class="mb4">
                     <div>
                         <strong><label for="email">Enter your email and we'll send you a receipt for all of your donations this year.</label></strong>
@@ -141,6 +141,7 @@
 			return {
 				category: '',
 				processing: false,
+				eventEnded: false,
 
 				// Form Data
 				formData: {
@@ -285,7 +286,9 @@
 				vue.countdown.timer = setInterval(function () {
 					if (Settings.isAfterEvent()) {
 						vue.countdown.loaded = false;
+						vue.eventEnded = true;
 						clearInterval(vue.countdown.timer);
+						return;
 					}
 
 					if (Settings.isBeforeEvent()) {
@@ -303,7 +306,6 @@
 					vue.countdown.minutes = countdown.minutes;
 					vue.countdown.seconds = countdown.seconds;
 					vue.countdown.loaded = true;
-
 				}, 1000);
 			},
 			getReceiptConstraints: function () {
