@@ -71,6 +71,7 @@ module.exports = function () {
 			filename: 'bundle.js',
 			publicPath: '/',
 		},
+		devtool: 'hidden-source-map',
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env': {

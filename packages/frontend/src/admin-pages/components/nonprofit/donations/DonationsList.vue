@@ -43,7 +43,7 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
-	import ComponentDonationsListTable from './DonationsListTableRow.vue';
+	import ComponentDonationsListTable from './DonationsListTable.vue';
 	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
 	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
 	import PaginationMixin from './../../../mixins/pagination';
