@@ -25,11 +25,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const FetchDynamicContent = require('./../bin/fetch-dynamic-content');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const WebpackOnBuildPlugin = require('on-build-webpack');
 
 module.exports = function () {
 	const env = process.env.NODE_ENV || 'development';
 	const config = {
+		mode: env,
 		module: {
 			rules: [
 				{
@@ -89,6 +91,7 @@ module.exports = function () {
 				{from: './src/public-pages/assets/img', to: 'assets/img'},
 				{from: './src/public-pages/assets/temp', to: 'assets/temp'}
 			]),
+			new VueLoaderPlugin(),
 			new HtmlWebpackPlugin({
 				template: 'src/public-pages/templates/index.mustache',
 				filename: 'templates/index.mustache'

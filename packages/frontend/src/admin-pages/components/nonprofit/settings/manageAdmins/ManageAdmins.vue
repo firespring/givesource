@@ -61,11 +61,13 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentManageAdminsListTable from './ManageAdminsListTable.vue';
+
+	export default {
 		data: function () {
 			return {
 				nonprofit: {},
-                apiError: {},
+				apiError: {},
 			}
 		},
 		computed: {
@@ -84,9 +86,9 @@
 				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
 					vue.nonprofit = response.data;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                    next();
-                });
+					vue.apiError = err.response.data.errors;
+					next();
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -96,18 +98,18 @@
 				vue.nonprofit = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
+				vue.apiError = err.response.data.errors;
+				next();
 			});
 		},
-        methods:{
-            hasError: function(err){
-                const vue = this;
-                vue.apiError = err.response.data.errors;
-            }
-        },
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		components: {
-			'manage-admins-list-table': require('./ManageAdminsListTable.vue')
+			'manage-admins-list-table': ComponentManageAdminsListTable,
 		}
 	};
 </script>

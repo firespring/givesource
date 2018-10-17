@@ -102,9 +102,12 @@
 </template>
 
 <script>
+	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
+	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+
 	const slug = require('slug');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				loaded: false,
@@ -119,9 +122,9 @@
 					logoFileUuid: ''
 				},
 
-                // Errors
-                formErrors: {},
-                apiError: {},
+				// Errors
+				formErrors: {},
+				apiError: {},
 			}
 		},
 		computed: {
@@ -230,7 +233,7 @@
 					return promise;
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			},
 			changeSlug: function (event) {
@@ -296,8 +299,8 @@
 			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../../forms/Ckeditor.vue'),
-			'forms-image-upload': require('./../../../forms/ImageUpload.vue')
+			'forms-ckeditor': ComponentCKEditor,
+			'forms-image-upload': ComponentImageUpload,
 		}
 	};
 </script>

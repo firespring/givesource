@@ -118,10 +118,12 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
 
 	require('fireSlider.js/dist/jquery.fireSlider.velocity');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				files: [],
@@ -252,27 +254,29 @@
 					slide: 'div.slide',
 				});
 
-				slider.on('mouseenter mouseover touchenter touchstart', function () {
-					vue.hover = true;
-				}).on('mouseelave mouseout touchleave touchend', function () {
-					vue.hover = false;
-				});
+				if (slider.length > 1) {
+					slider.on('mouseenter mouseover touchenter touchstart', function () {
+						vue.hover = true;
+					}).on('mouseelave mouseout touchleave touchend', function () {
+						vue.hover = false;
+					});
 
-				// Pause slider if we interact with a slide (including videos)
-				window.addEventListener('blur', function () {
-					if (vue.hover) {
+					// Pause slider if we interact with a slide (including videos)
+					window.addEventListener('blur', function () {
+						if (vue.hover) {
+							slider.data('fireSlider').pause();
+						}
+					});
+
+					slider.data('fireSlider').slides.on('click', function () {
 						slider.data('fireSlider').pause();
-					}
-				});
+					});
 
-				slider.data('fireSlider').slides.on('click', function () {
-					slider.data('fireSlider').pause();
-				});
-
-				// Resume playing slider if we interact with the pager
-				slider.data('fireSlider').pages.on('click', function () {
-					slider.data('fireSlider').play();
-				});
+					// Resume playing slider if we interact with the pager
+					slider.data('fireSlider').pages.on('click', function () {
+						slider.data('fireSlider').play();
+					});
+				}
 			});
 		},
 		methods: {
@@ -313,8 +317,8 @@
 			}
 		},
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('./../layout/Hero.vue')
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
 		}
 	};
 </script>

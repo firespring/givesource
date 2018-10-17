@@ -23,10 +23,13 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentHeader from './layout/Header.vue';
+	import ComponentModals from './modals/Modals.vue';
+
+	export default {
 		components: {
-			'layout-header': require('./layout/Header.vue'),
-            'modals': require('./modals/Modals.vue')
-        }
+			'layout-header': ComponentHeader,
+			'modals': ComponentModals
+		}
 	};
 </script>

@@ -22,7 +22,7 @@
 <script>
 	require('@claviska/jquery-minicolors');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				localValue: ''

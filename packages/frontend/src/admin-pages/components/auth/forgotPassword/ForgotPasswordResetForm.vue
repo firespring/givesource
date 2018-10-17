@@ -96,7 +96,7 @@
 <script>
 	const User = require('../../../helpers/user');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 

@@ -133,7 +133,11 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
+	import ComponentFileUpload from './../../../forms/FileUpload.vue';
+	import ComponentSpinner from './../../../layout/Spinner.vue';
+
+	export default {
 		data: function () {
 			return {
 				original: [],
@@ -171,7 +175,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -357,14 +361,14 @@
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../../forms/Ckeditor.vue'),
-			'forms-file-upload': require('./../../../forms/FileUpload.vue'),
-			'layout-spinner': require('./../../../layout/Spinner.vue'),
+			'forms-ckeditor': ComponentCKEditor,
+			'forms-file-upload': ComponentFileUpload,
+			'layout-spinner': ComponentSpinner,
 		}
 	};
 </script>

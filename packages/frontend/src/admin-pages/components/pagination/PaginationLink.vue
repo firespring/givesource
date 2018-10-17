@@ -22,7 +22,7 @@
 <script>
     import * as Utils from './../../helpers/utils';
 
-	module.exports = {
+	export default {
 		computed: {
 			start: function () {
 				return this.page * this.size;

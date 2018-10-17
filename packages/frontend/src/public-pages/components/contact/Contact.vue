@@ -22,7 +22,7 @@
 
         <main class="main">
             <div class="wrapper wrapper--sm">
-            <api-error v-model="apiError"></api-error>
+                <api-error v-model="apiError"></api-error>
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
@@ -109,8 +109,12 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
+	import ComponentSubmit from './../forms/Submit.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				contents: [],
@@ -125,8 +129,8 @@
 				},
 
 				formErrors: {},
-                apiError: {},
-            }
+				apiError: {},
+			}
 		},
 		computed: {
 			contactPhone: function () {
@@ -147,8 +151,8 @@
 				})).then(function (response) {
 					vue.contents = response.data;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -160,7 +164,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -243,16 +247,16 @@
 						vue.$router.push({name: 'contact-response'});
 					}
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 					vue.processing = false;
 				});
 			}
 		},
 		components: {
-			'forms-submit': require('./../forms/Submit.vue'),
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
+			'forms-submit': ComponentSubmit,
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
 		}
 	};
 </script>

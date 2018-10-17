@@ -37,7 +37,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentLoginForm from './LoginForm.vue';
+	import ComponentPasswordResetForm from './PasswordResetForm.vue';
+
+	export default {
 		data: function () {
 			return {
 				displayHeader: true,
@@ -47,12 +50,8 @@
 				userAttributes: null,
 			}
 		},
-        beforeMount: function () {
-	        document.body.classList.remove('has-menubar', 'has-menubar--secondary');
-        },
-		components: {
-			'login-form': require('./LoginForm.vue'),
-			'password-reset-form': require('./PasswordResetForm.vue')
+		beforeMount: function () {
+			document.body.classList.remove('has-menubar', 'has-menubar--secondary');
 		},
 		methods: {
 			setDisplayHeader: function (displayHeader) {
@@ -70,6 +69,10 @@
 			setUserAttributes: function (userAttributes) {
 				this.userAttributes = userAttributes;
 			}
-		}
+		},
+		components: {
+			'login-form': ComponentLoginForm,
+			'password-reset-form': ComponentPasswordResetForm,
+		},
 	};
 </script>

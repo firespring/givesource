@@ -252,7 +252,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentSelectNonprofitCategory from './../../forms/SelectNonprofitCategory.vue';
+	import ComponentSelectState from './../../forms/SelectState.vue';
+
+	export default {
 		data: function () {
 			return {
 				formData: {
@@ -308,7 +311,7 @@
 				],
 
 				formErrors: {},
-                apiError: {}
+				apiError: {}
 			}
 		},
 		computed: {
@@ -471,8 +474,8 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			},
 			registerAndActivateNonprofit: function () {
 				const vue = this;
@@ -506,13 +509,13 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			}
 		},
 		components: {
-			'category-select': require('../../forms/SelectNonprofitCategory.vue'),
-			'state-select': require('../../forms/SelectState.vue'),
+			'category-select': ComponentSelectNonprofitCategory,
+			'state-select': ComponentSelectState,
 		}
 	};
 </script>

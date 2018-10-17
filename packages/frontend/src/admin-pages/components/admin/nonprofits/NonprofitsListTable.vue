@@ -26,7 +26,8 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid" v-on:updateNonprofit="updateNonprofit" v-on:hasError="hasError"></nonprofits-list-table-row>
+        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid" v-on:updateNonprofit="updateNonprofit"
+                                   v-on:hasError="hasError"></nonprofits-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -37,38 +38,41 @@
 </template>
 
 <script>
-    module.exports = {
-        computed: {
-            displayRows: function () {
-                return this.loaded && this.nonprofits.length;
-            }
-        },
-        props: {
-            nonprofits: {
-                type: Array,
-                default: function () {
-                    return [];
-                }
-            },
-            loaded: {
-                type: Boolean,
-                default: false,
-            }
-        },
-        methods: {
-            updateNonprofit: function (nonprofitUuid) {
-                const vue = this;
-                vue.$emit('updateNonprofit', nonprofitUuid);
-            },
+	import ComponentEmptyTableRow from './../../layout/EmptyTableRow.vue';
+	import ComponentNonprofitListTableRow from './NonprofitsListTableRow.vue';
 
-            hasError: function (err) {
-                const vue = this;
-                vue.$emit('hasError', err);
-            }
-        },
-        components: {
-            'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue'),
-            'nonprofits-list-table-row': require('./NonprofitsListTableRow.vue')
-        },
-    };
+	export default {
+		computed: {
+			displayRows: function () {
+				return this.loaded && this.nonprofits.length;
+			}
+		},
+		props: {
+			nonprofits: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			},
+			loaded: {
+				type: Boolean,
+				default: false,
+			}
+		},
+		methods: {
+			updateNonprofit: function (nonprofitUuid) {
+				const vue = this;
+				vue.$emit('updateNonprofit', nonprofitUuid);
+			},
+
+			hasError: function (err) {
+				const vue = this;
+				vue.$emit('hasError', err);
+			}
+		},
+		components: {
+			'layout-empty-table-row': ComponentEmptyTableRow,
+			'nonprofits-list-table-row': ComponentNonprofitListTableRow,
+		},
+	};
 </script>

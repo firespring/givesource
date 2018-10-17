@@ -15,6 +15,21 @@
  */
 
 import * as Settings from './../helpers/settings';
+import Component404 from './../components/errors/404.vue';
+import ComponentAbout from './../components/about/About.vue';
+import ComponentCart from './../components/cart/Cart.vue';
+import ComponentCartResponse from './../components/cart/response/CartResponse.vue';
+import ComponentContact from './../components/contact/Contact.vue';
+import ComponentContactResponse from './../components/contact/response/ContactResponse.vue';
+import ComponentFAQ from './../components/faq/FAQ.vue';
+import ComponentHomepage from './../components/homepage/Homepage.vue';
+import ComponentLeaderboard from './../components/leaderboard/Leaderboard.vue';
+import ComponentNonprofit from './../components/nonprofits/Nonprofit.vue';
+import ComponentRegister from './../components/register/Register.vue';
+import ComponentRegisterResponse from './../components/register/response/RegisterResponse.vue';
+import ComponentSearchResults from './../components/search/SearchResults.vue';
+import ComponentTermsOfService from './../components/terms/TermsOfService.vue';
+import ComponentToolkits from './../components/toolkits/Toolkits.vue';
 import store from './../store';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -39,7 +54,7 @@ const router = new VueRouter({
 		{
 			path: '/',
 			name: 'homepage',
-			component: require('./../components/homepage/Homepage.vue')
+			component: ComponentHomepage
 		},
 		{
 			path: '/index',
@@ -52,7 +67,7 @@ const router = new VueRouter({
 		{
 			path: '/about',
 			name: 'about',
-			component: require('./../components/about/About.vue'),
+			component: ComponentAbout,
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
 					next({name: '404'});
@@ -64,7 +79,7 @@ const router = new VueRouter({
 		{
 			path: '/toolkits',
 			name: 'toolkits',
-			component: require('./../components/toolkits/Toolkits.vue'),
+			component: ComponentToolkits,
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
 					next({name: '404'});
@@ -76,7 +91,7 @@ const router = new VueRouter({
 		{
 			path: '/faq',
 			name: 'faq',
-			component: require('./../components/faq/FAQ.vue'),
+			component: ComponentFAQ,
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
 					next({name: '404'});
@@ -88,27 +103,27 @@ const router = new VueRouter({
 		{
 			path: '/cart',
 			name: 'cart',
-			component: require('./../components/cart/Cart.vue')
+			component: ComponentCart,
 		},
 		{
 			path: '/cart/thank-you',
 			name: 'cart-response',
-			component: require('./../components/cart/response/CartResponse.vue')
+			component: ComponentCartResponse,
 		},
 		{
 			path: '/contact',
 			name: 'contact',
-			component: require('./../components/contact/Contact.vue')
+			component: ComponentContact,
 		},
 		{
 			path: '/contact/thank-you',
 			name: 'contact-response',
-			component: require('./../components/contact/response/ContactResponse.vue')
+			component: ComponentContactResponse,
 		},
 		{
 			path: '/terms',
 			name: 'terms',
-			component: require('./../components/terms/TermsOfService.vue'),
+			component: ComponentTermsOfService,
 			beforeEnter: function (to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_TERMS_ENABLED')) {
 					next({name: '404'});
@@ -120,7 +135,7 @@ const router = new VueRouter({
 		{
 			path: '/leaderboard',
 			name: 'leaderboard',
-			component: require('./../components/leaderboard/Leaderboard.vue'),
+			component: ComponentLeaderboard,
 			beforeEnter: function (to, from, next) {
 				if (!Settings.isDuringEvent() && !Settings.isAfterEvent()) {
 					next({name: '404'});
@@ -132,17 +147,17 @@ const router = new VueRouter({
 		{
 			path: '/search',
 			name: 'search-results',
-			component: require('./../components/search/SearchResults.vue')
+			component: ComponentSearchResults,
 		},
 		{
 			path: '/register',
 			name: 'register',
-			component: require('./../components/register/Register.vue')
+			component: ComponentRegister,
 		},
 		{
 			path: '/register/thank-you',
 			name: 'register-response',
-			component: require('./../components/register/response/RegisterResponse.vue')
+			component: ComponentRegisterResponse,
 		},
 		{
 			path: '/nonprofits/:slug',
@@ -151,7 +166,7 @@ const router = new VueRouter({
 			meta: {
 				nonprofit: null,
 			},
-			component: require('./../components/nonprofits/Nonprofit.vue'),
+			component: ComponentNonprofit,
 			beforeEnter: function (to, from, next) {
 				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
 					if (Object.keys(response.data).length) {
@@ -170,7 +185,7 @@ const router = new VueRouter({
 		{
 			path: '*',
 			name: '404',
-			component: require('./../components/errors/404.vue')
+			component: Component404,
 		}
 	]
 });

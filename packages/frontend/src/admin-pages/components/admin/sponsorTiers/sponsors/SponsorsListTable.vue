@@ -34,7 +34,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDraggable from 'vuedraggable';
+	import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue';
+
+	export default {
 		data: function () {
 			return {
 				localSponsors: [],
@@ -60,19 +63,19 @@
 					return [];
 				}
 			},
-            sponsorTierUuid: {
+			sponsorTierUuid: {
 				type: String,
-                default: null,
-            }
+				default: null,
+			}
 		},
-        watch: {
+		watch: {
 			sponsors: function (value) {
 				this.localSponsors = value;
-            },
-            localSponsors: function () {
+			},
+			localSponsors: function () {
 				this.$emit('sponsors', this.localSponsors);
-            },
-        },
+			},
+		},
 		methods: {
 			getFile: function (fileUuid) {
 				return _.find(this.files, {uuid: fileUuid});
@@ -89,24 +92,24 @@
 				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors', {
 					sponsors: toUpdate
 				}).catch(function (err) {
-				    vue.$emit('hasError', err);
+					vue.$emit('hasError', err);
 				});
 			},
 			deleteSponsor: function (sponsorUuid) {
 				const vue = this;
 
-				vue.localSponsors = _.filter(vue.localSponsors, function(sponsor) {
+				vue.localSponsors = _.filter(vue.localSponsors, function (sponsor) {
 					return sponsor.uuid !== sponsorUuid;
 				});
-            },
-            hasError: function (err){
-                const vue = this;
-                vue.$emit('hasError', err);
-            }
+			},
+			hasError: function (err) {
+				const vue = this;
+				vue.$emit('hasError', err);
+			}
 		},
 		components: {
-			'draggable': require('vuedraggable'),
-			'sponsors-list-table-row': require('./SponsorsListTableRow.vue')
+			'draggable': ComponentDraggable,
+			'sponsors-list-table-row': ComponentSponsorsListTableRow,
 		}
 	};
 </script>

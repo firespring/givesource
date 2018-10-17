@@ -26,7 +26,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		computed: {
 			amount: function () {
 				return this.formatMoney(this.donationTier.amount);

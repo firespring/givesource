@@ -41,7 +41,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDonationCartModalListTable from './DonationCartModalListTable.vue';
+
+	export default {
 		data: function () {
 			return {
 				hasError: false,
@@ -54,11 +56,11 @@
 				default: 1000
 			}
 		},
-        computed: {
-	        isCartEmpty : function () {
-		        return this.$store.state.cartItems.length === 0;
-	        }
-        },
+		computed: {
+			isCartEmpty: function () {
+				return this.$store.state.cartItems.length === 0;
+			}
+		},
 		created: function () {
 			const vue = this;
 			vue.addBodyClasses('has-donation-overlay');
@@ -110,7 +112,7 @@
 			}
 		},
 		components: {
-			'donation-cart-modal-list-table': require('./DonationCartModalListTable.vue')
+			'donation-cart-modal-list-table': ComponentDonationCartModalListTable,
 		}
 	};
 </script>

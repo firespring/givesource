@@ -24,7 +24,7 @@
 <script>
 	require('chosen-js');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				localValue: '',

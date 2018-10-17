@@ -23,7 +23,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDraggable from 'vuedraggable';
+	import ComponentFAQListTableRow from './FAQListTableRow.vue';
+
+	export default {
 		data: function () {
 			return {
 				localContents: [],
@@ -65,13 +68,13 @@
 				vue.$request.patch('contents', {
 					contents: toUpdate
 				}).catch(function (err) {
-                    vue.$emit('hasError', err);
+					vue.$emit('hasError', err);
 				});
 			}
 		},
 		components: {
-			'draggable': require('vuedraggable'),
-			'faq-list-table-row': require('./FAQListTableRow.vue')
+			'draggable': ComponentDraggable,
+			'faq-list-table-row': ComponentFAQListTableRow,
 		}
 	};
 </script>

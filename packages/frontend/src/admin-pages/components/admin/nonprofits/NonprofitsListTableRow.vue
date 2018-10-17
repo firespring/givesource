@@ -83,7 +83,7 @@
 <script>
 	const numeral = require('numeral');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				displayingMenu: false,

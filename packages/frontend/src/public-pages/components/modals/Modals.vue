@@ -21,80 +21,84 @@
 </template>
 
 <script>
-    module.exports = {
-	    data: function () {
-		    return {
-			    modals: [],
-			    data: {}
-		    };
-	    },
-	    created: function () {
-		    const vue = this;
+	import ComponentDonationCartModal from './donations/DonationCartModal.vue';
+	import ComponentDonationTiersModal from './donations/DonationTiersModal.vue';
+	import ComponentMenuModal from './MenuModal.vue';
 
-		    /**
-		     * Add a modal to the top of the stack
-		     *
-		     * @param {String} modal
-		     */
-		    vue.bus.$on('addModal', function (modal, data) {
-			    vue.modals.push(modal);
-			    vue.data[modal] = data || null;
-		    });
+	export default {
+		data: function () {
+			return {
+				modals: [],
+				data: {}
+			};
+		},
+		created: function () {
+			const vue = this;
 
-		    /**
-		     * Remove the top-most modal from the stack
-		     */
-		    vue.bus.$on('removeModal', function (modal) {
-			    if (vue.modals.indexOf(modal) > -1) {
-				    vue.modals.splice(vue.modals.indexOf(modal), 1);
-			    } else if (vue.modals.length) {
-				    vue.modals = vue.modals.slice(0 , -1);
-			    }
-		    });
+			/**
+			 * Add a modal to the top of the stack
+			 *
+			 * @param {String} modal
+			 */
+			vue.bus.$on('addModal', function (modal, data) {
+				vue.modals.push(modal);
+				vue.data[modal] = data || null;
+			});
 
-		    /**
-		     * Replace the top-most modal
-		     */
-		    vue.bus.$on('replaceModal', function (modal, data) {
-			    if (vue.modals.length > 0) {
-				    vue.modals[vue.modals.length - 1] = modal;
-				    vue.data[modal] = data || null;
-			    } else {
-				    vue.modals.push(modal);
-				    vue.data[modal] = data || null;
-			    }
-		    });
+			/**
+			 * Remove the top-most modal from the stack
+			 */
+			vue.bus.$on('removeModal', function (modal) {
+				if (vue.modals.indexOf(modal) > -1) {
+					vue.modals.splice(vue.modals.indexOf(modal), 1);
+				} else if (vue.modals.length) {
+					vue.modals = vue.modals.slice(0, -1);
+				}
+			});
 
-		    /**
-		     * Clear all modals from the stack
-		     */
-		    vue.bus.$on('clearModals', function () {
-			    vue.modals = [];
-			    vue.data = {};
-		    });
-	    },
-        mounted: function () {
-	    	const vue = this;
+			/**
+			 * Replace the top-most modal
+			 */
+			vue.bus.$on('replaceModal', function (modal, data) {
+				if (vue.modals.length > 0) {
+					vue.modals[vue.modals.length - 1] = modal;
+					vue.data[modal] = data || null;
+				} else {
+					vue.modals.push(modal);
+					vue.data[modal] = data || null;
+				}
+			});
 
-            $(document).keyup(function (event) {
-            	if (vue.modals.length && event.keyCode === 27) {
-		            vue.clearModals();
-                    vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay');
-                }
-            });
-        },
-	    methods: {
-		    calculateOverlayZIndex: function (index) {
-			    return 999 + (index * 1000);
-		    },
-		    calculateModalZIndex: function (index) {
-			    return this.calculateOverlayZIndex(index) + 1;
-		    }
-	    },
-        components: {
-	    	'menu-overlay': require('./MenuModal.vue'),
-	    	'donation-cart': require('./donations/DonationCartModal.vue'),
-	    	'donation-tiers': require('./donations/DonationTiersModal.vue')
-        }
-    };
+			/**
+			 * Clear all modals from the stack
+			 */
+			vue.bus.$on('clearModals', function () {
+				vue.modals = [];
+				vue.data = {};
+			});
+		},
+		mounted: function () {
+			const vue = this;
+
+			$(document).keyup(function (event) {
+				if (vue.modals.length && event.keyCode === 27) {
+					vue.clearModals();
+					vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav', 'has-donation-overlay');
+				}
+			});
+		},
+		methods: {
+			calculateOverlayZIndex: function (index) {
+				return 999 + (index * 1000);
+			},
+			calculateModalZIndex: function (index) {
+				return this.calculateOverlayZIndex(index) + 1;
+			}
+		},
+		components: {
+			'menu-overlay': ComponentMenuModal,
+			'donation-cart': ComponentDonationCartModal,
+			'donation-tiers': ComponentDonationTiersModal,
+		}
+	};
 </script>

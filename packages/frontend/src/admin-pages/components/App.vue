@@ -22,9 +22,11 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentModals from './modals/Modals.vue';
+
+	export default {
 		components: {
-			'modals': require('./modals/Modals.vue')
+			'modals': ComponentModals
 		}
 	};
 

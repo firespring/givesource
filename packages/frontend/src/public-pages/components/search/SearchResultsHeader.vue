@@ -47,7 +47,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentNonprofitCategorySelect from './../forms/NonprofitCategorySelect.vue';
+
+	export default {
 		data: function () {
 			return {
 				// Form Data
@@ -131,7 +133,7 @@
 			}
 		},
 		components: {
-			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue'),
+			'forms-nonprofit-category-select': ComponentNonprofitCategorySelect,
 		}
 	};
 </script>

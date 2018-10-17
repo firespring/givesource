@@ -36,8 +36,10 @@
 
 <script>
 	import * as Settings from './../../helpers/settings';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
 
-	module.exports = {
+	export default {
 		beforeMount: function () {
 			const vue = this;
 
@@ -50,8 +52,8 @@
 			}
 		},
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('./../layout/Hero.vue'),
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
 		}
 	};
 </script>

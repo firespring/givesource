@@ -72,29 +72,28 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentAuthorizingSpinner from './../AuthorizingSpinner.vue';
+
+	export default {
 		data: function () {
 			return {
 				displayAuthorizing: false,
 
-                // Form Data
-                formData: {
+				// Form Data
+				formData: {
 					password: '',
-	                passwordConfirm: ''
-                },
+					passwordConfirm: ''
+				},
 
-                // Errors
-                errors: [],
-                formErrors: {}
+				// Errors
+				errors: [],
+				formErrors: {}
 			}
 		},
 		props: [
 			'cognitoUser',
 			'userAttributes'
 		],
-		components: {
-			'authorizing': require('../AuthorizingSpinner.vue'),
-		},
 		watch: {
 			formData: {
 				handler: function () {
@@ -125,12 +124,12 @@
 
 				vue.toggleAuthorizing(true);
 				vue.errors = [];
-                vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-                if (Object.keys(vue.formErrors).length) {
-                	vue.toggleAuthorizing(false);
-                } else {
-                	vue.resetPassword();
-                }
+				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				if (Object.keys(vue.formErrors).length) {
+					vue.toggleAuthorizing(false);
+				} else {
+					vue.resetPassword();
+				}
 			},
 			resetPassword: function () {
 				const vue = this;
@@ -144,7 +143,7 @@
 							}).catch(function (err) {
 								console.log(err);
 								vue.toggleAuthorizing(false);
-                            });
+							});
 						},
 						onFailure: function (err) {
 							vue.toggleAuthorizing(false);
@@ -171,15 +170,18 @@
 					vue.$emit('setDisplayLinks', true);
 				}
 			},
-            redirectToIntendedUri: function () {
+			redirectToIntendedUri: function () {
 				const vue = this;
 
-	            if (vue.$route.query.redirect) {
-		            vue.$router.push(vue.$route.query.redirect);
-	            } else {
-		            vue.$router.push('/');
-	            }
-            }
+				if (vue.$route.query.redirect) {
+					vue.$router.push(vue.$route.query.redirect);
+				} else {
+					vue.$router.push('/');
+				}
+			}
+		},
+		components: {
+			'authorizing': ComponentAuthorizingSpinner,
 		}
 	}
 </script>

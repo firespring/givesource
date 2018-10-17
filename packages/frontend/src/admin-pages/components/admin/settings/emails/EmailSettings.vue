@@ -51,7 +51,8 @@
                                         <label for="donationNotificationTextBefore" class="c-form-item-label-text">Text Before Donation Details</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_BEFORE" :loaded="loaded" id="donationNotificationTextBefore"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_BEFORE" :loaded="loaded"
+                                                        id="donationNotificationTextBefore"></forms-ckeditor>
                                         <div class="c-notes c-notes--below">
                                             This text will appear above the donation details.
                                         </div>
@@ -190,13 +191,14 @@
 </template>
 
 <script>
+	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
 	import Request from './../../../../helpers/request';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],
-                loaded: false,
+				loaded: false,
 
 				// Form Data
 				formData: {
@@ -226,8 +228,8 @@
 							'EMAILS_DONATION_RECEIPT_AFTER_LIST',
 							'EMAILS_DONATION_RECEIPT_BEFORE_LIST',
 							'EMAILS_USER_REGISTRATION_ACTIVATED',
-                            'EMAILS_USER_REGISTRATION_PENDING',
-                        ]
+							'EMAILS_USER_REGISTRATION_PENDING',
+						]
 					}).then(function (response) {
 						settings = response.data;
 					});
@@ -366,8 +368,8 @@
 				});
 			}
 		},
-        components: {
-	        'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
-        }
+		components: {
+			'forms-ckeditor': ComponentCKEditor,
+		}
 	};
 </script>

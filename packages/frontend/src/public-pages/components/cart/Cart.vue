@@ -222,8 +222,18 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentAddressState from './../forms/AddressState.vue';
+	import ComponentCartDonations from './CartDonations.vue';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentPaymentCCMonth from './../forms/PaymentCCMonth.vue';
+	import ComponentPaymentCCNumber from './../forms/PaymentCCNumber.vue';
+	import ComponentPaymentCCSecurityCode from './../forms/PaymentCCSecurityCode.vue';
+	import ComponentPaymentCCYear from './../forms/PaymentCCYear.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
+	import ComponentSubmit from './../forms/Submit.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				processing: false,
@@ -455,7 +465,7 @@
 				if (vue.donationError) {
 					$('table.table-donations')[0].scrollIntoView(true);
 					vue.processing = false;
-                } else if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
+				} else if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
 					vue.scrollToError();
 					vue.processing = false;
 				} else {
@@ -571,16 +581,16 @@
 			}
 		},
 		components: {
-			'cart-donations': require('./CartDonations.vue'),
-			'forms-address-state': require('../forms/AddressState.vue'),
-			'forms-payment-cc-month': require('../forms/PaymentCCMonth.vue'),
-			'forms-payment-cc-number': require('../forms/PaymentCCNumber.vue'),
-			'forms-payment-cc-security-code': require('../forms/PaymentCCSecurityCode.vue'),
-			'forms-payment-cc-year': require('../forms/PaymentCCYear.vue'),
-			'forms-submit': require('../forms/Submit.vue'),
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('./../layout/Hero.vue'),
-			'layout-sponsors': require('./../layout/Sponsors.vue'),
+			'cart-donations': ComponentCartDonations,
+			'forms-address-state': ComponentAddressState,
+			'forms-payment-cc-month': ComponentPaymentCCMonth,
+			'forms-payment-cc-number': ComponentPaymentCCNumber,
+			'forms-payment-cc-security-code': ComponentPaymentCCSecurityCode,
+			'forms-payment-cc-year': ComponentPaymentCCYear,
+			'forms-submit': ComponentSubmit,
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
 		}
 	};
 </script>

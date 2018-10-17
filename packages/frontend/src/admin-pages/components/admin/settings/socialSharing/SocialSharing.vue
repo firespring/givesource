@@ -85,8 +85,9 @@
 </template>
 
 <script>
+	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],

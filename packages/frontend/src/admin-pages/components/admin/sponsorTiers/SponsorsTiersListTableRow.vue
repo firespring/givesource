@@ -49,7 +49,7 @@
 <script>
 	import * as Utils from './../../../helpers/utils';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				displayingMenu: false,

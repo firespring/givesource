@@ -39,7 +39,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDonationsListTableRow from './DonationsListTableRow.vue';
+	import ComponentEmptyListTableRow from './../../layout/EmptyTableRow.vue';
+
+	export default {
 		computed: {
 			displayRows: function () {
 				return this.loaded && this.donations.length;
@@ -48,18 +51,18 @@
 		props: {
 			donations: {
 				type: Array,
-                default: function () {
-                	return [];
-                }
-            },
-            loaded: {
+				default: function () {
+					return [];
+				}
+			},
+			loaded: {
 				type: Boolean,
-                default: false,
-            }
+				default: false,
+			}
 		},
 		components: {
-			'donations-list-table-row': require('./DonationsListTableRow.vue'),
-			'layout-empty-table-row': require('./../../layout/EmptyTableRow.vue')
+			'donations-list-table-row': ComponentDonationsListTableRow,
+			'layout-empty-table-row': ComponentEmptyListTableRow,
 		}
 	};
 </script>

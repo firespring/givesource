@@ -37,7 +37,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentEmptyTableRow from './../../../layout/EmptyTableRow.vue';
+	import ComponentManageAdminsListTableRow from './ManageAdminsListTableRow.vue';
+
+	export default {
 		data: function () {
 			return {
 				adminUsers: [],
@@ -93,14 +96,14 @@
 					});
 					vue.clearModals();
 				}).catch(function (err) {
-                    vue.removeModal('spinner');
-                    vue.$emit('hasError', err);
+					vue.removeModal('spinner');
+					vue.$emit('hasError', err);
 				});
 			}
 		},
 		components: {
-			'layout-empty-table-row': require('./../../../layout/EmptyTableRow.vue'),
-			'manage-admins-list-table-row': require('./ManageAdminsListTableRow.vue')
+			'layout-empty-table-row': ComponentEmptyTableRow,
+			'manage-admins-list-table-row': ComponentManageAdminsListTableRow,
 		}
 	};
 </script>

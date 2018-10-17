@@ -48,14 +48,15 @@
 
 <script>
 	import * as Utils from './../../../../helpers/utils';
+	import ComponentSponsorsListTable from './SponsorsListTable.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				files: [],
 				sponsors: [],
 				sponsorTier: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -76,9 +77,9 @@
 					});
 					if (uuids.length) {
 						return vue.$request.get('files', {uuids: uuids});
-                    } else {
+					} else {
 						return Promise.resolve();
-                    }
+					}
 				}).then(function (response) {
 					vue.files = response ? response.data : [];
 				});
@@ -108,23 +109,23 @@
 				}
 			}).then(function (response) {
 				vue.files = response ? response.data : [];
-                next();
+				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		props: [
 			'sponsorTierUuid'
 		],
-        methods: {
-		  hasError: function(err){
-		      const vue = this;
-              vue.apiError = err.response.data.errors;
-          }
-        },
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		components: {
-			'sponsors-list-table': require('./SponsorsListTable.vue')
+			'sponsors-list-table': ComponentSponsorsListTable,
 		}
 	};
 </script>

@@ -43,14 +43,16 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
+	import ComponentDonationsListTable from './DonationsListTableRow.vue';
+	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
+	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
+	import PaginationMixin from './../../../mixins/pagination';
 
-	const PaginationMixin = require('./../../../mixins/pagination');
-
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				nonprofit: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		computed: {
@@ -85,19 +87,19 @@
 				next();
 			});
 		},
-        methods: {
-            hasError: function(err) {
-                const vue = this;
-                vue.apiError = err.response.data.errors;
-            }
-        },
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		mixins: [
 			PaginationMixin
 		],
 		components: {
-			'donations-list-table': require('./DonationsListTable.vue'),
-			'donations-list-table-header': require('./DonationsListTableHeader.vue'),
-			'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
+			'donations-list-table': ComponentDonationsListTable,
+			'donations-list-table-header': ComponentDonationsListTableHeader,
+			'paginated-table-footer': ComponentPaginatedTableFooter,
 		}
 	};
 </script>

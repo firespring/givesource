@@ -21,7 +21,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentSpinner from './../layout/Spinner.vue';
+
+	export default {
 		data: function () {
 			return {
 				localValue: '',
@@ -90,7 +92,7 @@
 			}
 		},
 		components: {
-			'layout-spinner': require('./../layout/Spinner.vue')
+			'layout-spinner': ComponentSpinner,
 		}
 	};
 </script>

@@ -62,7 +62,8 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.url" type="url" name="url" id="url" placeholder="https://" :class="{ 'has-error': formErrors.url }" v-auto-focus>
+                                            <input v-model="formData.url" type="url" name="url" id="url" placeholder="https://" :class="{ 'has-error': formErrors.url }"
+                                                   v-auto-focus>
                                         </div>
                                         <div v-if="formErrors.url" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.url }}
@@ -101,23 +102,25 @@
 </template>
 
 <script>
+	import ComponentVideo from './../../../media/Video.vue';
+
 	const MediaHelper = require('./../../../../helpers/media');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				slide: {},
-                nonprofit: {},
+				nonprofit: {},
 
-                // Form Data
-                formData: {
+				// Form Data
+				formData: {
 					url: '',
-                    caption: '',
-                },
+					caption: '',
+				},
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			}
 		},
 		computed: {
@@ -135,8 +138,8 @@
 					return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
 				}).then(function (response) {
 					vue.slide = response.data;
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -149,7 +152,7 @@
 				vue.slide = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -163,13 +166,13 @@
 				},
 				deep: true
 			},
-            slide: {
+			slide: {
 				handler: function () {
 					const vue = this;
 					vue.formData = vue.sync(vue.formData, vue.slide);
-                },
-                deep: true
-            }
+				},
+				deep: true
+			}
 		},
 		methods: {
 			getConstraints: function () {
@@ -207,11 +210,11 @@
 				const vue = this;
 
 				const params = vue.getUpdatedParameters(vue.formData, vue.slide);
-                if (Object.keys(params).length === 0) {
+				if (Object.keys(params).length === 0) {
 					vue.clearModals();
-	                vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
-	                return;
-                }
+					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+					return;
+				}
 
 				MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
 					if (params.hasOwnProperty('url')) {
@@ -229,12 +232,12 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			}
 		},
 		components: {
-			'media-video': require('../../../media/Video.vue')
+			'media-video': ComponentVideo,
 		}
 	};
 </script>

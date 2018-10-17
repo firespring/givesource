@@ -110,7 +110,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../forms/Ckeditor.vue';
+	import ComponentToolkitListTable from './toolkit/ToolkitListTable.vue';
+
+	export default {
 		data: function () {
 			return {
 				contents: [],
@@ -125,16 +128,16 @@
 						value: ''
 					},
 					TOOLKIT_LEADING_TEXT: {
-                        key: 'TOOLKIT_LEADING_TEXT',
-                        type: 'RICH_TEXT',
-                        value: ''
+						key: 'TOOLKIT_LEADING_TEXT',
+						type: 'RICH_TEXT',
+						value: ''
 					},
 				},
 
 				// Errors
 				formErrors: {},
-                apiError: {},
-            };
+				apiError: {},
+			};
 		},
 		computed: {
 			resourceContents: function () {
@@ -152,9 +155,9 @@
 					vue.contents = response.data;
 					vue.original = JSON.parse(JSON.stringify(response.data));
 					vue.loaded = true;
-				}).catch(function (err){
-                    vue.apiError = err.response.data.errors;
-                });
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -172,8 +175,8 @@
 				vue.loaded = true;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
+				vue.apiError = err.response.data.errors;
+				next();
 			});
 		},
 		created: function () {
@@ -268,7 +271,7 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			},
 			addResource: function (event) {
@@ -277,14 +280,14 @@
 
 				vue.addModal('pages-toolkit-add-resource-modal');
 			},
-            hasError: function(err){
-			    const vue = this;
-                vue.apiError = err.response.data.errors;
-            },
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),
-			'toolkit-list-table': require('./toolkit/ToolkitListTable.vue')
+			'forms-ckeditor': ComponentCKEditor,
+			'toolkit-list-table': ComponentToolkitListTable,
 		}
 	};
 </script>

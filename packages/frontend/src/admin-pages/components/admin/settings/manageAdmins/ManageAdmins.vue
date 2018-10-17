@@ -51,20 +51,22 @@
 </template>
 
 <script>
-	module.exports = {
-	    data: function(){
-	      return {
-	          apiError: {},
-          }
-        },
-        methods:{
-          hasError: function(err){
-              const vue = this;
-              vue.apiError = err.response.data.errors;
-          }
-        },
+	import ComponentManageAdminsListTable from './ManageAdminsListTable.vue';
+
+	export default {
+		data: function () {
+			return {
+				apiError: {},
+			}
+		},
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		components: {
-			'manage-admins-list-table': require('./ManageAdminsListTable.vue')
+			'manage-admins-list-table': ComponentManageAdminsListTable,
 		},
 	};
 </script>

@@ -168,7 +168,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue';
+	import ComponentSpinner from './../../layout/Spinner.vue';
+
+	export default {
 		data: function () {
 			return {
 				nonprofits: [],
@@ -360,7 +363,7 @@
 								lastName: '',
 								nonprofitUuid: '',
 								subtotal: 0,
-                                type: vue.formData.type,
+								type: vue.formData.type,
 							};
 						} else {
 							vue.$router.push({name: 'donations-list'});
@@ -376,8 +379,8 @@
 			}
 		},
 		components: {
-			'forms-select-nonprofit': require('./../../forms/SelectNonprofit.vue'),
-			'layout-spinner': require('./../../layout/Spinner.vue')
+			'forms-select-nonprofit': ComponentSelectNonprofit,
+			'layout-spinner': ComponentSpinner,
 		}
 	};
 </script>

@@ -145,8 +145,10 @@
 </template>
 
 <script>
+	import ComponentColor from './../../../forms/Color.vue';
+	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],
@@ -165,7 +167,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 
 			};
 		},
@@ -226,7 +228,7 @@
 					FAVICON: {
 						presence: false,
 						favicon: true,
-                    },
+					},
 					FOUNDATION_LOGO: {
 						presence: false,
 						image: true,
@@ -303,7 +305,7 @@
 						vue.$router.push({name: 'settings-list'});
 					}).catch(function (err) {
 						vue.clearModals();
-                        vue.apiError = err.response.data.errors;
+						vue.apiError = err.response.data.errors;
 					});
 
 				});
@@ -378,8 +380,8 @@
 			}
 		},
 		components: {
-			'forms-color': require('./../../../forms/Color.vue'),
-			'forms-image-upload': require('./../../../forms/ImageUpload.vue')
+			'forms-color': ComponentColor,
+			'forms-image-upload': ComponentImageUpload,
 		}
 	};
 </script>

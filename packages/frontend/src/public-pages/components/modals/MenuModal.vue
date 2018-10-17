@@ -31,7 +31,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		computed: {
 			displayAbout: function () {
 				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');

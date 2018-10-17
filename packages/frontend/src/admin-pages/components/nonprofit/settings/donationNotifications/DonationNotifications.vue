@@ -83,7 +83,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue';
+	import ComponentSelectState from './../../../forms/SelectState.vue';
+
+	export default {
 		data: function () {
 			return {
 				nonprofit: {},
@@ -93,9 +96,9 @@
 					receiveDonationNotifications: true,
 				},
 
-                settings: {
+				settings: {
 					SENDER_EMAIL: null,
-                },
+				},
 
 				// Errors
 				formErrors: {},
@@ -118,8 +121,8 @@
 				}).then(function (response) {
 					if (response.data && response.data.value) {
 						vue.settings.SENDER_EMAIL = response.data.value;
-                    }
-                });
+					}
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -202,8 +205,8 @@
 			}
 		},
 		components: {
-			'category-select': require('./../../../forms/SelectNonprofitCategory.vue'),
-			'state-select': require('./../../../forms/SelectState.vue')
+			'category-select': ComponentSelectNonprofitCategory,
+			'state-select': ComponentSelectState,
 		}
 	};
 </script>

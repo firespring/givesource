@@ -63,77 +63,80 @@
 </template>
 
 <script>
-    module.exports = {
-        data: function () {
-            return {
-                firstName: this.user.firstName,
-                lastName: this.user.lastName,
-                gravatarAlt: this.user.firstName && this.user.lastName ? this.user.firstName + ' ' + this.user.lastName : 'Avatar',
-                navigationComponent: 'navigation-nonprofit',
+	import ComponentNavigationAdmin from './NavigationAdmin.vue';
+	import ComponentNavigationNonprofits from './NavigationNonprofits.vue';
 
-                displayingMenu: false,
-                timer: null,
-            }
-        },
-        computed: {
-            isAdmin: function () {
-                return this.isSuperAdminUser() || this.isAdminUser();
-            },
-            logoLink: function () {
-                if (!this.isAdmin && this.nonprofitUuid) {
-                    return {name: 'nonprofit-donations-list', params: {nonprofitUuid: this.nonprofitUuid}};
-                }
-                return {name: 'donations-list'};
-            }
-        },
-        props: [
-            'nonprofitUuid'
-        ],
-        created: function () {
-            const vue = this;
+	export default {
+		data: function () {
+			return {
+				firstName: this.user.firstName,
+				lastName: this.user.lastName,
+				gravatarAlt: this.user.firstName && this.user.lastName ? this.user.firstName + ' ' + this.user.lastName : 'Avatar',
+				navigationComponent: 'navigation-nonprofit',
 
-            vue.bus.$on('userAccountUpdateInfo', function (data) {
-                vue.firstName = data.firstName;
-                vue.lastName = data.lastName;
-            });
-        },
-        beforeDestroy: function () {
-            const vue = this;
+				displayingMenu: false,
+				timer: null,
+			}
+		},
+		computed: {
+			isAdmin: function () {
+				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+			logoLink: function () {
+				if (!this.isAdmin && this.nonprofitUuid) {
+					return {name: 'nonprofit-donations-list', params: {nonprofitUuid: this.nonprofitUuid}};
+				}
+				return {name: 'donations-list'};
+			}
+		},
+		props: [
+			'nonprofitUuid'
+		],
+		created: function () {
+			const vue = this;
 
-            vue.bus.$off('userAccountUpdateInfo');
-        },
-        beforeMount: function () {
-            document.body.classList.add('has-menubar', 'has-menubar--secondary');
-        },
-        methods: {
-            toggleMenu: function (event) {
-                event.preventDefault();
-                const vue = this;
-                if (vue.displayingMenu) {
-                    $(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
-                    $(vue.$refs.oMenubarPopup).fadeOut(200);
-                } else {
-                    $(vue.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active');
-                    $(vue.$refs.oMenubarPopup).fadeIn(200);
-                }
-                vue.displayingMenu = !vue.displayingMenu;
-            },
-            closeMenu: function () {
-                const vue = this;
-                vue.timer = setTimeout(function () {
-                    $(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
-                    $(vue.$refs.oMenubarPopup).fadeOut(200);
-                    vue.displayingMenu = false;
-                }, 500);
-            },
-            cancelCloseMenu: function () {
-                const vue = this;
-                clearTimeout(vue.timer);
-            }
-        },
-        components: {
-            'navigation-nonprofit': require('./NavigationNonprofits.vue'),
-            'navigation-admin': require('./NavigationAdmin.vue'),
-        }
-    };
+			vue.bus.$on('userAccountUpdateInfo', function (data) {
+				vue.firstName = data.firstName;
+				vue.lastName = data.lastName;
+			});
+		},
+		beforeDestroy: function () {
+			const vue = this;
+
+			vue.bus.$off('userAccountUpdateInfo');
+		},
+		beforeMount: function () {
+			document.body.classList.add('has-menubar', 'has-menubar--secondary');
+		},
+		methods: {
+			toggleMenu: function (event) {
+				event.preventDefault();
+				const vue = this;
+				if (vue.displayingMenu) {
+					$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
+					$(vue.$refs.oMenubarPopup).fadeOut(200);
+				} else {
+					$(vue.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active');
+					$(vue.$refs.oMenubarPopup).fadeIn(200);
+				}
+				vue.displayingMenu = !vue.displayingMenu;
+			},
+			closeMenu: function () {
+				const vue = this;
+				vue.timer = setTimeout(function () {
+					$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
+					$(vue.$refs.oMenubarPopup).fadeOut(200);
+					vue.displayingMenu = false;
+				}, 500);
+			},
+			cancelCloseMenu: function () {
+				const vue = this;
+				clearTimeout(vue.timer);
+			}
+		},
+		components: {
+			'navigation-admin': ComponentNavigationAdmin,
+			'navigation-nonprofit': ComponentNavigationNonprofits,
+		}
+	};
 </script>

@@ -62,11 +62,13 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../forms/Ckeditor.vue';
+
+	export default {
 		data: function () {
 			return {
 				contents: [],
-                original: [],
+				original: [],
 				loaded: false,
 
 				// Form Data
@@ -80,8 +82,8 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
-            };
+				apiError: {},
+			};
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -91,9 +93,9 @@
 					vue.contents = response.data;
 					vue.original = JSON.parse(JSON.stringify(response.data));
 					vue.loaded = true;
-				}).catch(function(err){
-                    vue.apiError = err.response.data.errors;
-                });
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -108,8 +110,8 @@
 				vue.loaded = true;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
+				vue.apiError = err.response.data.errors;
+				next();
 			});
 		},
 		watch: {
@@ -181,12 +183,12 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			}
 		},
 		components: {
-			'forms-ckeditor': require('./../../forms/Ckeditor.vue')
+			'forms-ckeditor': ComponentCKEditor,
 		}
 	};
 </script>

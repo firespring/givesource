@@ -24,10 +24,12 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = function () {
 	const env = process.env.NODE_ENV || 'development';
 	const config = {
+		mode: env,
 		module: {
 			rules: [
 				{
@@ -91,6 +93,7 @@ module.exports = function () {
 					'deploy-info.json'
 				]
 			}),
+			new VueLoaderPlugin(),
 			new HtmlWebpackPlugin({
 				template: 'src/admin-pages/index.html'
 			}),

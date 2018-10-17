@@ -32,7 +32,8 @@
                                 </h3>
                             </div>
                             <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
-                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--accent btn--xs">Donate</a></div>
+                            <div v-if="canDonate" class="leaderboard-item__action"><a v-on:click.prevent="donate(nonprofit)" href="#" class="btn btn--accent btn--xs">Donate</a>
+                            </div>
                         </div>
                     </div>
 
@@ -49,12 +50,17 @@
 </template>
 
 <script>
-	const numeral = require('numeral');
-	const PaginationMixin = require('./../../mixins/pagination');
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentPagination from './../pagination/Pagination.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
+	import PaginationMixin from './../../mixins/pagination';
 
-	module.exports = {
+	const numeral = require('numeral');
+
+	export default {
 		computed: {
 			eventTitle: function () {
 				return Settings.eventTitle();
@@ -108,10 +114,10 @@
 			PaginationMixin,
 		],
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('./../layout/Hero.vue'),
-			'layout-sponsors': require('./../layout/Sponsors.vue'),
-			'pagination': require('./../pagination/Pagination.vue'),
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
+			'pagination': ComponentPagination,
 		}
 	};
 </script>

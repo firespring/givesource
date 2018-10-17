@@ -100,7 +100,7 @@
 <script>
 	import Vue from "vue";
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				file: {},

@@ -62,11 +62,13 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../forms/Ckeditor.vue';
+
+	export default {
 		data: function () {
 			return {
 				contents: [],
-                original: [],
+				original: [],
 				loaded: false,
 
 				// Form Data
@@ -80,8 +82,8 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {}
-            };
+				apiError: {}
+			};
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -178,12 +180,12 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			}
 		},
 		components: {
-			'forms-ckeditor': require('./../../forms/Ckeditor.vue')
+			'forms-ckeditor': ComponentCKEditor,
 		}
 	};
 </script>

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-    module.exports = {
+    export default {
         computed: {
         	spinnerClass: function () {
         		switch (this.size) {

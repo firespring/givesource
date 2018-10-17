@@ -105,7 +105,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentSponsorTier from './../../../forms/SponsorTier.vue';
+
+	export default {
 		data: function () {
 			return {
 				file: {},
@@ -123,7 +126,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -146,9 +149,9 @@
 					if (response) {
 						vue.file = response.data;
 					}
-				}).catch(function(err){
-                    vue.apiError = err.response.data.errors;
-                });
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -170,7 +173,7 @@
 				}
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -269,13 +272,13 @@
 					vue.$router.push({name: 'sponsors-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			}
 		},
 		components: {
-			'forms-image-upload': require('./../../../forms/ImageUpload.vue'),
-			'forms-sponsor-tier': require('./../../../forms/SponsorTier.vue')
+			'forms-image-upload': ComponentImageUpload,
+			'forms-sponsor-tier': ComponentSponsorTier,
 		}
 	};
 </script>

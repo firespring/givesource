@@ -52,6 +52,11 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentLeaderboard from './Leaderboard.vue';
+	import ComponentMetrics from './Metrics.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
 
 	const fetchData = function () {
 		let promise = Promise.resolve();
@@ -127,7 +132,7 @@
 		return promise;
 	};
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				contents: [],
@@ -190,11 +195,11 @@
 			},
 		},
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
-			'leaderboard': require('./Leaderboard.vue'),
-			'metrics': require('./Metrics.vue'),
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
+			'leaderboard': ComponentLeaderboard,
+			'metrics': ComponentMetrics,
 		}
 	};
 </script>

@@ -93,7 +93,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				// Form Data

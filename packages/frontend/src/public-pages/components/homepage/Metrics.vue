@@ -131,10 +131,12 @@
 <script>
 	import * as Utils from './../../helpers/utils';
 	import * as Settings from './../../helpers/settings';
+	import ComponentNonprofitCategorySelect from './../forms/NonprofitCategorySelect.vue';
+	import ComponentSubmit from './../forms/Submit.vue';
 
 	const numeral = require('numeral');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				category: '',
@@ -379,8 +381,8 @@
 			}
 		},
 		components: {
-			'forms-nonprofit-category-select': require('./../forms/NonprofitCategorySelect.vue'),
-			'forms-submit': require('./../forms/Submit.vue')
+			'forms-nonprofit-category-select': ComponentNonprofitCategorySelect,
+			'forms-submit': ComponentSubmit,
 		}
 	};
 </script>

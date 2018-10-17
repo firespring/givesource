@@ -83,7 +83,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				firstName: this.user.firstName || '',

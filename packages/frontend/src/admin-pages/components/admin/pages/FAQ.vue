@@ -63,13 +63,15 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentFAQListTable from './faq/FAQListTable.vue';
+
+	export default {
 		data: function () {
 			return {
 				contents: [],
 				loaded: false,
-                apiError: {},
-            };
+				apiError: {},
+			};
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -131,13 +133,13 @@
 
 				vue.addModal('pages-faq-add-question-modal');
 			},
-            hasError: function (err) {
-                const vue = this;
-                vue.apiError = err.response.data.errors;
-            },
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			},
 		},
 		components: {
-			'faq-list-table': require('./faq/FAQListTable.vue')
+			'faq-list-table': ComponentFAQListTable,
 		}
 	};
 </script>

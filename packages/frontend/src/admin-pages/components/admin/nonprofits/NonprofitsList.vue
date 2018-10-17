@@ -23,7 +23,8 @@
                 <div class="o-app-main-content">
                     <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
                     </nonprofits-list-table-header>
-                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit" v-on:hasError="hasError"></nonprofits-list-table>
+                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"
+                                           v-on:hasError="hasError"></nonprofits-list-table>
                     <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
                 </div>
             </div>
@@ -33,14 +34,17 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
-	const PaginationMixin = require('./../../../mixins/pagination');
+	import ComponentNonprofitListTable from './NonprofitsListTable.vue';
+	import ComponentNonprofitListTableHeader from './NonprofitsListTableHeader.vue';
+	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
+	import PaginationMixin from './../../../mixins/pagination';
 
-	module.exports = {
-	    data:function(){
-	        return {
-                apiError: {}
-            };
-        },
+	export default {
+		data: function () {
+			return {
+				apiError: {}
+			};
+		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
 				vue.$request.get('nonprofits', to.query).then(function (response) {
@@ -73,7 +77,7 @@
 		mixins: [
 			PaginationMixin
 		],
-        methods: {
+		methods: {
 			updateNonprofit: function (nonprofitUuid) {
 				const vue = this;
 
@@ -82,17 +86,17 @@
 						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
 					});
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
-            },
-            searchNonprofits: function (params) {
+					vue.apiError = err.response.data.errors;
+				});
+			},
+			searchNonprofits: function (params) {
 				const vue = this;
 
 				let sort = 'all_created_on_descending';
 				if (params.sort) {
 					sort = params.sort;
 					delete params.sort;
-                }
+				}
 
 				vue.pagination.loaded = false;
 				vue.$request.get('nonprofits/search', params).then(function (response) {
@@ -100,35 +104,35 @@
 						return Utils.sortAlphabetically(a, b, 'legalName');
 					});
 					vue.setPaginationData({
-                        size: 0,
-                        sort: sort,
-                        start: 0,
-                        total: 0,
-                        items: response.data
-                    });
-                }).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
-            },
-            resetPagination: function () {
+						size: 0,
+						sort: sort,
+						start: 0,
+						total: 0,
+						items: response.data
+					});
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
+			},
+			resetPagination: function () {
 				const vue = this;
 
-	            vue.resetPaginationData();
-	            vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
-		            vue.setPaginationData(response.data);
-	            }).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
-            },
-            hasError: function (err) {
-                const vue = this;
-                vue.apiError = err.response.data.errors;
-            }
-        },
+				vue.resetPaginationData();
+				vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
+					vue.setPaginationData(response.data);
+				}).catch(function (err) {
+					vue.apiError = err.response.data.errors;
+				});
+			},
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		components: {
-			'nonprofits-list-table': require('./NonprofitsListTable.vue'),
-			'nonprofits-list-table-header': require('./NonprofitsListTableHeader.vue'),
-			'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
+			'nonprofits-list-table': ComponentNonprofitListTable,
+			'nonprofits-list-table-header': ComponentNonprofitListTableHeader,
+			'paginated-table-footer': ComponentPaginatedTableFooter,
 		}
 	};
 </script>

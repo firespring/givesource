@@ -63,9 +63,12 @@
 </template>
 
 <script>
-    import * as Utils from './../../../helpers/utils';
+	import * as Utils from './../../../helpers/utils';
+	import ComponentDonationTiersModalOptionRow from './DonationTiersModalOptionRow.vue';
+	import ComponentMoney from './../../forms/Money.vue';
+	import ComponentSpinner from './../../layout/Spinner.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				donationTiers: [],
@@ -173,7 +176,7 @@
 
 					if (!Utils.isInternetExplorer()) {
 						vue.bus.$emit('updateCartItems');
-                    }
+					}
 
 					$(vue.$refs.donationModalOptions).fadeOut(function () {
 						vue.removeModal('donation-tiers');
@@ -184,9 +187,9 @@
 			}
 		},
 		components: {
-			'donation-tiers-option-row': require('./DonationTiersModalOptionRow.vue'),
-			'forms-money': require('./../../forms/Money.vue'),
-			'layout-spinner': require('./../../layout/Spinner.vue'),
+			'donation-tiers-option-row': ComponentDonationTiersModalOptionRow,
+			'forms-money': ComponentMoney,
+			'layout-spinner': ComponentSpinner,
 		}
 	}
 </script>

@@ -21,7 +21,7 @@
 <script>
 	const MediaHelper = require('./../../helpers/media');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				src: '',

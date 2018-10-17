@@ -22,7 +22,7 @@
 <script>
 	require('jquery.payment');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				localValue: this.value ? this.value : null,

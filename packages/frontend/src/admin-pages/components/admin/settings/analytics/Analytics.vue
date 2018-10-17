@@ -78,7 +78,7 @@
 <script>
 	import Request from './../../../../helpers/request';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],

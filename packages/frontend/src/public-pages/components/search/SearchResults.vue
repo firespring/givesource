@@ -64,10 +64,16 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentPagination from './../pagination/Pagination.vue';
+	import ComponentSearchResultsHeader from './SearchResultsHeader.vue';
+	import ComponentSearchResultsRow from './SearchResultsRow.vue';
+	import ComponentSpinner from './../layout/Spinner.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
+	import PaginationMixin from './../../mixins/pagination';
 
-	const PaginationMixin = require('./../../mixins/pagination');
-
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				category: 0,
@@ -176,13 +182,13 @@
 			PaginationMixin
 		],
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-spinner': require('./../layout/Spinner.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
-			'pagination': require('./../pagination/Pagination.vue'),
-			'search-results-header': require('./SearchResultsHeader.vue'),
-			'search-results-row': require('./SearchResultsRow.vue')
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-spinner': ComponentSpinner,
+			'layout-sponsors': ComponentSponsors,
+			'pagination': ComponentPagination,
+			'search-results-header': ComponentSearchResultsHeader,
+			'search-results-row': ComponentSearchResultsRow,
 		}
 	};
 </script>

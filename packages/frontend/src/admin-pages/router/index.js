@@ -16,6 +16,54 @@
 
 import * as User from './../helpers/user';
 import * as Utils from './../helpers/utils';
+import Component404 from './../components/errors/404.vue';
+import ComponentAbout from './../components/admin/pages/About.vue';
+import ComponentAnalytics from './../components/admin/settings/analytics/Analytics.vue';
+import ComponentAppearance from './../components/admin/settings/appearance/Appearance.vue';
+import ComponentCheckout from './../components/admin/pages/Checkout.vue';
+import ComponentContactSettings from './../components/admin/settings/contact/ContactSettings.vue';
+import ComponentContactUs from './../components/admin/pages/ContactUs.vue';
+import ComponentDonationsAdd from './../components/admin/donations/DonationsAdd.vue';
+import ComponentDonationsList from './../components/admin/donations/DonationsList.vue';
+import ComponentEmailSettings from './../components/admin/settings/emails/EmailSettings.vue';
+import ComponentEventSettings from './../components/admin/settings/event/EventSettings.vue';
+import ComponentFAQ from './../components/admin/pages/FAQ.vue';
+import ComponentForgotPassword from './../components/auth/forgotPassword/ForgotPassword.vue';
+import ComponentForgotPasswordEmailSent from './../components/auth/forgotPassword/ForgotPasswordEmailSent.vue';
+import ComponentForgotPasswordForm from './../components/auth/forgotPassword/ForgotPasswordForm.vue';
+import ComponentForgotPasswordResetForm from './../components/auth/forgotPassword/ForgotPasswordResetForm.vue';
+import ComponentHomepage from './../components/admin/pages/Homepage.vue';
+import ComponentLogin from './../components/auth/login/Login.vue';
+import ComponentLogout from './../components/auth/Logout.vue';
+import ComponentManageAdmins from './../components/admin/settings/manageAdmins/ManageAdmins.vue';
+import ComponentManageAdminsInvite from './../components/admin/settings/manageAdmins/ManageAdminsInvite.vue';
+import ComponentNonprofitDonationNotifications from './../components/nonprofit/settings/donationNotifications/DonationNotifications.vue';
+import ComponentNonprofitDonationsList from './../components/nonprofit/donations/DonationsList.vue';
+import ComponentNonprofitManageAdmins from './../components/nonprofit/settings/manageAdmins/ManageAdmins.vue';
+import ComponentNonprofitManageAdminsInvite from './../components/nonprofit/settings/manageAdmins/ManageAdminsInvite.vue';
+import ComponentNonprofitManageOrganization from './../components/nonprofit/settings/manageOrganization/ManageOrganization.vue';
+import ComponentNonprofitPhotosEdit from './../components/nonprofit/yourPage/media/PhotosEdit.vue';
+import ComponentNonprofitRequestNameChange from './../components/nonprofit/settings/requestNameChange/RequestNameChange.vue';
+import ComponentNonprofitsAdd from './../components/admin/nonprofits/NonprofitsAdd.vue';
+import ComponentNonprofitSettingsList from './../components/nonprofit/settings/SettingsList.vue';
+import ComponentNonprofitsList from './../components/admin/nonprofits/NonprofitsList.vue';
+import ComponentNonprofitVideosAdd from './../components/nonprofit/yourPage/media/VideosAdd.vue';
+import ComponentNonprofitVideosEdit from './../components/nonprofit/yourPage/media/VideosEdit.vue';
+import ComponentNonprofitYourPage from './../components/nonprofit/yourPage/YourPage.vue';
+import ComponentPagesList from './../components/admin/pages/PagesList.vue';
+import ComponentPaymentGatewaySettings from './../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue';
+import ComponentRegister from './../components/admin/pages/Register.vue';
+import ComponentSettingsList from './../components/admin/settings/SettingsList.vue';
+import ComponentSocialSharing from './../components/admin/settings/socialSharing/SocialSharing.vue';
+import ComponentSponsorAdd from './../components/admin/sponsorTiers/sponsors/SponsorAdd.vue';
+import ComponentSponsorEdit from './../components/admin/sponsorTiers/sponsors/SponsorEdit.vue';
+import ComponentSponsorsList from './../components/admin/sponsorTiers/sponsors/SponsorsList.vue';
+import ComponentSponsorTiersAdd from './../components/admin/sponsorTiers/SponsorsTiersAdd.vue';
+import ComponentSponsorTiersEdit from './../components/admin/sponsorTiers/SponsorsTiersEdit.vue';
+import ComponentSponsorTiersList from './../components/admin/sponsorTiers/SponsorsTiersList.vue';
+import ComponentTerms from './../components/admin/pages/Terms.vue';
+import ComponentToolkits from './../components/admin/pages/Toolkits.vue';
+import ComponentUserAccount from './../components/account/UserAccount.vue';
 import Request from './../helpers/request';
 import store from './../store';
 import Vue from 'vue';
@@ -60,7 +108,7 @@ const router = new VueRouter({
 		{
 			path: '/donations',
 			name: 'donations-list',
-			component: require('./../components/admin/donations/DonationsList.vue'),
+			component: ComponentDonationsList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -68,7 +116,7 @@ const router = new VueRouter({
 		{
 			path: '/donations/add',
 			name: 'donations-add',
-			component: require('./../components/admin/donations/DonationsAdd.vue'),
+			component: ComponentDonationsAdd,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -76,7 +124,7 @@ const router = new VueRouter({
 		{
 			path: '/nonprofits',
 			name: 'nonprofits-list',
-			component: require('./../components/admin/nonprofits/NonprofitsList.vue'),
+			component: ComponentNonprofitsList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -84,7 +132,7 @@ const router = new VueRouter({
 		{
 			path: '/nonprofits/add',
 			name: 'add-nonprofit',
-			component: require('./../components/admin/nonprofits/NonprofitsAdd.vue'),
+			component: ComponentNonprofitsAdd,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -94,7 +142,7 @@ const router = new VueRouter({
 		{
 			path: '/pages',
 			name: 'pages-list',
-			component: require('./../components/admin/pages/PagesList.vue'),
+			component: ComponentPagesList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -102,7 +150,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/homepage',
 			name: 'pages-homepage',
-			component: require('./../components/admin/pages/Homepage.vue'),
+			component: ComponentHomepage,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -110,7 +158,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/checkout',
 			name: 'pages-checkout',
-			component: require('./../components/admin/pages/Checkout.vue'),
+			component: ComponentCheckout,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -118,7 +166,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/contact-us',
 			name: 'pages-contact-us',
-			component: require('./../components/admin/pages/ContactUs.vue'),
+			component: ComponentContactUs,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -126,7 +174,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/register',
 			name: 'pages-register',
-			component: require('./../components/admin/pages/Register.vue'),
+			component: ComponentRegister,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -134,7 +182,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/about',
 			name: 'pages-about',
-			component: require('./../components/admin/pages/About.vue'),
+			component: ComponentAbout,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -142,7 +190,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/faq',
 			name: 'pages-faq',
-			component: require('./../components/admin/pages/FAQ.vue'),
+			component: ComponentFAQ,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -150,7 +198,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/toolkits',
 			name: 'pages-toolkits',
-			component: require('./../components/admin/pages/Toolkits.vue'),
+			component: ComponentToolkits,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -158,7 +206,7 @@ const router = new VueRouter({
 		{
 			path: '/pages/terms',
 			name: 'pages-terms',
-			component: require('./../components/admin/pages/Terms.vue'),
+			component: ComponentTerms,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -168,7 +216,7 @@ const router = new VueRouter({
 		{
 			path: '/settings',
 			name: 'settings-list',
-			component: require('./../components/admin/settings/SettingsList.vue'),
+			component: ComponentSettingsList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -176,7 +224,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/event',
 			name: 'settings-event',
-			component: require('./../components/admin/settings/event/EventSettings.vue'),
+			component: ComponentEventSettings,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -184,7 +232,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/contact',
 			name: 'settings-contact',
-			component: require('./../components/admin/settings/contact/ContactSettings.vue'),
+			component: ComponentContactSettings,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -192,7 +240,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/site-appearance',
 			name: 'settings-site-appearance',
-			component: require('./../components/admin/settings/appearance/Appearance.vue'),
+			component: ComponentAppearance,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -200,7 +248,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/emails',
 			name: 'settings-emails',
-			component: require('./../components/admin/settings/emails/EmailSettings.vue'),
+			component: ComponentEmailSettings,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -208,7 +256,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/payment-gateway',
 			name: 'settings-payment-gateway',
-			component: require('./../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue'),
+			component: ComponentPaymentGatewaySettings,
 			meta: {
 				allowedGroups: ['SuperAdmin']
 			},
@@ -216,7 +264,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/google-analytics',
 			name: 'settings-analytics',
-			component: require('./../components/admin/settings/analytics/Analytics.vue'),
+			component: ComponentAnalytics,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -224,7 +272,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/admins',
 			name: 'settings-admins-list',
-			component: require('./../components/admin/settings/manageAdmins/ManageAdmins.vue'),
+			component: ComponentManageAdmins,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -232,7 +280,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/admins/invite',
 			name: 'settings-admins-invite',
-			component: require('./../components/admin/settings/manageAdmins/ManageAdminsInvite.vue'),
+			component: ComponentManageAdminsInvite,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -240,7 +288,7 @@ const router = new VueRouter({
 		{
 			path: '/settings/social-sharing',
 			name: 'settings-social-sharing',
-			component: require('./../components/admin/settings/socialSharing/SocialSharing.vue'),
+			component: ComponentSocialSharing,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
@@ -250,7 +298,7 @@ const router = new VueRouter({
 		{
 			path: '/sponsor-tiers',
 			name: 'sponsor-tiers-list',
-			component: require('./../components/admin/sponsorTiers/SponsorsTiersList.vue'),
+			component: ComponentSponsorTiersList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -258,7 +306,7 @@ const router = new VueRouter({
 		{
 			path: '/sponsor-tiers/add',
 			name: 'sponsor-tiers-add',
-			component: require('./../components/admin/sponsorTiers/SponsorsTiersAdd.vue'),
+			component: ComponentSponsorTiersAdd,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -267,7 +315,7 @@ const router = new VueRouter({
 			path: '/sponsor-tiers/:sponsorTierUuid',
 			name: 'sponsor-tiers-edit',
 			props: true,
-			component: require('./../components/admin/sponsorTiers/SponsorsTiersEdit.vue'),
+			component: ComponentSponsorTiersEdit,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -276,7 +324,7 @@ const router = new VueRouter({
 			path: '/sponsor-tiers/:sponsorTierUuid/sponsors',
 			name: 'sponsors-list',
 			props: true,
-			component: require('./../components/admin/sponsorTiers/sponsors/SponsorsList.vue'),
+			component: ComponentSponsorsList,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -285,7 +333,7 @@ const router = new VueRouter({
 			path: '/sponsor-tiers/:sponsorTierUuid/add',
 			name: 'sponsors-add',
 			props: true,
-			component: require('./../components/admin/sponsorTiers/sponsors/SponsorAdd.vue'),
+			component: ComponentSponsorAdd,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -294,7 +342,7 @@ const router = new VueRouter({
 			path: '/sponsor-tiers/:sponsorTierUuid/sponsors/:sponsorUuid',
 			name: 'sponsors-edit',
 			props: true,
-			component: require('./../components/admin/sponsorTiers/sponsors/SponsorEdit.vue'),
+			component: ComponentSponsorEdit,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			}
@@ -305,7 +353,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/donations',
 			name: 'nonprofit-donations-list',
 			props: true,
-			component: require('./../components/nonprofit/donations/DonationsList.vue'),
+			component: ComponentNonprofitDonationsList,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -317,7 +365,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings',
 			name: 'nonprofit-settings-list',
 			props: true,
-			component: require('./../components/nonprofit/settings/SettingsList.vue'),
+			component: ComponentNonprofitSettingsList,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
 				validateNonprofitUuid: true
@@ -327,7 +375,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings/manage-organization',
 			name: 'nonprofit-settings-manage-organization',
 			props: true,
-			component: require('./../components/nonprofit/settings/manageOrganization/ManageOrganization.vue'),
+			component: ComponentNonprofitManageOrganization,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
 				validateNonprofitUuid: true
@@ -337,7 +385,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings/donation-notifications',
 			name: 'nonprofit-settings-donation-notifications',
 			props: true,
-			component: require('./../components/nonprofit/settings/donationNotifications/DonationNotifications.vue'),
+			component: ComponentNonprofitDonationNotifications,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
 				validateNonprofitUuid: true
@@ -347,7 +395,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings/admins',
 			name: 'nonprofit-settings-admins-list',
 			props: true,
-			component: require('./../components/nonprofit/settings/manageAdmins/ManageAdmins.vue'),
+			component: ComponentNonprofitManageAdmins,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
 				validateNonprofitUuid: true
@@ -357,7 +405,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings/admins/invite',
 			name: 'nonprofit-settings-admins-invite',
 			props: true,
-			component: require('./../components/nonprofit/settings/manageAdmins/ManageAdminsInvite.vue'),
+			component: ComponentNonprofitManageAdminsInvite,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -367,7 +415,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/settings/request-name-change',
 			name: 'nonprofit-settings-request-name-change',
 			props: true,
-			component: require('./../components/nonprofit/settings/requestNameChange/RequestNameChange.vue'),
+			component: ComponentNonprofitRequestNameChange,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -379,14 +427,14 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/your-page',
 			name: 'nonprofit-your-page',
 			props: true,
-			component: require('./../components/nonprofit/yourPage/YourPage.vue'),
+			component: ComponentNonprofitYourPage,
 			meta: {validateNonprofitUuid: true}
 		},
 		{
 			path: '/nonprofits/:nonprofitUuid/your-page/media/videos/add',
 			name: 'nonprofit-your-page-media-videos-add',
 			props: true,
-			component: require('./../components/nonprofit/yourPage/media/VideosAdd.vue'),
+			component: ComponentNonprofitVideosAdd,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -396,7 +444,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/your-page/media/videos/:slideUuid',
 			name: 'nonprofit-your-page-media-videos-edit',
 			props: true,
-			component: require('./../components/nonprofit/yourPage/media/VideosEdit.vue'),
+			component: ComponentNonprofitVideosEdit,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -406,7 +454,7 @@ const router = new VueRouter({
 			path: '/nonprofits/:nonprofitUuid/your-page/media/photos/:slideUuid',
 			name: 'nonprofit-your-page-media-photos-edit',
 			props: true,
-			component: require('./../components/nonprofit/yourPage/media/PhotosEdit.vue'),
+			component: ComponentNonprofitPhotosEdit,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true
@@ -417,14 +465,14 @@ const router = new VueRouter({
 		{
 			path: '/account',
 			name: 'user-account',
-			component: require('./../components/account/UserAccount.vue'),
+			component: ComponentUserAccount,
 		},
 
 		// Authentication
 		{
 			path: '/login',
 			name: 'login',
-			component: require('./../components/auth/login/Login.vue'),
+			component: ComponentLogin,
 			meta: {requiresAuth: false},
 			beforeEnter: function (to, from, next) {
 				if (User.isAuthenticated()) {
@@ -440,16 +488,16 @@ const router = new VueRouter({
 		{
 			path: '/logout',
 			name: 'logout',
-			component: require('./../components/auth/Logout.vue'),
+			component: ComponentLogout,
 		},
 		{
 			path: '/forgot-password',
-			component: require('./../components/auth/forgotPassword/ForgotPassword.vue'),
+			component: ComponentForgotPassword,
 			children: [
 				{
 					path: '/',
 					name: 'forgot-password',
-					component: require('./../components/auth/forgotPassword/ForgotPasswordForm.vue'),
+					component: ComponentForgotPasswordForm,
 					meta: {requiresAuth: false},
 					beforeEnter: function (to, from, next) {
 						if (User.isAuthenticated()) {
@@ -461,7 +509,7 @@ const router = new VueRouter({
 				{
 					path: 'sent',
 					name: 'forgot-password-request-sent',
-					component: require('./../components/auth/forgotPassword/ForgotPasswordEmailSent.vue'),
+					component: ComponentForgotPasswordEmailSent,
 					meta: {requiresAuth: false},
 					beforeEnter: function (to, from, next) {
 						if (User.isAuthenticated()) {
@@ -473,7 +521,7 @@ const router = new VueRouter({
 				{
 					path: 'reset',
 					name: 'forgot-password-reset',
-					component: require('./../components/auth/forgotPassword/ForgotPasswordResetForm.vue'),
+					component: ComponentForgotPasswordResetForm,
 					meta: {requiresAuth: false},
 					beforeEnter: function (to, from, next) {
 						if (User.isAuthenticated()) {
@@ -489,7 +537,7 @@ const router = new VueRouter({
 		{
 			path: '*',
 			name: '404',
-			component: require('./../components/errors/404.vue'),
+			component: Component404,
 			meta: {requiresAuth: false},
 		}
 	]

@@ -120,7 +120,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		computed: {
 			isSuperAdmin: function () {
 				return this.isSuperAdminUser();

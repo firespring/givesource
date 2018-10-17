@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-module.exports = {
+export default {
 	data: function () {
 		return {
 			pagination: {

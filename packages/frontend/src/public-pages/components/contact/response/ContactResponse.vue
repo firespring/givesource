@@ -37,13 +37,16 @@
 <script>
 	import * as Settings from './../../../helpers/settings';
 	import * as Utils from './../../../helpers/utils';
+	import ComponentFooter from './../../layout/Footer.vue';
+	import ComponentHero from './../../layout/Hero.vue';
+	import ComponentSponsors from './../../layout/Sponsors.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				contents: [],
-                apiError: {},
-            };
+				apiError: {},
+			};
 		},
 		computed: {
 			response: function () {
@@ -61,8 +64,8 @@
 				})).then(function (response) {
 					vue.contents = response.data;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -74,7 +77,7 @@
 				vue.contents = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -85,9 +88,9 @@
 			vue.setPageTitle(vue.eventTitle + ' - Thank You');
 		},
 		components: {
-			'layout-footer': require('./../../layout/Footer.vue'),
-			'layout-hero': require('./../../layout/Hero.vue'),
-			'layout-sponsors': require('./../../layout/Sponsors.vue'),
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
 		}
 	};
 </script>

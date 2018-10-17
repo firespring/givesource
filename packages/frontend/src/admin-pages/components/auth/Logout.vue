@@ -19,7 +19,7 @@
 <script>
     const User = require('../../helpers/user');
 
-    module.exports = {
+    export default {
     	mounted: function () {
     		const vue = this;
 

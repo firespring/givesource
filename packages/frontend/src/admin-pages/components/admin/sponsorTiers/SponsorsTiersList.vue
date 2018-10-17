@@ -37,12 +37,15 @@
         </main>
     </div>
 </template>
+
 <script>
-	module.exports = {
+	import ComponentSponsorsTiersListTable from './SponsorsTiersListTable.vue';
+
+	export default {
 		data: function () {
 			return {
 				sponsorTiers: [],
-                apiError: {},
+				apiError: {},
 			};
 		},
 		beforeRouteEnter: function (to, from, next) {
@@ -53,8 +56,8 @@
 					});
 					vue.sponsorTiers = response.data;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -67,18 +70,18 @@
 				vue.sponsorTiers = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
-        methods: {
-		    hasError: function(err){
-		        const vue = this;
-                vue.apiError = err.response.data.errors;
-            }
-        },
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
 		components: {
-			'sponsors-list-table': require('./SponsorsTiersListTable.vue')
+			'sponsors-list-table': ComponentSponsorsTiersListTable,
 		}
 	};
 </script>

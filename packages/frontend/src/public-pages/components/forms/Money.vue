@@ -23,7 +23,7 @@
 	import * as Utils from './../../helpers/utils';
 	const numeral = require('numeral');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				localValue: this.value ? this.value : '0.00',

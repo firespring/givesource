@@ -33,49 +33,52 @@
 </template>
 
 <script>
-    import * as Utils from './../../../helpers/utils';
+	import * as Utils from './../../../helpers/utils';
+	import ComponentDonationsListTable from './DonationsListTable.vue';
+	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
+	import ComponentDonationsMetrics from './DonationsMetrics.vue';
+	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
+	import PaginationMixin from './../../../mixins/pagination';
 
-    const PaginationMixin = require('./../../../mixins/pagination');
+	export default {
+		data: function () {
+			return {
+				apiError: {}
+			};
+		},
+		beforeRouteEnter: function (to, from, next) {
+			next(function (vue) {
+				vue.$request.get('donations', to.query).then(function (response) {
+					vue.setPaginationData(response.data)
+				});
+			});
+		},
+		beforeRouteUpdate: function (to, from, next) {
+			const vue = this;
 
-    module.exports = {
-        data: function () {
-            return {
-                apiError: {}
-            };
-        },
-        beforeRouteEnter: function (to, from, next) {
-            next(function (vue) {
-                vue.$request.get('donations', to.query).then(function (response) {
-                    vue.setPaginationData(response.data)
-                });
-            });
-        },
-        beforeRouteUpdate: function (to, from, next) {
-            const vue = this;
-
-            vue.resetPaginationData();
-            vue.$request.get('donations', to.query).then(function (response) {
-                vue.setPaginationData(response.data);
-                next();
-            }).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
-            });
-        },
-        methods: {
-           hasError: function(err) {
-               const vue = this;
-               vue.apiError = err.response.data.errors;
-           }
-        },
-        mixins: [
-            PaginationMixin
-        ],
-        components: {
-            'donations-list-table': require('./DonationsListTable.vue'),
-            'donations-list-table-header': require('./DonationsListTableHeader.vue'),
-            'donations-metrics': require('./DonationsMetrics.vue'),
-            'paginated-table-footer': require('./../../pagination/PaginatedTableFooter.vue')
-        }
-    };
+			vue.resetPaginationData();
+			vue.$request.get('donations', to.query).then(function (response) {
+				vue.setPaginationData(response.data);
+				next();
+			}).catch(function (err) {
+				vue.apiError = err.response.data.errors;
+				next();
+			});
+		},
+		methods: {
+			hasError: function (err) {
+				const vue = this;
+				vue.apiError = err.response.data.errors;
+			}
+		},
+		mixins: [
+			PaginationMixin
+		],
+		components: {
+			'donations-list-table': ComponentDonationsListTable,
+			'donations-list-table-header': ComponentDonationsListTableHeader,
+			'donations-metrics': ComponentDonationsMetrics,
+			'paginated-table-footer': ComponentPaginatedTableFooter,
+		}
+	};
 </script>

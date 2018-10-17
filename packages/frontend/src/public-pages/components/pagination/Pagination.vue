@@ -36,7 +36,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentPaginationLink from './PaginationLink.vue';
+
+	export default {
 		data: function () {
 			return {
 				range: [],
@@ -114,7 +116,7 @@
 			}
 		},
 		components: {
-			'pagination-link': require('./PaginationLink.vue')
+			'pagination-link': ComponentPaginationLink,
 		}
 	};
 </script>

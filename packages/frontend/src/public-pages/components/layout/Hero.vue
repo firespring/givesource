@@ -44,7 +44,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		computed: {
 			mastheadStyle: function () {
 				const vue = this;

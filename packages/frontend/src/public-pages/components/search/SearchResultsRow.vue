@@ -40,7 +40,7 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 
-	module.exports = {
+	export default {
 		computed: {
 			amount: function () {
 				return this.formatMoney(this.nonprofit.donationsSubtotal);

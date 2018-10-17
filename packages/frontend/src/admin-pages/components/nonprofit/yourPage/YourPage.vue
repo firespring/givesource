@@ -63,7 +63,11 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentTabContent from './tabs/Content.vue';
+	import ComponentTabDonationTiers from './tabs/DonationTiers.vue';
+	import ComponentTabMedia from './tabs/Media.vue';
+
+	export default {
 		data: function () {
 			return {
 				nonprofit: {},
@@ -74,9 +78,9 @@
 			isAdmin: function () {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-            landingPageUrl: function () {
+			landingPageUrl: function () {
 				return this.$store.getters.setting('EVENT_URL') + '/nonprofits/' + this.nonprofit.slug;
-            }
+			}
 		},
 		props: [
 			'nonprofitUuid'
@@ -106,11 +110,6 @@
 				next();
 			});
 		},
-		components: {
-			'tab-content': require('./tabs/Content.vue'),
-			'tab-media': require('./tabs/Media.vue'),
-			'tab-donation-tiers': require('./tabs/DonationTiers.vue')
-		},
 		methods: {
 			getTabComponent: function (query) {
 				switch (query) {
@@ -123,10 +122,15 @@
 						return 'tab-content';
 				}
 			},
-            updateNonprofit: function (nonprofit) {
+			updateNonprofit: function (nonprofit) {
 				const vue = this;
 				vue.nonprofit = nonprofit;
-            }
-		}
+			}
+		},
+		components: {
+			'tab-content': ComponentTabContent,
+			'tab-donation-tiers': ComponentTabDonationTiers,
+			'tab-media': ComponentTabMedia,
+		},
 	};
 </script>

@@ -41,9 +41,10 @@
 </template>
 
 <script>
-    import * as Utils from './../../helpers/utils';
+	import * as Utils from './../../helpers/utils';
+	import ComponentMoney from './../forms/Money.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				localAmount: this.amount,
@@ -130,7 +131,7 @@
 			}
 		},
 		components: {
-			'forms-money': require('./../forms/Money.vue')
+			'forms-money': ComponentMoney,
 		}
 	};
 </script>

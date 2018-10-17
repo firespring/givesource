@@ -79,7 +79,7 @@
 <script>
 	const numeral = require('numeral');
 
-	module.exports = {
+	export default {
 		computed: {
 			isAnonymous: function () {
 				return this.donation.isAnonymous;

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		props: {
 			content: {
 				type: Object,

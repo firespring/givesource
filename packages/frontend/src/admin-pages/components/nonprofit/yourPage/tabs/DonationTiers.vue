@@ -57,7 +57,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDonationTiersListTableRow from './../donationTiers/DonationTiersListTableRow.vue';
+
+	export default {
 		data: function () {
 			return {
 				donationTiers: [],
@@ -203,7 +205,7 @@
 			}
 		},
 		components: {
-			'donation-tiers-list-table-row': require('./../donationTiers/DonationTiersListTableRow.vue')
+			'donation-tiers-list-table-row': ComponentDonationTiersListTableRow,
 		}
 	};
 </script>

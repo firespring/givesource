@@ -124,7 +124,8 @@
                                                         <label for="testKeyPublic" class="c-form-item-label-text">Test Public API Key</label>
                                                     </div>
                                                     <div class="c-form-item__control">
-                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" name="testKeyPublic" id="testKeyPublic"></forms-secure-text>
+                                                        <forms-secure-text v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY" name="testKeyPublic"
+                                                                           id="testKeyPublic"></forms-secure-text>
                                                     </div>
                                                 </div>
 
@@ -227,8 +228,9 @@
 
 <script>
 	import * as Transform from './../../../../helpers/transform';
+	import ComponentSecureText from './../../../forms/SecureText.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],
@@ -254,7 +256,7 @@
 					keys: Object.keys(vue.formData)
 				}).then(function (response) {
 					vue.settings = response.data;
-                });
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -300,7 +302,7 @@
 					PAYMENT_SPRING_PUBLIC_API_KEY: {
 						label: 'Public API Key',
 						presence: false,
-                    },
+					},
 					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
 						label: 'Test Public API Key',
 						presence: false,
@@ -312,7 +314,7 @@
 					TEST_PAYMENTS_DISPLAY: {
 						label: 'This field',
 						presence: true,
-                    },
+					},
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
 						label: 'Offline Fee Percentage',
 						numericality: {
@@ -393,7 +395,7 @@
 			},
 		},
 		components: {
-			'forms-secure-text': require('./../../../forms/SecureText.vue')
+			'forms-secure-text': ComponentSecureText,
 		}
 	};
 </script>

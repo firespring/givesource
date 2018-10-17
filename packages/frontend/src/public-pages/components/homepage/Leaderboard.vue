@@ -45,7 +45,7 @@
 	import * as Utils from './../../helpers/utils';
 	import * as Settings from './../../helpers/settings';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				nonprofits: [],

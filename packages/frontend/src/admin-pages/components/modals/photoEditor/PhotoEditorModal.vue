@@ -73,7 +73,7 @@
 	import VueSlider from "vue-slider-component";
 	const MathHelper = require('./../../../helpers/math');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				src: null,

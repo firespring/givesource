@@ -50,7 +50,7 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				cartItemsCount: 0,

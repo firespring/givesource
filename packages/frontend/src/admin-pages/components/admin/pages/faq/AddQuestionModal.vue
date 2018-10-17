@@ -73,7 +73,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
+
+	export default {
 		data: function () {
 			return {
 				// Form Data
@@ -92,7 +94,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -167,12 +169,12 @@
 					vue.clearModals();
 				}).catch(function (err) {
 					vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
+			'forms-ckeditor': ComponentCKEditor,
 		}
 	};
 </script>

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		computed: {
 			start: function () {
 				return this.page * this.size;

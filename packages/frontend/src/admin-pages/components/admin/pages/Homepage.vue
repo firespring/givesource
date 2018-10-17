@@ -246,9 +246,12 @@
 </template>
 
 <script>
+	import ComponentCKEditor from './../../forms/Ckeditor.vue';
+	import ComponentImageUpload from './../../forms/ImageUpload.vue';
+	import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue';
 	import Request from './../../../helpers/request';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				nonprofits: [],
@@ -318,9 +321,9 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 
-            };
+			};
 		},
 		computed: {
 			showMatchFundOptions: function () {
@@ -571,7 +574,7 @@
 					vue.$router.push({name: 'pages-list'});
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 
 			},
@@ -650,9 +653,9 @@
 			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../forms/Ckeditor.vue'),
-			'forms-image-upload': require('./../../forms/ImageUpload.vue'),
-			'forms-select-nonprofit': require('./../../forms/SelectNonprofit.vue')
+			'forms-ckeditor': ComponentCKEditor,
+			'forms-image-upload': ComponentImageUpload,
+			'forms-select-nonprofit': ComponentSelectNonprofit,
 		}
 	};
 </script>

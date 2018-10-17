@@ -24,7 +24,7 @@
 <script>
 	import DatePicker from 'jquery-datetimepicker';
 
-    module.exports = {
+    export default {
     	data: function () {
     		return {
     			localValue: '',

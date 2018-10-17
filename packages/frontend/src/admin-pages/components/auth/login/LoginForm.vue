@@ -72,9 +72,11 @@
 </template>
 
 <script>
+	import ComponentAuthorizingSpinner from './../AuthorizingSpinner.vue';
+
 	const User = require('../../../helpers/user');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				displayAuthorizing: false,
@@ -89,9 +91,6 @@
 				errors: [],
 				formErrors: {}
 			}
-		},
-		components: {
-			'authorizing': require('../AuthorizingSpinner.vue'),
 		},
 		beforeMount: function () {
 			const vue = this;
@@ -186,6 +185,9 @@
 					vue.$emit('setDisplayLinks', true);
 				}
 			}
+		},
+		components: {
+			'authorizing': ComponentAuthorizingSpinner,
 		}
 	};
 </script>

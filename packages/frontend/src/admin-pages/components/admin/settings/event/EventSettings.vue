@@ -171,8 +171,10 @@
 
 <script>
 	import * as Utils from './../../../../helpers/utils';
+	import ComponentDatetime from './../../../forms/Datetime.vue';
+	import ComponentSelectTimeZone from './../../../forms/SelectTimeZone.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				settings: [],
@@ -344,8 +346,8 @@
 			}
 		},
 		components: {
-			'forms-datetime': require('./../../../forms/Datetime.vue'),
-			'forms-select-time-zone': require('./../../../forms/SelectTimeZone.vue')
+			'forms-datetime': ComponentDatetime,
+			'forms-select-time-zone': ComponentSelectTimeZone,
 		}
 	};
 </script>

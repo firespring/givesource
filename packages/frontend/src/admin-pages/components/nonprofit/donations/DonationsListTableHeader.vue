@@ -27,7 +27,7 @@
 <script>
 	const slug = require('slug');
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				report: {},

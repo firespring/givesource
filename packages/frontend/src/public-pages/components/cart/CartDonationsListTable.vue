@@ -46,9 +46,10 @@
 </template>
 
 <script>
-    import * as Utils from './../../helpers/utils';
+	import * as Utils from './../../helpers/utils';
+	import ComponentCartDonationsListTableRow from './CartDonationsListTableRow.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				cartItems: [],
@@ -91,7 +92,7 @@
 			}
 		},
 		components: {
-			'cart-donations-list-table-row': require('./CartDonationsListTableRow.vue')
+			'cart-donations-list-table-row': ComponentCartDonationsListTableRow,
 		}
 	};
 </script>

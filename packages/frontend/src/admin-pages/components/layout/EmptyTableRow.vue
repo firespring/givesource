@@ -29,7 +29,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentSpinner from './Spinner.vue';
+
+	export default {
 		computed: {
 			displayButton: function () {
 				return this.buttonText && this.buttonLink;
@@ -58,7 +60,7 @@
 			}
 		},
 		components: {
-			'layout-spinner': require('./Spinner.vue')
+			'layout-spinner': ComponentSpinner,
 		}
 	};
 </script>

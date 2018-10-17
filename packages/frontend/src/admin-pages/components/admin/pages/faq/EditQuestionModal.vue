@@ -73,7 +73,9 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
+
+	export default {
 		data: function () {
 			return {
 				original: [],
@@ -94,7 +96,7 @@
 
 				// Errors
 				formErrors: {},
-                apiErrors: {},
+				apiErrors: {},
 			};
 		},
 		props: {
@@ -106,7 +108,7 @@
 				type: Object,
 				default: {
 					content: {},
-                }
+				}
 			}
 		},
 		watch: {
@@ -119,7 +121,7 @@
 				},
 				deep: true
 			},
-            data: {
+			data: {
 				handler: function () {
 					const vue = this;
 					if (Object.keys(vue.data.content).length) {
@@ -130,22 +132,22 @@
 							}
 						});
 					}
-                },
-                deep: true
-            }
+				},
+				deep: true
+			}
 		},
-        mounted: function () {
-	        const vue = this;
-	        if (Object.keys(vue.data.content).length) {
-	        	vue.original = JSON.parse(JSON.stringify(vue.data.content.value));
-		        Object.keys(vue.formData).forEach(function (key) {
-			        const content = _.find(vue.data.content.value, {key: key});
-			        if (content) {
-				        vue.formData[key] = content;
-			        }
-		        });
-	        }
-        },
+		mounted: function () {
+			const vue = this;
+			if (Object.keys(vue.data.content).length) {
+				vue.original = JSON.parse(JSON.stringify(vue.data.content.value));
+				Object.keys(vue.formData).forEach(function (key) {
+					const content = _.find(vue.data.content.value, {key: key});
+					if (content) {
+						vue.formData[key] = content;
+					}
+				});
+			}
+		},
 		methods: {
 			getConstraints: function () {
 				return {
@@ -180,18 +182,18 @@
 				if (toUpdate.length) {
 					vue.$request.patch('contents', {
 						contents: toUpdate
-                    }).then(function () {
-                    	vue.bus.$emit('updateFAQList', vue.data.content);
-                    	vue.clearModals();
-                    }).catch(function (err) {
-                    	vue.removeModal('spinner');
-                        vue.apiError = err.response.data.errors;
-                    });
-                }
+					}).then(function () {
+						vue.bus.$emit('updateFAQList', vue.data.content);
+						vue.clearModals();
+					}).catch(function (err) {
+						vue.removeModal('spinner');
+						vue.apiError = err.response.data.errors;
+					});
+				}
 			},
 		},
 		components: {
-			'forms-ckeditor': require('./../../../forms/Ckeditor.vue')
+			'forms-ckeditor': ComponentCKEditor,
 		}
 	};
 </script>

@@ -57,7 +57,7 @@
 
 <script>
 
-    module.exports = {
+    export default {
         data: function () {
             return {
                 displayingMenu: false,selectedAdminUser: this.adminUser,

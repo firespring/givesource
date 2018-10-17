@@ -49,10 +49,13 @@
 </template>
 
 <script>
-	const MediaHelper = require('./../../../../helpers/media');
 	import * as Utils from './../../../../helpers/utils';
+	import ComponentDraggable from 'vuedraggable';
+	import ComponentMediaListTableRow from './../media/MediaListTableRow.vue';
 
-	module.exports = {
+	const MediaHelper = require('./../../../../helpers/media');
+
+	export default {
 		data: function () {
 			return {
 				file: null,
@@ -158,7 +161,7 @@
 				const extensions = ['gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
-                    vue.addModal('photo-editor', {
+					vue.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-New',
 						width: 770,
@@ -169,9 +172,9 @@
 				} else {
 					vue.addModal('error', {
 						title: 'Invalid Image Type',
-                        message: 'The following image types are supported: .gif, .jpg or .png'
-                    });
-                }
+						message: 'The following image types are supported: .gif, .jpg or .png'
+					});
+				}
 			},
 			uploadFile: function (fileData, file) {
 				const vue = this;
@@ -226,8 +229,8 @@
 			}
 		},
 		components: {
-			'draggable': require('vuedraggable'),
-			'media-list-table-row': require('./../media/MediaListTableRow.vue')
+			'draggable': ComponentDraggable,
+			'media-list-table-row': ComponentMediaListTableRow,
 		}
 	}
 </script>

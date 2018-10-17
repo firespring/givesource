@@ -105,7 +105,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentSponsorTier from './../../../forms/SponsorTier.vue';
+
+	export default {
 		data: function () {
 			return {
 				sponsorTiers: [],
@@ -121,7 +124,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -148,7 +151,7 @@
 				vue.sponsorTiers = response.data;
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -248,13 +251,13 @@
 					}
 				}).catch(function (err) {
 					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+					vue.apiError = err.response.data.errors;
 				});
 			}
 		},
 		components: {
-			'forms-image-upload': require('./../../../forms/ImageUpload.vue'),
-			'forms-sponsor-tier': require('./../../../forms/SponsorTier.vue')
+			'forms-image-upload': ComponentImageUpload,
+			'forms-sponsor-tier': ComponentSponsorTier,
 		}
 	};
 </script>

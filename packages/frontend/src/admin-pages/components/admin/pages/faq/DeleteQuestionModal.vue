@@ -50,7 +50,7 @@
 </template>
 
 <script>
-	module.exports = {
+	export default {
 		props: {
 			zIndex: {
 				type: [Number, String],

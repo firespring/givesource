@@ -54,22 +54,25 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
+	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHero from './../layout/Hero.vue';
+	import ComponentSponsors from './../layout/Sponsors.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				contents: [],
-                apiError: {},
+				apiError: {},
 			};
 		},
 		computed: {
 			resources: function () {
 				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
 			},
-            leadingText: function () {
-	            const text = _.find(this.contents, {key: 'TOOLKIT_LEADING_TEXT'});
-	            return text ? text.value : null;
-            },
+			leadingText: function () {
+				const text = _.find(this.contents, {key: 'TOOLKIT_LEADING_TEXT'});
+				return text ? text.value : null;
+			},
 			additionalText: function () {
 				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
 				return text ? text.value : null;
@@ -103,8 +106,8 @@
 					});
 					return promise;
 				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                });
+					vue.apiError = err.response.data.errors;
+				});
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -135,7 +138,7 @@
 			}).then(function () {
 				next();
 			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+				vue.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -166,9 +169,9 @@
 			}
 		},
 		components: {
-			'layout-footer': require('./../layout/Footer.vue'),
-			'layout-hero': require('../layout/Hero.vue'),
-			'layout-sponsors': require('../layout/Sponsors.vue'),
+			'layout-footer': ComponentFooter,
+			'layout-hero': ComponentHero,
+			'layout-sponsors': ComponentSponsors,
 		}
 	};
 </script>

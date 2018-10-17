@@ -16,15 +16,16 @@
 
 import * as VueMoney from 'v-money';
 import AlertCloseDirective from './directives/alertClose';
-import ApiErrorComponent from './components/errors/ApiError.vue';
-import App from './components/App.vue';
 import AutoFocusDirective from './directives/autoFocus';
 import axios from 'axios';
+import ComponentApiError from './components/errors/ApiError.vue';
+import ComponentApp from './components/App.vue';
+import ComponentCKEditor from 'vueckeditor';
+import ComponentGravatar from 'vue-gravatar';
+import ComponentNavigation from './components/header/Navigation.vue';
 import EventBusMixin from './mixins/eventBus';
 import FloatingLabelDirective from './directives/floatingLabel';
-import GravatarComponent from 'vue-gravatar';
 import ModalMixin from './mixins/modals';
-import NavigationComponent from './components/header/Navigation.vue';
 import Request from './helpers/request';
 import router from './router';
 import ShaveDirective from './directives/shave';
@@ -33,7 +34,6 @@ import UserMixin from './mixins/user';
 import UtilsMixin from './mixins/utils';
 import ValidateMixin from './mixins/validate';
 import Vue from 'vue';
-import VueCkeditor from 'vueckeditor';
 import VueFilters from './filters';
 
 // Register filters
@@ -54,10 +54,10 @@ Vue.directive('money', VueMoney.VMoney);
 Vue.directive('shave', ShaveDirective);
 
 // Register global components
-Vue.component('api-error', ApiErrorComponent);
-Vue.component('navigation', NavigationComponent);
-Vue.component('v-gravatar', GravatarComponent);
-Vue.component('vue-ckeditor', VueCkeditor);
+Vue.component('api-error', ComponentApiError);
+Vue.component('navigation', ComponentNavigation);
+Vue.component('v-gravatar', ComponentGravatar);
+Vue.component('vue-ckeditor', ComponentCKEditor);
 
 // Register vue global
 Vue.prototype.user = {};
@@ -69,7 +69,7 @@ window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Bootstrap the app
-const main = App;
+const main = ComponentApp;
 main.router = router;
 main.store = store;
 

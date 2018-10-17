@@ -33,7 +33,10 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentDraggable from 'vuedraggable';
+	import ComponentSponsorsTiersListTableRow from './SponsorsTiersListTableRow.vue';
+
+	export default {
 		data: function () {
 			return {
 				localSponsorTiers: [],
@@ -45,7 +48,7 @@
 					draggable: 'tr',
 				},
 
-                apiError:{},
+				apiError: {},
 			};
 		},
 		props: {
@@ -77,7 +80,7 @@
 				vue.$request.patch('sponsor-tiers', {
 					sponsorTiers: toUpdate
 				}).catch(function (err) {
-                    vue.$emit('hasError', err);
+					vue.$emit('hasError', err);
 				});
 			},
 			deleteSponsorTier: function (sponsorTierUuid) {
@@ -87,14 +90,14 @@
 					return sponsorTier.uuid !== sponsorTierUuid;
 				});
 			},
-            hasError: function (err) {
-                const vue = this;
-                vue.$emit('hasError', err);
-            },
+			hasError: function (err) {
+				const vue = this;
+				vue.$emit('hasError', err);
+			},
 		},
 		components: {
-			'draggable': require('vuedraggable'),
-			'sponsors-list-table-row': require('./SponsorsTiersListTableRow.vue')
+			'draggable': ComponentDraggable,
+			'sponsors-list-table-row': ComponentSponsorsTiersListTableRow,
 		}
 	};
 </script>

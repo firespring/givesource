@@ -47,8 +47,9 @@
 
 <script>
 	import * as Utils from './../../../helpers/utils';
+	import ComponentDonationCartModalListTableRow from './DonationCartModalListTableRow.vue';
 
-	module.exports = {
+	export default {
 		data: function () {
 			return {
 				cartItems: [],
@@ -74,14 +75,14 @@
 				item.amount = amount;
 
 				vue.$set(vue.cartItems, index, item);
-                vue.$store.commit('updateCartItem', {
-                	timestamp: item.timestamp,
-                    amount: item.amount
-                });
+				vue.$store.commit('updateCartItem', {
+					timestamp: item.timestamp,
+					amount: item.amount
+				});
 
-                if (!Utils.isInternetExplorer()) {
-	                vue.bus.$emit('updateCartItems');
-                }
+				if (!Utils.isInternetExplorer()) {
+					vue.bus.$emit('updateCartItems');
+				}
 			},
 			findNonprofit: function () {
 				const vue = this;
@@ -93,7 +94,7 @@
 			}
 		},
 		components: {
-			'donation-cart-modal-list-table-row': require('./DonationCartModalListTableRow.vue')
+			'donation-cart-modal-list-table-row': ComponentDonationCartModalListTableRow
 		}
 	};
 </script>

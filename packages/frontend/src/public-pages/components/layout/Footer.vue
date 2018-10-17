@@ -47,7 +47,7 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 
-	module.exports = {
+	export default {
         computed: {
 			adminPagesUrl: function () {
 				return this.$store.getters.setting('ADMIN_URL') + '/login';

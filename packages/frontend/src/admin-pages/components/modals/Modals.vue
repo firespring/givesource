@@ -22,7 +22,25 @@
 </template>
 
 <script>
-	module.exports = {
+	import ComponentContactEmailModal from './../admin/settings/contact/ContactEmailModal.vue';
+	import ComponentContactPhoneModal from './../admin/settings/contact/ContactPhoneModal.vue';
+	import ComponentDeleteModal from './DeleteModal.vue';
+	import ComponentErrorModal from './ErrorModal.vue';
+	import ComponentFAQAddQuestionModal from './../admin/pages/faq/AddQuestionModal.vue';
+	import ComponentFAQDeleteQuestionModal from './../admin/pages/faq/DeleteQuestionModal.vue';
+	import ComponentFAQEditQuestionModal from './../admin/pages/faq/EditQuestionModal.vue';
+	import ComponentModalSpinner from './ModalSpinner.vue';
+	import ComponentPhotoEditorModal from './photoEditor/PhotoEditorModal.vue';
+	import ComponentResendVerifyEmailModal from './../admin/settings/contact/ResendVerifyEmailModal.vue';
+	import ComponentRevokeNonprofitModal from './../admin/nonprofits/RevokeNonprofitModal.vue';
+	import ComponentSenderEmailModal from './../admin/settings/contact/SenderEmailModal.vue';
+	import ComponentToolkitAddResourceModal from './../admin/pages/toolkit/AddResourceModal.vue';
+	import ComponentToolkitDeleteResourceModal from './../admin/pages/toolkit/DeleteResourceModal.vue';
+	import ComponentToolkitEditResourceModal from './../admin/pages/toolkit/EditResourceModal.vue';
+	import ComponentUserAccountInfoModal from './../account/UserAccountInfoModal.vue';
+	import ComponentUserAccountPasswordModal from './../account/UserAccountPasswordModal.vue';
+
+	export default {
 		data: function () {
 			return {
 				modals: [],
@@ -83,23 +101,23 @@
 			}
 		},
 		components: {
-			'spinner': require('./ModalSpinner.vue'),
-			'account-edit-info': require('../account/UserAccountInfoModal.vue'),
-			'account-edit-password': require('../account/UserAccountPasswordModal.vue'),
-            'confirm-delete' : require('./DeleteModal.vue'),
-            'error': require('./ErrorModal.vue'),
-			'nonprofits-revoke': require('./../admin/nonprofits/RevokeNonprofitModal.vue'),
-			'photo-editor': require('./photoEditor/PhotoEditorModal.vue'),
-			'pages-faq-add-question-modal': require('./../admin/pages/faq/AddQuestionModal.vue'),
-			'pages-faq-delete-question-modal': require('./../admin/pages/faq/DeleteQuestionModal.vue'),
-			'pages-faq-edit-question-modal': require('./../admin/pages/faq/EditQuestionModal.vue'),
-			'pages-toolkit-add-resource-modal': require('./../admin/pages/toolkit/AddResourceModal.vue'),
-			'pages-toolkit-delete-resource-modal': require('./../admin/pages/toolkit/DeleteResourceModal.vue'),
-			'pages-toolkit-edit-resource-modal': require('./../admin/pages/toolkit/EditResourceModal.vue'),
-			'settings-edit-contact-email': require('./../admin/settings/contact/ContactEmailModal.vue'),
-			'settings-edit-contact-phone': require('./../admin/settings/contact/ContactPhoneModal.vue'),
-			'settings-edit-sender-email': require('./../admin/settings/contact/SenderEmailModal.vue'),
-			'settings-resend-verify-email': require('./../admin/settings/contact/ResendVerifyEmailModal.vue'),
+			'spinner': ComponentModalSpinner,
+			'account-edit-info': ComponentUserAccountInfoModal,
+			'account-edit-password': ComponentUserAccountPasswordModal,
+			'confirm-delete': ComponentDeleteModal,
+			'error': ComponentErrorModal,
+			'nonprofits-revoke': ComponentRevokeNonprofitModal,
+			'photo-editor': ComponentPhotoEditorModal,
+			'pages-faq-add-question-modal': ComponentFAQAddQuestionModal,
+			'pages-faq-delete-question-modal': ComponentFAQDeleteQuestionModal,
+			'pages-faq-edit-question-modal': ComponentFAQEditQuestionModal,
+			'pages-toolkit-add-resource-modal': ComponentToolkitAddResourceModal,
+			'pages-toolkit-delete-resource-modal': ComponentToolkitDeleteResourceModal,
+			'pages-toolkit-edit-resource-modal': ComponentToolkitEditResourceModal,
+			'settings-edit-contact-email': ComponentContactEmailModal,
+			'settings-edit-contact-phone': ComponentContactPhoneModal,
+			'settings-edit-sender-email': ComponentSenderEmailModal,
+			'settings-resend-verify-email': ComponentResendVerifyEmailModal,
 		}
 	};
 </script>
