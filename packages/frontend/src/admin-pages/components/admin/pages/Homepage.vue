@@ -565,7 +565,7 @@
 							return vue.$request.delete('settings', {
 								settings: toDelete
 							});
-						})
+						});
 					}
 
 					return promise;

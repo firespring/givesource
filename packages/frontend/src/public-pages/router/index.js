@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as Utils from './../helpers/utils';
 import * as Settings from './../helpers/settings';
 import Component404 from './../components/errors/404.vue';
 import ComponentAbout from './../components/about/About.vue';
@@ -21,6 +22,7 @@ import ComponentCart from './../components/cart/Cart.vue';
 import ComponentCartResponse from './../components/cart/response/CartResponse.vue';
 import ComponentContact from './../components/contact/Contact.vue';
 import ComponentContactResponse from './../components/contact/response/ContactResponse.vue';
+import ComponentCustomPage from './../components/pages/CustomPage.vue';
 import ComponentFAQ from './../components/faq/FAQ.vue';
 import ComponentHomepage from './../components/homepage/Homepage.vue';
 import ComponentLeaderboard from './../components/leaderboard/Leaderboard.vue';
@@ -181,6 +183,32 @@ const router = new VueRouter({
 			}
 		},
 
+		// Custom Pages
+		{
+			path: '*',
+			name: 'custom-page',
+			meta: {
+				page: null,
+			},
+			component: ComponentCustomPage,
+			beforeEnter(to, from, next) {
+				const pages = store.getters.pages;
+				const slug = to.path;
+
+				pages.forEach((page) => {
+					if (slug === '/' + page.slug) {
+						to.meta.page = page;
+					}
+				});
+
+				if (to.meta.page && to.meta.page.enabled) {
+					next();
+				} else {
+					next({name: '404'});
+				}
+			}
+		},
+
 		// Error Pages
 		{
 			path: '*',
@@ -189,5 +217,104 @@ const router = new VueRouter({
 		}
 	]
 });
+
+/**
+ * Load custom pages middleware
+ *
+ * @param {{}} to
+ * @param {{}} from
+ * @param {function} next
+ */
+const loadCustomPages = function (to, from, next) {
+	let promise = Promise.resolve();
+	const uuids = store.getters.setting('CUSTOM_PAGES').split('|');
+
+	if (uuids.length) {
+		const pages = [];
+		const contentKeys = [];
+		const settingKeys = [];
+
+		const contentList = [
+			'CUSTOM_PAGE_SLUG',
+			'CUSTOM_PAGE_TITLE',
+			'CUSTOM_PAGE_TEXT',
+		];
+
+		const settingList = [
+			'CUSTOM_PAGE_ENABLED'
+		];
+
+		uuids.forEach((uuid) => {
+			const identifier = uuid.toUpperCase().replace(/-/g, '_');
+			contentList.forEach((key) => {
+				contentKeys.push(key + '_' + identifier);
+			});
+			settingList.forEach((key) => {
+				settingKeys.push(key + '_' + identifier);
+			});
+		});
+
+		let contents = [];
+		let settings = [];
+
+		promise = promise.then(() => {
+			return axios.get(API_URL + 'contents' + Utils.generateQueryString({
+				keys: contentKeys
+			}));
+		}).then((response) => {
+			contents = response.data;
+
+			return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+				keys: settingKeys
+			}));
+		}).then((response) => {
+			settings = response.data;
+		}).then(() => {
+			uuids.forEach((uuid) => {
+				const page = {
+					enabled: false,
+					identifier: uuid.toUpperCase().replace(/-/g, '_'),
+					slug: null,
+					text: null,
+					title: null,
+					uuid: uuid,
+				};
+
+				contents.forEach((content) => {
+					if (content.key.includes(page.identifier)) {
+						Object.keys(page).forEach((key) => {
+							if (content.key.includes(key.toUpperCase())) {
+								page[key] = content.value;
+							}
+						});
+					}
+				});
+
+				settings.forEach((setting) => {
+					if (setting.key.includes(page.identifier)) {
+						Object.keys(page).forEach((key) => {
+							if (setting.key.includes(key.toUpperCase())) {
+								page[key] = setting.value;
+							}
+						});
+					}
+				});
+
+				pages.push(page);
+			});
+
+			store.commit('pages', pages);
+		});
+	}
+
+	promise.then(() => {
+		next();
+	});
+};
+
+/**
+ * Route Middleware
+ */
+router.beforeEach(loadCustomPages);
 
 export default router;

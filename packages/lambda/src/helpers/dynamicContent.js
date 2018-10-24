@@ -55,6 +55,7 @@ exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackNa
 		SettingHelper.SETTING_ADMIN_URL,
 		SettingHelper.SETTING_API_URL,
 		SettingHelper.SETTING_CONTACT_PHONE,
+		SettingHelper.SETTING_CUSTOM_PAGES,
 		SettingHelper.SETTING_DATE_DONATIONS_END,
 		SettingHelper.SETTING_DATE_DONATIONS_START,
 		SettingHelper.SETTING_DATE_EVENT_END,

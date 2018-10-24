@@ -21,11 +21,18 @@
             <div class="o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
+
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
 
                         <header class="c-page-section__header">
                             <div class="c-page-section-header-text">
                                 <h2 class="c-page-section-title" id="section-select-menus">Manage the pages that appear on your event site</h2>
+                            </div>
+
+                            <div class="c-page-section-header-actions" v-if="canAddPages">
+                                <router-link :to="{ name: 'pages-custom-add' }" role="button" class="c-btn c-btn--xs c-btn--flat c-btn--text c-btn--icon">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>Add Page
+                                </router-link>
                             </div>
                         </header>
 
@@ -205,6 +212,37 @@
                                 </div>
                             </div>
 
+
+                            <template v-for="content in custom">
+                                <hr class="expand">
+
+                                <div class="c-form-item-grid">
+                                    <div class="c-form-item c-form-item--text">
+                                        <div>
+                                            <strong>
+                                                <i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                                                <router-link :to="{name: 'pages-custom-edit', params: { pageUuid: content.uuid } }">{{ content.title }}</router-link>
+                                            </strong> — <a :href="getPageUrl('/' + content.slug)" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/' + content.slug) }}</a>
+                                        </div>
+                                        <div class="c-notes c-notes--below" v-if="content.description">
+                                            {{ content.description }}
+                                        </div>
+                                    </div>
+
+                                    <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
+                                        <div class="c-form-item__control">
+                                            <div class="c-switch-control">
+                                                <div>
+                                                    <input v-model="content.enabled" v-on:change="updateCustomSettingEnabled(content)" type="checkbox"
+                                                           :name="content.uuid" :id="content.uuid" :disabled="content.updating">
+                                                    <label :for="content.uuid" class="c-switch-lever"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
                         </div>
                     </section>
                 </div>
@@ -214,9 +252,70 @@
 </template>
 
 <script>
-	export default {
-		data: function () {
+	import {getContentKeys, getSettingKeys} from './../../../helpers/content';
+	import Request from './../../../helpers/request';
+
+	/**
+	 * Pre-loaded data
+	 *
+	 * @returns {Promise}
+	 */
+	const fetchData = () => {
+		const request = new Request();
+		let settings = [];
+
+		return request.get('settings', {
+			keys: [
+				'CUSTOM_PAGES',
+				'EVENT_URL',
+				'PAGE_ABOUT_ENABLED',
+				'PAGE_FAQ_ENABLED',
+				'PAGE_TERMS_ENABLED',
+				'PAGE_TOOLKIT_ENABLED',
+			]
+		}).then((response) => {
+			settings = response.hasOwnProperty('data') ? response.data : [];
+
+			const keys = getSettingKeys(settings);
+			if (keys.length) {
+				return request.get('settings', {
+					keys: keys
+				});
+			} else {
+				return Promise.resolve({});
+			}
+		}).then((response) => {
+			if (response.hasOwnProperty('data')) {
+				response.data.forEach((setting) => {
+					settings.push(setting);
+				});
+			}
+
+			const keys = getContentKeys(settings);
+			if (keys.length) {
+				return request.get('contents', {
+					keys: keys
+				});
+			} else {
+				return Promise.resolve({});
+			}
+		}).then((response) => {
+			let contents = response.hasOwnProperty('data') ? response.data : [];
 			return {
+				contents: contents,
+				settings: settings
+			}
+		}).catch((e) => {
+			console.log(e);
+		});
+	};
+
+	export default {
+		data() {
+			return {
+				canAddPages: false,
+				contents: [],
+				custom: [],
 				settings: [],
 				updating: [],
 
@@ -231,39 +330,60 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
-            };
+				apiError: {},
+			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.settings = response.data;
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteEnter(to, from, next) {
+			fetchData().then((data) => {
+				next((vm) => {
+					vm.contents = data.contents;
+					vm.settings = data.settings;
 
-			vue.$request.get('settings', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.settings = response.data;
-				next();
-			}).catch(function () {
-				next();
+					const setting = _.find(vm.settings, {key: 'CUSTOM_PAGES'});
+					const uuids = (typeof setting === 'object' && setting.hasOwnProperty('value')) ? setting.value.split('|') : [];
+
+					if (uuids.length < 3) {
+						vm.canAddPages = true;
+					}
+
+					uuids.forEach((uuid) => {
+						const content = {
+							description: null,
+							enabled: false,
+							identifier: uuid.toUpperCase().replace(/-/g, '_'),
+							slug: null,
+							text: null,
+							title: null,
+							updating: false,
+							uuid: uuid,
+						};
+						vm.contents.forEach((c) => {
+							if (c.key.includes(content.identifier)) {
+								Object.keys(content).forEach((key) => {
+									if (c.key.includes(key.toUpperCase())) {
+										content[key] = c.value;
+									}
+								});
+							}
+						});
+						const setting = _.find(vm.settings, {key: 'CUSTOM_PAGE_ENABLED_' + content.identifier});
+						if (typeof setting === 'object' && setting.hasOwnProperty('value')) {
+							content.enabled = setting.value;
+						}
+						vm.custom.push(content);
+					});
+				});
 			});
 		},
 		watch: {
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach((key) => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								vue.formData[key] = setting.value;
+								vm.formData[key] = setting.value;
 							}
 						});
 					}
@@ -272,54 +392,88 @@
 			}
 		},
 		methods: {
-			settingUpdateInProgress: function (key) {
+			settingUpdateInProgress(key) {
 				if (!this.isSettingUpdating(key)) {
 					this.updating.push(key);
 				}
 			},
-			settingUpdateFinished: function (key) {
-				this.updating = this.updating.filter(function (k) {
+			settingUpdateFinished(key) {
+				this.updating = this.updating.filter((k) => {
 					return k !== key;
 				});
 			},
-			isSettingUpdating: function (key) {
+			isSettingUpdating(key) {
 				return this.updating.indexOf(key) > -1;
 			},
-			getPageUrl: function (relativeLink) {
+			getPageUrl(relativeLink) {
 				return this.formData.EVENT_URL + relativeLink;
 			},
-			updateSetting: function (key) {
-				const vue = this;
+			updateSetting(key) {
+				const vm = this;
 
-				if (vue.isSettingUpdating(key)) {
+				if (vm.isSettingUpdating(key)) {
 					return;
 				}
 
-				vue.settingUpdateInProgress(key);
+				vm.settingUpdateInProgress(key);
 
-				vue.updating.push(key);
-				if (_.find(vue.settings, {key: key})) {
-					vue.$request.patch('settings/' + key, {
-						value: vue.formData[key]
-					}).then(function () {
-						vue.settingUpdateFinished(key);
-					}).catch(function (err) {
-                        vue.apiError = err.response.data.errors;
-						vue.settingUpdateFinished(key);
+				vm.updating.push(key);
+				if (_.find(vm.settings, {key: key})) {
+					vm.$request.patch('settings/' + key, {
+						value: vm.formData[key]
+					}).then(() => {
+						vm.settingUpdateFinished(key);
+					}).catch((err) => {
+						vm.apiError = err.response.data.errors;
+						vm.settingUpdateFinished(key);
 					});
 				} else {
-					vue.$request.post('settings', {
+					vm.$request.post('settings', {
 						key: key,
-						value: vue.formData[key]
-					}).then(function (response) {
-						vue.settings.push(response.data);
-						vue.settingUpdateFinished(key);
-					}).catch(function (err) {
-                        vue.apiError = err.response.data.errors;
-						vue.settingUpdateFinished(key);
+						value: vm.formData[key]
+					}).then((response) => {
+						vm.settings.push(response.data);
+						vm.settingUpdateFinished(key);
+					}).catch((err) => {
+						vm.apiError = err.response.data.errors;
+						vm.settingUpdateFinished(key);
 					});
 				}
 			},
+			updateCustomSettingEnabled(content) {
+				const vm = this;
+
+				if (content.updating) {
+					return;
+				}
+
+				content.updating = true;
+
+				const key = 'CUSTOM_PAGE_ENABLED_' + content.identifier;
+				const setting = _.find(vm.settings, {key: key});
+				if (setting) {
+					vm.$request.patch('settings/' + key, {
+						value: content.enabled
+					}).then(() => {
+						content.updating = false;
+					}).catch((err) => {
+						vm.apiError = err.response.data.errors;
+						content.updating = false;
+					});
+				} else {
+					vm.$request.post('settings', {
+						key: key,
+						value: content.enabled
+					}).then((response) => {
+						vm.settings.push(response.data);
+						content.updating = false;
+					}).catch((err) => {
+						vm.apiError = err.response.data.errors;
+						content.updating = false;
+					});
+				}
+
+			}
 		}
 	};
 </script>

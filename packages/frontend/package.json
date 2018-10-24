@@ -44,6 +44,7 @@
 		"jquery-datetimepicker": "^2.5.4",
 		"lodash": "^4.17.11",
 		"moment-timezone": "^0.5.14",
+		"node-uuid": "^1.4.8",
 		"numeral": "^2.0.6",
 		"on-build-webpack": "^0.1.0",
 		"path": "^0.12.7",

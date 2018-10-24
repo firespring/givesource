@@ -35,6 +35,7 @@ exports.handle = function (event, context, callback) {
 		ADMIN_URL: null,
 		API_URL: null,
 		CONTACT_PHONE: null,
+		CUSTOM_PAGES: null,
 		DATE_DONATIONS_END: null,
 		DATE_DONATIONS_START: null,
 		DATE_EVENT_END: null,

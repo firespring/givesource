@@ -25,6 +25,8 @@
             <router-link :to="{ name: 'about' }" v-if="displayAbout">About</router-link>
             <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
             <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
+
+            <router-link v-for="page in pages" :key="page.uuid" :to="{ path: page.slug }" v-if="page.enabled">{{ page.title }}</router-link>
         </nav>
 
         <form v-on:submit="submit" class="page-header__search flex justify-center items-center">
@@ -84,6 +86,9 @@
 				const vue = this;
 				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
 				return eventLogo ? eventLogo : '/assets/temp/logo-event.png';
+			},
+			pages: function () {
+				return this.$store.getters.pages;
 			},
 		},
 		created: function () {

@@ -23,6 +23,8 @@ import ComponentAppearance from './../components/admin/settings/appearance/Appea
 import ComponentCheckout from './../components/admin/pages/Checkout.vue';
 import ComponentContactSettings from './../components/admin/settings/contact/ContactSettings.vue';
 import ComponentContactUs from './../components/admin/pages/ContactUs.vue';
+import ComponentCustomPagesAdd from '../components/admin/pages/custom/CustomPagesAdd.vue';
+import ComponentCustomPagesEdit from '../components/admin/pages/custom/CustomPagesEdit.vue';
 import ComponentDonationsAdd from './../components/admin/donations/DonationsAdd.vue';
 import ComponentDonationsList from './../components/admin/donations/DonationsList.vue';
 import ComponentEmailSettings from './../components/admin/settings/emails/EmailSettings.vue';
@@ -207,6 +209,23 @@ const router = new VueRouter({
 			path: '/pages/terms',
 			name: 'pages-terms',
 			component: ComponentTerms,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/custom',
+			name: 'pages-custom-add',
+			component: ComponentCustomPagesAdd,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/pages/custom/:pageUuid',
+			name: 'pages-custom-edit',
+			props: true,
+			component: ComponentCustomPagesEdit,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},
