@@ -142,6 +142,8 @@ module.exports = function (env) {
 			GenerateDynamicContent: './src/custom/generateDynamicContent/index.js',
 			GeneratePublicIndexFile: './src/custom/generatePublicIndexFile/index.js',
 			GenerateReport: './src/custom/generateReport/index.js',
+			MetricAddAmount: './src/custom/metricAddAmount/index.js',
+			MetricMaxAmount: './src/custom/metricMaxAmount/index.js',
 			S3PutObject: './src/custom/s3PutObject/index.js',
 			S3SyncObjects: './src/custom/s3SyncObjects/index.js',
 			SaveSettings: './src/custom/saveSettings/index.js',
