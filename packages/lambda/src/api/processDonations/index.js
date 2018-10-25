@@ -23,7 +23,6 @@ const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const MetricsHelper = require('./../../helpers/metrics');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
@@ -31,7 +30,7 @@ const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SSM = require('./../../aws/ssm');
 
-exports.handle = function (event, context, callback) {
+export function handle(event, context, callback) {
 	const donationsRepository = new DonationsRepository();
 	const donorsRepository = new DonorsRepository();
 	const lambda = new Lambda();
@@ -56,18 +55,18 @@ exports.handle = function (event, context, callback) {
 	};
 
 	const payment = request.get('payment', {});
-	request.validate().then(function () {
+	request.validate().then(() => {
 		return DonationHelper.validatePaymentSpringPayment(payment);
-	}).then(function () {
+	}).then(() => {
 		return settingsRepository.batchGet(Object.keys(settings));
-	}).then(function (response) {
-		response.forEach(function (setting) {
+	}).then((response) => {
+		response.forEach((setting) => {
 			settings[setting.key] = setting.value;
 		});
 		let key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/';
 		key += payment.is_test_mode ? 'payment-spring-test-api-key' : 'payment-spring-api-key';
 		return ssm.getParameter(process.env.AWS_REGION, key, true);
-	}).then(function (response) {
+	}).then((response) => {
 		if (response && response.Parameter) {
 			apiKey = response.Parameter.Value;
 		} else {
@@ -75,7 +74,7 @@ exports.handle = function (event, context, callback) {
 		}
 
 		let promise = Promise.resolve();
-		request.get('donations', []).forEach(function (donation) {
+		request.get('donations', []).forEach((donation) => {
 			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
@@ -88,7 +87,7 @@ exports.handle = function (event, context, callback) {
 				fees += model.fees;
 			}
 			donations.push(model);
-			promise = promise.then(function () {
+			promise = promise.then(() => {
 				return model.validate([
 					'fees',
 					'isAnonymous',
@@ -102,36 +101,42 @@ exports.handle = function (event, context, callback) {
 			});
 		});
 		return promise;
-	}).then(function () {
+	}).then(() => {
 		total = subtotal + fees;
 
 		let promise = Promise.resolve();
-		nonprofitUuids.forEach(function (nonprofitUuid) {
-			promise = promise.then(function () {
-				return nonprofitsRepository.get(nonprofitUuid).then(function (response) {
+		nonprofitUuids.forEach((nonprofitUuid) => {
+			promise = promise.then(() => {
+				return nonprofitsRepository.get(nonprofitUuid).then((response) => {
 					nonprofits.push(response);
 				});
 			});
 		});
 		return promise;
-	}).then(function () {
+	}).then(() => {
 		const data = request.get('donor', {});
 		if (data.hasOwnProperty('email')) {
 			return donorsRepository.queryEmail(data.email);
 		}
 		return Promise.resolve(new Donor());
-	}).then(function (response) {
+	}).then((response) => {
 		if (response) {
 			donor = response;
 			return Promise.resolve();
 		} else {
 			donor = new Donor();
-			return !payment.is_test_mode ? MetricsHelper.addAmountToMetric('DONORS_COUNT', 1) : Promise.resolve();
+			if (!payment.is_test_mode) {
+				const body = {
+					amount: 1,
+					key: 'DONORS_COUNT'
+				};
+				lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
+			}
 		}
-	}).then(function () {
+	}).then(() => {
 		donor.populate(request.get('donor', {}));
 		return donor.validate();
-	}).then(function () {
+	}).then(() => {
 		return axios({
 			method: 'post',
 			url: 'https://api.paymentspring.com/api/v1/charge',
@@ -145,7 +150,7 @@ exports.handle = function (event, context, callback) {
 				password: ''
 			}
 		});
-	}).then(function (response) {
+	}).then((response) => {
 		paymentTransaction = new PaymentTransaction({
 			billingZip: response.data.zip,
 			creditCardExpirationMonth: parseInt(response.data.card_exp_month),
@@ -159,10 +164,10 @@ exports.handle = function (event, context, callback) {
 			transactionStatus: response.data.status
 		});
 		return paymentTransaction.validate();
-	}).then(function () {
+	}).then(() => {
 		return !payment.is_test_mode ? paymentTransactionsRepository.save(paymentTransaction) : Promise.resolve(paymentTransaction);
-	}).then(function (response) {
-		donations.forEach(function (donation) {
+	}).then((response) => {
+		donations.forEach((donation) => {
 			donation.paymentTransactionUuid = response.uuid;
 			donation.creditCardName = response.creditCardName;
 			donation.creditCardType = response.creditCardType;
@@ -176,8 +181,8 @@ exports.handle = function (event, context, callback) {
 			donation.paymentTransactionStatus = response.transactionStatus;
 		});
 		return !payment.is_test_mode ? donorsRepository.save(donor) : Promise.resolve(donor);
-	}).then(function (response) {
-		donations.forEach(function (donation) {
+	}).then((response) => {
+		donations.forEach((donation) => {
 			donation.donorUuid = response.uuid;
 			if (!donation.isAnonymous) {
 				donation.donorFirstName = response.firstName;
@@ -191,8 +196,8 @@ exports.handle = function (event, context, callback) {
 				donation.donorZip = response.zip;
 			}
 		});
-		nonprofits.forEach(function (nonprofit) {
-			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach(function (donation) {
+		nonprofits.forEach((nonprofit) => {
+			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach((donation) => {
 				donation.nonprofitLegalName = nonprofit.legalName;
 				donation.nonprofitAddress1 = nonprofit.address1;
 				donation.nonprofitAddress2 = nonprofit.address2;
@@ -210,32 +215,50 @@ exports.handle = function (event, context, callback) {
 			});
 		});
 		return donationsRepository.batchUpdate(donations);
-	}).then(function () {
+	}).then(() => {
 		return !payment.is_test_mode ? nonprofitsRepository.batchUpdate(nonprofits) : Promise.resolve();
-	}).then(function () {
-		return !payment.is_test_mode ? MetricsHelper.addAmountToMetric('DONATIONS_COUNT', donations.length) : Promise.resolve();
-	}).then(function () {
-		return !payment.is_test_mode ? MetricsHelper.addAmountToMetric('DONATIONS_TOTAL', subtotal) : Promise.resolve();
-	}).then(function () {
-		return !payment.is_test_mode ? MetricsHelper.maxMetricAmount('TOP_DONATION', topDonation) : Promise.resolve();
-	}).then(function () {
+	}).then(() => {
+		if (!payment.is_test_mode) {
+			const body = {
+				amount: donations.length,
+				key: 'DONATIONS_COUNT'
+			};
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
+		}
+	}).then(() => {
+		if (!payment.is_test_mode) {
+			const body = {
+				amount: subtotal,
+				key: 'DONATIONS_TOTAL'
+			};
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
+		}
+	}).then(() => {
+		if (!payment.is_test_mode) {
+			const body = {
+				amount: topDonation,
+				key: 'TOP_DONATION'
+			};
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricMaxAmount', {body: body});
+		}
+	}).then(() => {
 		const body = {
-			donations: donations.map(function (donation) {
+			donations: donations.map((donation) => {
 				return donation.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 			}),
 			donor: donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}),
 			paymentTransaction: paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE})
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
-	}).then(function () {
+	}).then(() => {
 		const body = {
-			donations: donations.map(function (donation) {
+			donations: donations.map((donation) => {
 				return donation.all();
 			})
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 		callback();
-	}).catch(function (err) {
+	}).catch((err) => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 
