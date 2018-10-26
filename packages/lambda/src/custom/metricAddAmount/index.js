@@ -15,13 +15,11 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
 const Metric = require('./../../models/metric');
 const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
 
 export function handle(event, context, callback) {
-	const lambda = new Lambda();
 	const request = new Request(event, context).parameters(['amount', 'key']);
 	const repository = new MetricsRepository();
 
@@ -39,8 +37,6 @@ export function handle(event, context, callback) {
 		return metric.validate();
 	}).then(() => {
 		return repository.batchUpdate([metric]);
-	}).then(() => {
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(() => {
 		callback();
 	}).catch((err) => {

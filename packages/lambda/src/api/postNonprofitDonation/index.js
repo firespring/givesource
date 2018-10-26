@@ -82,6 +82,8 @@ export function handle(event, context, callback) {
 			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricMaxAmount', {body: body});
 		}
 	}).then(() => {
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
+	}).then(() => {
 		const body = {
 			donations: [donation.all()]
 		};
