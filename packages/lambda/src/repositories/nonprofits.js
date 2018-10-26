@@ -112,6 +112,7 @@ NonprofitsRepository.prototype.getAll = function () {
  */
 NonprofitsRepository.prototype.search = function (keys, search, filters) {
 	const repository = this;
+	search = search.trim();
 	return new Promise(function (resolve, reject) {
 		const params = {
 			FilterExpression: '',
