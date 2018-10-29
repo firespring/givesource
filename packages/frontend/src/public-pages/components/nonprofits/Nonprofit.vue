@@ -161,7 +161,7 @@
 				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
 			canDonate: function () {
-				return Settings.isDuringDonations();
+				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
 			logoUrl: function () {
 				const vue = this;
