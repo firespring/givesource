@@ -77,15 +77,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="c-form-item c-form-item--rich-text">
-                                    <div class="c-form-item__label">
-                                        <label for="pageDescription" class="c-form-item-label-text">Page Description</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <input v-model="formData.PAGE_DESCRIPTION.value" type="text" name="pageDescription" id="pageDescription">
-                                    </div>
-                                </div>
                             </div>
                         </section>
 
@@ -158,11 +149,6 @@
 					},
 					PAGE_SLUG: {
 						key: 'CUSTOM_PAGE_SLUG',
-						type: 'TEXT',
-						value: ''
-					},
-					PAGE_DESCRIPTION: {
-						key: 'CUSTOM_PAGE_DESCRIPTION',
 						type: 'TEXT',
 						value: ''
 					},

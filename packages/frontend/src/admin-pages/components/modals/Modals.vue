@@ -24,6 +24,7 @@
 <script>
 	import ComponentContactEmailModal from './../admin/settings/contact/ContactEmailModal.vue';
 	import ComponentContactPhoneModal from './../admin/settings/contact/ContactPhoneModal.vue';
+	import ComponentCustomPagesDeleteModal from './../admin/pages/custom/CustomPagesDeleteModal.vue';
 	import ComponentDeleteModal from './DeleteModal.vue';
 	import ComponentErrorModal from './ErrorModal.vue';
 	import ComponentFAQAddQuestionModal from './../admin/pages/faq/AddQuestionModal.vue';
@@ -108,6 +109,7 @@
 			'error': ComponentErrorModal,
 			'nonprofits-revoke': ComponentRevokeNonprofitModal,
 			'photo-editor': ComponentPhotoEditorModal,
+			'pages-custom-delete-modal': ComponentCustomPagesDeleteModal,
 			'pages-faq-add-question-modal': ComponentFAQAddQuestionModal,
 			'pages-faq-delete-question-modal': ComponentFAQDeleteQuestionModal,
 			'pages-faq-edit-question-modal': ComponentFAQEditQuestionModal,
