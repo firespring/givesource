@@ -68,7 +68,7 @@
 		},
 		computed: {
 			canDonate: function () {
-				return Settings.isDuringDonations();
+				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
 			displayAbout: function () {
 				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
