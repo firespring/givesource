@@ -82,15 +82,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="c-form-item c-form-item--rich-text">
-                                    <div class="c-form-item__label">
-                                        <label for="pageDescription" class="c-form-item-label-text">Page Description</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <input v-model="formData.PAGE_DESCRIPTION.value" type="text" name="pageDescription" id="pageDescription">
-                                    </div>
-                                </div>
                             </div>
                         </section>
 
@@ -178,11 +169,6 @@
 						type: 'TEXT',
 						value: ''
 					},
-					PAGE_DESCRIPTION: {
-						key: 'CUSTOM_PAGE_DESCRIPTION',
-						type: 'TEXT',
-						value: ''
-					},
 					PAGE_TEXT: {
 						key: 'CUSTOM_PAGE_TEXT',
 						type: 'RICH_TEXT',
@@ -214,6 +200,18 @@
 					vm.loaded = true;
 				});
 			});
+		},
+		created() {
+			const vm = this;
+
+			vm.bus.$on('deletePage', () => {
+				vm.$router.push({name: 'pages-list'});
+			});
+		},
+		beforeDestroy() {
+			const vm = this;
+
+			vm.bus.$off('deletePage');
 		},
 		watch: {
 			formData: {
@@ -310,56 +308,10 @@
 			deletePage() {
 				const vm = this;
 
-				vm.addModal('spinner');
-
-				vm.$request.delete('contents', {
-					contents: vm.contents
-				}).then(() => {
-					const setting = _.find(vm.settings, {key: 'CUSTOM_PAGES'});
-					const uuids = setting.value.split('|');
-					const updatedUuids = uuids.filter((uuid) => {
-						return uuid !== vm.pageUuid;
-					});
-
-					let promise = Promise.resolve();
-					if (updatedUuids.length) {
-						setting.value = updatedUuids.join('|');
-						promise = promise.then(() => {
-							return vm.$request.patch('settings', {
-								settings: [setting]
-							});
-						});
-					} else {
-						promise = promise.then(() => {
-							return vm.$request.delete('settings', {
-								settings: [setting]
-							});
-						});
-					}
-
-					promise = promise.then(() => {
-						const keys = getSettingKeys(vm.pageUuid);
-						const toDelete = [];
-
-						keys.forEach((key) => {
-							const setting = _.find(vm.settings, {key: key});
-							if (setting) {
-								toDelete.push(setting);
-							}
-						});
-
-						return vm.$request.delete('settings', {
-							settings: toDelete
-						});
-					});
-
-					return promise;
-				}).then(() => {
-					vm.clearModals();
-					vm.$router.push({name: 'pages-list'});
-				}).catch((err) => {
-					vm.clearModals();
-					vm.apiError = err.response.data.errors;
+				vm.addModal('pages-custom-delete-modal', {
+					contents: vm.contents,
+					settings: vm.settings,
+					pageUuid: vm.pageUuid
 				});
 			},
 			editSlug() {

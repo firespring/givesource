@@ -18,7 +18,6 @@ const getContentKeys = (setting) => {
 	const keys = [];
 	const uuids = _getUuids(setting);
 	const list = [
-		'CUSTOM_PAGE_DESCRIPTION',
 		'CUSTOM_PAGE_SLUG',
 		'CUSTOM_PAGE_TEXT',
 		'CUSTOM_PAGE_TITLE',
