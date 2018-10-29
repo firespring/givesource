@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: AWS CloudWatch Events for Givesource
+Description: AWS CloudWatch Events for Givesource®
 Parameters:
 
   StackName:

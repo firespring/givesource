@@ -1,6 +1,6 @@
 {
 	"name": "givesource-lambda",
-	"description": "AWS Lambda functions for Givesource app",
+	"description": "AWS Lambda functions for Givesource®",
 	"scripts": {
 		"build": "npm run clean && npm run webpack",
 		"clean": "rimraf build",

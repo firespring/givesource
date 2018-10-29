@@ -1,6 +1,6 @@
 {
 	"name": "givesource-cloudformation",
-	"description": "AWS CloudFormation setup for Givesource",
+	"description": "AWS CloudFormation setup for Givesource®",
 	"scripts": {
 		"build": "npm run clean && node bin/build.js",
 		"clean": "rimraf build",

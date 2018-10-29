@@ -1,8 +1,8 @@
 ![Logo](https://github.com/firespring/givesource/wiki/images/givesource-logo-colors-on-dark.png)
 
 
-Givesource is a platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
-Leveraging Amazon Web Services, Givesource was built using a serverless architecture to support high site traffic and donor activity.
+Givesource® is a platform designed to help foundations manage Giving Day events by allowing participating nonprofits to easily create a page and take donations.
+Leveraging Amazon Web Services, Givesource® was built using a serverless architecture to support high site traffic and donor activity.
 This means you have unlimited capacity to help nonprofits fundraise and grow your community without managing expensive servers.
 
 ## Features
@@ -20,19 +20,19 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 2. AWS CloudFormation should open in a new window, with the "Specify an Amazon S3 template URL" option checked, click next.
 
-	![Givesource Stack Setup Step 1](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-1.png)
+	![Givesource® Stack Setup Step 1](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-1.png)
 	
 3. Enter your desired stack name and admin email address, and click Next.
 
-	![Givesource Stack Setup Step 2](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-2.png)
+	![Givesource® Stack Setup Step 2](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-2.png)
 	
 4. Click Next.
 
-	![Givesource Stack Setup Step 3](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-3.png)
+	![Givesource® Stack Setup Step 3](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-3.png)
 	
 5. Verify your information, check the acknowledgement box, and click Create.
 
-	![Givesource Stack Setup Step 4](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-4.png)
+	![Givesource® Stack Setup Step 4](https://github.com/firespring/givesource/wiki/images/givesource-stack-step-4.png)
 	
 6. When the stack is created, an email will be sent to the admin email address entered in on step 2. This will take up to 25 minutes. Click the link in the email to setup a password and login.
 

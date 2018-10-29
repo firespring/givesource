@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Donors API resources for Givesource
+Description: Donors API resources for Givesource®
 Parameters:
 
   StackName:
