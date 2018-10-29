@@ -224,9 +224,6 @@
                                                 <router-link :to="{name: 'pages-custom-edit', params: { pageUuid: content.uuid } }">{{ content.title }}</router-link>
                                             </strong> — <a :href="getPageUrl('/' + content.slug)" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/' + content.slug) }}</a>
                                         </div>
-                                        <div class="c-notes c-notes--below" v-if="content.description">
-                                            {{ content.description }}
-                                        </div>
                                     </div>
 
                                     <div class="c-form-item c-form-item--switch c-form-item--compact c-form-item--v-center">
@@ -348,7 +345,6 @@
 
 					uuids.forEach((uuid) => {
 						const content = {
-							description: null,
 							enabled: false,
 							identifier: uuid.toUpperCase().replace(/-/g, '_'),
 							slug: null,
