@@ -22,11 +22,11 @@
 
             <div v-if="displayDonationTotals" class="main-spotlight-section day-totals">
                 <div>We’ve received</div>
-                <div class="day-totals__numbers">
+                <div class="day-totals__numbers day-totals__numbers--donations-num">
                     <div v-for="digit in donationsCountArray" :class="metricClass(digit)">{{ digit }}</div>
                 </div>
                 <div>donations for</div>
-                <div class="day-totals__numbers">
+                <div class="day-totals__numbers day-totals__numbers--donations-amount">
                     <div v-for="digit in donationsTotalArray" :class="metricClass(digit)">{{ digit }}</div>
                 </div>
             </div>

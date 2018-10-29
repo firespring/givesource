@@ -19,16 +19,18 @@
 
         <h2 class="leaderboard__title"><span>{{ eventTitle }}</span> Leaderboard</h2>
 
-        <div class="grid">
-            <div class="grid-item" v-for="(column, columnIndex) in columns">
-                <div class="leaderboard-item" v-for="(nonprofit, nonprofitIndex) in column.nonprofits">
-                    <div class="leaderboard-item__num">{{ position(columnIndex, nonprofitIndex) }}.</div>
-                    <div class="leaderboard-item__info">
-                        <h3>
-                            <router-link :to="{ name: 'nonprofit-landing-page', params: {slug: nonprofit.slug} }">{{ nonprofit.legalName}}</router-link>
-                        </h3>
+        <div class="leaderboard__items">
+            <div class="grid">
+                <div class="grid-item" v-for="(column, columnIndex) in columns">
+                    <div class="leaderboard-item" v-for="(nonprofit, nonprofitIndex) in column.nonprofits">
+                        <div class="leaderboard-item__num">{{ position(columnIndex, nonprofitIndex) }}.</div>
+                        <div class="leaderboard-item__info">
+                            <h3>
+                                <router-link :to="{ name: 'nonprofit-landing-page', params: {slug: nonprofit.slug} }">{{ nonprofit.legalName}}</router-link>
+                            </h3>
+                        </div>
+                        <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                     </div>
-                    <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
                 </div>
             </div>
         </div>
