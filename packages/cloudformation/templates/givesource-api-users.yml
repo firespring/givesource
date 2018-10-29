@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Users API resources for Givesource®
+Description: Users API resources for Givesource(R)
 Parameters:
 
   StackName:

@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: AWS S3 resources for Givesource®
+Description: AWS S3 resources for Givesource(R)
 Parameters:
 
   AdminPagesCNAMEs:
@@ -146,7 +146,7 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
         Enabled: true
-        Comment: Distribution for Givesource® public pages S3 bucket
+        Comment: Distribution for Givesource(R) public pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -180,7 +180,7 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
         Enabled: true
-        Comment: Distribution for Givesource® uploads S3 bucket
+        Comment: Distribution for Givesource(R) uploads S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0

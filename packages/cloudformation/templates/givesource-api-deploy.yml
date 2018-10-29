@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: AWS API Gateway Deployment resources for Givesource®
+Description: AWS API Gateway Deployment resources for Givesource(R)
 Parameters:
 
   RestApi:

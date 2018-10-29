@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: AWS Resources for Givesource®
+Description: AWS Resources for Givesource(R)
 Parameters:
 
   AdminEmail:

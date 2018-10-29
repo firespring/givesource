@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Messages API resources for Givesource®
+Description: Messages API resources for Givesource(R)
 Parameters:
 
   StackName:

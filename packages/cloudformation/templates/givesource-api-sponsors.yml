@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Sponsors API resources for Givesource®
+Description: Sponsors API resources for Givesource(R)
 Parameters:
 
   StackName:

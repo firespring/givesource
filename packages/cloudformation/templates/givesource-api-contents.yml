@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Contents API resources for Givesource®
+Description: Contents API resources for Givesource(R)
 Parameters:
 
   StackName:
