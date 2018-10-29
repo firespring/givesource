@@ -254,16 +254,11 @@ const donationsEndDate = function () {
  * @returns {boolean}
  */
 const isDuringDonations = function () {
-	const eventStart = eventStartDate();
-	const eventEnd = eventEndDate();
-	const donationsStart = donationsStartDate();
-	const donationsEnd = donationsEndDate();
+	const start = donationsStartDate();
+	const end = donationsEndDate();
 
-	if ((eventStart && eventEnd) || (donationsStart && donationsEnd)) {
+	if (start && end) {
 		const now = moment();
-		const start = donationsStart ? donationsStart : eventStart;
-		const end = donationsEnd ? donationsEnd : eventEnd;
-
 		return now.isBetween(start, end, 'day', '[]');
 	}
 

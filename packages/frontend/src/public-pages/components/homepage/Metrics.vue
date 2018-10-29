@@ -208,7 +208,7 @@
 				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
 			},
 			canDonate: function () {
-				return Settings.isDuringDonations();
+				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
 			displayMatchFund: function () {
 				const vue = this;
