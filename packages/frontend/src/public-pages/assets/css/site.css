@@ -1778,6 +1778,13 @@ Leaderboard
 	background-size: cover;
 }
 
+.leaderboard-item--detailed .leaderboard-item__image--full {
+	border-radius: 0;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
 .leaderboard-item--detailed .leaderboard-item__info {
 	-ms-flex: 1 0 100%;
 	-webkit-box-flex: 1;

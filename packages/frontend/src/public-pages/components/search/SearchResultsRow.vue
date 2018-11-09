@@ -17,7 +17,7 @@
 <template>
     <div class="leaderboard-item leaderboard-item--detailed">
 
-        <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }" class="leaderboard-item__image" :style="'background-image: url(' + logoUrl + ')'">
+        <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }" class="leaderboard-item__image leaderboard-item__image--full" :style="'background-image: url(' + logoUrl + ')'">
         </router-link>
 
         <div class="leaderboard-item__info">
