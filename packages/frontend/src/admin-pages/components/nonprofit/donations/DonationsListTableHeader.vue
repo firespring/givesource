@@ -18,7 +18,7 @@
     <div class="c-header-actions">
 
         <div>
-            <a v-on:click="exportDonations" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
+            <a v-on:click.prevent="exportDonations" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
         </div>
 
     </div>
@@ -28,64 +28,92 @@
 	const slug = require('slug');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				report: {},
 				file: {},
+				downloaded: false,
 
 				countdown: null,
 			};
 		},
+
 		props: {
 			nonprofit: {}
 		},
+
 		methods: {
-			exportDonations: function (event) {
-				event.preventDefault();
-				const vue = this;
+			exportDonations() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.$request.post('nonprofits/' + vue.nonprofit.uuid + '/reports' , {
+				vm.$request.post('nonprofits/' + vm.nonprofit.uuid + '/reports', {
 					type: 'DONATIONS',
-					nonprofitUuid: vue.nonprofit.uuid,
-					name: slug(vue.nonprofit.legalName),
-				}).then(function (response) {
-					vue.report = response.data;
-					vue.pollReport();
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.$emit('hasError', err);
+					nonprofitUuid: vm.nonprofit.uuid,
+					name: slug(vm.nonprofit.legalName),
+				}).then(response => {
+					vm.report = response.data;
+					vm.pollReport();
+				}).catch(err => {
+					vm.clearModals();
+					vm.$emit('hasError', err);
 				});
 			},
-			pollReport: function () {
-				const vue = this;
 
-				vue.countdown = setInterval(function () {
-					vue.$store.commit('generateCacheKey');
-					vue.$request.get('nonprofits/' + vue.nonprofit.uuid + '/reports/' + vue.report.uuid).then(function (response) {
-						vue.report = response.data;
-						if (vue.report.status === 'SUCCESS') {
-							vue.clearModals();
-							clearTimeout(vue.countdown);
-							vue.downloadFile();
-						} else if (vue.report.status === 'FAILED') {
-							vue.clearModals();
-							clearTimeout(vue.countdown);
-							console.log('Report failed to generate');
-						}
-					}).catch(function (err) {
-                        vue.clearModals();
-                        vue.$emit('hasError', err);
-                    });
-				}, 1000);
+			pollReport() {
+				const vm = this;
+
+				if (vm.downloaded) {
+					vm.downloadFile();
+					vm.clearModals();
+
+				} else {
+					vm.countdown = setInterval(() => {
+						vm.$store.commit('generateCacheKey');
+
+						vm.$request.get('nonprofits/' + vm.nonprofit.uuid + '/reports/' + vm.report.uuid).then(response => {
+							vm.report = response.data;
+
+							if (vm.report.status === 'SUCCESS') {
+								vm.clearModals();
+								clearTimeout(vm.countdown);
+
+								if (!vm.downloaded) {
+									vm.downloadFile();
+								}
+
+							} else if (vm.report.status === 'FAILED') {
+								vm.clearModals();
+								clearTimeout(vm.countdown);
+								console.log('Report failed to generate');
+							}
+
+						}).catch(err => {
+							vm.clearModals();
+							vm.$emit('hasError', err);
+						});
+
+					}, 1000);
+				}
 			},
-			downloadFile: function () {
-				const vue = this;
 
-				vue.$request.get('files/' + vue.report.fileUuid).then(function (fileResponse) {
-					vue.file = fileResponse.data;
-					window.location.href = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path;
+			downloadFile() {
+				const vm = this;
+
+				let promise = Promise.resolve();
+
+				if (!vm.downloaded) {
+					promise = promise.then(() => {
+						return vm.$request.get('files/' + vm.report.fileUuid);
+					}).then(response => {
+						vm.file = response.data;
+						vm.downloaded = true;
+					});
+				}
+
+				promise = promise.then(() => {
+					window.location.href = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.file.path;
 				});
 			}
 		}
