@@ -61,7 +61,7 @@
             </div>
         </td>
 
-        <td class="u-nowrap empty" v-if="isOffline || isAnonymous"></td>
+        <td class="u-nowrap empty" v-if="!hasAddress || isAnonymous"></td>
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
@@ -81,25 +81,35 @@
 
 	export default {
 		computed: {
-			isAnonymous: function () {
+			isAnonymous() {
 				return this.donation.isAnonymous;
-            },
-			isOffline: function () {
+			},
+
+			isOffline() {
 				return this.donation.isOfflineDonation;
-            },
-            isOfflineBulk: function () {
+			},
+
+			isOfflineBulk() {
 				return this.isOffline && this.donation.type === 'BULK';
-            },
-			formattedAmount: function () {
+			},
+
+			hasAddress() {
+				return this.donation.donorAddress1 || this.donation.donorAddress2 || this.donation.donorCity || this.donation.donorState || this.donation.donorZip;
+			},
+
+			formattedAmount() {
 				return numeral(this.donation.subtotal / 100).format('$0,00.00');
 			},
-			formattedDate: function () {
+
+			formattedDate() {
 				return new Date(this.donation.createdOn).toLocaleDateString();
 			},
-			formattedTime: function () {
+
+			formattedTime() {
 				return new Date(this.donation.createdOn).toLocaleTimeString();
 			},
 		},
+
 		props: {
 			donation: {},
 		}
