@@ -137,35 +137,34 @@ exports.calculateFees = function (isOfflineDonation, isFeeCovered, amount, trans
  */
 exports.getFeeRates = function (isOfflineDonation) {
 	let promise = Promise.resolve();
+	const repo = new SettingsRepository();
+
 	if (isOfflineDonation) {
 		promise = promise.then(function () {
-			const repo = new SettingsRepository();
-			return repo.batchGet([SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE, SettingHelper.SETTING_OOFFLINE_TRANSACTION_FEE_FLAT_RATE]).then(function (response) {
-				let percent = 0;
-				let flatRate = 0;
-				_.forEach(response, function (setting) {
-					if (setting.key === SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE) {
-						percent = parseFloat(setting.value);
-					} else if (setting.key === SettingHelper.SETTING_OOFFLINE_TRANSACTION_FEE_FLAT_RATE) {
-						flatRate = parseInt(setting.value);
-					}
-				});
-
-				return {
-					percent: percent,
-					flatRate: flatRate,
-				}
-			});
+			return repo.batchGet([SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE, SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_FLAT_RATE]);
 		});
-
 	} else {
 		promise = promise.then(function () {
-			return {
-				percent: .029,
-				flatRate: 30,
-			}
+			return repo.batchGet([SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE, SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE]);
 		});
 	}
+
+	promise = promise.then(function (response) {
+		let percent = 0;
+		let flatRate = 0;
+		_.forEach(response, function (setting) {
+			if (setting.key === SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_PERCENTAGE || setting.key === SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE) {
+				percent = parseFloat(setting.value);
+			} else if (setting.key === SettingHelper.SETTING_OFFLINE_TRANSACTION_FEE_FLAT_RATE || setting.key === SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE) {
+				flatRate = parseInt(setting.value);
+			}
+		});
+
+		return {
+			percent: percent,
+			flatRate: flatRate,
+		}
+	});
 
 	return promise;
 };

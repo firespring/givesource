@@ -121,7 +121,7 @@
 
 				const cartItems = vue.$store.getters.cartItems;
 				if (cartItems.length) {
-					vue.donationFees = vue.calculateFees(cartItems, 30, 0.029);
+					vue.donationFees = vue.calculateFees(cartItems);
 					vue.donationSubtotal = 0;
 					cartItems.forEach(function (cartItem) {
 						vue.donationSubtotal += cartItem.amount;

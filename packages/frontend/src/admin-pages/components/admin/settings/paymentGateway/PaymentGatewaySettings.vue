@@ -139,6 +139,50 @@
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
+                                    <h2 class="c-page-section-title">Payment Gateway Donation Fees</h2>
+                                </div>
+                            </header>
+
+                            <div class="c-page-section__main">
+
+                                <div class="c-form-item c-form-item--text" :class="{ 'c-form-item--has-error': formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE }">
+                                    <div class="c-form-item__label">
+                                        <label for="paymentGatewayTransactionFeePercentage" class="c-form-item-label-text">Payment Gateway Fee Percentage</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <input v-model="formData.PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE" type="text" name="paymentGatewayTransactionFeePercentage"
+                                               id="paymentGatewayTransactionFeePercentage" :class="{ 'has-error': formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE }">
+                                        <div v-if="formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE }}
+                                        </div>
+                                        <div class="c-notes c-notes--below">
+                                            If your payment gateway collects a percent fee for credit card transactions, enter that amount here.
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="c-form-item c-form-item--text" :class="{ 'c-form-item--has-error': formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE }">
+                                    <div class="c-form-item__label">
+                                        <label for="paymentGatewayTransactionFeeFlatRate" class="c-form-item-label-text">Payment Gateway Fee Flat Rate</label>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <input v-model="formData.PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE" type="text" name="paymentGatewayTransactionFeeFlatRate"
+                                               id="paymentGatewayTransactionFeeFlatRate" :class="{ 'has-error': formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE }">
+                                        <div v-if="formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE }}
+                                        </div>
+                                        <div class="c-notes c-notes--below">
+                                            If your payment gateway collects a flat rate fee for credit card transactions, enter that amount here.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
+                            <header class="c-page-section__header">
+                                <div class="c-page-section-header-text">
                                     <h2 class="c-page-section-title">Offline Donation Fees</h2>
                                 </div>
                             </header>
@@ -237,12 +281,14 @@
 
 				// Form Data
 				formData: {
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: '0.00',
+					OFFLINE_TRANSACTION_FEE_PERCENTAGE: '0.0',
+					PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: '0.00',
+					PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: '0.0',
+					PAYMENT_SPRING_LIVE_MODE: false,
 					PAYMENT_SPRING_PUBLIC_API_KEY: '',
 					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: '',
-					PAYMENT_SPRING_LIVE_MODE: false,
 					TEST_PAYMENTS_DISPLAY: false,
-					OFFLINE_TRANSACTION_FEE_PERCENTAGE: '0.0',
-					OFFLINE_TRANSACTION_FEE_FLAT_RATE: '0.00',
 				},
 
 				// Errors
@@ -299,21 +345,11 @@
 		methods: {
 			getConstraints: function () {
 				return {
-					PAYMENT_SPRING_PUBLIC_API_KEY: {
-						label: 'Public API Key',
-						presence: false,
-					},
-					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
-						label: 'Test Public API Key',
-						presence: false,
-					},
-					PAYMENT_SPRING_LIVE_MODE: {
-						label: 'This field',
-						presence: true,
-					},
-					TEST_PAYMENTS_DISPLAY: {
-						label: 'This field',
-						presence: true,
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
+						label: 'Offline Fee Flat Rate',
+						numericality: {
+							greaterThanOrEqualTo: 0,
+						}
 					},
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
 						label: 'Offline Fee Percentage',
@@ -322,24 +358,55 @@
 							lessThanOrEqualTo: 100
 						}
 					},
-					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
-						label: 'Offline Fee Flat Rate',
+					PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: {
+						label: 'Payment Gateway Fee Flat Rate',
 						numericality: {
 							greaterThanOrEqualTo: 0,
 						}
-					}
+					},
+					PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: {
+						label: 'Payment Gateway Fee Percentage',
+						numericality: {
+							greaterThanOrEqualTo: 0,
+							lessThanOrEqualTo: 100
+						}
+					},
+					PAYMENT_SPRING_LIVE_MODE: {
+						label: 'This field',
+						presence: true,
+					},
+					PAYMENT_SPRING_PUBLIC_API_KEY: {
+						label: 'Public API Key',
+						presence: false,
+					},
+					PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
+						label: 'Test Public API Key',
+						presence: false,
+					},
+					TEST_PAYMENTS_DISPLAY: {
+						label: 'This field',
+						presence: true,
+					},
 				};
 			},
 			getTransformers: function () {
 				return {
+					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
+						onDisplay: ['fromCents', 'money'],
+						onSave: ['money', 'toCents', 'zeroToEmptyString']
+					},
 					OFFLINE_TRANSACTION_FEE_PERCENTAGE: {
 						onDisplay: ['fromPercent', 'percent'],
 						onSave: ['percent', 'toPercent', 'zeroToEmptyString']
 					},
-					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
+					PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: {
 						onDisplay: ['fromCents', 'money'],
 						onSave: ['money', 'toCents', 'zeroToEmptyString']
-					}
+					},
+					PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: {
+						onDisplay: ['fromPercent', 'percent'],
+						onSave: ['percent', 'toPercent', 'zeroToEmptyString']
+					},
 				}
 			},
 			submit: function (event) {

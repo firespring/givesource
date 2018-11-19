@@ -27,6 +27,7 @@ const NonprofitsRepository = require('./../../repositories/nonprofits');
 const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
+const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const SSM = require('./../../aws/ssm');
 
@@ -54,6 +55,9 @@ export function handle(event, context, callback) {
 		'EVENT_TIMEZONE': null,
 	};
 
+	settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
+	settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
+
 	const payment = request.get('payment', {});
 	request.validate().then(() => {
 		return DonationHelper.validatePaymentSpringPayment(payment);
@@ -75,7 +79,13 @@ export function handle(event, context, callback) {
 
 		let promise = Promise.resolve();
 		request.get('donations', []).forEach((donation) => {
-			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
+			let transactionFlatFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE];
+			transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
+
+			let transactionPercentFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE];
+			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
+
+			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, transactionFlatFee, transactionPercentFee);
 			const model = new Donation(donation);
 			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
 				nonprofitUuids.push(model.nonprofitUuid);

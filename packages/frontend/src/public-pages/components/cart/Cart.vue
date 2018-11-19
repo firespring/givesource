@@ -507,7 +507,7 @@
 				vue.donations = [];
 				const cartItems = vue.$store.getters.cartItems;
 				cartItems.forEach(function (cartItem) {
-					const fees = vue.calculateFees([cartItem], 30, 0.029);
+					const fees = vue.calculateFees([cartItem]);
 					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
 					vue.donations.push({
 						fees: fees,

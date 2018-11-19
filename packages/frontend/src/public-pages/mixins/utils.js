@@ -40,7 +40,15 @@ const mixin = {
 		formatMoney: function (amount) {
 			return numeral(amount / 100).format('$0,0.00');
 		},
-		calculateFees: function (cartItems, transactionFlatFee, transactionPercentFee) {
+		calculateFees: function (cartItems) {
+			const vm = this;
+
+			let transactionFlatFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE');
+			transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
+
+			let transactionPercentFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE');
+			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
+
 			let fees = 0;
 			cartItems.forEach(function (cartItem) {
 				fees += Math.floor(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
