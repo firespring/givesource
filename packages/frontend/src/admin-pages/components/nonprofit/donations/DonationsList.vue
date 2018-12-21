@@ -21,6 +21,7 @@
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
+                    <donations-metrics :nonprofit="nonprofit"></donations-metrics>
 
                     <div class="o-page-header" v-if="isAdmin">
                         <div class="o-page-header__text">
@@ -45,6 +46,7 @@
 	import * as Utils from './../../../helpers/utils';
 	import ComponentDonationsListTable from './DonationsListTable.vue';
 	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
+	import ComponentDonationsMetrics from './DonationsMetrics.vue';
 	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
 	import PaginationMixin from './../../../mixins/pagination';
 
@@ -99,6 +101,7 @@
 		components: {
 			'donations-list-table': ComponentDonationsListTable,
 			'donations-list-table-header': ComponentDonationsListTableHeader,
+			'donations-metrics': ComponentDonationsMetrics,
 			'paginated-table-footer': ComponentPaginatedTableFooter,
 		}
 	};
