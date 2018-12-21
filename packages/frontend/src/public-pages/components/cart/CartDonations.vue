@@ -50,7 +50,7 @@
 	export default {
 		data: function () {
 			return {
-				localValue: false,
+				localValue: true,
 
 				donationFees: 0,
 				donationSubtotal: 0,
