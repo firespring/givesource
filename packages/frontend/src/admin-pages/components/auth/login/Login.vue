@@ -21,7 +21,7 @@
 
                 <section class="c-page-section c-page-section--border c-page-section--shadow" v-bind:class="{ 'c-page-section--headless': displayHeader }">
                     <header class="c-page-section__header u-justify-center" v-if="displayHeader">
-                        <a href="#"><img alt="Firespring Logo" src="../../../assets/svg/firespring-wordmark-white.svg" class="logo"></a>
+                        <a href="#"><img alt="Givesource Logo" src="../../../assets/img/logo-givesource.png" class="logo"></a>
                     </header>
 
 
@@ -52,6 +52,7 @@
 		},
 		beforeMount: function () {
 			document.body.classList.remove('has-menubar', 'has-menubar--secondary');
+			document.body.classList.add('login');
 		},
 		methods: {
 			setDisplayHeader: function (displayHeader) {

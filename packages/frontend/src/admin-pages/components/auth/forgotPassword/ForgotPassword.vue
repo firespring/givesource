@@ -21,7 +21,7 @@
 
                 <section class="c-page-section c-page-section--border c-page-section--shadow">
                     <header class="c-page-section__header u-justify-center">
-                        <a href="#"><img alt="Firespring Logo" src="../../../assets/svg/firespring-wordmark-white.svg" class="logo"></a>
+                        <a href="#"><img alt="Givesource Logo" src="../../../assets/img/logo-givesource.png" class="logo"></a>
                     </header>
 
                     <router-view></router-view>
@@ -34,5 +34,10 @@
 </template>
 
 <script>
-	export default {};
+	export default {
+		beforeMount: function () {
+			document.body.classList.remove('has-menubar', 'has-menubar--secondary');
+			document.body.classList.add('login');
+		}
+    };
 </script>

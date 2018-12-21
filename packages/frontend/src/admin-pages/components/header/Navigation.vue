@@ -21,9 +21,8 @@
             <div class="o-branding">
                 <router-link :to="logoLink" class="u-flex u-items-center">
                     <div class="o-branding__logo">
-                        <img alt="Firespring Logo" src="../../assets/svg/firespring-wordmark-white.svg" class="logo svg">
+                        <img alt="Givesource Logo" src="../../assets/img/logo-givesource.png" class="logo">
                     </div>
-                    <span class="o-branding__app-name">Givesource®</span>
                 </router-link>
             </div>
 
