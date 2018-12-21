@@ -18,14 +18,13 @@
 	"author": "Firespring",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"aws-sdk": "^2.65.0",
+		"aws-sdk": "^2.380.0",
 		"config": "^1.30.0",
 		"dotenv": "^4.0.0",
 		"json-loader": "^0.5.7",
 		"mime": "^2.2.2",
 		"rimraf": "^2.6.1",
-		"validate.js": "0.10.0",
-		"webpack": "^2.6.1"
+		"validate.js": "0.10.0"
 	},
 	"devDependencies": {
 		"archiver": "^2.1.1",
@@ -44,19 +43,21 @@
 		"json2csv": "^3.11.5",
 		"jsonwebtoken": "^8.1.0",
 		"jwk-to-pem": "^1.2.6",
-		"lodash": "^4.17.4",
-		"mocha": "^3.4.2",
+		"lodash": "^4.17.11",
+		"mocha": "^5.2.0",
 		"mocha-promise-me": "^1.0.3",
 		"moment-timezone": "^0.5.14",
 		"mustache": "^2.3.0",
 		"node-uuid": "^1.4.8",
 		"numeral": "^2.0.6",
-		"nyc": "^11.0.2",
+		"nyc": "^13.1.0",
 		"randomstring": "^1.1.5",
 		"raw-loader": "^0.5.1",
-		"request": "^2.83.0",
+		"request": "^2.88.0",
 		"sinon": "^2.3.6",
-		"slug": "^0.9.1",
-		"uuid-validate": "0.0.2"
+		"slug": "^0.9.3",
+		"uuid-validate": "0.0.2",
+		"webpack": "^4.28.1",
+		"webpack-cli": "^3.1.2"
 	}
 }

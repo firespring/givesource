@@ -293,7 +293,7 @@
 			}
 		},
 		components: {
-			'forms-image-upload': require('./../../../forms/ImageUpload.vue')
+			'forms-image-upload': ComponentImageUpload
 		}
 	};
 </script>
