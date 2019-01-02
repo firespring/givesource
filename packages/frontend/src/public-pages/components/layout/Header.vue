@@ -29,7 +29,7 @@
             <router-link v-for="page in pages" :key="page.uuid" :to="{ path: page.slug }" v-if="page.enabled">{{ page.title }}</router-link>
         </nav>
 
-        <form v-on:submit="submit" class="page-header__search flex justify-center items-center">
+        <form v-on:submit.prevent="submit" class="page-header__search flex justify-center items-center">
             <input v-model="formData.search" type="search" name="searchNonprofits" id="searchNonprofits" placeholder="Find a Nonprofit" ref="search">
             <div v-if="formErrors.search" class="notes notes--below notes--error">
                 {{ formErrors.search }}
@@ -45,7 +45,8 @@
             </router-link>
         </div>
 
-        <a v-on:click="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars" aria-hidden="true"></i><span>Menu</span></a>
+        <a v-on:click.prevent="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars"
+                                                                                                                          aria-hidden="true"></i><span>Menu</span></a>
     </header>
 </template>
 
@@ -53,7 +54,7 @@
 	import * as Settings from './../../helpers/settings';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				cartItemsCount: 0,
 
@@ -67,62 +68,61 @@
 			};
 		},
 		computed: {
-			canDonate: function () {
+			canDonate() {
 				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
-			displayAbout: function () {
+			displayAbout() {
 				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
 			},
-			displayFAQ: function () {
+			displayFAQ() {
 				return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED');
 			},
-			displayToolkits: function () {
+			displayToolkits() {
 				return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED');
 			},
-			logoTitle: function () {
+			logoTitle() {
 				return Settings.eventTitle() + ' Logo';
 			},
-			logoUrl: function () {
-				const vue = this;
-				const eventLogo = vue.$store.getters.setting('EVENT_LOGO');
+			logoUrl() {
+				const eventLogo = this.$store.getters.setting('EVENT_LOGO');
 				return eventLogo ? eventLogo : '/assets/temp/logo-event.png';
 			},
-			pages: function () {
+			pages() {
 				return this.$store.getters.pages;
 			},
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.cartItemsCount = vue.$store.state.cartItems.length;
-			vue.bus.$on('updateCartItems', function () {
-				vue.cartItemsCount = vue.$store.state.cartItems.length;
-				$(vue.$refs.shoppingCart).find('span.fa-layers-text').text(vue.cartItemsCount);
+			vm.cartItemsCount = vm.$store.state.cartItems.length;
+			vm.bus.$on('updateCartItems', () => {
+				vue.cartItemsCount = vm.$store.state.cartItems.length;
+				$(vm.$refs.shoppingCart).find('span.fa-layers-text').text(vm.cartItemsCount);
 			});
 
-			vue.bus.$on('navigate', function () {
-				vue.formData.search = '';
+			vm.bus.$on('navigate', () => {
+				vm.formData.search = '';
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
+		beforeDestroy() {
+			const vm = this;
 
-			vue.bus.$off('updateCartItems');
-			vue.bus.$off('navigate');
+			vm.bus.$off('updateCartItems');
+			vm.bus.$off('navigate');
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					search: {
 						presence: false,
@@ -132,31 +132,28 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (!Object.keys(vue.formErrors).length) {
-					vue.searchNonprofits();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (!Object.keys(vm.formErrors).length) {
+					vm.searchNonprofits();
 				}
 			},
-			searchNonprofits: function () {
-				const vue = this;
+			searchNonprofits() {
+				const vm = this;
 
-				vue.$router.push(vue.generatePageLink({search: vue.formData.search}));
+				vm.$router.push(vm.generatePageLink({search: vm.formData.search, start: null}));
 			},
-			openMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
+			openMenu() {
+				this.addModal('menu-overlay');
+			},
+			generatePageLink(query) {
+				const vm = this;
 
-				vue.addModal('menu-overlay');
-			},
-			generatePageLink: function (query) {
-				const vue = this;
 				query = query || {};
-				query = _.extend({}, vue.$route.query, query);
-				Object.keys(query).forEach(function (key) {
+				query = _.extend({}, vm.$route.query, query);
+				Object.keys(query).forEach(key => {
 					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
 						delete query[key];
 					}
