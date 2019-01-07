@@ -23,6 +23,22 @@
         <main class="main">
             <api-error v-model="apiError"></api-error>
             <div class="wrapper wrapper--sm" v-html="text"></div>
+
+            <div style="margin-top: 1.5rem;">
+                <social-sharing network-tag="a"
+                                :url="pageUrl"
+                                :title="settings.SOCIAL_SHARING_DESCRIPTION"
+                                inline-template>
+                    <div class="donation-share">
+                        <network network="facebook">
+                            <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i>Share</span>
+                        </network>
+                        <network network="twitter">
+                            <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i class="fab fa-twitter" aria-hidden="true"></i>Tweet</span>
+                        </network>
+                    </div>
+                </social-sharing>
+            </div>
         </main>
 
         <layout-footer>
@@ -39,51 +55,74 @@
 	import ComponentSponsors from './../../layout/Sponsors.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
+
+				settings: {
+					SOCIAL_SHARING_DESCRIPTION: ''
+				},
+
 				apiError: {},
 			};
 		},
 		computed: {
-			text: function () {
+			text() {
 				const text = _.find(this.contents, {key: 'CART_RESPONSE_TEXT'});
 				return text ? text.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
-			}
+			},
+			pageUrl() {
+				return document.location.origin;
+			},
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				axios.get(API_URL + 'contents' + Utils.generateQueryString({
-					keys: 'CART_RESPONSE_TEXT',
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				return Promise.all([vm.loadContents(), vm.loadSettings()]).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			axios.get(API_URL + 'contents' + Utils.generateQueryString({
-				keys: 'CART_RESPONSE_TEXT',
-			})).then(function (response) {
-				vue.contents = response.data;
-				next();
-			}).catch(function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			Promise.all([vm.loadContents(), vm.loadSettings()]).catch(err => {
+				vm.apiError = err.response.data.errors;
+			}).then(() => {
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Thank You');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Thank You');
+		},
+		methods: {
+			loadContents() {
+				const vm = this;
+
+				return axios.get(API_URL + 'contents' + Utils.generateQueryString({
+					keys: 'CART_RESPONSE_TEXT',
+				})).then(response => {
+					vm.contents = response.data;
+				});
+			},
+			loadSettings() {
+				const vm = this;
+
+				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
+					keys: Object.keys(vm.settings)
+				})).then(response => {
+					response.data.forEach(setting => {
+						if (vm.settings.hasOwnProperty(setting.key)) {
+							vm.settings[setting.key] = setting.value;
+						}
+					});
+				});
+			},
 		},
 		components: {
 			'layout-footer': ComponentFooter,

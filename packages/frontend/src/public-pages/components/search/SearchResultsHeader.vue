@@ -17,7 +17,7 @@
 <template>
     <div class="actions-row">
         <div class="actions-row__search" style="width: 100%;">
-            <form v-on:submit="submit">
+            <form v-on:submit.prevent="submit">
                 <div class="grid grid--compact grid--middle">
 
                     <div class="grid-item grid-item--expand">
@@ -50,7 +50,7 @@
 	import ComponentNonprofitCategorySelect from './../forms/NonprofitCategorySelect.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -73,24 +73,24 @@
 			}
 		},
 		watch: {
-			category: function (value) {
+			category(value) {
 				this.formData.category = value;
 			},
-			search: function (value) {
+			search(value) {
 				this.formData.search = value;
 			},
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					search: {
 						presence: false,
@@ -100,34 +100,35 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (!Object.keys(vue.formErrors).length) {
-					vue.searchNonprofits();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (!Object.keys(vm.formErrors).length) {
+					vm.searchNonprofits();
 				}
 			},
-			searchNonprofits: function () {
-				const vue = this;
+			searchNonprofits() {
+				const vm = this;
 
-				vue.$router.push(vue.generatePageLink({
-					category: vue.formData.category,
-					search: vue.formData.search,
+				vm.$router.push(vm.generatePageLink({
+					category: vm.formData.category,
+					search: vm.formData.search,
+					start: null
 				}));
 			},
-			generatePageLink: function (query) {
-				const vue = this;
+			generatePageLink(query) {
+				const vm = this;
+
 				query = query || {};
-				query = _.extend({}, vue.$route.query, query);
-				Object.keys(query).forEach(function (key) {
+				query = _.extend({}, vm.$route.query, query);
+				Object.keys(query).forEach(key => {
 					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
 						delete query[key];
 					}
 				});
 				return {
-					name: vue.$route.name,
+					name: vm.$route.name,
 					query: query
 				};
 			}

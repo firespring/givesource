@@ -44,7 +44,7 @@
 	import ComponentDonationCartModalListTable from './DonationCartModalListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				hasError: false,
 			};
@@ -57,58 +57,63 @@
 			}
 		},
 		computed: {
-			isCartEmpty: function () {
+			isCartEmpty() {
 				return this.$store.state.cartItems.length === 0;
 			}
 		},
-		created: function () {
-			const vue = this;
-			vue.addBodyClasses('has-donation-overlay');
+		created() {
+			this.addBodyClasses('has-donation-overlay');
 		},
-		mounted: function () {
-			const vue = this;
-			$(vue.$refs.donationModalCart).fadeIn();
+		mounted() {
+			$(this.$refs.donationModalCart).fadeIn();
 		},
 		methods: {
-			close: function () {
-				const vue = this;
+			close() {
+				const vm = this;
 
-				$(vue.$refs.donationModalCart).fadeOut(function () {
-					vue.removeModal('donation-cart');
-					vue.removeBodyClasses('has-donation-overlay');
+				$(vm.$refs.donationModalCart).fadeOut(() => {
+					vm.removeModal('donation-cart');
+					vm.removeBodyClasses('has-donation-overlay');
 				});
 			},
-			checkoutBtn: function () {
-				const vue = this;
+			checkoutBtn() {
+				const vm = this;
 
-				if (!vue.hasError) {
-					$(vue.$refs.donationModalCart).hide();
-					vue.removeModal('donation-cart');
-					vue.removeBodyClasses('has-donation-overlay');
-					vue.$router.push({name: 'cart'});
+				if (!vm.hasError) {
+					$(vm.$refs.donationModalCart).hide();
+					vm.removeModal('donation-cart');
+					vm.removeBodyClasses('has-donation-overlay');
+					vm.$router.push({name: 'cart'});
 				}
 			},
-			helpMoreBtn: function () {
-				const vue = this;
+			helpMoreBtn() {
+				const vm = this;
 
-				if (!vue.hasError) {
-					$(vue.$refs.donationModalCart).hide();
-					vue.removeModal('donation-cart');
-					vue.removeBodyClasses('has-donation-overlay');
-					vue.$router.push({name: 'search-results'});
+				if (!vm.hasError) {
+					$(vm.$refs.donationModalCart).hide();
+					vm.removeModal('donation-cart');
+					vm.removeBodyClasses('has-donation-overlay');
+
+					vm.$router.push({
+						name: vm.$route.name === 'leaderboard' ? 'leaderboard' : 'search-results',
+						query: vm.$route.query ? vm.$route.query : {}
+					});
 				}
 			},
-			findNonprofit: function () {
-				const vue = this;
+			findNonprofit() {
+				const vm = this;
 
-				$(vue.$refs.donationModalCart).hide();
-				vue.removeModal('donation-cart');
-				vue.removeBodyClasses('has-donation-overlay');
-				vue.$router.push({name: 'search-results'});
+				$(vm.$refs.donationModalCart).hide();
+				vm.removeModal('donation-cart');
+				vm.removeBodyClasses('has-donation-overlay');
+
+				vm.$router.push({
+					name: vm.$route.name === 'leaderboard' ? 'leaderboard' : 'search-results',
+					query: vm.$route.query ? vm.$route.query : {}
+				});
 			},
-			hasDonationErrors: function (hasError) {
-				const vue = this;
-				vue.hasError = hasError;
+			hasDonationErrors(hasError) {
+				this.hasError = hasError;
 			}
 		},
 		components: {
