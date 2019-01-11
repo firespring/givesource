@@ -48,6 +48,7 @@ import ComponentNonprofitPhotosEdit from './../components/nonprofit/yourPage/med
 import ComponentNonprofitRequestNameChange from './../components/nonprofit/settings/requestNameChange/RequestNameChange.vue';
 import ComponentNonprofitsAdd from './../components/admin/nonprofits/NonprofitsAdd.vue';
 import ComponentNonprofitSettingsList from './../components/nonprofit/settings/SettingsList.vue';
+import ComponentNonprofitSocialSharing from './../components/nonprofit/settings/socialSharing/SocialSharing.vue';
 import ComponentNonprofitsList from './../components/admin/nonprofits/NonprofitsList.vue';
 import ComponentNonprofitVideosAdd from './../components/nonprofit/yourPage/media/VideosAdd.vue';
 import ComponentNonprofitVideosEdit from './../components/nonprofit/yourPage/media/VideosEdit.vue';
@@ -435,6 +436,16 @@ const router = new VueRouter({
 			name: 'nonprofit-settings-request-name-change',
 			props: true,
 			component: ComponentNonprofitRequestNameChange,
+			meta: {
+				nonprofitStatus: ['ACTIVE'],
+				validateNonprofitUuid: true
+			}
+		},
+		{
+			path: '/nonprofits/:nonprofitUuid/settings/social-sharing',
+			name: 'nonprofit-settings-social-sharing',
+			props: true,
+			component: ComponentNonprofitSocialSharing,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
 				validateNonprofitUuid: true

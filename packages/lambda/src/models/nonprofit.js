@@ -60,6 +60,8 @@ Nonprofit.prototype.attributes = [
 	'receiveDonationNotifications',
 	'shortDescription',
 	'slug',
+	'socialSharingDescription',
+	'socialSharingFileUuid',
 	'state',
 	'status',
 	'taxId',
@@ -153,6 +155,14 @@ Nonprofit.prototype.constraints = {
 	slug: {
 		presence: false,
 		type: 'string'
+	},
+	socialSharingDescription: {
+		presence: false,
+		type: 'string',
+	},
+	socialSharingFileUuid: {
+		presence: false,
+		uuid: 4
 	},
 	state: {
 		presence: true,
