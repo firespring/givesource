@@ -47,7 +47,7 @@
                             <div class="c-page-section-header-text">
                                 <h2 class="c-page-section-title">Content For Social Sharing</h2>
                                 <div class="c-notes c-notes--below">
-                                    This content will be used when someone clicks the "share" buttons, or share the url of your page.
+                                    This content will be used when someone shares your donation page via social media.
                                 </div>
                             </div>
                         </header>
@@ -57,6 +57,10 @@
                             <div class="c-form-item c-form-item--file c-form-item--file-picker" :class="{ 'c-form-item--has-error': formErrors.socialSharingImage }">
                                 <div class="c-form-item__label">
                                     <label for="socialSharingImage" class="c-form-item-label-text">Social Image</label>
+
+                                    <div class="c-notes">
+                                        This image will appear when your donation page is shared via social media.
+                                    </div>
                                 </div>
                                 <forms-image-upload v-model="formData.socialSharingImage" name="socialSharingImage" id="socialSharingImage"></forms-image-upload>
                                 <div v-if="formErrors.socialSharingImage" class="c-notes c-notes--below c-notes--bad c-form-control-error">
@@ -67,6 +71,10 @@
                             <div class="c-form-item c-form-item--textarea" :class="{ 'c-form-item--has-error': formErrors.socialSharingDescription }">
                                 <div class="c-form-item__label">
                                     <label for="socialSharingDescription" class="c-form-item-label-text">Social Sharing Description</label>
+
+                                    <div class="c-notes">
+                                        This description will appear when your event is shared via social media.
+                                    </div>
                                 </div>
                                 <div class="c-form-item__control">
                                         <textarea v-model="formData.socialSharingDescription" name="socialSharingDescription" id="socialSharingDescription"
@@ -74,6 +82,20 @@
                                     <div v-if="formErrors.socialSharingDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.socialSharingDescription }}
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="c-form-item" v-if="displayPreview">
+                                <div class="c-form-item__label">
+                                    <label class="c-form-item-label-text">Preview</label>
+
+                                    <div class="c-notes">
+                                        This is an example how your event may appear when shared via social media.
+                                    </div>
+                                </div>
+                                <div class="c-form-item__control">
+                                    <social-card :description="previewDescription" :event_title="settings.EVENT_TITLE" :fallback_image="previewFallbackImage"
+                                                 :image="formData.socialSharingImage" :title="previewTitle" :url="previewUrl"></social-card>
                                 </div>
                             </div>
 
@@ -92,9 +114,10 @@
 </template>
 
 <script>
-	import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue';
 	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue';
 	import ComponentSelectState from './../../../forms/SelectState.vue';
+	import ComponentSocialCard from './../../../media/SocialCard.vue';
 
 	export default {
 		data() {
@@ -108,14 +131,37 @@
 					socialSharingImage: null,
 				},
 
+				settings: {
+					EVENT_TITLE: '',
+					EVENT_URL: '',
+					MASTHEAD_IMAGE: null,
+					SOCIAL_SHARING_DESCRIPTION: '',
+					SOCIAL_SHARING_IMAGE: null,
+				},
+
 				// Errors
 				formErrors: {},
 				apiError: {},
 			}
 		},
 		computed: {
+			displayPreview() {
+				return this.previewDescription || this.previewFallbackImage || this.settings.socialSharingImage || this.previewUrl || this.previewTitle;
+			},
 			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
+			},
+			previewDescription() {
+				return this.formData.socialSharingDescription ? this.formData.socialSharingDescription : this.settings.SOCIAL_SHARING_DESCRIPTION;
+			},
+			previewFallbackImage() {
+				return this.settings.SOCIAL_SHARING_IMAGE ? this.settings.SOCIAL_SHARING_IMAGE : this.settings.MASTHEAD_IMAGE;
+			},
+			previewTitle() {
+				return this.settings.EVENT_TITLE ? 'Support ' + this.nonprofit.legalName + ' at ' + this.settings.EVENT_TITLE : this.nonprofit.legalName;
+			},
+			previewUrl() {
+				return this.settings.EVENT_URL + '/nonprofits/' + this.nonprofit.slug;
 			}
 		},
 		props: [
@@ -125,6 +171,7 @@
 			next(vm => {
 				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
 					vm.nonprofit = response.data;
+					return vm.loadSettings();
 				});
 			});
 		},
@@ -133,11 +180,12 @@
 
 			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
 				vm.nonprofit = response.data;
+				return vm.loadSettings();
 			}).catch(() => {
 				next();
 			});
 		},
-		created: function () {
+		created() {
 			this.addModal('spinner');
 		},
 		watch: {
@@ -171,6 +219,34 @@
 			}
 		},
 		methods: {
+			loadSettings() {
+				const vm = this;
+				return vm.$request.get('/settings', {
+					keys: Object.keys(vm.settings)
+				}).then(response => {
+					response.data.forEach(setting => {
+						if (vm.settings.hasOwnProperty(setting.key)) {
+							if (!vm.isFileSetting(setting.key)) {
+								vm.settings[setting.key] = setting.value;
+							} else {
+								if (setting.value) {
+									vm.$request.get('files/' + setting.value).then(response => {
+										vm.settings[setting.key] = response.data;
+									}).catch(() => {
+										vm.settings[setting.key] = null;
+									});
+								}
+							}
+						}
+					});
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+				});
+			},
+			isFileSetting(key) {
+				const fileKeys = ['MASTHEAD_IMAGE', 'SOCIAL_SHARING_IMAGE'];
+				return _.includes(fileKeys, key);
+			},
 			getConstraints() {
 				return {
 					socialSharingDescription: {
@@ -194,7 +270,7 @@
 					vm.updateNonprofit();
 				}
 			},
-			updateNonprofit: function () {
+			updateNonprofit() {
 				const vm = this;
 
 				vm.getUpdatedNonprofitParams().then(updatedParams => {
@@ -229,7 +305,7 @@
 					vm.apiError = err.response.data.errors;
 				});
 			},
-			getUpdatedNonprofitParams: function () {
+			getUpdatedNonprofitParams() {
 				const vm = this;
 				let promise = Promise.resolve();
 
@@ -282,9 +358,10 @@
 			},
 		},
 		components: {
-			'category-select': ComponentSelectNonprofitCategory,
 			'forms-image-upload': ComponentImageUpload,
+			'category-select': ComponentSelectNonprofitCategory,
 			'state-select': ComponentSelectState,
+			'social-card': ComponentSocialCard
 		}
 	};
 </script>

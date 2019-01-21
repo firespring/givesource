@@ -26,8 +26,12 @@ const User = require('./../models/user');
  *
  * @constructor
  */
-function NonprofitUsersRepository() {
-	Repository.call(this, RepositoryHelper.UsersTable);
+function NonprofitUsersRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.UsersTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

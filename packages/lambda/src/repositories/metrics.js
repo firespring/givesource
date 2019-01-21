@@ -23,8 +23,12 @@ const Metric = require('./../models/metric');
  *
  * @constructor
  */
-function MetricsRepository() {
-	Repository.call(this, RepositoryHelper.MetricsTable);
+function MetricsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.MetricsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

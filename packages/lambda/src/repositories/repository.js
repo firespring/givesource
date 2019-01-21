@@ -24,10 +24,10 @@ const QueryBuilder = require('./../aws/queryBuilder');
  *
  * @constructor
  */
-function Repository(table) {
-	const region = process.env.AWS_REGION;
-	this.dbClient = new AWS.DynamoDB.DocumentClient({region: region});
-	this.table = table || null;
+function Repository(options) {
+	options = options || {};
+	this.table = options.table || null;
+	this.dbClient = new AWS.DynamoDB.DocumentClient({region: options.region || process.env.AWS_REGION});
 }
 
 /**

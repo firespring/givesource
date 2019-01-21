@@ -24,8 +24,12 @@ const Setting = require('./../models/setting');
  *
  * @constructor
  */
-function SettingsRepository() {
-	Repository.call(this, RepositoryHelper.SettingsTable);
+function SettingsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.SettingsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

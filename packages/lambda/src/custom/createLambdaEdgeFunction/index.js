@@ -142,7 +142,7 @@ exports.handle = function (event, context, callback) {
 		const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
 		if (associations.Quantity && associations.Items) {
 			associations.Items.forEach(function (item, index) {
-				if (item.LambdaFunctionARN === event.PhysicalResourceId) {
+				if (item.LambdaFunctionARN === event.PhysicalResourceId || item.EventType === 'origin-request') {
 					associations.Items.splice(index, 1);
 					associations.Quantity = associations.Quantity - 1;
 				}

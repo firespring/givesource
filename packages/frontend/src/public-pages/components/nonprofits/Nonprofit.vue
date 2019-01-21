@@ -56,7 +56,7 @@
                             </div>
 
                             <div v-if="canDonate" class="donation-action">
-                                <a v-on:click="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
+                                <a v-on:click.prevent="openDonations" href="#" class="btn btn--accent btn--lg btn--block donation-trigger">Donate</a>
                             </div>
 
                             <social-sharing network-tag="a"
@@ -124,7 +124,7 @@
 	require('fireSlider.js/dist/jquery.fireSlider.velocity');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				files: [],
 				logo: null,
@@ -133,6 +133,7 @@
 				hovering: false,
 
 				settings: {
+					EVENT_URL: '',
 					SOCIAL_SHARING_DESCRIPTION: ''
 				},
 
@@ -143,49 +144,50 @@
 			'slug'
 		],
 		computed: {
-			donationsLabel: function () {
+			donationsLabel() {
 				return this.nonprofit.donationsCount === 1 ? 'Donation' : 'Donations';
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			},
-			pageTitle: function () {
-				const vue = this;
-				let title = vue.eventTitle + ' - Donate';
-				if (vue.nonprofitLoaded) {
-					title += ' to ' + vue.nonprofit.legalName;
+			pageTitle() {
+				const vm = this;
+				let title = vm.eventTitle + ' - Donate';
+				if (vm.nonprofitLoaded) {
+					title += ' to ' + vm.nonprofit.legalName;
 				}
 				return title;
 			},
-			displayDonationMetrics: function () {
+			displayDonationMetrics() {
 				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
-			canDonate: function () {
+			canDonate() {
 				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
-			logoUrl: function () {
-				const vue = this;
+			logoUrl() {
+				const vm = this;
 				let logo = false;
-				if (vue.logo) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.logo.path;
-				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('EVENT_LOGO');
+
+				if (vm.logo) {
+					logo = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.logo.path;
+				} else if (vm.$store.getters.setting('EVENT_LOGO')) {
+					logo = vm.$store.getters.setting('EVENT_LOGO');
 				} else {
 					logo = '/assets/temp/logo-event.png';
 				}
 				return logo;
 			},
-			pageUrl: function () {
-				return document.location.origin;
+			pageUrl() {
+				return this.settings.EVENT_URL + '/nonprofits/' + this.nonprofit.slug;
 			},
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('donation', 'donation--nonprofit');
-			vue.setPageTitle(vue.pageTitle);
+			vm.setBodyClasses('donation', 'donation--nonprofit');
+			vm.setPageTitle(vm.pageTitle);
 		},
-		beforeRouteEnter: function (to, from, next) {
+		beforeRouteEnter(to, from, next) {
 			let files = [];
 			let logo = null;
 			let slides = [];
@@ -195,59 +197,59 @@
 			if (to.meta.nonprofit !== null) {
 				nonprofit = to.meta.nonprofit;
 			} else {
-				promise = promise.then(function () {
-					return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
+				promise = promise.then(() => {
+					return axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(response => {
 						nonprofit = response.data;
 					});
 				});
 			}
 
-			promise = promise.then(function () {
+			promise = promise.then(() => {
 				return axios.get(API_URL + 'nonprofits/' + nonprofit.uuid + '/slides');
-			}).then(function (response) {
-				response.data.sort(function (a, b) {
+			}).then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
 				slides = response.data;
 				const uuids = [];
-				slides.forEach(function (slide) {
+				slides.forEach(slide => {
 					if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
 						uuids.push(slide.fileUuid);
 					}
 				});
 				return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
-			}).then(function (response) {
+			}).then(response => {
 				if (response && response.data) {
 					files = response.data;
 				}
 			});
 
 			if (!_.isEmpty(nonprofit.logoFileUuid)) {
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return axios.get(API_URL + 'files/' + nonprofit.logoFileUuid);
-				}).then(function (response) {
+				}).then(response => {
 					if (response && response.data) {
 						logo = response.data;
 					}
 				});
 			}
 
-			promise.then(function () {
-				next(function (vue) {
-					vue.files = files;
-					vue.logo = logo;
-					vue.nonprofit = nonprofit;
-					vue.slides = slides;
-					return vue.loadSettings();
+			promise.then(() => {
+				next(vm => {
+					vm.files = files;
+					vm.logo = logo;
+					vm.nonprofit = nonprofit;
+					vm.slides = slides;
+					return vm.loadSettings();
 				});
 			});
 		},
-		mounted: function () {
-			const vue = this;
+		mounted() {
+			const vm = this;
 
-			$(document).ready(function () {
-				const slider = $(vue.$refs.slider).data({
-					pager: $(vue.$refs.sliderNav)
+			$(document).ready(() => {
+				const slider = $(vm.$refs.slider).data({
+					pager: $(vm.$refs.sliderNav)
 				}).fireSlider({
 					activePagerClass: 'current',
 					pagerTemplate: '<a href="#"></a>',
@@ -255,63 +257,63 @@
 				});
 
 				if (slider.length > 1) {
-					slider.on('mouseenter mouseover touchenter touchstart', function () {
-						vue.hover = true;
-					}).on('mouseelave mouseout touchleave touchend', function () {
-						vue.hover = false;
+					slider.on('mouseenter mouseover touchenter touchstart', () => {
+						vm.hover = true;
+					}).on('mouseelave mouseout touchleave touchend', () => {
+						vm.hover = false;
 					});
 
 					// Pause slider if we interact with a slide (including videos)
-					window.addEventListener('blur', function () {
-						if (vue.hover) {
+					window.addEventListener('blur', () => {
+						if (vm.hover) {
 							slider.data('fireSlider').pause();
 						}
 					});
 
-					slider.data('fireSlider').slides.on('click', function () {
+					slider.data('fireSlider').slides.on('click', () => {
 						slider.data('fireSlider').pause();
 					});
 
 					// Resume playing slider if we interact with the pager
-					slider.data('fireSlider').pages.on('click', function () {
+					slider.data('fireSlider').pages.on('click', () => {
 						slider.data('fireSlider').play();
 					});
 				}
 			});
 		},
 		methods: {
-			loadSettings: function () {
-				const vue = this;
+			loadSettings() {
+				const vm = this;
+
 				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
-					keys: Object.keys(vue.settings)
-				})).then(function (response) {
-					response.data.forEach(function (setting) {
-						if (vue.settings.hasOwnProperty(setting.key)) {
-							vue.settings[setting.key] = setting.value;
+					keys: Object.keys(vm.settings)
+				})).then(response => {
+					response.data.forEach(setting => {
+						if (vm.settings.hasOwnProperty(setting.key)) {
+							vm.settings[setting.key] = setting.value;
 						}
 					});
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			getImageUrl: function (fileUuid) {
-				const vue = this;
-				const file = _.find(vue.files, {uuid: fileUuid});
+			getImageUrl(fileUuid) {
+				const vm = this;
+				const file = _.find(vm.files, {uuid: fileUuid});
 
-				return file ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
+				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
 			},
-			openDonations: function (event) {
-				event.preventDefault();
-				const vue = this;
+			openDonations() {
+				const vm = this;
 
-				vue.addModal('donation-tiers', {nonprofit: vue.nonprofit});
+				vm.addModal('donation-tiers', {nonprofit: vm.nonprofit});
 			}
 		},
 		watch: {
 			nonprofit: {
-				handler: function () {
-					const vue = this;
-					vue.setPageTitle(vue.pageTitle);
+				handler() {
+					const vm = this;
+					vm.setPageTitle(vm.pageTitle);
 				},
 				deep: true
 			}

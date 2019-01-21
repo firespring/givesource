@@ -25,8 +25,12 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  *
  * @constructor
  */
-function DonorsRepository() {
-	Repository.call(this, RepositoryHelper.DonorsTable);
+function DonorsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.DonorsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

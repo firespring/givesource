@@ -24,8 +24,12 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  *
  * @constructor
  */
-function PaymentTransactionsRepository() {
-	Repository.call(this, RepositoryHelper.PaymentTransactionsTable);
+function PaymentTransactionsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.PaymentTransactionsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

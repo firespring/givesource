@@ -25,8 +25,12 @@ const QueryBuilder = require('./../aws/queryBuilder');
  *
  * @constructor
  */
-function ContentsRepository() {
-	Repository.call(this, RepositoryHelper.ContentsTable);
+function ContentsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.ContentsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

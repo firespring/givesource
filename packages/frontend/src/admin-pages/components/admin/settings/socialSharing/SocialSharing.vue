@@ -32,14 +32,14 @@
 
                 <div class="o-app-main-content">
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
 
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
                                     <h2 class="c-page-section-title">Content For Social Sharing</h2>
                                     <div class="c-notes c-notes--below">
-                                        This content will be used when someone clicks the "share" buttons on donation pages.
+                                        This content will be used when someone shares your event via social media.
                                     </div>
                                 </div>
                             </header>
@@ -49,6 +49,10 @@
                                 <div class="c-form-item c-form-item--file c-form-item--file-picker" :class="{ 'c-form-item--has-error': formErrors.SOCIAL_SHARING_IMAGE }">
                                     <div class="c-form-item__label">
                                         <label for="socialSharingImage" class="c-form-item-label-text">Social Image</label>
+
+                                        <div class="c-notes">
+                                            This image will appear when your event is shared via social media, If you do not select an image, your masthead image will be used.
+                                        </div>
                                     </div>
                                     <forms-image-upload v-model="formData.SOCIAL_SHARING_IMAGE" name="socialSharingImage" id="socialSharingImage"></forms-image-upload>
                                     <div v-if="formErrors.SOCIAL_SHARING_IMAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
@@ -59,6 +63,10 @@
                                 <div class="c-form-item c-form-item--textarea" :class="{ 'c-form-item--has-error': formErrors.SOCIAL_SHARING_DESCRIPTION }">
                                     <div class="c-form-item__label">
                                         <label for="socialSharingDescription" class="c-form-item-label-text">Social Description</label>
+
+                                        <div class="c-notes">
+                                            This description will appear when your event is shared via social media.
+                                        </div>
                                     </div>
                                     <div class="c-form-item__control">
                                         <textarea v-model="formData.SOCIAL_SHARING_DESCRIPTION" name="socialSharingDescription" id="socialSharingDescription"
@@ -66,6 +74,20 @@
                                         <div v-if="formErrors.SOCIAL_SHARING_DESCRIPTION" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.SOCIAL_SHARING_DESCRIPTION }}
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="c-form-item" v-if="displayPreview">
+                                    <div class="c-form-item__label">
+                                        <label class="c-form-item-label-text">Preview</label>
+
+                                        <div class="c-notes">
+                                            This is an example how your event may appear when shared via social media.
+                                        </div>
+                                    </div>
+                                    <div class="c-form-item__control">
+                                        <social-card :description="formData.SOCIAL_SHARING_DESCRIPTION" :fallback_image="formData.MASTHEAD_IMAGE"
+                                                     :image="formData.SOCIAL_SHARING_IMAGE" :title="formData.EVENT_TITLE" :url="formData.EVENT_URL"></social-card>
                                     </div>
                                 </div>
 
@@ -86,14 +108,18 @@
 
 <script>
 	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentSocialCard from './../../../media/SocialCard.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 
 				// Form Data
 				formData: {
+					EVENT_TITLE: '',
+                    EVENT_URL: '',
+					MASTHEAD_IMAGE: null,
 					SOCIAL_SHARING_IMAGE: null,
 					SOCIAL_SHARING_DESCRIPTION: ''
 				},
@@ -103,40 +129,45 @@
 
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.settings = response.data;
+        computed: {
+			displayPreview() {
+				return this.formData.EVENT_TITLE || this.formData.EVENT_URL || this.formData.SOCIAL_SHARING_IMAGE || this.formData.SOCIAL_SHARING_DESCRIPTION;
+            }
+        },
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('settings', {
+					keys: Object.keys(vm.formData)
+				}).then(response => {
+					vm.settings = response.data;
 				});
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								if (!vue.isFileSetting(key)) {
-									vue.formData[key] = setting.value;
+								if (!vm.isFileSetting(key)) {
+									vm.formData[key] = setting.value;
 								} else {
 									if (setting.value) {
-										vue.$request.get('files/' + setting.value).then(function (response) {
-											vue.formData[key] = response.data;
-										}).catch(function () {
-											vue.formData[key] = null;
+										vm.$request.get('files/' + setting.value).then(response => {
+											vm.formData[key] = response.data;
+										}).catch(() => {
+											vm.formData[key] = null;
 										});
 									}
 								}
@@ -148,7 +179,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					SOCIAL_SHARING_DESCRIPTION: {
 						presence: false
@@ -159,49 +190,48 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateSettings();
+					vm.updateSettings();
 				}
 			},
-			updateSettings: function () {
-				const vue = this;
+			updateSettings() {
+				const vm = this;
 
-				vue.getSettingsToUpdate().then(function (settings) {
-					const toUpdate = _.reject(settings, function (setting) {
+				vm.getSettingsToUpdate().then(settings => {
+					const toUpdate = _.reject(settings, setting => {
 						return (setting.value === '' || setting.value === null);
 					});
-					const toDelete = _.filter(settings, function (setting) {
+					const toDelete = _.filter(settings, setting => {
 						return (setting.value === '' || setting.value === null);
 					});
 
-					vue.$request.patch('settings', {
+					vm.$request.patch('settings', {
 						settings: toUpdate
-					}).then(function (response) {
+					}).then(response => {
 						if (response.data.errorMessage) {
 							console.log(response.data);
 						}
-						return vue.$request.delete('settings', {
+						return vm.$request.delete('settings', {
 							settings: toDelete
 						});
-					}).then(function (response) {
+					}).then(response => {
 						if (response.data.errorMessage) {
 							console.log(response.data);
 						}
 
 						// delete files that were replace or removed
 						const filesToDelete = [];
-						_.forEach(settings, function (setting) {
-							if (vue.isFileSetting(setting.key)) {
-								const originalSetting = _.find(vue.settings, {key: setting.key});
+						_.forEach(settings, setting => {
+							if (vm.isFileSetting(setting.key)) {
+								const originalSetting = _.find(vm.settings, {key: setting.key});
 								if (originalSetting && originalSetting.value !== setting.value && originalSetting.value !== '' && originalSetting.value !== null) {
 									filesToDelete.push(originalSetting.value);
 								}
@@ -209,32 +239,33 @@
 						});
 
 						if (filesToDelete.length > 0) {
-							return vue.$request.delete('files', {
+							return vm.$request.delete('files', {
 								files: filesToDelete
 							});
 						}
 
 						return Promise.resolve();
-					}).then(function () {
-						vue.clearModals();
-						vue.$router.push({name: 'settings-list'});
-					}).catch(function (err) {
-						vue.clearModals();
+					}).then(() => {
+						vm.clearModals();
+						vm.$router.push({name: 'settings-list'});
+					}).catch(err => {
+						vm.clearModals();
 						console.log(err);
 					});
 
 				});
 
 			},
-			getSettingsToUpdate: function () {
-				const vue = this;
+			getSettingsToUpdate() {
+				const vm = this;
 				const settings = [];
 				let promise = Promise.resolve();
-				Object.keys(vue.formData).forEach(function (key) {
-					if (vue.formData[key] instanceof File) {
-						promise = promise.then(function () {
-							return vue.uploadImage(key).then(function (uploadedFile) {
-								vue.$store.commit('generateCacheKey');
+
+				Object.keys(vm.formData).forEach(key => {
+					if (vm.formData[key] instanceof File) {
+						promise = promise.then(() => {
+							return vm.uploadImage(key).then(uploadedFile => {
+								vm.$store.commit('generateCacheKey');
 								settings.push({
 									key: key,
 									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''
@@ -242,10 +273,10 @@
 							});
 						});
 					} else {
-						promise = promise.then(function () {
-							let settingValue = vue.formData[key];
-							if (_.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid')) {
-								settingValue = vue.formData[key].uuid;
+						promise = promise.then(() => {
+							let settingValue = vm.formData[key];
+							if (_.isPlainObject(vm.formData[key]) && vm.formData[key].hasOwnProperty('uuid')) {
+								settingValue = vm.formData[key].uuid;
 							}
 							settings.push({
 								key: key,
@@ -255,45 +286,47 @@
 					}
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return settings;
 				});
 
 				return promise;
 			},
-			uploadImage: function (key) {
-				const vue = this;
+			uploadImage(key) {
+				const vm = this;
 				let file = null;
 				let promise = Promise.resolve();
-				if (vue.formData[key]) {
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData[key].type,
-							filename: vue.formData[key].name
+
+				if (vm.formData[key]) {
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData[key].type,
+							filename: vm.formData[key].name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData[key]);
-					}).then(function () {
+						return instance.put(signedUrl, vm.formData[key]);
+					}).then(() => {
 						return file;
 					});
 				}
 				return promise;
 			},
 			isFileSetting(settingKey) {
-				const fileKeys = ['SOCIAL_SHARING_IMAGE'];
+				const fileKeys = ['MASTHEAD_IMAGE', 'SOCIAL_SHARING_IMAGE'];
 				return _.includes(fileKeys, settingKey);
 			}
 		},
 		components: {
-			'forms-image-upload': ComponentImageUpload
+			'forms-image-upload': ComponentImageUpload,
+            'social-card': ComponentSocialCard
 		}
 	};
 </script>

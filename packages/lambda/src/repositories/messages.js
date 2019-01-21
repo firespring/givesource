@@ -24,8 +24,12 @@ const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
  *
  * @constructor
  */
-function MessagesRepository() {
-	Repository.call(this, RepositoryHelper.MessagesTable);
+function MessagesRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.MessagesTable;
+	}
+	Repository.call(this, options);
 }
 
 /**

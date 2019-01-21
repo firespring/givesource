@@ -26,8 +26,12 @@ const SponsorTiersRepository = require('./sponsorTiers');
  *
  * @constructor
  */
-function SponsorsRepository() {
-	Repository.call(this, RepositoryHelper.SponsorsTable);
+function SponsorsRepository(options) {
+	options = options || {};
+	if (!options.table) {
+		options.table = RepositoryHelper.SponsorsTable;
+	}
+	Repository.call(this, options);
 }
 
 /**
