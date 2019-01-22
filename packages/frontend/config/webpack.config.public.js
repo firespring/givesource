@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ module.exports = function () {
 				'window.jQuery': 'jquery'
 			}),
 			new CopyWebpackPlugin([
+				{from: './config/settings.json', to: 'settings.json'},
 				{from: './config/robots-allow.txt', to: 'robots.txt'},
 				{from: './src/public-pages/assets/css', to: 'assets/css'},
 				{from: './src/public-pages/assets/img', to: 'assets/img'},
@@ -94,8 +95,7 @@ module.exports = function () {
 			]),
 			new VueLoaderPlugin(),
 			new HtmlWebpackPlugin({
-				template: 'src/public-pages/templates/index.mustache',
-				filename: 'templates/index.mustache'
+				template: 'src/public-pages/index.html'
 			}),
 			new BrowserSyncPlugin({
 				host: 'localhost',
@@ -107,7 +107,7 @@ module.exports = function () {
 						BrowserSyncSpa(/^[^\.]+$/, __dirname + '/../build/public-pages/index.html')
 					]
 				},
-				files: ['bundle.js', 'assets/**/*.css'],
+				files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
 				open: false
 			}),
 			new WebpackOnBuildPlugin(FetchDynamicContent.fetch),

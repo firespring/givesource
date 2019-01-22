@@ -105,9 +105,7 @@ promise = promise.then(function () {
 }).then(function () {
 	return release(publicSource + 'assets/temp/sponsors/', publicDestination + 'assets/temp/sponsors/');
 }).then(function () {
-	return release(publicSource + 'templates/', publicDestination + 'templates/');
-}).then(function () {
-	console.log('CloudFormation release complete.');
+	console.log('Frontend release complete.');
 }).catch(function (err) {
 	console.log(err);
 });

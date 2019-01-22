@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,57 +42,6 @@ exports.regenerateCustomCss = function (updatedSettings, awsRegion, awsStackName
 };
 
 /**
- * Regenerate public index if the appropriate settings have changed
- *
- * @param {Array} updatedSettings
- * @param {String} awsRegion
- * @param {String} awsStackName
- * @param {Boolean} force
- * @returns {Promise}
- */
-exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackName, force) {
-	const settings = [
-		SettingHelper.SETTING_ADMIN_URL,
-		SettingHelper.SETTING_API_URL,
-		SettingHelper.SETTING_CONTACT_PHONE,
-		SettingHelper.SETTING_CUSTOM_PAGES,
-		SettingHelper.SETTING_DATE_DONATIONS_END,
-		SettingHelper.SETTING_DATE_DONATIONS_START,
-		SettingHelper.SETTING_DATE_EVENT_END,
-		SettingHelper.SETTING_DATE_EVENT_START,
-		SettingHelper.SETTING_DATE_REGISTRATIONS_END,
-		SettingHelper.SETTING_DATE_REGISTRATIONS_START,
-		SettingHelper.SETTING_EVENT_LOGO,
-		SettingHelper.SETTING_EVENT_TIMEZONE,
-		SettingHelper.SETTING_EVENT_TITLE,
-		SettingHelper.SETTING_EVENT_URL,
-		SettingHelper.SETTING_FAVICON,
-		SettingHelper.SETTING_FOUNDATION_LOGO,
-		SettingHelper.SETTING_FOUNDATION_URL,
-		SettingHelper.SETTING_GOOGLE_ANALYTICS_TRACKING_ID,
-		SettingHelper.SETTING_MASTHEAD_IMAGE,
-		SettingHelper.SETTING_PAGE_ABOUT_ENABLED,
-		SettingHelper.SETTING_PAGE_FAQ_ENABLED,
-		SettingHelper.SETTING_PAGE_TERMS_ENABLED,
-		SettingHelper.SETTING_PAGE_TOOLKIT_ENABLED,
-		SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE,
-		SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE,
-		SettingHelper.SETTING_PUBLIC_INDEX_TEMPLATE,
-		SettingHelper.SETTING_SOCIAL_SHARING_DESCRIPTION,
-		SettingHelper.SETTING_SOCIAL_SHARING_IMAGE,
-		SettingHelper.SETTING_UPLOADS_CLOUD_FRONT_URL,
-	];
-	const changedSettings = _.intersection(settings, updatedSettings);
-	let promise = Promise.resolve();
-	if (changedSettings.length > 0 || force) {
-		const lambda = new Lambda();
-		promise = lambda.invoke(awsRegion, awsStackName + '-GeneratePublicIndexFile', {});
-	}
-
-	return promise;
-};
-
-/**
  * Regenerate dynamic content
  *
  * @param {Array} updatedSettings
@@ -104,7 +53,5 @@ exports.regeneratePublicIndex = function (updatedSettings, awsRegion, awsStackNa
 exports.regenerateDynamicContent = function (updatedSettings, awsRegion, awsStackName, force) {
 	const helper = this;
 
-	return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force).then(function () {
-		return helper.regeneratePublicIndex(updatedSettings, awsRegion, awsStackName, force);
-	});
+	return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force);
 };

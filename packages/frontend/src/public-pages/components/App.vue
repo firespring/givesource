@@ -27,6 +27,35 @@
 	import ComponentModals from './modals/Modals.vue';
 
 	export default {
+		beforeCreate() {
+			const vm = this;
+
+			const eventTitle = vm.store.getters.setting('EVENT_TITLE');
+			if (eventTitle) {
+                document.title = eventTitle;
+            }
+
+			const favicon = vm.$store.getters.setting('FAVICON');
+			if (favicon) {
+                vm.createFavicon(favicon);
+            }
+        },
+        methods: {
+			createFavicon(url) {
+				const head = document.head || document.getElementsByTagName('head')[0];
+				const current = document.querySelector("link[rel*='icon']");
+				const link = document.createElement('link');
+				link.type = 'image/png';
+				link.rel = 'shortcut icon';
+				link.href = url;
+
+				if (current) {
+					head.removeChild(current);
+                }
+
+                head.appendChild(link);
+            }
+        },
 		components: {
 			'layout-header': ComponentHeader,
 			'modals': ComponentModals

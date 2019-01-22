@@ -99,7 +99,7 @@ const store = new Vuex.Store({
 			return function (key, defaultValue) {
 				defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue;
 				let value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue;
-				return value === '1' || value === 1 || value === true || value.toLowerCase() === 'true';
+				return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true');
 			}
 		},
 		updated: function (state) {

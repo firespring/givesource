@@ -43,7 +43,7 @@ const router = new VueRouter({
 	linkActiveClass: 'here',
 	mode: 'history',
 	base: __dirname,
-	scrollBehavior: function (to, from, savedPosition) {
+	scrollBehavior(to, from, savedPosition) {
 		if (to.hash) {
 			return {selector: to.hash};
 		} else if (savedPosition) {
@@ -70,7 +70,7 @@ const router = new VueRouter({
 			path: '/about',
 			name: 'about',
 			component: ComponentAbout,
-			beforeEnter: function (to, from, next) {
+			beforeEnter(to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
 					next({name: '404'});
 				} else {
@@ -82,7 +82,7 @@ const router = new VueRouter({
 			path: '/toolkits',
 			name: 'toolkits',
 			component: ComponentToolkits,
-			beforeEnter: function (to, from, next) {
+			beforeEnter(to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
 					next({name: '404'});
 				} else {
@@ -94,7 +94,7 @@ const router = new VueRouter({
 			path: '/faq',
 			name: 'faq',
 			component: ComponentFAQ,
-			beforeEnter: function (to, from, next) {
+			beforeEnter(to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
 					next({name: '404'});
 				} else {
@@ -126,7 +126,7 @@ const router = new VueRouter({
 			path: '/terms',
 			name: 'terms',
 			component: ComponentTermsOfService,
-			beforeEnter: function (to, from, next) {
+			beforeEnter(to, from, next) {
 				if (!store.getters.booleanSetting('PAGE_TERMS_ENABLED')) {
 					next({name: '404'});
 				} else {
@@ -138,7 +138,7 @@ const router = new VueRouter({
 			path: '/leaderboard',
 			name: 'leaderboard',
 			component: ComponentLeaderboard,
-			beforeEnter: function (to, from, next) {
+			beforeEnter(to, from, next) {
 				if (!Settings.isDuringEvent() && !Settings.isAfterEvent()) {
 					next({name: '404'});
 				} else {
@@ -169,15 +169,15 @@ const router = new VueRouter({
 				nonprofit: null,
 			},
 			component: ComponentNonprofit,
-			beforeEnter: function (to, from, next) {
-				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(function (response) {
+			beforeEnter(to, from, next) {
+				axios.get(API_URL + 'nonprofits/pages/' + to.params.slug).then(response => {
 					if (Object.keys(response.data).length) {
 						to.meta.nonprofit = response.data;
 						next();
 					} else {
 						next({name: '404'});
 					}
-				}).catch(function () {
+				}).catch(() => {
 					next({name: '404'});
 				});
 			}
@@ -225,9 +225,10 @@ const router = new VueRouter({
  * @param {{}} from
  * @param {function} next
  */
-const loadCustomPages = function (to, from, next) {
+const loadCustomPages = (to, from, next) => {
 	let promise = Promise.resolve();
-	const uuids = store.getters.setting('CUSTOM_PAGES').split('|');
+	const setting = store.getters.setting('CUSTOM_PAGES') || '';
+	const uuids = setting.split('|');
 
 	if (uuids.length) {
 		const pages = [];
@@ -309,12 +310,131 @@ const loadCustomPages = function (to, from, next) {
 
 	promise.then(() => {
 		next();
+	}).catch(err => {
+		console.log(err);
+		next(false);
+	});
+};
+
+/**
+ * Update app settings
+ *
+ * @return {Promise}
+ */
+const updateSettings = () => {
+	const settings = {
+		ADMIN_URL: null,
+		CONTACT_PHONE: null,
+		CUSTOM_PAGES: null,
+		DATE_DONATIONS_END: null,
+		DATE_DONATIONS_START: null,
+		DATE_EVENT_END: null,
+		DATE_EVENT_START: null,
+		DATE_REGISTRATIONS_END: null,
+		DATE_REGISTRATIONS_START: null,
+		EVENT_LOGO: null,
+		EVENT_TIMEZONE: null,
+		EVENT_TITLE: null,
+		FAVICON: null,
+		FOUNDATION_LOGO: null,
+		FOUNDATION_URL: null,
+		GOOGLE_ANALYTICS_TRACKING_ID: null,
+		MASTHEAD_IMAGE: null,
+		PAGE_ABOUT_ENABLED: null,
+		PAGE_FAQ_ENABLED: null,
+		PAGE_TERMS_ENABLED: null,
+		PAGE_TOOLKIT_ENABLED: null,
+		PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: null,
+		PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: null,
+		UPLOADS_CLOUD_FRONT_URL: null,
+	};
+
+	const files = {
+		EVENT_LOGO: null,
+		FAVICON: null,
+		FOUNDATION_LOGO: null,
+		MASTHEAD_IMAGE: null,
+		SOCIAL_SHARING_IMAGE: null,
+	};
+
+	return axios.get('/settings.json').then(response => {
+		if (response.data && response.data.API_URL) {
+			window.API_URL = response.data.API_URL;
+			store.commit('settings', {API_URL: response.data.API_URL});
+			return axios.get(response.data.API_URL + 'settings' + Utils.generateQueryString({
+				keys: Object.keys(settings)
+			}));
+		}
+		return Promise.reject(new Error('Unable to retrieve api url.'));
+	}).then(response => {
+		if (response.data) {
+			response.data.forEach(setting => {
+				if (settings.hasOwnProperty(setting.key)) {
+					settings[setting.key] = setting.value;
+				}
+			});
+		}
+
+		Object.keys(files).forEach(key => {
+			if (settings.hasOwnProperty(key) && settings[key]) {
+				files[key] = settings[key];
+			}
+		});
+
+		if (_.compact(Object.values(files)).length) {
+			return axios.get(API_URL + 'files' + Utils.generateQueryString({
+				uuids: _.compact(Object.values(files))
+			}));
+		}
+
+		return Promise.resolve({});
+	}).then(response => {
+		if (response.data) {
+			response.data.forEach(file => {
+				Object.keys(files).forEach(key => {
+					if (files[key] === file.uuid) {
+						settings[key] = settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path;
+					}
+				});
+			});
+		}
+
+		store.commit('settings', settings);
+		store.commit('updated');
+	});
+};
+
+/**
+ * Load settings, fetch updated settings every minute.
+ *
+ * @param {{}} to
+ * @param {{}} from
+ * @param {function} next
+ */
+const loadSettings = (to, from, next) => {
+	const date = new Date();
+	const lastUpdated = store.getters.updated;
+	date.setMinutes(date.getMinutes() - 1);
+
+	let promise = Promise.resolve();
+	if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
+		promise = updateSettings();
+	} else {
+		window.API_URL = store.getters.setting('API_URL');
+	}
+
+	promise.then(() => {
+		next();
+	}).catch(err => {
+		console.log(err);
+		next(false);
 	});
 };
 
 /**
  * Route Middleware
  */
+router.beforeEach(loadSettings);
 router.beforeEach(loadCustomPages);
 
 export default router;

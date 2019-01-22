@@ -53,12 +53,14 @@ window.$ = window.jQuery = require('jquery');
 window.axios = axios;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-// Load app settings
-window.API_URL = window.appSettings.API_URL;
-store.commit('settings', window.appSettings);
+// Bootstrap the app
+const main = App;
+main.router = router;
+main.store = store;
 
+// Setup Analytics
 Vue.use(VueAnalytics, {
-	id: function () {
+	id() {
 		return store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID');
 	},
 	router,
@@ -66,11 +68,6 @@ Vue.use(VueAnalytics, {
 		pageviewOnLoad: false
 	}
 });
-
-// Bootstrap the app
-const main = App;
-main.router = router;
-main.store = store;
 
 // Start the app
 const app = new Vue(main);

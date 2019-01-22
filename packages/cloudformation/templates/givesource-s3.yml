@@ -154,6 +154,8 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
+            Headers:
+              - User-Agent
           TargetOriginId: !Ref PublicPagesS3
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200

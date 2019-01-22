@@ -45,8 +45,7 @@
             </router-link>
         </div>
 
-        <a v-on:click.prevent="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars"
-                                                                                                                          aria-hidden="true"></i><span>Menu</span></a>
+        <a v-on:click.prevent="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars" aria-hidden="true"></i><span>Menu</span></a>
     </header>
 </template>
 

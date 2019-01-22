@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,6 +130,7 @@ module.exports = {
 
 		// Custom Lambda Functions
 		ApiGatewayFlushCache: './src/custom/apiGatewayFlushCache/index.js',
+		AssociateLambdaEdgeFunctions: './src/custom/associateLambdaEdgeFunctions/index.js',
 		CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
 		CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
 		CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',
@@ -140,7 +141,6 @@ module.exports = {
 		DeleteReports: './src/custom/deleteReports/index.js',
 		GenerateCustomFrontendCss: './src/custom/generateCustomFrontendCss/index.js',
 		GenerateDynamicContent: './src/custom/generateDynamicContent/index.js',
-		GeneratePublicIndexFile: './src/custom/generatePublicIndexFile/index.js',
 		GenerateReport: './src/custom/generateReport/index.js',
 		GenerateSocialShareHtml: './src/custom/generateSocialShareHtml/index.js',
 		MetricAddAmount: './src/custom/metricAddAmount/index.js',

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,12 @@ const deployInfo = require('../config/deploy-info.json');
 const fs = require('fs');
 const S3 = require('./aws/s3');
 
-exports.fetch = function () {
+exports.fetch = () => {
 	const s3 = new S3();
-	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(function (response) {
+	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(response => {
 		const configDir = path.resolve(__dirname, './../build/public-pages/assets/css');
 		fs.writeFileSync(configDir + '/custom.css', response.Body);
 		console.log('custom.css downloaded from S3');
-	}).catch(function (err) {
-		console.log(err);
-	});
-
-	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'index.html').then(function (response) {
-		const configDir = path.resolve(__dirname, './../build/public-pages');
-		fs.writeFileSync(configDir + '/index.html', response.Body);
-		console.log('index.html downloaded from S3');
 	}).catch(function (err) {
 		console.log(err);
 	});

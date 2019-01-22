@@ -325,27 +325,6 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
-  # Generate public index file
-
-  GeneratePublicIndexFileLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/GeneratePublicIndexFile.zip
-      Description: "Generate index file for the public website"
-      Environment:
-        Variables:
-          AWS_STACK_NAME: !Ref StackName
-          PUBLIC_PAGES_S3_BUCKET: !Ref PublicPagesS3
-      FunctionName: !Sub |-
-        ${StackName}-GeneratePublicIndexFile
-      Handler: "index.handle"
-      Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
-
   # Generate dynamic content
 
   GenerateDynamicContentLambdaFunction:
@@ -367,7 +346,6 @@ Resources:
       Runtime: "nodejs6.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn:
-      - GeneratePublicIndexFileLambdaFunction
       - GenerateCustomFrontendCssLambdaFunction
 
   # Lambda@Edge Function Resources
@@ -469,6 +447,26 @@ Resources:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-CreateLambdaEdgeFunction
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
+      Runtime: "nodejs6.10"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+    DependsOn: CreateLambdaEdgeFunctionRole
+
+  AssociateLambdaEdgeFunctions:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/AssociateLambdaEdgeFunctions.zip
+      Description: "Associate AWS Lambda@Edge functions with a CloudFront Distribution"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-AssociateLambdaEdgeFunctions
       Handler: "index.handle"
       MemorySize: 128
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
@@ -641,8 +639,6 @@ Resources:
     Type: Custom::LambdaEdgeSecurityHeaders
     Properties:
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      CloudFrontDistribution: !Ref AdminPagesCloudFrontDistribution
-      EventType: origin-response
       FunctionName: SecurityHeadersAdminPages
       Code: !Sub |-
          exports.handle = function (event, context, callback) {
@@ -684,8 +680,6 @@ Resources:
     Type: Custom::LambdaEdgeSecurityHeaders
     Properties:
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
-      EventType: origin-response
       FunctionName: SecurityHeadersPublicPages
       Code: !Sub |-
          exports.handle = function (event, context, callback) {
@@ -726,8 +720,6 @@ Resources:
     Type: Custom::LambdaEdgeSecurityHeaders
     Properties:
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      CloudFrontDistribution: !Ref UploadsCloudFrontDistribution
-      EventType: origin-response
       FunctionName: SecurityHeadersUploads
       Code: !Sub |-
         exports.handle = function (event, context, callback) {
@@ -767,8 +759,6 @@ Resources:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
-      EventType: origin-request
       S3Bucket: !Sub |-
         {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
       S3Key: fn/{{version}}/GenerateSocialShareHtml.zip
@@ -797,6 +787,64 @@ Resources:
         }
     DependsOn:
       - CreateParameterLambdaFunction
+
+  # Associate Lambda@Edge Functions
+
+  AssociateAdminPagesFunctions:
+    Type: Custom::AssociateLambdaEdgeFunctions
+    Properties:
+      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+      CloudFrontDistribution: !Ref AdminPagesCloudFrontDistribution
+      Functions: !Sub |-
+        {
+          "functions": [
+            {
+              "arn": "${CreateSecurityHeadersAdminPages.LambdaFunctionARN}",
+              "type": "origin-response"
+            }
+          ]
+        }
+    DependsOn:
+      - CreateSecurityHeadersAdminPages
+
+  AssociatePublicPagesFunctions:
+    Type: Custom::AssociateLambdaEdgeFunctions
+    Properties:
+      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+      CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
+      Functions: !Sub |-
+        {
+          "functions": [
+            {
+              "arn": "${CreateSecurityHeadersPublicPages.LambdaFunctionARN}",
+              "type": "origin-response"
+            },
+            {
+              "arn": "${GenerateSocialShareHtml.LambdaFunctionARN}",
+              "type": "origin-request"
+            }
+          ]
+        }
+    DependsOn:
+      - CreateSecurityHeadersPublicPages
+      - GenerateSocialShareHtml
+
+  AssociateUploadsPagesFunctions:
+    Type: Custom::AssociateLambdaEdgeFunctions
+    Properties:
+      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+      CloudFrontDistribution: !Ref UploadsCloudFrontDistribution
+      Functions: !Sub |-
+        {
+          "functions": [
+            {
+              "arn": "${CreateSecurityHeadersUploads.LambdaFunctionARN}",
+              "type": "origin-response"
+            }
+          ]
+        }
+    DependsOn:
+      - CreateSecurityHeadersUploads
 
   # S3 Admin Pages Deployment
 
@@ -829,6 +877,23 @@ Resources:
     DependsOn: S3SyncObjectsFunction
 
   # S3 Public Pages Deployment
+
+  PublicPagesPagesSettingsJson:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken: !GetAtt S3PutObjectFunction.Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      Bucket: !Ref PublicPagesS3
+      Key: "settings.json"
+      Body: !Sub |-
+        {
+          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+        }
+    DependsOn:
+      - S3PutObjectFunction
+      - CognitoUserPool
+      - CognitoUserPoolClient
 
   PublicPagesDynamicContentDeploy:
     Type: Custom::DynamicContent
@@ -869,12 +934,7 @@ Resources:
           "UPLOADS_CLOUD_FRONT_URL": "${UploadsCloudFrontUrl}",
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
-          "USER_POOL_ID": "${CognitoUserPool.UserPoolId}",
-          "PUBLIC_INDEX_TEMPLATE": {
-            "type": "S3",
-            "bucket": "{{awsReleaseBucket}}",
-            "path": "public-pages/{{version}}/templates/index.mustache"
-          }
+          "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
         }
     DependsOn:
       - CognitoUserPool
