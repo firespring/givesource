@@ -150,13 +150,11 @@
 			eventTitle() {
 				return Settings.eventTitle();
 			},
+            pageDescription() {
+				return this.nonprofit.shortDescription;
+            },
 			pageTitle() {
-				const vm = this;
-				let title = vm.eventTitle + ' - Donate';
-				if (vm.nonprofitLoaded) {
-					title += ' to ' + vm.nonprofit.legalName;
-				}
-				return title;
+				return 'Support '+ this.nonprofit.legalName + ' at ' + this.eventTitle;
 			},
 			displayDonationMetrics() {
 				return Settings.isDuringEvent() || Settings.isAfterEvent();
@@ -240,6 +238,7 @@
 					vm.logo = logo;
 					vm.nonprofit = nonprofit;
 					vm.slides = slides;
+					vm.setPageDescription(vm.nonprofit.shortDescription);
 					return vm.loadSettings();
 				});
 			});

@@ -33,10 +33,10 @@ function CloudFormation() {
  * @param {[]} [stacks]
  * @return {Promise}
  */
-CloudFormation.prototype.describeStacks = function (region, stackName, nextToken, stacks) {
+CloudFormation.prototype.describeStacks = (region, stackName, nextToken, stacks) => {
 	const cloudFormation = this;
 	const awsCloudFormation = new AWS.CloudFormation({region: region});
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		stacks = stacks || [];
 		const params = {};
 		if (stackName) {
@@ -45,7 +45,7 @@ CloudFormation.prototype.describeStacks = function (region, stackName, nextToken
 		if (nextToken) {
 			params.NextToken = nextToken;
 		}
-		awsCloudFormation.describeStacks(params, function (err, data) {
+		awsCloudFormation.describeStacks(params, (err, data) => {
 			if (err) {
 				reject(err);
 			}

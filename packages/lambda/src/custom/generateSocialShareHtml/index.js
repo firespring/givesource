@@ -30,10 +30,8 @@ exports.handle = (event, context, callback) => {
 		return;
 	}
 
-	// request is coming from a supported social sharing bot
+	// request is coming from a social media bot
 	if (userAgent.match(/twitterbot|facebookexternalhit|linkedinbot|slackbot/i)) {
-		console.log('user-agent: ' + userAgent);
-
 		const ssm = new SSM();
 		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '');
 
@@ -100,13 +98,12 @@ exports.handle = (event, context, callback) => {
 			}
 		});
 
-		// ff sharing a nonprofit's page, get nonprofit's share settings
+		// if sharing a nonprofit's page, get nonprofit's share settings
 		if (request.uri.indexOf('/nonprofits/') === 0) {
 			let slug = request.uri.replace('/nonprofits/', '');
 			slug = slug.split('/')[0].split('.')[0];
 
 			if (slug) {
-				console.log('slug: ' + slug);
 				promise = promise.then(() => {
 					return nonprofitRepository.getBySlug(slug).then(nonprofit => {
 						data.url = settings.EVENT_URL + '/nonprofits/' + slug;
@@ -157,7 +154,108 @@ exports.handle = (event, context, callback) => {
 			callback(null, response);
 		});
 
-		// pass on normal requests
+	// request is coming from a search engine crawler
+	} else if (userAgent.match(/googlebot|bingbot|slur|duckduckbot|ia_archiver/i)) {
+		const ssm = new SSM();
+		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '');
+
+		let fileRepository = null;
+		let nonprofitRepository = null;
+		let settingsRepository = null;
+
+		const settings = {
+			EVENT_TITLE: null,
+			SEO_DESCRIPTION: null,
+			SOCIAL_SHARING_DESCRIPTION: null,
+		};
+
+		const data = {
+			description: null,
+			title: null
+		};
+
+		let promise = Promise.resolve();
+		promise = promise.then(() => {
+			// get stack configuration
+			return ssm.getParameter(process.env.AWS_REGION, '/' + functionName + '/config');
+		}).then(response => {
+			const config = JSON.parse(response.Parameter.Value);
+
+			fileRepository = new FileRepository({
+				region: config.AWS_STACK_REGION,
+				table: config.AWS_STACK_NAME + '-Files'
+			});
+
+			nonprofitRepository = new NonprofitsRepository({
+				region: config.AWS_STACK_REGION,
+				table: config.AWS_STACK_NAME + '-Nonprofits'
+			});
+
+			settingsRepository = new SettingsRepository({
+				region: config.AWS_STACK_REGION,
+				table: config.AWS_STACK_NAME + '-Settings'
+			});
+		}).then(() => {
+			// get event settings
+			return settingsRepository.batchGet(Object.keys(settings));
+		}).then(response => {
+			response.forEach(setting => {
+				if (settings.hasOwnProperty(setting.key)) {
+					settings[setting.key] = setting.value;
+				}
+			});
+		}).then(() => {
+			// set seo defaults
+			data.description = settings.SEO_DESCRIPTION ? settings.SEO_DESCRIPTION : settings.SOCIAL_SHARING_DESCRIPTION;
+			data.title = settings.EVENT_TITLE;
+		});
+
+		// if crawling a nonprofit's page, get nonprofit's details
+		if (request.uri.indexOf('/nonprofits/') === 0) {
+			let slug = request.uri.replace('/nonprofits/', '');
+			slug = slug.split('/')[0].split('.')[0];
+
+			if (slug) {
+				promise = promise.then(() => {
+					return nonprofitRepository.getBySlug(slug).then(nonprofit => {
+						if (nonprofit.shortDescription) {
+							data.description = nonprofit.shortDescription;
+						}
+						if (nonprofit.legalName) {
+							data.title = 'Support ' + nonprofit.legalName + ' at ' + settings.EVENT_TITLE;
+						}
+					});
+				});
+			}
+		}
+
+		promise.then(() => {
+			// generate HTML response
+			console.log('template-data: %j', data);
+			return RenderHelper.renderTemplate('public.seo', data);
+		}).then(html => {
+			const response = {
+				status: '200',
+				statusDescription: 'HTTP OK',
+				body: html,
+				headers: {
+					'cache-control': [{
+						key: 'Cache-Control',
+						value: 'max-age=300'
+					}],
+					'content-type': [{
+						key: 'Content-Type',
+						value: 'text/html'
+					}]
+				}
+			};
+			callback(null, response);
+		}).catch(err => {
+			console.log(err);
+			callback(null, response);
+		});
+
+	// normal request
 	} else {
 		callback(null, request);
 	}

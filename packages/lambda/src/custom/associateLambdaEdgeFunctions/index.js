@@ -61,7 +61,34 @@ exports.handle = (event, context, callback) => {
 	}
 
 	if (event.RequestType === 'Create' || event.RequestType === 'Update') {
-		cloudFront.getDistributionConfig(cloudFrontDistribution).then(() => {
+		cloudFront.getDistributionConfig(cloudFrontDistribution).then(data => {
+			const eTag = data.ETag;
+			const config = data.DistributionConfig;
+
+			if (!config.DefaultCacheBehavior) {
+				config.DefaultCacheBehavior = {};
+			}
+
+			let associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
+			functions.forEach(fn => {
+				if (associations.Items && associations.Quantity) {
+					associations.Items.forEach((item, index) => {
+						if (item.LambdaFunctionARN === fn.arn || item.EventType === 'origin-request') {
+							associations.Items.splice(index, 1);
+							associations.Quantity = associations.Quantity - 1;
+						}
+					});
+				}
+				associations.Quantity = associations.Quantity + 1;
+				associations.Items.push({
+					EventType: fn.type,
+					LambdaFunctionARN: fn.arn
+				});
+			});
+
+			config.DefaultCacheBehavior.LambdaFunctionAssociations = associations;
+			return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config);
+		}).then(() => {
 			response.send(event, context, response.SUCCESS);
 		}).catch(err => {
 			logger.log(err);

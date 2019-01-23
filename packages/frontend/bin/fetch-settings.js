@@ -31,7 +31,7 @@ const fs = require('fs');
  * @param {String} outputKey
  * @return {*}
  */
-const findOutputKey = function (outputs, outputKey) {
+const findOutputKey = (outputs, outputKey) => {
 	const output = _.find(outputs, {OutputKey: outputKey});
 	if (output && output.OutputValue) {
 		return output.OutputValue;
@@ -45,9 +45,9 @@ const findOutputKey = function (outputs, outputKey) {
  *
  * @return {Promise}
  */
-const getSettings = function () {
+const getSettings = () => {
 	const cloudFormation = new CloudFormation();
-	return cloudFormation.describeStacks(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')).then(function (stacks) {
+	return cloudFormation.describeStacks(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')).then(stacks => {
 		if (stacks.length !== 1) {
 			return Promise.reject(new Error('unexpected number of stacks'));
 		} else {
@@ -72,14 +72,14 @@ const getSettings = function () {
  * @param {String} filename
  * @param {{}} data
  */
-const writeConfig = function (filename, data) {
+const writeConfig = (filename, data) => {
 	const jsonData = JSON.stringify(data, null, 2);
 	const filePath = path.resolve(__dirname, './../config/' + filename);
 	fs.writeFileSync(filePath, jsonData);
 	console.log(filename + ' created');
 };
 
-getSettings().then(function (data) {
+getSettings().then(data => {
 	const settings = {
 		API_URL: null
 	};
@@ -92,7 +92,7 @@ getSettings().then(function (data) {
 		PublicPagesS3BucketUrl: null,
 		UploadsCloudFrontDistribution: null,
 	};
-	Object.keys(data).forEach(function (key) {
+	Object.keys(data).forEach(key => {
 		if (settings.hasOwnProperty(key)) {
 			settings[key] = data[key];
 		}
@@ -103,6 +103,6 @@ getSettings().then(function (data) {
 
 	writeConfig('settings.json', settings);
 	writeConfig('deploy-info.json', deployInfo);
-}).catch(function (err) {
+}).catch(err => {
 	console.log(err);
 });

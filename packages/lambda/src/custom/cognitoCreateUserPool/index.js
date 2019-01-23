@@ -32,7 +32,7 @@ exports.handle = function (event, context) {
 			response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
 		}).catch(function (err) {
 			logger.log(err);
-			response.send(event, context, response.FAILED);
+			response.send(event, context, response.SUCCESS);
 		});
 		return;
 	}
@@ -43,11 +43,13 @@ exports.handle = function (event, context) {
 		return;
 	}
 
-	cognito.createUserPool(process.env.AWS_REGION, poolName, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
-		const userPoolId = userPool.UserPool.Id;
-		response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
-	}).catch(function (err) {
-		logger.log(err);
-		response.send(event, context, response.FAILED);
-	});
+	if (event.RequestType === 'Create') {
+		cognito.createUserPool(process.env.AWS_REGION, poolName, snsCallerArn, cognitoCustomMessageArn).then(function (userPool) {
+			const userPoolId = userPool.UserPool.Id;
+			response.send(event, context, response.SUCCESS, {UserPoolId: userPoolId}, userPoolId);
+		}).catch(function (err) {
+			logger.log(err);
+			response.send(event, context, response.FAILED);
+		});
+	}
 };

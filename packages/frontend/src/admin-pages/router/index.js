@@ -56,6 +56,7 @@ import ComponentNonprofitYourPage from './../components/nonprofit/yourPage/YourP
 import ComponentPagesList from './../components/admin/pages/PagesList.vue';
 import ComponentPaymentGatewaySettings from './../components/admin/settings/paymentGateway/PaymentGatewaySettings.vue';
 import ComponentRegister from './../components/admin/pages/Register.vue';
+import ComponentSeoSettings from './../components/admin/settings/seo/SeoSettings.vue';
 import ComponentSettingsList from './../components/admin/settings/SettingsList.vue';
 import ComponentSocialSharing from './../components/admin/settings/socialSharing/SocialSharing.vue';
 import ComponentSponsorAdd from './../components/admin/sponsorTiers/sponsors/SponsorAdd.vue';
@@ -309,6 +310,14 @@ const router = new VueRouter({
 			path: '/settings/social-sharing',
 			name: 'settings-social-sharing',
 			component: ComponentSocialSharing,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/seo',
+			name: 'settings-seo',
+			component: ComponentSeoSettings,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

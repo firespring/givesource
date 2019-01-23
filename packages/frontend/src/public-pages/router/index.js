@@ -346,6 +346,8 @@ const updateSettings = () => {
 		PAGE_TOOLKIT_ENABLED: null,
 		PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: null,
 		PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: null,
+		SEO_DESCRIPTION: null,
+		SOCIAL_SHARING_DESCRIPTION: null,
 		UPLOADS_CLOUD_FRONT_URL: null,
 	};
 
@@ -354,7 +356,6 @@ const updateSettings = () => {
 		FAVICON: null,
 		FOUNDATION_LOGO: null,
 		MASTHEAD_IMAGE: null,
-		SOCIAL_SHARING_IMAGE: null,
 	};
 
 	return axios.get('/settings.json').then(response => {

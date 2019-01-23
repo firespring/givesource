@@ -103,6 +103,17 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-seo' }">SEO Settings</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                        Manage how your website appears in search engine results.
+                                    </div>
+                                </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
                                         <router-link :to="{ name: 'settings-social-sharing' }">Social Sharing Settings</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">

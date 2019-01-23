@@ -34,6 +34,11 @@ const mixin = {
 				document.body.classList.add(bodyClass);
 			});
 		},
+		setPageDescription(description) {
+			if (description) {
+				document.querySelector('meta[name="description"]').setAttribute('content', description);
+			}
+		},
 		setPageTitle: function (title) {
 			document.title = title;
 		},
