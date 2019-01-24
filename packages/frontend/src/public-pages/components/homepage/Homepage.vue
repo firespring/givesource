@@ -136,7 +136,6 @@
 		data: function () {
 			return {
 				contents: [],
-				spotlightImage: '/assets/temp/logo-gtld.png',
 				nonprofits: [],
 				matchFundNonprofit: null,
 

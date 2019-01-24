@@ -22,7 +22,8 @@
     {{#event_title}}<meta property="og:site_name" content="{{event_title}}">{{/event_title}}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary">
+    {{^image_url}}<meta name="twitter:card" content="summary">{{/image_url}}
+    {{#image_url}}<meta name="twitter:card" content="summary_large_image">{{/image_url}}
     {{#title}}<meta name="twitter:title" content="{{title}}">{{/title}}
     {{#description}}<meta name="twitter:description" content="{{description}}">{{/description}}
     {{#image_url}}<meta name="twitter:image" content="{{image_url}}">{{/image_url}}

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019 Firespring, Inc.
+  ~ Copyright 2018 Firespring, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -52,61 +52,108 @@
 			};
 		},
 		computed: {
-			filename: function () {
-				const vue = this;
-				if (vue.localValue && vue.localValue instanceof File) {
-					return vue.localValue.name;
-				} else if (vue.localValue && vue.localValue.hasOwnProperty('filename')) {
-					return vue.localValue.filename;
+			filename() {
+				const vm = this;
+				if (vm.localValue && vm.localValue instanceof File) {
+					return vm.localValue.name;
+				} else if (vm.localValue && vm.localValue.hasOwnProperty('filename')) {
+					return vm.localValue.filename;
 				}
 				return '';
 			},
-			hasFile: function () {
-				const vue = this;
-				return (vue.localValue instanceof File || (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('filename')));
+			hasFile() {
+				const vm = this;
+				return (vm.localValue instanceof File || (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('filename')));
 			}
 		},
 		props: {
 			id: '',
 			name: '',
 			value: {},
+			height: {
+				type: Number,
+                default: 400
+            },
+			width: {
+				type: Number,
+                default: 800
+            },
+			extensions: {
+				type: Array,
+				default() {
+					return ['gif', 'jpeg', 'jpg', 'png'];
+				}
+			},
+		},
+		created() {
+			const vm = this;
+
+			vm.bus.$on('imageEditorSave', (original, blob) => {
+				vm.localValue = vm.blobToFile(blob, original.name);
+			});
+		},
+		beforeDestroy() {
+			this.bus.$off('imageEditorSave');
 		},
 		watch: {
-			value: function (newVal) {
+			value(newVal) {
 				this.localValue = newVal;
 			},
-			localValue: function () {
-				const vue = this;
+			localValue() {
+				const vm = this;
 
-				if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {
-					vue.fileUrl = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
-				} else if (vue.localValue instanceof File) {
+				if (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('path')) {
+					vm.fileUrl = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
+				} else if (vm.localValue instanceof File) {
 					const reader = new FileReader();
-					reader.onload = function (e) {
-						vue.fileUrl = e.target.result;
+					reader.onload = (e) => {
+						vm.fileUrl = e.target.result;
 					};
-					reader.readAsDataURL(vue.localValue);
+					reader.readAsDataURL(vm.localValue);
 				}
 
-				vue.$emit('input', this.localValue);
+				vm.$emit('input', vm.localValue);
 			}
 		},
 		methods: {
-			onTrigger: function () {
-				const vue = this;
-				vue.$refs.input.click();
+			onTrigger() {
+				this.$refs.input.click();
 			},
-			onChange: function (event) {
-				const vue = this;
+			onChange(event) {
+				const vm = this;
+
 				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
-					vue.localValue = files[0];
+				if (files.length && files[0] instanceof File && vm.extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
+					console.log(vm.height);
+					console.log(vm.width);
+					vm.addModal('photo-editor', {
+						file: files[0],
+						listener: 'imageEditorSave',
+						height: vm.height,
+						width: vm.width
+					});
+					vm.$refs.input.value = '';
+					vm.addModal('spinner');
+				} else {
+					vm.addModal('error', {
+						title: 'Invalid Image Type',
+						message: 'The following image types are supported: ' + vm.extensions.join(', '),
+					});
 				}
 			},
-			removeFile: function () {
-				const vue = this;
-				$(vue.$refs.input).val('');
-				vue.localValue = null;
+			removeFile() {
+				const vm = this;
+				$(vm.$refs.input).val('');
+				vm.localValue = null;
+			},
+			blobToFile(blob, filename) {
+				const date = new Date();
+				blob.lastModifiedDate = date;
+				blob.lastModified = date.getTime();
+				blob.name = filename;
+				blob.__proto__ = File.prototype;
+
+				return blob;
 			}
 		}
 	};

@@ -59,7 +59,7 @@
 				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
 					logo = vue.$store.getters.setting('EVENT_LOGO');
 				} else {
-					logo = '/assets/temp/logo-event.png';
+					logo = '/assets/img/logo-event.png';
 				}
 				return logo;
 			}

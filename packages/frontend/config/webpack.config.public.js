@@ -90,8 +90,7 @@ module.exports = function () {
 				{from: './config/settings.json', to: 'settings.json'},
 				{from: './config/robots-allow.txt', to: 'robots.txt'},
 				{from: './src/public-pages/assets/css', to: 'assets/css'},
-				{from: './src/public-pages/assets/img', to: 'assets/img'},
-				{from: './src/public-pages/assets/temp', to: 'assets/temp'}
+				{from: './src/public-pages/assets/img', to: 'assets/img'}
 			]),
 			new VueLoaderPlugin(),
 			new HtmlWebpackPlugin({

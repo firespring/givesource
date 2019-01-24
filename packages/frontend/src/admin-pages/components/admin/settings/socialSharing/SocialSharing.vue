@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 Firespring, Inc.
+  ~ Copyright 2019 Firespring, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
 
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
-                                    <h2 class="c-page-section-title">Content For Social Sharing</h2>
+                                    <h2 class="c-page-section-title">Social Sharing</h2>
                                     <div class="c-notes c-notes--below">
                                         This content will be used when someone shares your event via social media.
                                     </div>
@@ -54,7 +54,7 @@
                                             This image will appear when your event is shared via social media, If you do not select an image, your masthead image will be used.
                                         </div>
                                     </div>
-                                    <forms-image-upload v-model="formData.SOCIAL_SHARING_IMAGE" name="socialSharingImage" id="socialSharingImage"></forms-image-upload>
+                                    <forms-image-editor v-model="formData.SOCIAL_SHARING_IMAGE" name="socialSharingImage" id="socialSharingImage"></forms-image-editor>
                                     <div v-if="formErrors.SOCIAL_SHARING_IMAGE" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.SOCIAL_SHARING_IMAGE }}
                                     </div>
@@ -86,8 +86,8 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <social-card :description="formData.SOCIAL_SHARING_DESCRIPTION" :fallback_image="formData.MASTHEAD_IMAGE"
-                                                     :image="formData.SOCIAL_SHARING_IMAGE" :title="formData.EVENT_TITLE" :url="formData.EVENT_URL"></social-card>
+                                        <social-card :description="formData.SOCIAL_SHARING_DESCRIPTION" :image="formData.SOCIAL_SHARING_IMAGE" :title="formData.EVENT_TITLE"
+                                                     :url="formData.EVENT_URL"></social-card>
                                     </div>
                                 </div>
 
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentImageEditor from './../../../forms/ImageEditor.vue';
 	import ComponentSocialCard from './../../../media/SocialCard.vue';
 
 	export default {
@@ -119,7 +119,6 @@
 				formData: {
 					EVENT_TITLE: '',
                     EVENT_URL: '',
-					MASTHEAD_IMAGE: null,
 					SOCIAL_SHARING_IMAGE: null,
 					SOCIAL_SHARING_DESCRIPTION: ''
 				},
@@ -320,12 +319,12 @@
 				return promise;
 			},
 			isFileSetting(settingKey) {
-				const fileKeys = ['MASTHEAD_IMAGE', 'SOCIAL_SHARING_IMAGE'];
+				const fileKeys = ['SOCIAL_SHARING_IMAGE'];
 				return _.includes(fileKeys, settingKey);
 			}
 		},
 		components: {
-			'forms-image-upload': ComponentImageUpload,
+			'forms-image-editor': ComponentImageEditor,
             'social-card': ComponentSocialCard
 		}
 	};

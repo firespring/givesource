@@ -142,7 +142,7 @@ module.exports = {
 		GenerateCustomFrontendCss: './src/custom/generateCustomFrontendCss/index.js',
 		GenerateDynamicContent: './src/custom/generateDynamicContent/index.js',
 		GenerateReport: './src/custom/generateReport/index.js',
-		GenerateSocialShareHtml: './src/custom/generateSocialShareHtml/index.js',
+		GeneratePublicPagesHtml: './src/custom/generatePublicPagesHtml/index.js',
 		MetricAddAmount: './src/custom/metricAddAmount/index.js',
 		MetricMaxAmount: './src/custom/metricMaxAmount/index.js',
 		S3PutObject: './src/custom/s3PutObject/index.js',

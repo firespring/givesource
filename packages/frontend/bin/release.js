@@ -101,10 +101,6 @@ promise = promise.then(function () {
 }).then(function () {
 	return release(publicSource + 'assets/img/', publicDestination + 'assets/img/');
 }).then(function () {
-	return release(publicSource + 'assets/temp/', publicDestination + 'assets/temp/');
-}).then(function () {
-	return release(publicSource + 'assets/temp/sponsors/', publicDestination + 'assets/temp/sponsors/');
-}).then(function () {
 	console.log('Frontend release complete.');
 }).catch(function (err) {
 	console.log(err);

@@ -84,7 +84,7 @@
 			},
 			logoUrl() {
 				const eventLogo = this.$store.getters.setting('EVENT_LOGO');
-				return eventLogo ? eventLogo : '/assets/temp/logo-event.png';
+				return eventLogo ? eventLogo : '/assets/img/logo-event.png';
 			},
 			pages() {
 				return this.$store.getters.pages;

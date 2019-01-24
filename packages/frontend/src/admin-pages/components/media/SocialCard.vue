@@ -1,6 +1,8 @@
 <template>
-    <div class="c-card">
-        <div class="c-card__media" :style="{'background-image': 'url(' + cardImageSrc + ')'}" v-if="cardImageSrc"></div>
+    <div class="c-card" style="max-width: 600px; height: auto;">
+        <div class="c-card__media" style="max-height: 300px; height: auto; overflow: hidden;" v-if="cardImageSrc">
+            <img :src="cardImageSrc">
+        </div>
         <div class="c-card__title" v-if="title || url">
             <div class="c-card-title-text">
                 <div class="c-card-subtitle" v-if="cardEventTitle">{{cardEventTitle}}</div>

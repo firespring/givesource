@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 Firespring, Inc.
+  ~ Copyright 2019 Firespring, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@
 
                         <header class="c-page-section__header">
                             <div class="c-page-section-header-text">
-                                <h2 class="c-page-section-title">Content For Social Sharing</h2>
+                                <h2 class="c-page-section-title">Social Sharing</h2>
                                 <div class="c-notes c-notes--below">
                                     This content will be used when someone shares your donation page via social media.
                                 </div>
@@ -62,7 +62,7 @@
                                         This image will appear when your donation page is shared via social media.
                                     </div>
                                 </div>
-                                <forms-image-upload v-model="formData.socialSharingImage" name="socialSharingImage" id="socialSharingImage"></forms-image-upload>
+                                <forms-image-editor v-model="formData.socialSharingImage" name="socialSharingImage" id="socialSharingImage"></forms-image-editor>
                                 <div v-if="formErrors.socialSharingImage" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                     {{ formErrors.socialSharingImage }}
                                 </div>
@@ -94,7 +94,7 @@
                                     </div>
                                 </div>
                                 <div class="c-form-item__control">
-                                    <social-card :description="previewDescription" :event_title="settings.EVENT_TITLE" :fallback_image="previewFallbackImage"
+                                    <social-card :description="previewDescription" :event_title="settings.EVENT_TITLE" :fallback_image="settings.SOCIAL_SHARING_IMAGE"
                                                  :image="formData.socialSharingImage" :title="previewTitle" :url="previewUrl"></social-card>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
+	import ComponentImageEditor from './../../../forms/ImageEditor.vue';
 	import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue';
 	import ComponentSelectState from './../../../forms/SelectState.vue';
 	import ComponentSocialCard from './../../../media/SocialCard.vue';
@@ -134,7 +134,6 @@
 				settings: {
 					EVENT_TITLE: '',
 					EVENT_URL: '',
-					MASTHEAD_IMAGE: null,
 					SOCIAL_SHARING_DESCRIPTION: '',
 					SOCIAL_SHARING_IMAGE: null,
 				},
@@ -153,9 +152,6 @@
 			},
 			previewDescription() {
 				return this.formData.socialSharingDescription ? this.formData.socialSharingDescription : this.settings.SOCIAL_SHARING_DESCRIPTION;
-			},
-			previewFallbackImage() {
-				return this.settings.SOCIAL_SHARING_IMAGE ? this.settings.SOCIAL_SHARING_IMAGE : this.settings.MASTHEAD_IMAGE;
 			},
 			previewTitle() {
 				return this.settings.EVENT_TITLE ? 'Support ' + this.nonprofit.legalName + ' at ' + this.settings.EVENT_TITLE : this.nonprofit.legalName;
@@ -244,7 +240,7 @@
 				});
 			},
 			isFileSetting(key) {
-				const fileKeys = ['MASTHEAD_IMAGE', 'SOCIAL_SHARING_IMAGE'];
+				const fileKeys = ['SOCIAL_SHARING_IMAGE'];
 				return _.includes(fileKeys, key);
 			},
 			getConstraints() {
@@ -358,7 +354,7 @@
 			},
 		},
 		components: {
-			'forms-image-upload': ComponentImageUpload,
+			'forms-image-editor': ComponentImageEditor,
 			'category-select': ComponentSelectNonprofitCategory,
 			'state-select': ComponentSelectState,
 			'social-card': ComponentSocialCard

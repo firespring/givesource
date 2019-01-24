@@ -32,15 +32,15 @@ function SSM() {
  * @param {bool} [decryption]
  * @return {Promise}
  */
-SSM.prototype.getParameter = function (region, name, decryption) {
+SSM.prototype.getParameter = (region, name, decryption) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		decryption = decryption || false;
 		const params = {
 			Name: name,
 			WithDecryption: decryption
 		};
-		awsSSM.getParameter(params, function (err, data) {
+		awsSSM.getParameter(params, (err, data) => {
 			if (err) {
 				reject(err);
 			}
@@ -61,9 +61,9 @@ SSM.prototype.getParameter = function (region, name, decryption) {
  * @return {Promise}
  */
 
-SSM.prototype.putParameter = function (region, name, value, type, keyId, overwrite) {
+SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		if (!type) {
 			type = keyId ? 'SecureString' : 'String';
 		}
@@ -77,7 +77,7 @@ SSM.prototype.putParameter = function (region, name, value, type, keyId, overwri
 		if (keyId) {
 			params['KeyId'] = keyId;
 		}
-		awsSSM.putParameter(params, function (err, data) {
+		awsSSM.putParameter(params, (err, data) => {
 			if (err) {
 				reject(err);
 			}

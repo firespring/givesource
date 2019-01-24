@@ -54,7 +54,7 @@
 			},
 			backgroundImageUrl: function () {
 				const vue = this;
-				return vue.$store.getters.setting('MASTHEAD_IMAGE') ? vue.$store.getters.setting('MASTHEAD_IMAGE') : '/assets/temp/hero.jpg';
+				return vue.$store.getters.setting('MASTHEAD_IMAGE') ? vue.$store.getters.setting('MASTHEAD_IMAGE') : '/assets/img/hero.jpg';
 			},
 			hasSpotlightSlot: function () {
 				return this.$slots.spotlight;

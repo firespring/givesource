@@ -755,16 +755,16 @@ Resources:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
 
-  GenerateSocialShareHtml:
+  GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
       S3Bucket: !Sub |-
         {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-      S3Key: fn/{{version}}/GenerateSocialShareHtml.zip
+      S3Key: fn/{{version}}/GeneratePublicPagesHtml.zip
       S3Region: !Sub |-
         ${AWS::Region}
-      FunctionName: GenerateSocialShareHtml
+      FunctionName: GeneratePublicPagesHtml
       StackName: !Ref StackName
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs6.10"
@@ -772,12 +772,12 @@ Resources:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
 
-  GenerateSocialShareHtmlConfigParameter:
+  GeneratePublicPagesHtmlConfigParameter:
     Type: Custom::CreateParameter
     Properties:
       ServiceToken: !GetAtt CreateParameterLambdaFunction.Arn
       Name: !Sub |-
-        /${StackName}-GenerateSocialShareHtml/config
+        /${StackName}-GeneratePublicPagesHtml/config
       Region: us-east-1
       Type: String
       Value: !Sub |-
@@ -820,14 +820,14 @@ Resources:
               "type": "origin-response"
             },
             {
-              "arn": "${GenerateSocialShareHtml.LambdaFunctionARN}",
+              "arn": "${GeneratePublicPagesHtml.LambdaFunctionARN}",
               "type": "origin-request"
             }
           ]
         }
     DependsOn:
       - CreateSecurityHeadersPublicPages
-      - GenerateSocialShareHtml
+      - GeneratePublicPagesHtml
 
   AssociateUploadsPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions

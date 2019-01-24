@@ -61,7 +61,6 @@
 
                             <social-sharing network-tag="a"
                                             :url="pageUrl"
-                                            :title="settings.SOCIAL_SHARING_DESCRIPTION"
                                             inline-template>
                                 <div class="donation-share">
                                     <network network="facebook">
@@ -83,7 +82,7 @@
                                 </div>
                             </template>
                             <div v-else class="nonprofit-campaign__slider" style="overflow: hidden;">
-                                <img alt="" src="/assets/temp/community.jpg">
+                                <img alt="" src="/assets/img/community.jpg">
                             </div>
                         </div>
                     </div>
@@ -133,8 +132,7 @@
 				hovering: false,
 
 				settings: {
-					EVENT_URL: '',
-					SOCIAL_SHARING_DESCRIPTION: ''
+					EVENT_URL: ''
 				},
 
 				apiError: {},
@@ -171,7 +169,7 @@
 				} else if (vm.$store.getters.setting('EVENT_LOGO')) {
 					logo = vm.$store.getters.setting('EVENT_LOGO');
 				} else {
-					logo = '/assets/temp/logo-event.png';
+					logo = '/assets/img/logo-event.png';
 				}
 				return logo;
 			},

@@ -33,7 +33,7 @@ exports.handle = (event, context, callback) => {
 	// request is coming from a social media bot
 	if (userAgent.match(/twitterbot|facebookexternalhit|linkedinbot|slackbot/i)) {
 		const ssm = new SSM();
-		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '');
+		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '').replace('us-east-1.', '');
 
 		let fileRepository = null;
 		let nonprofitRepository = null;
@@ -42,7 +42,6 @@ exports.handle = (event, context, callback) => {
 		const settings = {
 			EVENT_TITLE: null,
 			EVENT_URL: null,
-			MASTHEAD_IMAGE: null,
 			SOCIAL_SHARING_DESCRIPTION: null,
 			SOCIAL_SHARING_IMAGE: null,
 			UPLOADS_CLOUD_FRONT_URL: null
@@ -59,7 +58,7 @@ exports.handle = (event, context, callback) => {
 		let promise = Promise.resolve();
 		promise = promise.then(() => {
 			// get stack configuration
-			return ssm.getParameter(process.env.AWS_REGION, '/' + functionName + '/config');
+			return ssm.getParameter('us-east-1', '/' + functionName + '/config');
 		}).then(response => {
 			const config = JSON.parse(response.Parameter.Value);
 
@@ -92,16 +91,12 @@ exports.handle = (event, context, callback) => {
 			data.event_title = settings.EVENT_TITLE;
 			data.title = settings.EVENT_TITLE;
 			data.url = settings.EVENT_URL;
-
-			if (!settings.SOCIAL_SHARING_IMAGE) {
-				settings.SOCIAL_SHARING_IMAGE = settings.MASTHEAD_IMAGE;
-			}
 		});
 
 		// if sharing a nonprofit's page, get nonprofit's share settings
 		if (request.uri.indexOf('/nonprofits/') === 0) {
 			let slug = request.uri.replace('/nonprofits/', '');
-			slug = slug.split('/')[0].split('.')[0];
+			slug = slug.split('/')[0].split('.')[0].split('&')[0];
 
 			if (slug) {
 				promise = promise.then(() => {
@@ -131,7 +126,7 @@ exports.handle = (event, context, callback) => {
 		}).then(() => {
 			// generate HTML response
 			console.log('template-data: %j', data);
-			return RenderHelper.renderTemplate('social.social-sharing', data);
+			return RenderHelper.renderTemplate('public.social-sharing', data);
 		}).then(html => {
 			const response = {
 				status: '200',
@@ -157,7 +152,7 @@ exports.handle = (event, context, callback) => {
 	// request is coming from a search engine crawler
 	} else if (userAgent.match(/googlebot|bingbot|slur|duckduckbot|ia_archiver/i)) {
 		const ssm = new SSM();
-		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '');
+		const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME.replace(process.env.AWS_REGION + '.', '').replace('us-east-1.', '');
 
 		let fileRepository = null;
 		let nonprofitRepository = null;
@@ -177,7 +172,7 @@ exports.handle = (event, context, callback) => {
 		let promise = Promise.resolve();
 		promise = promise.then(() => {
 			// get stack configuration
-			return ssm.getParameter(process.env.AWS_REGION, '/' + functionName + '/config');
+			return ssm.getParameter('us-east-1', '/' + functionName + '/config');
 		}).then(response => {
 			const config = JSON.parse(response.Parameter.Value);
 
@@ -213,7 +208,7 @@ exports.handle = (event, context, callback) => {
 		// if crawling a nonprofit's page, get nonprofit's details
 		if (request.uri.indexOf('/nonprofits/') === 0) {
 			let slug = request.uri.replace('/nonprofits/', '');
-			slug = slug.split('/')[0].split('.')[0];
+			slug = slug.split('/')[0].split('.')[0].split('&')[0];
 
 			if (slug) {
 				promise = promise.then(() => {
