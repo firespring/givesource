@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+const Fuse = require('fuse.js');
 const HttpException = require('./../../exceptions/http');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const ResourceNotFoundException = require('./../../exceptions/resourceNotFound');
@@ -21,18 +22,18 @@ const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
 
-exports.handle = function (event, context, callback) {
+exports.handle = (event, context, callback) => {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
 	const settingsRepository = new SettingsRepository();
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
 	let matchFundNonprofitUuid = null;
 
-	request.validate().then(function () {
+	request.validate().then(() => {
 		if (!includeMatchFund) {
-			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(function (setting) {
+			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(setting => {
 				matchFundNonprofitUuid = setting.value;
-			}).catch(function (err) {
+			}).catch(err => {
 				if (err instanceof ResourceNotFoundException) {
 					return Promise.resolve();
 				} else {
@@ -42,7 +43,7 @@ exports.handle = function (event, context, callback) {
 		}
 
 		return Promise.resolve();
-	}).then(function () {
+	}).then(() => {
 		if (!request.queryParam('category', false) && !request.queryParam('legalName', false) && !request.queryParam('status', false)) {
 			return Promise.reject(new Error('Missing required query parameter: category, legalName or status'));
 		}
@@ -50,20 +51,27 @@ exports.handle = function (event, context, callback) {
 			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category', 'c']), matchFundNonprofitUuid));
 		}
 		if (request.queryParam('legalName', false)) {
-			return repository.search(['legalNameSearch'], request.queryParam('legalName'), transformFilters(request.queryParamsExcept(['legalName', 'c']), matchFundNonprofitUuid));
+			return repository.getAll().then(nonprofits => {
+				const options = {
+					keys: ['legalName'],
+					threshold: 0.3,
+				};
+				const fuse = new Fuse(nonprofits, options);
+				return fuse.search(request.queryParam('legalName'));
+			});
 		}
 		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status', 'c']), matchFundNonprofitUuid));
-	}).then(function (response) {
-		const results = response.map(function (model) {
+	}).then(response => {
+		const results = response.map(model => {
 			return model.all();
 		});
 		callback(null, results);
-	}).catch(function (err) {
+	}).catch(err => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 };
 
-const transformFilters = function (filters, matchFundNonprofitUuid) {
+const transformFilters = (filters, matchFundNonprofitUuid) => {
 	if (filters.hasOwnProperty('legalName')) {
 		filters.legalNameSearch = filters.legalName;
 		delete filters.legalName;
