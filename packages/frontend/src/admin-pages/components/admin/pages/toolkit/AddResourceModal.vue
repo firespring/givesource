@@ -79,7 +79,7 @@
                                         <div class="sub-options-inline-wrapper sub-options-inline-wrapper--show">
                                             <div id="toolkitResourceType-1-sub-options" class="sub-options-inline" :class="{'sub-options-inline--show': showFileInput}">
 
-                                                <div class="c-form-item c-form-item--file c-form-item--required">
+                                                <div class="c-form-item c-form-item--file c-form-item--file-picker c-form-item--required">
                                                     <div class="c-form-item__label">
                                                         <label for="resourceFile" class="c-form-item-label-text">File</label>
                                                     </div>

@@ -82,7 +82,7 @@
                                                     <layout-spinner height="80px"></layout-spinner>
                                                 </div>
 
-                                                <div class="c-form-item c-form-item--file c-form-item--required" v-else>
+                                                <div class="c-form-item c-form-item--file c-form-item--file-picker c-form-item--required" v-else>
                                                     <div class="c-form-item__label">
                                                         <label for="resourceFile" class="c-form-item-label-text">File</label>
                                                     </div>
