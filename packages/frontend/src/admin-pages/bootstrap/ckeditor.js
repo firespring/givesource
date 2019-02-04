@@ -34,7 +34,6 @@ const plugin = {
 						editor.setReadOnly(true);
 
 						uploadImage(input.files[0]).then(file => {
-							console.log(file);
 							editor.setReadOnly(false);
 
 							const src = store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path;
