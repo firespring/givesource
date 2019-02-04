@@ -130,7 +130,6 @@
 </template>
 
 <script>
-	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
 	import ComponentFileUpload from './../../../forms/FileUpload.vue';
 
 	export default {
@@ -305,7 +304,6 @@
 			},
 		},
 		components: {
-			'forms-ckeditor': ComponentCKEditor,
 			'forms-file-upload': ComponentFileUpload,
 		}
 	};

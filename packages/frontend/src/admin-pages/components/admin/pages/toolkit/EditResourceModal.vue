@@ -133,7 +133,6 @@
 </template>
 
 <script>
-	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
 	import ComponentFileUpload from './../../../forms/FileUpload.vue';
 	import ComponentSpinner from './../../../layout/Spinner.vue';
 
@@ -366,7 +365,6 @@
 			},
 		},
 		components: {
-			'forms-ckeditor': ComponentCKEditor,
 			'forms-file-upload': ComponentFileUpload,
 			'layout-spinner': ComponentSpinner,
 		}

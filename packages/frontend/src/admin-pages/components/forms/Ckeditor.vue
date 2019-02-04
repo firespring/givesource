@@ -15,19 +15,19 @@
   -->
 
 <template>
-    <vue-ckeditor v-if="loaded" v-model="localValue" :toolbar="toolbar" :id="id" :language="language" :extraplugins="plugins" :class="{ 'has-error': hasErrors }" :height="height">
-    </vue-ckeditor>
-    <layout-spinner v-else :height="height + 'px'"></layout-spinner>
+    <forms-ckeditor-textarea v-if="loaded" v-model="localValue" :id="id" :class="{ 'has-error': hasErrors }" :height="height" :type="type" :allowImages="allowImages">
+    </forms-ckeditor-textarea>
+    <layout-spinner v-else :height="height"></layout-spinner>
 </template>
 
 <script>
 	import ComponentSpinner from './../layout/Spinner.vue';
+	import ComponentCkeditorTextarea from './CkeditorTextarea.vue';
 
 	export default {
 		data: function () {
 			return {
 				localValue: '',
-				language: 'en-us',
 			}
 		},
 		props: {
@@ -36,10 +36,10 @@
 				type: String,
 				default: ''
 			},
-			loaded: {
+            allowImages: {
 				type: Boolean,
-				default: false
-			},
+                default: false,
+            },
 			hasErrors: {
 				type: Boolean,
 				default: false
@@ -48,31 +48,13 @@
 				type: String,
 				default: '200'
 			},
-			basic: {
+			loaded: {
 				type: Boolean,
-				default: false,
-			}
-		},
-		computed: {
-			toolbar: function () {
-				let options = [
-					{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
-					{name: 'links', items: ['Link', 'Unlink']},
-				];
-				if (!this.basic) {
-					options = [
-						{name: 'styles', items: ['Format']},
-						{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
-						{name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote']},
-						{name: 'colors', items: ['TextColor', 'BGColor']},
-						{name: 'links', items: ['Link', 'Unlink']},
-						{name: 'tools', items: ['Maximize']},
-					];
-				}
-				return options;
+				default: true
 			},
-			plugins: function () {
-				return this.basic ? '' : 'colorbutton,colordialog';
+			type: {
+				type: String,
+				default: 'Basic',
 			}
 		},
 		watch: {
@@ -92,6 +74,7 @@
 			}
 		},
 		components: {
+			'forms-ckeditor-textarea': ComponentCkeditorTextarea,
 			'layout-spinner': ComponentSpinner,
 		}
 	};
