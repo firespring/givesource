@@ -21,7 +21,7 @@
                 <div class="c-modal-dialog__contents">
                     <div class="c-modal-content">
                         <div class="c-progress c-progress--spinner c-spinner-lg c-spinner-active">
-                            <div class="c-spinner-layer c-spinner-white-only">
+                            <div class="c-spinner-layer c-spinner-orange-only">
                                 <div class="c-spinner-circle-clipper left">
                                     <div class="c-spinner-circle"></div>
                                 </div><div class="gap-patch">
