@@ -18,9 +18,9 @@ import * as VueMoney from 'v-money';
 import AlertCloseDirective from './directives/alertClose';
 import AutoFocusDirective from './directives/autoFocus';
 import axios from 'axios';
+import bootstrapCkeditor from './bootstrap/ckeditor';
 import ComponentApiError from './components/errors/ApiError.vue';
 import ComponentApp from './components/App.vue';
-import ComponentCKEditor from 'vueckeditor';
 import ComponentGravatar from 'vue-gravatar';
 import ComponentNavigation from './components/header/Navigation.vue';
 import EventBusMixin from './mixins/eventBus';
@@ -57,7 +57,9 @@ Vue.directive('shave', ShaveDirective);
 Vue.component('api-error', ComponentApiError);
 Vue.component('navigation', ComponentNavigation);
 Vue.component('v-gravatar', ComponentGravatar);
-Vue.component('vue-ckeditor', ComponentCKEditor);
+
+// Bootstrap libs
+bootstrapCkeditor();
 
 // Register vue global
 Vue.prototype.user = {};

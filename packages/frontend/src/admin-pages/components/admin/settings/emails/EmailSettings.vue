@@ -51,8 +51,8 @@
                                         <label for="donationNotificationTextBefore" class="c-form-item-label-text">Text Before Donation Details</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_BEFORE" :loaded="loaded"
-                                                        id="donationNotificationTextBefore"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.EMAILS_DONATION_NOTIFICATION_BEFORE" :loaded="loaded" id="donationNotificationTextBefore">
+                                        </forms-ckeditor>
                                         <div class="c-notes c-notes--below">
                                             This text will appear above the donation details.
                                         </div>

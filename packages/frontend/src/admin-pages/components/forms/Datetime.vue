@@ -16,8 +16,8 @@
 
 <template>
     <div class="u-control-icon u-control-icon--date">
-        <input v-if="isDesktop" type="text" v-model="localValue" :name="name" :id="id" :placeholder="placeholder" ref="datetime" :class="{'has-error': hasError}">
-        <input v-else type="date" v-model="localValue" :name="name" :id="id" :class="{'has-error': hasError}">
+        <input v-if="isDesktop" type="text" v-model="localValue" :name="name" :id="id" :placeholder="placeholder" ref="datetime" :class="{'has-error': hasError}" autocomplete="off">
+        <input v-else type="date" v-model="localValue" :name="name" :id="id" :class="{'has-error': hasError}" autocomplete="off">
     </div>
 </template>
 

@@ -77,7 +77,7 @@
 
                                     <div class="c-form-item__control">
                                         <div class="u-control-icon u-control-icon--url">
-                                            <input v-model="formData.FOUNDATION_URL" type="url" name="foundationUrl" id="foundationUrl" placeholder="http://">
+                                            <input v-model="formData.FOUNDATION_URL" type="url" name="foundationUrl" id="foundationUrl" placeholder="https://">
                                         </div>
                                         <div class="c-notes c-notes--below">
                                             Enter a URL that you want your foundation logo to link to (e.g., your foundation's website).

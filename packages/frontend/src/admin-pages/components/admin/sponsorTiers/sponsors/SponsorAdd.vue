@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--file">
+                                <div class="c-form-item c-form-item--file c-form-item--file-picker">
                                     <div class="c-form-item__label">
                                         <label for="fileFieldDefault" class="c-form-item-label-text">Logo</label>
                                         <div class="c-notes">

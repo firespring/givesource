@@ -43,7 +43,7 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.ABOUT_TEXT.value" :loaded="loaded" id="pageText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.ABOUT_TEXT.value" :loaded="loaded" id="pageText" type="Advanced" :allowImages="true"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>

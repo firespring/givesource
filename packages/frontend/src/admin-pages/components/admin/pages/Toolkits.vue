@@ -46,7 +46,8 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.TOOLKIT_LEADING_TEXT.value" :loaded="loaded" id="additionalTextAbove"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.TOOLKIT_LEADING_TEXT.value" :loaded="loaded" id="additionalTextAbove" type="Advanced" :allowImages="true">
+                                        </forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +92,8 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.TOOLKIT_ADDITIONAL_TEXT.value" :loaded="loaded" id="additionalText"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.TOOLKIT_ADDITIONAL_TEXT.value" :loaded="loaded" id="additionalText" type="Advanced" :allowImages="true">
+                                        </forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
