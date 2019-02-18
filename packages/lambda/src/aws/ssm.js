@@ -34,19 +34,12 @@ function SSM() {
  */
 SSM.prototype.getParameter = (region, name, decryption) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return new Promise((resolve, reject) => {
-		decryption = decryption || false;
-		const params = {
-			Name: name,
-			WithDecryption: decryption
-		};
-		awsSSM.getParameter(params, (err, data) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
+	decryption = decryption || false;
+	const params = {
+		Name: name,
+		WithDecryption: decryption
+	};
+	return awsSSM.getParameter(params).promise();
 };
 
 /**
@@ -63,27 +56,20 @@ SSM.prototype.getParameter = (region, name, decryption) => {
 
 SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return new Promise((resolve, reject) => {
-		if (!type) {
-			type = keyId ? 'SecureString' : 'String';
-		}
-		overwrite = overwrite || true;
-		const params = {
-			Name: name,
-			Type: type,
-			Value: value,
-			Overwrite: overwrite
-		};
-		if (keyId) {
-			params['KeyId'] = keyId;
-		}
-		awsSSM.putParameter(params, (err, data) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
+	if (!type) {
+		type = keyId ? 'SecureString' : 'String';
+	}
+	overwrite = overwrite || true;
+	const params = {
+		Name: name,
+		Type: type,
+		Value: value,
+		Overwrite: overwrite
+	};
+	if (keyId) {
+		params['KeyId'] = keyId;
+	}
+	return awsSSM.putParameter(params).promise();
 };
 
 /**
@@ -95,14 +81,7 @@ SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
  */
 SSM.prototype.deleteParameter = (region, name) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return new Promise((resolve, reject) => {
-		awsSSM.deleteParameter({Name: name}, (err, data) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
+	return awsSSM({Name: name}).promise();
 };
 
 module.exports = SSM;

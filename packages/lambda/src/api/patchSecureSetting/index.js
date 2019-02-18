@@ -25,7 +25,7 @@ exports.handle = function (event, context, callback) {
 
 	request.validate().then(function () {
 		const key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/' + request.urlParam('key');
-		return ssm.putParameter(process.env.AWS_REGION, key, request.get('value'), 'SecureSetting', process.env.KMS_KEY, true);
+		return ssm.putParameter(process.env.AWS_REGION, key, request.get('value'), 'SecureString', process.env.KMS_KEY, true);
 	}).then(function (response) {
 		console.log('response: %j', response);
 		callback();
