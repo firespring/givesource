@@ -36,7 +36,7 @@
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
                         </nav>
-                        <h1 class="o-page-header-title">Donation Notifications</h1>
+                        <h1 class="o-page-header-title">Social Sharing Settings</h1>
                     </div>
                 </div>
 
