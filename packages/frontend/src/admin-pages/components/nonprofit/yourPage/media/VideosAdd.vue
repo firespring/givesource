@@ -66,17 +66,17 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--text" :class="{ 'c-form-item--has-error': formErrors.caption }">
-                                    <div class="c-form-item__label">
-                                        <label for="caption" class="c-form-item-label-text">Caption (100 characters or less)</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <input v-model="formData.caption" type="text" name="caption" id="caption" maxlength="100" :class="{ 'has-error': formErrors.caption }">
-                                        <div v-if="formErrors.caption" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.caption }}
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--<div class="c-form-item c-form-item&#45;&#45;text" :class="{ 'c-form-item&#45;&#45;has-error': formErrors.caption }">-->
+                                    <!--<div class="c-form-item__label">-->
+                                        <!--<label for="caption" class="c-form-item-label-text">Caption (100 characters or less)</label>-->
+                                    <!--</div>-->
+                                    <!--<div class="c-form-item__control">-->
+                                        <!--<input v-model="formData.caption" type="text" name="caption" id="caption" maxlength="100" :class="{ 'has-error': formErrors.caption }">-->
+                                        <!--<div v-if="formErrors.caption" class="c-notes c-notes&#45;&#45;below c-notes&#45;&#45;bad c-form-control-error">-->
+                                            <!--{{ formErrors.caption }}-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
                             </div>
                         </section>

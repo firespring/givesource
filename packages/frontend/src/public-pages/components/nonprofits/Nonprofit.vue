@@ -76,8 +76,8 @@
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
                             <template v-if="slides.length">
                                 <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;">
-                                    <img v-if="slide.type === 'IMAGE'" alt="" :src="getImageUrl(slide.fileUuid)">
-                                    <iframe v-else :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                    <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide.fileUuid)">
+                                    <iframe v-else :alt="slide.caption" :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
                                             allowfullscreen></iframe>
                                 </div>
                             </template>

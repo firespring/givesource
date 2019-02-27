@@ -35,7 +35,7 @@
                 <th></th>
                 <th>Type</th>
                 <th>Preview</th>
-                <th class="u-width-100p">Caption</th>
+                <th class="u-width-100p"></th>
                 <th></th>
             </tr>
             </thead>
