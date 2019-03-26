@@ -56,6 +56,15 @@ exports.handle = (event, context, callback) => {
 					keys: ['legalName'],
 					threshold: 0.3,
 				};
+
+				if (request.queryParam('status', false)) {
+					nonprofits = nonprofits.filter(nonprofit => nonprofit.status.toLowerCase() === request.queryParam('status').toLowerCase());
+				}
+
+				if (!includeMatchFund) {
+					nonprofits = nonprofits.filter(nonprofit => nonprofit.uuid !== matchFundNonprofitUuid);
+				}
+
 				const fuse = new Fuse(nonprofits, options);
 				return fuse.search(request.queryParam('legalName'));
 			});
