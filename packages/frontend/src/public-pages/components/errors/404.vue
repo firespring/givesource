@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero :presentedBy="false">
             <h1 slot="title">Oops!</h1>
         </layout-hero>
@@ -37,6 +39,7 @@
 <script>
 	import * as Settings from './../../helpers/settings';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 
 	export default {
@@ -53,6 +56,7 @@
 		},
 		components: {
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 		}
 	};

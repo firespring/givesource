@@ -16,9 +16,12 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero :presentedBy="true">
             <h1 slot="title">Leaderboard</h1>
         </layout-hero>
+
         <main class="main">
             <div class="wrapper wrapper--sm">
                 <div class="main__content">
@@ -53,6 +56,7 @@
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentPagination from './../pagination/Pagination.vue';
 	import ComponentSponsors from './../layout/Sponsors.vue';
@@ -115,6 +119,7 @@
 		],
 		components: {
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-sponsors': ComponentSponsors,
 			'pagination': ComponentPagination,

@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero>
             <div slot="logo" v-if="logoUrl" class="page-hero__logo">
                 <img width="320" height="140" :alt="nonprofit.legalName" :src="logoUrl">
@@ -118,6 +120,7 @@
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 
 	require('fireSlider.js/dist/jquery.fireSlider.velocity');
@@ -317,6 +320,7 @@
 		},
 		components: {
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 		}
 	};

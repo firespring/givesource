@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero :presentedBy="true">
             <h1 slot="title">Nonprofit Search Results</h1>
         </layout-hero>
@@ -65,6 +67,7 @@
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentPagination from './../pagination/Pagination.vue';
 	import ComponentSearchResultsHeader from './SearchResultsHeader.vue';
@@ -183,6 +186,7 @@
 		],
 		components: {
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-spinner': ComponentSpinner,
 			'layout-sponsors': ComponentSponsors,

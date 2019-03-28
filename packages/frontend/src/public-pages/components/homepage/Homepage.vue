@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero :presentedBy="true" :wrap="true">
             <img v-show="homepageSpotlightUrl" slot="spotlight" :alt="eventTitle" :src="homepageSpotlightUrl">
 
@@ -53,6 +55,7 @@
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentLeaderboard from './Leaderboard.vue';
 	import ComponentMetrics from './Metrics.vue';
@@ -195,6 +198,7 @@
 		},
 		components: {
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-sponsors': ComponentSponsors,
 			'leaderboard': ComponentLeaderboard,

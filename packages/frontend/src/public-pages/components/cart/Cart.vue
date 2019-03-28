@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero>
             <h1 slot="title">Your Donations</h1>
         </layout-hero>
@@ -225,6 +227,7 @@
 	import ComponentAddressState from './../forms/AddressState.vue';
 	import ComponentCartDonations from './CartDonations.vue';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentPaymentCCMonth from './../forms/PaymentCCMonth.vue';
 	import ComponentPaymentCCNumber from './../forms/PaymentCCNumber.vue';
@@ -589,6 +592,7 @@
 			'forms-payment-cc-year': ComponentPaymentCCYear,
 			'forms-submit': ComponentSubmit,
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-sponsors': ComponentSponsors,
 		}

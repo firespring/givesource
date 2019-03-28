@@ -16,14 +16,12 @@
 
 <template>
     <div>
-        <layout-header></layout-header>
         <router-view></router-view>
         <modals></modals>
     </div>
 </template>
 
 <script>
-	import ComponentHeader from './layout/Header.vue';
 	import ComponentModals from './modals/Modals.vue';
 
 	export default {
@@ -53,7 +51,6 @@
 			}
 		},
 		components: {
-			'layout-header': ComponentHeader,
 			'modals': ComponentModals
 		}
 	};

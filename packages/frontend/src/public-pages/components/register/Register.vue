@@ -16,6 +16,8 @@
 
 <template>
     <div>
+        <layout-header></layout-header>
+
         <layout-hero :presentedBy="true">
             <h1 slot="title">Register for {{ eventTitle }}</h1>
         </layout-hero>
@@ -191,6 +193,7 @@
 	import * as Settings from './../../helpers/settings';
 	import ComponentAddressState from './../forms/AddressState.vue';
 	import ComponentFooter from './../layout/Footer.vue';
+	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentNonprofitCategory from './../forms/NonprofitCategory.vue';
 	import ComponentSponsors from './../layout/Sponsors.vue';
@@ -417,6 +420,7 @@
 			'forms-nonprofit-category': ComponentNonprofitCategory,
 			'forms-submit': ComponentSubmit,
 			'layout-footer': ComponentFooter,
+			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-sponsors': ComponentSponsors,
 		}
