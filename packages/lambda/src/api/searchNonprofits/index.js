@@ -55,6 +55,9 @@ exports.handle = (event, context, callback) => {
 				const options = {
 					keys: ['legalName'],
 					threshold: 0.3,
+					location: 0,
+					distance: 200,
+					tokenize: true
 				};
 
 				if (request.queryParam('status', false)) {
