@@ -45,22 +45,23 @@
 	import ComponentMoney from './../forms/Money.vue';
 
 	export default {
-		data: function () {
+		data() {
+			const vm = this;
+
 			return {
-				localAmount: this.amount,
-				localNote: this.note,
+				localAmount: vm.amount,
+				localNote: vm.note,
 				error: null,
 
 				formErrors: {},
 			};
 		},
 		computed: {
-			donationAmount: function () {
+			donationAmount() {
 				return this.formatMoney(this.amount);
 			},
-			placeHolder: function () {
-				const vue = this;
-				return "Leave " + vue.nonprofit.legalName + " a note with your donation";
+			placeHolder() {
+				return "Leave " + this.nonprofit.legalName + " a note with your donation";
 			}
 		},
 		props: [
@@ -71,30 +72,30 @@
 			'index'
 		],
 		watch: {
-			localAmount: function (value, oldValue) {
-				const vue = this;
+			localAmount(value, oldValue) {
+				const vm = this;
 
 				if (value !== oldValue) {
-					vue.$emit('updateCartItem', vue.index, vue.localAmount, vue.localNote);
+					vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote);
 				}
 			},
-			amount: function (value, oldValue) {
-				const vue = this;
+			amount(value, oldValue) {
+				const vm = this;
 
 				if (value === oldValue) {
 					return;
 				}
-				vue.formErrors = vue.validate({amount: value}, vue.getConstraints());
-				vue.error = !!Object.keys(vue.formErrors).length;
-				vue.$emit('hasError', vue.error);
+				vm.formErrors = vm.validate({amount: value}, vm.getConstraints());
+				vm.error = !!Object.keys(vm.formErrors).length;
+				vm.$emit('hasError', vm.error);
 
-				vue.localAmount = value;
+				vm.localAmount = value;
 			},
-			localNote: function (value, oldValue) {
-				const vue = this;
+			localNote(value, oldValue) {
+				const vm = this;
 
 				if (value !== oldValue) {
-					vue.$emit('updateCartItem', vue.index, vue.localAmount, vue.localNote);
+					vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote);
 				}
 			},
 			note: function (value, oldValue) {
@@ -108,7 +109,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					amount: {
 						presence: true,
@@ -119,14 +120,14 @@
 					},
 				};
 			},
-			deleteCartItem: function () {
-				const vue = this;
+			deleteCartItem() {
+				const vm = this;
 
-				vue.$store.commit('removeCartItem', vue.timestamp);
-				vue.$emit('removeCartItem', vue.index);
+				vm.$store.commit('removeCartItem', vm.timestamp);
+				vm.$emit('removeCartItem', vm.index);
 
 				if (!Utils.isInternetExplorer()) {
-					vue.bus.$emit('updateCartItems');
+					vm.bus.$emit('updateCartItems');
 				}
 			}
 		},

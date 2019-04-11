@@ -256,7 +256,7 @@
 					slide: 'div.slide',
 				});
 
-				if (slider.length > 1) {
+				if (vm.slides.length > 1) {
 					slider.on('mouseenter mouseover touchenter touchstart', () => {
 						vm.hover = true;
 					}).on('mouseelave mouseout touchleave touchend', () => {
