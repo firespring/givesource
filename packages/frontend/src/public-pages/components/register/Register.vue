@@ -67,7 +67,7 @@
                                                :class="{'has-error': formErrors.firstName}">
                                     </div>
                                     <div class="grid-item">
-                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="First Last"
+                                        <input v-model="formData.lastName" type="text" name="lastName" id="lastName" maxlength="200" placeholder="Last Name"
                                                :class="{'has-error': formErrors.lastName}">
                                     </div>
                                 </div>
