@@ -282,9 +282,9 @@ const loadCustomPages = (to, from, next) => {
 				};
 
 				contents.forEach((content) => {
-					if (content.key.includes(page.identifier)) {
+					if (content.key.indexOf(page.identifier) > -1) {
 						Object.keys(page).forEach((key) => {
-							if (content.key.includes(key.toUpperCase())) {
+							if (content.key.indexOf(key.toUpperCase()) > -1) {
 								page[key] = content.value;
 							}
 						});
@@ -292,9 +292,9 @@ const loadCustomPages = (to, from, next) => {
 				});
 
 				settings.forEach((setting) => {
-					if (setting.key.includes(page.identifier)) {
+					if (setting.key.indexOf(page.identifier) > -1) {
 						Object.keys(page).forEach((key) => {
-							if (setting.key.includes(key.toUpperCase())) {
+							if (setting.key.indexOf(key.toUpperCase()) > -1) {
 								page[key] = setting.value;
 							}
 						});
@@ -382,9 +382,10 @@ const updateSettings = () => {
 			}
 		});
 
-		if (_.compact(Object.values(files)).length) {
+		const values = Object.keys(files).map(key => files[key]);
+		if (_.compact(values).length) {
 			return axios.get(API_URL + 'files' + Utils.generateQueryString({
-				uuids: _.compact(Object.values(files))
+				uuids: _.compact(values)
 			}));
 		}
 
