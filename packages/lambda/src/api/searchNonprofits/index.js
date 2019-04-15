@@ -53,10 +53,11 @@ exports.handle = (event, context, callback) => {
 		if (request.queryParam('legalName', false)) {
 			return repository.getAll().then(nonprofits => {
 				const options = {
-					keys: ['legalName'],
-					threshold: 0.3,
-					location: 0,
 					distance: 200,
+					keys: ['legalName'],
+					location: 0,
+					sort: true,
+					threshold: 0.3,
 					tokenize: true
 				};
 

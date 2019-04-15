@@ -100,9 +100,11 @@
 
 				vue.pagination.loaded = false;
 				vue.$request.get('nonprofits/search', params).then(function (response) {
-					response.data.sort(function (a, b) {
-						return Utils.sortAlphabetically(a, b, 'legalName');
-					});
+					if (!params.hasOwnProperty('legalName')) {
+						response.data.sort(function (a, b) {
+							return Utils.sortAlphabetically(a, b, 'legalName');
+						});
+                    }
 					vue.setPaginationData({
 						size: 0,
 						sort: sort,

@@ -109,9 +109,11 @@
 					options.status = 'ACTIVE';
 					options.includeMatchFund = 0;
 					axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
-						response.data.sort(function (a, b) {
-							return Utils.sortAlphabetically(a, b, 'legalName');
-						});
+						if (!options.hasOwnProperty('legalName')) {
+							response.data.sort(function (a, b) {
+								return Utils.sortAlphabetically(a, b, 'legalName');
+							});
+                        }
 						vue.fetchLogos(response.data).then(function () {
 							vue.setPaginationData({items: response.data});
 						});
@@ -147,9 +149,11 @@
 				options.status = 'ACTIVE';
 				options.includeMatchFund = 0;
 				axios.get(API_URL + 'nonprofits/search' + Utils.generateQueryString(options)).then(function (response) {
-					response.data.sort(function (a, b) {
-						return Utils.sortAlphabetically(a, b, 'legalName');
-					});
+					if (!options.hasOwnProperty('legalName')) {
+						response.data.sort(function (a, b) {
+							return Utils.sortAlphabetically(a, b, 'legalName');
+						});
+					}
 					vue.fetchLogos(response.data).then(function () {
 						vue.setPaginationData({items: response.data});
 						next();
