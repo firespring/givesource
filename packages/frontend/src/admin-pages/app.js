@@ -59,9 +59,6 @@ Vue.component('api-error', ComponentApiError);
 Vue.component('navigation', ComponentNavigation);
 Vue.component('v-gravatar', ComponentGravatar);
 
-// Bootstrap libs
-// bootstrapCkeditor();
-
 // Register vue global
 Vue.prototype.user = {};
 Vue.prototype.user.groups = [];
