@@ -87,7 +87,7 @@
                     <div class="c-notes c-notes--above">
                         Describe the non-profit's mission, purpose, and goals for the giving day.
                     </div>
-                    <forms-ckeditor v-model="formData.longDescription" :loaded="loaded" id="longDescription" :hasErrors="formErrors.longDescription"></forms-ckeditor>
+                    <forms-ckeditor v-model="formData.longDescription" :loaded="loaded" id="longDescription" :hasErrors="formErrors.longDescription" type="moderate"></forms-ckeditor>
                     <div v-if="formErrors.longDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                         {{ formErrors.longDescription }}
                     </div>

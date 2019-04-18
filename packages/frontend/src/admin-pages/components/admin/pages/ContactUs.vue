@@ -46,8 +46,7 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.CONTACT_FORM_TEXT.value" :loaded="loaded" id="formText" type="Advanced" :allowImages="true">
-                                        </forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.CONTACT_FORM_TEXT.value" :loaded="loaded" id="formText" type="advanced"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -66,8 +65,7 @@
                             <div class="c-page-section__main">
                                 <div class="c-form-item c-form-item--rich-text">
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.CONTACT_RESPONSE_TEXT.value" :loaded="loaded" id="responseText" type="Advanced" :allowImages="true">
-                                        </forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.CONTACT_RESPONSE_TEXT.value" :loaded="loaded" id="responseText" type="advanced"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>

@@ -47,7 +47,7 @@
                                         <label for="questionAnswer" class="c-form-item-label-text">Answer</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.FAQ_LIST_ITEM_ANSWER.value" id="questionAnswer" type="Advanced" :allowImages="true"
+                                        <forms-ckeditor v-model="formData.FAQ_LIST_ITEM_ANSWER.value" id="questionAnswer" type="advanced"
                                                         :has-error="formErrors['FAQ_LIST_ITEM_ANSWER.value']"></forms-ckeditor>
                                         <div v-if="formErrors['FAQ_LIST_ITEM_ANSWER.value']" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors['FAQ_LIST_ITEM_ANSWER.value'] }}

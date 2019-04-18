@@ -15,18 +15,13 @@
   -->
 
 <template>
-    <textarea :id="id" :value="value"></textarea>
+    <textarea :id="id" :value="value" :class="{'has-error': hasErrors}" :height="height"></textarea>
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-				plugins: {
-					Basic: '',
-					Advanced: 'colorbutton,colordialog'
-				},
-
 				toolbars: {
 					Basic: [
 						{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
@@ -52,9 +47,9 @@
 				type: String,
 				default: '',
 			},
-			allowImages: {
+			hasErrors: {
 				type: Boolean,
-				default: false,
+				default: false
 			},
 			height: {
 				type: String,
@@ -70,37 +65,17 @@
 			},
 		},
 		computed: {
-			extraPlugins() {
-				const vm = this;
-
-				let plugins = (vm.type && vm.plugins.hasOwnProperty(vm.type)) ? vm.plugins[vm.type] : vm.toolbars.Basic;
-				if (vm.allowImages) {
-					plugins = (plugins === '') ? 'insertimage' : plugins + ',insertimage';
-				}
-
-				return plugins;
-			},
 			toolbar() {
 				const vm = this;
-
-				const toolbar = (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.Basic;
-				if (vm.allowImages) {
-					toolbar.push({
-						name: 'insert',
-						items: ['Image']
-					});
-				}
-
-				return toolbar;
+				return (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.Basic;
 			}
 		},
 		mounted() {
 			const vm = this;
 
 			const config = {
-				allowedContent: vm.allowImages,
 				disallowedContent: 'script',
-				extraPlugins: vm.extraPlugins,
+				extraPlugins: 'colorbutton,colordialog',
 				height: vm.height,
 				language: vm.language,
 				toolbar: vm.toolbar,

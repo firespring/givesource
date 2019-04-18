@@ -18,7 +18,7 @@ import * as VueMoney from 'v-money';
 import AlertCloseDirective from './directives/alertClose';
 import AutoFocusDirective from './directives/autoFocus';
 import axios from 'axios';
-import bootstrapCkeditor from './bootstrap/ckeditor';
+import CKEditor from '@ckeditor/ckeditor5-vue';
 import ComponentApiError from './components/errors/ApiError.vue';
 import ComponentApp from './components/App.vue';
 import ComponentGravatar from 'vue-gravatar';
@@ -36,8 +36,9 @@ import ValidateMixin from './mixins/validate';
 import Vue from 'vue';
 import VueFilters from './filters';
 
-// Register filters
+// Register plugins
 Vue.use(VueFilters);
+Vue.use(CKEditor);
 
 // Register mixins
 Vue.mixin(EventBusMixin);
@@ -59,7 +60,7 @@ Vue.component('navigation', ComponentNavigation);
 Vue.component('v-gravatar', ComponentGravatar);
 
 // Bootstrap libs
-bootstrapCkeditor();
+// bootstrapCkeditor();
 
 // Register vue global
 Vue.prototype.user = {};

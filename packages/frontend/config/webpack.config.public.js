@@ -24,7 +24,7 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const FetchDynamicContent = require('./../bin/fetch-dynamic-content');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const WebpackOnBuildPlugin = require('on-build-webpack');
 
@@ -56,7 +56,7 @@ module.exports = function () {
 					test: /\.js$/,
 					exclude: /node_modules/,
 					loader: 'babel-loader'
-				}
+				},
 			]
 		},
 		resolve: {
@@ -113,7 +113,11 @@ module.exports = function () {
 		]
 	};
 	if (env === 'production') {
-		config.plugins.push(new UglifyJsPlugin());
+		config.optimization = {
+			minimizer: [
+				new TerserPlugin()
+			]
+		};
 	}
 	return config;
 };

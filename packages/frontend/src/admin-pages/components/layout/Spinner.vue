@@ -15,7 +15,7 @@
   -->
 
 <template>
-    <div style="justify-content: center; align-items: center; display: flex;" :style="{ height: height }">
+    <div style="justify-content: center; align-items: center; display: flex;" :style="{ height: height + 'px' }">
         <div class="c-progress c-progress--spinner c-spinner-active" :class="spinnerClass">
             <div class="c-spinner-layer c-spinner-orange-only">
                 <div class="c-spinner-circle-clipper left">

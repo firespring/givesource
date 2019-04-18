@@ -75,7 +75,7 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MASTHEAD_TEXT.value" :loaded="loaded" id="headerText" type="Basic"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MASTHEAD_TEXT.value" :loaded="loaded" id="headerText" type="basic"></forms-ckeditor>
                                     </div>
                                 </div>
 
@@ -88,8 +88,7 @@
                                         </div>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MAIN_TEXT.value" :loaded="loaded" id="mainText" type="Advanced" :allowImages="true">
-                                        </forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_MAIN_TEXT.value" :loaded="loaded" id="mainText" type="advanced"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +127,7 @@
                                     </div>
 
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_REGISTER_DETAILS.value" :loaded="loaded" id="nonprofitDetailsText" type="Basic">
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_REGISTER_DETAILS.value" :loaded="loaded" id="nonprofitDetailsText" type="basic">
                                         </forms-ckeditor>
                                     </div>
                                 </div>
@@ -227,8 +226,8 @@
                                     </div>
 
                                     <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_POST_EVENT_TEXT.value" :loaded="loaded" id="postEventDetailsText" type="Advanced"
-                                                        :allowImages="true"></forms-ckeditor>
+                                        <forms-ckeditor v-model="formData.contents.HOMEPAGE_POST_EVENT_TEXT.value" :loaded="loaded" id="postEventDetailsText"
+                                                        type="advanced"></forms-ckeditor>
                                     </div>
                                 </div>
                             </div>

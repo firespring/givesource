@@ -15,25 +15,30 @@
   -->
 
 <template>
-    <component v-if="loaded" :is="editor" v-model="localValue" :type="type" :id="id" :height="height" :hasErrors="hasErrors"></component>
-    <layout-spinner v-else :height="height"></layout-spinner>
+    <ckeditor v-model="localValue" :editor="editor" tag-name="textarea" :class="{'has-errors': hasErrors}" :id="id"></ckeditor>
 </template>
 
 <script>
-	import ComponentCkeditor4 from './Ckeditor4.vue';
-	import ComponentCkeditor5 from './Ckeditor5.vue';
+	import AdvancedEditor from './../../ckeditor/editors/advanced';
+	import BasicEditor from './../../ckeditor/editors/basic';
 	import ComponentSpinner from './../layout/Spinner.vue';
+	import ModerateEditor from './../../ckeditor/editors/moderate';
 
 	export default {
 		data() {
 			return {
 				localValue: this.value ? this.value : '',
-			};
+				editors: {
+					advanced: AdvancedEditor,
+					basic: BasicEditor,
+					moderate: ModerateEditor,
+				},
+			}
 		},
 		computed: {
 			editor() {
 				const vm = this;
-				return vm.isInternetExplorer() || vm.isMicrosoftEdge() ? 'forms-ckeditor4' : 'forms-ckeditor5';
+				return vm.type && vm.editors.hasOwnProperty(vm.type) ? vm.editors[vm.type] : vm.editors.basic;
 			}
 		},
 		props: {
@@ -45,14 +50,6 @@
 			hasErrors: {
 				type: Boolean,
 				default: false
-			},
-			height: {
-				type: String,
-				default: '200'
-			},
-			loaded: {
-				type: Boolean,
-				default: true
 			},
 			type: {
 				type: String,
@@ -74,8 +71,6 @@
 			}
 		},
 		components: {
-			'forms-ckeditor4': ComponentCkeditor4,
-			'forms-ckeditor5': ComponentCkeditor5,
 			'layout-spinner': ComponentSpinner,
 		}
 	};

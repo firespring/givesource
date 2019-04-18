@@ -16,11 +16,11 @@
 
 const mixin = {
 	methods: {
-		sync: function (object, sources) {
+		sync(object, sources) {
 			object = JSON.parse(JSON.stringify(object));
 			sources = Array.isArray(sources) ? sources : [sources];
-			Object.keys(object).forEach(function (key) {
-				sources.forEach(function (source) {
+			Object.keys(object).forEach(key => {
+				sources.forEach(source => {
 					source = JSON.parse(JSON.stringify(source));
 					if (source.hasOwnProperty(key) && source[key] !== undefined && source[key] !== null) {
 						object[key] = source[key];
@@ -29,14 +29,14 @@ const mixin = {
 			});
 			return object;
 		},
-		getUpdatedParameters: function (data, originals) {
+		getUpdatedParameters(data, originals) {
 			const mixin = this;
 
 			const params = {};
 			data = JSON.parse(JSON.stringify(data));
 			originals = Array.isArray(originals) ? originals : [originals];
-			Object.keys(data).forEach(function (key) {
-				originals.forEach(function (original) {
+			Object.keys(data).forEach(key => {
+				originals.forEach(original => {
 					original = JSON.parse(JSON.stringify(original));
 					if (!original.hasOwnProperty(key) || original[key] !== data[key] || (mixin.isEmptyParam(original[key]) && !mixin.isEmptyParam(data[key])) || (!mixin.isEmptyParam(original[key]) && mixin.isEmptyParam(data[key]))) {
 						params[key] = data[key];
@@ -45,8 +45,14 @@ const mixin = {
 			});
 			return params;
 		},
-		isEmptyParam: function (param) {
+		isEmptyParam(param) {
 			return param === undefined || param === null || param === '';
+		},
+		isInternetExplorer() {
+			return (navigator.appVersion.indexOf("MSIE 10") > -1) || (navigator.userAgent.indexOf("Trident") > -1 && navigator.userAgent.indexOf("rv:11") > -1);
+		},
+		isMicrosoftEdge() {
+			return (/Edge/.test(navigator.userAgent));
 		}
 	}
 };

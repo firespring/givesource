@@ -17,14 +17,21 @@
 const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../.env`});
 
-const path = require('path');
-const webpack = require('webpack');
-const BrowserSyncSpa = require('browser-sync-middleware-spa');
+const {styles} = require('@ckeditor/ckeditor5-dev-utils');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const BrowserSyncSpa = require('browser-sync-middleware-spa');
+const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const webpack = require('webpack');
+
+const transpileDependencies = [
+	'@ckeditor',
+	'amazon-cognito-identity-js'
+];
 
 module.exports = function () {
 	const env = process.env.NODE_ENV || 'development';
@@ -44,16 +51,49 @@ module.exports = function () {
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/i,
+					exclude: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
 					loader: 'file-loader?name=assets/img/[name].[ext]'
 				},
 				{
 					test: /\.css$/,
+					exclude: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
 					loader: 'style-loader!css-loader'
 				},
 				{
 					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader'
+					exclude: new RegExp(`node_modules/(?!(${transpileDependencies.join('|')})/).*`),
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: [
+								['@babel/preset-env']
+							]
+						}
+					}
+				},
+				{
+					test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+					use: [
+						{
+							loader: 'style-loader',
+							options: {
+								singleton: true,
+							},
+						},
+						{
+							loader: 'postcss-loader',
+							options: styles.getPostCssConfig({
+								themeImporter: {
+									themePath: require.resolve('@ckeditor/ckeditor5-theme-lark'),
+								},
+								minify: true,
+							}),
+						},
+					],
+				},
+				{
+					test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+					loader: 'raw-loader'
 				}
 			]
 		},
@@ -64,7 +104,9 @@ module.exports = function () {
 		},
 		target: 'web',
 		entry: [
-			'./src/admin-pages/app.js'
+			'@babel/polyfill',
+			'whatwg-fetch',
+			'./src/admin-pages/app.js',
 		],
 		output: {
 			path: path.resolve(__dirname, './../build/admin-pages'),
@@ -95,6 +137,7 @@ module.exports = function () {
 				]
 			}),
 			new VueLoaderPlugin(),
+			new CKEditorWebpackPlugin({language: 'en'}),
 			new HtmlWebpackPlugin({
 				template: 'src/admin-pages/index.html'
 			}),
@@ -114,7 +157,11 @@ module.exports = function () {
 		]
 	};
 	if (env === 'production') {
-		config.plugins.push(new UglifyJsPlugin());
+		config.optimization = {
+			minimizer: [
+				new TerserPlugin()
+			]
+		};
 	}
 	return config;
 };
