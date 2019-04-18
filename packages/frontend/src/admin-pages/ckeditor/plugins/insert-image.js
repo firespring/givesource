@@ -44,12 +44,10 @@ export default class InsertImage extends Plugin {
 					if (input.files.length) {
 						plugin.uploadImage(input.files[0]).then(file => {
 							const src = store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path;
-							console.log(src);
 							editor.model.change(writer => {
 								const imageElement = writer.createElement('image', {
 									src: src
 								});
-
 								editor.model.insertContent(imageElement, editor.model.document.selection);
 							});
 						}).catch(err => {
