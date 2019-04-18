@@ -18,7 +18,6 @@ import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classicedi
 import BlockQuotePlugin from '@ckeditor/ckeditor5-block-quote/src/blockquote';
 import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
-import HeadingPlugin from '@ckeditor/ckeditor5-heading/src/heading';
 import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import LinkPlugin from '@ckeditor/ckeditor5-link/src/link';
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list';
@@ -30,7 +29,6 @@ export default class ModerateEditor extends ClassicEditorBase {
 // Plugins to include in the build.
 ModerateEditor.builtinPlugins = [
 	EssentialsPlugin,
-	HeadingPlugin,
 	BoldPlugin,
 	ItalicPlugin,
 	BlockQuotePlugin,

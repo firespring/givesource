@@ -23,15 +23,20 @@
 		data() {
 			return {
 				toolbars: {
-					Basic: [
-						{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
+					basic: [
+						{name: 'basicstyles', items: ['Bold', 'Italic', '-', 'RemoveFormat']},
 						{name: 'links', items: ['Link', 'Unlink']},
 					],
-					Advanced: [
+                    moderate: [
+	                    {name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat']},
+	                    {name: 'paragraph', items: ['NumberedList', 'BulletedList']},
+	                    {name: 'links', items: ['Link', 'Unlink']},
+	                    {name: 'tools', items: ['Maximize']},
+                    ],
+					advanced: [
 						{name: 'styles', items: ['Format']},
-						{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']},
-						{name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote']},
-						{name: 'colors', items: ['TextColor', 'BGColor']},
+						{name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat']},
+						{name: 'paragraph', items: ['NumberedList', 'BulletedList']},
 						{name: 'links', items: ['Link', 'Unlink']},
 						{name: 'tools', items: ['Maximize']},
 					]
@@ -55,29 +60,25 @@
 				type: String,
 				default: '200',
 			},
-			language: {
-				type: String,
-				default: 'en-us'
-			},
 			type: {
 				type: String,
-				default: 'Basic'
+				default: 'basic'
 			},
 		},
 		computed: {
 			toolbar() {
 				const vm = this;
-				return (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.Basic;
-			}
+				return (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.basic;
+			},
 		},
 		mounted() {
 			const vm = this;
 
 			const config = {
+				allowedContent: (vm.type === 'advanced'),
 				disallowedContent: 'script',
-				extraPlugins: 'colorbutton,colordialog',
 				height: vm.height,
-				language: vm.language,
+				language: 'en-us',
 				toolbar: vm.toolbar,
 			};
 
