@@ -31,7 +31,7 @@ exports.handle = (event, context, callback) => {
 	const functionName = process.env.AWS_STACK_NAME + '-' + event.ResourceProperties.FunctionName;
 	const region = 'us-east-1';
 	const role = event.ResourceProperties.Role;
-	const runtime = 'nodejs6.10';
+	const runtime = 'nodejs8.10';
 
 	if (event.RequestType === 'Delete') {
 		lambda.deleteFunction(region, event.PhysicalResourceId).then(() => {

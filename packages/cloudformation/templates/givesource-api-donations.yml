@@ -53,7 +53,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonationLambdaInvokePermission:
@@ -82,7 +82,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetDonationsLambdaInvokePermission:
@@ -111,7 +111,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostDonationLambdaInvokePermission:
@@ -140,7 +140,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchDonationLambdaInvokePermission:
@@ -169,7 +169,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteDonationLambdaInvokePermission:
@@ -198,7 +198,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref SecureLambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   ProcessDonationsLambdaInvokePermission:
@@ -228,7 +228,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostDonationsReceiptLambdaInvokePermission:

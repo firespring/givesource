@@ -50,7 +50,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetContentsLambdaInvokePermission:
@@ -79,7 +79,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostContentLambdaInvokePermission:
@@ -108,7 +108,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchContentLambdaInvokePermission:
@@ -137,7 +137,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchContentsLambdaInvokePermission:
@@ -166,7 +166,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteContentLambdaInvokePermission:
@@ -195,7 +195,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteContentsLambdaInvokePermission:

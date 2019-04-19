@@ -66,7 +66,7 @@ Resources:
         ${StackName}-AuthorizeUsers
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CognitoUserPool
 
@@ -99,7 +99,7 @@ Resources:
         ${StackName}-ApiGatewayFlushCache
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Api Gateway Authorizers
@@ -151,7 +151,7 @@ Resources:
         ${StackName}-CognitoCreateUserPool
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CognitoCustomMessageFunction
 
@@ -170,7 +170,7 @@ Resources:
         ${StackName}-CognitoCreateUserPoolClient
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCreateUserFunction:
@@ -188,7 +188,7 @@ Resources:
         ${StackName}-CognitoCreateUser
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCreateUserGroupFunction:
@@ -206,7 +206,7 @@ Resources:
         ${StackName}-CognitoCreateUserGroup
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCustomMessageFunction:
@@ -227,7 +227,7 @@ Resources:
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   CognitoCustomMessageLambdaInvokePermission:
@@ -322,7 +322,7 @@ Resources:
         ${StackName}-GenerateCustomFrontendCss
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Generate dynamic content
@@ -343,7 +343,7 @@ Resources:
         ${StackName}-GenerateDynamicContent
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn:
       - GenerateCustomFrontendCssLambdaFunction
@@ -450,7 +450,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CreateLambdaEdgeFunctionRole
 
@@ -470,7 +470,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CreateLambdaEdgeFunctionRole
 
@@ -491,7 +491,7 @@ Resources:
         ${StackName}-CreateParameter
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Report Lambda Resources
@@ -512,7 +512,7 @@ Resources:
         ${StackName}-GenerateReport
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteReportsLambdaFunction:
@@ -532,7 +532,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteReportsLambdaInvokePermission:
@@ -563,7 +563,7 @@ Resources:
         ${StackName}-SaveSettings
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Secure Settings KMS Resources
@@ -612,7 +612,7 @@ Resources:
         ${StackName}-S3PutObject
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   S3SyncObjectsFunction:
@@ -630,7 +630,7 @@ Resources:
         ${StackName}-S3SyncObjects
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Create Lambda@Edge Functions
@@ -767,7 +767,7 @@ Resources:
       FunctionName: GeneratePublicPagesHtml
       StackName: !Ref StackName
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
     DependsOn:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
@@ -958,7 +958,7 @@ Resources:
         ${StackName}-SendDonationNotificationEmail
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   SendDonationsReceiptEmailLambdaFunction:
@@ -976,7 +976,7 @@ Resources:
         ${StackName}-SendDonationsReceiptEmail
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   SendContactMessageEmailLambdaFunction:
@@ -994,7 +994,7 @@ Resources:
         ${StackName}-SendContactMessageEmail
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   SendRegistrationPendingEmailLambdaFunction:
@@ -1012,7 +1012,7 @@ Resources:
         ${StackName}-SendRegistrationPendingEmail
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Metrics lambda functions
@@ -1032,7 +1032,7 @@ Resources:
         ${StackName}-MetricAddAmount
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   MetricMaxAmountLambdaFunction:
@@ -1050,7 +1050,7 @@ Resources:
         ${StackName}-MetricMaxAmount
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
 Outputs:

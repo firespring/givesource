@@ -48,7 +48,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteReportsLambdaInvokePermission:
