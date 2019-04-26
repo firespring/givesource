@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Firespring, Inc.
+ * Copyright 2019 Firespring, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 const EmailHelper = require('./../../helpers/email');
 const FilesRepository = require('./../../repositories/files');
+const HttpException = require('./../../exceptions/http');
 const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
