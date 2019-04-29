@@ -77,7 +77,7 @@
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
                             <template v-if="slides.length">
-                                <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;">
+                                <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;" :key="slide.uuid">
                                     <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide.fileUuid)">
                                     <iframe v-else :alt="slide.caption" :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
                                             allowfullscreen></iframe>
@@ -248,37 +248,40 @@
 			const vm = this;
 
 			$(document).ready(() => {
-				const slider = $(vm.$refs.slider).data({
-					pager: $(vm.$refs.sliderNav)
-				}).fireSlider({
-					activePagerClass: 'current',
-					pagerTemplate: '<a href="#"></a>',
-					slide: 'div.slide',
-				});
-
-				if (vm.slides.length > 1) {
-					slider.on('mouseenter mouseover touchenter touchstart', () => {
-						vm.hover = true;
-					}).on('mouseelave mouseout touchleave touchend', () => {
-						vm.hover = false;
+				// Do this on the next tick so Safari and Firefox to work correctly
+				vm.$nextTick(() => {
+					const slider = $(vm.$refs.slider).data({
+						pager: $(vm.$refs.sliderNav)
+					}).fireSlider({
+						activePagerClass: 'current',
+						pagerTemplate: '<a href="#"></a>',
+						slide: 'div.slide',
 					});
 
-					// Pause slider if we interact with a slide (including videos)
-					window.addEventListener('blur', () => {
-						if (vm.hover) {
+					if (vm.slides.length > 1) {
+						slider.on('mouseenter mouseover touchenter touchstart', () => {
+							vm.hover = true;
+						}).on('mouseelave mouseout touchleave touchend', () => {
+							vm.hover = false;
+						});
+
+						// Pause slider if we interact with a slide (including videos)
+						window.addEventListener('blur', () => {
+							if (vm.hover) {
+								slider.data('fireSlider').pause();
+							}
+						});
+
+						slider.data('fireSlider').slides.on('click', () => {
 							slider.data('fireSlider').pause();
-						}
-					});
+						});
 
-					slider.data('fireSlider').slides.on('click', () => {
-						slider.data('fireSlider').pause();
-					});
-
-					// Resume playing slider if we interact with the pager
-					slider.data('fireSlider').pages.on('click', () => {
-						slider.data('fireSlider').play();
-					});
-				}
+						// Resume playing slider if we interact with the pager
+						slider.data('fireSlider').pages.on('click', () => {
+							slider.data('fireSlider').play();
+						});
+					}
+				});
 			});
 		},
 		methods: {
