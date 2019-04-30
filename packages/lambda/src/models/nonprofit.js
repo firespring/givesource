@@ -43,6 +43,7 @@ Nonprofit.prototype.attributes = [
 	'address1',
 	'address2',
 	'address3',
+	'annualRevenue',
 	'category1',
 	'category2',
 	'category3',
@@ -56,6 +57,7 @@ Nonprofit.prototype.attributes = [
 	'legalNameSearch',
 	'logoFileUuid',
 	'longDescription',
+	'numberOfEmployees',
 	'phone',
 	'receiveDonationNotifications',
 	'shortDescription',
@@ -85,6 +87,10 @@ Nonprofit.prototype.constraints = {
 	address3: {
 		presence: false,
 		type: 'string'
+	},
+	annualRevenue: {
+		presence: false,
+		type: 'number'
 	},
 	category1: {
 		presence: true,
@@ -139,6 +145,10 @@ Nonprofit.prototype.constraints = {
 	longDescription: {
 		presence: false,
 		type: 'string'
+	},
+	numberOfEmployees: {
+		presence: false,
+		type: 'number'
 	},
 	phone: {
 		presence: false,

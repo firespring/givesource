@@ -163,6 +163,30 @@
                                 <forms-nonprofit-category v-model="formData.categories"></forms-nonprofit-category>
                             </div>
                         </div>
+
+                        <div class="form-item">
+                            <div class="form-item__label">
+                                Annual Revenues
+                            </div>
+                            <div class="form-item__control">
+                                <div v-if="formErrors.annualRevenue" class="notes notes--above notes--error">
+                                    {{ formErrors.annualRevenue }}
+                                </div>
+                                <forms-nonprofit-revenue v-model="formData.annualRevenue" placeholder="--None--"></forms-nonprofit-revenue>
+                            </div>
+                        </div>
+
+                        <div class="form-item">
+                            <div class="form-item__label">
+                                Number of Employees
+                            </div>
+                            <div class="form-item__control">
+                                <div v-if="formErrors.numberOfEmployees" class="notes notes--above notes--error">
+                                    {{ formErrors.numberOfEmployees }}
+                                </div>
+                                <forms-nonprofit-number-of-employees v-model="formData.numberOfEmployees" placeholder="--None--"></forms-nonprofit-number-of-employees>
+                            </div>
+                        </div>
                     </fieldset>
 
                     <div class="form-actions flex justify-center items-center">
@@ -196,6 +220,8 @@
 	import ComponentHeader from './../layout/Header.vue';
 	import ComponentHero from './../layout/Hero.vue';
 	import ComponentNonprofitCategory from './../forms/NonprofitCategory.vue';
+	import ComponentNonprofitNumberOfEmployees from './../forms/NonprofitNumberOfEmployees.vue';
+	import ComponentNonprofitRevenue from './../forms/NonprofitRevenueSelect.vue';
 	import ComponentSponsors from './../layout/Sponsors.vue';
 	import ComponentSubmit from './../forms/Submit.vue';
 
@@ -219,6 +245,8 @@
 					firstName: '',
 					lastName: '',
 					email: '',
+					annualRevenue: '',
+					numberOfEmployees: '',
 				},
 
 				formErrors: {},
@@ -364,6 +392,12 @@
 							message: 'The email entered is not valid'
 						},
 					},
+					annualRevenue: {
+						presence: false,
+                    },
+					numberOfEmployees: {
+						presence: false,
+                    }
 				}
 			},
 			submit: function (event) {
@@ -395,7 +429,8 @@
 						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : null,
 						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : null,
 						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : null,
-
+						annualRevenue: vue.formData.annualRevenue,
+						numberOfEmployees: vue.formData.numberOfEmployees
 					},
 					user: {
 						firstName: vue.formData.firstName,
@@ -418,6 +453,8 @@
 		components: {
 			'forms-address-state': ComponentAddressState,
 			'forms-nonprofit-category': ComponentNonprofitCategory,
+            'forms-nonprofit-number-of-employees': ComponentNonprofitNumberOfEmployees,
+			'forms-nonprofit-revenue': ComponentNonprofitRevenue,
 			'forms-submit': ComponentSubmit,
 			'layout-footer': ComponentFooter,
 			'layout-header': ComponentHeader,
