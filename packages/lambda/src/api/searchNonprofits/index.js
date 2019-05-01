@@ -70,7 +70,7 @@ exports.handle = (event, context, callback) => {
 				}
 
 				const fuse = new Fuse(nonprofits, options);
-				return fuse.search(request.queryParam('legalName'));
+				return fuse.search(request.queryParam('legalName')).slice(0, 50);
 			});
 		}
 		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status', 'c']), matchFundNonprofitUuid));
