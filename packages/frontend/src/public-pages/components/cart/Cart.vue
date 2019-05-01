@@ -26,7 +26,7 @@
             <div class="wrapper wrapper--sm">
                 <api-error v-model="apiError"></api-error>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <cart-donations v-model="formData.isFeeCovered" :displayTotal="!isCartEmpty" v-on:hasError="donationHasErrors"></cart-donations>
 
                     <fieldset v-if="!isCartEmpty">
@@ -237,7 +237,7 @@
 	import ComponentSubmit from './../forms/Submit.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				processing: false,
 				donationError: false,
@@ -248,7 +248,7 @@
 
 				// Form Data
 				formData: {
-					isFeeCovered: false,
+					isFeeCovered: true,
 					isAnonymous: false,
 				},
 
@@ -284,78 +284,78 @@
 			};
 		},
 		computed: {
-			text: function () {
+			text() {
 				const text = _.find(this.contents, {key: 'CART_CHECKOUT_TEXT'});
 				return text ? text.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			},
-			isCartEmpty: function () {
+			isCartEmpty() {
 				return this.$store.state.cartItems.length === 0;
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
 					keys: 'CART_CHECKOUT_TEXT',
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				})).then(response => {
+					vm.contents = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: 'CART_CHECKOUT_TEXT',
-			})).then(function (response) {
-				vue.contents = response.data;
+			})).then(response => {
+				vm.contents = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Your Donations');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Your Donations');
 		},
 		watch: {
 			donor: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors.donor).length) {
-						vue.formErrors.donor = vue.validate(vue.donor, vue.getDonorConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors.donor).length) {
+						vm.formErrors.donor = vm.validate(vm.donor, vm.getDonorConstraints());
 					}
 				},
 				deep: true
 			},
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors.formData).length) {
-						vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors.formData).length) {
+						vm.formErrors.formData = vm.validate(vm.formData, vm.getFormDataConstraints());
 					}
 				},
 				deep: true
 			},
 			paymentDetails: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors.paymentDetails).length) {
-						vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors.paymentDetails).length) {
+						vm.formErrors.paymentDetails = vm.validate(vm.paymentDetails, vm.getPaymentDetailsConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getDonorConstraints: function () {
+			getDonorConstraints() {
 				return {
 					address1: {
 						label: '',
@@ -401,7 +401,7 @@
 					},
 				};
 			},
-			getFormDataConstraints: function () {
+			getFormDataConstraints() {
 				return {
 					isFeeCovered: {
 						presence: false,
@@ -411,7 +411,7 @@
 					}
 				};
 			},
-			getPaymentDetailsConstraints: function () {
+			getPaymentDetailsConstraints() {
 				return {
 					ccNumber: {
 						label: '',
@@ -456,66 +456,65 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.processing = true;
-				vue.formErrors.donor = vue.validate(vue.donor, vue.getDonorConstraints());
-				vue.formErrors.formData = vue.validate(vue.formData, vue.getFormDataConstraints());
-				vue.formErrors.paymentDetails = vue.validate(vue.paymentDetails, vue.getPaymentDetailsConstraints());
+				vm.processing = true;
+				vm.formErrors.donor = vm.validate(vm.donor, vm.getDonorConstraints());
+				vm.formErrors.formData = vm.validate(vm.formData, vm.getFormDataConstraints());
+				vm.formErrors.paymentDetails = vm.validate(vm.paymentDetails, vm.getPaymentDetailsConstraints());
 
-				if (vue.donationError) {
+				if (vm.donationError) {
 					$('table.table-donations')[0].scrollIntoView(true);
-					vue.processing = false;
-				} else if (Object.keys(vue.formErrors.donor).length || Object.keys(vue.formErrors.formData).length || Object.keys(vue.formErrors.paymentDetails).length) {
-					vue.scrollToError();
-					vue.processing = false;
+					vm.processing = false;
+				} else if (Object.keys(vm.formErrors.donor).length || Object.keys(vm.formErrors.formData).length || Object.keys(vm.formErrors.paymentDetails).length) {
+					vm.scrollToError();
+					vm.processing = false;
 				} else {
-					vue.processDonations();
+					vm.processDonations();
 				}
 			},
-			processDonations: function () {
-				const vue = this;
+			processDonations() {
+				const vm = this;
 
-				vue.getPaymentToken().then(function (response) {
+				vm.getPaymentToken().then(response => {
 					const payment = response.data;
-					payment.is_test_mode = !_.find(vue.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'}).value;
+					payment.is_test_mode = !_.find(vm.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'}).value;
 					return axios.post(API_URL + 'donations/process', {
-						donor: vue.donor,
-						donations: vue.getDonations(),
+						donor: vm.donor,
+						donations: vm.getDonations(),
 						payment: payment,
 					});
-				}).then(function (response) {
-					vue.processing = false;
+				}).then(response => {
+					vm.processing = false;
 
 					if (response.data && response.data.errorMessage) {
 						console.log(response.data);
-						vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+						vm.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
 					} else {
-						vue.$store.commit('clearCartItems');
+						vm.$store.commit('clearCartItems');
 						if (!Utils.isInternetExplorer()) {
-							vue.bus.$emit('updateCartItems');
+							vm.bus.$emit('updateCartItems');
 						}
-						vue.$router.push({name: 'cart-response'});
+						vm.$router.push({name: 'cart-response'});
 					}
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-					vue.processing = false;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					vm.processing = false;
 				});
 			},
-			getDonations: function () {
-				const vue = this;
+			getDonations() {
+				const vm = this;
 
-				vue.donations = [];
-				const cartItems = vue.$store.getters.cartItems;
-				cartItems.forEach(function (cartItem) {
-					const fees = vue.calculateFees([cartItem]);
-					const total = vue.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
-					vue.donations.push({
+				vm.donations = [];
+				const cartItems = vm.$store.getters.cartItems;
+				cartItems.forEach(cartItem => {
+					const fees = vm.calculateFees([cartItem]);
+					const total = vm.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount;
+					vm.donations.push({
 						fees: fees,
-						isAnonymous: vue.formData.isAnonymous,
-						isFeeCovered: vue.formData.isFeeCovered,
+						isAnonymous: vm.formData.isAnonymous,
+						isFeeCovered: vm.formData.isFeeCovered,
 						isOfflineDonation: false,
 						nonprofitUuid: cartItem.nonprofit.uuid,
 						subtotal: cartItem.amount,
@@ -524,10 +523,10 @@
 					});
 				});
 
-				return vue.donations;
+				return vm.donations;
 			},
-			getApiKey: function () {
-				const vue = this;
+			getApiKey() {
+				const vm = this;
 
 				const keys = [
 					'PAYMENT_SPRING_PUBLIC_API_KEY',
@@ -536,12 +535,12 @@
 				];
 				return axios.get(API_URL + 'settings' + Utils.generateQueryString({
 					keys: keys
-				})).then(function (response) {
-					vue.settings = response.data;
+				})).then(response => {
+					vm.settings = response.data;
 
-					const paymentMode = _.find(vue.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'});
-					const publicApiKey = _.find(vue.settings, {key: 'PAYMENT_SPRING_PUBLIC_API_KEY'});
-					const testPublicApiKey = _.find(vue.settings, {key: 'PAYMENT_SPRING_TEST_PUBLIC_API_KEY'});
+					const paymentMode = _.find(vm.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'});
+					const publicApiKey = _.find(vm.settings, {key: 'PAYMENT_SPRING_PUBLIC_API_KEY'});
+					const testPublicApiKey = _.find(vm.settings, {key: 'PAYMENT_SPRING_TEST_PUBLIC_API_KEY'});
 
 					if (paymentMode && paymentMode.value === true && publicApiKey.value) {
 						return Promise.resolve(publicApiKey.value);
@@ -552,23 +551,23 @@
 					}
 
 					return Promise.reject(new Error('There was an error processing your payment.'));
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			getPaymentToken: function () {
-				const vue = this;
+			getPaymentToken() {
+				const vm = this;
 
 				const params = {
-					card_number: vue.paymentDetails.ccNumber.replace(/\s/g, ''),
-					card_exp_month: vue.paymentDetails.ccExpMonth,
-					card_exp_year: vue.paymentDetails.ccExpYear.toString(),
-					card_owner_name: vue.paymentDetails.ccName,
-					csc: vue.paymentDetails.ccCvv,
+					card_number: vm.paymentDetails.ccNumber.replace(/\s/g, ''),
+					card_exp_month: vm.paymentDetails.ccExpMonth,
+					card_exp_year: vm.paymentDetails.ccExpYear.toString(),
+					card_owner_name: vm.paymentDetails.ccName,
+					csc: vm.paymentDetails.ccCvv,
 					token_type: 'credit_card',
-					zip: vue.donor.zip
+					zip: vm.donor.zip
 				};
-				return vue.getApiKey().then(function (publicKey) {
+				return vm.getApiKey().then(publicKey => {
 					params['username'] = publicKey;
 					return axios.post('https://api.paymentspring.com/api/v1/tokens', params, {
 						auth: {
@@ -578,9 +577,8 @@
 					});
 				});
 			},
-			donationHasErrors: function (hasError) {
-				const vue = this;
-				vue.donationError = hasError;
+			donationHasErrors(hasError) {
+				this.donationError = hasError;
 			}
 		},
 		components: {
