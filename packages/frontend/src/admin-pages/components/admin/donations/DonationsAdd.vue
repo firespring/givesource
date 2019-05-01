@@ -32,7 +32,7 @@
 
                     <api-error v-model="apiError"></api-error>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <layout-spinner v-if="!loaded" height="496px"></layout-spinner>
                             <div class="c-page-section__main" v-else>
@@ -377,8 +377,8 @@
 				return constraints;
 			},
 
-			submit(event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
 
 			save(action) {
@@ -478,7 +478,8 @@
 					vm.clearModals();
 
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
 						if (action === 'add') {
 							vm.formData = {

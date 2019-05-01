@@ -18,19 +18,19 @@ const numeral = require('numeral');
 
 const mixin = {
 	methods: {
-		addBodyClasses: function (...classes) {
-			classes.forEach(function (bodyClass) {
+		addBodyClasses(...classes) {
+			classes.forEach(bodyClass => {
 				document.body.classList.add(bodyClass);
 			});
 		},
-		removeBodyClasses: function (...classes) {
-			classes.forEach(function (bodyClass) {
+		removeBodyClasses(...classes) {
+			classes.forEach(bodyClass => {
 				document.body.classList.remove(bodyClass);
 			});
 		},
-		setBodyClasses: function (...classes) {
+		setBodyClasses(...classes) {
 			document.body.className = '';
-			classes.forEach(function (bodyClass) {
+			classes.forEach(bodyClass => {
 				document.body.classList.add(bodyClass);
 			});
 		},
@@ -39,13 +39,13 @@ const mixin = {
 				document.querySelector('meta[name="description"]').setAttribute('content', description);
 			}
 		},
-		setPageTitle: function (title) {
+		setPageTitle(title) {
 			document.title = title;
 		},
-		formatMoney: function (amount) {
+		formatMoney(amount) {
 			return numeral(amount / 100).format('$0,0.00');
 		},
-		calculateFees: function (cartItems) {
+		calculateFees(cartItems) {
 			const vm = this;
 
 			let transactionFlatFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE');
@@ -55,10 +55,16 @@ const mixin = {
 			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
 
 			let fees = 0;
-			cartItems.forEach(function (cartItem) {
+			cartItems.forEach(cartItem => {
 				fees += Math.floor(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
 			});
 			return fees;
+		},
+		formatErrorMessageResponse(response) {
+			return {
+				message: response.data.errorMessage || 'There was an error processing your request',
+				type: response.data.errorType || 'Unknown'
+			}
 		}
 	}
 };

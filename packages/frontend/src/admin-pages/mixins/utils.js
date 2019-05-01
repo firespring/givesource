@@ -53,6 +53,12 @@ const mixin = {
 		},
 		isMicrosoftEdge() {
 			return (/Edge/.test(navigator.userAgent));
+		},
+		formatErrorMessageResponse(response) {
+			return {
+				message: response.data.errorMessage || 'There was an error processing your request',
+				type: response.data.errorType || 'Unknown'
+			}
 		}
 	}
 };

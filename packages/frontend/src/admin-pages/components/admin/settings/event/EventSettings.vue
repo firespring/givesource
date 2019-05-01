@@ -32,7 +32,7 @@
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
                                 <div class="c-page-section-header-text">
@@ -175,7 +175,7 @@
 	import ComponentSelectTimeZone from './../../../forms/SelectTimeZone.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 
@@ -198,64 +198,64 @@
 			};
 		},
 		computed: {
-			dateEventMinDate: function () {
+			dateEventMinDate() {
 				return this.formData.DATE_EVENT_START ? this.formData.DATE_EVENT_START : false;
 			},
-			dateEventMaxDate: function () {
+			dateEventMaxDate() {
 				return this.formData.DATE_EVENT_END ? this.formData.DATE_EVENT_END : false;
 			},
-			dateRegistrationsMinDate: function () {
+			dateRegistrationsMinDate() {
 				return this.formData.DATE_REGISTRATIONS_START ? this.formData.DATE_REGISTRATIONS_START : false;
 			},
-			dateRegistrationsMaxDate: function () {
+			dateRegistrationsMaxDate() {
 				return this.formData.DATE_REGISTRATIONS_END ? this.formData.DATE_REGISTRATIONS_END : false;
 			},
-			dateAcceptDonationsMinDate: function () {
+			dateAcceptDonationsMinDate() {
 				return this.formData.DATE_DONATIONS_START ? this.formData.DATE_DONATIONS_START : false;
 			},
-			dateAcceptDonationsMaxDate: function () {
+			dateAcceptDonationsMaxDate() {
 				return this.formData.DATE_DONATIONS_END ? this.formData.DATE_DONATIONS_END : false;
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.settings = response.data;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('settings', {
+					keys: Object.keys(vm.formData)
+				}).then(response => {
+					vm.settings = response.data;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('settings', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.settings = response.data;
+			vm.$request.get('settings', {
+				keys: Object.keys(vm.formData)
+			}).then(response => {
+				vm.settings = response.data;
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								vue.formData[key] = setting.value;
+								vm.formData[key] = setting.value;
 							}
 						});
 					}
@@ -264,7 +264,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					DATE_DONATIONS_END: {
 						label: 'Donations end date',
@@ -296,52 +296,53 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateSettings();
+					vm.updateSettings();
 				}
 			},
-			updateSettings: function () {
-				const vue = this;
+			updateSettings() {
+				const vm = this;
 
 				const settings = [];
-				Object.keys(vue.formData).forEach(function (key) {
+				Object.keys(vm.formData).forEach(key => {
 					settings.push({
 						key: key,
-						value: vue.formData[key]
+						value: vm.formData[key]
 					});
 				});
 
 				const toUpdate = _.reject(settings, {value: ''});
 				const toDelete = _.filter(settings, {value: ''});
 
-				vue.$request.patch('settings', {
+				vm.$request.patch('settings', {
 					settings: toUpdate
-				}).then(function (response) {
+				}).then(response => {
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					}
-					return vue.$request.delete('settings', {
+					return vm.$request.delete('settings', {
 						settings: toDelete
 					});
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'settings-list'});
+						vm.$router.push({name: 'settings-list'});
 					}
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

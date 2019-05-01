@@ -32,7 +32,8 @@
 
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
-                    <form v-on:submit="submit">
+
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -109,7 +110,7 @@
 	import ComponentSponsorTier from './../../../forms/SponsorTier.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				sponsorTiers: [],
 				sponsorTier: {},
@@ -130,44 +131,44 @@
 		props: {
 			sponsorTierUuid: null,
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers').then(function (response) {
-					response.data.sort(function (a, b) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('sponsor-tiers').then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.sponsorTiers = response.data;
-					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: to.params.sponsorTierUuid});
+					vm.sponsorTiers = response.data;
+					vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: to.params.sponsorTierUuid});
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('sponsor-tiers').then(function (response) {
-				response.data.sort(function (a, b) {
+			vm.$request.get('sponsor-tiers').then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.sponsorTiers = response.data;
+				vm.sponsorTiers = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					file: {
 						presence: false,
@@ -186,72 +187,73 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
-			save: function (action) {
-				const vue = this;
+			save(action) {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.addSponsor(action);
+					vm.addSponsor(action);
 				}
 			},
-			addSponsor: function (action) {
-				const vue = this;
+			addSponsor(action) {
+				const vm = this;
 
 				let file = null;
 				let promise = Promise.resolve();
-				if (vue.formData.file) {
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData.file.type,
-							filename: vue.formData.file.name
+				if (vm.formData.file) {
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData.file.type,
+							filename: vm.formData.file.name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData.file.type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData.file.type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = vm.formData.file.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData.file.type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData.file);
+						return instance.put(signedUrl, vm.formData.file);
 					});
 				}
 
-				promise.then(function () {
-					return vue.$request.post('sponsor-tiers/' + vue.formData.sponsorTierUuid + '/sponsors', {
+				promise.then(() => {
+					return vm.$request.post('sponsor-tiers/' + vm.formData.sponsorTierUuid + '/sponsors', {
 						fileUuid: file && file.hasOwnProperty('uuid') ? file.uuid : null,
-						name: vue.formData.name,
-						sponsorTierUuid: vue.formData.sponsorTierUuid,
-						url: vue.formData.url
+						name: vm.formData.name,
+						sponsorTierUuid: vm.formData.sponsorTierUuid,
+						url: vm.formData.url
 					});
-				}).then(function (response) {
-					vue.$store.commit('generateCacheKey');
-					vue.clearModals();
+				}).then(response => {
+					vm.$store.commit('generateCacheKey');
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
 						if (action === 'add') {
-							vue.formData = {
+							vm.formData = {
 								file: null,
 								name: null,
-								sponsorTierUuid: vue.sponsorTierUuid,
+								sponsorTierUuid: vm.sponsorTierUuid,
 								url: null
 							};
 						} else {
-							vue.$router.push({name: 'sponsors-list'});
+							vm.$router.push({name: 'sponsors-list'});
 						}
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

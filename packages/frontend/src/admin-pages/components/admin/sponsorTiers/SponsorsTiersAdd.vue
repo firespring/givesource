@@ -31,7 +31,7 @@
 
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -94,7 +94,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -109,17 +109,17 @@
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					name: {
 						presence: true,
@@ -131,41 +131,42 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
-			save: function (action) {
-				const vue = this;
+			save(action) {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.addSponsorTier(action);
+					vm.addSponsorTier(action);
 				}
 			},
-			addSponsorTier: function (action) {
-				const vue = this;
+			addSponsorTier(action) {
+				const vm = this;
 
-				vue.$request.post('sponsor-tiers', vue.formData).then(function (response) {
-					vue.clearModals();
+				vm.$request.post('sponsor-tiers', vm.formData).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
 						if (action === 'add') {
-							vue.formData = {
+							vm.formData = {
 								name: '',
 								size: 'DEFAULT',
 							};
 						} else {
-							vue.$router.push({name: 'sponsor-tiers-list'});
+							vm.$router.push({name: 'sponsor-tiers-list'});
 						}
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+                    vm.apiError = err.response.data.errors;
 				});
 			}
 		}

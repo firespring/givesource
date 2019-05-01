@@ -200,7 +200,7 @@
 	import ComponentSubmit from './../forms/Submit.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				processing: false,
@@ -226,69 +226,69 @@
 			}
 		},
 		computed: {
-			text: function () {
+			text() {
 				const text = _.find(this.contents, {key: 'REGISTER_FORM_TEXT'});
 				return text ? text.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			},
-			registrationStartDate: function () {
+			registrationStartDate() {
 				return Settings.registrationStartDate().format('MMMM DDDo YYYY');
 			},
-			canRegister: function () {
+			canRegister() {
 				return Settings.isDuringRegistrations();
 			},
-			isAfterRegistrations: function () {
+			isAfterRegistrations() {
 				return Settings.isAfterRegistrations();
 			},
-			isBeforeRegistrations: function () {
+			isBeforeRegistrations() {
 				return Settings.isBeforeRegistrations();
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
+		beforeRouteEnter(to, from, next) {
+			next((vm) => {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
 					keys: 'REGISTER_FORM_TEXT'
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				})).then(response => {
+					vm.contents = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: 'REGISTER_FORM_TEXT'
-			})).then(function (response) {
-				vue.contents = response.data;
+			})).then(response => {
+				vm.contents = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Register');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Register');
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					legalName: {
 						label: '',
@@ -366,52 +366,54 @@
 					},
 				}
 			},
-			submit: function (event) {
+			submit(event) {
 				event.preventDefault();
-				const vue = this;
+				const vm = this;
 
-				vue.processing = true;
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.processing = false;
+				vm.processing = true;
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.processing = false;
 				} else {
-					vue.registerNonprofit();
+					vm.registerNonprofit();
 				}
 			},
-			registerNonprofit: function () {
-				const vue = this;
+			registerNonprofit() {
+				const vm = this;
 
 				axios.post(API_URL + 'nonprofits/register', {
 					nonprofit: {
-						legalName: vue.formData.legalName,
-						taxId: vue.formData.taxId,
-						address1: vue.formData.address1,
-						address2: vue.formData.address2,
-						address3: vue.formData.address3,
-						city: vue.formData.city,
-						state: vue.formData.state,
-						zip: vue.formData.zip,
-						phone: vue.formData.phone,
-						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : null,
-						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : null,
-						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : null,
+						legalName: vm.formData.legalName,
+						taxId: vm.formData.taxId,
+						address1: vm.formData.address1,
+						address2: vm.formData.address2,
+						address3: vm.formData.address3,
+						city: vm.formData.city,
+						state: vm.formData.state,
+						zip: vm.formData.zip,
+						phone: vm.formData.phone,
+						category1: vm.formData.categories.length >= 1 ? vm.formData.categories[0] : null,
+						category2: vm.formData.categories.length >= 2 ? vm.formData.categories[1] : null,
+						category3: vm.formData.categories.length >= 3 ? vm.formData.categories[2] : null,
 
 					},
 					user: {
-						firstName: vue.formData.firstName,
-						lastName: vue.formData.lastName,
-						email: vue.formData.email
+						firstName: vm.formData.firstName,
+						lastName: vm.formData.lastName,
+						email: vm.formData.email
 					}
-				}).then(function (response) {
-					vue.processing = false;
+				}).then(response => {
+					vm.processing = false;
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.alert');
 					} else {
-						vue.$router.push({name: 'register-response'});
+						vm.$router.push({name: 'register-response'});
 					}
-				}).catch(function (err) {
-					vue.processing = false;
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.processing = false;
+					vm.apiError = err.response.data.errors;
+					vm.scrollToError('.alert');
 				});
 			},
 		},

@@ -24,7 +24,7 @@
         </div>
 
         <div class="c-header-actions__search u-flex-expand">
-            <form v-on:submit="submit">
+            <form v-on:submit.prevent="submit">
                 <div class="c-form-control-grid">
 
                     <div class="c-form-control-grid__item u-flex-collapse">
@@ -55,7 +55,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				sort: this.pagination.sort,
 
@@ -71,7 +71,7 @@
 		props: {
 			pagination: {
 				type: Object,
-				default: function () {
+				default() {
 					return {
 						items: [],
 						loaded: false,
@@ -85,14 +85,14 @@
 		},
 		watch: {
 			pagination: {
-				handler: function () {
+				handler() {
 					this.sort = this.pagination.sort;
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					search: {
 						presence: false,
@@ -102,41 +102,40 @@
                     }
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (!Object.keys(vue.formErrors).length) {
-					if (vue.formData.search.replace(/\s/g, '')) {
-						vue.searchNonprofits();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (!Object.keys(vm.formErrors).length) {
+					if (vm.formData.search.replace(/\s/g, '')) {
+						vm.searchNonprofits();
 					} else {
-						vue.$emit('resetPagination');
+						vm.$emit('resetPagination');
 					}
 				}
 			},
-            searchNonprofits: function () {
-				const vue = this;
+            searchNonprofits() {
+				const vm = this;
 
-	            const filter = vue.getFilter();
+	            const filter = vm.getFilter();
 	            const params = {
-		            legalName: vue.formData.search.toLowerCase(),
+		            legalName: vm.formData.search.toLowerCase(),
 	            };
 
 	            if (filter) {
 		            params.status = filter;
 	            }
 
-	            if (vue.sort) {
-	            	params.sort = vue.sort;
+	            if (vm.sort) {
+	            	params.sort = vm.sort;
                 }
 
-	            vue.$emit('searchNonprofits', params);
+	            vm.$emit('searchNonprofits', params);
             },
-            getFilter: function () {
-				const vue = this;
+            getFilter() {
+				const vm = this;
 
-				switch (vue.sort) {
+				switch (vm.sort) {
                     case 'active_legal_name_descending':
                     	return 'ACTIVE';
 
@@ -151,26 +150,26 @@
 						return null;
                 }
             },
-			updateSort: function () {
-				const vue = this;
+			updateSort() {
+				const vm = this;
 
-				if (vue.formData.search) {
-					vue.searchNonprofits();
+				if (vm.formData.search) {
+					vm.searchNonprofits();
                 } else {
-					vue.$router.push(vue.generatePageLink({sort: vue.sort}));
+					vm.$router.push(vm.generatePageLink({sort: vm.sort}));
                 }
 			},
-			generatePageLink: function (query) {
-				const vue = this;
+			generatePageLink(query) {
+				const vm = this;
 				query = query || {};
-				query = _.extend({}, vue.$route.query, query);
-				Object.keys(query).forEach(function (key) {
+				query = _.extend({}, vm.$route.query, query);
+				Object.keys(query).forEach(key => {
 					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
 						delete query[key];
 					}
 				});
 				return {
-					name: vue.$route.name,
+					name: vm.$route.name,
 					query: query
 				};
 			}

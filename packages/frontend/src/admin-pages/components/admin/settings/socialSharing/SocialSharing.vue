@@ -216,14 +216,16 @@
 						settings: toUpdate
 					}).then(response => {
 						if (response.data.errorMessage) {
-							console.log(response.data);
+							vm.apiError = vm.formatErrorMessageResponse(response);
+							vm.scrollToError('.c-alert');
 						}
 						return vm.$request.delete('settings', {
 							settings: toDelete
 						});
 					}).then(response => {
 						if (response.data.errorMessage) {
-							console.log(response.data);
+							vm.apiError = vm.formatErrorMessageResponse(response);
+							vm.scrollToError('.c-alert');
 						}
 
 						// delete files that were replace or removed

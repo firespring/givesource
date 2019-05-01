@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                         <div class="c-page-section__main">
 
@@ -77,7 +77,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				nonprofit: {},
 
@@ -94,36 +94,36 @@
 		props: [
 			'nonprofitUuid'
 		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vue.nonprofit = response.data;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+					vm.nonprofit = response.data;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
+			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.nonprofit = response.data;
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					requestedName: {
 						presence: true,
@@ -133,41 +133,40 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.submitRequest();
+					vm.submitRequest();
 				}
 			},
-			submitRequest: function () {
-				const vue = this;
+			submitRequest() {
+				const vm = this;
 
-				const name = (vue.user.firstName && vue.user.lastName) ? vue.user.firstName + ' ' + vue.user.lastName : vue.nonprofit.legalName;
-				vue.$request.post('messages', {
+				const name = (vm.user.firstName && vm.user.lastName) ? vm.user.firstName + ' ' + vm.user.lastName : vm.nonprofit.legalName;
+				vm.$request.post('messages', {
 					name: name,
-					email: vue.user.email,
-					message: vue.formatMessage(),
+					email: vm.user.email,
+					message: vm.formatMessage(),
 					type: 'NAME_CHANGE'
-				}).then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'nonprofit-settings-list'});
-				}).catch(function (err) {
+				}).then(() => {
+					vm.clearModals();
+					vm.$router.push({name: 'nonprofit-settings-list'});
+				}).catch(err => {
 					console.log(err);
 				});
 			},
-			formatMessage: function () {
-				const vue = this;
+			formatMessage() {
+				const vm = this;
 
-				let message = '<strong>Original Name:</strong> ' + vue.nonprofit.legalName + '<br>';
-				message += '<strong>Requested Name:</strong> ' + vue.formData.requestedName + '<br>';
-				message += '<strong>Reason:</strong> ' + vue.formData.changeReason;
+				let message = '<strong>Original Name:</strong> ' + vm.nonprofit.legalName + '<br>';
+				message += '<strong>Requested Name:</strong> ' + vm.formData.requestedName + '<br>';
+				message += '<strong>Reason:</strong> ' + vm.formData.changeReason;
 
 				return message;
 			}

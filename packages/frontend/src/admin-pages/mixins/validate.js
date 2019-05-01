@@ -17,12 +17,12 @@
 const validate = require('validate.js');
 
 // Add "label" validator to allow custom label mapping functionality
-validate.validators.label = function () {
+validate.validators.label = () => {
 	return [];
 };
 
 // Add image validator
-validate.validators.image = function (value, options) {
+validate.validators.image = (value, options) => {
 	let extensions = ['gif', 'jpeg', 'jpg', 'png'];
 	options = options || true;
 
@@ -42,7 +42,7 @@ validate.validators.image = function (value, options) {
 };
 
 // Add favicon validator
-validate.validators.favicon = function (value, options) {
+validate.validators.favicon = (value, options) => {
 	let extensions = ['gif', 'ico', 'png'];
 	options = options || true;
 
@@ -63,10 +63,10 @@ validate.validators.favicon = function (value, options) {
 
 const mixin = {
 	methods: {
-		validate: function (data, constraints) {
+		validate(data, constraints) {
 			return this.getErrorMessages(validate(data, constraints, {fullMessages: false}), constraints);
 		},
-		getErrorMessages: function (errors, constraints) {
+		getErrorMessages(errors, constraints) {
 			const validationErrors = {};
 			for (let field in errors) {
 				if (errors.hasOwnProperty(field) && errors[field].length > 0) {
@@ -76,9 +76,12 @@ const mixin = {
 			}
 			return validationErrors;
 		},
-		scrollToError: function () {
-			this.$nextTick(function () {
-				$('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text')[0].scrollIntoView(true);
+		scrollToError(selector) {
+			this.$nextTick(() => {
+				const $el = selector ? $(selector) : $('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text');
+				if ($el.length) {
+					$el[0].scrollIntoView(true);
+				}
 			});
 		}
 	}

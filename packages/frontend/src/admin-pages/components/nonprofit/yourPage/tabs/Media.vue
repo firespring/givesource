@@ -20,7 +20,8 @@
         <div class="c-header-actions">
             <div>
                 <input v-on:change="onFileChange" ref="fileInput" type="file" name="fileUpload" id="fileUpload" class="u-none" accept="image/*" :disabled="disableAddButton">
-                <button v-on:click="onTrigger" type="button" class="c-btn c-btn--sm c-btn--icon" id="fileUploadTrigger" data-control="fileUpload" :disabled="disableAddButton">
+                <button v-on:click.prevent="onTrigger" type="button" class="c-btn c-btn--sm c-btn--icon" id="fileUploadTrigger" data-control="fileUpload"
+                        :disabled="disableAddButton">
                     <i class="fa fa-picture-o" aria-hidden="true"></i>Add Images
                 </button>
                 <router-link :to="{ name: 'nonprofit-your-page-media-videos-add' }" role="button" class="c-btn c-btn--sm c-btn--icon" :disabled="disableAddButton">
@@ -56,7 +57,7 @@
 	const MediaHelper = require('./../../../../helpers/media');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				file: null,
 				files: [],
@@ -78,114 +79,112 @@
 			'nonprofitUuid'
 		],
 		computed: {
-			disableAddButton: function () {
-				const vue = this;
-				return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides);
+			disableAddButton() {
+				const vm = this;
+				return !vm.loadedSlides || (vm.slides.length >= vm.maxSlides);
 			}
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vm.$request.get('nonprofits/' + vm.nonprofitUuid + '/slides').then(response => {
 				if (response.data.errorMessage) {
-					console.log(response.data);
+					vm.apiError = vm.formatErrorMessageResponse(response);
+					vm.scrollToError('.c-alert');
 					return Promise.reject();
 				} else {
-					response.data.sort(function (a, b) {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.slides = response.data;
+					vm.slides = response.data;
 					const uuids = [];
-					vue.slides.forEach(function (slide) {
+					vm.slides.forEach(slide => {
 						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
 							uuids.push(slide.fileUuid);
 						}
 					});
 
 					if (uuids.length) {
-						return vue.$request.get('files/', {uuids: uuids});
+						return vm.$request.get('files/', {uuids: uuids});
 					} else {
 						return Promise.resolve();
 					}
 				}
-			}).then(function (response) {
+			}).then(response => {
 				if (response && response.data) {
-					vue.files = response.data;
+					vm.files = response.data;
 				}
-				vue.loadedSlides = true;
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+				vm.loadedSlides = true;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('photoEditorSave-New', function (data, file) {
-				vue.uploadFile(data, file);
+			vm.bus.$on('photoEditorSave-New', (data, file) => {
+				vm.uploadFile(data, file);
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
+		beforeDestroy() {
+			const vm = this;
 
-			vue.bus.$off('photoEditorSave-New');
+			vm.bus.$off('photoEditorSave-New');
 		},
 		methods: {
-			getFile: function (fileUuid) {
-				const vue = this;
-				return _.find(vue.files, {uuid: fileUuid});
+			getFile(fileUuid) {
+				const vm = this;
+				return _.find(vm.files, {uuid: fileUuid});
 			},
-			updateSortOrder: function () {
-				const vue = this;
+			updateSortOrder() {
+				const vm = this;
 
-				const original = JSON.parse(JSON.stringify(vue.slides));
-				vue.slides.forEach(function (slide, i) {
+				const original = JSON.parse(JSON.stringify(vm.slides));
+				vm.slides.forEach((slide, i) => {
 					slide.sortOrder = i;
 				});
 
-				const toUpdate = _.differenceWith(vue.slides, original, _.isEqual);
-				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
+				const toUpdate = _.differenceWith(vm.slides, original, _.isEqual);
+				vm.$request.patch('nonprofits/' + vm.nonprofitUuid + '/slides', {
 					slides: toUpdate
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			onTrigger: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.$refs.fileInput.click();
+			onTrigger() {
+				this.$refs.fileInput.click();
 			},
-			onFileChange: function (event) {
-				const vue = this;
+			onFileChange(event) {
+				const vm = this;
 
 				const extensions = ['gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
-					vue.addModal('photo-editor', {
+					vm.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-New',
 						width: 770,
 						height: 443
 					});
-					vue.$refs.fileInput.value = '';
-					vue.addModal('spinner');
+					vm.$refs.fileInput.value = '';
+					vm.addModal('spinner');
 				} else {
-					vue.addModal('error', {
+					vm.addModal('error', {
 						title: 'Invalid Image Type',
 						message: 'The following image types are supported: .gif, .jpg or .png'
 					});
 				}
 			},
-			uploadFile: function (fileData, file) {
-				const vue = this;
+			uploadFile(fileData, file) {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.$request.post('files', {
+				vm.$request.post('files', {
 					content_type: fileData.type,
 					filename: fileData.name
-				}).then(function (response) {
-					vue.file = response.data.file;
+				}).then(response => {
+					vm.file = response.data.file;
 					const signedUrl = response.data.upload_url;
 
 					const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
@@ -194,37 +193,37 @@
 					instance.defaults.headers.put['Content-Type'] = fileData.type || 'application/octet-stream';
 					axios.defaults.headers = defaultHeaders;
 					return instance.put(signedUrl, file);
-				}).then(function () {
-					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
-						fileUuid: vue.file.uuid,
+				}).then(() => {
+					return vm.$request.post('nonprofits/' + vm.nonprofitUuid + '/slides', {
+						fileUuid: vm.file.uuid,
 						type: MediaHelper.TYPE_IMAGE
 					});
-				}).then(function (response) {
-					vue.$store.commit('generateCacheKey');
-					vue.$router.push({
+				}).then(response => {
+					vm.$store.commit('generateCacheKey');
+					vm.$router.push({
 						name: 'nonprofit-your-page-media-photos-edit',
 						params: {
 							slideUuid: response.data.uuid
 						}
 					});
-					vue.clearModals();
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+					vm.clearModals();
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			deleteSlide: function (slide) {
-				const vue = this;
+			deleteSlide(slide) {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
-					const current = JSON.parse(JSON.stringify(vue.slides));
-					vue.slides = _.reject(current, {uuid: slide.uuid});
-					vue.clearModals();
-					vue.updateSortOrder();
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				vm.addModal('spinner');
+				vm.$request.delete('nonprofits/' + vm.nonprofitUuid + '/slides/' + slide.uuid).then(() => {
+					const current = JSON.parse(JSON.stringify(vm.slides));
+					vm.slides = _.reject(current, {uuid: slide.uuid});
+					vm.clearModals();
+					vm.updateSortOrder();
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

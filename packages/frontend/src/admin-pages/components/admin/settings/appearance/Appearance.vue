@@ -33,7 +33,7 @@
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
 
                             <header class="c-page-section__header">
@@ -149,7 +149,7 @@
 	import ComponentImageUpload from './../../../forms/ImageUpload.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 
@@ -171,40 +171,40 @@
 
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.settings = response.data;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('settings', {
+					keys: Object.keys(vm.formData)
+				}).then(response => {
+					vm.settings = response.data;
 				});
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								if (!vue.isFileSetting(key)) {
-									vue.formData[key] = setting.value;
+								if (!vm.isFileSetting(key)) {
+									vm.formData[key] = setting.value;
 								} else {
 									if (setting.value) {
-										vue.$request.get('files/' + setting.value).then(function (response) {
-											vue.formData[key] = response.data;
-										}).catch(function () {
-											vue.formData[key] = null;
+										vm.$request.get('files/' + setting.value).then(response => {
+											vm.formData[key] = response.data;
+										}).catch(() => {
+											vm.formData[key] = null;
 										});
 									}
 								}
@@ -216,7 +216,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					ACCENT_COLOR: {
 						label: 'Accent Color',
@@ -244,49 +244,50 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateSettings();
+					vm.updateSettings();
 				}
 			},
-			updateSettings: function () {
-				const vue = this;
+			updateSettings() {
+				const vm = this;
 
-				vue.getSettingsToUpdate().then(function (settings) {
-					const toUpdate = _.reject(settings, function (setting) {
+				vm.getSettingsToUpdate().then(settings => {
+					const toUpdate = _.reject(settings, setting => {
 						return (setting.value === '' || setting.value === null);
 					});
-					const toDelete = _.filter(settings, function (setting) {
+					const toDelete = _.filter(settings, setting => {
 						return (setting.value === '' || setting.value === null);
 					});
 
-					vue.$request.patch('settings', {
+					vm.$request.patch('settings', {
 						settings: toUpdate
-					}).then(function (response) {
+					}).then(response => {
 						if (response.data.errorMessage) {
-							console.log(response.data);
+							vm.apiError = vm.formatErrorMessageResponse(response);
+							vm.scrollToError('.c-alert');
 						}
-						return vue.$request.delete('settings', {
+						return vm.$request.delete('settings', {
 							settings: toDelete
 						});
-					}).then(function (response) {
+					}).then(response => {
 						if (response.data.errorMessage) {
-							console.log(response.data);
+							vm.apiError = vm.formatErrorMessageResponse(response);
+							vm.scrollToError('.c-alert');
 						}
 
 						// delete files that were replace or removed
 						const filesToDelete = [];
-						_.forEach(settings, function (setting) {
-							if (vue.isFileSetting(setting.key)) {
-								const originalSetting = _.find(vue.settings, {key: setting.key});
+						_.forEach(settings, setting => {
+							if (vm.isFileSetting(setting.key)) {
+								const originalSetting = _.find(vm.settings, {key: setting.key});
 								if (originalSetting && originalSetting.value !== setting.value && originalSetting.value !== '' && originalSetting.value !== null) {
 									filesToDelete.push(originalSetting.value);
 								}
@@ -294,32 +295,32 @@
 						});
 
 						if (filesToDelete.length > 0) {
-							return vue.$request.delete('files', {
+							return vm.$request.delete('files', {
 								files: filesToDelete
 							});
 						}
 
 						return Promise.resolve();
-					}).then(function () {
-						vue.clearModals();
-						vue.$router.push({name: 'settings-list'});
-					}).catch(function (err) {
-						vue.clearModals();
-						vue.apiError = err.response.data.errors;
+					}).then(() => {
+						vm.clearModals();
+						vm.$router.push({name: 'settings-list'});
+					}).catch(err => {
+						vm.clearModals();
+						vm.apiError = err.response.data.errors;
 					});
 
 				});
 
 			},
-			getSettingsToUpdate: function () {
-				const vue = this;
+			getSettingsToUpdate() {
+				const vm = this;
 				const settings = [];
 				let promise = Promise.resolve();
-				Object.keys(vue.formData).forEach(function (key) {
-					if (vue.formData[key] instanceof File) {
-						promise = promise.then(function () {
-							return vue.uploadImage(key).then(function (uploadedFile) {
-								vue.$store.commit('generateCacheKey');
+				Object.keys(vm.formData).forEach(key => {
+					if (vm.formData[key] instanceof File) {
+						promise = promise.then(() => {
+							return vm.uploadImage(key).then(uploadedFile => {
+								vm.$store.commit('generateCacheKey');
 								settings.push({
 									key: key,
 									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''
@@ -327,12 +328,12 @@
 							});
 						});
 					} else {
-						promise = promise.then(function () {
-							let settingValue = vue.formData[key];
-							if (key === 'ACCENT_COLOR' && vue.formData[key] === vue.defaultColor) {
+						promise = promise.then(() => {
+							let settingValue = vm.formData[key];
+							if (key === 'ACCENT_COLOR' && vm.formData[key] === vm.defaultColor) {
 								settingValue = '';
-							} else if (_.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid')) {
-								settingValue = vue.formData[key].uuid;
+							} else if (_.isPlainObject(vm.formData[key]) && vm.formData[key].hasOwnProperty('uuid')) {
+								settingValue = vm.formData[key].uuid;
 							}
 							settings.push({
 								key: key,
@@ -342,33 +343,33 @@
 					}
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return settings;
 				});
 
 				return promise;
 			},
-			uploadImage: function (key) {
-				const vue = this;
+			uploadImage(key) {
+				const vm = this;
 				let file = null;
 				let promise = Promise.resolve();
-				if (vue.formData[key]) {
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData[key].type,
-							filename: vue.formData[key].name
+				if (vm.formData[key]) {
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData[key].type,
+							filename: vm.formData[key].name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData[key]);
-					}).then(function () {
+						return instance.put(signedUrl, vm.formData[key]);
+					}).then(() => {
 						return file;
 					});
 				}

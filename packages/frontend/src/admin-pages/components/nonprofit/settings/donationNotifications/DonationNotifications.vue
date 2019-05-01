@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                         <div class="c-page-section__main">
 
@@ -87,7 +87,7 @@
 	import ComponentSelectState from './../../../forms/SelectState.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				nonprofit: {},
 				loaded: false,
@@ -103,104 +103,104 @@
 				// Errors
 				formErrors: {},
 				apiError: {},
-			}
+			};
 		},
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			}
 		},
 		props: [
 			'nonprofitUuid'
 		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vue.nonprofit = response.data;
-					return vue.$request.get('settings/SENDER_EMAIL');
-				}).then(function (response) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+					vm.nonprofit = response.data;
+					return vm.$request.get('settings/SENDER_EMAIL');
+				}).then(response => {
 					if (response.data && response.data.value) {
-						vue.settings.SENDER_EMAIL = response.data.value;
+						vm.settings.SENDER_EMAIL = response.data.value;
 					}
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
-				return vue.$request.get('settings/SENDER_EMAIL');
-			}).then(function (response) {
+			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.nonprofit = response.data;
+				return vm.$request.get('settings/SENDER_EMAIL');
+			}).then(response => {
 				if (response.data && response.data.value) {
-					vue.settings.SENDER_EMAIL = response.data.value;
+					vm.settings.SENDER_EMAIL = response.data.value;
 				}
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
-		created: function () {
+		created() {
 			this.addModal('spinner');
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			nonprofit: {
-				handler: function () {
-					const vue = this;
+				handler() {
+					const vm = this;
 
-					vue.formData = vue.sync(vue.formData, vue.nonprofit);
-					vue.loaded = true;
-					vue.removeModal('spinner');
+					vm.formData = vm.sync(vm.formData, vm.nonprofit);
+					vm.loaded = true;
+					vm.removeModal('spinner');
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateNonprofit();
+					vm.updateNonprofit();
 				}
 			},
-			updateNonprofit: function () {
-				const vue = this;
+			updateNonprofit() {
+				const vm = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
+				const params = vm.getUpdatedParameters(vm.formData, vm.nonprofit);
 				if (Object.keys(params).length === 0) {
-					vue.clearModals();
-					vue.$router.push({name: 'nonprofit-settings-list'});
+					vm.clearModals();
+					vm.$router.push({name: 'nonprofit-settings-list'});
 					return;
 				}
 
-				vue.$request.patch('nonprofits/' + vue.nonprofitUuid, params).then(function (response) {
-					vue.clearModals();
+				vm.$request.patch('nonprofits/' + vm.nonprofitUuid, params).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'nonprofit-settings-list'});
+						vm.$router.push({name: 'nonprofit-settings-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

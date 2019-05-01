@@ -18,7 +18,7 @@ require('jquery.payment');
 const validate = require('validate.js');
 
 // Add "label" validator to allow custom label mapping functionality
-validate.validators.label = function () {
+validate.validators.label = () => {
 	return [];
 };
 
@@ -29,7 +29,7 @@ validate.validators.label = function () {
  * @param {{}} [options]
  * @return {*}
  */
-validate.validators.ccNumber = function (value, options) {
+validate.validators.ccNumber = (value, options) => {
 	if (!value || value === false || typeof value === 'undefined' || value === null) {
 		return null;
 	}
@@ -49,7 +49,7 @@ validate.validators.ccNumber = function (value, options) {
  * @param {{}} [options]
  * @return {*}
  */
-validate.validators.ccCvv = function (value, options) {
+validate.validators.ccCvv = (value, options) => {
 	if (!value || value === false || typeof value === 'undefined' || value === null) {
 		return null;
 	}
@@ -64,10 +64,10 @@ validate.validators.ccCvv = function (value, options) {
 
 const mixin = {
 	methods: {
-		validate: function (data, constraints) {
+		validate(data, constraints) {
 			return this.getErrorMessages(validate(data, constraints, {fullMessages: false}), constraints);
 		},
-		getErrorMessages: function (errors, constraints) {
+		getErrorMessages(errors, constraints) {
 			const validationErrors = {};
 			for (let field in errors) {
 				if (errors.hasOwnProperty(field) && errors[field].length > 0) {
@@ -77,9 +77,12 @@ const mixin = {
 			}
 			return validationErrors;
 		},
-		scrollToError: function () {
-			this.$nextTick(function () {
-				$('.has-error:first').closest('.form-item').first('.form-item__label')[0].scrollIntoView(true);
+		scrollToError(selector) {
+			this.$nextTick(() => {
+				const $el = selector ? $(selector) : $('.has-error:first').closest('.form-item').first('.form-item__label');
+				if ($el.length) {
+					$el[0].scrollIntoView(true);
+				}
 			});
 		}
 	}

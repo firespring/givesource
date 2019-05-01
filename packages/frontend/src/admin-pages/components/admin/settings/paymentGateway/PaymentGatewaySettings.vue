@@ -31,7 +31,8 @@
 
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
-                    <form v-on:submit="submit">
+
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
@@ -275,7 +276,7 @@
 	import ComponentSecureText from './../../../forms/SecureText.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 
@@ -296,45 +297,45 @@
 				apiError: {},
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.settings = response.data;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('settings', {
+					keys: Object.keys(vm.formData)
+				}).then(response => {
+					vm.settings = response.data;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('settings', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.settings = response.data;
+			vm.$request.get('settings', {
+				keys: Object.keys(vm.formData)
+			}).then(response => {
+				vm.settings = response.data;
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								vue.formData[key] = Transform.transform(setting.value, _.get(vue.getTransformers(), key), {method: 'onDisplay'});
+								vm.formData[key] = Transform.transform(setting.value, _.get(vm.getTransformers(), key), {method: 'onDisplay'});
 							}
 						});
 					}
@@ -343,7 +344,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
 						label: 'Offline Fee Flat Rate',
@@ -389,7 +390,7 @@
 					},
 				};
 			},
-			getTransformers: function () {
+			getTransformers() {
 				return {
 					OFFLINE_TRANSACTION_FEE_FLAT_RATE: {
 						onDisplay: ['fromCents', 'money'],
@@ -409,27 +410,26 @@
 					},
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
-					vue.scrollToError();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
+					vm.scrollToError();
 				} else {
-					vue.$emit('save');
-					vue.updateSettings();
+					vm.$emit('save');
+					vm.updateSettings();
 				}
 			},
-			updateSettings: function () {
-				const vue = this;
+			updateSettings() {
+				const vm = this;
 
-				const transformedData = Transform.transformData(vue.formData, vue.getTransformers(), {method: 'onSave'});
+				const transformedData = Transform.transformData(vm.formData, vm.getTransformers(), {method: 'onSave'});
 				const settings = [];
-				Object.keys(transformedData).forEach(function (key) {
+				Object.keys(transformedData).forEach(key => {
 					settings.push({
 						key: key,
 						value: transformedData[key]
@@ -439,25 +439,27 @@
 				const toUpdate = _.reject(settings, {value: ''});
 				const toDelete = _.filter(settings, {value: ''});
 
-				vue.$request.patch('settings', {
+				vm.$request.patch('settings', {
 					settings: toUpdate
-				}).then(function (response) {
+				}).then(response => {
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					}
-					return vue.$request.delete('settings', {
+					return vm.$request.delete('settings', {
 						settings: toDelete
 					});
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'settings-list'});
+						vm.$router.push({name: 'settings-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
 		},

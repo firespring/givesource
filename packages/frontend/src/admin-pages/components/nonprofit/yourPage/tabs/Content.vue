@@ -18,7 +18,7 @@
     <div class="c-page-section__content">
         <api-error v-model="apiError"></api-error>
 
-        <form v-on:submit="submit">
+        <form v-on:submit.prevent="submit">
 
             <div class="c-form-item c-form-item--text">
                 <div class="c-form-item__label">
@@ -42,7 +42,7 @@
                             {{ pageLink }}{{ nonprofit.slug }}
                         </div>
                         <div class="c-form-control-grid__item u-flex-collapse">
-                            <a v-on:click="changeSlug" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--neutral">Change</a>
+                            <a v-on:click.prevent="changeSlug" href="#" class="c-btn c-btn--xs c-btn--flat c-btn--neutral">Change</a>
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,8 @@
                     <div class="c-notes c-notes--above">
                         Describe the non-profit's mission, purpose, and goals for the giving day.
                     </div>
-                    <forms-ckeditor v-model="formData.longDescription" :loaded="loaded" id="longDescription" :hasErrors="formErrors.longDescription" type="moderate"></forms-ckeditor>
+                    <forms-ckeditor v-model="formData.longDescription" :loaded="loaded" id="longDescription" :hasErrors="formErrors.longDescription"
+                                    type="moderate"></forms-ckeditor>
                     <div v-if="formErrors.longDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                         {{ formErrors.longDescription }}
                     </div>
@@ -108,7 +109,7 @@
 	const slug = require('slug');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				loaded: false,
 				editSlug: false,
@@ -125,52 +126,52 @@
 				// Errors
 				formErrors: {},
 				apiError: {},
-			}
+			};
 		},
 		computed: {
-			pageLink: function () {
+			pageLink() {
 				return this.$store.getters.setting('EVENT_URL') + '/nonprofits/';
 			}
 		},
 		props: {
 			nonprofit: {
 				type: Object,
-				default: function () {
+				default() {
 					return {};
 				}
 			}
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			nonprofit: {
-				handler: function () {
-					const vue = this;
+				handler() {
+					const vm = this;
 
-					vue.formData = vue.sync(vue.formData, vue.nonprofit);
-					if (!_.isEmpty(vue.formData.logoFileUuid)) {
-						vue.$request.get('files/' + vue.formData.logoFileUuid).then(function (response) {
-							vue.formData.logo = response.data;
-						}).catch(function () {
-							vue.formData.logo = null;
+					vm.formData = vm.sync(vm.formData, vm.nonprofit);
+					if (!_.isEmpty(vm.formData.logoFileUuid)) {
+						vm.$request.get('files/' + vm.formData.logoFileUuid).then(response => {
+							vm.formData.logo = response.data;
+						}).catch(() => {
+							vm.formData.logo = null;
 						});
 					} else {
-						vue.formData.logo = null;
+						vm.formData.logo = null;
 					}
-					vue.loaded = true;
+					vm.loaded = true;
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					longDescription: {
 						presence: false,
@@ -188,110 +189,107 @@
 					}
 				}
 			},
-			submit: function (e) {
-				e.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateNonprofit();
+					vm.updateNonprofit();
 				}
 			},
-			updateNonprofit: function () {
-				const vue = this;
+			updateNonprofit() {
+				const vm = this;
 
-				vue.getUpdatedNonprofitParams().then(function (updatedParams) {
+				vm.getUpdatedNonprofitParams().then(updatedParams => {
 					let promise = Promise.resolve();
-					const originalLogoFileUuid = vue.nonprofit.logoFileUuid;
+					const originalLogoFileUuid = vm.nonprofit.logoFileUuid;
 
 					if (Object.keys(updatedParams).length) {
-						promise = promise.then(function () {
-							return vue.$request.patch('nonprofits/' + vue.nonprofit.uuid, updatedParams).then(function (response) {
+						promise = promise.then(() => {
+							return vm.$request.patch('nonprofits/' + vm.nonprofit.uuid, updatedParams).then(response => {
 								if (response.data.errorMessage) {
-									console.log(response.data);
+									vm.apiError = vm.formatErrorMessageResponse(response);
+									vm.scrollToError('.c-alert');
 								}
-								vue.editSlug = false;
-								vue.$emit('updateNonprofit', response.data);
+								vm.editSlug = false;
+								vm.$emit('updateNonprofit', response.data);
 							})
 						});
 					}
 
 					if (updatedParams.hasOwnProperty('logoFileUuid') && !_.isEmpty(originalLogoFileUuid)) {
-						promise = promise.then(function () {
-							return vue.$request.delete('files/' + originalLogoFileUuid);
+						promise = promise.then(() => {
+							return vm.$request.delete('files/' + originalLogoFileUuid);
 						});
 					}
 
-					promise.then(function () {
-						vue.clearModals();
+					promise.then(() => {
+						vm.clearModals();
 					});
 
 					return promise;
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			changeSlug: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.editSlug = true;
+			changeSlug() {
+				this.editSlug = true;
 			},
-			slugMask: function (event) {
-				const vue = this;
-				vue.formData.slug = slug(event.target.value, {lower: true});
+			slugMask(event) {
+				const vm = this;
+				vm.formData.slug = slug(event.target.value, {lower: true});
 			},
-			getUpdatedNonprofitParams: function () {
-				const vue = this;
+			getUpdatedNonprofitParams() {
+				const vm = this;
 				let promise = Promise.resolve();
 
-				if (vue.formData.logo instanceof File) {
-					promise = promise.then(function () {
-						return vue.uploadFile('logo').then(function (uploadedFile) {
-							vue.$store.commit('generateCacheKey');
-							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+				if (vm.formData.logo instanceof File) {
+					promise = promise.then(() => {
+						return vm.uploadFile('logo').then(uploadedFile => {
+							vm.$store.commit('generateCacheKey');
+							vm.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
 						});
 					});
-				} else if (_.isPlainObject(vue.formData.logo) && vue.formData.logo.hasOwnProperty('uuid')) {
-					vue.formData.logoFileUuid = vue.formData.logo.uuid;
+				} else if (_.isPlainObject(vm.formData.logo) && vm.formData.logo.hasOwnProperty('uuid')) {
+					vm.formData.logoFileUuid = vm.formData.logo.uuid;
 				} else {
-					vue.formData.logoFileUuid = '';
+					vm.formData.logoFileUuid = '';
 				}
 
-				promise = promise.then(function () {
-					const params = vue.getUpdatedParameters(vue.formData, vue.nonprofit);
+				promise = promise.then(() => {
+					const params = vm.getUpdatedParameters(vm.formData, vm.nonprofit);
 					delete params.logo;
 					return params;
 				});
 
 				return promise;
 			},
-			uploadFile: function (key) {
-				const vue = this;
+			uploadFile(key) {
+				const vm = this;
 				let file = null;
 				let promise = Promise.resolve();
-				if (vue.formData[key]) {
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData[key].type,
-							filename: vue.formData[key].name
+				if (vm.formData[key]) {
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData[key].type,
+							filename: vm.formData[key].name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData[key].type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData[key]);
-					}).then(function () {
+						return instance.put(signedUrl, vm.formData[key]);
+					}).then(() => {
 						return file;
 					});
 				}

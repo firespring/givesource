@@ -61,7 +61,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -70,7 +70,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -80,24 +80,26 @@
 			},
 			data: {
 				type: Object,
-				default: {
-					CONTACT_PHONE: null,
+				default: () => {
+					return {
+						CONTACT_PHONE: null,
+					};
 				}
 			}
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					CONTACT_PHONE: {
 						label: 'Contact phone number',
@@ -105,49 +107,50 @@
 					}
 				};
 			},
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.updateSetting();
+					vm.updateSetting();
 				}
 			},
-			updateSetting: function () {
-				const vue = this;
+			updateSetting() {
+				const vm = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.data);
+				const params = vm.getUpdatedParameters(vm.formData, vm.data);
 				if (Object.keys(params).length === 0) {
-					vue.clearModals();
+					vm.clearModals();
 					return;
 				}
 
-				vue.$request.patch('settings', {
+				vm.$request.patch('settings', {
 					settings: [
 						{
 							key: 'CONTACT_PHONE',
-							value: vue.formData.CONTACT_PHONE
+							value: vm.formData.CONTACT_PHONE
 						},
 					]
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					}
-					vue.bus.$emit('updateSetting', {
+					vm.bus.$emit('updateSetting', {
 						key: 'CONTACT_PHONE',
-						value: vue.formData.CONTACT_PHONE
+						value: vm.formData.CONTACT_PHONE
 					});
-				}).catch(function (err) {
-                    vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
-                });
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.apiError = err.response.data.errors;
+				});
 			}
 		}
 	};

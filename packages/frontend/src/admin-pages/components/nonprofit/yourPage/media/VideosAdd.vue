@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="o-app-main-content">
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -67,15 +67,15 @@
                                 </div>
 
                                 <!--<div class="c-form-item c-form-item&#45;&#45;text" :class="{ 'c-form-item&#45;&#45;has-error': formErrors.caption }">-->
-                                    <!--<div class="c-form-item__label">-->
-                                        <!--<label for="caption" class="c-form-item-label-text">Caption (100 characters or less)</label>-->
-                                    <!--</div>-->
-                                    <!--<div class="c-form-item__control">-->
-                                        <!--<input v-model="formData.caption" type="text" name="caption" id="caption" maxlength="100" :class="{ 'has-error': formErrors.caption }">-->
-                                        <!--<div v-if="formErrors.caption" class="c-notes c-notes&#45;&#45;below c-notes&#45;&#45;bad c-form-control-error">-->
-                                            <!--{{ formErrors.caption }}-->
-                                        <!--</div>-->
-                                    <!--</div>-->
+                                <!--<div class="c-form-item__label">-->
+                                <!--<label for="caption" class="c-form-item-label-text">Caption (100 characters or less)</label>-->
+                                <!--</div>-->
+                                <!--<div class="c-form-item__control">-->
+                                <!--<input v-model="formData.caption" type="text" name="caption" id="caption" maxlength="100" :class="{ 'has-error': formErrors.caption }">-->
+                                <!--<div v-if="formErrors.caption" class="c-notes c-notes&#45;&#45;below c-notes&#45;&#45;bad c-form-control-error">-->
+                                <!--{{ formErrors.caption }}-->
+                                <!--</div>-->
+                                <!--</div>-->
                                 <!--</div>-->
 
                             </div>
@@ -96,15 +96,15 @@
 </template>
 
 <script>
-    const MediaHelper = require('./../../../../helpers/media');
+	const MediaHelper = require('./../../../../helpers/media');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				slides: [],
 				loadedSlides: false,
-                maxSlides: 8,
-                nonprofit: {},
+				maxSlides: 8,
+				nonprofit: {},
 
 				// Form Data
 				formData: {
@@ -113,73 +113,74 @@
 				},
 
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			}
 		},
 		props: [
 			'nonprofitUuid',
 		],
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-			disableSaveButton: function () {
-				const vue = this;
-				return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides);
+			disableSaveButton() {
+				const vm = this;
+				return !vm.loadedSlides || (vm.slides.length >= vm.maxSlides);
 			},
-            disableSaveAndNextButton: function () {
-				const vue = this;
-	            return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides - 1);
-            }
+			disableSaveAndNextButton() {
+				const vm = this;
+				return !vm.loadedSlides || (vm.slides.length >= vm.maxSlides - 1);
+			}
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vue.nonprofit = response.data;
-				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                    next();
-                });
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+					vm.nonprofit = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					next();
+				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
+			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.nonprofit = response.data;
 				next();
-			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
+				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vm.$request.get('nonprofits/' + vm.nonprofitUuid + '/slides').then(response => {
 				if (response.data.errorMessage) {
-					console.log(response.data);
+					vm.apiError = vm.formatErrorMessageResponse(response);
+					vm.scrollToError('.c-alert');
 				} else {
-					vue.slides = response.data;
-					vue.loadedSlides = true;
+					vm.slides = response.data;
+					vm.loadedSlides = true;
 				}
-			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 			});
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					url: {
 						presence: true,
@@ -198,50 +199,51 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
-			save: function (action) {
-				const vue = this;
+			save(action) {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.addNonprofitSlide(action);
+					vm.addNonprofitSlide(action);
 				}
 			},
-			addNonprofitSlide: function (action) {
-				const vue = this;
+			addNonprofitSlide(action) {
+				const vm = this;
 
-				MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
-					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
-						caption: vue.formData.caption,
+				MediaHelper.getVideoData(vm.formData.url).then(videoData => {
+					return vm.$request.post('nonprofits/' + vm.nonprofitUuid + '/slides', {
+						caption: vm.formData.caption,
 						embedUrl: videoData.embedUrl,
 						externalId: videoData.id,
 						thumbnail: videoData.thumbnail,
 						type: videoData.type,
-						url: vue.formData.url,
+						url: vm.formData.url,
 					});
-                }).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-					    vue.slides.push(response.data);
+						vm.slides.push(response.data);
 					}
 
 					if (action === 'add') {
-						vue.formData.url = '';
-						vue.formData.caption = '';
+						vm.formData.url = '';
+						vm.formData.caption = '';
 					} else {
-						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
-                    }
-                }).catch(function (err) {
-                    vue.clearModals();
-                    vue.apiError = err.response.data.errors;
-                });
+						vm.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+					}
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
+				});
 			}
 		}
 	};

@@ -31,7 +31,7 @@
 
                 <div class="o-app-main-content">
                     <api-error v-model="apiError"></api-error>
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -92,7 +92,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				sponsorTier: {},
 
@@ -110,46 +110,46 @@
 		props: [
 			'sponsorTierUuid'
 		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
-					vue.sponsorTier = response.data;
-				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid).then(response => {
+					vm.sponsorTier = response.data;
+				}).catch(err => {
+                    vm.apiError = err.response.data.errors;
                  });
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
-				vue.sponsorTier = response.data;
+			vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid).then(response => {
+				vm.sponsorTier = response.data;
 				next();
-			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+			}).catch(err => {
+                vm.apiError = err.response.data.errors;
                 next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			sponsorTier: {
-				handler: function () {
-					const vue = this;
-					vue.formData = vue.sync(vue.formData, vue.sponsorTier);
+				handler() {
+					const vm = this;
+					vm.formData = vm.sync(vm.formData, vm.sponsorTier);
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					name: {
 						presence: true,
@@ -161,38 +161,38 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateSponsorTier();
+					vm.updateSponsorTier();
 				}
 			},
-			updateSponsorTier: function () {
-				const vue = this;
+			updateSponsorTier() {
+				const vm = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.sponsorTier);
+				const params = vm.getUpdatedParameters(vm.formData, vm.sponsorTier);
 				if (Object.keys(params).length === 0) {
-					vue.clearModals();
+					vm.clearModals();
 					return;
 				}
 
-				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid, params).then(function (response) {
-					vue.clearModals();
+				vm.$request.patch('sponsor-tiers/' + vm.sponsorTierUuid, params).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'sponsor-tiers-list'});
+						vm.$router.push({name: 'sponsor-tiers-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+                    vm.apiError = err.response.data.errors;
 				});
 			}
 		}

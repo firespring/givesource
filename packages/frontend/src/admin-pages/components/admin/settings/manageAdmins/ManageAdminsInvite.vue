@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow">
 
                         <header class="c-page-section__header">
@@ -77,7 +77,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -90,7 +90,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					emailAddresses: {
 						label: 'Email addresses',
@@ -98,34 +98,33 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.inviteAdmins();
+					vm.inviteAdmins();
 				}
 			},
-			inviteAdmins: function () {
-				const vue = this;
+			inviteAdmins() {
+				const vm = this;
 
-				vue.$request.post('users', {
-					email_addresses: vue.formData.emailAddresses
-				}).then(function (response) {
-					vue.clearModals();
+				vm.$request.post('users', {
+					email_addresses: vm.formData.emailAddresses
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
-                        vue.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
                     } else {
-						vue.$router.push({name: 'settings-admins-list'});
+						vm.$router.push({name: 'settings-admins-list'});
 					}
-				}).catch(function (err) {
-                    vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
+				}).catch(err => {
+                    vm.removeModal('spinner');
+                    vm.apiError = err.response.data.errors;
                 });
 			}
 		}

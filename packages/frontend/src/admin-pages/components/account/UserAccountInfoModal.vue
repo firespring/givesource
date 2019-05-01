@@ -73,85 +73,86 @@
 </template>
 
 <script>
-    export default {
-        data: function () {
-            return {
+	export default {
+		data: function () {
+			return {
 
-                // Form Data
-                formData: {
-                    firstName: this.user.firstName,
-                    lastName: this.user.lastName
-                },
+				// Form Data
+				formData: {
+					firstName: this.user.firstName,
+					lastName: this.user.lastName
+				},
 
-                // Errors
-                formErrors: {},
-                apiError: {}
-            }
-        },
-        watch: {
-            formData: {
-                handler: function () {
-                    const vue = this;
-                    if (Object.keys(vue.formErrors).length) {
-                        vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-                    }
-                },
-                deep: true
-            }
-        },
-        props: {
-            zIndex: {
-                type: [Number, String],
-                default: 1000
-            }
-        },
-        methods: {
-            getConstraints: function () {
-                return {
-                    firstName: {
-                        presence: true,
-                    },
-                    lastName: {
-                        presence: true,
-                    }
-                }
-            },
-            cancel: function () {
-                this.clearModals();
-            },
-            save: function () {
-                const vue = this;
+				// Errors
+				formErrors: {},
+				apiError: {}
+			}
+		},
+		watch: {
+			formData: {
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+					}
+				},
+				deep: true
+			}
+		},
+		props: {
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			}
+		},
+		methods: {
+			getConstraints() {
+				return {
+					firstName: {
+						presence: true,
+					},
+					lastName: {
+						presence: true,
+					}
+				}
+			},
+			cancel() {
+				this.clearModals();
+			},
+			save() {
+				const vm = this;
 
-                vue.addModal('spinner');
-                vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-                if (Object.keys(vue.formErrors).length) {
-                    vue.removeModal();
-                } else {
-                    vue.updateUser();
-                }
-            },
-            updateUser: function () {
-                const vue = this;
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
+				} else {
+					vm.updateUser();
+				}
+			},
+			updateUser() {
+				const vm = this;
 
-                const params = vue.getUpdatedParameters(vue.formData, vue.user);
-                if (Object.keys(params).length === 0) {
-                    vue.clearModals();
-                    return;
-                }
+				const params = vm.getUpdatedParameters(vm.formData, vm.user);
+				if (Object.keys(params).length === 0) {
+					vm.clearModals();
+					return;
+				}
 
-                vue.$request.patch('users/' + vue.user.uuid, params).then(function (response) {
-                    vue.removeModal();
-                    if (response.data.errorMessage) {
-                        console.log(response.data);
-                    } else {
-                        vue.clearModals();
-                        vue.bus.$emit('userAccountUpdateInfo', response.data);
-                    }
-                }).catch(function (err) {
-                    vue.removeModal();
-                    vue.apiError = err.response.data.errors;
-                });
-            }
-        }
-    };
+				vm.$request.patch('users/' + vm.user.uuid, params).then(response => {
+					vm.removeModal();
+					if (response.data.errorMessage) {
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
+					} else {
+						vm.clearModals();
+						vm.bus.$emit('userAccountUpdateInfo', response.data);
+					}
+				}).catch(err => {
+					vm.removeModal();
+					vm.apiError = err.response.data.errors;
+				});
+			}
+		}
+	};
 </script>

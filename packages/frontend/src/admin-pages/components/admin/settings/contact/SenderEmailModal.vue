@@ -61,7 +61,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -70,7 +70,7 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		props: {
@@ -80,24 +80,26 @@
 			},
 			data: {
 				type: Object,
-				default: {
-					SENDER_EMAIL: null
+				default: () => {
+					return {
+						SENDER_EMAIL: null
+					};
 				}
 			}
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					SENDER_EMAIL: {
 						label: 'Sender email address',
@@ -106,59 +108,60 @@
 					}
 				};
 			},
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.updateSetting();
+					vm.updateSetting();
 				}
 			},
-			updateSetting: function () {
-				const vue = this;
+			updateSetting() {
+				const vm = this;
 
-				const params = vue.getUpdatedParameters(vue.formData, vue.data);
+				const params = vm.getUpdatedParameters(vm.formData, vm.data);
 				if (Object.keys(params).length === 0) {
-					vue.clearModals();
+					vm.clearModals();
 					return;
 				}
 
-				vue.$request.get('settings/email').then(function (response) {
-					const setting = _.find(response.data, {email: vue.formData.SENDER_EMAIL});
+				vm.$request.get('settings/email').then(response => {
+					const setting = _.find(response.data, {email: vm.formData.SENDER_EMAIL});
 					if (!setting || (setting && !setting.verified)) {
-						return vue.$request.post('settings/email/verify', {
-							email: vue.formData.SENDER_EMAIL
+						return vm.$request.post('settings/email/verify', {
+							email: vm.formData.SENDER_EMAIL
 						});
 					} else {
 						return Promise.resolve();
 					}
-				}).then(function () {
-					return vue.$request.patch('settings', {
+				}).then(() => {
+					return vm.$request.patch('settings', {
 						settings: [
 							{
 								key: 'SENDER_EMAIL',
-								value: vue.formData.SENDER_EMAIL
+								value: vm.formData.SENDER_EMAIL
 							},
 						]
 					});
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					}
-					vue.bus.$emit('updateSetting', {
+					vm.bus.$emit('updateSetting', {
 						key: 'SENDER_EMAIL',
-						value: vue.formData.SENDER_EMAIL
+						value: vm.formData.SENDER_EMAIL
 					});
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-                    vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		}

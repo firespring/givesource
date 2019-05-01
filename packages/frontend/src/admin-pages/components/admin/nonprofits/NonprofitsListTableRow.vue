@@ -50,7 +50,7 @@
 
         <td>
             <div v-if="canModify" class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only js-btn-dropdown-trigger"></a>
+                <a v-on:click.prevent="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only js-btn-dropdown-trigger"></a>
 
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
@@ -84,45 +84,45 @@
 	const numeral = require('numeral');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				displayingMenu: false,
 				timer: null,
-                apiError: {}
-            };
+				apiError: {}
+			};
 		},
 		computed: {
-			date: function () {
+			date() {
 				return new Date(this.nonprofit.createdOn).toLocaleDateString();
 			},
-			time: function () {
+			time() {
 				return new Date(this.nonprofit.createdOn).toLocaleTimeString();
 			},
-			donationAmount: function () {
+			donationAmount() {
 				return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,0.00');
 			},
-			canAcceptDonations: function () {
+			canAcceptDonations() {
 				return this.nonprofit.status === 'ACTIVE';
 			},
-			canChangeStatus: function () {
+			canChangeStatus() {
 				return this.nonprofit.status === 'PENDING';
 			},
-			canDeleteNonprofit: function () {
+			canDeleteNonprofit() {
 				return this.nonprofit.status === 'DENIED';
 			},
-			canEditNonprofitDetails: function () {
+			canEditNonprofitDetails() {
 				return this.nonprofit.status === 'ACTIVE' || this.nonprofit.status === 'PENDING';
 			},
-			canEditNonprofitDonationPage: function () {
+			canEditNonprofitDonationPage() {
 				return this.nonprofit.status === 'ACTIVE';
 			},
-			canRevoke: function () {
+			canRevoke() {
 				return this.nonprofit.status === 'ACTIVE';
 			},
-			canModify: function () {
+			canModify() {
 				return this.nonprofit.status !== 'REVOKED';
 			},
-			statusLabelClass: function () {
+			statusLabelClass() {
 				switch (this.nonprofit.status) {
 					case 'ACTIVE':
 						return 'c-label--good';
@@ -132,7 +132,7 @@
 						return 'c-label--bad';
 				}
 			},
-			statusIconClass: function () {
+			statusIconClass() {
 				switch (this.nonprofit.status) {
 					case 'ACTIVE':
 						return 'fa-check-circle';
@@ -142,7 +142,7 @@
 						return 'fa-ban';
 				}
 			},
-			statusLabel: function () {
+			statusLabel() {
 				switch (this.nonprofit.status) {
 					case 'ACTIVE':
 						return 'Active';
@@ -160,51 +160,50 @@
 			'nonprofit'
 		],
 		methods: {
-			toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
+			toggleMenu() {
+				const vm = this;
 
-				if (vue.displayingMenu) {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
+				if (vm.displayingMenu) {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
 				} else {
-					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeIn();
+					$(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeIn();
 				}
-				vue.displayingMenu = !vue.displayingMenu;
+				vm.displayingMenu = !vm.displayingMenu;
 			},
-			closeMenu: function () {
-				const vue = this;
+			closeMenu() {
+				const vm = this;
 
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-					vue.displayingMenu = false;
+				vm.timer = setTimeout(() => {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
+					vm.displayingMenu = false;
 				}, 250);
 			},
-			cancelCloseMenu: function () {
-				const vue = this;
+			cancelCloseMenu() {
+				const vm = this;
 
-				clearTimeout(vue.timer);
+				clearTimeout(vm.timer);
 			},
-			updateStatus: function (status) {
-				const vue = this;
+			updateStatus(status) {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.$request.patch('nonprofits/' + vue.nonprofit.uuid + '/status', {
+				vm.$request.patch('nonprofits/' + vm.nonprofit.uuid + '/status', {
 					status: status
-				}).then(function () {
-					vue.clearModals();
-					vue.$emit('updateNonprofit', vue.nonprofit.uuid);
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.$emit('hasError', err);
+				}).then(() => {
+					vm.clearModals();
+					vm.$emit('updateNonprofit', vm.nonprofit.uuid);
+				}).catch(err => {
+					vm.clearModals();
+					vm.$emit('hasError', err);
 				})
 			},
-			revokeNonprofit: function () {
-				const vue = this;
-				vue.addModal('nonprofits-revoke', {nonprofit: vue.nonprofit});
+			revokeNonprofit() {
+				const vm = this;
+				vm.addModal('nonprofits-revoke', {nonprofit: vm.nonprofit});
 			}
 		}
 	};

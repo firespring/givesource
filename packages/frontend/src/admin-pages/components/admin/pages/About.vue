@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow">
                             <header class="c-page-section__header">
@@ -65,7 +65,7 @@
 	import ComponentCKEditor from './../../forms/Ckeditor.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				original: [],
@@ -85,41 +85,41 @@
 				apiError: {}
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('contents', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.contents = response.data;
-					vue.original = JSON.parse(JSON.stringify(response.data));
-					vue.loaded = true;
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('contents', {
+					keys: Object.keys(vm.formData)
+				}).then(response => {
+					vm.contents = response.data;
+					vm.original = JSON.parse(JSON.stringify(response.data));
+					vm.loaded = true;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.loaded = false;
-			vue.$request.get('contents', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.contents = response.data;
-				vue.original = JSON.parse(JSON.stringify(response.data));
-				vue.loaded = true;
+			vm.loaded = false;
+			vm.$request.get('contents', {
+				keys: Object.keys(vm.formData)
+			}).then(response => {
+				vm.contents = response.data;
+				vm.original = JSON.parse(JSON.stringify(response.data));
+				vm.loaded = true;
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
 		watch: {
 			contents: {
-				handler: function () {
-					const vue = this;
-					if (vue.contents.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.contents, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.contents.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const content = _.find(vm.contents, {key: key});
 							if (content) {
-								vue.formData[key] = content;
+								vm.formData[key] = content;
 							}
 						});
 					}
@@ -128,39 +128,38 @@
 			}
 		},
 		methods: {
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.updateContents();
+				vm.addModal('spinner');
+				vm.updateContents();
 			},
-			updateContents: function () {
-				const vue = this;
+			updateContents() {
+				const vm = this;
 
 				const created = [];
-				const changed = _.differenceWith(vue.contents, vue.original, _.isEqual);
+				const changed = _.differenceWith(vm.contents, vm.original, _.isEqual);
 				const toUpdate = _.reject(changed, {value: ''});
 				const toDelete = _.filter(changed, {value: ''});
-				Object.keys(vue.formData).forEach(function (key) {
-					if (!_.find(vue.original, {key: key}) && vue.formData[key].value !== '') {
-						created.push(vue.formData[key]);
+				Object.keys(vm.formData).forEach(key => {
+					if (!_.find(vm.original, {key: key}) && vm.formData[key].value !== '') {
+						created.push(vm.formData[key]);
 					}
 				});
 
 				let promise = Promise.resolve();
 				if (created.length) {
-					created.forEach(function (content) {
-						promise = promise.then(function () {
-							return vue.$request.post('contents', content);
+					created.forEach(content => {
+						promise = promise.then(() => {
+							return vm.$request.post('contents', content);
 						});
 					});
 				}
 
 				if (toUpdate.length) {
-					promise = promise.then(function () {
-						return vue.$request.patch('contents', {
-							contents: toUpdate.map(function (content) {
+					promise = promise.then(() => {
+						return vm.$request.patch('contents', {
+							contents: toUpdate.map(content => {
 								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
 							}),
 						});
@@ -168,19 +167,19 @@
 				}
 
 				if (toDelete.length) {
-					promise = promise.then(function () {
-						return vue.$request.delete('contents', {
+					promise = promise.then(() => {
+						return vm.$request.delete('contents', {
 							contents: toDelete
 						});
 					});
 				}
 
-				promise.then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'pages-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				promise.then(() => {
+					vm.clearModals();
+					vm.$router.push({name: 'pages-list'});
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

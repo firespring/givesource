@@ -30,7 +30,7 @@
                         </div>
                     </div>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
@@ -238,8 +238,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button v-on:click="saveAndActivate" type="submit" class="c-btn">Save &amp; Activate</button>
-                            <button v-on:click="saveAndFinish" type="submit" class="c-btn">Save &amp; Finish</button>
+                            <button v-on:click.prevent="saveAndActivate" type="submit" class="c-btn">Save &amp; Activate</button>
+                            <button v-on:click.prevent="saveAndFinish" type="submit" class="c-btn">Save &amp; Finish</button>
                             <router-link :to="{ name: 'nonprofits-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel </router-link>
                         </footer>
 
@@ -256,7 +256,7 @@
 	import ComponentSelectState from './../../forms/SelectState.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				formData: {
 					legalName: '',
@@ -315,26 +315,26 @@
 			}
 		},
 		computed: {
-			category1Options: function () {
-				const vue = this;
-				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
-					if (option.value === vue.formData.category2 || option.value === vue.formData.category3) {
+			category1Options() {
+				const vm = this;
+				return _.forEach(_.cloneDeep(vm.categoryOptions), option => {
+					if (option.value === vm.formData.category2 || option.value === vm.formData.category3) {
 						option.disabled = true;
 					}
 				});
 			},
-			category2Options: function () {
-				const vue = this;
-				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
-					if (option.value === vue.formData.category1 || option.value === vue.formData.category3) {
+			category2Options() {
+				const vm = this;
+				return _.forEach(_.cloneDeep(vm.categoryOptions), option => {
+					if (option.value === vm.formData.category1 || option.value === vm.formData.category3) {
 						option.disabled = true;
 					}
 				});
 			},
-			category3Options: function () {
-				const vue = this;
-				return _.forEach(_.cloneDeep(vue.categoryOptions), function (option) {
-					if (option.value === vue.formData.category1 || option.value === vue.formData.category2) {
+			category3Options() {
+				const vm = this;
+				return _.forEach(_.cloneDeep(vm.categoryOptions), option => {
+					if (option.value === vm.formData.category1 || option.value === vm.formData.category2) {
 						option.disabled = true;
 					}
 				});
@@ -342,17 +342,17 @@
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					legalName: {
 						presence: true,
@@ -411,105 +411,107 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
-			saveAndFinish: function (event) {
-				event.preventDefault();
-				const vue = this;
+			saveAndFinish() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
-					vue.scrollToError();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
+					vm.scrollToError();
 				} else {
-					vue.registerNonprofit();
+					vm.registerNonprofit();
 				}
 			},
-			saveAndActivate: function (event) {
-				event.preventDefault();
-				const vue = this;
+			saveAndActivate() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
-					vue.scrollToError();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
+					vm.scrollToError();
 				} else {
-					vue.registerAndActivateNonprofit();
+					vm.registerAndActivateNonprofit();
 				}
 			},
-			registerNonprofit: function () {
-				const vue = this;
+			registerNonprofit() {
+				const vm = this;
 
-				vue.$request.post('nonprofits/register', {
+				vm.$request.post('nonprofits/register', {
 					nonprofit: {
-						legalName: vue.formData.legalName,
-						taxId: vue.formData.taxId,
-						address1: vue.formData.address1,
-						address2: vue.formData.address2,
-						address3: vue.formData.address3,
-						city: vue.formData.city,
-						state: vue.formData.state,
-						zip: vue.formData.zip,
-						phone: vue.formData.phone,
-						category1: vue.formData.category1,
-						category2: vue.formData.category2,
-						category3: vue.formData.category3,
+						legalName: vm.formData.legalName,
+						taxId: vm.formData.taxId,
+						address1: vm.formData.address1,
+						address2: vm.formData.address2,
+						address3: vm.formData.address3,
+						city: vm.formData.city,
+						state: vm.formData.state,
+						zip: vm.formData.zip,
+						phone: vm.formData.phone,
+						category1: vm.formData.category1,
+						category2: vm.formData.category2,
+						category3: vm.formData.category3,
 					},
 					user: {
-						firstName: vue.formData.firstName,
-						lastName: vue.formData.lastName,
-						email: vue.formData.email
+						firstName: vm.formData.firstName,
+						lastName: vm.formData.lastName,
+						email: vm.formData.email
 					},
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'nonprofits-list'});
+						vm.$router.push({name: 'nonprofits-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
+					vm.scrollToError('.c-alert');
 				});
 			},
-			registerAndActivateNonprofit: function () {
-				const vue = this;
+			registerAndActivateNonprofit() {
+				const vm = this;
 
-				vue.$request.post('nonprofits/admin/register', {
+				vm.$request.post('nonprofits/admin/register', {
 					nonprofit: {
-						legalName: vue.formData.legalName,
-						taxId: vue.formData.taxId,
-						address1: vue.formData.address1,
-						address2: vue.formData.address2,
-						address3: vue.formData.address3,
-						city: vue.formData.city,
-						state: vue.formData.state,
-						zip: vue.formData.zip,
-						phone: vue.formData.phone,
-						category1: vue.formData.category1,
-						category2: vue.formData.category2,
-						category3: vue.formData.category3,
+						legalName: vm.formData.legalName,
+						taxId: vm.formData.taxId,
+						address1: vm.formData.address1,
+						address2: vm.formData.address2,
+						address3: vm.formData.address3,
+						city: vm.formData.city,
+						state: vm.formData.state,
+						zip: vm.formData.zip,
+						phone: vm.formData.phone,
+						category1: vm.formData.category1,
+						category2: vm.formData.category2,
+						category3: vm.formData.category3,
 					},
 					user: {
-						firstName: vue.formData.firstName,
-						lastName: vue.formData.lastName,
-						email: vue.formData.email
+						firstName: vm.formData.firstName,
+						lastName: vm.formData.lastName,
+						email: vm.formData.email
 					},
-				}).then(function (response) {
-					vue.clearModals();
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'nonprofits-list'});
+						vm.$router.push({name: 'nonprofits-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
+					vm.scrollToError('.c-alert');
 				});
 			}
 		},

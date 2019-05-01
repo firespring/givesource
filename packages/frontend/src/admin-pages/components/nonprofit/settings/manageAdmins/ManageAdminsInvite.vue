@@ -26,7 +26,8 @@
                         <nav class="o-page-header-nav c-breadcrumb">
                             <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
                             <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                            <span v-if="nonprofit.legalName"><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage {{ nonprofit.legalName }}'s Admin Users</router-link></span>
+                            <span v-if="nonprofit.legalName"><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage {{ nonprofit.legalName
+                                }}'s Admin Users</router-link></span>
                             <span v-else><router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admin Users</router-link></span>
                         </nav>
                         <h1 class="o-page-header-title" v-if="nonprofit.legalName">Invite {{ nonprofit.legalName }}'s Admin Users</h1>
@@ -43,7 +44,7 @@
                     </div>
                 </div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <section class="c-page-section c-page-section--border c-page-section--shadow">
 
                         <header class="c-page-section__header">
@@ -89,7 +90,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				nonprofit: {},
 
@@ -100,39 +101,39 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			}
 		},
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			}
 		},
 		props: [
 			'nonprofitUuid'
 		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vue.nonprofit = response.data;
-				}).catch(function(err){
-                    vue.apiError = err.response.data.errors;
-                });
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+					vm.nonprofit = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
+			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.nonprofit = response.data;
 				next();
-			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
-                next();
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
+				next();
 			});
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					emailAddresses: {
 						label: 'Email addresses',
@@ -140,33 +141,33 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.inviteNonprofitAdmins();
+					vm.inviteNonprofitAdmins();
 				}
 			},
-			inviteNonprofitAdmins: function () {
-				const vue = this;
+			inviteNonprofitAdmins() {
+				const vm = this;
 
-				vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/users', {
-					email_addresses: vue.formData.emailAddresses
-				}).then(function (response) {
-					vue.clearModals();
+				vm.$request.post('nonprofits/' + vm.nonprofitUuid + '/users', {
+					email_addresses: vm.formData.emailAddresses
+				}).then(response => {
+					vm.clearModals();
 					if (response.data.errorMessage) {
-						console.log(response.data);
+						vm.apiError = vm.formatErrorMessageResponse(response);
+						vm.scrollToError('.c-alert');
 					} else {
-						vue.$router.push({name: 'nonprofit-settings-admins-list'});
+						vm.$router.push({name: 'nonprofit-settings-admins-list'});
 					}
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		}

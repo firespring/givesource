@@ -277,7 +277,8 @@
 						promise = promise.then(() => {
 							return vm.$request.patch('nonprofits/' + vm.nonprofit.uuid, updatedParams).then(response => {
 								if (response.data.errorMessage) {
-									console.log(response.data);
+									vm.apiError = vm.formatErrorMessageResponse(response);
+									vm.scrollToError('.c-alert');
 								}
 								vm.$emit('updateNonprofit', response.data);
 							})
