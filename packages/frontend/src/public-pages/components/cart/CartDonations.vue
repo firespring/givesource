@@ -48,33 +48,33 @@
 	import ComponentCartDonationsListTable from './CartDonationsListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
-				localValue: true,
+				localValue: this.value,
 
 				donationFees: 0,
 				donationSubtotal: 0,
 			};
 		},
 		computed: {
-			donationTotal: function () {
-				const vue = this;
+			donationTotal() {
+				const vm = this;
 
-				if (vue.localValue) {
+				if (vm.localValue) {
 					return this.donationFees + this.donationSubtotal;
 				} else {
 					return this.donationSubtotal;
 				}
 			},
-			fees: function () {
+			fees() {
 				const fees = JSON.parse(JSON.stringify(this.donationFees));
 				return this.formatMoney(fees);
 			},
-			subtotal: function () {
+			subtotal() {
 				const subtotal = JSON.parse(JSON.stringify(this.donationSubtotal));
 				return this.formatMoney(subtotal);
 			},
-			total: function () {
+			total() {
 				const total = JSON.parse(JSON.stringify(this.donationTotal));
 				return this.formatMoney(total);
 			}
@@ -86,54 +86,51 @@
 				default: false
 			}
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.updateDonationsSubtotal();
-			vue.bus.$on('updateCartItems', function () {
-				vue.updateDonationsSubtotal();
+			vm.updateDonationsSubtotal();
+			vm.bus.$on('updateCartItems', () => {
+				vm.updateDonationsSubtotal();
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
-
-			vue.bus.$off('updateCartItems');
+		beforeDestroy() {
+			this.bus.$off('updateCartItems');
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', value);
+				vm.$emit('input', value);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
+				vm.localValue = value;
 			}
 		},
 		methods: {
-			updateDonationsSubtotal: function () {
-				const vue = this;
+			updateDonationsSubtotal() {
+				const vm = this;
 
-				const cartItems = vue.$store.getters.cartItems;
+				const cartItems = vm.$store.getters.cartItems;
 				if (cartItems.length) {
-					vue.donationFees = vue.calculateFees(cartItems);
-					vue.donationSubtotal = 0;
-					cartItems.forEach(function (cartItem) {
-						vue.donationSubtotal += cartItem.amount;
+					vm.donationFees = vm.calculateFees(cartItems);
+					vm.donationSubtotal = 0;
+					cartItems.forEach(cartItem => {
+						vm.donationSubtotal += cartItem.amount;
 					});
 				} else {
-					vue.donationFees = 0;
-					vue.donationSubtotal = 0;
+					vm.donationFees = 0;
+					vm.donationSubtotal = 0;
 				}
 			},
-			hasError: function (hasError) {
-				const vue = this;
-				vue.$emit('hasError', hasError);
+			hasError(hasError) {
+				this.$emit('hasError', hasError);
 			},
 		},
 		components: {
