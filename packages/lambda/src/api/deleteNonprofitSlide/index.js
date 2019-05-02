@@ -21,34 +21,42 @@ const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides'
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
 
-exports.handle = function (event, context, callback) {
+exports.handle = (event, context, callback) => {
 	const fileRepository = new FileRepository();
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 	const s3 = new S3();
 
+	let file = null;
 	let slide = null;
-	request.validate().then(function () {
+	request.validate().then(() => {
 		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
-	}).then(function (response) {
+	}).then(response => {
 		slide = response;
-		if (slide.fileUuid) {
-			let file = null;
-			return fileRepository.get(slide.fileUuid).then(function (response) {
+		if (slide && slide.fileUuid) {
+			return fileRepository.get(slide.fileUuid).catch(() => {
+				// file has already been deleted
+				return Promise.resolve()
+			}).then(response => {
 				file = response;
-				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);
-			}).then(function () {
-				return fileRepository.delete(file.uuid);
+				if (file && file.uuid) {
+					return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`).then(() => {
+						return fileRepository.delete(file.uuid);
+					}).catch(err => {
+						console.log(err);
+						return Promise.resolve();
+					});
+				}
 			});
 		} else {
 			return Promise.resolve();
 		}
-	}).then(function () {
+	}).then(() => {
 		return repository.delete(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
-	}).then(function () {
+	}).then(() => {
 		callback();
-	}).catch(function (err) {
+	}).catch(err => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 };
