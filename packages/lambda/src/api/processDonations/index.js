@@ -57,6 +57,7 @@ export function handle(event, context, callback) {
 
 	settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
 	settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
+	settings[SettingHelper.SETTING_EVENT_TITLE] = '';
 
 	const payment = request.get('payment', {});
 	request.validate().then(() => {
@@ -154,6 +155,7 @@ export function handle(event, context, callback) {
 				token: payment.id,
 				amount: total,
 				send_receipt: false,
+				description: settings[SettingHelper.SETTING_EVENT_TITLE]
 			},
 			auth: {
 				username: apiKey,
