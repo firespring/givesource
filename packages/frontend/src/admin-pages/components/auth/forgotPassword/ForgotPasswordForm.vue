@@ -18,7 +18,7 @@
     <div class="c-page-section__main">
         <h4>Reset your password</h4>
 
-        <form v-on:submit="submit">
+        <form v-on:submit.prevent="submit">
 
             <div class="c-alert c-alert--bad c-alert--shadow u-flex u-justify-center" v-if="errors.length">
                 <div class="c-alert__body u-flex u-justify-between">
@@ -58,7 +58,7 @@
 	const User = require('../../../helpers/user');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 
 				// Form Data
@@ -73,17 +73,17 @@
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					email: {
 						label: 'Email address',
@@ -92,30 +92,29 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.errors = [];
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.errors = [];
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.forgotPassword();
+					vm.forgotPassword();
 				}
 			},
-			forgotPassword: function () {
-				const vue = this;
+			forgotPassword() {
+				const vm = this;
 
-				User.forgotPassword(vue.formData.email, {
-					onSuccess: function (data, cognitoUser) {
-						vue.clearModals();
-						vue.$router.push({'name': 'forgot-password-request-sent'});
+				User.forgotPassword(vm.formData.email, {
+					onSuccess(data, cognitoUser) {
+						vm.clearModals();
+						vm.$router.push({'name': 'forgot-password-request-sent'});
 					},
-					onFailure: function (err) {
-						vue.clearModals();
-						vue.$router.push({'name': 'forgot-password-request-sent'});
+					onFailure(err) {
+						vm.clearModals();
+						vm.$router.push({'name': 'forgot-password-request-sent'});
 					}
 				});
 			}

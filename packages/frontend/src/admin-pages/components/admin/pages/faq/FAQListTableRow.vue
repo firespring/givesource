@@ -20,11 +20,11 @@
             <div class="c-drag-handle ui-sortable-handle"></div>
         </td>
         <td class="u-width-100p">
-            <strong><a v-on:click="editQuestion" href="#">{{ question }}</a></strong>
+            <strong><a v-on:click.prevent="editQuestion" href="#">{{ question }}</a></strong>
             <div class="c-notes c-notes--below c-notes--clipped" v-html="answer" v-shave="40"></div>
         </td>
         <td class="icon">
-            <a v-on:click="deleteQuestion" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
+            <a v-on:click.prevent="deleteQuestion" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
         </td>
     </tr>
 </template>
@@ -38,18 +38,22 @@
 			},
 		},
 		computed: {
-			question: function () {
-				if (this.content.hasOwnProperty('value')) {
-					const question = _.find(this.content.value, {key: 'FAQ_LIST_ITEM_QUESTION'});
+			question() {
+				const vm = this;
+
+				if (vm.content.hasOwnProperty('value')) {
+					const question = _.find(vm.content.value, {key: 'FAQ_LIST_ITEM_QUESTION'});
 					if (question) {
 						return question.value;
 					}
 				}
 				return null;
 			},
-			answer: function () {
-				if (this.content.hasOwnProperty('value')) {
-					const answer = _.find(this.content.value, {key: 'FAQ_LIST_ITEM_ANSWER'});
+			answer() {
+				const vm = this;
+
+				if (vm.content.hasOwnProperty('value')) {
+					const answer = _.find(vm.content.value, {key: 'FAQ_LIST_ITEM_ANSWER'});
 					if (answer) {
 						return answer.value;
 					}
@@ -58,17 +62,13 @@
 			}
 		},
 		methods: {
-			editQuestion: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-faq-edit-question-modal', {content: vue.content});
-            },
-			deleteQuestion: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-faq-delete-question-modal', {content: vue.content});
+			editQuestion() {
+				const vm = this;
+				vm.addModal('pages-faq-edit-question-modal', {content: vm.content});
+			},
+			deleteQuestion() {
+				const vm = this;
+				vm.addModal('pages-faq-delete-question-modal', {content: vm.content});
 			}
 		}
 	};

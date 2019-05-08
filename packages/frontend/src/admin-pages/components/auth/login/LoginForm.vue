@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <form v-on:submit="submit">
+        <form v-on:submit.prevent="submit">
             <div class="c-form-item c-form-item--email c-form-item--required c-form-item--compact">
                 <div class="c-form-item__control">
                     <div class="u-control-icon u-control-icon--email has-floating-label js-floating-label" v-floating-label>
@@ -77,7 +77,7 @@
 	const User = require('../../../helpers/user');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				displayAuthorizing: false,
 
@@ -90,26 +90,25 @@
 				// Errors
 				errors: [],
 				formErrors: {}
-			}
+			};
 		},
-		beforeMount: function () {
-			const vue = this;
-
-			vue.loginWithQueryParams();
+		beforeMount() {
+			const vm = this;
+			vm.loginWithQueryParams();
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					email: {
 						label: 'Email address',
@@ -119,70 +118,69 @@
 					password: {
 						presence: true
 					}
-				}
+				};
 			},
-			submit: function (event) {
-				const vue = this;
-				event.preventDefault();
+			submit() {
+				const vm = this;
 
-				vue.toggleAuthorizing(true);
-				vue.errors = [];
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.toggleAuthorizing(false);
+				vm.toggleAuthorizing(true);
+				vm.errors = [];
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.toggleAuthorizing(false);
 				} else {
-					vue.login();
+					vm.login();
 				}
 			},
-			loginWithQueryParams: function () {
-				const vue = this;
-				if (vue.$route.query.id && vue.$route.query.token) {
-					vue.toggleAuthorizing(true);
-					vue.login(vue.$route.query.id, vue.$route.query.token);
+			loginWithQueryParams() {
+				const vm = this;
+				if (vm.$route.query.id && vm.$route.query.token) {
+					vm.toggleAuthorizing(true);
+					vm.login(vm.$route.query.id, vm.$route.query.token);
 				}
 			},
-			login: function (id, token) {
-				const vue = this;
-				const username = id ? id : vue.formData.email;
-				const password = token ? token : vue.formData.password;
+			login(id, token) {
+				const vm = this;
+				const username = id ? id : vm.formData.email;
+				const password = token ? token : vm.formData.password;
 
 				User.login(username, password, {
-					onSuccess: function () {
-						if (vue.$route.query.redirect) {
-							vue.$router.push({path: decodeURIComponent(vue.$route.query.redirect)});
+					onSuccess() {
+						if (vm.$route.query.redirect) {
+							vm.$router.push({path: decodeURIComponent(vm.$route.query.redirect)});
 						} else {
-							vue.$router.push({name: 'homepage'});
+							vm.$router.push({name: 'homepage'});
 						}
 					},
-					onFailure: function (err) {
-						vue.toggleAuthorizing(false);
-						vue.errors.push('Incorrect username or password.');
+					onFailure(err) {
+						vm.toggleAuthorizing(false);
+						vm.errors.push('Incorrect username or password.');
 					},
-					mfaRequired: function (codeDeliveryDetails, cognitoUser) {
-						vue.toggleAuthorizing(false);
-						vue.$emit('setCognitoUser', cognitoUser);
+					mfaRequired(codeDeliveryDetails, cognitoUser) {
+						vm.toggleAuthorizing(false);
+						vm.$emit('setCognitoUser', cognitoUser);
 						// TODO: handle mfa
-						// vue.cognitoUser.sendMFACode(mfaCode, this);
+						// vm.cognitoUser.sendMFACode(mfaCode, this);
 					},
-					newPasswordRequired: function (userAttributes, requiredAttributes, cognitoUser) {
-						vue.toggleAuthorizing(false);
-						vue.$emit('setCognitoUser', cognitoUser);
-						vue.$emit('setUserAttributes', userAttributes);
-						vue.$emit('setMainComponent', 'password-reset-form');
+					newPasswordRequired(userAttributes, requiredAttributes, cognitoUser) {
+						vm.toggleAuthorizing(false);
+						vm.$emit('setCognitoUser', cognitoUser);
+						vm.$emit('setUserAttributes', userAttributes);
+						vm.$emit('setMainComponent', 'password-reset-form');
 					}
 				});
 			},
-			toggleAuthorizing: function (toggle) {
-				const vue = this;
+			toggleAuthorizing(toggle) {
+				const vm = this;
 
 				if (toggle) {
-					vue.displayAuthorizing = true;
-					vue.$emit('setDisplayHeader', false);
-					vue.$emit('setDisplayLinks', false);
+					vm.displayAuthorizing = true;
+					vm.$emit('setDisplayHeader', false);
+					vm.$emit('setDisplayLinks', false);
 				} else {
-					vue.displayAuthorizing = false;
-					vue.$emit('setDisplayHeader', true);
-					vue.$emit('setDisplayLinks', true);
+					vm.displayAuthorizing = false;
+					vm.$emit('setDisplayHeader', true);
+					vm.$emit('setDisplayLinks', true);
 				}
 			}
 		},

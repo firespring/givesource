@@ -40,57 +40,56 @@
 	import PaginationMixin from './../../../mixins/pagination';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				apiError: {}
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('nonprofits', to.query).then(function (response) {
-					vue.setPaginationData(response.data);
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('nonprofits', to.query).then(response => {
+					vm.setPaginationData(response.data);
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.resetPaginationData();
-			vue.$request.get('nonprofits', to.query).then(function (response) {
-				vue.setPaginationData(response.data);
+			vm.resetPaginationData();
+			vm.$request.get('nonprofits', to.query).then(response => {
+				vm.setPaginationData(response.data);
 				next();
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('revokeNonprofit', function (nonprofitUuid) {
-				vue.updateNonprofit(nonprofitUuid);
+			vm.bus.$on('revokeNonprofit', nonprofitUuid => {
+				vm.updateNonprofit(nonprofitUuid);
 			});
 
 		},
-		beforeDestroy: function () {
-			const vue = this;
-
-			vue.bus.$off('revokeNonprofit');
+		beforeDestroy() {
+			const vm = this;
+			vm.bus.$off('revokeNonprofit');
 		},
 		mixins: [
 			PaginationMixin
 		],
 		methods: {
-			updateNonprofit: function (nonprofitUuid) {
-				const vue = this;
+			updateNonprofit(nonprofitUuid) {
+				const vm = this;
 
-				vue.$request.get('nonprofits/' + nonprofitUuid).then(function (response) {
-					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
+				vm.$request.get('nonprofits/' + nonprofitUuid).then(response => {
+					vm.pagination.items = _.map(vm.pagination.items, nonprofit => {
 						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
 					});
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			searchNonprofits: function (params) {
-				const vue = this;
+			searchNonprofits(params) {
+				const vm = this;
 
 				let sort = 'all_created_on_descending';
 				if (params.sort) {
@@ -98,37 +97,37 @@
 					delete params.sort;
 				}
 
-				vue.pagination.loaded = false;
-				vue.$request.get('nonprofits/search', params).then(function (response) {
+				vm.pagination.loaded = false;
+				vm.$request.get('nonprofits/search', params).then(response => {
 					if (!params.hasOwnProperty('legalName')) {
-						response.data.sort(function (a, b) {
+						response.data.sort((a, b) => {
 							return Utils.sortAlphabetically(a, b, 'legalName');
 						});
-                    }
-					vue.setPaginationData({
+					}
+					vm.setPaginationData({
 						size: 0,
 						sort: sort,
 						start: 0,
 						total: 0,
 						items: response.data
 					});
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			resetPagination: function () {
-				const vue = this;
+			resetPagination() {
+				const vm = this;
 
-				vue.resetPaginationData();
-				vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
-					vue.setPaginationData(response.data);
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				vm.resetPaginationData();
+				vm.$request.get('nonprofits', vm.$route.query).then(response => {
+					vm.setPaginationData(response.data);
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				const vm = this;
+				vm.apiError = err.response.data.errors;
 			}
 		},
 		components: {

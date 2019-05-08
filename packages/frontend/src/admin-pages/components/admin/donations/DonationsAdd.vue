@@ -214,8 +214,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button v-on:click="save('close')" type="submit" class="c-btn">Save & Finish</button>
-                            <button v-on:click="save('add')" type="submit" class="c-btn">Save & Add Another</button>
+                            <button v-on:click.prevent="save('close')" type="submit" class="c-btn">Save & Finish</button>
+                            <button v-on:click.prevent="save('add')" type="submit" class="c-btn">Save & Add Another</button>
                             <router-link :to="{ name: 'donations-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
 

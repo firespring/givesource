@@ -36,7 +36,7 @@
         </td>
         <td class="u-nowrap">
             <div v-if="!isSuperAdmin" class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only"></a>
+                <a v-on:click.prevent="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options" v-if="!adminUser.isVerified">
                         <a v-on:click.prevent="resendVerificationEmail" href="#">
@@ -56,63 +56,66 @@
 </template>
 
 <script>
-
-    export default {
-        data: function () {
-            return {
-                displayingMenu: false,selectedAdminUser: this.adminUser,
-            timer: null,}
-        },
-        computed: {
-            formattedDate: function () {
-                return new Date(this.adminUser.createdOn).toLocaleDateString();
-            },
-            isSuperAdmin: function () {
-                return _.includes(this.adminUser.groups, 'SuperAdmin');
-            }
-        },
-        props: [
-            'adminUser'
-        ],
-        methods: {
-            toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
-				if (vue.displayingMenu) {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-				} else {
-					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeIn();
-				}
-				vue.displayingMenu = !vue.displayingMenu;
+	export default {
+		data() {
+			return {
+				displayingMenu: false,
+				selectedAdminUser: this.adminUser,
+				timer: null,
+			};
+		},
+		computed: {
+			formattedDate() {
+				return new Date(this.adminUser.createdOn).toLocaleDateString();
 			},
-			closeMenu: function () {
-				const vue = this;
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-					vue.displayingMenu = false;
+			isSuperAdmin() {
+				return _.includes(this.adminUser.groups, 'SuperAdmin');
+			}
+		},
+		props: [
+			'adminUser'
+		],
+		methods: {
+			toggleMenu() {
+				const vm = this;
+
+				if (vm.displayingMenu) {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
+				} else {
+					$(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeIn();
+				}
+				vm.displayingMenu = !vm.displayingMenu;
+			},
+			closeMenu() {
+				const vm = this;
+
+				vm.timer = setTimeout(() => {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
+					vm.displayingMenu = false;
 				}, 250);
 			},
-			cancelCloseMenu: function () {
-				const vue = this;
-				clearTimeout(vue.timer);
+			cancelCloseMenu() {
+				const vm = this;
+				clearTimeout(vm.timer);
 			},
-			removeUser: function () {
-                const vue = this;
-                vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser);},
-			resendVerificationEmail: function () {
-				const vue = this;
+			removeUser() {
+				const vm = this;
+				vm.bus.$emit('deleteUserAdminModal', vm.selectedAdminUser);
+			},
+			resendVerificationEmail() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.$request.post('users/' + vue.adminUser.uuid + '/resend-verification-email').then(function () {
-					vue.clearModals();
-				}).catch(function (err) {
+				vm.addModal('spinner');
+				vm.$request.post('users/' + vm.adminUser.uuid + '/resend-verification-email').then(() => {
+					vm.clearModals();
+				}).catch(err => {
 					console.log(err);
-					vue.clearModals();
+					vm.clearModals();
 				});
-            },
-        }
-    };
+			},
+		}
+	};
 </script>

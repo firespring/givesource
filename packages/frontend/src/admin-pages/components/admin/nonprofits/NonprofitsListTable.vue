@@ -43,14 +43,14 @@
 
 	export default {
 		computed: {
-			displayRows: function () {
+			displayRows() {
 				return this.loaded && this.nonprofits.length;
 			}
 		},
 		props: {
 			nonprofits: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				}
 			},
@@ -60,14 +60,14 @@
 			}
 		},
 		methods: {
-			updateNonprofit: function (nonprofitUuid) {
-				const vue = this;
-				vue.$emit('updateNonprofit', nonprofitUuid);
+			updateNonprofit(nonprofitUuid) {
+				const vm = this;
+				vm.$emit('updateNonprofit', nonprofitUuid);
 			},
 
-			hasError: function (err) {
-				const vue = this;
-				vue.$emit('hasError', err);
+			hasError(err) {
+				const vm = this;
+				vm.$emit('hasError', err);
 			}
 		},
 		components: {

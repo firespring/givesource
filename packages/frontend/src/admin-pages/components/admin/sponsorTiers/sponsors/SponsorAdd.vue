@@ -93,8 +93,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button v-on:click="save('add')" type="submit" class="c-btn">Save &amp; Add Another</button>
-                            <button v-on:click="save('close')" type="submit" class="c-btn">Save &amp; Finish</button>
+                            <button v-on:click.prevent="save('add')" type="submit" class="c-btn">Save &amp; Add Another</button>
+                            <button v-on:click.prevent="save('close')" type="submit" class="c-btn">Save &amp; Finish</button>
                             <router-link :to="{name:'sponsors-list'}" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
                     </form>

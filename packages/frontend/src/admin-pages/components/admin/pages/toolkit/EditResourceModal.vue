@@ -120,8 +120,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" type="button" class="c-btn js-modal-close">Save &amp; Close</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
+                                <button v-on:click.prevent="save" type="button" class="c-btn js-modal-close">Save &amp; Close</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
                             </div>
                         </div>
 
@@ -137,7 +137,7 @@
 	import ComponentSpinner from './../../../layout/Spinner.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				original: [],
 				file: {},
@@ -190,34 +190,34 @@
 			}
 		},
 		computed: {
-			showFileInput: function () {
+			showFileInput() {
 				return this.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'FILE';
 			},
-			showLinkInput: function () {
+			showLinkInput() {
 				return this.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'LINK';
 			},
-			filename: function () {
+			filename() {
 				return Object.keys(this.file).length ? this.file.filename : '';
 			}
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			data: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.data.content).length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.data.content.value, {key: key});
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.data.content).length) {
+						Object.keys(vm.formData).forEach(key => {
+							const content = _.find(vm.data.content.value, {key: key});
 							if (content) {
-								vue.formData[key] = content;
+								vm.formData[key] = content;
 							}
 						});
 					}
@@ -225,30 +225,30 @@
 				deep: true
 			}
 		},
-		mounted: function () {
-			const vue = this;
-			if (Object.keys(vue.data.content).length) {
-				vue.original = JSON.parse(JSON.stringify(vue.data.content.value));
-				Object.keys(vue.formData).forEach(function (key) {
-					const content = _.find(vue.data.content.value, {key: key});
+		mounted() {
+			const vm = this;
+			if (Object.keys(vm.data.content).length) {
+				vm.original = JSON.parse(JSON.stringify(vm.data.content.value));
+				Object.keys(vm.formData).forEach(key => {
+					const content = _.find(vm.data.content.value, {key: key});
 					if (content) {
-						vue.formData[key] = content;
+						vm.formData[key] = content;
 					}
 				});
 
-				const file = _.find(vue.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+				const file = _.find(vm.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
 				if (file) {
-					vue.loading = true;
-					vue.$request.get('files/' + file.value).then(function (response) {
-						vue.file = response.data;
-						vue.loading = false;
+					vm.loading = true;
+					vm.$request.get('files/' + file.value).then(response => {
+						vm.file = response.data;
+						vm.loading = false;
 					});
 				}
 			}
 		},
 		methods: {
-			getConstraints: function () {
-				const vue = this;
+			getConstraints() {
+				const vm = this;
 
 				const constraints = {
 					'TOOLKIT_RESOURCE_LIST_ITEM_TITLE.value': {
@@ -266,7 +266,7 @@
 					},
 				};
 
-				if (vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'LINK') {
+				if (vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'LINK') {
 					constraints['TOOLKIT_RESOURCE_LIST_ITEM_LINK.value'] = {
 						label: 'Link',
 						presence: true,
@@ -281,56 +281,56 @@
 
 				return constraints;
 			},
-			cancel: function () {
+			cancel() {
 				this.data.content.value = this.original;
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.updateContents();
+					vm.updateContents();
 				}
 			},
-			updateContents: function () {
-				const vue = this;
+			updateContents() {
+				const vm = this;
 
-				const changed = _.differenceWith(vue.data.content.value, vue.original, _.isEqual);
+				const changed = _.differenceWith(vm.data.content.value, vm.original, _.isEqual);
 				const toUpdate = _.reject(changed, {value: ''});
 				const toDelete = _.filter(changed, {value: ''});
 
 				let file = null;
 				let promise = Promise.resolve();
 				if (_.find(toUpdate, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'})) {
-					const originalFileContent = _.find(vue.original, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+					const originalFileContent = _.find(vm.original, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
 					if (originalFileContent) {
-						promise = promise.then(function () {
-							vue.$request.delete('files/' + originalFileContent.value);
+						promise = promise.then(() => {
+							vm.$request.delete('files/' + originalFileContent.value);
 						});
 					}
 
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type,
-							filename: vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.name
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type,
+							filename: vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Disposition'] = 'attachment; filename="' + vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.name + '"';
+						instance.defaults.headers.common['Content-Type'] = vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Disposition'] = 'attachment; filename="' + vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value.name + '"';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value);
-					}).then(function () {
-						toUpdate.forEach(function (content) {
+						return instance.put(signedUrl, vm.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value);
+					}).then(() => {
+						toUpdate.forEach(content => {
 							if (content.key === 'TOOLKIT_RESOURCE_LIST_ITEM_FILE') {
 								content.value = file.uuid;
 							}
@@ -339,28 +339,28 @@
 				}
 
 				if (toUpdate.length) {
-					promise = promise.then(function () {
-						return vue.$request.patch('contents', {
+					promise = promise.then(() => {
+						return vm.$request.patch('contents', {
 							contents: toUpdate
 						});
 					});
 				}
 
 				if (toDelete.length) {
-					promise = promise.then(function () {
-						return vue.$request.delete('contents', {
+					promise = promise.then(() => {
+						return vm.$request.delete('contents', {
 							contents: toDelete
 						});
 					});
 				}
 
-				promise.then(function () {
-					vue.$store.commit('generateCacheKey');
-					vue.bus.$emit('updateToolkitResourceList', vue.data.content);
-					vue.clearModals();
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-					vue.apiError = err.response.data.errors;
+				promise.then(() => {
+					vm.$store.commit('generateCacheKey');
+					vm.bus.$emit('updateToolkitResourceList', vm.data.content);
+					vm.clearModals();
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.apiError = err.response.data.errors;
 				});
 			},
 		},

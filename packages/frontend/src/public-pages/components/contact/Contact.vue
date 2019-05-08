@@ -28,7 +28,7 @@
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <fieldset>
 
                         <div class="form-item form-item--required">
@@ -118,7 +118,7 @@
 	import ComponentSubmit from './../forms/Submit.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				processing: false,
@@ -136,60 +136,60 @@
 			}
 		},
 		computed: {
-			contactPhone: function () {
+			contactPhone() {
 				return this.$store.getters.setting('CONTACT_PHONE') || null;
 			},
-			text: function () {
+			text() {
 				const text = _.find(this.contents, {key: 'CONTACT_FORM_TEXT'});
 				return text ? text.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
 					keys: 'CONTACT_FORM_TEXT'
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				})).then(response => {
+					vm.contents = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: 'CONTACT_FORM_TEXT'
-			})).then(function (response) {
-				vue.contents = response.data;
+			})).then(response => {
+				vm.contents = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Contact Us');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Contact Us');
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					email: {
 						label: '',
@@ -219,39 +219,38 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.processing = true;
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				vm.processing = true;
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 
-				if (Object.keys(vue.formErrors).length) {
-					vue.scrollToError();
-					vue.processing = false;
+				if (Object.keys(vm.formErrors).length) {
+					vm.scrollToError();
+					vm.processing = false;
 				} else {
-					vue.sendMessage();
+					vm.sendMessage();
 				}
 			},
-			sendMessage: function () {
-				const vue = this;
+			sendMessage() {
+				const vm = this;
 
 				axios.post(API_URL + 'messages', {
-					name: vue.formData.firstName + ' ' + vue.formData.lastName,
-					email: vue.formData.email,
-					phone: vue.formData.phone,
-					message: vue.formData.message,
+					name: vm.formData.firstName + ' ' + vm.formData.lastName,
+					email: vm.formData.email,
+					phone: vm.formData.phone,
+					message: vm.formData.message,
 					type: 'CONTACT',
-				}).then(function (response) {
-					vue.processing = false;
+				}).then(response => {
+					vm.processing = false;
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
-						vue.$router.push({name: 'contact-response'});
+						vm.$router.push({name: 'contact-response'});
 					}
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-					vue.processing = false;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					vm.processing = false;
 				});
 			}
 		},

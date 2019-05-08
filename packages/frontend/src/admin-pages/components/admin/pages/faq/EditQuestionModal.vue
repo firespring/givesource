@@ -60,8 +60,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" type="button" class="c-btn">Save &amp; Close</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
+                                <button v-on:click.prevent="save" type="button" class="c-btn">Save &amp; Close</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
 
@@ -76,7 +76,7 @@
 	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				original: [],
 
@@ -113,22 +113,22 @@
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			data: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.data.content).length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.data.content.value, {key: key});
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.data.content).length) {
+						Object.keys(vm.formData).forEach(key => {
+							const content = _.find(vm.data.content.value, {key: key});
 							if (content) {
-								vue.formData[key] = content;
+								vm.formData[key] = content;
 							}
 						});
 					}
@@ -136,20 +136,20 @@
 				deep: true
 			}
 		},
-		mounted: function () {
-			const vue = this;
-			if (Object.keys(vue.data.content).length) {
-				vue.original = JSON.parse(JSON.stringify(vue.data.content.value));
-				Object.keys(vue.formData).forEach(function (key) {
-					const content = _.find(vue.data.content.value, {key: key});
+		mounted() {
+			const vm = this;
+			if (Object.keys(vm.data.content).length) {
+				vm.original = JSON.parse(JSON.stringify(vm.data.content.value));
+				Object.keys(vm.formData).forEach(key => {
+					const content = _.find(vm.data.content.value, {key: key});
 					if (content) {
-						vue.formData[key] = content;
+						vm.formData[key] = content;
 					}
 				});
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					'FAQ_LIST_ITEM_QUESTION.value': {
 						label: 'Question',
@@ -161,33 +161,33 @@
 					},
 				};
 			},
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.updateContents();
+					vm.updateContents();
 				}
 			},
-			updateContents: function () {
-				const vue = this;
+			updateContents() {
+				const vm = this;
 
-				const toUpdate = _.differenceWith(vue.data.content.value, vue.original, _.isEqual);
+				const toUpdate = _.differenceWith(vm.data.content.value, vm.original, _.isEqual);
 				if (toUpdate.length) {
-					vue.$request.patch('contents', {
+					vm.$request.patch('contents', {
 						contents: toUpdate
-					}).then(function () {
-						vue.bus.$emit('updateFAQList', vue.data.content);
-						vue.clearModals();
-					}).catch(function (err) {
-						vue.removeModal('spinner');
-						vue.apiError = err.response.data.errors;
+					}).then(() => {
+						vm.bus.$emit('updateFAQList', vm.data.content);
+						vm.clearModals();
+					}).catch(err => {
+						vm.removeModal('spinner');
+						vm.apiError = err.response.data.errors;
 					});
 				}
 			},

@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="o-app-main-content">
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
                             <div class="c-page-section__main">
 
@@ -85,8 +85,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button v-on:click="save" type="submit" class="c-btn">Save Changes</button>
-                            <button v-on:click="cancel" type="submit" class="c-btn c-btn--text c-btn--neutral">Cancel</button>
+                            <button v-on:click.prevent="save" type="submit" class="c-btn">Save Changes</button>
+                            <button v-on:click.prevent="cancel" type="submit" class="c-btn c-btn--text c-btn--neutral">Cancel</button>
                         </footer>
 
                     </form>
@@ -98,10 +98,8 @@
 </template>
 
 <script>
-	import Vue from "vue";
-
 	export default {
-		data: function () {
+		data() {
 			return {
 				file: {},
 				newFile: null,
@@ -116,14 +114,14 @@
 
 				// Errors
 				formErrors: {},
-                apiError: {},
+				apiError: {},
 			};
 		},
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-			imageUrl: function () {
+			imageUrl() {
 				return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false;
 			}
 		},
@@ -133,81 +131,81 @@
 		],
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			slide: {
-				handler: function () {
-					const vue = this;
-					vue.formData = vue.sync(vue.formData, vue.slide);
+				handler() {
+					const vm = this;
+					vm.formData = vm.sync(vm.formData, vm.slide);
 				},
 				deep: true
 			},
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-					vue.nonprofit = response.data;
-					return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
-				}).then(function (response) {
-					vue.slide = response.data;
-					if (vue.slide.fileUuid) {
-						return vue.$request.get('files/' + vue.slide.fileUuid);
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+					vm.nonprofit = response.data;
+					return vm.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+				}).then(response => {
+					vm.slide = response.data;
+					if (vm.slide.fileUuid) {
+						return vm.$request.get('files/' + vm.slide.fileUuid);
 					} else {
 						return Promise.resolve(null);
 					}
-				}).then(function (response) {
+				}).then(response => {
 					if (response) {
-						vue.file = response.data;
+						vm.file = response.data;
 					}
-				}).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                    next();
-                });
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					next();
+				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
-				vue.nonprofit = response.data;
-				return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
-			}).then(function (response) {
-				vue.slide = response.data;
-				if (vue.slide.fileUuid) {
-					return vue.$request.get('files/' + vue.slide.fileUuid);
+			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.nonprofit = response.data;
+				return vm.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+			}).then(response => {
+				vm.slide = response.data;
+				if (vm.slide.fileUuid) {
+					return vm.$request.get('files/' + vm.slide.fileUuid);
 				} else {
 					return Promise.resolve(null);
 				}
-			}).then(function (response) {
+			}).then(response => {
 				if (response) {
-					vue.file = response.data;
+					vm.file = response.data;
 				}
 				next();
-			}).catch(function (err) {
-                vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('photoEditorSave-Edit', function (data, file) {
-				vue.uploadFile(data, file);
+			vm.bus.$on('photoEditorSave-Edit', (data, file) => {
+				vm.uploadFile(data, file);
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
+		beforeDestroy() {
+			const vm = this;
 
-			vue.bus.$off('photoEditorSave-Edit');
+			vm.bus.$off('photoEditorSave-Edit');
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					caption: {
 						presence: false,
@@ -217,77 +215,76 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
+			submit() {
+				// do nothing
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateNonprofitSlide();
+					vm.updateNonprofitSlide();
 				}
 			},
-			cancel: function () {
-				const vue = this;
+			cancel() {
+				const vm = this;
 
-				if (vue.newFile) {
-					vue.addModal('spinner');
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
-						vue.clearModals();
-						vue.newFile = null;
-						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
-					}).catch(function (err) {
-						vue.clearModals();
-                        vue.apiError = err.response.data.errors;
+				if (vm.newFile) {
+					vm.addModal('spinner');
+					vm.$request.delete('files/' + vm.newFile.uuid).then(() => {
+						vm.clearModals();
+						vm.newFile = null;
+						vm.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+					}).catch(err => {
+						vm.clearModals();
+						vm.apiError = err.response.data.errors;
 					});
 				} else {
-					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+					vm.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 				}
 			},
-			replaceImage: function (event) {
-				event.preventDefault();
-				const vue = this;
+			replaceImage() {
+				const vm = this;
 
-				if (vue.newFile) {
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
-						vue.newFile = null;
-					}).catch(function (err) {
-                        vue.apiError = err.response.data.errors;
+				if (vm.newFile) {
+					vm.$request.delete('files/' + vm.newFile.uuid).then(() => {
+						vm.newFile = null;
+					}).catch(err => {
+						vm.apiError = err.response.data.errors;
 					});
 				}
 
-				vue.$refs.fileInput.click();
+				vm.$refs.fileInput.click();
 			},
-			onFileChange: function (event) {
-				const vue = this;
+			onFileChange(event) {
+				const vm = this;
 
 				const extensions = ['gif', 'jpeg', 'jpg', 'png'];
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length && files[0] instanceof File && extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
-					vue.addModal('photo-editor', {
+					vm.addModal('photo-editor', {
 						file: files[0],
 						listener: 'photoEditorSave-Edit',
 						width: 770,
 						height: 443
 					});
-					vue.addModal('spinner');
+					vm.addModal('spinner');
 				}
 			},
-			uploadFile: function (fileData, file) {
-				const vue = this;
+			uploadFile(fileData, file) {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.$request.post('files', {
+				vm.$request.post('files', {
 					content_type: fileData.type,
 					filename: fileData.name
-				}).then(function (response) {
-					vue.newFile = response.data.file;
+				}).then(response => {
+					vm.newFile = response.data.file;
 					const signedUrl = response.data.upload_url;
 
 					const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
@@ -296,42 +293,42 @@
 					instance.defaults.headers.put['Content-Type'] = fileData.type || 'application/octet-stream';
 					axios.defaults.headers = defaultHeaders;
 					return instance.put(signedUrl, file);
-				}).then(function () {
-					vue.clearModals();
-					vue.file = vue.newFile;
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				}).then(() => {
+					vm.clearModals();
+					vm.file = vm.newFile;
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			updateNonprofitSlide: function () {
-				const vue = this;
+			updateNonprofitSlide() {
+				const vm = this;
 				const params = {};
 
-				if (vue.newFile) {
-					params['fileUuid'] = vue.newFile.uuid;
+				if (vm.newFile) {
+					params['fileUuid'] = vm.newFile.uuid;
 				}
 
-				if (vue.formData.caption !== vue.slide.caption) {
-					params['caption'] = vue.formData.caption;
+				if (vm.formData.caption !== vm.slide.caption) {
+					params['caption'] = vm.formData.caption;
 				}
 
 				if (Object.keys(params).length === 0) {
-					vue.clearModals();
-					return vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+					vm.clearModals();
+					return vm.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 				}
 
-				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides/' + vue.slideUuid, params).then(function () {
-					if (vue.newFile) {
-						return vue.$request.delete('files/' + vue.slide.fileUuid);
+				vm.$request.patch('nonprofits/' + vm.nonprofitUuid + '/slides/' + vm.slideUuid, params).then(() => {
+					if (vm.newFile) {
+						return vm.$request.delete('files/' + vm.slide.fileUuid);
 					}
-				}).then(function () {
-					vue.$store.commit('generateCacheKey');
-					vue.clearModals();
-					vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.apiError = err.response.data.errors;
+				}).then(() => {
+					vm.$store.commit('generateCacheKey');
+					vm.clearModals();
+					vm.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
 		}

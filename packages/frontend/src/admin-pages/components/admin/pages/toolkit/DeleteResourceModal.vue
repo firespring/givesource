@@ -36,8 +36,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="deleteResource" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete This Item</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep This Item</button>
+                                <button v-on:click.prevent="deleteResource" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete This Item</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep This Item</button>
                             </div>
                         </div>
 
@@ -64,27 +64,27 @@
 			}
 		},
 		methods: {
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			deleteResource: function () {
-				const vue = this;
+			deleteResource() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
 				let promise = Promise.resolve();
-				const file = _.find(vue.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
+				const file = _.find(vm.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
 				if (file && file.value) {
-					promise = promise.then(function () {
-						return vue.$request.delete('files/' + file.value);
+					promise = promise.then(() => {
+						return vm.$request.delete('files/' + file.value);
 					});
 				}
 
-				promise.then(function () {
-					return vue.$request.delete('contents/' + vue.data.content.uuid);
-				}).then(function () {
-					vue.bus.$emit('deleteToolkitResourceList', vue.data.content);
-					vue.clearModals();
+				promise.then(() => {
+					return vm.$request.delete('contents/' + vm.data.content.uuid);
+				}).then(() => {
+					vm.bus.$emit('deleteToolkitResourceList', vm.data.content);
+					vm.clearModals();
 				});
 			},
 		}

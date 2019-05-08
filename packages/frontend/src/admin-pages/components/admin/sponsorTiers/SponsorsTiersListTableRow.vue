@@ -29,14 +29,14 @@
                 <router-link :to="{ name: 'sponsors-list', params: {sponsorTierUuid: sponsorTier.uuid} }" role="button" class="c-btn c-btn--sm">
                     Manage Tier
                 </router-link>
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger"></a>
+                <a v-on:click.prevent="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
                         <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierUuid: sponsorTier.uuid }}">
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings
                         </router-link>
                         <hr>
-                        <a v-on:click="deleteSponsorTier" href="#" class="js-modal-trigger" rel="modal-confirm-delete">
+                        <a v-on:click.prevent="deleteSponsorTier" href="#" class="js-modal-trigger" rel="modal-confirm-delete">
                             <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier
                         </a>
                     </div>
@@ -50,7 +50,7 @@
 	import * as Utils from './../../../helpers/utils';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				displayingMenu: false,
 				timer: null,
@@ -59,70 +59,70 @@
 		props: {
 			sponsorTier: {
 				type: Object,
-				default: function () {
+				default() {
 					return {};
 				}
 			},
 		},
 		methods: {
-			toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
-				if (vue.displayingMenu) {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
+			toggleMenu() {
+				const vm = this;
+
+				if (vm.displayingMenu) {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
 				} else {
-					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeIn();
+					$(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeIn();
 				}
-				vue.displayingMenu = !vue.displayingMenu;
+				vm.displayingMenu = !vm.displayingMenu;
 			},
-			closeMenu: function () {
-				const vue = this;
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-					vue.displayingMenu = false;
+			closeMenu() {
+				const vm = this;
+
+				vm.timer = setTimeout(() => {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
+					vm.displayingMenu = false;
 				}, 250);
 			},
-			cancelCloseMenu: function () {
-				const vue = this;
-				clearTimeout(vue.timer);
+			cancelCloseMenu() {
+				const vm = this;
+				clearTimeout(vm.timer);
 			},
-			deleteSponsorTier: function (event) {
-				event.preventDefault();
-				const vue = this;
+			deleteSponsorTier() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
 				const sponsors = [];
 				const fileUuids = [];
-				vue.$request.get('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors').then(function (response) {
-					response.data.forEach(function (sponsor) {
+				vm.$request.get('sponsor-tiers/' + vm.sponsorTier.uuid + '/sponsors').then(response => {
+					response.data.forEach(sponsor => {
 						sponsors.push(sponsor);
 						if (sponsor.fileUuid) {
 							fileUuids.push(sponsor.fileUuid);
 						}
 					});
-					return vue.$request.get('files', {
+					return vm.$request.get('files', {
 						uuids: fileUuids
 					});
-				}).then(function (response) {
-					return vue.$request.delete('files', {
+				}).then(response => {
+					return vm.$request.delete('files', {
 						files: response.data
 					});
-				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors', {
+				}).then(() => {
+					return vm.$request.delete('sponsor-tiers/' + vm.sponsorTier.uuid + '/sponsors', {
 						sponsors: sponsors
 					});
-				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid);
-				}).then(function () {
-					vue.clearModals();
-					vue.$emit('deleteSponsorTier', vue.sponsorTier.uuid);
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.$emit('hasError', err);
+				}).then(() => {
+					return vm.$request.delete('sponsor-tiers/' + vm.sponsorTier.uuid);
+				}).then(() => {
+					vm.clearModals();
+					vm.$emit('deleteSponsorTier', vm.sponsorTier.uuid);
+				}).catch(err => {
+					vm.clearModals();
+					vm.$emit('hasError', err);
 				});
 			}
 		}

@@ -41,34 +41,34 @@
 	import PaginationMixin from './../../../mixins/pagination';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				apiError: {}
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('donations', to.query).then(function (response) {
-					vue.setPaginationData(response.data)
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('donations', to.query).then(response => {
+					vm.setPaginationData(response.data)
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.resetPaginationData();
-			vue.$request.get('donations', to.query).then(function (response) {
-				vue.setPaginationData(response.data);
+			vm.resetPaginationData();
+			vm.$request.get('donations', to.query).then(response => {
+				vm.setPaginationData(response.data);
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				const vm = this;
+				vm.apiError = err.response.data.errors;
 			}
 		},
 		mixins: [

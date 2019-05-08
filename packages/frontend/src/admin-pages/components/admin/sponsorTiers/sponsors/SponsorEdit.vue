@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="o-app-main-content">
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
                         <api-error v-model="apiError"></api-error>
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
@@ -109,7 +109,7 @@
 	import ComponentSponsorTier from './../../../forms/SponsorTier.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				file: {},
 				sponsor: {},
@@ -133,74 +133,74 @@
 			sponsorUuid: null,
 			sponsorTierUuid: null,
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers').then(function (response) {
-					response.data.sort(function (a, b) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('sponsor-tiers').then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.sponsorTiers = response.data;
-					return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
-				}).then(function (response) {
-					vue.sponsor = response.data;
-					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: vue.sponsor.sponsorTierUuid});
-					return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vue.sponsor.fileUuid) : Promise.resolve();
-				}).then(function (response) {
+					vm.sponsorTiers = response.data;
+					return vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors/' + vm.sponsorUuid);
+				}).then(response => {
+					vm.sponsor = response.data;
+					vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: vm.sponsor.sponsorTierUuid});
+					return (vm.sponsor.fileUuid) ? vm.$request.get('files/' + vm.sponsor.fileUuid) : Promise.resolve();
+				}).then(response => {
 					if (response) {
-						vue.file = response.data;
+						vm.file = response.data;
 					}
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('sponsor-tiers').then(function (response) {
-				response.data.sort(function (a, b) {
+			vm.$request.get('sponsor-tiers').then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.sponsorTiers = response.data;
-				return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid);
-			}).then(function (response) {
-				vue.sponsor = response.data;
-				vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: vue.sponsor.sponsorTierUuid});
-				return (vue.sponsor.fileUuid) ? vue.$request.get('files/' + vue.sponsor.fileUuid) : Promise.resolve();
-			}).then(function (response) {
+				vm.sponsorTiers = response.data;
+				return vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors/' + vm.sponsorUuid);
+			}).then(response => {
+				vm.sponsor = response.data;
+				vm.sponsorTier = _.find(vm.sponsorTiers, {uuid: vm.sponsor.sponsorTierUuid});
+				return (vm.sponsor.fileUuid) ? vm.$request.get('files/' + vm.sponsor.fileUuid) : Promise.resolve();
+			}).then(response => {
 				if (response) {
-					vue.file = response.data;
+					vm.file = response.data;
 				}
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			sponsor: {
-				handler: function () {
-					const vue = this;
-					vue.formData = vue.sync(vue.formData, vue.sponsor);
+				handler() {
+					const vm = this;
+					vm.formData = vm.sync(vm.formData, vm.sponsor);
 				},
 				deep: true
 			},
-			file: function () {
-				const vue = this;
-				vue.formData.file = vue.file;
+			file() {
+				const vm = this;
+				vm.formData.file = vm.file;
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					file: {
 						presence: false,
@@ -219,60 +219,59 @@
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.updateSponsor();
+					vm.updateSponsor();
 				}
 			},
-			updateSponsor: function () {
-				const vue = this;
+			updateSponsor() {
+				const vm = this;
 
 				let promise = Promise.resolve();
-				if (vue.formData.file instanceof File) {
-					if (vue.file.hasOwnProperty('uuid')) {
-						promise = vue.$request.delete('files/' + vue.file.uuid);
+				if (vm.formData.file instanceof File) {
+					if (vm.file.hasOwnProperty('uuid')) {
+						promise = vm.$request.delete('files/' + vm.file.uuid);
 					}
 
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
-							content_type: vue.formData.file.type,
-							filename: vue.formData.file.name
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
+							content_type: vm.formData.file.type,
+							filename: vm.formData.file.name
 						});
-					}).then(function (response) {
-						vue.file = response.data.file;
+					}).then(response => {
+						vm.file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
 						const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
 						let instance = axios.create();
-						instance.defaults.headers.common['Content-Type'] = vue.formData.file.type || 'application/octet-stream';
-						instance.defaults.headers.put['Content-Type'] = vue.formData.file.type || 'application/octet-stream';
+						instance.defaults.headers.common['Content-Type'] = vm.formData.file.type || 'application/octet-stream';
+						instance.defaults.headers.put['Content-Type'] = vm.formData.file.type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
-						return instance.put(signedUrl, vue.formData.file);
+						return instance.put(signedUrl, vm.formData.file);
 					});
 				}
 
-				promise.then(function () {
-					const params = vue.getUpdatedParameters(vue.formData, vue.sponsor);
-					if (vue.file.hasOwnProperty('uuid')) {
-						params.fileUuid = vue.file.uuid;
+				promise.then(() => {
+					const params = vm.getUpdatedParameters(vm.formData, vm.sponsor);
+					if (vm.file.hasOwnProperty('uuid')) {
+						params.fileUuid = vm.file.uuid;
 					}
 
-					return vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors/' + vue.sponsorUuid, params);
-				}).then(function () {
-					vue.$store.commit('generateCacheKey');
-					vue.clearModals();
-					vue.$router.push({name: 'sponsors-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+					return vm.$request.patch('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors/' + vm.sponsorUuid, params);
+				}).then(() => {
+					vm.$store.commit('generateCacheKey');
+					vm.clearModals();
+					vm.$router.push({name: 'sponsors-list'});
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			}
 		},

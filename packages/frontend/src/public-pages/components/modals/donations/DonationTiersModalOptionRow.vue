@@ -16,7 +16,7 @@
 
 <template>
     <div class="donation-option">
-        <a v-on:click="selectTier"  href="#">
+        <a v-on:click.prevent="selectTier" href="#">
             <h2 class="donation-option__title">{{ amount }}</h2>
             <div class="donation-option__description">
                 {{ donationTier.description }}
@@ -28,19 +28,18 @@
 <script>
 	export default {
 		computed: {
-			amount: function () {
-				return this.formatMoney(this.donationTier.amount);
+			amount() {
+				const vm = this;
+				return vm.formatMoney(vm.donationTier.amount);
 			}
 		},
 		props: {
 			donationTier: {}
 		},
 		methods: {
-			selectTier: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.$emit('selectTier', vue.donationTier.amount);
+			selectTier() {
+				const vm = this;
+				vm.$emit('selectTier', vm.donationTier.amount);
 			}
 		}
 	};

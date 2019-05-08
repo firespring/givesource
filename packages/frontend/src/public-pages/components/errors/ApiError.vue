@@ -24,7 +24,7 @@
                 <li v-if="localValue.request_id">ID: {{localValue.request_id}}</li>
             </ul>
         </div>
-        <a href="#" v-on:click="close" class="alert__close" role="button">
+        <a href="#" v-on:click.prevent="close" class="alert__close" role="button">
             <svg class="svg-inline--fa fa-times-circle fa-w-16" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="times-circle" role="img"
                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path fill="currentColor"
@@ -34,7 +34,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: {}
 			};
@@ -43,20 +43,20 @@
 			value: {}
 		},
 		computed: {
-			hasError: function () {
+			hasError() {
 				return this.localValue && Object.keys(this.localValue).length;
 			}
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', vue.localValue);
+				vm.$emit('input', vm.localValue);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
@@ -64,21 +64,21 @@
 				if (_.isArray(value)) {
 					value = value[0];
 				}
-				vue.localValue = value;
+				vm.localValue = value;
 			},
-            hasError: function (value) {
-				const vue = this;
+			hasError(value) {
+				const vm = this;
 				if (value) {
-					vue.$nextTick(function () {
-						vue.$refs.alert.scrollIntoView(true);
+					vm.$nextTick(() => {
+						vm.$refs.alert.scrollIntoView(true);
 					});
-                }
-            }
+				}
+			}
 		},
 		methods: {
-			close: function () {
-				const vue = this;
-				vue.localValue = {};
+			close() {
+				const vm = this;
+				vm.localValue = {};
 			}
 		},
 	}

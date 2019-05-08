@@ -31,7 +31,7 @@
             </strong>
         </td>
         <td class="icon">
-            <a href="#" v-on:click="deleteSlide" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
+            <a href="#" v-on:click.prevent="deleteSlide" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
                 <i class="fa fa-trash" aria-hidden="true"></i>Delete
             </a>
         </td>
@@ -45,17 +45,17 @@
 		props: {
 			file: {
 				type: Object,
-				default: function () {
+				default() {
 					return {};
 				},
 			},
 			slide: {},
 		},
 		computed: {
-			icon: function () {
-				const vue = this;
+			icon() {
+				const vm = this;
 
-				switch (vue.slide.type) {
+				switch (vm.slide.type) {
 					case MediaHelper.TYPE_VIMEO:
 						return 'fa-vimeo-square';
 					case MediaHelper.TYPE_YOUTUBE:
@@ -65,10 +65,10 @@
 						return 'fa-picture-o';
 				}
 			},
-			editLink: function () {
-				const vue = this;
+			editLink() {
+				const vm = this;
 
-				switch (vue.slide.type) {
+				switch (vm.slide.type) {
 					case MediaHelper.TYPE_VIMEO:
 					case MediaHelper.TYPE_YOUTUBE:
 						return 'nonprofit-your-page-media-videos-edit';
@@ -77,37 +77,36 @@
 						return 'nonprofit-your-page-media-photos-edit';
 				}
 			},
-			caption: function () {
-				const vue = this;
+			caption() {
+				const vm = this;
 
-				switch (vue.slide.type) {
+				switch (vm.slide.type) {
 					case MediaHelper.TYPE_VIMEO:
 					case MediaHelper.TYPE_YOUTUBE:
-						return vue.slide.caption || vue.slide.url;
+						return vm.slide.caption || vm.slide.url;
 					case MediaHelper.TYPE_IMAGE:
 					default:
-						return vue.slide.caption || vue.file.filename;
+						return vm.slide.caption || vm.file.filename;
 				}
 			},
-			imageSrc: function () {
-				const vue = this;
+			imageSrc() {
+				const vm = this;
 
-				switch (vue.slide.type) {
+				switch (vm.slide.type) {
 					case MediaHelper.TYPE_VIMEO:
 					case MediaHelper.TYPE_YOUTUBE:
-						return vue.slide.thumbnail;
+						return vm.slide.thumbnail;
 					case MediaHelper.TYPE_IMAGE:
 					default:
-						return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path;
+						return vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.file.path;
 				}
 			}
 		},
 		methods: {
-			deleteSlide: function (event) {
-				event.preventDefault();
-				const vue = this;
+			deleteSlide() {
+				const vm = this;
 
-				vue.$emit('deleteSlide', vue.slide);
+				vm.$emit('deleteSlide', vm.slide);
 			}
 		}
 	};

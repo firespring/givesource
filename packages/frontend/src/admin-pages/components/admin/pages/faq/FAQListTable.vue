@@ -27,7 +27,7 @@
 	import ComponentFAQListTableRow from './FAQListTableRow.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localContents: [],
 
@@ -42,33 +42,33 @@
 		props: {
 			contents: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				}
 			},
 		},
 		watch: {
-			contents: function (value) {
+			contents(value) {
 				this.localContents = value;
 			},
-			localContents: function () {
+			localContents() {
 				this.$emit('contents', this.localContents);
 			},
 		},
 		methods: {
-			updateSortOrder: function () {
-				const vue = this;
+			updateSortOrder() {
+				const vm = this;
 
-				const original = JSON.parse(JSON.stringify(vue.localContents));
-				vue.localContents.forEach(function (content, i) {
+				const original = JSON.parse(JSON.stringify(vm.localContents));
+				vm.localContents.forEach((content, i) => {
 					content.sortOrder = i;
 				});
 
-				const toUpdate = _.differenceWith(vue.localContents, original, _.isEqual);
-				vue.$request.patch('contents', {
+				const toUpdate = _.differenceWith(vm.localContents, original, _.isEqual);
+				vm.$request.patch('contents', {
 					contents: toUpdate
-				}).catch(function (err) {
-					vue.$emit('hasError', err);
+				}).catch(err => {
+					vm.$emit('hasError', err);
 				});
 			}
 		},

@@ -39,8 +39,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="remove" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep Them</button>
+                                <button v-on:click.prevent="remove" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete Them</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep Them</button>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				modalTitle: this.data.modalTitle,
 				modalText: this.data.modalText,
@@ -77,11 +77,11 @@
 			}
 		},
 		methods: {
-			cancel: function () {
+			cancel() {
 				const vue = this;
 				vue.clearModals();
 			},
-			remove: function () {
+			remove() {
 				const vue = this;
 				vue.clearModals();
 				vue.bus.$emit(vue.callback);

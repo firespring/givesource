@@ -60,8 +60,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" class="c-btn">Save &amp; Close</button>
-                                <button v-on:click="cancel" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
+                                <button v-on:click.prevent="save" class="c-btn">Save &amp; Close</button>
+                                <button v-on:click.prevent="cancel" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
 
@@ -74,7 +74,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 
 				// Form Data

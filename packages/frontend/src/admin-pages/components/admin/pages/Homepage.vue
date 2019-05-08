@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
@@ -252,7 +252,7 @@
 	import Request from './../../../helpers/request';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				nonprofits: [],
 				contents: [],
@@ -326,19 +326,19 @@
 			};
 		},
 		computed: {
-			showMatchFundOptions: function () {
+			showMatchFundOptions() {
 				return this.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value;
 			},
 		},
-		beforeRouteEnter: function (to, from, next) {
-			const fetchData = function () {
+		beforeRouteEnter(to, from, next) {
+			const fetchData = () => {
 				const request = new Request();
 				let contents = null;
 				let nonprofits = null;
 				let settings = null;
 				let promise = Promise.resolve();
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return request.get('contents', {
 						keys: [
 							'HOMEPAGE_TITLE',
@@ -352,33 +352,33 @@
 							'HOMEPAGE_MATCH_BUTTON',
 							'HOMEPAGE_MATCH_DETAILS'
 						]
-					}).then(function (response) {
+					}).then(response => {
 						contents = response.data;
 					});
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return request.get('settings', {
 						keys: ['MATCH_FUND_NONPROFIT_UUID']
-					}).then(function (response) {
+					}).then(response => {
 						settings = response.data;
 					});
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return request.get('nonprofits/search', {
 						status: 'ACTIVE'
-					}).then(function (response) {
+					}).then(response => {
 						nonprofits = response.data;
 					});
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					const spotlight = _.find(contents, {key: 'HOMEPAGE_SPOTLIGHT'});
 					if (spotlight) {
-						return request.get('files/' + spotlight.value).then(function (response) {
+						return request.get('files/' + spotlight.value).then(response => {
 							spotlight.file = response.data;
-						}).catch(function () {
+						}).catch(() => {
 							spotlight.file = null;
 						});
 					} else {
@@ -386,7 +386,7 @@
 					}
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return {
 						contents: contents,
 						nonprofits: nonprofits,
@@ -397,38 +397,38 @@
 				return promise;
 			};
 
-			fetchData().then(function (data) {
-				next(function (vue) {
-					vue.contents = data.contents;
-					vue.original = JSON.parse(JSON.stringify(data.contents));
-					vue.nonprofits = data.nonprofits;
-					vue.settings = data.settings;
-					vue.loaded = true;
+			fetchData().then(data => {
+				next(vm => {
+					vm.contents = data.contents;
+					vm.original = JSON.parse(JSON.stringify(data.contents));
+					vm.nonprofits = data.nonprofits;
+					vm.settings = data.settings;
+					vm.loaded = true;
 				});
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			contents: {
-				handler: function () {
-					const vue = this;
-					if (vue.contents.length) {
-						Object.keys(vue.formData.contents).forEach(function (key) {
-							const content = _.cloneDeep(_.find(vue.contents, {key: key}));
+				handler() {
+					const vm = this;
+					if (vm.contents.length) {
+						Object.keys(vm.formData.contents).forEach(key => {
+							const content = _.cloneDeep(_.find(vm.contents, {key: key}));
 							if (content) {
 								if (content.type === 'FILE' && content.hasOwnProperty('file')) {
-									vue.formData.contents[key] = content;
-									vue.formData.contents[key].value = content.file;
+									vm.formData.contents[key] = content;
+									vm.formData.contents[key].value = content.file;
 								} else {
-									vue.formData.contents[key] = content;
+									vm.formData.contents[key] = content;
 								}
 							}
 						});
@@ -437,13 +437,13 @@
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData.settings).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData.settings).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								vue.formData.settings[key] = setting.value;
+								vm.formData.settings[key] = setting.value;
 							}
 						});
 					}
@@ -452,7 +452,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					'contents.HOMEPAGE_SPOTLIGHT.value': {
 						label: 'Homepage Spotlight Image',
@@ -461,36 +461,35 @@
 					},
 					'settings.MATCH_FUND_NONPROFIT_UUID': {
 						label: 'Match Fund Nonprofit',
-						presence: function (value, data) {
+						presence(value, data) {
 							return data.contents.HOMEPAGE_MATCH_IS_ENABLED.value;
 						}
 					}
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
-					vue.scrollToError();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
+					vm.scrollToError();
 				} else {
-					vue.updateContents();
+					vm.updateContents();
 				}
 			},
-			updateContents: function () {
-				const vue = this;
+			updateContents() {
+				const vm = this;
 
-				vue.getContentsToUpdate().then(function (contents) {
+				vm.getContentsToUpdate().then(contents => {
 					const toCreate = [];
 					const toUpdate = [];
 					const toDelete = [];
 					const filesToDelete = [];
-					_.forEach(contents, function (content, key) {
-						const original = _.find(vue.original, {key: key});
+					_.forEach(contents, (content, key) => {
+						const original = _.find(vm.original, {key: key});
 						const newValue = content.value;
 						if (original) {
 							if (newValue === '' || newValue === null) {
@@ -511,17 +510,17 @@
 
 					let promise = Promise.resolve();
 					if (toCreate.length) {
-						toCreate.forEach(function (content) {
-							promise = promise.then(function () {
-								return vue.$request.post('contents', content);
+						toCreate.forEach(content => {
+							promise = promise.then(() => {
+								return vm.$request.post('contents', content);
 							});
 						});
 					}
 
 					if (toUpdate.length) {
-						promise = promise.then(function () {
-							return vue.$request.patch('contents', {
-								contents: toUpdate.map(function (content) {
+						promise = promise.then(() => {
+							return vm.$request.patch('contents', {
+								contents: toUpdate.map(content => {
 									return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
 								}),
 							});
@@ -529,91 +528,91 @@
 					}
 
 					if (toDelete.length) {
-						promise = promise.then(function () {
-							return vue.$request.delete('contents', {
+						promise = promise.then(() => {
+							return vm.$request.delete('contents', {
 								contents: toDelete
 							});
 						});
 					}
 
 					if (filesToDelete.length) {
-						promise = promise.then(function () {
-							return vue.$request.delete('files', {
+						promise = promise.then(() => {
+							return vm.$request.delete('files', {
 								files: filesToDelete
 							});
 						});
 					}
 
 					return promise;
-				}).then(function () {
-					return vue.getSettingsToUpdate();
-				}).then(function (settings) {
+				}).then(() => {
+					return vm.getSettingsToUpdate();
+				}).then(settings => {
 					let promise = Promise.resolve();
 					const toUpdate = _.reject(settings, {value: ''});
 					const toDelete = _.filter(settings, {value: ''});
 
 					if (toUpdate.length) {
-						promise = promise.then(function () {
-							return vue.$request.patch('settings', {
+						promise = promise.then(() => {
+							return vm.$request.patch('settings', {
 								settings: toUpdate
 							});
 						});
 					}
 
 					if (toDelete.length) {
-						promise = promise.then(function () {
-							return vue.$request.delete('settings', {
+						promise = promise.then(() => {
+							return vm.$request.delete('settings', {
 								settings: toDelete
 							});
 						});
 					}
 
 					return promise;
-				}).then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'pages-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				}).then(() => {
+					vm.clearModals();
+					vm.$router.push({name: 'pages-list'});
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 
 			},
-			getContentsToUpdate: function () {
-				const vue = this;
+			getContentsToUpdate() {
+				const vm = this;
 				let promise = Promise.resolve();
 				const contents = {};
 
-				Object.keys(vue.formData.contents).forEach(function (key) {
-					if (vue.formData.contents[key].value instanceof File) {
-						promise = promise.then(function () {
-							return vue.uploadFile(vue.formData.contents[key]).then(function (uploadedFile) {
-								vue.$store.commit('generateCacheKey');
-								contents[key] = _.cloneDeep(vue.formData.contents[key]);
+				Object.keys(vm.formData.contents).forEach(key => {
+					if (vm.formData.contents[key].value instanceof File) {
+						promise = promise.then(() => {
+							return vm.uploadFile(vm.formData.contents[key]).then(uploadedFile => {
+								vm.$store.commit('generateCacheKey');
+								contents[key] = _.cloneDeep(vm.formData.contents[key]);
 								contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
 							});
 						});
 					} else {
-						promise = promise.then(function () {
-							const contentValue = _.isPlainObject(vue.formData.contents[key].value) && vue.formData.contents[key].value.hasOwnProperty('uuid') ? vue.formData.contents[key].value.uuid : vue.formData.contents[key].value;
-							contents[key] = _.cloneDeep(vue.formData.contents[key]);
+						promise = promise.then(() => {
+							const contentValue = _.isPlainObject(vm.formData.contents[key].value) && vm.formData.contents[key].value.hasOwnProperty('uuid') ? vm.formData.contents[key].value.uuid : vm.formData.contents[key].value;
+							contents[key] = _.cloneDeep(vm.formData.contents[key]);
 							contents[key].value = contentValue;
 						});
 					}
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return contents;
 				});
 
 				return promise;
 			},
-			getSettingsToUpdate: function () {
-				const vue = this;
-				return new Promise(function (resolve, reject) {
+			getSettingsToUpdate() {
+				const vm = this;
+				return new Promise((resolve, reject) => {
 					const settings = [];
-					Object.keys(vue.formData.settings).forEach(function (key) {
-						let value = vue.formData.settings[key];
-						if (vue.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value === false) {
+					Object.keys(vm.formData.settings).forEach(key => {
+						let value = vm.formData.settings[key];
+						if (vm.formData.contents.HOMEPAGE_MATCH_IS_ENABLED.value === false) {
 							value = '';
 						}
 						settings.push({
@@ -625,17 +624,17 @@
 					resolve(settings);
 				});
 			},
-			uploadFile: function (fileValue) {
-				const vue = this;
+			uploadFile(fileValue) {
+				const vm = this;
 				let file = null;
 				let promise = Promise.resolve();
 				if (fileValue.value) {
-					promise = promise.then(function () {
-						return vue.$request.post('files', {
+					promise = promise.then(() => {
+						return vm.$request.post('files', {
 							content_type: fileValue.value.type,
 							filename: fileValue.value.name
 						});
-					}).then(function (response) {
+					}).then(response => {
 						file = response.data.file;
 						const signedUrl = response.data.upload_url;
 
@@ -645,7 +644,7 @@
 						instance.defaults.headers.put['Content-Type'] = fileValue.value.type || 'application/octet-stream';
 						axios.defaults.headers = defaultHeaders;
 						return instance.put(signedUrl, fileValue.value);
-					}).then(function () {
+					}).then(() => {
 						return file;
 					});
 				}

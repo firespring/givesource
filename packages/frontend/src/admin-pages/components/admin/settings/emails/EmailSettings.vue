@@ -33,7 +33,7 @@
                 <div class="o-app-main-content">
 
                     <!-- BEGIN form -->
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <header class="c-page-section__header">
@@ -195,7 +195,7 @@
 	import Request from './../../../../helpers/request';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 				loaded: false,
@@ -214,13 +214,13 @@
 				formErrors: {}
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			const fetchData = function () {
+		beforeRouteEnter(to, from, next) {
+			const fetchData = () => {
 				const request = new Request();
 				let settings = null;
 				let promise = Promise.resolve();
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return request.get('settings', {
 						keys: [
 							'EMAILS_DONATION_NOTIFICATION_BEFORE',
@@ -230,12 +230,12 @@
 							'EMAILS_USER_REGISTRATION_ACTIVATED',
 							'EMAILS_USER_REGISTRATION_PENDING',
 						]
-					}).then(function (response) {
+					}).then(response => {
 						settings = response.data;
 					});
 				});
 
-				promise = promise.then(function () {
+				promise = promise.then(() => {
 					return {
 						settings: settings
 					};
@@ -244,31 +244,31 @@
 				return promise;
 			};
 
-			fetchData().then(function (data) {
-				next(function (vue) {
-					vue.settings = data.settings;
-					vue.loaded = true;
+			fetchData().then(data => {
+				next(vm => {
+					vm.settings = data.settings;
+					vm.loaded = true;
 				});
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			},
 			settings: {
-				handler: function () {
-					const vue = this;
-					if (vue.settings.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const setting = _.find(vue.settings, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.settings.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const setting = _.find(vm.settings, {key: key});
 							if (setting) {
-								vue.formData[key] = setting.value;
+								vm.formData[key] = setting.value;
 							}
 						});
 					}
@@ -277,7 +277,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					EMAILS_DONATION_NOTIFICATION_BEFORE: {
 						label: 'Text before donation details',
@@ -305,39 +305,38 @@
 					},
 				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
-					vue.scrollToError();
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
+					vm.scrollToError();
 				} else {
-					vue.updateSettings();
+					vm.updateSettings();
 				}
 			},
-			updateSettings: function () {
-				const vue = this;
+			updateSettings() {
+				const vm = this;
 
-				vue.getSettingsToUpdate().then(function (settings) {
+				vm.getSettingsToUpdate().then(settings => {
 					let promise = Promise.resolve();
 					const toUpdate = _.reject(settings, {value: ''});
 					const toDelete = _.filter(settings, {value: ''});
 
 					if (toUpdate.length) {
-						promise = promise.then(function () {
-							return vue.$request.patch('settings', {
+						promise = promise.then(() => {
+							return vm.$request.patch('settings', {
 								settings: toUpdate
 							});
 						});
 					}
 
 					if (toDelete.length) {
-						promise = promise.then(function () {
-							return vue.$request.delete('settings', {
+						promise = promise.then(() => {
+							return vm.$request.delete('settings', {
 								settings: toDelete
 							});
 						})
@@ -345,23 +344,23 @@
 
 					return promise;
 
-				}).then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'settings-list'});
-				}).catch(function (err) {
-					vue.clearModals();
+				}).then(() => {
+					vm.clearModals();
+					vm.$router.push({name: 'settings-list'});
+				}).catch(err => {
+					vm.clearModals();
 					console.log(err);
 				});
 
 			},
-			getSettingsToUpdate: function () {
-				const vue = this;
-				return new Promise(function (resolve, reject) {
+			getSettingsToUpdate() {
+				const vm = this;
+				return new Promise((resolve, reject) => {
 					const settings = [];
-					Object.keys(vue.formData).forEach(function (key) {
+					Object.keys(vm.formData).forEach(key => {
 						settings.push({
 							key: key,
-							value: vue.formData[key]
+							value: vm.formData[key]
 						});
 					});
 					resolve(settings);

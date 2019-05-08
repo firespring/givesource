@@ -39,7 +39,7 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="close" class="c-btn c-btn--neutral c-btn--text">Close</button>
+                                <button v-on:click.prevent="close" class="c-btn c-btn--neutral c-btn--text">Close</button>
                             </div>
                         </div>
 
@@ -59,27 +59,27 @@
 			},
 			data: {
 				type: Object,
-				default: function () {
+				default() {
 					return {
 						email: ''
 					};
 				}
 			},
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.$request.get('settings/email').then(function (response) {
-				const setting = _.find(response.data, {email: vue.data.email});
+			vm.$request.get('settings/email').then(response => {
+				const setting = _.find(response.data, {email: vm.data.email});
 				if (!setting || (setting && !setting.verified)) {
-					return vue.$request.post('settings/email/verify', {
-						email: vue.data.email
+					return vm.$request.post('settings/email/verify', {
+						email: vm.data.email
 					});
 				}
 			});
 		},
 		methods: {
-			close: function () {
+			close() {
 				this.clearModals();
 			}
 		}

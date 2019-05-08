@@ -28,7 +28,7 @@
 
                 <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
-                <form v-on:submit="submit">
+                <form v-on:submit.prevent="submit">
                     <fieldset>
 
                         <div class="form-item form-item--required">
@@ -366,8 +366,7 @@
 					},
 				}
 			},
-			submit(event) {
-				event.preventDefault();
+			submit() {
 				const vm = this;
 
 				vm.processing = true;

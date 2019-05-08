@@ -82,8 +82,8 @@
                         </section>
 
                         <footer class="c-form-actions">
-                            <button v-on:click="save('add')" type="submit" class="c-btn" :disabled="disableSaveAndNextButton">Save &amp; Add Another</button>
-                            <button v-on:click="save('close')" type="submit" class="c-btn" :disabled="disableSaveButton">Save &amp; Finish</button>
+                            <button v-on:click.prevent="save('add')" type="submit" class="c-btn" :disabled="disableSaveAndNextButton">Save &amp; Add Another</button>
+                            <button v-on:click.prevent="save('close')" type="submit" class="c-btn" :disabled="disableSaveButton">Save &amp; Finish</button>
                             <router-link :to="{ name: 'nonprofit-your-page', query: { tab: 'media' }}" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
                         </footer>
 

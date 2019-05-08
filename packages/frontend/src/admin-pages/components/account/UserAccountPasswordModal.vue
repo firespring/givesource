@@ -93,8 +93,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" class="c-btn">Save &amp; Close</button>
-                                <button v-on:click="cancel" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
+                                <button v-on:click.prevent="save" class="c-btn">Save &amp; Close</button>
+                                <button v-on:click.prevent="cancel" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
 
@@ -109,7 +109,7 @@
 	const User = require('../../helpers/user');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 
 				// Form Data
@@ -122,14 +122,14 @@
 				// Errors
 				errors: [],
 				formErrors: {},
-			}
+			};
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
@@ -142,7 +142,7 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					currentPassword: {
 						presence: true,
@@ -155,32 +155,32 @@
 						presence: true,
 						equality: 'password'
 					}
-				}
+				};
 			},
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.errors = [];
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.errors = [];
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.changeUserPassword();
+					vm.changeUserPassword();
 				}
 			},
-			changeUserPassword: function () {
-				const vue = this;
+			changeUserPassword() {
+				const vm = this;
 
-				User.changePassword(vue.formData.currentPassword, vue.formData.password, function (err) {
-					vue.removeModal();
+				User.changePassword(vm.formData.currentPassword, vm.formData.password, err => {
+					vm.removeModal();
 					if (err) {
-						vue.errors.push(User.formatCognitoErrorMessage(err));
+						vm.errors.push(User.formatCognitoErrorMessage(err));
 					} else {
-						vue.clearModals();
+						vm.clearModals();
 					}
 				});
 			}

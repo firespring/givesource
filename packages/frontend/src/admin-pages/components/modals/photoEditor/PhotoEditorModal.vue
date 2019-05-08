@@ -28,26 +28,26 @@
                         <div class="c-page-section">
                             <div class="c-page-section__main">
 
-                                <vue-cropper ref="cropper" :src="src" style="max-height: 500px;"
-                                             :cropBoxResizable="false" :cropBoxMovable="false" :dragMode="'move'" :viewMode="1" :aspectRatio="data.width/data.height"
-                                             :autoCropArea="1.0" :toggleDragModeOnDblclick="false" :ready="onReady" :zoom="onZoom">
-                                </vue-cropper>
+                                <vm-cropper ref="cropper" :src="src" style="max-height: 500px;"
+                                            :cropBoxResizable="false" :cropBoxMovable="false" :dragMode="'move'" :viewMode="1" :aspectRatio="data.width/data.height"
+                                            :autoCropArea="1.0" :toggleDragModeOnDblclick="false" :ready="onReady" :zoom="onZoom">
+                                </vm-cropper>
 
                                 <br><br>
 
                                 <div style="display: flex; margin: 0 -.25rem; line-height: 1;">
                                     <div style="flex: 1 0 1.5rem; max-width: 1.5rem; margin: 1rem 0 0;">
-                                        <i v-on:click="zoomOut" class="fa fa-search-minus" aria-hidden="true" style="color: #474747; cursor: pointer;"></i>
+                                        <i v-on:click.prevent="zoomOut" class="fa fa-search-minus" aria-hidden="true" style="color: #474747; cursor: pointer;"></i>
                                     </div>
 
                                     <div style="flex: 1; margin: 1rem 0 0;">
-                                        <vue-slider v-model="zoom" :min="1" :max="400" :formatter="'{value}%'" :bgStyle="{ backgroundColor: '#474747' }"
-                                                    :tooltipStyle="{ backgroundColor: '#dd360b', borderColor: '#dd360b' }" :processStyle="{ backgroundColor: '#474747' }">
-                                        </vue-slider>
+                                        <vm-slider v-model="zoom" :min="1" :max="400" :formatter="'{value}%'" :bgStyle="{ backgroundColor: '#474747' }"
+                                                   :tooltipStyle="{ backgroundColor: '#dd360b', borderColor: '#dd360b' }" :processStyle="{ backgroundColor: '#474747' }">
+                                        </vm-slider>
                                     </div>
 
                                     <div style="flex: 1 0 1.5rem; max-width: 1.5rem; margin: 1rem 0 0;">
-                                        <i v-on:click="zoomIn" class="fa fa-search-plus" aria-hidden="true" style="color: #474747; cursor: pointer;"></i>
+                                        <i v-on:click.prevent="zoomIn" class="fa fa-search-plus" aria-hidden="true" style="color: #474747; cursor: pointer;"></i>
                                     </div>
                                 </div>
 
@@ -56,8 +56,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" type="button" class="c-btn">Save &amp; Continue</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
+                                <button v-on:click.prevent="save" type="button" class="c-btn">Save &amp; Continue</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -71,16 +71,17 @@
 <script>
 	import VueCropper from "vue-cropperjs";
 	import VueSlider from "vue-slider-component";
+
 	const MathHelper = require('./../../../helpers/math');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				src: null,
 				zoom: 0,
 				image: '',
 				ready: false,
-			}
+			};
 		},
 		props: {
 			zIndex: {
@@ -91,76 +92,72 @@
 				type: Object,
 				default: {
 					file: {},
-                    listener: 'photoEditorSave',
+					listener: 'photoEditorSave',
 					width: 770,
 					height: 443
 				}
 			}
 		},
 		watch: {
-			zoom: function (value) {
-				const vue = this;
-
-				vue.$refs.cropper.zoomTo(value / 100);
+			zoom(value) {
+				const vm = this;
+				vm.$refs.cropper.zoomTo(value / 100);
 			}
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 			const reader = new FileReader();
 
-			reader.onload = function (event) {
-				vue.src = event.target.result;
-				vue.$refs.cropper.replace(event.target.result);
+			reader.onload = (event) => {
+				vm.src = event.target.result;
+				vm.$refs.cropper.replace(event.target.result);
 			};
 
-			reader.readAsDataURL(vue.data.file);
+			reader.readAsDataURL(vm.data.file);
 		},
 		methods: {
-			onReady: function () {
-				const vue = this;
+			onReady() {
+				const vm = this;
 
-				vue.ready = true;
-				vue.removeModal();
+				vm.ready = true;
+				vm.removeModal();
 
-				vue.zoom = 100;
-				vue.$refs.cropper.zoomTo(1);
+				vm.zoom = 100;
+				vm.$refs.cropper.zoomTo(1);
 			},
-			onZoom: function (event) {
-				const vue = this;
+			onZoom(event) {
+				const vm = this;
 				const value = Math.floor(MathHelper.precise(event.detail.ratio * 100));
 
-				if (vue.zoom !== value) {
-					vue.zoom = value;
+				if (vm.zoom !== value) {
+					vm.zoom = value;
 				}
 			},
-            zoomOut: function () {
-				const vue = this;
-
-				vue.zoom = ((vue.zoom - 10) > 0) ? vue.zoom - 10 : 1;
-            },
-            zoomIn: function () {
-				const vue = this;
-
-				vue.zoom = ((vue.zoom + 10) <= 400) ? vue.zoom + 10 : 400;
-            },
-			cancel: function () {
-				const vue = this;
-
-				vue.clearModals();
+			zoomOut() {
+				const vm = this;
+				vm.zoom = ((vm.zoom - 10) > 0) ? vm.zoom - 10 : 1;
 			},
-			save: function () {
-				const vue = this;
+			zoomIn() {
+				const vm = this;
+				vm.zoom = ((vm.zoom + 10) <= 400) ? vm.zoom + 10 : 400;
+			},
+			cancel() {
+				const vm = this;
+				vm.clearModals();
+			},
+			save() {
+				const vm = this;
 
-				const dataUrl = vue.$refs.cropper.getCroppedCanvas({
-					width: vue.data.width,
-					height: vue.data.height,
+				const dataUrl = vm.$refs.cropper.getCroppedCanvas({
+					width: vm.data.width,
+					height: vm.data.height,
 					fillColor: '#fff',
-				}).toDataURL(vue.data.file.type);
+				}).toDataURL(vm.data.file.type);
 
-				vue.bus.$emit(vue.data.listener, vue.data.file, vue.dataURLToBlob(dataUrl, vue.data.file.type));
-				vue.removeModal('photo-editor');
+				vm.bus.$emit(vm.data.listener, vm.data.file, vm.dataURLToBlob(dataUrl, vm.data.file.type));
+				vm.removeModal('photo-editor');
 			},
-			dataURLToBlob: function (dataUrl, type) {
+			dataURLToBlob(dataUrl, type) {
 				const binary = atob(dataUrl.split(',')[1]);
 				const array = [];
 				for (let i = 0; i < binary.length; i++) {

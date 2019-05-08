@@ -36,8 +36,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="deleteQuestion" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete This Item</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep This Item</button>
+                                <button v-on:click.prevent="deleteQuestion" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete This Item</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep This Item</button>
                             </div>
                         </div>
 
@@ -64,16 +64,16 @@
 			}
 		},
 		methods: {
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			deleteQuestion: function () {
-				const vue = this;
+			deleteQuestion() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.$request.delete('contents/' + vue.data.content.uuid).then(function () {
-					vue.bus.$emit('deleteFAQList', vue.data.content);
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.$request.delete('contents/' + vm.data.content.uuid).then(() => {
+					vm.bus.$emit('deleteFAQList', vm.data.content);
+					vm.clearModals();
 				});
 			},
 		}

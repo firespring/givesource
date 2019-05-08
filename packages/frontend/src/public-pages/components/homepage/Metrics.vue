@@ -43,7 +43,7 @@
             </div>
 
             <div class="main-spotlight-section nonprofit-search">
-                <form v-on:submit="submitSearch" class="nonprofit-search__name">
+                <form v-on:submit.prevent="submitSearch" class="nonprofit-search__name">
                     <div class="form-item">
                         <div class="form-item__label">
                             <label for="nonprofitName">Search by Name</label>
@@ -105,7 +105,7 @@
             </div>
 
             <div class="main-spotlight-section wrapper wrapper--xs" v-if="displaySendReceiptForm || eventEnded">
-                <form v-on:submit="submitReceiptRequest" class="mb4">
+                <form v-on:submit.prevent="submitReceiptRequest" class="mb4">
                     <div>
                         <strong><label for="email">Enter your email and we'll send you a receipt for all of your donations this year.</label></strong>
                     </div>
@@ -137,7 +137,7 @@
 	const numeral = require('numeral');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				category: '',
 				processing: false,
@@ -171,48 +171,48 @@
 			};
 		},
 		computed: {
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			},
-			countdownPrefix: function () {
+			countdownPrefix() {
 				return this.countdown.type === 'event' ? 'You have' : 'There are';
 			},
-			countdownSuffix: function () {
+			countdownSuffix() {
 				if (this.countdown.type === 'event') {
 					return 'left to make a donation.';
 				}
 				return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.';
 			},
-			displayEventCountdown: function () {
+			displayEventCountdown() {
 				return Settings.isBeforeEvent() || Settings.isDuringEvent();
 			},
-			displayRegisterButton: function () {
-				const vue = this;
+			displayRegisterButton() {
+				const vm = this;
 
-				if (!vue.registerButtonText) {
+				if (!vm.registerButtonText) {
 					return false;
 				}
 
 				return Settings.isDuringRegistrations();
 			},
-			displaySendReceiptForm: function () {
+			displaySendReceiptForm() {
 				return Settings.isAfterEvent();
 			},
-			displayDonationTotals: function () {
+			displayDonationTotals() {
 				return Settings.isDuringEvent() || Settings.isAfterEvent();
 			},
-			donationsCountArray: function () {
+			donationsCountArray() {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000').split('');
 			},
-			donationsTotalArray: function () {
+			donationsTotalArray() {
 				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00').split('');
 			},
-			canDonate: function () {
+			canDonate() {
 				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
-			displayMatchFund: function () {
-				const vue = this;
-				return (vue.matchFundEnabled && vue.matchFundNonprofit);
+			displayMatchFund() {
+				const vm = this;
+				return (vm.matchFundEnabled && vm.matchFundNonprofit);
 			}
 		},
 		props: {
@@ -241,37 +241,37 @@
 				default: null,
 			}
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vue.metrics)})).then(function (response) {
-				response.data.forEach(function (metric) {
-					if (vue.metrics.hasOwnProperty(metric.key)) {
-						vue.metrics[metric.key] = metric.value;
+			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vm.metrics)})).then(response => {
+				response.data.forEach(metric => {
+					if (vm.metrics.hasOwnProperty(metric.key)) {
+						vm.metrics[metric.key] = metric.value;
 					}
 				});
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 			});
 
-			if (vue.displayEventCountdown) {
-				vue.initializeCountdown();
+			if (vm.displayEventCountdown) {
+				vm.initializeCountdown();
 			}
 		},
 		watch: {
-			category: function (value) {
+			category(value) {
 				if (value) {
 					this.$router.push({name: 'search-results', query: {category: value}});
 				}
 			},
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						if (vue.displaySendReceiptForm) {
-							vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						if (vm.displaySendReceiptForm) {
+							vm.formErrors = vm.validate(vm.formData, vm.getReceiptConstraints());
 						} else {
-							vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
+							vm.formErrors = vm.validate(vm.formData, vm.getSearchConstraints());
 						}
 					}
 				},
@@ -279,36 +279,36 @@
 			},
 		},
 		methods: {
-			initializeCountdown: function () {
-				const vue = this;
+			initializeCountdown() {
+				const vm = this;
 
 				let countdown = {};
-				vue.countdown.timer = setInterval(function () {
+				vm.countdown.timer = setInterval(() => {
 					if (Settings.isAfterEvent()) {
-						vue.countdown.loaded = false;
-						vue.eventEnded = true;
-						clearInterval(vue.countdown.timer);
+						vm.countdown.loaded = false;
+						vm.eventEnded = true;
+						clearInterval(vm.countdown.timer);
 						return;
 					}
 
 					if (Settings.isBeforeEvent()) {
-						vue.countdown.type = 'preEvent';
+						vm.countdown.type = 'preEvent';
 						countdown = Settings.countdownUntilEventStart();
 					}
 
 					if (Settings.isDuringEvent()) {
-						vue.countdown.type = 'event';
+						vm.countdown.type = 'event';
 						countdown = Settings.countdownUntilEventEnd();
 					}
 
-					vue.countdown.days = countdown.days;
-					vue.countdown.hours = countdown.hours;
-					vue.countdown.minutes = countdown.minutes;
-					vue.countdown.seconds = countdown.seconds;
-					vue.countdown.loaded = true;
+					vm.countdown.days = countdown.days;
+					vm.countdown.hours = countdown.hours;
+					vm.countdown.minutes = countdown.minutes;
+					vm.countdown.seconds = countdown.seconds;
+					vm.countdown.loaded = true;
 				}, 1000);
 			},
-			getReceiptConstraints: function () {
+			getReceiptConstraints() {
 				return {
 					email: {
 						presence: true,
@@ -316,7 +316,7 @@
 					}
 				};
 			},
-			getSearchConstraints: function () {
+			getSearchConstraints() {
 				return {
 					search: {
 						presence: false,
@@ -326,52 +326,50 @@
 					},
 				};
 			},
-			submitReceiptRequest: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submitReceiptRequest() {
+				const vm = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getReceiptConstraints());
-				if (!Object.keys(vue.formErrors).length) {
-					vue.processing = true;
-					vue.requestReceipt();
+				vm.formErrors = vm.validate(vm.formData, vm.getReceiptConstraints());
+				if (!Object.keys(vm.formErrors).length) {
+					vm.processing = true;
+					vm.requestReceipt();
 				}
 			},
-			submitSearch: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submitSearch() {
+				const vm = this;
 
-				vue.formErrors = vue.validate(vue.formData, vue.getSearchConstraints());
-				if (!Object.keys(vue.formErrors).length) {
-					vue.searchNonprofits();
+				vm.formErrors = vm.validate(vm.formData, vm.getSearchConstraints());
+				if (!Object.keys(vm.formErrors).length) {
+					vm.searchNonprofits();
 				}
 			},
-			requestReceipt: function () {
-				const vue = this;
+			requestReceipt() {
+				const vm = this;
 
 				axios.post(API_URL + 'donations/receipt', {
-					email: vue.formData.email,
-				}).then(function () {
-					vue.formData.email = '';
-					vue.processing = false;
+					email: vm.formData.email,
+				}).then(() => {
+					vm.formData.email = '';
+					vm.processing = false;
 					// TODO: redirect to thank-you page
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-					vue.processing = false;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					vm.processing = false;
 				});
 			},
-			searchNonprofits: function () {
-				const vue = this;
+			searchNonprofits() {
+				const vm = this;
 
-				vue.$router.push(vue.generatePageLink({search: vue.formData.search}));
+				vm.$router.push(vm.generatePageLink({search: vm.formData.search}));
 			},
-			metricClass: function (digit) {
+			metricClass(digit) {
 				return /^\d+$/.test(digit) ? 'number' : 'text';
 			},
-			generatePageLink: function (query) {
-				const vue = this;
+			generatePageLink(query) {
+				const vm = this;
 				query = query || {};
-				query = _.extend({}, vue.$route.query, query);
-				Object.keys(query).forEach(function (key) {
+				query = _.extend({}, vm.$route.query, query);
+				Object.keys(query).forEach(key => {
 					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
 						delete query[key];
 					}

@@ -23,10 +23,10 @@
             <i class="fa" :class="iconClass" aria-hidden="true"></i>
         </td>
         <td class="u-width-100p">
-            <strong><a v-on:click="editResource" href="#">{{ title }}</a></strong>
+            <strong><a v-on:click.prevent="editResource" href="#">{{ title }}</a></strong>
         </td>
         <td class="icon">
-            <a v-on:click="deleteResource" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
+            <a v-on:click.prevent="deleteResource" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
         </td>
     </tr>
 </template>
@@ -40,37 +40,37 @@
 			},
 		},
 		computed: {
-			title: function () {
-				if (this.content.hasOwnProperty('value')) {
-					const title = _.find(this.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE'});
+			title() {
+				const vm = this;
+
+				if (vm.content.hasOwnProperty('value')) {
+					const title = _.find(vm.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE'});
 					if (title) {
 						return title.value;
 					}
 				}
 				return null;
 			},
-            iconClass: function () {
-	            if (this.content.hasOwnProperty('value')) {
-		            const type = _.find(this.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE'});
-		            if (type) {
-			            return type.value === 'FILE' ? 'fa-file' : 'fa-link';
-		            }
-	            }
-	            return 'fa-file';
-            }
+			iconClass() {
+				const vm = this;
+
+				if (vm.content.hasOwnProperty('value')) {
+					const type = _.find(vm.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE'});
+					if (type) {
+						return type.value === 'FILE' ? 'fa-file' : 'fa-link';
+					}
+				}
+				return 'fa-file';
+			}
 		},
 		methods: {
-			editResource: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-toolkit-edit-resource-modal', {content: vue.content});
+			editResource() {
+				const vm = this;
+				vm.addModal('pages-toolkit-edit-resource-modal', {content: vm.content});
 			},
-			deleteResource: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-toolkit-delete-resource-modal', {content: vue.content});
+			deleteResource() {
+				const vm = this;
+				vm.addModal('pages-toolkit-delete-resource-modal', {content: vm.content});
 			}
 		}
 	};

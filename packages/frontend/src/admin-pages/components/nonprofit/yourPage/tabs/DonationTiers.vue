@@ -50,7 +50,7 @@
         </table>
 
         <footer class="c-form-actions">
-            <button v-on:click="submit" type="submit" class="c-btn c-btn--flat">Save Changes</button>
+            <button v-on:click.prevent="submit" type="submit" class="c-btn c-btn--flat">Save Changes</button>
         </footer>
 
     </div>

@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <form v-on:submit="submit">
+                    <form v-on:submit.prevent="submit">
 
                         <section class="c-page-section c-page-section--border c-page-section--shadow">
                             <header class="c-page-section__header">
@@ -69,7 +69,7 @@
 
                                 <div class="c-table-footer">
                                     <div class="c-table-footer__actions">
-                                        <a v-on:click="addResource" href="#" role="button" class="c-btn c-btn--good c-btn--icon c-btn--sm">
+                                        <a v-on:click.prevent="addResource" href="#" role="button" class="c-btn c-btn--good c-btn--icon c-btn--sm">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Resource
                                         </a>
                                     </div>
@@ -114,7 +114,7 @@
 	import ComponentToolkitListTable from './toolkit/ToolkitListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				original: [],
@@ -140,77 +140,77 @@
 			};
 		},
 		computed: {
-			resourceContents: function () {
+			resourceContents() {
 				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('contents', {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('contents', {
 					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
+				}).then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.contents = response.data;
-					vue.original = JSON.parse(JSON.stringify(response.data));
-					vue.loaded = true;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+					vm.contents = response.data;
+					vm.original = JSON.parse(JSON.stringify(response.data));
+					vm.loaded = true;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.loaded = false;
-			vue.$request.get('contents', {
+			vm.loaded = false;
+			vm.$request.get('contents', {
 				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
-			}).then(function (response) {
-				response.data.sort(function (a, b) {
+			}).then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.contents = response.data;
-				vue.original = JSON.parse(JSON.stringify(response.data));
-				vue.loaded = true;
+				vm.contents = response.data;
+				vm.original = JSON.parse(JSON.stringify(response.data));
+				vm.loaded = true;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('addToolkitResourceList', function (data) {
-				vue.contents.push(data);
+			vm.bus.$on('addToolkitResourceList', data => {
+				vm.contents.push(data);
 			});
 
-			vue.bus.$on('deleteToolkitResourceList', function (data) {
-				vue.contents = _.reject(vue.contents, {uuid: data.uuid});
+			vm.bus.$on('deleteToolkitResourceList', data => {
+				vm.contents = _.reject(vm.contents, {uuid: data.uuid});
 			});
 
-			vue.bus.$on('updateToolkitResourceList', function (data) {
-				const index = _.findIndex(vue.contents, {uuid: data.uuid});
-				vue.contents[index > -1 ? index : vue.contents.length] = data;
+			vm.bus.$on('updateToolkitResourceList', data => {
+				const index = _.findIndex(vm.contents, {uuid: data.uuid});
+				vm.contents[index > -1 ? index : vm.contents.length] = data;
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
+		beforeDestroy() {
+			const vm = this;
 
-			vue.bus.$off('addToolkitResourceList');
-			vue.bus.$off('deleteToolkitResourceList');
-			vue.bus.$off('updateToolkitResourceList');
+			vm.bus.$off('addToolkitResourceList');
+			vm.bus.$off('deleteToolkitResourceList');
+			vm.bus.$off('updateToolkitResourceList');
 		},
 		watch: {
 			contents: {
-				handler: function () {
-					const vue = this;
-					if (vue.contents.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.contents, {key: key});
+				handler() {
+					const vm = this;
+					if (vm.contents.length) {
+						Object.keys(vm.formData).forEach(key => {
+							const content = _.find(vm.contents, {key: key});
 							if (content) {
-								vue.formData[key] = content;
+								vm.formData[key] = content;
 							}
 						});
 					}
@@ -219,39 +219,38 @@
 			}
 		},
 		methods: {
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.updateContents();
+				vm.addModal('spinner');
+				vm.updateContents();
 			},
-			updateContents: function () {
-				const vue = this;
+			updateContents() {
+				const vm = this;
 
 				const created = [];
-				const changed = _.differenceWith(vue.contents, vue.original, _.isEqual);
+				const changed = _.differenceWith(vm.contents, vm.original, _.isEqual);
 				const toUpdate = _.reject(changed, {value: ''});
 				const toDelete = _.filter(changed, {value: ''});
-				Object.keys(vue.formData).forEach(function (key) {
-					if (!_.find(vue.original, {key: key}) && vue.formData[key].value !== '') {
-						created.push(vue.formData[key]);
+				Object.keys(vm.formData).forEach(key => {
+					if (!_.find(vm.original, {key: key}) && vm.formData[key].value !== '') {
+						created.push(vm.formData[key]);
 					}
 				});
 
 				let promise = Promise.resolve();
 				if (created.length) {
-					created.forEach(function (content) {
-						promise = promise.then(function () {
-							return vue.$request.post('contents', content);
+					created.forEach(content => {
+						promise = promise.then(() => {
+							return vm.$request.post('contents', content);
 						});
 					});
 				}
 
 				if (toUpdate.length) {
-					promise = promise.then(function () {
-						return vue.$request.patch('contents', {
-							contents: toUpdate.map(function (content) {
+					promise = promise.then(() => {
+						return vm.$request.patch('contents', {
+							contents: toUpdate.map(content => {
 								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
 							}),
 						});
@@ -259,30 +258,28 @@
 				}
 
 				if (toDelete.length) {
-					promise = promise.then(function () {
-						return vue.$request.delete('contents', {
+					promise = promise.then(() => {
+						return vm.$request.delete('contents', {
 							contents: toDelete
 						});
 					});
 				}
 
-				promise.then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'pages-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
+				promise.then(() => {
+					vm.clearModals();
+					vm.$router.push({name: 'pages-list'});
+				}).catch(err => {
+					vm.clearModals();
+					vm.apiError = err.response.data.errors;
 				});
 			},
-			addResource: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-toolkit-add-resource-modal');
+			addResource() {
+				const vm = this;
+				vm.addModal('pages-toolkit-add-resource-modal');
 			},
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				const vm = this;
+				vm.apiError = err.response.data.errors;
 			},
 		},
 		components: {

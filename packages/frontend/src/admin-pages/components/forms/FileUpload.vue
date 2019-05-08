@@ -26,45 +26,45 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: this.value ? this.value : {}
 			};
 		},
 		computed: {
-			filename: function () {
-				if (this.localValue && this.localValue instanceof File) {
-					return this.localValue.name;
-				} else if (this.localValue && this.localValue.hasOwnProperty('filename')) {
-					return this.localValue.filename;
-				} else if (this.placeholder) {
-					return this.placeholder;
-                }
+			filename() {
+				const vm = this;
+
+				if (vm.localValue && vm.localValue instanceof File) {
+					return vm.localValue.name;
+				} else if (vm.localValue && vm.localValue.hasOwnProperty('filename')) {
+					return vm.localValue.filename;
+				} else if (vm.placeholder) {
+					return vm.placeholder;
+				}
 				return '';
 			}
 		},
 		props: {
 			id: '',
 			name: '',
-            placeholder: '',
+			placeholder: '',
 			value: {},
 		},
 		watch: {
-			value: function (newVal) {
+			value(newVal) {
 				this.localValue = newVal;
 			},
-			localValue: function () {
+			localValue() {
 				this.$emit('input', this.localValue);
 			}
 		},
 		methods: {
-			onTrigger: function (event) {
-				event.preventDefault();
+			onTrigger() {
 				const vue = this;
-
 				vue.$refs.input.click();
 			},
-			onChange: function (event) {
+			onChange(event) {
 				const vue = this;
 
 				const files = event.target.files || event.dataTransfer.files;

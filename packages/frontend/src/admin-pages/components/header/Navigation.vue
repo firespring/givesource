@@ -28,7 +28,7 @@
 
             <div class="o-user">
                 <div class="o-user__current o-menubar-popup-parent" ref="oMenubarPopupParent" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                    <a href="#" class="js-user-popup-toggle has-tooltip" title="Manage Your Account" v-on:click="toggleMenu">
+                    <a href="#" class="js-user-popup-toggle has-tooltip" title="Manage Your Account" v-on:click.prevent="toggleMenu">
                         <v-gravatar :email="user.email" :size="150" default-img="mm" :alt="gravatarAlt" class="o-user__avatar"></v-gravatar>
                     </a>
                     <div class="o-menubar-popup o-menubar-popup--current-user" ref="oMenubarPopup">
@@ -66,7 +66,7 @@
 	import ComponentNavigationNonprofits from './NavigationNonprofits.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				firstName: this.user.firstName,
 				lastName: this.user.lastName,
@@ -75,15 +75,17 @@
 
 				displayingMenu: false,
 				timer: null,
-			}
+			};
 		},
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
-			logoLink: function () {
-				if (!this.isAdmin && this.nonprofitUuid) {
-					return {name: 'nonprofit-donations-list', params: {nonprofitUuid: this.nonprofitUuid}};
+			logoLink() {
+				const vm = this;
+
+				if (!vm.isAdmin && vm.nonprofitUuid) {
+					return {name: 'nonprofit-donations-list', params: {nonprofitUuid: vm.nonprofitUuid}};
 				}
 				return {name: 'donations-list'};
 			}
@@ -91,46 +93,46 @@
 		props: [
 			'nonprofitUuid'
 		],
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('userAccountUpdateInfo', function (data) {
-				vue.firstName = data.firstName;
-				vue.lastName = data.lastName;
+			vm.bus.$on('userAccountUpdateInfo', data => {
+				vm.firstName = data.firstName;
+				vm.lastName = data.lastName;
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
-
-			vue.bus.$off('userAccountUpdateInfo');
+		beforeDestroy() {
+			const vm = this;
+			vm.bus.$off('userAccountUpdateInfo');
 		},
-		beforeMount: function () {
+		beforeMount() {
 			document.body.classList.add('has-menubar', 'has-menubar--secondary');
 		},
 		methods: {
-			toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
-				if (vue.displayingMenu) {
-					$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
-					$(vue.$refs.oMenubarPopup).fadeOut(200);
+			toggleMenu() {
+				const vm = this;
+
+				if (vm.displayingMenu) {
+					$(vm.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
+					$(vm.$refs.oMenubarPopup).fadeOut(200);
 				} else {
-					$(vue.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active');
-					$(vue.$refs.oMenubarPopup).fadeIn(200);
+					$(vm.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active');
+					$(vm.$refs.oMenubarPopup).fadeIn(200);
 				}
-				vue.displayingMenu = !vue.displayingMenu;
+				vm.displayingMenu = !vm.displayingMenu;
 			},
-			closeMenu: function () {
-				const vue = this;
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
-					$(vue.$refs.oMenubarPopup).fadeOut(200);
-					vue.displayingMenu = false;
+			closeMenu() {
+				const vm = this;
+
+				vm.timer = setTimeout(() => {
+					$(vm.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active');
+					$(vm.$refs.oMenubarPopup).fadeOut(200);
+					vm.displayingMenu = false;
 				}, 500);
 			},
-			cancelCloseMenu: function () {
-				const vue = this;
-				clearTimeout(vue.timer);
+			cancelCloseMenu() {
+				const vm = this;
+				clearTimeout(vm.timer);
 			}
 		},
 		components: {

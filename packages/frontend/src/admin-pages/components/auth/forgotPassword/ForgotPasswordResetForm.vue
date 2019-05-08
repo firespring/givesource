@@ -18,7 +18,7 @@
     <div class="c-page-section__main">
         <h4>Reset your password</h4>
 
-        <form v-on:submit="submit">
+        <form v-on:submit.prevent="submit">
 
             <div class="c-alert c-alert--bad c-alert--shadow u-flex u-justify-center" v-if="errors.length">
                 <div class="c-alert__body u-flex u-justify-between">
@@ -97,7 +97,7 @@
 	const User = require('../../../helpers/user');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 
 				formData: {
@@ -113,44 +113,44 @@
 				// Errors
 				errors: [],
 				formErrors: {}
-			}
+			};
 		},
 		props: [
 			'cognitoUser'
 		],
 		computed: {
-			hasCode: function () {
-				const vue = this;
-				return vue.$route.query.code !== undefined
+			hasCode() {
+				const vm = this;
+				return vm.$route.query.code !== undefined
 			},
-			hasEmail: function () {
-				const vue = this;
-				return vue.$route.query.email !== undefined
+			hasEmail() {
+				const vm = this;
+				return vm.$route.query.email !== undefined
 			},
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
-				var vue = this;
+			getConstraints() {
+				var vm = this;
 				return {
 					email: {
 						label: 'Email address',
-						presence: (!vue.hasEmail),
+						presence: (!vm.hasEmail),
 						email: true
 					},
 					code: {
 						label: 'Verification code',
-						presence: (!vue.hasCode)
+						presence: (!vm.hasCode)
 					},
 					password: {
 						presence: true,
@@ -162,33 +162,32 @@
 					}
 				}
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.alert = false;
-				vue.errors = [];
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.clearModals();
+				vm.addModal('spinner');
+				vm.alert = false;
+				vm.errors = [];
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.clearModals();
 				} else {
-					vue.verify();
+					vm.verify();
 				}
 			},
-			verify: function () {
-				const vue = this;
+			verify() {
+				const vm = this;
 
-				const email = vue.hasEmail ? vue.$route.query.email : vue.formData.email;
-				const code = vue.hasCode ? vue.$route.query.code : vue.formData.code;
-				User.resetPassword(email, code, vue.formData.password, {
-					onSuccess: function (data, cognitoUser) {
-						vue.clearModals();
-						vue.$router.push({name: 'login'});
+				const email = vm.hasEmail ? vm.$route.query.email : vm.formData.email;
+				const code = vm.hasCode ? vm.$route.query.code : vm.formData.code;
+				User.resetPassword(email, code, vm.formData.password, {
+					onSuccess(data, cognitoUser) {
+						vm.clearModals();
+						vm.$router.push({name: 'login'});
 					},
-					onFailure: function (err) {
-						vue.clearModals();
-						vue.errors.push(User.formatCognitoErrorMessage(err));
+					onFailure(err) {
+						vm.clearModals();
+						vm.errors.push(User.formatCognitoErrorMessage(err));
 					}
 				});
 			}

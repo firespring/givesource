@@ -28,26 +28,26 @@
             <router-link v-for="page in pages" :key="page.uuid" :to="{ path: page.slug }" v-if="page.enabled">{{ page.title }}</router-link>
         </nav>
 
-        <a v-on:click="close" href="#" id="overlay__close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
+        <a v-on:click.prevent="close" href="#" id="overlay__close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
     </div>
 </template>
 
 <script>
 	export default {
 		computed: {
-			displayAbout: function () {
+			displayAbout() {
 				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
 			},
-			displayFAQ: function () {
+			displayFAQ() {
 				return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED');
 			},
-			displayToolkits: function () {
+			displayToolkits() {
 				return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED');
 			},
-			displayCart: function () {
+			displayCart() {
 				return this.$store.getters.cartItems.length > 0;
 			},
-			pages: function () {
+			pages() {
 				return this.$store.getters.pages;
 			},
 		},
@@ -58,16 +58,15 @@
 				default: 1000
 			}
 		},
-		created: function () {
+		created() {
 			this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
 		},
 		methods: {
-			close: function (event) {
-				event.preventDefault();
-				const vue = this;
+			close() {
+				const vm = this;
 
-				vue.removeModal('menu-overlay');
-				vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
+				vm.removeModal('menu-overlay');
+				vm.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
 			}
 		}
 	};

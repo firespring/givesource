@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <form v-on:submit="submit" novalidate="">
+        <form v-on:submit.prevent="submit" novalidate="">
 
             <div class="c-form-item c-form-item--password c-form-item--required c-form-item--compact">
                 <div class="c-form-item__control">
@@ -75,7 +75,7 @@
 	import ComponentAuthorizingSpinner from './../AuthorizingSpinner.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				displayAuthorizing: false,
 
@@ -88,7 +88,7 @@
 				// Errors
 				errors: [],
 				formErrors: {}
-			}
+			};
 		},
 		props: [
 			'cognitoUser',
@@ -96,17 +96,17 @@
 		],
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					password: {
 						presence: true,
@@ -116,67 +116,66 @@
 						presence: true,
 						equality: 'password'
 					}
-				}
+				};
 			},
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+			submit() {
+				const vm = this;
 
-				vue.toggleAuthorizing(true);
-				vue.errors = [];
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.toggleAuthorizing(false);
+				vm.toggleAuthorizing(true);
+				vm.errors = [];
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.toggleAuthorizing(false);
 				} else {
-					vue.resetPassword();
+					vm.resetPassword();
 				}
 			},
-			resetPassword: function () {
-				const vue = this;
+			resetPassword() {
+				const vm = this;
 
-				if (vue.cognitoUser) {
-					delete vue.userAttributes['email_verified'];
-					vue.cognitoUser.completeNewPasswordChallenge(vue.formData.password, vue.userAttributes, {
-						onSuccess: function () {
-							vue.$request.patch('users/' + vue.cognitoUser.username, {isVerified: true}).then(function () {
-								vue.redirectToIntendedUri();
-							}).catch(function (err) {
+				if (vm.cognitoUser) {
+					delete vm.userAttributes['email_verified'];
+					vm.cognitoUser.completeNewPasswordChallenge(vm.formData.password, vm.userAttributes, {
+						onSuccess() {
+							vm.$request.patch('users/' + vm.cognitoUser.username, {isVerified: true}).then(() => {
+								vm.redirectToIntendedUri();
+							}).catch(err => {
 								console.log(err);
-								vue.toggleAuthorizing(false);
+								vm.toggleAuthorizing(false);
 							});
 						},
-						onFailure: function (err) {
-							vue.toggleAuthorizing(false);
-							vue.errors.push(err.message);
+						onFailure(err) {
+							vm.toggleAuthorizing(false);
+							vm.errors.push(err.message);
 						},
-						mfaRequired: function (codeDeliveryDetails) {
-							vue.toggleAuthorizing(false);
+						mfaRequired(codeDeliveryDetails) {
+							vm.toggleAuthorizing(false);
 							// TODO: handle mfa
-							// vue.cognitoUser.sendMFACode(mfaCode, this);
+							// vm.cognitoUser.sendMFACode(mfaCode, this);
 						}
 					});
 				}
 			},
-			toggleAuthorizing: function (toggle) {
-				const vue = this;
+			toggleAuthorizing(toggle) {
+				const vm = this;
 
 				if (toggle) {
-					vue.displayAuthorizing = true;
-					vue.$emit('setDisplayHeader', false);
-					vue.$emit('setDisplayLinks', false);
+					vm.displayAuthorizing = true;
+					vm.$emit('setDisplayHeader', false);
+					vm.$emit('setDisplayLinks', false);
 				} else {
-					vue.displayAuthorizing = false;
-					vue.$emit('setDisplayHeader', true);
-					vue.$emit('setDisplayLinks', true);
+					vm.displayAuthorizing = false;
+					vm.$emit('setDisplayHeader', true);
+					vm.$emit('setDisplayLinks', true);
 				}
 			},
-			redirectToIntendedUri: function () {
-				const vue = this;
+			redirectToIntendedUri() {
+				const vm = this;
 
-				if (vue.$route.query.redirect) {
-					vue.$router.push(vue.$route.query.redirect);
+				if (vm.$route.query.redirect) {
+					vm.$router.push(vm.$route.query.redirect);
 				} else {
-					vue.$router.push('/');
+					vm.$router.push('/');
 				}
 			}
 		},

@@ -126,7 +126,7 @@
 	import * as Utils from './../../../../helpers/utils';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				settings: [],
 				emailSettings: [],
@@ -134,58 +134,58 @@
 			};
 		},
 		computed: {
-			displayResendContactEmailVerificationLink: function () {
+			displayResendContactEmailVerificationLink() {
 				return this.settings.length && this.emailSettings.length && !this.contactEmailIsVerified;
 			},
-			displayResendSenderEmailVerificationLink: function () {
+			displayResendSenderEmailVerificationLink() {
 				return this.settings.length && this.emailSettings.length && !this.senderEmailIsVerified;
 			},
-			contactEmail: function () {
+			contactEmail() {
 				let setting = null;
 				if (this.settings.length) {
 					setting = _.find(this.settings, {key: 'CONTACT_EMAIL'});
 				}
 				return setting ? setting.value : null;
 			},
-			contactEmailIsVerified: function () {
+			contactEmailIsVerified() {
 				let setting = null;
 				if (this.settings.length && this.emailSettings.length && this.contactEmail) {
 					setting = _.find(this.emailSettings, {email: this.contactEmail});
 				}
 				return setting ? setting.verified : false;
 			},
-			contactEmailVerificaitonMessage: function () {
+			contactEmailVerificaitonMessage() {
 				let message = '';
 				if (this.settings.length && this.emailSettings.length) {
 					message = this.contactEmail && !this.contactEmailIsVerified ? ' (Awaiting Verification)' : '';
 				}
 				return message;
 			},
-			contactPhone: function () {
+			contactPhone() {
 				let setting = null;
 				if (this.settings.length) {
 					setting = _.find(this.settings, {key: 'CONTACT_PHONE'});
 				}
 				return setting ? setting.value : null;
 			},
-			isCognitoSenderEmailAddress: function () {
-                return this.senderEmail === this.cognitoSenderEmailAddress;
+			isCognitoSenderEmailAddress() {
+				return this.senderEmail === this.cognitoSenderEmailAddress;
 			},
-			senderEmail: function () {
+			senderEmail() {
 				let setting = null;
 				if (this.settings.length) {
 					setting = _.find(this.settings, {key: 'SENDER_EMAIL'});
 				}
 				return setting ? setting.value : null;
 			},
-			senderEmailIsVerified: function () {
+			senderEmailIsVerified() {
 				let setting = null;
 				if (this.settings.length && this.emailSettings.length && this.senderEmail) {
 					setting = _.find(this.emailSettings, {email: this.senderEmail});
 				}
 				return setting ? setting.verified : false;
 			},
-			senderEmailVerificaitonMessage: function () {
+			senderEmailVerificaitonMessage() {
 				let message = '';
 				if (this.settings.length && this.emailSettings.length) {
 					message = this.senderEmail && !this.senderEmailIsVerified ? ' (Awaiting Verification)' : '';
@@ -193,92 +193,92 @@
 				return message;
 			},
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('settings', {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('settings', {
 					keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
-				}).then(function (response) {
-					vue.settings = response.data;
-					return vue.$request.get('settings/email');
-				}).then(function (response) {
-					vue.emailSettings = response.data;
-					return vue.$request.get('settings/email/sender');
-				}).then(function (response) {
+				}).then(response => {
+					vm.settings = response.data;
+					return vm.$request.get('settings/email');
+				}).then(response => {
+					vm.emailSettings = response.data;
+					return vm.$request.get('settings/email/sender');
+				}).then(response => {
 					if (response.data && response.data.email) {
-						vue.cognitoSenderEmailAddress = response.data.email;
+						vm.cognitoSenderEmailAddress = response.data.email;
 					}
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('settings', {
+			vm.$request.get('settings', {
 				keys: ['CONTACT_EMAIL', 'CONTACT_PHONE', 'SENDER_EMAIL']
-			}).then(function (response) {
-				vue.settings = response.data;
-				return vue.$request.get('settings/email');
-			}).then(function (response) {
-				vue.emailSettings = response.data;
-				return vue.$request.get('settings/email/sender');
-			}).then(function (response) {
+			}).then(response => {
+				vm.settings = response.data;
+				return vm.$request.get('settings/email');
+			}).then(response => {
+				vm.emailSettings = response.data;
+				return vm.$request.get('settings/email/sender');
+			}).then(response => {
 				if (response.data && response.data.email) {
-					vue.cognitoSenderEmailAddress = response.data.email;
+					vm.cognitoSenderEmailAddress = response.data.email;
 				}
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('updateSetting', function (data) {
-				_.remove(vue.settings, {key: data.key});
-				vue.settings.push(data);
+			vm.bus.$on('updateSetting', data => {
+				_.remove(vm.settings, {key: data.key});
+				vm.settings.push(data);
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
-			vue.bus.$off('updateSetting');
+		beforeDestroy() {
+			const vm = this;
+			vm.bus.$off('updateSetting');
 		},
 		methods: {
-			editContactEmail: function () {
-				const vue = this;
-				vue.addModal('settings-edit-contact-email', {CONTACT_EMAIL: vue.contactEmail});
+			editContactEmail() {
+				const vm = this;
+				vm.addModal('settings-edit-contact-email', {CONTACT_EMAIL: vm.contactEmail});
 			},
-			editContactPhone: function () {
-				const vue = this;
-				vue.addModal('settings-edit-contact-phone', {CONTACT_PHONE: vue.contactPhone});
+			editContactPhone() {
+				const vm = this;
+				vm.addModal('settings-edit-contact-phone', {CONTACT_PHONE: vm.contactPhone});
 			},
-			editSenderEmail: function () {
-				const vue = this;
-				vue.addModal('settings-edit-sender-email', {SENDER_EMAIL: vue.senderEmail, SENDER_EMAIL_IS_VERIFIED: vue.senderEmailIsVerified});
+			editSenderEmail() {
+				const vm = this;
+				vm.addModal('settings-edit-sender-email', {SENDER_EMAIL: vm.senderEmail, SENDER_EMAIL_IS_VERIFIED: vm.senderEmailIsVerified});
 			},
-			resendContactEmailVerification: function () {
-				const vue = this;
-				vue.addModal('settings-resend-verify-email', {email: vue.contactEmail});
+			resendContactEmailVerification() {
+				const vm = this;
+				vm.addModal('settings-resend-verify-email', {email: vm.contactEmail});
 			},
-			resendSenderEmailVerification: function () {
-				const vue = this;
-				vue.addModal('settings-resend-verify-email', {email: vue.senderEmail});
+			resendSenderEmailVerification() {
+				const vm = this;
+				vm.addModal('settings-resend-verify-email', {email: vm.senderEmail});
 			},
-			setCognitoSenderEmail: function () {
-				const vue = this;
+			setCognitoSenderEmail() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 
-				vue.$request.patch('settings/email/sender', {
-					email: vue.senderEmail
-				}).then(function () {
-					return vue.$request.get('settings/email/sender');
-				}).then(function (response) {
+				vm.$request.patch('settings/email/sender', {
+					email: vm.senderEmail
+				}).then(() => {
+					return vm.$request.get('settings/email/sender');
+				}).then(response => {
 					if (response.data && response.data.email) {
-						vue.cognitoSenderEmailAddress = response.data.email;
+						vm.cognitoSenderEmailAddress = response.data.email;
 					}
-					vue.removeModal('spinner');
-				}).catch(function (err) {
-					vue.removeModal('spinner');
+					vm.removeModal('spinner');
+				}).catch(err => {
+					vm.removeModal('spinner');
 					console.log(err);
 				});
 			}

@@ -35,7 +35,7 @@
                                     <h2 class="c-page-section-title" id="section-your-info">Your Info</h2>
                                 </div>
                                 <div class="c-page-section-header-actions">
-                                    <button v-on:click="editUserInfo" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
+                                    <button v-on:click.prevent="editUserInfo" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
                                         <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                     </button>
                                 </div>
@@ -61,7 +61,7 @@
                                         <div class="u-break-word">********</div>
                                     </div>
                                     <div class="o-grid-col o-grid-col--sm-shrink">
-                                        <button v-on:click="editPassword" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
+                                        <button v-on:click.prevent="editPassword" class="c-btn c-btn--xs c-btn--flat c-btn--icon">
                                             <i class="fa fa-pencil" aria-hidden="true"></i>Edit
                                         </button>
                                     </div>
@@ -70,7 +70,7 @@
                         </section>
 
                         <div class="u-margin-top-scale">
-                            <button v-on:click="deleteAccount" class="c-btn c-btn--sm c-btn--bad c-btn--icon c-btn--text">
+                            <button v-on:click.prevent="deleteAccount" class="c-btn c-btn--sm c-btn--bad c-btn--icon c-btn--text">
                                 <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete Your Account
                             </button>
                         </div>
@@ -84,34 +84,33 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				firstName: this.user.firstName || '',
-                lastName: this.user.lastName || '',
-                nonprofitUuid: this.user.nonprofitUuid,
-            }
-        },
-		created: function () {
-			const vue = this;
+				lastName: this.user.lastName || '',
+				nonprofitUuid: this.user.nonprofitUuid,
+			};
+		},
+		created() {
+			const vm = this;
 
-			vue.bus.$on('userAccountUpdateInfo', function (data) {
-				vue.firstName = data.firstName;
-				vue.lastName = data.lastName;
-            });
-        },
-        beforeDestroy: function () {
-			const vue = this;
-
-			vue.bus.$off('userAccountUpdateInfo');
-        },
+			vm.bus.$on('userAccountUpdateInfo', data => {
+				vm.firstName = data.firstName;
+				vm.lastName = data.lastName;
+			});
+		},
+		beforeDestroy() {
+			const vm = this;
+			vm.bus.$off('userAccountUpdateInfo');
+		},
 		methods: {
-			editUserInfo: function () {
+			editUserInfo() {
 				this.addModal('account-edit-info');
 			},
-			editPassword: function () {
+			editPassword() {
 				this.addModal('account-edit-password');
 			},
-			deleteAccount: function (event) {
+			deleteAccount(event) {
 				// TODO: Delete User Account
 			}
 		},

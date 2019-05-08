@@ -48,7 +48,7 @@
 
                             <div class="c-table-footer">
                                 <div class="c-table-footer__actions">
-                                    <a v-on:click="addQuestion" href="#" role="button" class="c-btn c-btn--good c-btn--icon c-btn--sm">
+                                    <a v-on:click.prevent="addQuestion" href="#" role="button" class="c-btn c-btn--good c-btn--icon c-btn--sm">
                                         <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Question
                                     </a>
                                 </div>
@@ -66,76 +66,74 @@
 	import ComponentFAQListTable from './faq/FAQListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				loaded: false,
 				apiError: {},
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('contents', {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('contents', {
 					keys: ['FAQ_LIST']
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
+				}).then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.contents = response.data;
-					vue.loaded = true;
+					vm.contents = response.data;
+					vm.loaded = true;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.loaded = false;
-			vue.$request.get('contents', {
+			vm.loaded = false;
+			vm.$request.get('contents', {
 				keys: ['FAQ_LIST']
-			}).then(function (response) {
-				response.data.sort(function (a, b) {
+			}).then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.contents = response.data;
-				vue.loaded = true;
+				vm.contents = response.data;
+				vm.loaded = true;
 				next();
-			}).catch(function () {
+			}).catch(() => {
 				next();
 			});
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.bus.$on('addFAQList', function (data) {
-				vue.contents.push(data);
+			vm.bus.$on('addFAQList', data => {
+				vm.contents.push(data);
 			});
 
-			vue.bus.$on('deleteFAQList', function (data) {
-				vue.contents = _.reject(vue.contents, {uuid: data.uuid});
+			vm.bus.$on('deleteFAQList', data => {
+				vm.contents = _.reject(vm.contents, {uuid: data.uuid});
 			});
 
-			vue.bus.$on('updateFAQList', function (data) {
-				const index = _.findIndex(vue.contents, {uuid: data.uuid});
-				vue.contents[index > -1 ? index : vue.contents.length] = data;
+			vm.bus.$on('updateFAQList', data => {
+				const index = _.findIndex(vm.contents, {uuid: data.uuid});
+				vm.contents[index > -1 ? index : vm.contents.length] = data;
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
+		beforeDestroy() {
+			const vm = this;
 
-			vue.bus.$off('addFAQList');
-			vue.bus.$off('deleteFAQList');
-			vue.bus.$off('updateFAQList');
+			vm.bus.$off('addFAQList');
+			vm.bus.$off('deleteFAQList');
+			vm.bus.$off('updateFAQList');
 		},
 		methods: {
-			addQuestion: function (event) {
-				event.preventDefault();
-				const vue = this;
-
-				vue.addModal('pages-faq-add-question-modal');
+			addQuestion() {
+				const vm = this;
+				vm.addModal('pages-faq-add-question-modal');
 			},
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				const vm = this;
+				vm.apiError = err.response.data.errors;
 			},
 		},
 		components: {

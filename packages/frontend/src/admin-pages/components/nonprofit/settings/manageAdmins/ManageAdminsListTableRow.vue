@@ -40,7 +40,7 @@
 
         <td class="u-nowrap">
             <div class="c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only"></a>
+                <a v-on:click.prevent="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger c-btn-dropdown-trigger--only"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options" v-if="!nonprofitUser.isVerified">
                         <a v-on:click.prevent="resendVerificationEmail" href="#">
@@ -60,7 +60,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				displayingMenu: false,
 				selectedNonprofitUser: this.nonprofitUser,
@@ -68,7 +68,7 @@
 			};
 		},
 		computed: {
-			formattedDate: function () {
+			formattedDate() {
 				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
 			}
 		},
@@ -76,43 +76,44 @@
 			'nonprofitUser'
 		],
 		methods: {
-			toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
-				if (vue.displayingMenu) {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
+			toggleMenu() {
+				const vm = this;
+
+				if (vm.displayingMenu) {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
 				} else {
-					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeIn();
+					$(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeIn();
 				}
-				vue.displayingMenu = !vue.displayingMenu;
+				vm.displayingMenu = !vm.displayingMenu;
 			},
-			closeMenu: function () {
-				const vue = this;
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-					vue.displayingMenu = false;
+			closeMenu() {
+				const vm = this;
+
+				vm.timer = setTimeout(() => {
+					$(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+					$(vm.$refs.cBtnDropdownMenu).fadeOut();
+					vm.displayingMenu = false;
 				}, 250);
 			},
-			cancelCloseMenu: function () {
-				const vue = this;
-				clearTimeout(vue.timer);
+			cancelCloseMenu() {
+				const vm = this;
+				clearTimeout(vm.timer);
 			},
-			removeUser: function () {
-				const vue = this;
-				vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser);
+			removeUser() {
+				const vm = this;
+				vm.bus.$emit('deleteUserNonprofitModal', vm.selectedNonprofitUser);
 			},
-			resendVerificationEmail: function () {
-				const vue = this;
+			resendVerificationEmail() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.$request.post('users/' + vue.nonprofitUser.uuid + '/resend-verification-email').then(function () {
-					vue.clearModals();
-				}).catch(function (err) {
+				vm.addModal('spinner');
+				vm.$request.post('users/' + vm.nonprofitUser.uuid + '/resend-verification-email').then(() => {
+					vm.clearModals();
+				}).catch(err => {
 					console.log(err);
-					vue.clearModals();
+					vm.clearModals();
 				});
 			},
 		}

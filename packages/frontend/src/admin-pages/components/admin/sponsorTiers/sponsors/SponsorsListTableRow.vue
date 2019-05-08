@@ -31,7 +31,7 @@
         </td>
 
         <td class="icon">
-            <a v-on:click="deleteSponsor" href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
+            <a v-on:click.prevent="deleteSponsor" href="#" role="button" class="c-btn c-btn--sm c-btn--icon c-btn--bad c-btn--flat js-modal-trigger" rel="modal-confirm-delete">
                 <i class="fa fa-trash" aria-hidden="true"></i>Delete
             </a>
         </td>
@@ -41,43 +41,42 @@
 <script>
 	export default {
 		computed: {
-			logoUrl: function () {
+			logoUrl() {
 				return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false;
 			}
 		},
 		props: {
 			file: {
 				type: Object,
-				default: function () {
+				default() {
 					return {};
 				}
 			},
 			sponsor: {
 				type: Object,
-				default: function () {
+				default() {
 					return {};
 				}
 			},
 		},
 		methods: {
-			deleteSponsor: function (event) {
-				event.preventDefault();
-				const vue = this;
+			deleteSponsor() {
+				const vm = this;
 
-				vue.addModal('spinner');
+				vm.addModal('spinner');
 				let promise = Promise.resolve();
-				if (vue.sponsor.hasOwnProperty('fileUuid') && vue.sponsor.fileUuid) {
-					promise = vue.$request.delete('files/' + vue.sponsor.fileUuid);
+				if (vm.sponsor.hasOwnProperty('fileUuid') && vm.sponsor.fileUuid) {
+					promise = vm.$request.delete('files/' + vm.sponsor.fileUuid);
 				}
 
-				promise.then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsor.sponsorTierUuid + '/sponsors/' + vue.sponsor.uuid);
-				}).then(function () {
-					vue.clearModals();
-					vue.$emit('deleteSponsor', vue.sponsor.uuid);
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.$emit('hasError', err);
+				promise.then(() => {
+					return vm.$request.delete('sponsor-tiers/' + vm.sponsor.sponsorTierUuid + '/sponsors/' + vm.sponsor.uuid);
+				}).then(() => {
+					vm.clearModals();
+					vm.$emit('deleteSponsor', vm.sponsor.uuid);
+				}).catch(err => {
+					vm.clearModals();
+					vm.$emit('hasError', err);
 				});
 			}
 		}

@@ -60,8 +60,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="save" type="button" class="c-btn">Save &amp; Close</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
+                                <button v-on:click.prevent="save" type="button" class="c-btn">Save &amp; Close</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
                             </div>
                         </div>
 
@@ -76,7 +76,7 @@
 	import ComponentCKEditor from './../../../forms/Ckeditor.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				// Form Data
 				formData: {
@@ -109,17 +109,17 @@
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					'FAQ_LIST_ITEM_QUESTION.value': {
 						label: 'Question',
@@ -131,45 +131,45 @@
 					},
 				};
 			},
-			cancel: function () {
+			cancel() {
 				this.clearModals();
 			},
-			save: function () {
-				const vue = this;
+			save() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
-				if (Object.keys(vue.formErrors).length) {
-					vue.removeModal();
+				vm.addModal('spinner');
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
+				if (Object.keys(vm.formErrors).length) {
+					vm.removeModal();
 				} else {
-					vue.saveContents();
+					vm.saveContents();
 				}
 			},
-			saveContents: function () {
-				const vue = this;
+			saveContents() {
+				const vm = this;
 
 				let faqListContent = {};
-				vue.$request.post('contents', {
+				vm.$request.post('contents', {
 					key: 'FAQ_LIST',
 					type: 'COLLECTION'
-				}).then(function (response) {
+				}).then(response => {
 					faqListContent = response.data;
-					return vue.$request.patch('contents', {
-						contents: Object.keys(vue.formData).map(function (key) {
-							const content = vue.formData[key];
+					return vm.$request.patch('contents', {
+						contents: Object.keys(vm.formData).map(key => {
+							const content = vm.formData[key];
 							content.parentUuid = faqListContent.uuid;
 							return content;
 						}),
 					});
-				}).then(function () {
-					faqListContent.value = Object.keys(vue.formData).map(function (key) {
-						return vue.formData[key];
+				}).then(() => {
+					faqListContent.value = Object.keys(vm.formData).map(key => {
+						return vm.formData[key];
 					});
-					vue.bus.$emit('addFAQList', faqListContent);
-					vue.clearModals();
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-					vue.apiError = err.response.data.errors;
+					vm.bus.$emit('addFAQList', faqListContent);
+					vm.clearModals();
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.apiError = err.response.data.errors;
 				});
 			},
 		},

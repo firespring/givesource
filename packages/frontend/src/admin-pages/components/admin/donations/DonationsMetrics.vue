@@ -58,7 +58,7 @@
 	const numeral = require('numeral');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				metrics: {
 					'DONATIONS_COUNT': 0,
@@ -69,31 +69,31 @@
 			};
 		},
 		computed: {
-			donationsCount: function () {
+			donationsCount() {
 				return numeral(this.metrics.DONATIONS_COUNT).format('0,000');
 			},
-			donationsTotal: function () {
+			donationsTotal() {
 				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00');
 			},
-			donorsCount: function () {
+			donorsCount() {
 				return numeral(this.metrics.DONORS_COUNT).format('0,000');
 			},
-			topDonation: function () {
+			topDonation() {
 				return numeral(this.metrics.TOP_DONATION / 100).format('$0,00.00');
 			}
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.$request.get('metrics', {keys: Object.keys(vue.metrics)}).then(function (response) {
-				response.data.forEach(function (metric) {
-					if (vue.metrics.hasOwnProperty(metric.key)) {
-						vue.metrics[metric.key] = metric.value;
+			vm.$request.get('metrics', {keys: Object.keys(vm.metrics)}).then(response => {
+				response.data.forEach(metric => {
+					if (vm.metrics.hasOwnProperty(metric.key)) {
+						vm.metrics[metric.key] = metric.value;
 					}
 				});
-			}).catch(function (err) {
-                vue.$emit('hasError', err);
-            });
+			}).catch(err => {
+				vm.$emit('hasError', err);
+			});
 		}
 	};
 </script>

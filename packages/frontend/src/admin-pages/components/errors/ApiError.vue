@@ -26,14 +26,14 @@
                 </ul>
             </div>
             <div class="c-alert__close">
-                <button v-on:click="close" class="c-btn c-btn--xs c-btn--icon c-btn--reverse c-btn--text"><i class="fa fa-close" aria-hidden="true"></i>Close</button>
+                <button v-on:click.prevent="close" class="c-btn c-btn--xs c-btn--icon c-btn--reverse c-btn--text"><i class="fa fa-close" aria-hidden="true"></i>Close</button>
             </div>
         </div>
     </div>
 </template>
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: {}
 			};
@@ -42,19 +42,19 @@
 			value: {}
 		},
 		computed: {
-			hasError: function () {
+			hasError() {
 				return this.localValue && Object.keys(this.localValue).length;
 			}
 		},
 		watch: {
-			localValue: function (value, oldValue) {
+			localValue(value, oldValue) {
 				const vue = this;
 				if (value === oldValue) {
 					return;
 				}
 				vue.$emit('input', vue.localValue);
 			},
-			value: function (value, oldValue) {
+			value(value, oldValue) {
 				const vue = this;
 				if (value === oldValue) {
 					return;
@@ -63,7 +63,7 @@
 			}
 		},
 		methods: {
-			close: function () {
+			close() {
 				const vue = this;
 				vue.localValue = {};
 			}

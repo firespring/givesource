@@ -36,8 +36,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="revokeNonprofit" type="button" class="c-btn c-btn--bad js-modal-close">Revoke Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
+                                <button v-on:click.prevent="revokeNonprofit" type="button" class="c-btn c-btn--bad js-modal-close">Revoke Them</button>
+                                <button v-on:click.prevent="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
                             </div>
                         </div>
 
@@ -50,44 +50,44 @@
 </template>
 
 <script>
-    export default {
-        data: function () {
-            return {
-                apiError: {}
-            };
-        },
-        props: {
-            zIndex: {
-                type: [Number, String],
-                default: 1000
-            },
-            data: {
-                type: Object,
-                default: {
-                    nonprofit: {}
-                }
-            }
-        },
-        methods: {
-            cancel: function () {
-                this.clearModals();
-            },
-            revokeNonprofit: function () {
-                const vue = this;
+	export default {
+		data() {
+			return {
+				apiError: {}
+			};
+		},
+		props: {
+			zIndex: {
+				type: [Number, String],
+				default: 1000
+			},
+			data: {
+				type: Object,
+				default: {
+					nonprofit: {}
+				}
+			}
+		},
+		methods: {
+			cancel() {
+				this.clearModals();
+			},
+			revokeNonprofit() {
+				const vm = this;
 
-                vue.addModal('spinner');
+				vm.addModal('spinner');
 
-                vue.$request.patch('nonprofits/' + vue.data.nonprofit.uuid + '/status', {
-                    status: 'REVOKED'
-                }).then(function () {
-                    vue.clearModals();
-                    vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.uuid);
-                }).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                    vue.removeModal('spinner');
-                });
+				vm.$request.patch('nonprofits/' + vm.data.nonprofit.uuid + '/status', {
+					status: 'REVOKED'
+				}).then(() => {
+					vm.clearModals();
+					vm.bus.$emit('revokeNonprofit', vm.data.nonprofit.uuid);
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
+					vm.removeModal('spinner');
+				});
 
-            },
-        }
-    };
+			},
+		}
+	};
 </script>

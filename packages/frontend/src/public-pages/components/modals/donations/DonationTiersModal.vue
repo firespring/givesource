@@ -36,7 +36,7 @@
 
                     <div class="donation-options-custom">
                         <h2 v-if="displayDonationTiers">Or Enter a Custom Amount</h2>
-                        <form v-on:submit="customAmount">
+                        <form v-on:submit.prevent="customAmount">
                             <div class="input">
                                 <forms-money v-model="formData.customAmount" name="customAmount" id="customAmount" placeholder="Enter Amount"
                                              :hasError="formErrors.hasOwnProperty('customAmount')"></forms-money>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
 
-                <a v-on:click="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
+                <a v-on:click.prevent="close" href="#" class="donation-close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
             </div>
         </div>
 
@@ -69,7 +69,7 @@
 	import ComponentSpinner from './../../layout/Spinner.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				donationTiers: [],
 				nonprofit: null,
@@ -89,7 +89,7 @@
 			};
 		},
 		computed: {
-			displayDonationTiers: function () {
+			displayDonationTiers() {
 				return this.donationTiers.length;
 			},
 		},
@@ -105,32 +105,32 @@
 				default: 1000
 			}
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.addBodyClasses('has-donation-overlay');
-			vue.nonprofit = vue.data.nonprofit;
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
-				response.data.sort(function (a, b) {
+			vm.addBodyClasses('has-donation-overlay');
+			vm.nonprofit = vm.data.nonprofit;
+			axios.get(API_URL + 'nonprofits/' + vm.nonprofit.uuid + '/tiers').then(response => {
+				response.data.sort((a, b) => {
 					return b.amount - a.amount;
 				});
-				vue.donationTiers = response.data;
-				vue.loaded = true;
+				vm.donationTiers = response.data;
+				vm.loaded = true;
 			});
 		},
 		watch: {
 			formData: {
-				handler: function () {
-					const vue = this;
-					if (Object.keys(vue.formErrors).length) {
-						vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				handler() {
+					const vm = this;
+					if (Object.keys(vm.formErrors).length) {
+						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 					}
 				},
 				deep: true
 			}
 		},
 		methods: {
-			getConstraints: function () {
+			getConstraints() {
 				return {
 					customAmount: {
 						presence: true,
@@ -140,48 +140,46 @@
 					},
 				};
 			},
-			close: function (event) {
-				event.preventDefault();
-				const vue = this;
+			close() {
+				const vm = this;
 
-				vue.removeModal('donation-tiers');
-				vue.removeBodyClasses('has-donation-overlay');
+				vm.removeModal('donation-tiers');
+				vm.removeBodyClasses('has-donation-overlay');
 			},
-			selectTier: function (amount) {
-				const vue = this;
+			selectTier(amount) {
+				const vm = this;
 
-				vue.$store.commit('addCartItem', {
+				vm.$store.commit('addCartItem', {
 					amount: amount,
-					nonprofit: vue.nonprofit
+					nonprofit: vm.nonprofit
 				});
 
-				$(vue.$refs.donationModalOptions).fadeOut(function () {
-					vue.removeModal('donation-tiers');
-					vue.removeBodyClasses('has-donation-overlay');
-					vue.addModal('donation-cart');
+				$(vm.$refs.donationModalOptions).fadeOut(() => {
+					vm.removeModal('donation-tiers');
+					vm.removeBodyClasses('has-donation-overlay');
+					vm.addModal('donation-cart');
 				});
 			},
-			customAmount: function (event) {
-				event.preventDefault();
-				const vue = this;
+			customAmount() {
+				const vm = this;
 
-				const amount = Math.round(parseFloat(vue.formData.customAmount) * 100);
-				vue.formErrors = vue.validate(vue.formData, vue.getConstraints());
+				const amount = Math.round(parseFloat(vm.formData.customAmount) * 100);
+				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
 
-				if (amount && !Object.keys(vue.formErrors).length) {
-					vue.$store.commit('addCartItem', {
+				if (amount && !Object.keys(vm.formErrors).length) {
+					vm.$store.commit('addCartItem', {
 						amount: amount,
-						nonprofit: vue.nonprofit
+						nonprofit: vm.nonprofit
 					});
 
 					if (!Utils.isInternetExplorer()) {
-						vue.bus.$emit('updateCartItems');
+						vm.bus.$emit('updateCartItems');
 					}
 
-					$(vue.$refs.donationModalOptions).fadeOut(function () {
-						vue.removeModal('donation-tiers');
-						vue.removeBodyClasses('has-donation-overlay');
-						vue.addModal('donation-cart');
+					$(vm.$refs.donationModalOptions).fadeOut(() => {
+						vm.removeModal('donation-tiers');
+						vm.removeBodyClasses('has-donation-overlay');
+						vm.addModal('donation-cart');
 					});
 				}
 			}
