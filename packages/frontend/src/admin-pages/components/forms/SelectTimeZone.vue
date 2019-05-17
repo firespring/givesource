@@ -25,7 +25,7 @@
 	require('chosen-js');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: '',
 
@@ -1634,7 +1634,7 @@
 			};
 		},
 		computed: {
-			selectedValue: function () {
+			selectedValue() {
 				return this.localValue;
 			}
 		},
@@ -1657,32 +1657,32 @@
 				default: false
 			}
 		},
-		mounted: function () {
-			const vue = this;
+		mounted() {
+			const vm = this;
 
-			$(vue.$refs.select).chosen({
+			$(vm.$refs.select).chosen({
 				allow_single_deselect: true,
 				width: '100%'
-			}).change(function () {
-				vue.localValue = $(this).val();
+			}).change(() => {
+				vm.localValue = $(this).val();
 			});
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', vue.selectedValue);
+				vm.$emit('input', vm.selectedValue);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
-				$(vue.$refs.select).val(value);
-				$(vue.$refs.select).trigger("chosen:updated");
+				vm.localValue = value;
+				$(vm.$refs.select).val(value);
+				$(vm.$refs.select).trigger("chosen:updated");
 			}
 		}
 	};

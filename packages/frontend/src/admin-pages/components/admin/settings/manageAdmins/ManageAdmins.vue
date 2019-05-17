@@ -54,15 +54,14 @@
 	import ComponentManageAdminsListTable from './ManageAdminsListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				apiError: {},
-			}
+			};
 		},
 		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				this.apiError = err.response.data.errors;
 			}
 		},
 		components: {

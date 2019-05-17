@@ -17,14 +17,12 @@
 <template></template>
 
 <script>
-    const User = require('../../helpers/user');
+	const User = require('../../helpers/user');
 
-    export default {
-    	mounted: function () {
-    		const vue = this;
-
-            User.logout();
-            vue.$router.push({ name: 'login' });
-        }
-    };
+	export default {
+		mounted() {
+			User.logout();
+			this.$router.push({name: 'login'});
+		}
+	};
 </script>

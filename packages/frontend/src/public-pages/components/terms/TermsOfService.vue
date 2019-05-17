@@ -42,50 +42,50 @@
 	import ComponentSponsors from './../layout/Sponsors.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				apiError: {},
 			};
 		},
 		computed: {
-			terms: function () {
+			terms() {
 				const terms = _.find(this.contents, {key: 'TERMS_TEXT'});
 				return terms ? terms.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
 					keys: 'TERMS_TEXT'
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				})).then(response => {
+					vm.contents = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: 'TERMS_TEXT'
-			})).then(function (response) {
-				vue.contents = response.data;
+			})).then(response => {
+				vm.contents = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Terms of Service');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Terms of Service');
 		},
 		components: {
 			'layout-footer': ComponentFooter,

@@ -21,10 +21,11 @@
 
 <script>
 	import * as Utils from './../../helpers/utils';
+
 	const numeral = require('numeral');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: this.value ? this.value : '0.00',
 
@@ -36,7 +37,7 @@
 			}
 		},
 		computed: {
-			isInternetExplorer: function () {
+			isInternetExplorer() {
 				return Utils.isInternetExplorer();
 			}
 		},
@@ -55,28 +56,29 @@
 				default: false
 			}
 		},
-		mounted: function () {
+		mounted() {
 			this.format();
 		},
 		watch: {
-			value: function (val) {
+			value(val) {
 				this.localValue = val;
 			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-				this.$refs.input.dispatchEvent(new Event('input'));
+			localValue() {
+				const vm = this;
+				vm.$emit('input', vm.localValue);
+				vm.$refs.input.dispatchEvent(new Event('input'));
 			}
 		},
 		methods: {
-			format: function () {
-				const vue = this;
+			format() {
+				const vm = this;
 
-				let value = vue.$refs.input.value;
+				let value = vm.$refs.input.value;
 				value = value.replace(/\D/g, '');
 				value = numeral(value / 100).format('0.00');
 
-				vue.localValue = value;
-				vue.$refs.input.value = value;
+				vm.localValue = value;
+				vm.$refs.input.value = value;
 			},
 		}
 	};

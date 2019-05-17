@@ -15,7 +15,7 @@
  */
 
 export default {
-	data: function () {
+	data() {
 		return {
 			pagination: {
 				items: [],
@@ -28,10 +28,10 @@ export default {
 		};
 	},
 	methods: {
-		resetPaginationData: function () {
-			const vue = this;
+		resetPaginationData() {
+			const vm = this;
 
-			vue.pagination = {
+			vm.pagination = {
 				items: [],
 				loaded: false,
 				size: 0,
@@ -40,15 +40,15 @@ export default {
 				total: 0
 			};
 		},
-		setPaginationData: function (data) {
-			const vue = this;
+		setPaginationData(data) {
+			const vm = this;
 
-			Object.keys(vue.pagination).forEach(function (key) {
+			Object.keys(vm.pagination).forEach(key => {
 				if (data.hasOwnProperty(key)) {
-					vue.pagination[key] = data[key];
+					vm.pagination[key] = data[key];
 				}
 			});
-			vue.pagination.loaded = true;
+			vm.pagination.loaded = true;
 		}
 	}
 };

@@ -31,6 +31,7 @@
         </div>
     </div>
 </template>
+
 <script>
 	export default {
 		data() {
@@ -48,24 +49,23 @@
 		},
 		watch: {
 			localValue(value, oldValue) {
-				const vue = this;
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', vue.localValue);
+				vm.$emit('input', vm.localValue);
 			},
 			value(value, oldValue) {
-				const vue = this;
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
+				vm.localValue = value;
 			}
 		},
 		methods: {
 			close() {
-				const vue = this;
-				vue.localValue = {};
+				this.localValue = {};
 			}
 		},
 	}

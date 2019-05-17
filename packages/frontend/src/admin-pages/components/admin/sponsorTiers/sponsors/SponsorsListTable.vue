@@ -38,7 +38,7 @@
 	import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localSponsors: [],
 
@@ -53,13 +53,13 @@
 		props: {
 			files: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				}
 			},
 			sponsors: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				}
 			},
@@ -69,42 +69,41 @@
 			}
 		},
 		watch: {
-			sponsors: function (value) {
+			sponsors(value) {
 				this.localSponsors = value;
 			},
-			localSponsors: function () {
+			localSponsors() {
 				this.$emit('sponsors', this.localSponsors);
 			},
 		},
 		methods: {
-			getFile: function (fileUuid) {
+			getFile(fileUuid) {
 				return _.find(this.files, {uuid: fileUuid});
 			},
-			updateSortOrder: function () {
-				const vue = this;
+			updateSortOrder() {
+				const vm = this;
 
-				const original = JSON.parse(JSON.stringify(vue.localSponsors));
-				vue.localSponsors.forEach(function (sponsor, i) {
+				const original = JSON.parse(JSON.stringify(vm.localSponsors));
+				vm.localSponsors.forEach((sponsor, i) => {
 					sponsor.sortOrder = i;
 				});
 
-				const toUpdate = _.differenceWith(vue.localSponsors, original, _.isEqual);
-				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors', {
+				const toUpdate = _.differenceWith(vm.localSponsors, original, _.isEqual);
+				vm.$request.patch('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors', {
 					sponsors: toUpdate
-				}).catch(function (err) {
-					vue.$emit('hasError', err);
+				}).catch(err => {
+					vm.$emit('hasError', err);
 				});
 			},
-			deleteSponsor: function (sponsorUuid) {
-				const vue = this;
+			deleteSponsor(sponsorUuid) {
+				const vm = this;
 
-				vue.localSponsors = _.filter(vue.localSponsors, function (sponsor) {
+				vm.localSponsors = _.filter(vm.localSponsors, sponsor => {
 					return sponsor.uuid !== sponsorUuid;
 				});
 			},
-			hasError: function (err) {
-				const vue = this;
-				vue.$emit('hasError', err);
+			hasError(err) {
+				this.$emit('hasError', err);
 			}
 		},
 		components: {

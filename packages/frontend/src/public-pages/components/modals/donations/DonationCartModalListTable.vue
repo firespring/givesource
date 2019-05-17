@@ -50,47 +50,44 @@
 	import ComponentDonationCartModalListTableRow from './DonationCartModalListTableRow.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				cartItems: [],
 			};
 		},
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.cartItems = vue.$store.state.cartItems;
-			vue.cartItems.sort(function (a, b) {
+			vm.cartItems = vm.$store.state.cartItems;
+			vm.cartItems.sort((a, b) => {
 				return a.timestamp - b.timestamp;
 			});
 		},
 		methods: {
-			removeCartItem: function (index) {
-				const vue = this;
-				vue.cartItems.splice(index, 1);
+			removeCartItem(index) {
+				this.cartItems.splice(index, 1);
 			},
-			updateCartItem: function (index, amount) {
-				const vue = this;
+			updateCartItem(index, amount) {
+				const vm = this;
 
-				const item = vue.cartItems[index];
+				const item = vm.cartItems[index];
 				item.amount = amount;
 
-				vue.$set(vue.cartItems, index, item);
-				vue.$store.commit('updateCartItem', {
+				vm.$set(vm.cartItems, index, item);
+				vm.$store.commit('updateCartItem', {
 					timestamp: item.timestamp,
 					amount: item.amount
 				});
 
 				if (!Utils.isInternetExplorer()) {
-					vue.bus.$emit('updateCartItems');
+					vm.bus.$emit('updateCartItems');
 				}
 			},
-			findNonprofit: function () {
-				const vue = this;
-				vue.$emit('findNonprofit');
+			findNonprofit() {
+				this.$emit('findNonprofit');
 			},
-			hasError: function (hasError) {
-				const vue = this;
-				vue.$emit('hasError', hasError);
+			hasError(hasError) {
+				this.$emit('hasError', hasError);
 			}
 		},
 		components: {

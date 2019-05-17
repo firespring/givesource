@@ -37,7 +37,7 @@
 	import ComponentSponsorsTiersListTableRow from './SponsorsTiersListTableRow.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localSponsorTiers: [],
 
@@ -54,45 +54,44 @@
 		props: {
 			sponsorTiers: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				}
 			},
 		},
 		watch: {
-			sponsorTiers: function (value) {
+			sponsorTiers(value) {
 				this.localSponsorTiers = value;
 			},
-			localSponsorTiers: function () {
+			localSponsorTiers() {
 				this.$emit('sponsorTiers', this.localSponsorTiers);
 			},
 		},
 		methods: {
-			updateSortOrder: function () {
-				const vue = this;
+			updateSortOrder() {
+				const vm = this;
 
-				const original = JSON.parse(JSON.stringify(vue.localSponsorTiers));
-				vue.localSponsorTiers.forEach(function (sponsorTier, i) {
+				const original = JSON.parse(JSON.stringify(vm.localSponsorTiers));
+				vm.localSponsorTiers.forEach((sponsorTier, i) => {
 					sponsorTier.sortOrder = i;
 				});
 
-				const toUpdate = _.differenceWith(vue.localSponsorTiers, original, _.isEqual);
-				vue.$request.patch('sponsor-tiers', {
+				const toUpdate = _.differenceWith(vm.localSponsorTiers, original, _.isEqual);
+				vm.$request.patch('sponsor-tiers', {
 					sponsorTiers: toUpdate
-				}).catch(function (err) {
-					vue.$emit('hasError', err);
+				}).catch((err) => {
+					vm.$emit('hasError', err);
 				});
 			},
-			deleteSponsorTier: function (sponsorTierUuid) {
-				const vue = this;
+			deleteSponsorTier(sponsorTierUuid) {
+				const vm = this;
 
-				vue.localSponsorTiers = _.filter(vue.localSponsorTiers, function (sponsorTier) {
+				vm.localSponsorTiers = _.filter(vm.localSponsorTiers, sponsorTier => {
 					return sponsorTier.uuid !== sponsorTierUuid;
 				});
 			},
-			hasError: function (err) {
-				const vue = this;
-				vue.$emit('hasError', err);
+			hasError(err) {
+				this.$emit('hasError', err);
 			},
 		},
 		components: {

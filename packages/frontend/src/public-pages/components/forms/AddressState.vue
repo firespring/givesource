@@ -26,7 +26,7 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: this.value ? this.value : !this.placeholder ? 'AL' : '',
 				states: [
@@ -267,32 +267,31 @@
 						abbreviation: 'WY'
 					}
 				]
-			}
+			};
 		},
 		computed: {
-			selectedValue: function () {
-				const vue = this;
-				return vue.localValue;
+			selectedValue() {
+				return this.localValue;
 			}
 		},
-		mounted: function () {
-			const vue = this;
-			vue.$emit('input', vue.selectedValue);
+		mounted() {
+			const vm = this;
+			vm.$emit('input', vm.selectedValue);
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', vue.selectedValue);
+				vm.$emit('input', vm.selectedValue);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
+				vm.localValue = value;
 			}
 		},
 		props: {

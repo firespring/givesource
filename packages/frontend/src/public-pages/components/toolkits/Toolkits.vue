@@ -62,45 +62,45 @@
 	import ComponentSponsors from './../layout/Sponsors.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				contents: [],
 				apiError: {},
 			};
 		},
 		computed: {
-			resources: function () {
+			resources() {
 				return _.filter(this.contents, {key: 'TOOLKIT_RESOURCE_LIST'});
 			},
-			leadingText: function () {
+			leadingText() {
 				const text = _.find(this.contents, {key: 'TOOLKIT_LEADING_TEXT'});
 				return text ? text.value : null;
 			},
-			additionalText: function () {
+			additionalText() {
 				const text = _.find(this.contents, {key: 'TOOLKIT_ADDITIONAL_TEXT'});
 				return text ? text.value : null;
 			},
-			eventTitle: function () {
+			eventTitle() {
 				return Settings.eventTitle();
 			}
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
 				axios.get(API_URL + 'contents' + Utils.generateQueryString({
 					keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
-				})).then(function (response) {
-					response.data.sort(function (a, b) {
+				})).then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.contents = response.data;
-				}).then(function () {
+					vm.contents = response.data;
+				}).then(() => {
 					let promise = Promise.resolve();
-					vue.contents.forEach(function (content) {
+					vm.contents.forEach(content => {
 						if (content.type === 'COLLECTION') {
 							const fileIndex = _.findIndex(content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
 							if (content.value[fileIndex].value) {
-								promise = promise.then(function () {
-									return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(function (response) {
+								promise = promise.then(() => {
+									return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(response => {
 										content.value[fileIndex].value = response.data;
 									});
 								});
@@ -108,29 +108,29 @@
 						}
 					});
 					return promise;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
 			axios.get(API_URL + 'contents' + Utils.generateQueryString({
 				keys: ['TOOLKIT_RESOURCE_LIST', 'TOOLKIT_LEADING_TEXT', 'TOOLKIT_ADDITIONAL_TEXT']
-			})).then(function (response) {
-				response.data.sort(function (a, b) {
+			})).then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.contents = response.data;
-			}).then(function () {
+				vm.contents = response.data;
+			}).then(() => {
 				let promise = Promise.resolve();
-				vue.contents.forEach(function (content) {
+				vm.contents.forEach(content => {
 					if (content.type === 'COLLECTION') {
 						const fileIndex = _.findIndex(content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
 						if (content.value[fileIndex].value) {
-							promise = promise.then(function () {
-								return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(function (response) {
+							promise = promise.then(() => {
+								return axios.get(API_URL + 'files/' + content.value[fileIndex].value).then(response => {
 									content.value[fileIndex].value = response.data;
 								});
 							});
@@ -138,36 +138,34 @@
 					}
 				});
 				return promise;
-			}).then(function () {
+			}).then(() => {
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
-		beforeMount: function () {
-			const vue = this;
+		beforeMount() {
+			const vm = this;
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Toolkits');
+			vm.setBodyClasses('page');
+			vm.setPageTitle(vm.eventTitle + ' - Toolkits');
 		},
 		methods: {
-			getResourceValue: function (resource, contentKey, defaultValue) {
+			getResourceValue(resource, contentKey, defaultValue) {
 				const content = _.find(resource.value, {key: contentKey});
 				return content ? content.value : defaultValue ? defaultValue : null;
 			},
-			getResourceType: function (resource) {
-				const vue = this;
-
-				return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE', 'FILE');
+			getResourceType(resource) {
+				return this.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE', 'FILE');
 			},
-			getResourceLink: function (resource) {
-				const vue = this;
+			getResourceLink(resource) {
+				const vm = this;
 
-				if (vue.getResourceType(resource) === 'FILE') {
-					return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
+				if (vm.getResourceType(resource) === 'FILE') {
+					return vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_FILE').path;
 				} else {
-					return vue.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
+					return vm.getResourceValue(resource, 'TOOLKIT_RESOURCE_LIST_ITEM_LINK');
 				}
 			}
 		},

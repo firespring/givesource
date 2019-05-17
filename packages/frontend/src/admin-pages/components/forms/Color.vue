@@ -23,13 +23,13 @@
 	require('@claviska/jquery-minicolors');
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: ''
 			};
 		},
 		computed: {
-			isDesktop: function () {
+			isDesktop() {
 				return !/Mobi/.test(navigator.userAgent);
 			}
 		},
@@ -48,36 +48,36 @@
 				default: null
 			}
 		},
-		mounted: function () {
-			const vue = this;
+		mounted() {
+			const vm = this;
 
-			if (vue.isDesktop) {
+			if (vm.isDesktop) {
 				const options = {
-					change: function (value) {
-						vue.localValue = value;
+					change(value) {
+						vm.localValue = value;
 					},
 				};
-				if(vue.defaultColor) {
-					options.defaultValue = vue.defaultColor;
-                }
-				$(vue.$refs.input).minicolors(options);
+				if (vm.defaultColor) {
+					options.defaultValue = vm.defaultColor;
+				}
+				$(vm.$refs.input).minicolors(options);
 			}
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', value);
+				vm.$emit('input', value);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
-				$(vue.$refs.input).minicolors('value', vue.value);
+				vm.localValue = value;
+				$(vm.$refs.input).minicolors('value', vm.value);
 			}
 		}
 	};

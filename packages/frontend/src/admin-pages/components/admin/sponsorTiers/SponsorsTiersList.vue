@@ -42,42 +42,41 @@
 	import ComponentSponsorsTiersListTable from './SponsorsTiersListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				sponsorTiers: [],
 				apiError: {},
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers').then(function (response) {
-					response.data.sort(function (a, b) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('sponsor-tiers').then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.sponsorTiers = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
+					vm.sponsorTiers = response.data;
+				}).catch(err => {
+					vm.apiError = err.response.data.errors;
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('sponsor-tiers').then(function (response) {
-				response.data.sort(function (a, b) {
+			vm.$request.get('sponsor-tiers').then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.sponsorTiers = response.data;
+				vm.sponsorTiers = response.data;
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
 		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				this.apiError = err.response.data.errors;
 			}
 		},
 		components: {

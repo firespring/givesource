@@ -51,7 +51,7 @@
 	import ComponentSponsorsListTable from './SponsorsListTable.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				files: [],
 				sponsors: [],
@@ -59,59 +59,60 @@
 				apiError: {},
 			};
 		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
-					vue.sponsorTier = response.data;
-					return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
-				}).then(function (response) {
-					response.data.sort(function (a, b) {
+		beforeRouteEnter(to, from, next) {
+			next(vm => {
+				vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid).then(response => {
+					vm.sponsorTier = response.data;
+					return vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors');
+				}).then(response => {
+					response.data.sort((a, b) => {
 						return a.sortOrder - b.sortOrder;
 					});
-					vue.sponsors = response.data;
+					vm.sponsors = response.data;
 					const uuids = [];
-					vue.sponsors.forEach(function (sponsor) {
+					vm.sponsors.forEach(sponsor => {
 						if (sponsor.fileUuid) {
 							uuids.push(sponsor.fileUuid);
 						}
 					});
 					if (uuids.length) {
-						return vue.$request.get('files', {uuids: uuids});
+						return vm.$request.get('files', {uuids: uuids});
 					} else {
 						return Promise.resolve();
 					}
-				}).then(function (response) {
-					vue.files = response ? response.data : [];
+				}).then(response => {
+					vm.files = response ? response.data : [];
 				});
 			});
 		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+		beforeRouteUpdate(to, from, next) {
+			const vm = this;
 
-			vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid).then(function (response) {
-				vue.sponsorTier = response.data;
-				return vue.$request.get('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors');
-			}).then(function (response) {
-				response.data.sort(function (a, b) {
+			vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid).then(response => {
+				vm.sponsorTier = response.data;
+				return vm.$request.get('sponsor-tiers/' + vm.sponsorTierUuid + '/sponsors');
+			}).then(response => {
+				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;
 				});
-				vue.sponsors = response.data;
+
 				const uuids = [];
-				vue.sponsors.forEach(function (sponsor) {
+				vm.sponsors = response.data;
+				vm.sponsors.forEach(sponsor => {
 					if (sponsor.fileUuid) {
 						uuids.push(sponsor.fileUuid);
 					}
 				});
 				if (uuids.length) {
-					return vue.$request.get('files', {uuids: uuids});
+					return vm.$request.get('files', {uuids: uuids});
 				} else {
 					return Promise.resolve();
 				}
-			}).then(function (response) {
-				vue.files = response ? response.data : [];
+			}).then(response => {
+				vm.files = response ? response.data : [];
 				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
+			}).catch(err => {
+				vm.apiError = err.response.data.errors;
 				next();
 			});
 		},
@@ -119,9 +120,8 @@
 			'sponsorTierUuid'
 		],
 		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
+			hasError(err) {
+				this.apiError = err.response.data.errors;
 			}
 		},
 		components: {

@@ -24,16 +24,16 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: this.value || 0,
-			}
+			};
 		},
 		computed: {
-			formOptions: function () {
-				const vue = this;
-				return Object.keys(vue.options).map(function (value) {
-					let option = vue.options[value] || {};
+			formOptions() {
+				const vm = this;
+				return Object.keys(vm.options).map(value => {
+					let option = vm.options[value] || {};
 					if (typeof option !== 'object') {
 						option = {text: option};
 					}
@@ -42,9 +42,9 @@
 					return option;
 				});
 			},
-			selectedValue: function () {
-				const vue = this;
-				return vue.localValue;
+			selectedValue() {
+				const vm = this;
+				return vm.localValue;
 			},
 		},
 		props: {
@@ -63,7 +63,7 @@
 			},
 			options: {
 				type: [Object, Array],
-				default: function () {
+				default() {
 					return [
 						{value: 1, text: 'Animal-Related'},
 						{value: 2, text: 'Arts, Culture & Humanities'},
@@ -96,26 +96,26 @@
 						{value: 29, text: 'Veterans Support'},
 						{value: 30, text: 'Women'},
 						{value: 31, text: 'Youth Development'}
-					]
+					];
 				}
 			},
 		},
 		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
+			localValue(value, oldValue) {
+				const vm = this;
 
 				if (value === oldValue) {
 					return;
 				}
-				vue.$emit('input', vue.selectedValue);
+				vm.$emit('input', vm.selectedValue);
 			},
-			value: function (value, oldValue) {
-				const vue = this;
+			value(value, oldValue) {
+				const vm = this;
 
 				if (value === oldValue) {
 					return;
 				}
-				vue.localValue = value;
+				vm.localValue = value;
 			}
 		}
 	};

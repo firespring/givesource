@@ -41,63 +41,63 @@
 	import ComponentManageAdminsListTableRow from './ManageAdminsListTableRow.vue';
 
 	export default {
-		data: function () {
+		data() {
 			return {
 				adminUsers: [],
 				loaded: false
 			};
 		},
 		computed: {
-			displayRows: function () {
+			displayRows() {
 				return this.loaded && this.adminUsers.length;
 			},
 		},
 		props: [
 			'nonprofitUuid'
 		],
-		created: function () {
-			const vue = this;
+		created() {
+			const vm = this;
 
-			vue.$request.get('users').then(function (response) {
-				vue.adminUsers = response.data;
-				vue.loaded = true;
+			vm.$request.get('users').then(response => {
+				vm.adminUsers = response.data;
+				vm.loaded = true;
 			});
 
-			vue.bus.$on('deleteUserAdmin', function () {
-				vue.removeUser();
+			vm.bus.$on('deleteUserAdmin', () => {
+				vm.removeUser();
 			});
 
-			vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
-				vue.selectedAdminUser = selectedAdminUser;
-				vue.deleteModal(selectedAdminUser);
+			vm.bus.$on('deleteUserAdminModal', selectedAdminUser => {
+				vm.selectedAdminUser = selectedAdminUser;
+				vm.deleteModal(selectedAdminUser);
 			});
 		},
-		beforeDestroy: function () {
-			const vue = this;
-			vue.bus.$off('deleteUserAdmin');
-			vue.bus.$off('deleteUserAdminModal');
+		beforeDestroy() {
+			const vm = this;
+			vm.bus.$off('deleteUserAdmin');
+			vm.bus.$off('deleteUserAdminModal');
 		},
 		methods: {
-			deleteModal: function (selectedAdminUser) {
-				const vue = this;
-				vue.addModal('confirm-delete', {
+			deleteModal(selectedAdminUser) {
+				const vm = this;
+				vm.addModal('confirm-delete', {
 					modalTitle: 'Remove Admin User',
 					modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
 					callback: 'deleteUserAdmin',
 				});
 			},
-			removeUser: function () {
-				const vue = this;
+			removeUser() {
+				const vm = this;
 
-				vue.addModal('spinner');
-				vue.$request.delete('users/' + vue.selectedAdminUser.uuid).then(function () {
-					vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
-						return adminUser.uuid !== vue.selectedAdminUser.uuid;
+				vm.addModal('spinner');
+				vm.$request.delete('users/' + vm.selectedAdminUser.uuid).then(() => {
+					vm.adminUsers = _.filter(vm.adminUsers, adminUser => {
+						return adminUser.uuid !== vm.selectedAdminUser.uuid;
 					});
-					vue.clearModals();
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-					vue.$emit('hasError', err);
+					vm.clearModals();
+				}).catch(err => {
+					vm.removeModal('spinner');
+					vm.$emit('hasError', err);
 				});
 			}
 		},

@@ -17,7 +17,7 @@
 <template>
     <div class="c-form-item__control">
         <input v-on:change="onChange" type="file" :name="name" :id="id" class="u-none" ref="input">
-        <button v-on:click="onTrigger" type="button" class="c-btn c-btn--good" id="uploadTrigger">
+        <button v-on:click.prevent="onTrigger" type="button" class="c-btn c-btn--good" id="uploadTrigger">
             Select File
         </button>
         <div class="filenames" id="fileNames">{{ filename }}</div>
@@ -61,15 +61,14 @@
 		},
 		methods: {
 			onTrigger() {
-				const vue = this;
-				vue.$refs.input.click();
+				this.$refs.input.click();
 			},
 			onChange(event) {
-				const vue = this;
+				const vm = this;
 
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length) {
-					vue.localValue = files[0];
+					vm.localValue = files[0];
 				}
 			},
 		}

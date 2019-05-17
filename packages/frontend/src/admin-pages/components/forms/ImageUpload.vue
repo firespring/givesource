@@ -45,25 +45,25 @@
 
 <script>
 	export default {
-		data: function () {
+		data() {
 			return {
 				localValue: this.value ? this.value : null,
 				fileUrl: false
 			};
 		},
 		computed: {
-			filename: function () {
-				const vue = this;
-				if (vue.localValue && vue.localValue instanceof File) {
-					return vue.localValue.name;
-				} else if (vue.localValue && vue.localValue.hasOwnProperty('filename')) {
-					return vue.localValue.filename;
+			filename() {
+				const vm = this;
+				if (vm.localValue && vm.localValue instanceof File) {
+					return vm.localValue.name;
+				} else if (vm.localValue && vm.localValue.hasOwnProperty('filename')) {
+					return vm.localValue.filename;
 				}
 				return '';
 			},
-			hasFile: function () {
-				const vue = this;
-				return (vue.localValue instanceof File || (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('filename')));
+			hasFile() {
+				const vm = this;
+				return (vm.localValue instanceof File || (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('filename')));
 			}
 		},
 		props: {
@@ -72,41 +72,40 @@
 			value: {},
 		},
 		watch: {
-			value: function (newVal) {
+			value(newVal) {
 				this.localValue = newVal;
 			},
-			localValue: function () {
-				const vue = this;
+			localValue() {
+				const vm = this;
 
-				if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {
-					vue.fileUrl = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
-				} else if (vue.localValue instanceof File) {
+				if (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('path')) {
+					vm.fileUrl = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
+				} else if (vm.localValue instanceof File) {
 					const reader = new FileReader();
-					reader.onload = function (e) {
-						vue.fileUrl = e.target.result;
+					reader.onload = (event) => {
+						vm.fileUrl = event.target.result;
 					};
-					reader.readAsDataURL(vue.localValue);
+					reader.readAsDataURL(vm.localValue);
 				}
 
-				vue.$emit('input', this.localValue);
+				vm.$emit('input', this.localValue);
 			}
 		},
 		methods: {
-			onTrigger: function () {
-				const vue = this;
-				vue.$refs.input.click();
+			onTrigger() {
+				this.$refs.input.click();
 			},
-			onChange: function (event) {
-				const vue = this;
+			onChange(event) {
+				const vm = this;
 				const files = event.target.files || event.dataTransfer.files;
 				if (files.length) {
-					vue.localValue = files[0];
+					vm.localValue = files[0];
 				}
 			},
-			removeFile: function () {
-				const vue = this;
-				$(vue.$refs.input).val('');
-				vue.localValue = null;
+			removeFile() {
+				const vm = this;
+				$(vm.$refs.input).val('');
+				vm.localValue = null;
 			}
 		}
 	};
