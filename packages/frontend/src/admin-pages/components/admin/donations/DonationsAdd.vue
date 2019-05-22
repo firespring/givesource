@@ -501,7 +501,7 @@
 			},
 
 			getSubtotal() {
-				return this.formData.subtotal * 100;
+				return Math.floor(Math.round(this.formData.subtotal * 100));
 			}
 		},
 

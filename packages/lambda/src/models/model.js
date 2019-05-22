@@ -124,10 +124,10 @@ Model.prototype._constraints = {
  */
 Model.prototype._mutators = {
 	createdOn: function (value, options) {
-		const date = new Date(value);
 		if (options.timezone) {
-			return moment(date).tz(options.timezone, true).format('M/D/YYYY h:mm:ss A');
+			return moment.tz(value, options.timezone).format('M/D/YYYY h:mm:ss A');
 		} else {
+			const date = new Date(value);
 			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 		}
 	},

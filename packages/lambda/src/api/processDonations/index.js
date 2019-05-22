@@ -273,6 +273,9 @@ export function handle(event, context, callback) {
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 		callback();
 	}).catch((err) => {
+		if (err.response) {
+			console.log('Error: %j', err.response.data);
+		}
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 
