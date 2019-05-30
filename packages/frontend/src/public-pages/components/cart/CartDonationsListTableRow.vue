@@ -125,10 +125,6 @@
 
 				vm.$store.commit('removeCartItem', vm.timestamp);
 				vm.$emit('removeCartItem', vm.index);
-
-				if (!Utils.isInternetExplorer()) {
-					vm.bus.$emit('updateCartItems');
-				}
 			}
 		},
 		components: {

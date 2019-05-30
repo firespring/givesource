@@ -45,6 +45,7 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	import ComponentCartDonationsListTable from './CartDonationsListTable.vue';
 
 	export default {
@@ -57,6 +58,9 @@
 			};
 		},
 		computed: {
+			...mapState({
+				cartItems: state => state.cartItems,
+			}),
 			donationTotal() {
 				const vm = this;
 
@@ -90,14 +94,11 @@
 			const vm = this;
 
 			vm.updateDonationsSubtotal();
-			vm.bus.$on('updateCartItems', () => {
-				vm.updateDonationsSubtotal();
-			});
-		},
-		beforeDestroy() {
-			this.bus.$off('updateCartItems');
 		},
 		watch: {
+			cartItems() {
+				this.updateDonationsSubtotal();
+			},
 			localValue(value, oldValue) {
 				const vm = this;
 				if (value === oldValue) {
@@ -111,17 +112,16 @@
 					return;
 				}
 				vm.localValue = value;
-			}
+			},
 		},
 		methods: {
 			updateDonationsSubtotal() {
 				const vm = this;
 
-				const cartItems = vm.$store.getters.cartItems;
-				if (cartItems.length) {
-					vm.donationFees = vm.calculateFees(cartItems);
+				if (vm.cartItems.length) {
+					vm.donationFees = vm.calculateFees(vm.cartItems);
 					vm.donationSubtotal = 0;
-					cartItems.forEach(cartItem => {
+					vm.cartItems.forEach(cartItem => {
 						vm.donationSubtotal += cartItem.amount;
 					});
 				} else {

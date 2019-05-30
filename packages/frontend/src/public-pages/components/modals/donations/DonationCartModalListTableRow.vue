@@ -93,10 +93,6 @@
 
 				vue.$store.commit('removeCartItem', vue.timestamp);
 				vue.$emit('removeCartItem', vue.index);
-
-				if (!Utils.isInternetExplorer()) {
-					vue.bus.$emit('updateCartItems');
-				}
 			}
 		},
 		components: {

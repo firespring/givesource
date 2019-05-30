@@ -80,10 +80,6 @@
 					amount: item.amount,
 					note: item.note
 				});
-
-				if (!Utils.isInternetExplorer()) {
-					vm.bus.$emit('updateCartItems');
-				}
 			},
 			hasError(hasError) {
 				this.$emit('hasError', hasError);

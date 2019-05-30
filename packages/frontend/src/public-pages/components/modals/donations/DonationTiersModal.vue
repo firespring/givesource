@@ -174,10 +174,6 @@
 						nonprofit: vue.nonprofit
 					});
 
-					if (!Utils.isInternetExplorer()) {
-						vue.bus.$emit('updateCartItems');
-					}
-
 					$(vue.$refs.donationModalOptions).fadeOut(function () {
 						vue.removeModal('donation-tiers');
 						vue.removeBodyClasses('has-donation-overlay');

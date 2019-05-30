@@ -79,10 +79,6 @@
 					timestamp: item.timestamp,
 					amount: item.amount
 				});
-
-				if (!Utils.isInternetExplorer()) {
-					vue.bus.$emit('updateCartItems');
-				}
 			},
 			findNonprofit: function () {
 				const vue = this;

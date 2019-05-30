@@ -493,9 +493,6 @@
 						vm.apiError = {'message': response.data.errorMessage, 'type': response.data.errorType};
 					} else {
 						vm.$store.commit('clearCartItems');
-						if (!Utils.isInternetExplorer()) {
-							vm.bus.$emit('updateCartItems');
-						}
 						vm.$router.push({name: 'cart-response'});
 					}
 				}).catch(err => {

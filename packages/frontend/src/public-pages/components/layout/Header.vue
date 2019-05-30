@@ -40,23 +40,23 @@
             <router-link :to="{ name: 'cart' }" title="View your current donations">
                 <span class="fa-layers fa-fw" ref="shoppingCart">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="fa-layers-text fa-inverse" data-fa-transform="right-4 up-6">{{ cartItemsCount }}</span>
+                    <span class="fa-layers-text fa-inverse" data-fa-transform="right-4 up-6">{{ cartItems.length }}</span>
                 </span>
             </router-link>
         </div>
 
-        <a v-on:click.prevent="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars" aria-hidden="true"></i><span>Menu</span></a>
+        <a v-on:click.prevent="openMenu" href="#" id="mobile-nav-trigger" class="page-header__nav-toggle items-center"><i class="fas fa-bars"
+                                                                                                                          aria-hidden="true"></i><span>Menu</span></a>
     </header>
 </template>
 
 <script>
 	import * as Settings from './../../helpers/settings';
+	import {mapState} from 'vuex';
 
 	export default {
 		data() {
 			return {
-				cartItemsCount: 0,
-
 				// Form Data
 				formData: {
 					search: ''
@@ -67,6 +67,9 @@
 			};
 		},
 		computed: {
+			...mapState({
+				cartItems: state => state.cartItems,
+			}),
 			canDonate() {
 				return Settings.isDuringDonations() || Settings.isDuringEvent();
 			},
@@ -93,12 +96,6 @@
 		created() {
 			const vm = this;
 
-			vm.cartItemsCount = vm.$store.state.cartItems.length;
-			vm.bus.$on('updateCartItems', () => {
-				vue.cartItemsCount = vm.$store.state.cartItems.length;
-				$(vm.$refs.shoppingCart).find('span.fa-layers-text').text(vm.cartItemsCount);
-			});
-
 			vm.bus.$on('navigate', () => {
 				vm.formData.search = '';
 			});
@@ -106,10 +103,12 @@
 		beforeDestroy() {
 			const vm = this;
 
-			vm.bus.$off('updateCartItems');
 			vm.bus.$off('navigate');
 		},
 		watch: {
+			cartItems() {
+				$(this.$refs.shoppingCart).find('span.fa-layers-text').text(this.cartItems.length);
+			},
 			formData: {
 				handler() {
 					const vm = this;
