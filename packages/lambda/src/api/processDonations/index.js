@@ -161,6 +161,17 @@ export function handle(event, context, callback) {
 				username: apiKey,
 				password: ''
 			}
+		}).catch(err => {
+			if (err.response && err.response.data) {
+				console.log('Error: %j', err.response.data);
+
+				if (err.response.data.errors && err.response.data.errors[0]) {
+					return Promise.reject(new Error('There was an error processing your payment: ' + err.response.data.errors[0].message
+						+ '. Please double check your credit card information, or call the number on the back of your credit card.'));
+				}
+			}
+
+			return Promise.reject(new Error('There was an error processing your payment. Please double check your credit card information.'));
 		});
 	}).then((response) => {
 		paymentTransaction = new PaymentTransaction({
@@ -278,5 +289,4 @@ export function handle(event, context, callback) {
 		}
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
-
-};
+}
