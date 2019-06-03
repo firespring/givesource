@@ -43,7 +43,7 @@
 		"@claviska/jquery-minicolors": "^2.2.6",
 		"amazon-cognito-identity-js": "^3.0.2",
 		"aws-sdk": "^2.336.0",
-		"axios": "^0.16.2",
+		"axios": "^0.18.1",
 		"babel-loader": "^8.0.4",
 		"browser-sync": "^2.26.5",
 		"browser-sync-middleware-spa": "^1.0.0",
