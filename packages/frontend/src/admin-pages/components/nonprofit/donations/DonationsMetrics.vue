@@ -61,7 +61,7 @@
 				return numeral(this.nonprofit.donationsCount).format('0,000');
 			},
 			donationsTotal: function () {
-				return numeral(this.nonprofit.donationsTotal / 100).format('$0,00.00');
+				return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,00.00');
 			}
 		}
 	};
