@@ -21,6 +21,7 @@
                 <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Offline Donations
             </router-link>
             <a v-on:click.prevent="exportDonations" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-cloud-download" aria-hidden="true"></i>Export Donations</a>
+            <a v-on:click.prevent="donorReceipt" href="#" role="button" class="c-btn c-btn--sm c-btn--icon"><i class="fa fa-file-text" aria-hidden="true"></i>Donor Receipt</a>
         </div>
     </div>
 </template>
@@ -111,7 +112,12 @@
 				promise = promise.then(() => {
 					window.location.href = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.file.path;
 				});
-			}
+			},
+
+			donorReceipt() {
+				const vm = this;
+                vm.addModal('donor-receipt-modal');
+            }
 		}
 	};
 </script>

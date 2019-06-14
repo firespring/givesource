@@ -27,6 +27,7 @@ import ComponentCustomPagesAdd from '../components/admin/pages/custom/CustomPage
 import ComponentCustomPagesEdit from '../components/admin/pages/custom/CustomPagesEdit.vue';
 import ComponentDonationsAdd from './../components/admin/donations/DonationsAdd.vue';
 import ComponentDonationsList from './../components/admin/donations/DonationsList.vue';
+import ComponentDonorReceipt from './../components/admin/donations/DonorReceipt.vue';
 import ComponentEmailSettings from './../components/admin/settings/emails/EmailSettings.vue';
 import ComponentEventSettings from './../components/admin/settings/event/EventSettings.vue';
 import ComponentFAQ from './../components/admin/pages/FAQ.vue';
@@ -123,6 +124,25 @@ const router = new VueRouter({
 			component: ComponentDonationsAdd,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
+			}
+		},
+		{
+			path: '/donations/receipt',
+			name: 'donations-receipt',
+			component: ComponentDonorReceipt,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+			beforeEnter(to, from, next) {
+				if (store.state.receipt && store.state.donorEmail) {
+					next();
+				} else {
+					if (from.name) {
+						next({name: from.name});
+					} else {
+						next({name: 'homepage'});
+					}
+				}
 			}
 		},
 		{

@@ -14,159 +14,57 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const Donation = require('./../../models/donation');
-const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../models/donor');
-const DonorsRepository = require('./../../repositories/donors');
 const EmailHelper = require('./../../helpers/email');
-const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
-const PaymentTransaction = require('./../../models/paymentTransaction');
-const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
-const QueryBuilder = require('./../../aws/queryBuilder');
-const RenderHelper = require('./../../helpers/render');
+const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
 const SettingsRepostiory = require('./../../repositories/settings');
 
-exports.handle = function (event, context, callback) {
-	const donationsRepository = new DonationsRepository();
-	const donorsRepository = new DonorsRepository();
-	const filesRepository = new FilesRepository();
-	const paymentTransactionsRepository = new PaymentTransactionsRepository();
+exports.handle = (event, context, callback) => {
+	const lambda = new Lambda();
 	const request = new Request(event, context);
 	const ses = new SES();
 	const settingsRepository = new SettingsRepostiory();
 
-	let donor = request.get('donor', null);
-	let donations = request.get('donations', []);
-	let paymentTransaction = request.get('paymentTransaction', null);
-	let transactions = [];
+	let html = null;
+	const email = request.get('email', null);
+	const donor = request.get('donor', null);
+	const settings = {EVENT_TITLE: null};
 
-	let html = '';
-	let settings = {
-		CONTACT_PHONE: null,
-		EMAILS_DONATION_RECEIPT_AFTER_LIST: null,
-		EMAILS_DONATION_RECEIPT_BEFORE_LIST: null,
-		EVENT_URL: null,
-		EVENT_TIMEZONE: null,
-		EVENT_TITLE: null,
-		EVENT_LOGO: null,
-		PAGE_TERMS_ENABLED: null,
-		UPLOADS_CLOUD_FRONT_URL: null,
-	};
-	request.validate().then(function () {
-		return settingsRepository.batchGet(Object.keys(settings));
-	}).then(function (response) {
-		response.forEach(function (setting) {
+	request.validate().then(() => {
+		const body = {
+			email: email,
+			donor: donor,
+			donations: request.get('donations', []),
+			paymentTransaction: request.get('paymentTransaction', null)
+		};
+		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateDonationsReceipt', {body: body}, 'RequestResponse');
+	}).then(response => {
+		const payload = JSON.parse(response.Payload);
+		if (payload.html) {
+			html = payload.html;
+			return settingsRepository.batchGet(Object.keys(settings));
+		} else {
+			return Promise.reject(new Error('Unable to generate a receipt'));
+		}
+	}).then(response => {
+		response.forEach(setting => {
 			settings[setting.key] = setting.value;
 		});
 
-		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
-			return filesRepository.get(settings.EVENT_LOGO);
-		} else {
-			return Promise.resolve(null);
-		}
-	}).then(function () {
-		if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
-			return filesRepository.get(settings.EVENT_LOGO);
-		} else {
-			return Promise.resolve(null);
-		}
-	}).then(function (response) {
-		if (response) {
-			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
-		}
-
-		if (donor) {
-			donor = (donor instanceof Donor) ? donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donor;
-			return Promise.resolve();
-		} else if (request.get('email', false)) {
-			return donorsRepository.queryEmail(request.get('email'));
-		} else {
-			return Promise.reject(new Error('donor or email address missing'));
-		}
-	}).then(function (response) {
-		if (response) {
-			donor = response.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-		}
-		if (donor && donations.length === 0) {
-			const builder = new QueryBuilder('query');
-			builder.limit(1000).index('donorUuidCreatedOnIndex').condition('donorUuid', '=', donor.uuid).condition('createdOn', '>', 0).scanIndexForward(false);
-			return donationsRepository.batchQuery(builder);
-		}
-		return Promise.resolve({});
-	}).then(function (response) {
-		if (response.hasOwnProperty('Items')) {
-			donations = response.Items.map(function (donation) {
-				const model = new Donation(donation);
-				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
-			});
-		}
-
-		let promise = Promise.resolve();
-		if (paymentTransaction && donations.length) {
-			donations = donations.map(function (donation) {
-				const data =  (donation instanceof Donation) ? donation.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donation;
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
-			});
-
-			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : paymentTransaction;
-			transaction.donations = donations;
-			transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
-			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
-			transactions.push(transaction);
-		} else {
-			const paymentTransactionUuids = donations.map(function (donation) {
-				return donation.paymentTransactionUuid || null;
-			}).filter(function (uuid, index, uuids) {
-				return uuid !== null && index === uuids.indexOf(uuid);
-			});
-
-			paymentTransactionUuids.forEach(function (uuid) {
-				promise = promise.then(function () {
-					return paymentTransactionsRepository.get(uuid);
-				}).then(function (paymentTransaction) {
-					const transaction = paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-					transaction.donations = _.filter(donations, {paymentTransactionUuid: uuid});
-					transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
-					transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
-					transactions.push(transaction);
-				});
-			});
-		}
-
-		return promise;
-	}).then(function () {
-		return RenderHelper.renderTemplate('emails.donation-receipt', {
-			donor: donor,
-			settings: settings,
-			transactions: transactions
-		});
-	}).then(function (response) {
-		if (response) {
-			html = response;
-			return EmailHelper.getContactEmailAddresses();
-		} else {
-			return Promise.reject(new Error('unable to generate receipt email'));
-		}
-	}).then(function (response) {
+		return EmailHelper.getContactEmailAddresses();
+	}).then(response => {
 		if (response.from.email && response.from.verified) {
-			const toAddresses = [donor.email];
+			const toAddresses = donor && donor.email ? [donor.email] : [email];
 			const subject = settings.EVENT_TITLE ? 'Tax receipt: Thank you for participating in ' + settings.EVENT_TITLE : 'Tax receipt: Thank you for giving';
 			return ses.sendEmail(subject, html, null, response.from.email, toAddresses);
 		} else {
 			return Promise.reject(new Error('from contact email address missing or not verified'));
 		}
-	}).then(function () {
+	}).then(() => {
 		callback();
-	}).catch(function (err) {
+	}).catch((err) => {
 		console.log('Error: %j', err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

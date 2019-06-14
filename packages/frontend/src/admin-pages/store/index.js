@@ -24,7 +24,9 @@ const store = new Vuex.Store({
 	state: {
 		cacheKey: 0,
 		settings: {},
-		updated: 0
+		updated: 0,
+		receipt: null,
+		donorEmail: null,
 	},
 	mutations: {
 		generateCacheKey: function (state) {
@@ -34,6 +36,12 @@ const store = new Vuex.Store({
 			Object.keys(settings).forEach(function (key) {
 				state.settings[key] = settings[key];
 			});
+		},
+		setDonorEmail(state, email) {
+			state.donorEmail = email;
+		},
+		setReceipt(state, receiptHtml) {
+			state.receipt = receiptHtml;
 		},
 		updated: function (state) {
 			state.updated = new Date().getTime();
@@ -56,6 +64,17 @@ const store = new Vuex.Store({
 		},
 		updated: function (state) {
 			return state.updated;
+		}
+	},
+	actions: {
+		async setReceipt({commit}, payload) {
+			commit('setReceipt', payload.html);
+			commit('setDonorEmail', payload.email);
+		},
+
+		async clearReceipt({commit}) {
+			commit('setReceipt', null);
+			commit('setDonorEmail', null);
 		}
 	},
 	plugins: [

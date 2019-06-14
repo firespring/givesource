@@ -452,10 +452,11 @@
 
                                         {{#transactions}}
                                             <p>
-                                                <strong>Total Amount: {{ transactionAmount }}{{#isFeeCovered}} (includes covered fees){{/isFeeCovered}}</strong><br/>
-                                                Method of Payment: {{ creditCardType }}
-                                                (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; {{ creditCardLast4 }})<br/>
-                                                Tracking Number: {{ transactionId }}
+                                                {{#transactionId}}
+                                                    <strong>Total Amount: {{ transactionAmount }}{{#isFeeCovered}} (includes covered fees){{/isFeeCovered}}</strong><br/>
+                                                    Method of Payment: {{ creditCardType }} (&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; {{ creditCardLast4 }})<br/>
+                                                    Tracking Number: {{ transactionId }}
+                                                {{/transactionId}}
                                             </p>
 
                                             <p>

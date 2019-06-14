@@ -26,6 +26,7 @@
 	import ComponentContactPhoneModal from './../admin/settings/contact/ContactPhoneModal.vue';
 	import ComponentCustomPagesDeleteModal from './../admin/pages/custom/CustomPagesDeleteModal.vue';
 	import ComponentDeleteModal from './DeleteModal.vue';
+	import ComponentDonorReceiptModal from './../admin/donations/DonorReceiptModal.vue';
 	import ComponentErrorModal from './ErrorModal.vue';
 	import ComponentFAQAddQuestionModal from './../admin/pages/faq/AddQuestionModal.vue';
 	import ComponentFAQDeleteQuestionModal from './../admin/pages/faq/DeleteQuestionModal.vue';
@@ -107,6 +108,7 @@
 			'account-edit-password': ComponentUserAccountPasswordModal,
 			'confirm-delete': ComponentDeleteModal,
 			'error': ComponentErrorModal,
+			'donor-receipt-modal': ComponentDonorReceiptModal,
 			'nonprofits-revoke': ComponentRevokeNonprofitModal,
 			'photo-editor': ComponentPhotoEditorModal,
 			'pages-custom-delete-modal': ComponentCustomPagesDeleteModal,

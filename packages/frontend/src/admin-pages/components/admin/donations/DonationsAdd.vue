@@ -462,6 +462,7 @@
 						return vm.$request.post('donors', donor);
 
 					}).then(response => {
+						donation['donorUuid'] = response.data.uuid;
 						donation['donorAddress1'] = response.data.address1;
 						donation['donorAddress2'] = response.data.address2;
 						donation['donorCity'] = response.data.city;
