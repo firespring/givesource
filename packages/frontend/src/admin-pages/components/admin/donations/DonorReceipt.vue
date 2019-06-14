@@ -121,12 +121,8 @@
             display: none !important;
         }
 
-        iframe#receipt {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        body, div.o-app, main.o-app__main, div.o-app-main-content {
+            overflow: visible;
         }
     }
 </style>
