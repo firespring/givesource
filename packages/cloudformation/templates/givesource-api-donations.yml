@@ -943,7 +943,7 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: GetDonationsReceiptLambdaFunction
 
-  PostDontaionsReceiptApiMethod:
+  PostDonationsReceiptApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
@@ -1049,7 +1049,7 @@ Resources:
       ParentId: !Ref DonationsReceiptApiResource
       PathPart: "admin"
 
-  AdminPostDontaionsReceiptApiMethod:
+  AdminPostDonationsReceiptApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
@@ -1124,7 +1124,7 @@ Resources:
             method.response.header.Access-Control-Allow-Origin: true
     DependsOn: AdminPostDonationsReceiptLambdaFunction
 
-  OptionsDonationsReceiptApiMethod:
+  OptionsAdminDonationsReceiptApiMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestApi
