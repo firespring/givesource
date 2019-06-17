@@ -135,21 +135,21 @@ exports.handle = (event, context, callback) => {
 			});
 		}
 
-		if (!transactions.length && donations.length) {
-			donations.forEach((donation) => {
-				const transaction = new PaymentTransaction();
-				transaction.donations = [donation];
-				transaction.isAnonymous = donation.isAnonymous;
-				transaction.isFeeCovered = donation.isFeeCovered;
-				transactions.push(transaction);
-			});
-		}
+		return promise.then(() => {
+			if (!transactions.length && donations.length) {
+				donations.forEach((donation) => {
+					const transaction = new PaymentTransaction();
+					transaction.donations = [donation];
+					transaction.isAnonymous = donation.isAnonymous;
+					transaction.isFeeCovered = donation.isFeeCovered;
+					transactions.push(transaction);
+				});
+			}
 
-		if (!transactions.length) {
-			return Promise.reject(new Error('No donations were found'));
-		}
-
-		return promise;
+			if (!transactions.length) {
+				return Promise.reject(new Error('No donations were found'));
+			}
+		});
 	}).then(() => {
 		return RenderHelper.renderTemplate('emails.donation-receipt', {
 			donor: donor,
