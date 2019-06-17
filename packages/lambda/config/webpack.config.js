@@ -27,6 +27,7 @@ module.exports = {
 		AuthorizeUsers: './src/custom/authorizeUsers/index.js',
 
 		// Api Lambda Functions
+		AdminPostDonationsReceipt: './src/api/adminPostDonationsReceipt/index.js',
 		AdminRegisterNonprofit: './src/api/adminRegisterNonprofit/index.js',
 		DeleteContent: './src/api/deleteContent/index.js',
 		DeleteContents: './src/api/deleteContents/index.js',

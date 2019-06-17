@@ -28,9 +28,10 @@ exports.handle = (event, context, callback) => {
 	const settingsRepository = new SettingsRepostiory();
 
 	let html = null;
-	const email = request.get('email', null);
 	const donor = request.get('donor', null);
+	const email = request.get('email', null);
 	const settings = {EVENT_TITLE: null};
+	const toAddress = request.get('toAddress', null);
 
 	request.validate().then(() => {
 		const body = {
@@ -56,7 +57,8 @@ exports.handle = (event, context, callback) => {
 		return EmailHelper.getContactEmailAddresses();
 	}).then(response => {
 		if (response.from.email && response.from.verified) {
-			const toAddresses = donor && donor.email ? [donor.email] : [email];
+			let toAddresses = donor && donor.email ? [donor.email] : [email];
+			toAddresses = toAddress ? [toAddress] : toAddresses;
 			const subject = settings.EVENT_TITLE ? 'Tax receipt: Thank you for participating in ' + settings.EVENT_TITLE : 'Tax receipt: Thank you for giving';
 			return ses.sendEmail(subject, html, null, response.from.email, toAddresses);
 		} else {

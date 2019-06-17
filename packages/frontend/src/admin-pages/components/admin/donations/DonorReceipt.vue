@@ -61,13 +61,9 @@
             emailReceipt() {
 	            const vm = this;
 
-	            vm.addModal('spinner');
-	            vm.$request.post('donations/receipt', {email: vm.donorEmail}).then(() => {
-		            vm.clearModals();
-                }).catch(err => {
-                    vm.clearModals();
-		            vm.apiError = err.response.data.errors;
-                });
+	            vm.addModal('donor-receipt-email-modal', {
+		            email: vm.donorEmail
+	            });
             }
         },
 

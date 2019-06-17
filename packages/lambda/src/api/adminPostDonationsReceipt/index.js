@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const Donation = require('./../../models/donation');
-const DonationsRepository = require('./../../repositories/donations');
+const Lambda = require('./../../aws/lambda');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 exports.handle = (event, context, callback) => {
-	const repository = new DonationsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const lambda = new Lambda();
+	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email']);
 
-	const donation = new Donation(request._body);
 	request.validate().then(() => {
-		return donation.validate();
-	}).then(() => {
-		return repository.save(donation);
-	}).then(model => {
-		callback(null, model.all());
+		const body = {
+			email: request.get('email'),
+			toAddress: request.get('toAddress', null)
+		};
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
+		callback();
 	}).catch(err => {
+		console.log('Error: %j', err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
 };
