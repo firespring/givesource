@@ -565,13 +565,8 @@
 					zip: vm.donor.zip
 				};
 				return vm.getApiKey().then(publicKey => {
-					params['username'] = publicKey;
-					return axios.post('https://api.paymentspring.com/api/v1/tokens', params, {
-						auth: {
-							username: publicKey,
-							password: ''
-						}
-					});
+					params['public_api_key'] = publicKey;
+					return axios.get('https://api.paymentspring.com/api/v1/tokens/jsonp' + Utils.generateQueryString(params));
 				});
 			},
 			donationHasErrors(hasError) {
