@@ -73,7 +73,7 @@ exports.handle = (event, context, callback) => {
 			functions.forEach(fn => {
 				if (associations.Items && associations.Quantity) {
 					associations.Items.forEach((item, index) => {
-						if (item.LambdaFunctionARN === fn.arn || item.EventType === 'origin-request') {
+						if (item.LambdaFunctionARN === fn.arn || item.EventType === 'origin-request' || item.EventType === 'origin-response') {
 							associations.Items.splice(index, 1);
 							associations.Quantity = associations.Quantity - 1;
 						}
