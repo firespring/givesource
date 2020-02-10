@@ -53,7 +53,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetUserProfileLambdaInvokePermission:
@@ -85,7 +85,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetUsersLambdaInvokePermission:
@@ -115,7 +115,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: 30
 
   PostUserLambdaInvokePermission:
@@ -144,7 +144,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchUserLambdaInvokePermission:
@@ -174,7 +174,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteUserLambdaInvokePermission:
@@ -206,7 +206,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: 30
 
   ResendUserEmailVerificationLambdaInvokePermission:

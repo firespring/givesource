@@ -56,7 +56,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitLambdaInvokePermission:
@@ -85,7 +85,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitsLambdaInvokePermission:
@@ -114,7 +114,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitLambdaInvokePermission:
@@ -143,7 +143,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitLambdaInvokePermission:
@@ -172,7 +172,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitLambdaInvokePermission:
@@ -203,7 +203,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationLambdaInvokePermission:
@@ -232,7 +232,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationsLambdaInvokePermission:
@@ -261,7 +261,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationLambdaInvokePermission:
@@ -290,7 +290,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationLambdaInvokePermission:
@@ -319,7 +319,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationLambdaInvokePermission:
@@ -350,7 +350,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTierLambdaInvokePermission:
@@ -379,7 +379,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitDonationTiersLambdaInvokePermission:
@@ -408,7 +408,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitDonationTierLambdaInvokePermission:
@@ -437,7 +437,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitDonationTiersLambdaInvokePermission:
@@ -466,7 +466,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitDonationTiersLambdaInvokePermission:
@@ -497,7 +497,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: 30
 
   GetNonprofitPageLambdaInvokePermission:
@@ -528,7 +528,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitReportLambdaInvokePermission:
@@ -557,7 +557,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitReportLambdaInvokePermission:
@@ -588,7 +588,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlideLambdaInvokePermission:
@@ -617,7 +617,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitSlidesLambdaInvokePermission:
@@ -646,7 +646,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitSlideLambdaInvokePermission:
@@ -675,7 +675,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlideLambdaInvokePermission:
@@ -704,7 +704,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitSlidesLambdaInvokePermission:
@@ -734,7 +734,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitSlideLambdaInvokePermission:
@@ -765,7 +765,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetNonprofitUsersLambdaInvokePermission:
@@ -795,7 +795,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostNonprofitUserLambdaInvokePermission:
@@ -825,7 +825,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteNonprofitUserLambdaInvokePermission:
@@ -857,7 +857,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   NonprofitAdminRegisterLambdaInvokePermission:
@@ -888,7 +888,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   NonprofitRegisterLambdaInvokePermission:
@@ -919,7 +919,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   SearchNonprofitsLambdaInvokePermission:
@@ -951,7 +951,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchNonprofitStatusLambdaInvokePermission:

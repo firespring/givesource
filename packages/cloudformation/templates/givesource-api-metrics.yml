@@ -50,7 +50,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetMetricsLambdaInvokePermission:
@@ -79,7 +79,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchMetricsLambdaInvokePermission:
@@ -108,7 +108,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteMetricsLambdaInvokePermission:

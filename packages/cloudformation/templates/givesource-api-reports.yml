@@ -53,7 +53,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetReportLambdaInvokePermission:
@@ -82,7 +82,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostReportLambdaInvokePermission:

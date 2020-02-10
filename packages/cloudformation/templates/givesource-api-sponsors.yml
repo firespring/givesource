@@ -50,7 +50,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetSponsorTierLambdaInvokePermission:
@@ -79,7 +79,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetSponsorTiersLambdaInvokePermission:
@@ -108,7 +108,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostSponsorTiersLambdaInvokePermission:
@@ -137,7 +137,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchSponsorTierLambdaInvokePermission:
@@ -166,7 +166,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchSponsorTiersLambdaInvokePermission:
@@ -195,7 +195,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteSponsorTierLambdaInvokePermission:
@@ -226,7 +226,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetSponsorLambdaInvokePermission:
@@ -255,7 +255,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetSponsorsLambdaInvokePermission:
@@ -284,7 +284,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PostSponsorLambdaInvokePermission:
@@ -313,7 +313,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchSponsorLambdaInvokePermission:
@@ -342,7 +342,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchSponsorsLambdaInvokePermission:
@@ -371,7 +371,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteSponsorLambdaInvokePermission:
@@ -400,7 +400,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   DeleteSponsorsLambdaInvokePermission:
