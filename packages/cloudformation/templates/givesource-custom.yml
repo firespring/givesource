@@ -767,7 +767,7 @@ Resources:
       FunctionName: GeneratePublicPagesHtml
       StackName: !Ref StackName
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs12.x"
+      Runtime: "nodejs10.x"
     DependsOn:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
