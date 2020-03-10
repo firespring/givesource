@@ -114,7 +114,7 @@ exports.handle = (event, context, callback) => {
 			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
 			transactions.push(transaction);
 		} else {
-			const paymentTransactionUuids = donations.map((donation) => {
+			const paymentTransactionUuids = donations.map(donation => {
 				return donation.paymentTransactionUuid || null;
 			}).filter((uuid, index, uuids) => {
 				return uuid !== null && index === uuids.indexOf(uuid);
@@ -137,8 +137,9 @@ exports.handle = (event, context, callback) => {
 
 		return promise.then(() => {
 			if (!transactions.length && donations.length) {
-				donations.forEach((donation) => {
-					const transaction = new PaymentTransaction();
+				donations.forEach(donation => {
+					let transaction = new PaymentTransaction({createdOn: donation.createdOn});
+					transaction = transaction.mutate(null, {timezone: settings.EVENT_TIMEZONE});
 					transaction.donations = [donation];
 					transaction.isAnonymous = donation.isAnonymous;
 					transaction.isFeeCovered = donation.isFeeCovered;
