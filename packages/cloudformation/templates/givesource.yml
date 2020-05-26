@@ -28,6 +28,11 @@ Parameters:
     Type: String
     Default: ""
 
+  EnableMonitoring:
+    Description: Conditionally the creation/deletion of the monitoring stack
+    Type: String
+    Default: "false"
+
 Mappings:
   ApiGateway:
     IntegrationRequestTemplate:
@@ -81,6 +86,10 @@ Mappings:
   Lambda:
     Timeout:
       Default: 30
+
+Conditions:
+
+  EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
 Resources:
 
@@ -678,6 +687,39 @@ Resources:
       - CustomStack
       - DynamoDbStack
       - S3Stack
+
+  MonitoringStack:
+    Condition: EnableMonitoring
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        AdminEmail: !Ref AdminEmail
+        AdminPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDomainName
+        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
+        AdminPagesCNAMEs: !Join [",", !Ref AdminPagesCNAMEs]
+        PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
+        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
+        PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
+        ContentsTable: !GetAtt DynamoDbStack.Outputs.ContentsTable
+        DonationsTable: !GetAtt DynamoDbStack.Outputs.DonationsTable
+        DonorsTable: !GetAtt DynamoDbStack.Outputs.DonorsTable
+        FilesTable: !GetAtt DynamoDbStack.Outputs.FilesTable
+        MessagesTable: !GetAtt DynamoDbStack.Outputs.MessagesTable
+        MetricsTable: !GetAtt DynamoDbStack.Outputs.MetricsTable
+        NonprofitsTable: !GetAtt DynamoDbStack.Outputs.NonprofitsTable
+        NonprofitDonationTiersTable: !GetAtt DynamoDbStack.Outputs.NonprofitDonationTiersTable
+        NonprofitSlidesTable: !GetAtt DynamoDbStack.Outputs.NonprofitSlidesTable
+        PaymentTransactionsTable: !GetAtt DynamoDbStack.Outputs.PaymentTransactionsTable
+        ReportsTable: !GetAtt DynamoDbStack.Outputs.ReportsTable
+        SettingsTable: !GetAtt DynamoDbStack.Outputs.SettingsTable
+        SponsorsTable: !GetAtt DynamoDbStack.Outputs.SponsorsTable
+        SponsorTiersTable: !GetAtt DynamoDbStack.Outputs.SponsorTiersTable
+        UsersTable: !GetAtt DynamoDbStack.Outputs.UsersTable
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - CognitoInitialUser
 
 Outputs:
 

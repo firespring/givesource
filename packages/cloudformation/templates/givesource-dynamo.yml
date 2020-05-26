@@ -2,528 +2,2342 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS DynamoDB resources for Givesource(R)
 Parameters:
-
   StackName:
     Type: String
 
-Resources:
+  DefaultMinCapacity:
+    Type: Number
+    Default: 1
 
+  DefaultMaxReadCapacity:
+    Type: Number
+    Default: 50
+
+  DefaultMaxWriteCapacity:
+    Type: Number
+    Default: 10
+
+  DefaultTargetValue:
+    Type: Number
+    Default: 70
+
+  DefaultScaleInCooldown:
+    Type: Number
+    Default: 2700
+
+  ModerateTrafficMinCapacity:
+    Type: Number
+    Default: 1
+
+  ModerateTrafficMaxReadCapacity:
+    Type: Number
+    Default: 500
+
+  ModerateTrafficMaxWriteCapacity:
+    Type: Number
+    Default: 25
+
+  ModerateTrafficTargetValue:
+    Type: Number
+    Default: 60
+
+  HighTrafficMinCapacity:
+    Type: Number
+    Default: 1
+
+  HighTrafficMaxReadCapacity:
+    Type: Number
+    Default: 5000
+
+  HighTrafficMaxWriteCapacity:
+    Type: Number
+    Default: 50
+
+  HighTrafficTargetValue:
+    Type: Number
+    Default: 50
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Stack Settings
+        Parameters:
+          - StackName
+
+      - Label:
+          default: Default Auto-Scaling Settings
+        Parameters:
+          - DefaultMinCapacity
+          - DefaultMaxReadCapacity
+          - DefaultMaxWriteCapacity
+          - DefaultTargetValue
+          - DefaultScaleInCooldown
+
+      - Label:
+          default: Moderate Traffic Auto-Scaling Settings
+        Parameters:
+          - ModerateTrafficMinCapacity
+          - ModerateTrafficMaxReadCapacity
+          - ModerateTrafficMaxWriteCapacity
+          - ModerateTrafficTargetValue
+
+      - Label:
+          default: High Traffic Auto-Scaling Settings
+        Parameters:
+          - HighTrafficMinCapacity
+          - HighTrafficMaxReadCapacity
+          - HighTrafficMaxWriteCapacity
+          - HighTrafficTargetValue
+
+Resources:
   ContentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Contents
+        ${StackName}-Contents
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: key
-        AttributeType: S
-      - AttributeName: parentUuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: key
+          AttributeType: S
+        - AttributeName: parentUuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: keyIndex
-        KeySchema:
-        - AttributeName: key
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: parentUuidIndex
-        KeySchema:
-        - AttributeName: parentUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: keyIndex
+          KeySchema:
+            - AttributeName: key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: parentUuidIndex
+          KeySchema:
+            - AttributeName: parentUuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
+  ContentsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${ContentsTable}
+      ScalingTargetId: !Ref ContentsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ContentsTableKeyReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}/index/keyIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableKeyReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${ContentsTable}/index/keyIndex
+      ScalingTargetId: !Ref ContentsTableKeyReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ContentsTableParentUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}/index/parentUuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableParentUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${ContentsTable}/index/parentUuidIndex
+      ScalingTargetId: !Ref ContentsTableParentUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ContentsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${ContentsTable}
+      ScalingTargetId: !Ref ContentsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ContentsTableKeyWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}/index/keyIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableKeyWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${ContentsTable}/index/keyIndex
+      ScalingTargetId: !Ref ContentsTableKeyWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ContentsTableParentUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ContentsTable}/index/parentUuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ContentsTableParentUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${ContentsTable}/index/parentUuidIndex
+      ScalingTargetId: !Ref ContentsTableParentUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   DonationsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Donations
+        ${StackName}-Donations
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: nonprofitUuid
-        AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
-      - AttributeName: isDeleted
-        AttributeType: N
-      - AttributeName: subtotal
-        AttributeType: N
-      - AttributeName: donorUuid
-        AttributeType: S
-      - AttributeName: paymentTransactionIsTestMode
-        AttributeType: N
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: nonprofitUuid
+          AttributeType: S
+        - AttributeName: createdOn
+          AttributeType: N
+        - AttributeName: isDeleted
+          AttributeType: N
+        - AttributeName: subtotal
+          AttributeType: N
+        - AttributeName: donorUuid
+          AttributeType: S
+        - AttributeName: paymentTransactionIsTestMode
+          AttributeType: N
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: isDeletedCreatedOnIndex
-        KeySchema:
-        - AttributeName: isDeleted
-          KeyType: HASH
-        - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: nonprofitUuidCreatedOnIndex
-        KeySchema:
-        - AttributeName: nonprofitUuid
-          KeyType: HASH
-        - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: nonprofitUuidSubtotalIndex
-        KeySchema:
-        - AttributeName: nonprofitUuid
-          KeyType: HASH
-        - AttributeName: subtotal
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: paymentTransactionIsTestModeCreatedOnIndex
-        KeySchema:
-        - AttributeName: paymentTransactionIsTestMode
-          KeyType: HASH
-        - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: donorUuidCreatedOnIndex
-        KeySchema:
-        - AttributeName: donorUuid
-          KeyType: HASH
-        - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: isDeletedCreatedOnIndex
+          KeySchema:
+            - AttributeName: isDeleted
+              KeyType: HASH
+            - AttributeName: createdOn
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: nonprofitUuidCreatedOnIndex
+          KeySchema:
+            - AttributeName: nonprofitUuid
+              KeyType: HASH
+            - AttributeName: createdOn
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: nonprofitUuidSubtotalIndex
+          KeySchema:
+            - AttributeName: nonprofitUuid
+              KeyType: HASH
+            - AttributeName: subtotal
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: paymentTransactionIsTestModeCreatedOnIndex
+          KeySchema:
+            - AttributeName: paymentTransactionIsTestMode
+              KeyType: HASH
+            - AttributeName: createdOn
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: donorUuidCreatedOnIndex
+          KeySchema:
+            - AttributeName: donorUuid
+              KeyType: HASH
+            - AttributeName: createdOn
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: ContentsTable
+
+  DonationsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}
+      ScalingTargetId: !Ref DonationsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableDonorUuidCreatedOnIndexReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/donorUuidCreatedOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableDonorUuidCreatedOnIndexReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}/index/donorUuidCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableDonorUuidCreatedOnIndexReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableIsDeletedCreatedOnReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/isDeletedCreatedOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableIsDeletedCreatedOnReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}/index/isDeletedCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableIsDeletedCreatedOnReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableNonprofitUuidCreatedOnReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/nonprofitUuidCreatedOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableNonprofitUuidCreatedOnReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}/index/nonprofitUuidCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableNonprofitUuidCreatedOnReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableNonprofitUuidSubtotalReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/nonprofitUuidSubtotalIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableNonprofitUuidSubtotalReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}/index/nonprofitUuidSubtotalIndex
+      ScalingTargetId: !Ref DonationsTableNonprofitUuidSubtotalReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTablePaymentTransactionIsTestModeCreatedOnReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/paymentTransactionIsTestModeCreatedOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTablePaymentTransactionIsTestModeCreatedOnReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonationsTable}/index/paymentTransactionIsTestModeCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTablePaymentTransactionIsTestModeCreatedOnReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}
+      ScalingTargetId: !Ref DonationsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableDonorUuidCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/donorUuidCreatedOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableDonorUuidCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}/index/donorUuidCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableDonorUuidCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableIsDeletedCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/isDeletedCreatedOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableIsDeletedCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}/index/isDeletedCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableIsDeletedCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableNonprofitUuidCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/nonprofitUuidCreatedOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableNonprofitUuidCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}/index/nonprofitUuidCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTableNonprofitUuidCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTableNonprofitUuidSubtotalWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/nonprofitUuidSubtotalIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTableNonprofitUuidSubtotalWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}/index/nonprofitUuidSubtotalIndex
+      ScalingTargetId: !Ref DonationsTableNonprofitUuidSubtotalWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonationsTablePaymentTransactionIsTestModeCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonationsTable}/index/paymentTransactionIsTestModeCreatedOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonationsTablePaymentTransactionIsTestModeCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonationsTable}/index/paymentTransactionIsTestModeCreatedOnIndex
+      ScalingTargetId: !Ref DonationsTablePaymentTransactionIsTestModeCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   DonorsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Donors
+        ${StackName}-Donors
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: email
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: emailIndex
-        KeySchema:
-        - AttributeName: email
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: emailIndex
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: DonationsTable
+
+  DonorsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonorsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonorsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonorsTable}
+      ScalingTargetId: !Ref DonorsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonorsTableEmailReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonorsTable}/index/emailIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonorsTableEmailReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${DonorsTable}/index/emailIndex
+      ScalingTargetId: !Ref DonorsTableEmailReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonorsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonorsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonorsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonorsTable}
+      ScalingTargetId: !Ref DonorsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  DonorsTableEmailWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${DonorsTable}/index/emailIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  DonorsTableEmailWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${DonorsTable}/index/emailIndex
+      ScalingTargetId: !Ref DonorsTableEmailWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   FilesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Files
+        ${StackName}-Files
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
     DependsOn: DonorsTable
 
+  FilesTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${FilesTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  FilesTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${FilesTable}
+      ScalingTargetId: !Ref FilesTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  FilesTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${FilesTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  FilesTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${FilesTable}
+      ScalingTargetId: !Ref FilesTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
   MessagesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Messages
+        ${StackName}-Messages
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
     DependsOn: FilesTable
 
+  MessagesTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MessagesTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MessagesTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${MessagesTable}
+      ScalingTargetId: !Ref MessagesTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MessagesTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MessagesTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MessagesTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${MessagesTable}
+      ScalingTargetId: !Ref MessagesTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
   MetricsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Metrics
+        ${StackName}-Metrics
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
-      - AttributeName: key
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: createdOn
+          AttributeType: N
+        - AttributeName: key
+          AttributeType: S
       KeySchema:
-      - AttributeName: key
-        KeyType: HASH
+        - AttributeName: key
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: uuidIndex
-        KeySchema:
-        - AttributeName: uuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: createdOnIndex
-        KeySchema:
-        - AttributeName: createdOn
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: uuidIndex
+          KeySchema:
+            - AttributeName: uuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: createdOnIndex
+          KeySchema:
+            - AttributeName: createdOn
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: MessagesTable
+
+  MetricsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${MetricsTable}
+      ScalingTargetId: !Ref MetricsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MetricsTableCreatedOnReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}/index/createdOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableCreatedOnReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${MetricsTable}/index/createdOnIndex
+      ScalingTargetId: !Ref MetricsTableCreatedOnReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MetricsTableUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}/index/uuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${MetricsTable}/index/uuidIndex
+      ScalingTargetId: !Ref MetricsTableUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MetricsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${MetricsTable}
+      ScalingTargetId: !Ref MetricsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MetricsTableCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}/index/createdOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${MetricsTable}/index/createdOnIndex
+      ScalingTargetId: !Ref MetricsTableCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  MetricsTableUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${MetricsTable}/index/uuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  MetricsTableUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${MetricsTable}/index/uuidIndex
+      ScalingTargetId: !Ref MetricsTableUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   NonprofitsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Nonprofits
+        ${StackName}-Nonprofits
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: createdOn
-        AttributeType: N
-      - AttributeName: status
-        AttributeType: S
-      - AttributeName: slug
-        AttributeType: S
-      - AttributeName: isDeleted
-        AttributeType: N
-      - AttributeName: donationsSubtotal
-        AttributeType: N
-      - AttributeName: legalNameSearch
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: createdOn
+          AttributeType: N
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: slug
+          AttributeType: S
+        - AttributeName: isDeleted
+          AttributeType: N
+        - AttributeName: donationsSubtotal
+          AttributeType: N
+        - AttributeName: legalNameSearch
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: isDeletedCreatedOnIndex
-        KeySchema:
-        - AttributeName: isDeleted
-          KeyType: HASH
-        - AttributeName: createdOn
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: isDeletedLegalNameIndex
-        KeySchema:
-        - AttributeName: isDeleted
-          KeyType: HASH
-        - AttributeName: legalNameSearch
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: statusLegalNameIndex
-        KeySchema:
-        - AttributeName: status
-          KeyType: HASH
-        - AttributeName: legalNameSearch
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: statusSubtotalIndex
-        KeySchema:
-        - AttributeName: status
-          KeyType: HASH
-        - AttributeName: donationsSubtotal
-          KeyType: RANGE
-        Projection:
-          ProjectionType:   ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: slugIndex
-        KeySchema:
-        - AttributeName: slug
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: isDeletedCreatedOnIndex
+          KeySchema:
+            - AttributeName: isDeleted
+              KeyType: HASH
+            - AttributeName: createdOn
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: isDeletedLegalNameIndex
+          KeySchema:
+            - AttributeName: isDeleted
+              KeyType: HASH
+            - AttributeName: legalNameSearch
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: statusLegalNameIndex
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: legalNameSearch
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: statusSubtotalIndex
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: donationsSubtotal
+              KeyType: RANGE
+          Projection:
+            ProjectionType:   ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: slugIndex
+          KeySchema:
+            - AttributeName: slug
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: MetricsTable
+
+  NonprofitsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}
+      ScalingTargetId: !Ref NonprofitsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableIsDeletedCreatedOnReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/isDeletedCreatedOnIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableIsDeletedCreatedOnReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}/index/isDeletedCreatedOnIndex
+      ScalingTargetId: !Ref NonprofitsTableIsDeletedCreatedOnReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableIsDeletedLegalNameReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/isDeletedLegalNameIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableIsDeletedLegalNameReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}/index/isDeletedLegalNameIndex
+      ScalingTargetId: !Ref NonprofitsTableIsDeletedLegalNameReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableSlugReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/slugIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableSlugReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}/index/slugIndex
+      ScalingTargetId: !Ref NonprofitsTableSlugReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableStatusLegalNameReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/statusLegalNameIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableStatusLegalNameReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}/index/statusLegalNameIndex
+      ScalingTargetId: !Ref NonprofitsTableStatusLegalNameReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableStatusSubtotalReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/statusSubtotalIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableStatusSubtotalReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitsTable}/index/statusSubtotalIndex
+      ScalingTargetId: !Ref NonprofitsTableStatusSubtotalReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}
+      ScalingTargetId: !Ref NonprofitsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableIsDeletedCreatedOnWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/isDeletedCreatedOnIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableIsDeletedCreatedOnWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}/index/isDeletedCreatedOnIndex
+      ScalingTargetId: !Ref NonprofitsTableIsDeletedCreatedOnWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableIsDeletedLegalNameWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/isDeletedLegalNameIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableIsDeletedLegalNameWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}/index/isDeletedLegalNameIndex
+      ScalingTargetId: !Ref NonprofitsTableIsDeletedLegalNameWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableSlugWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/slugIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableSlugWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}/index/slugIndex
+      ScalingTargetId: !Ref NonprofitsTableSlugWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableStatusLegalNameWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/statusLegalNameIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableStatusLegalNameWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}/index/statusLegalNameIndex
+      ScalingTargetId: !Ref NonprofitsTableStatusLegalNameWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitsTableStatusSubtotalWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitsTable}/index/statusSubtotalIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitsTableStatusSubtotalWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitsTable}/index/statusSubtotalIndex
+      ScalingTargetId: !Ref NonprofitsTableStatusSubtotalWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   NonprofitDonationTiersTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-NonprofitDonationTiers
+        ${StackName}-NonprofitDonationTiers
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: nonprofitUuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: nonprofitUuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: nonprofitUuidIndex
-        KeySchema:
-        - AttributeName: nonprofitUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: nonprofitUuidIndex
+          KeySchema:
+            - AttributeName: nonprofitUuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: NonprofitsTable
+
+  NonprofitDonationTiersTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitDonationTiersTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitDonationTiersTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitDonationTiersTable}
+      ScalingTargetId: !Ref NonprofitDonationTiersTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitDonationTiersTableNonprofitUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitDonationTiersTable}/index/nonprofitUuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitDonationTiersTableNonprofitUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitDonationTiersTable}/index/nonprofitUuidIndex
+      ScalingTargetId: !Ref NonprofitDonationTiersTableNonprofitUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitDonationTiersTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitDonationTiersTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitDonationTiersTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitDonationTiersTable}
+      ScalingTargetId: !Ref NonprofitDonationTiersTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitDonationTiersTableNonprofitUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitDonationTiersTable}/index/nonprofitUuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitDonationTiersTableNonprofitUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitDonationTiersTable}/index/nonprofitUuidIndex
+      ScalingTargetId: !Ref NonprofitDonationTiersTableNonprofitUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   NonprofitSlidesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-NonprofitSlides
+        ${StackName}-NonprofitSlides
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: nonprofitUuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: nonprofitUuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: nonprofitUuidIndex
-        KeySchema:
-        - AttributeName: nonprofitUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: nonprofitUuidIndex
+          KeySchema:
+            - AttributeName: nonprofitUuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: NonprofitDonationTiersTable
+
+  NonprofitSlidesTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitSlidesTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitSlidesTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitSlidesTable}
+      ScalingTargetId: !Ref NonprofitSlidesTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitSlidesTableNonprofitUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitSlidesTable}/index/nonprofitUuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitSlidesTableNonprofitUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${NonprofitSlidesTable}/index/nonprofitUuidIndex
+      ScalingTargetId: !Ref NonprofitSlidesTableNonprofitUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitSlidesTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitSlidesTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitSlidesTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitSlidesTable}
+      ScalingTargetId: !Ref NonprofitSlidesTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  NonprofitSlidesTableNonprofitUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${NonprofitSlidesTable}/index/nonprofitUuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref HighTrafficMinCapacity
+      MaxCapacity: !Ref HighTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  NonprofitSlidesTableNonprofitUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${NonprofitSlidesTable}/index/nonprofitUuidIndex
+      ScalingTargetId: !Ref NonprofitSlidesTableNonprofitUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref HighTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   PaymentTransactionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-PaymentTransactions
+        ${StackName}-PaymentTransactions
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
     DependsOn: NonprofitSlidesTable
 
+  PaymentTransactionsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${PaymentTransactionsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  PaymentTransactionsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${PaymentTransactionsTable}
+      ScalingTargetId: !Ref PaymentTransactionsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  PaymentTransactionsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${PaymentTransactionsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  PaymentTransactionsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${PaymentTransactionsTable}
+      ScalingTargetId: !Ref PaymentTransactionsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
   ReportsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Reports
+        ${StackName}-Reports
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
     DependsOn: PaymentTransactionsTable
 
+  ReportsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ReportsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ReportsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${ReportsTable}
+      ScalingTargetId: !Ref ReportsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  ReportsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${ReportsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  ReportsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${ReportsTable}
+      ScalingTargetId: !Ref ReportsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
   SettingsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Settings
+        ${StackName}-Settings
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: key
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: key
+          AttributeType: S
       KeySchema:
-      - AttributeName: key
-        KeyType: HASH
+        - AttributeName: key
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: uuidIndex
-        KeySchema:
-        - AttributeName: uuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: uuidIndex
+          KeySchema:
+            - AttributeName: uuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: ReportsTable
+
+  SettingsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SettingsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SettingsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SettingsTable}
+      ScalingTargetId: !Ref SettingsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SettingsTableUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SettingsTable}/index/uuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SettingsTableUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SettingsTable}/index/uuidIndex
+      ScalingTargetId: !Ref SettingsTableUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SettingsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SettingsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SettingsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SettingsTable}
+      ScalingTargetId: !Ref SettingsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SettingsTableUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SettingsTable}/index/uuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SettingsTableUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SettingsTable}/index/uuidIndex
+      ScalingTargetId: !Ref SettingsTableUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   SponsorsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Sponsors
+        ${StackName}-Sponsors
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: sponsorTierUuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: sponsorTierUuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: sponsorTierUuidIndex
-        KeySchema:
-        - AttributeName: sponsorTierUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: sponsorTierUuidIndex
+          KeySchema:
+            - AttributeName: sponsorTierUuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: SettingsTable
+
+  SponsorsTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorsTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorsTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SponsorsTable}
+      ScalingTargetId: !Ref SponsorsTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorsTableSponsorTierUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorsTable}/index/sponsorTierUuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorsTableSponsorTierUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SponsorsTable}/index/sponsorTierUuidIndex
+      ScalingTargetId: !Ref SponsorsTableSponsorTierUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorsTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorsTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorsTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SponsorsTable}
+      ScalingTargetId: !Ref SponsorsTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorsTableSponsorTierUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorsTable}/index/sponsorTierUuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorsTableSponsorTierUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SponsorsTable}/index/sponsorTierUuidIndex
+      ScalingTargetId: !Ref SponsorsTableSponsorTierUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   SponsorTiersTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-SponsorTiers
+        ${StackName}-SponsorTiers
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: name
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: name
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: nameIndex
-        KeySchema:
-        - AttributeName: name
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: nameIndex
+          KeySchema:
+            - AttributeName: name
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: SponsorsTable
+
+  SponsorTiersTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorTiersTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorTiersTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SponsorTiersTable}
+      ScalingTargetId: !Ref SponsorTiersTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorTiersTableNameReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorTiersTable}/index/nameIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorTiersTableNameReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${SponsorTiersTable}/index/nameIndex
+      ScalingTargetId: !Ref SponsorTiersTableNameReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorTiersTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorTiersTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorTiersTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SponsorTiersTable}
+      ScalingTargetId: !Ref SponsorTiersTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  SponsorTiersTableNameWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${SponsorTiersTable}/index/nameIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref DefaultMinCapacity
+      MaxCapacity: !Ref DefaultMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  SponsorTiersTableNameWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${SponsorTiersTable}/index/nameIndex
+      ScalingTargetId: !Ref SponsorTiersTableNameWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref DefaultTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
 
   UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub |-
-       ${StackName}-Users
+        ${StackName}-Users
       AttributeDefinitions:
-      - AttributeName: uuid
-        AttributeType: S
-      - AttributeName: email
-        AttributeType: S
-      - AttributeName: cognitoUuid
-        AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: cognitoUuid
+          AttributeType: S
       KeySchema:
-      - AttributeName: uuid
-        KeyType: HASH
+        - AttributeName: uuid
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: emailIndex
-        KeySchema:
-        - AttributeName: email
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: cognitoUuidIndex
-        KeySchema:
-        - AttributeName: cognitoUuid
-          KeyType: HASH
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: emailIndex
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: cognitoUuidIndex
+          KeySchema:
+            - AttributeName: cognitoUuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
     DependsOn: SponsorTiersTable
 
-Outputs:
+  UsersTableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
 
+  UsersTableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${UsersTable}
+      ScalingTargetId: !Ref UsersTableReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  UsersTableCognitoUuidReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}/index/cognitoUuidIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  UsersTableCognitoUuidReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${UsersTable}/index/cognitoUuidIndex
+      ScalingTargetId: !Ref UsersTableCognitoUuidReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  UsersTableEmailReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}/index/emailIndex
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxReadCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  UsersTableEmailReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBReadCapacityUtilization:table/${UsersTable}/index/emailIndex
+      ScalingTargetId: !Ref UsersTableEmailReadScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  UsersTableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  UsersTableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${UsersTable}
+      ScalingTargetId: !Ref UsersTableWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  UsersTableCognitoUuidWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}/index/cognitoUuidIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  UsersTableCognitoUuidWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${UsersTable}/index/cognitoUuidIndex
+      ScalingTargetId: !Ref UsersTableCognitoUuidWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+  UsersTableEmailWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub table/${UsersTable}/index/emailIndex
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: !Ref ModerateTrafficMinCapacity
+      MaxCapacity: !Ref ModerateTrafficMaxWriteCapacity
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+
+  UsersTableEmailWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub DynamoDBWriteCapacityUtilization:table/${UsersTable}/index/emailIndex
+      ScalingTargetId: !Ref UsersTableEmailWriteScalingTarget
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        TargetValue: !Ref ModerateTrafficTargetValue
+        DisableScaleIn: false
+        ScaleInCooldown: !Ref DefaultScaleInCooldown
+
+Outputs:
   ContentsTable:
     Value: !Ref ContentsTable
 

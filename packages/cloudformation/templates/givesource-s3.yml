@@ -207,6 +207,9 @@ Outputs:
   AdminPagesCloudFrontDistribution:
     Value: !Ref AdminPagesDistribution
 
+  AdminPagesCloudFrontDomainName:
+    Value: !GetAtt AdminPagesDistribution.DomainName
+
   AdminPagesCloudFrontUrl:
     Value: !Sub |-
       https://${AdminPagesDistribution.DomainName}
@@ -220,6 +223,9 @@ Outputs:
   PublicPagesCloudFrontDistribution:
     Value: !Ref PublicPagesDistribution
 
+  PublicPagesCloudFrontDomainName:
+    Value: !GetAtt PublicPagesDistribution.DomainName
+
   PublicPagesCloudFrontUrl:
     Value: !Sub |-
       https://${PublicPagesDistribution.DomainName}
@@ -232,6 +238,9 @@ Outputs:
 
   UploadsCloudFrontDistribution:
     Value: !Ref UploadsDistribution
+
+  UploadsCloudFrontDomainName:
+    Value: !GetAtt UploadsDistribution.DomainName
 
   UploadsCloudFrontUrl:
     Value: !Sub |-
