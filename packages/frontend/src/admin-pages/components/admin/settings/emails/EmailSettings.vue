@@ -31,6 +31,7 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
 
                     <!-- BEGIN form -->
                     <form v-on:submit="submit">

@@ -21,6 +21,8 @@
             <div class="o-app_main-content o-app_main-content">
 
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
+
                     <donations-metrics v-on:hasError="hasError"></donations-metrics>
                     <api-error v-model="apiError"></api-error>
                     <donations-list-table-header v-on:hasError="hasError"></donations-list-table-header>

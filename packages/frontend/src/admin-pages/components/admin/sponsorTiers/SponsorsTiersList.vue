@@ -20,6 +20,7 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
                     <api-error v-model="apiError"></api-error>
 
                     <div class="c-header-actions">

@@ -20,6 +20,8 @@
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
+
                     <div class="o-app-main-content">
                         <section class="c-page-section c-page-section--headless c-page-section--border c-page-section--shadow c-page-section--segmented">
                             <div class="c-page-section__main">

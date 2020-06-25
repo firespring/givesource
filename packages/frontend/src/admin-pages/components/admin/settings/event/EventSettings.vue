@@ -30,6 +30,8 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
+
                     <api-error v-model="apiError"></api-error>
 
                     <form v-on:submit="submit">

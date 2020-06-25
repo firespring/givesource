@@ -23,6 +23,7 @@ import ComponentApiError from './components/errors/ApiError.vue';
 import ComponentApp from './components/App.vue';
 import ComponentGravatar from 'vue-gravatar';
 import ComponentNavigation from './components/header/Navigation.vue';
+import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringKeysBanner.vue';
 import EventBusMixin from './mixins/eventBus';
 import FloatingLabelDirective from './directives/floatingLabel';
 import ModalMixin from './mixins/modals';
@@ -58,6 +59,7 @@ Vue.directive('shave', ShaveDirective);
 Vue.component('api-error', ComponentApiError);
 Vue.component('navigation', ComponentNavigation);
 Vue.component('v-gravatar', ComponentGravatar);
+Vue.component('paymentspring-keys-banner', ComponentPaymentspringKeysBanner);
 
 // Register vue global
 Vue.prototype.user = {};

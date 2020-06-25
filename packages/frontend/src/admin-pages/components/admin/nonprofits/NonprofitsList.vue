@@ -21,6 +21,8 @@
             <div class="o-app_main-content o-app_main-content">
                 <api-error v-model="apiError"></api-error>
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
+
                     <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
                     </nonprofits-list-table-header>
                     <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"

@@ -30,6 +30,8 @@
                 </div>
 
                 <div class="o-app-main-content">
+                    <paymentspring-keys-banner/>
+
                     <section class="c-page-section c-page-section--border c-page-section--shadow">
 
                         <header class="c-page-section__header">
