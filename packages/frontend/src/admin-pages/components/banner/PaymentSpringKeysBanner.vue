@@ -18,12 +18,12 @@
 		data() {
 			return {
 				/**
-                 * Settings that will be returned in api call
+				 * Settings that will be returned in api call
 				 */
 				settings: [],
 
 				/**
-                 * Should banner show
+				 * Should banner show
 				 */
 				displayBanner: false
 			}
@@ -44,8 +44,8 @@
 
 		computed: {
 			/**
-             * Check to see what user level the user is
-             *
+			 * Check to see what user level the user is
+			 *
 			 * @return {boolean}
 			 */
 			isAdmin: function () {
@@ -55,7 +55,7 @@
 
 		watch: {
 			/**
-             * Watch the setting data variable for change.
+			 * Watch the setting data variable for change.
 			 */
 			settings: {
 				handler: function () {
