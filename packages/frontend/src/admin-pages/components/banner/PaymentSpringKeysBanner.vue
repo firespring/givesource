@@ -6,7 +6,7 @@
             </div>
             <div class="c-alert__text">
                 <p>
-                    Please contact your support rep to enter your payment keys. This Giving Day event can't take donations until that's done.
+                    Uh-oh! You are missing a critical piece to accepting donations. Contact Support right away to ensure donations can be sent through your site.
                 </p>
             </div>
         </div>
@@ -14,6 +14,8 @@
 </template>
 
 <script>
+	const moment = require('moment-timezone');
+
 	export default {
 		data() {
 			return {
@@ -33,7 +35,7 @@
 			const vue = this;
 
 			vue.$request.get('settings', {
-				keys: ['PAYMENT_SPRING_PUBLIC_API_KEY']
+				keys: ['PAYMENT_SPRING_PUBLIC_API_KEY', 'EVENT_TIMEZONE', 'DATE_DONATIONS_START']
 			}).then(function (response) {
 				vue.settings = response.data;
 				next();
@@ -53,6 +55,29 @@
 			},
 		},
 
+		methods: {
+			/**
+             * Determines is the date is within 72 hours of the first donation
+             *
+             * @returns {boolean}
+             */
+			showDonationsWarningBanner: function () {
+				const vue = this;
+				if (vue.settings.length > 0) {
+					const eventTimezone = _.find(vue.settings, {key: 'EVENT_TIMEZONE'});
+					const dateDonationsStart = _.find(vue.settings, {key: 'DATE_DONATIONS_START'});
+					if (eventTimezone && dateDonationsStart) {
+						const dateStart = moment(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true);
+						const threeDaysBefore = moment(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true).subtract(3, 'd');
+
+						return moment().isBetween(threeDaysBefore, dateStart);
+                    }
+				}
+
+				return false;
+			}
+		},
+
 		watch: {
 			/**
 			 * Watch the setting data variable for change.
@@ -60,9 +85,11 @@
 			settings: {
 				handler: function () {
 					const vue = this;
-					if (vue.settings.length === 0) {
+					const paymentKey = _.find(vue.settings, {key: 'PAYMENT_SPRING_PUBLIC_API_KEY'});
+					if (!paymentKey && vue.showDonationsWarningBanner()) {
 						vue.displayBanner = true;
 					}
+
 				}
 			}
 		},
