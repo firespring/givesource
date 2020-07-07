@@ -101,7 +101,7 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
       TimeoutInMinutes: 40
 
-  AuroraDbStack: ### Going to have to add the Aurora Stuff here I think DM: Debug (also will need to do a release)
+  AuroraDbStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:

@@ -7,7 +7,7 @@ Parameters:
     Type: String
     Default: givesource
   DBClusterName:
-    Description: "Givesource Aurora RDS cluster name" #I think this probably needs something else
+    Description: "Givesource Aurora RDS cluster name"
     Type: String
     Default: givesource-rds-cluster
   DatabaseName:
@@ -22,7 +22,7 @@ Parameters:
     MinLength: '1'
     Type: String
     Default: adminUser
-  DBSubnetList: # this might need to work with only two, script was built for three
+  DBSubnetList:
     Description: "List of subnets for the Aurora RDS cluster"
     Type: List<AWS::EC2::Subnet::Id>
     ConstraintDescription: "must be a list of at least two existing subnets associated with at least two different availability zones."
