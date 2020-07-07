@@ -57,10 +57,10 @@
 
 		methods: {
 			/**
-             * Determines is the date is within 72 hours of the first donation
-             *
-             * @returns {boolean}
-             */
+			 * Determines is the date is within 72 hours of the first donation
+			 *
+			 * @returns {boolean}
+			 */
 			showDonationsWarningBanner: function () {
 				const vue = this;
 				if (vue.settings.length > 0) {
@@ -71,7 +71,7 @@
 						const threeDaysBefore = moment(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true).subtract(3, 'd');
 
 						return moment().isBetween(threeDaysBefore, dateStart);
-                    }
+					}
 				}
 
 				return false;
