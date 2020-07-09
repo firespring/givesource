@@ -54,8 +54,10 @@ Resources:
     Type: AWS::RDS::DBCluster
     Properties:
       DBClusterIdentifier: !Ref DBClusterName
-      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]]
-      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
+{{=<% %>=}}
+      MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
+<%={{ }}=%>
       DatabaseName: !Ref DatabaseName
       Engine: aurora
       EngineMode: serverless
