@@ -6,14 +6,10 @@ Parameters:
     Description: "Givesource"
     Type: String
     Default: givesource
-  DBClusterName:
-    Description: "Givesource Aurora RDS cluster name"
-    Type: String
-    Default: givesource-rds-cluster
   DatabaseName:
     Description: "Givesource Aurora RDS database name"
     Type: String
-    Default: givesourceDB
+    Default: givesource
   DBMasterUserName:
     AllowedPattern: "[a-zA-Z0-9_]+"
     ConstraintDescription: must be between 1 to 16 alphanumeric characters.
@@ -53,7 +49,6 @@ Resources:
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
-      DBClusterIdentifier: !Ref DBClusterName
 {{=<% %>=}}
       MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
@@ -84,7 +79,7 @@ Outputs:
 
   DatabaseClusterArn:
     Description: Aurora Cluster ARN
-    Value: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
+    Value: !Ref RDSCluster
     Export:
       Name: !Sub ${AWS::StackName}-DatabaseClusterArn
 
