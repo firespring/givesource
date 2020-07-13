@@ -2,14 +2,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS Aurora resources for Givesource(R)
 Parameters:
-  AppName:
-    Description: "Givesource"
-    Type: String
-    Default: givesource
-  DatabaseName:
-    Description: "Givesource Aurora RDS database name"
-    Type: String
-    Default: givesource
   DBMasterUserName:
     AllowedPattern: "[a-zA-Z0-9_]+"
     ConstraintDescription: must be between 1 to 16 alphanumeric characters.
@@ -43,9 +35,6 @@ Resources:
         GenerateStringKey: "password"
         PasswordLength: 30
         ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: AppName
-          Value: !Ref AppName
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
@@ -53,7 +42,6 @@ Resources:
       MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
 <%={{ }}=%>
-      DatabaseName: !Ref DatabaseName
       Engine: aurora
       EngineMode: serverless
       EngineVersion: 5.6.10a
@@ -70,12 +58,6 @@ Outputs:
     Value: !Ref AWS::StackName
     Export:
       Name: !Sub ${AWS::StackName}-StackName
-
-  DatabaseName:
-    Description: Aurora Database Name
-    Value: !Ref DatabaseName
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseName
 
   DatabaseClusterArn:
     Description: Aurora Cluster ARN
