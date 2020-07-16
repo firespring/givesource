@@ -101,6 +101,14 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
       TimeoutInMinutes: 40
 
+  AuroraDbStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
+      TimeoutInMinutes: 40
+
   S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -339,6 +347,7 @@ Resources:
     DependsOn:
       - CognitoSnsCallerRole
       - DynamoDbStack
+      - AuroraDbStack
       - LambdaRole
       - S3Stack
 
@@ -686,6 +695,7 @@ Resources:
       - ApiDeployStack
       - CustomStack
       - DynamoDbStack
+      - AuroraDbStack
       - S3Stack
 
   MonitoringStack:
