@@ -72,6 +72,8 @@ Resources:
         SecondsUntilAutoPause: 900 # 15 min
       DBSubnetGroupName:
         Ref: DBSubnetGroup
+      VpcSecurityGroupIds:
+        - !GetAtt GivesourceAuroraSecurityGroup.GroupId
     DependsOn: DBSecret
   CreateSchemaLambdaFunction:
     Type: AWS::Lambda::Function
