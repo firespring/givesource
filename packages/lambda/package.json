@@ -23,6 +23,7 @@
 		"dotenv": "^4.0.0",
 		"json-loader": "^0.5.7",
 		"mime": "^2.2.2",
+		"mysql": "^2.18.1",
 		"rimraf": "^2.6.1",
 		"validate.js": "0.10.0"
 	},

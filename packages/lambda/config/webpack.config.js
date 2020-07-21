@@ -155,6 +155,9 @@ module.exports = {
 		SendDonationNotificationEmail: './src/custom/sendDonationNotificationEmail/index.js',
 		SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
 		SendRegistrationPendingEmail: './src/custom/sendRegistrationPendingEmail/index.js',
+
+		// Database Lambda Functions
+		CreateSchema: './src/database/createSchema/index.js',
 	},
 	output: {
 		filename: '[name]/index.js',
