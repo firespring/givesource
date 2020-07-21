@@ -1,0 +1,213 @@
+---
+Description: Creates the VPC, routing tables, and subnets for Givesource
+Mappings:
+  IpRange:
+    us-east-1: {'016226103026': '172.32'}
+    us-east-2: {'016226103026': '172.33'}
+    us-west-1: {'016226103026': '172.34'}
+    us-west-2: {'016226103026': '172.35'}
+    us-east-1: {'948629139753': '172.132'}
+    us-east-2: {'948629139753': '172.133'}
+    us-west-1: {'948629139753': '172.134'}
+    us-west-2: {'948629139753': '172.135'}
+
+Resources:
+  internetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: givesource
+
+  vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Sub
+      - ${IpRange}.0.0/16
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: givesource
+      - Key: Purpose
+        Value: The VPC for Givesource
+
+  flowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub FlowLog/givesource/${vpc}
+      RetentionInDays: 365
+
+  flowLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: vpc-flow-logs.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: flowlog-log
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+            - ec2:CreateFlowLogs
+            Resource: '*'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+  flowLog:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      DeliverLogsPermissionArn: !GetAtt flowLogsRole.Arn
+      LogGroupName: !Ref flowLogGroup
+      ResourceId: !Ref vpc
+      ResourceType: VPC
+      TrafficType: ALL
+
+  attachInternetGatewayToVpc:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref internetGateway
+      VpcId: !Ref vpc
+
+  publicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: public-givesource
+
+  internetGatewayRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref publicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetGateway
+
+  primaryPublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref primaryPublicSubnet
+      RouteTableId: !Ref publicRouteTable
+
+  primaryPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Sub
+      - ${IpRange}.0.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+      AvailabilityZone: !Select [0, !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: SubnetType
+        Value: Public
+      - Key: Name
+        Value: primary-public-givesource
+
+  secondaryPublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref secondaryPublicSubnet
+      RouteTableId: !Ref publicRouteTable
+
+  secondaryPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Sub
+      - ${IpRange}.2.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+      AvailabilityZone: !Select [1, !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: SubnetType
+        Value: Public
+      - Key: Name
+        Value: secondary-givesource
+
+  billingDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub givesource-billing-${AWS::Region}
+      DashboardBody: !Sub
+      - >
+        {
+          "start": "-P6M",
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 12,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [
+                    "AWS/Billing",
+                    "EstimatedCharges",
+                    "Currency",
+                    "USD",
+                    {
+                      "period": 2592000,
+                      "stat": "Maximum"
+                    }
+                  ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "us-east-1"
+              }
+            }
+          ]
+        }
+      - {}
+
+Outputs:
+  internetGateway:
+    Description: Internet Gateway for the Givesource VPC
+    Value: !Ref internetGateway
+    Export:
+      Name: givesource-internet-gateway
+
+  vpc:
+    Description: VPC for Givesource
+    Value: !Ref vpc
+    Export:
+      Name: givesource-vpc
+
+  vpcCidr:
+    Description: The Cidr of the Givesource VPC
+    Value: !GetAtt vpc.CidrBlock
+    Export:
+      Name: givesource-vpc-cidr
+
+  aclVpc:
+    Description: Default ACL for the Givesource VPC
+    Value: !GetAtt vpc.DefaultNetworkAcl
+    Export:
+      Name: givesource-vpc-acl
+
+  ipRange:
+    Description: IP Range for the Givesource VPC
+    Value: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']
+    Export:
+      Name: givesource-vpc-ip-range
+
+  primaryPublicSubnet:
+    Description: Primary Public Subnet for Givesource
+    Value: !Ref primaryPublicSubnet
+    Export:
+      Name: givsource-primary-public-subnet
+
+  secondaryPublicSubnet:
+    Description: Secondary Public Subnet for Givesource
+    Value: !Ref secondaryPublicSubnet
+    Export:
+      Name: givesource-secondary-public-subnet
+
