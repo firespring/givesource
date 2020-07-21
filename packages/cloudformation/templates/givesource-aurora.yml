@@ -65,6 +65,7 @@ Resources:
       Engine: aurora
       EngineMode: serverless
       EngineVersion: 5.6.10a
+      EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 16
