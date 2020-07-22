@@ -28,8 +28,6 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 
 		if ('SecretString' in response) {
-			//Here exec the requests to init the DB
-
 			console.log("Connecting to Aurora");
 			let connection = mysql.createConnection({
 				host: process.env.AURORA_DB_HOST,
@@ -44,22 +42,15 @@ exports.handle = function (event, context, callback) {
 				console.log('connected!'); /*DM: Debug */
 			});
 
-			connection.query('CREATE DATABASE IF NOT EXISTS `test-db-name` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;', function (err, rows, fields) {
+			connection.query('CREATE DATABASE IF NOT EXISTS `givesource` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;', function (err, rows, fields) {
 				if (err) throw err;
 				console.log(rows);
 			});
 
-			connection.changeUser({database: 'test-db-name'}, function (err) {
-				if (err) throw err;
-				console.log('switched to test-db-name');
-			});
+			connection.changeUser({database: 'givesource'});
 
-			console.log('get ready to run query'); /*DM: Debug */
 			//create the database
-			connection.query('DROP TABLE IF EXISTS contents', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS contents');
 
 			connection.query(
 				'CREATE TABLE `contents` (' +
@@ -72,15 +63,9 @@ exports.handle = function (event, context, callback) {
 				'`value` VARCHAR(50) NOT NULL, ' +
 				'`name` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`), ' +
-				'KEY `ix_contents_parent_id_index` (`parentId`))', function (err, rows, fields) {
-					if (err) throw err;
-					console.log(rows);
-				});
+				'KEY `ix_contents_parent_id_index` (`parentId`))');
 
-			connection.query('DROP TABLE IF EXISTS donations', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS donations');
 
 			connection.query('CREATE TABLE `donations` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -105,15 +90,9 @@ exports.handle = function (event, context, callback) {
 				'KEY `ix_donations_nonprofit_id` (`nonprofitId`), ' +
 				'KEY `ix_donations_payment_transaction_id` (`paymentTransactionId`), ' +
 				'KEY `ix_donations_donor_id` (`donorId`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS donors', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS donors');
 
 			connection.query('CREATE TABLE `donors` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -131,15 +110,9 @@ exports.handle = function (event, context, callback) {
 				'`zip` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_donors_email` (`email`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS files', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS files');
 
 			connection.query('CREATE TABLE `files` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -148,15 +121,9 @@ exports.handle = function (event, context, callback) {
 				'`path` VARCHAR(50) NOT NULL, ' +
 				'`filename` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS messages', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS messages');
 
 			connection.query('CREATE TABLE `messages` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -168,15 +135,9 @@ exports.handle = function (event, context, callback) {
 				'`phone` VARCHAR(50) NOT NULL, ' +
 				'`type` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS metrics', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS metrics');
 
 			connection.query('CREATE TABLE `metrics` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -185,15 +146,9 @@ exports.handle = function (event, context, callback) {
 				'`key` VARCHAR(50) NOT NULL, ' +
 				'`value` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS nonprofit_donation_tiers', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS nonprofit_donation_tiers');
 
 			connection.query('CREATE TABLE `nonprofit_donation_tiers` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -204,15 +159,9 @@ exports.handle = function (event, context, callback) {
 				'`nonprofitId` INT(11) NOT NULL DEFAULT 0, ' +
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_nonprofit_donation_tiers_nonprofit_id` (`nonprofitId`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS nonprofits', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS nonprofits');
 
 			connection.query('CREATE TABLE `nonprofits` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -245,15 +194,9 @@ exports.handle = function (event, context, callback) {
 				'KEY `ix_nonprofits_is_deleted` (`isDeleted`), ' +
 				'KEY `ix_nonprofits_status_legal_name_search_is_deleted` (`status`, `legalNameSearch`, `isDeleted`), ' +
 				'KEY `ix_nonprofits_slug` (`slug`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS nonprofit_slides', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS nonprofit_slides');
 
 			connection.query('CREATE TABLE `nonprofit_slides` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -270,15 +213,9 @@ exports.handle = function (event, context, callback) {
 				'`nonprofitId` INT(11) NOT NULL DEFAULT 0, ' +
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_nonprofit_slides_nonprofit_id` (`nonprofitId`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS payment_transactions', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS payment_transactions');
 
 			connection.query('CREATE TABLE `payment_transactions` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -295,15 +232,9 @@ exports.handle = function (event, context, callback) {
 				'`transactionId` VARCHAR(50) NOT NULL, ' +
 				'`transactionStatus` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS reports', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS reports');
 
 			connection.query('CREATE TABLE `reports` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -314,15 +245,9 @@ exports.handle = function (event, context, callback) {
 				'`fileId` INT(11) NOT NULL DEFAULT 0, ' +
 				'`nonprofitId` INT(11) NOT NULL DEFAULT 0, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS settings', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS settings');
 
 			connection.query('CREATE TABLE `settings` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -331,15 +256,9 @@ exports.handle = function (event, context, callback) {
 				'`key` VARCHAR(50) NOT NULL, ' +
 				'`value` VARCHAR(50) NOT NULL, ' +
 				'PRIMARY KEY (`id`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS sponsors', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS sponsors');
 
 			connection.query('CREATE TABLE `sponsors` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -353,15 +272,9 @@ exports.handle = function (event, context, callback) {
 				'`sponsorTierId` INT(11) NOT NULL DEFAULT 0, ' +
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_sponsors_sponsor_tier_id` (`sponsorTierId`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS sponsor_tiers', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS sponsor_tiers');
 
 			connection.query('CREATE TABLE `sponsor_tiers` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -372,15 +285,9 @@ exports.handle = function (event, context, callback) {
 				'`sortOrder` INT(11) NOT NULL DEFAULT 0, ' +
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_sponsor_tiers_name` (`name`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 
-			connection.query('DROP TABLE IF EXISTS users', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+			connection.query('DROP TABLE IF EXISTS users');
 
 			connection.query('CREATE TABLE `users` ( ' +
 				'`id` INT(11) NOT NULL, ' +
@@ -394,17 +301,13 @@ exports.handle = function (event, context, callback) {
 				'PRIMARY KEY (`id`), ' +
 				'KEY `ix_users_email` (`email`), ' +
 				'KEY `ix_users_cognito_id` (`cognitoId`) ' +
-				')', function (err, rows, fields) {
-				if (err) throw err;
-				console.log(rows);
-			});
+				')');
 			connection.end();
 
+			console.log('Schema has been created.');
 		}
-
 	}).catch(function (err) {
-		console.log('this mfer errored'); /*DM: Debug */
-		console.log(err); /*DM: Debug */
+		callback(err);
 	});
 
 	callback();

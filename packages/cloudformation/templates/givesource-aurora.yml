@@ -105,20 +105,10 @@ Resources:
           - !ImportValue givsource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
     DependsOn: RDSCluster
-#  CreateSchemaLambdaInvokePermission:
-#    Type: AWS::Lambda::Permission
-#    Properties:
-#      FunctionName: !Ref CreateSchemaLambdaFunction
-#      Action: "lambda:InvokeFunction"
-#      Principal: "apigateway.amazonaws.com"
-#      SourceArn: !Ref SnsTopic
-#  SnsTopic:
-#    Type: AWS::SNS::Topic
-#    Properties:
-#      DisplayName: !Sub ${StackName} Aurora Schema
-#      Subscription:
-#        - Endpoint: !GetAtt CreateSchemaLambdaFunction.Arn
-#          Protocol: lambda
+  CreateSchemaLambdaCustomResource:
+    Type: "Custom::CreateSchemaLambdaInvoker"
+    Properties:
+      ServiceToken: !GetAtt CreateSchemaLambdaFunction.Arn
 Outputs:
   StackName:
     Description: Aurora Stack Name
