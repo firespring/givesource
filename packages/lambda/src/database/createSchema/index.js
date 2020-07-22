@@ -15,6 +15,7 @@
  */
 
 const mysql = require("mysql");
+const response = require('cfn-response');
 const Request = require('./../../aws/request');
 const SecretsManager = require('./../../aws/secretsManager');
 
@@ -26,9 +27,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.SECRETS_MANAGER_SECRET_ID)
 	}).then(function (response) {
-
 		if ('SecretString' in response) {
-			console.log("Connecting to Aurora");
 			let connection = mysql.createConnection({
 				host: process.env.AURORA_DB_HOST,
 				user: process.env.DATABASE_USER,
@@ -44,7 +43,6 @@ exports.handle = function (event, context, callback) {
 
 			connection.query('CREATE DATABASE IF NOT EXISTS `givesource` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;', function (err, rows, fields) {
 				if (err) throw err;
-				console.log(rows);
 			});
 
 			connection.changeUser({database: 'givesource'});
@@ -307,8 +305,11 @@ exports.handle = function (event, context, callback) {
 			console.log('Schema has been created.');
 		}
 	}).catch(function (err) {
+		console.log(err);
+		response.send(event, context, response.FAILED);
 		callback(err);
 	});
 
+	response.send(event, context, response.SUCCESS);
 	callback();
 };
