@@ -302,19 +302,18 @@ Resources:
               - ssm:DeleteParameter
               - ssm:GetParameter
               - ssm:PutParameter
-              - secretsmanager:GetSecretValue
             Resource: '*'
 
-#  SecretsManagerManagedPolicy:
-#    Type: AWS::IAM::ManagedPolicy
-#    Properties:
-#      PolicyDocument:
-#        Version: 2012-10-17
-#        Statement:
-#          - Effect: Allow
-#            Action:
-#              - secretsmanager:GetSecretValue
-#            Resource: '*'
+  SecretsManagerManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: '*'
 
   LambdaRole:
     Type: AWS::IAM::Role
@@ -368,7 +367,7 @@ Resources:
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
         - !Ref SSMManagedPolicy
-        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - !Ref SecretsManagerManagedPolicy
 
   CustomStack:
     Type: AWS::CloudFormation::Stack
