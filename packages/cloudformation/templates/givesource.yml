@@ -106,7 +106,6 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
-        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         LambdaRoleArn: !GetAtt RDSSchemaLambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml

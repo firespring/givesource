@@ -14,13 +14,11 @@ Parameters:
     Type: String
   DefaultLambdaFunctionTimeout:
     Type: Number
+    Default: 120
   LambdaRoleArn:
     Type: String
   LambdaSecurityGroupId:
     Type: String
-  Lambda:
-    Timeout:
-      Default: 120
 Resources:
   GivesourceAuroraSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -100,7 +98,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
-      Timeout: !FindInMap [Lambda, Timeout, Default]
+      Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId

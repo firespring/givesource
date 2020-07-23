@@ -24,14 +24,19 @@ exports.handle = function (event, context, callback) {
 	const secretsManager = new SecretsManager();
 	const request = new Request(event, context);
 
+	if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
+		response.send(event, context, response.SUCCESS, {});
+		return;
+	}
+
 	request.validate().then(function () {
 		return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.SECRETS_MANAGER_SECRET_ID)
-	}).then(function (response) {
-		if ('SecretString' in response) {
+	}).then(function (res) {
+		if ('SecretString' in res) {
 			let connection = mysql.createConnection({
 				host: process.env.AURORA_DB_HOST,
 				user: process.env.DATABASE_USER,
-				password: JSON.parse(response.SecretString).password,
+				password: JSON.parse(res.SecretString).password,
 				ssl: true,
 				port: 3306
 			});
@@ -302,14 +307,12 @@ exports.handle = function (event, context, callback) {
 				')');
 			connection.end();
 
-			console.log('Schema has been created.');
+			response.send(event, context, response.SUCCESS, {});
+			callback();
 		}
 	}).catch(function (err) {
 		console.log(err);
 		response.send(event, context, response.FAILED);
 		callback(err);
 	});
-
-	response.send(event, context, response.SUCCESS);
-	callback();
 };
