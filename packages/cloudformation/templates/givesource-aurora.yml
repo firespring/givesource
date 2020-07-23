@@ -12,9 +12,6 @@ Parameters:
     Default: adminUser
   StackName:
     Type: String
-  DefaultLambdaFunctionTimeout:
-    Type: Number
-    Default: 120
   LambdaRoleArn:
     Type: String
   LambdaSecurityGroupId:
@@ -63,17 +60,16 @@ Resources:
       MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
 <%={{ }}=%>
-      Engine: aurora
+      Engine: aurora-mysql
       EngineMode: serverless
-      EngineVersion: 5.6.10a
+      EngineVersion: 5.7.mysql_aurora.2.07.1
       EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 16
         MinCapacity: 1
         SecondsUntilAutoPause: 900 # 15 min
-      DBSubnetGroupName:
-        Ref: DBSubnetGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
         - !GetAtt GivesourceAuroraSecurityGroup.GroupId
     DependsOn: DBSecret
@@ -98,7 +94,7 @@ Resources:
       MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+      Timeout: 120 #seconds
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
