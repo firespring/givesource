@@ -12,11 +12,33 @@ Parameters:
     Default: adminUser
   StackName:
     Type: String
-  LambdaRoleArn:
-    Type: String
   LambdaSecurityGroupId:
     Type: String
 Resources:
+  SecretsManagerManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: '*'
+  CreateSchemaLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - !Ref SecretsManagerManagedPolicy
   GivesourceAuroraSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -88,11 +110,10 @@ Resources:
           DATABASE_SECRET_ARN: !Ref DBSecret
           AURORA_DB_HOST: !GetAtt RDSCluster.Endpoint.Address
           SECRETS_MANAGER_SECRET_ID: !Sub "${AWS::StackName}-AuroraUserSecret"
-      FunctionName: !Sub |-
-        ${StackName}-CreateSchema
+      FunctionName: !Sub ${StackName}-CreateSchema
       Handler: "index.handle"
       MemorySize: 128
-      Role: !Ref LambdaRoleArn
+      Role: !GetAtt CreateSchemaLambdaRole.Arn
       Runtime: "nodejs12.x"
       Timeout: 120 #seconds
       VpcConfig:

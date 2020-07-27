@@ -106,7 +106,6 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
-        LambdaRoleArn: !GetAtt RDSSchemaLambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
@@ -304,17 +303,6 @@ Resources:
               - ssm:PutParameter
             Resource: '*'
 
-  SecretsManagerManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-            Resource: '*'
-
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -347,27 +335,6 @@ Resources:
       Tags:
         - Key: Name
           Value: givesource-lambda
-
-  RDSSchemaLambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Action: sts:AssumeRole
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-                - edgelambda.amazonaws.com
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-        - !Ref ApiGatewayManagedPolicy
-        - !Ref CloudFormationManagedPolicy
-        - !Ref CloudWatchLogsManagedPolicy
-        - !Ref LambdaManagedPolicy
-        - !Ref S3ManagedPolicy
-        - !Ref SSMManagedPolicy
-        - !Ref SecretsManagerManagedPolicy
 
   CustomStack:
     Type: AWS::CloudFormation::Stack
