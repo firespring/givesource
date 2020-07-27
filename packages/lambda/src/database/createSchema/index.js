@@ -312,7 +312,7 @@ exports.handle = function (event, context, callback) {
 		}
 	}).catch(function (err) {
 		console.log(err);
-		response.send(event, context, response.FAILED);
+		response.send(event, context, response.FAILED, {});
 		callback(err);
 	});
 };
