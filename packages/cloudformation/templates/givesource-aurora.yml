@@ -24,7 +24,7 @@ Resources:
           - Effect: Allow
             Action:
               - secretsmanager:GetSecretValue
-            Resource: '*'
+            Resource: !Ref DBSecret
   CreateSchemaLambdaRole:
     Type: AWS::IAM::Role
     Properties:
