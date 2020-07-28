@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const mysql = require("mysql");
 const response = require('cfn-response');
 const Request = require('./../../aws/request');
 const SecretsManager = require('./../../aws/secretsManager');
@@ -33,10 +32,13 @@ exports.handle = function (event, context, callback) {
 
 	request.validate().then(function (res) {
 		console.log('right above sequelize'); /*DM: Debug */
-		const sequelize = new Sequelize('givesource', process.env.DATABASE_USER, JSON.parse(res.SecretString).password, {
+		const sequelize = new Sequelize({
 			host: process.env.AURORA_DB_HOST,
-			dialect: "mysql",
-			dialectModule: mysql2,
+			username: process.env.DATABASE_USER,
+			password: JSON.parse(res.SecretString).password,
+			database: 'givesource',
+			dialect: 'mysql',
+			dialectModule: mysql2
 		});
 		console.log('hit here'); /*DM: Debug */
 		return sequelize.authenticate();
