@@ -18,19 +18,31 @@ const mysql = require("mysql");
 const response = require('cfn-response');
 const Request = require('./../../aws/request');
 const SecretsManager = require('./../../aws/secretsManager');
+const Sequelize = require('sequelize');
+const mysql2 = require('mysql2');
 
 exports.handle = function (event, context, callback) {
 	console.log(JSON.stringify(event));
 	const secretsManager = new SecretsManager();
 	const request = new Request(event, context);
 
-	if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-		response.send(event, context, response.SUCCESS, {});
-		return;
-	}
+	// if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
+	// 	response.send(event, context, response.SUCCESS, {});
+	// 	return;
+	// }
 
-	request.validate().then(function () {
-		return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.SECRETS_MANAGER_SECRET_ID)
+	request.validate().then(function (res) {
+		console.log('right above sequelize'); /*DM: Debug */
+		const sequelize = new Sequelize('givesource', process.env.DATABASE_USER, JSON.parse(res.SecretString).password, {
+			host: process.env.AURORA_DB_HOST,
+			dialect: "mysql",
+			dialectModule: mysql2,
+		});
+		console.log('hit here'); /*DM: Debug */
+		return sequelize.authenticate();
+	}).then(function (sequelize) {
+		console.log(sequelize); /*DM: Debug */
+		return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.SECRETS_MANAGER_SECRET_ID);
 	}).then(function (res) {
 		if ('SecretString' in res) {
 			let connection = mysql.createConnection({
