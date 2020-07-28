@@ -133,6 +133,12 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-StackName
 
+  DBSecretArn:
+    Description: DBSecret Arn
+    Value: !Ref DBSecret
+    Export:
+      Name: !Sub ${AWS::StackName}-DBSecretArn
+
   DatabaseClusterArn:
     Description: Aurora Cluster ARN
     Value: !Ref RDSCluster
