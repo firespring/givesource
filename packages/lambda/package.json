@@ -60,6 +60,7 @@
 		"randomstring": "^1.1.5",
 		"raw-loader": "^0.5.1",
 		"request": "^2.88.0",
+		"sequelize-cli": "^6.2.0",
 		"sinon": "^2.3.6",
 		"slug": "^0.9.3",
 		"uuid-validate": "0.0.2",

@@ -25,22 +25,27 @@ exports.handle = function (event, context, callback) {
 	const secretsManager = new SecretsManager();
 	const request = new Request(event, context);
 
-	// if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-	// 	response.send(event, context, response.SUCCESS, {});
-	// 	return;
-	// }
+	if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
+		response.send(event, context, response.SUCCESS, {});
+		return;
+	}
 
 	request.validate().then(function () {
 		return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.SECRETS_MANAGER_SECRET_ID);
 	}).then(function (res) {
-		console.log('right above sequelize'); /*DM: Debug */
-		const sequelize = new Sequelize('givesource', process.env.DATABASE_USER, JSON.parse(res.SecretString).password, {
+		const sequelize = new Sequelize('', process.env.DATABASE_USER, JSON.parse(res.SecretString).password, {
 			host: process.env.AURORA_DB_HOST,
 			dialect: 'mysql',
 			dialectModule: mysql2,
-			port: 3306
+			port: 3306,
+			dialectOptions: {
+				ssl: {
+					rejectUnauthorized: false
+				}
+			}
 		});
-		return sequelize.authenticate();
+
+		return sequelize.query("CREATE DATABASE IF NOT EXIST 'givesource' DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;");
 	}).then(function (res) {
 		console.log(res); /*DM: Debug */
 		response.send(event, context, response.SUCCESS, {});
