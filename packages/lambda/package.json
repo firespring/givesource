@@ -23,8 +23,9 @@
 		"dotenv": "^4.0.0",
 		"json-loader": "^0.5.7",
 		"mime": "^2.2.2",
-		"pg-hstore": "^2.3.3",
 		"mysql2": "^2.1.0",
+		"pg": "^8.3.0",
+		"pg-hstore": "^2.3.3",
 		"rimraf": "^2.6.1",
 		"sequelize": "^6.3.3",
 		"validate.js": "0.10.0"
