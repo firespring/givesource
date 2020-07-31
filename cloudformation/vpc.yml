@@ -129,17 +129,176 @@ Resources:
       - Key: SubnetType
         Value: Public
       - Key: Name
-        Value: secondary-givesource
+        Value: secondary-public-givesource
 
-  billingDashboard:
+  primaryPrivateEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  primaryPrivateNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt primaryPrivateEip.AllocationId
+      SubnetId: !Ref primaryPublicSubnet
+
+  primaryPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: primary-private-givesource
+
+  primaryPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref primaryPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref primaryPrivateNatGateway
+
+  primaryPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Sub
+      - ${IpRange}.10.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+      AvailabilityZone: !Select [0, !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: SubnetType
+        Value: Private
+      - Key: Name
+        Value: primary-private-givesource
+
+  primaryPrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref primaryPrivateSubnet
+      RouteTableId: !Ref primaryPrivateRouteTable
+
+  secondaryPrivateEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  secondaryPrivateNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt secondaryPrivateEip.AllocationId
+      SubnetId: !Ref secondaryPublicSubnet
+
+  secondaryPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: secondary-private-givesource
+
+  secondaryPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref secondaryPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref secondaryPrivateNatGateway
+
+  secondaryPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Sub
+      - ${IpRange}.12.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+      AvailabilityZone: !Select [1, !GetAZs {Ref: 'AWS::Region'}]
+      Tags:
+      - Key: SubnetType
+        Value: Private
+      - Key: Name
+        Value: secondary-private-givesource
+
+  secondaryPrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref secondaryPrivateSubnet
+      RouteTableId: !Ref secondaryPrivateRouteTable
+
+  vpcDashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
-      DashboardName: !Sub givesource-billing-${AWS::Region}
+      DashboardName: !Sub givesource-vpc-${AWS::Region}
       DashboardBody: !Sub
       - >
         {
           "start": "-P6M",
           "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [
+                    "AWS/NATGateway",
+                    "BytesInFromSource",
+                    "NatGatewayId",
+                    "${primaryPrivateNatGateway}",
+                    {
+                      "period": 3600
+                    }
+                  ],
+                  [
+                    ".",
+                    "BytesInFromSource",
+                    ".",
+                    "${secondaryPrivateNatGateway}",
+                    {
+                      "period": 3600
+                    }
+                  ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "${AWS::Region}",
+                "period": 300,
+                "title": "NAT Gateway Bytes received from clients in your VPC"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 6,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [
+                    "AWS/NATGateway",
+                    "BytesInFromDestination",
+                    "NatGatewayId",
+                    "${primaryPrivateNatGateway}",
+                    {
+                      "period": 3600
+                    }
+                  ],
+                  [
+                    ".",
+                    "BytesInFromDestination",
+                    ".",
+                    "${secondaryPrivateNatGateway}",
+                    {
+                      "period": 3600
+                    }
+                  ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "${AWS::Region}",
+                "title": "NAT Gateway Bytes received from the destination"
+              }
+            },
             {
               "type": "metric",
               "x": 0,
@@ -210,4 +369,16 @@ Outputs:
     Value: !Ref secondaryPublicSubnet
     Export:
       Name: givesource-secondary-public-subnet
+
+  primaryPrivateSubnet:
+    Description: Primary Private Subnet for Givesource
+    Value: !Ref primaryPrivateSubnet
+    Export:
+      Name: givsource-primary-private-subnet
+
+  secondaryPrivateSubnet:
+    Description: Secondary Private Subnet for Givesource
+    Value: !Ref secondaryPrivateSubnet
+    Export:
+      Name: givesource-secondary-private-subnet
 

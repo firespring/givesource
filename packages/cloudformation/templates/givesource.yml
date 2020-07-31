@@ -106,6 +106,7 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
 
@@ -323,6 +324,17 @@ Resources:
         - !Ref S3ManagedPolicy
         - !Ref SESManagedPolicy
         - !Ref SSMManagedPolicy
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Ingress/egress rules for lambda
+      VpcId: !ImportValue givesource-vpc
+      SecurityGroupIngress: []
+      SecurityGroupEgress: []
+      Tags:
+        - Key: Name
+          Value: givesource-lambda
 
   CustomStack:
     Type: AWS::CloudFormation::Stack

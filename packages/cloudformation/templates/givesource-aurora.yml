@@ -10,21 +10,60 @@ Parameters:
     MinLength: '1'
     Type: String
     Default: adminUser
-  DBSubnetList:
-    Description: "List of subnets for the Aurora RDS cluster"
-    Type: List<AWS::EC2::Subnet::Id>
-    ConstraintDescription: "must be a list of at least two existing subnets associated with at least two different availability zones."
-    Default: "subnet-ea69d68e,subnet-e01c0fcc"
   StackName:
     Type: String
+  LambdaSecurityGroupId:
+    Type: String
 Resources:
+  SecretsManagerManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: !Ref DBSecret
+  CreateSchemaLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - !Ref SecretsManagerManagedPolicy
+  GivesourceAuroraSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Ingress/egress rules for aurora
+      VpcId: !ImportValue givesource-vpc
+      SecurityGroupIngress: []
+      SecurityGroupEgress: []
+      Tags:
+        - Key: Name
+          Value: givesource-aurora
+  LambdaAuroraIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: allows access from lambda into aurora
+      GroupId: !GetAtt GivesourceAuroraSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !Ref LambdaSecurityGroupId
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: CloudFormation managed DB subnet group.
       SubnetIds:
-        - !Select [0, !Ref DBSubnetList ]
-        - !Select [1, !Ref DBSubnetList ]
+        - !ImportValue givsource-primary-private-subnet
+        - !ImportValue givesource-secondary-private-subnet
   DBSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
@@ -42,22 +81,63 @@ Resources:
       MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
 <%={{ }}=%>
-      Engine: aurora
+      Engine: aurora-mysql
       EngineMode: serverless
-      EngineVersion: 5.6.10a
+      EngineVersion: 5.7.mysql_aurora.2.07.1
+      EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 16
         MinCapacity: 1
         SecondsUntilAutoPause: 900 # 15 min
-      DBSubnetGroupName:
-        Ref: DBSubnetGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VpcSecurityGroupIds:
+        - !GetAtt GivesourceAuroraSecurityGroup.GroupId
+    DependsOn: DBSecret
+  CreateSchemaLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/CreateSchema.zip
+      Description: Database Init
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref AWS::StackName
+          DATABASE_USER: !Ref DBMasterUserName
+          DATABASE_SECRET_ARN: !Ref DBSecret
+          AURORA_DB_HOST: !GetAtt RDSCluster.Endpoint.Address
+          SECRETS_MANAGER_SECRET_ID: !Sub "${AWS::StackName}-AuroraUserSecret"
+      FunctionName: !Sub ${StackName}-CreateSchema
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !GetAtt CreateSchemaLambdaRole.Arn
+      Runtime: "nodejs12.x"
+      Timeout: 120 #seconds
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+    DependsOn: RDSCluster
+  CreateSchemaLambdaCustomResource:
+    Type: "Custom::CreateSchemaLambdaInvoker"
+    Properties:
+      ServiceToken: !GetAtt CreateSchemaLambdaFunction.Arn
 Outputs:
   StackName:
     Description: Aurora Stack Name
     Value: !Ref AWS::StackName
     Export:
       Name: !Sub ${AWS::StackName}-StackName
+
+  DBSecretArn:
+    Description: DBSecret Arn
+    Value: !Ref DBSecret
+    Export:
+      Name: !Sub ${AWS::StackName}-DBSecretArn
 
   DatabaseClusterArn:
     Description: Aurora Cluster ARN
