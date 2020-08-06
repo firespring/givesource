@@ -2,43 +2,47 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS Aurora resources for Givesource(R)
 Parameters:
-  DBMasterUserName:
+  DatabaseAdminUser:
     AllowedPattern: "[a-zA-Z0-9_]+"
     ConstraintDescription: must be between 1 to 16 alphanumeric characters.
     Description: The database admin account user name, between 1 to 16 alphanumeric characters.
     MaxLength: '16'
     MinLength: '1'
     Type: String
-    Default: adminUser
+    Default: admin
+  DatabaseMaintenanceUser:
+    AllowedPattern: "[a-zA-Z0-9_]+"
+    ConstraintDescription: must be between 1 to 16 alphanumeric characters.
+    Description: The database maintenance account user name, between 1 to 16 alphanumeric characters.
+    MaxLength: '16'
+    MinLength: '1'
+    Type: String
+    Default: maintenance
+  DatabaseReadwriteUser:
+    AllowedPattern: "[a-zA-Z0-9_]+"
+    ConstraintDescription: must be between 1 to 16 alphanumeric characters.
+    Description: The database readwrite account user name, between 1 to 16 alphanumeric characters.
+    MaxLength: '16'
+    MinLength: '1'
+    Type: String
+    Default: readwrite
+  DatabaseReadonlyUser:
+    AllowedPattern: "[a-zA-Z0-9_]+"
+    ConstraintDescription: must be between 1 to 16 alphanumeric characters.
+    Description: The database readonly account user name, between 1 to 16 alphanumeric characters.
+    MaxLength: '16'
+    MinLength: '1'
+    Type: String
+    Default: readonly
+  DatabaseName:
+    Type: String
+    Default: givesource
   StackName:
     Type: String
   LambdaSecurityGroupId:
     Type: String
 Resources:
-  SecretsManagerManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-            Resource: !Ref DBSecret
-  CreateSchemaLambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Action: sts:AssumeRole
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-        - !Ref SecretsManagerManagedPolicy
-  GivesourceAuroraSecurityGroup:
+  DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Ingress/egress rules for aurora
@@ -48,15 +52,6 @@ Resources:
       Tags:
         - Key: Name
           Value: givesource-aurora
-  LambdaAuroraIngress:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      Description: allows access from lambda into aurora
-      GroupId: !GetAtt GivesourceAuroraSecurityGroup.GroupId
-      IpProtocol: tcp
-      FromPort: 3306
-      ToPort: 3306
-      SourceSecurityGroupId: !Ref LambdaSecurityGroupId
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -64,22 +59,76 @@ Resources:
       SubnetIds:
         - !ImportValue givsource-primary-private-subnet
         - !ImportValue givesource-secondary-private-subnet
-  DBSecret:
+  AdminUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "${AWS::StackName}-AuroraUserSecret"
-      Description: RDS database auto-generated user password
+      Name: !Sub ${AWS::StackName}-AdminUserSecret
+      Description: Givesource database auto-generated admin user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DBMasterUserName}"}'
-        GenerateStringKey: "password"
-        PasswordLength: 30
+        SecretStringTemplate: !Sub '{"username": "${DatabaseAdminUser}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
         ExcludeCharacters: '"@/\'
+  AdminUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref AdminUserSecret
+      TargetId: !Ref RDSCluster
+      TargetType: AWS::RDS::DBCluster
+  MaintenanceUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${AWS::StackName}-MaintenanceUserSecret
+      Description: Givesource database auto-generated maintenance user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DatabaseMaintenanceUser}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+  MaintenanceUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref MaintenanceUserSecret
+      TargetId: !Ref RDSCluster
+      TargetType: AWS::RDS::DBCluster
+  ReadwriteUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${AWS::StackName}-ReadwriteUserSecret
+      Description: Givesource database auto-generated readwrite user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DatabaseReadwriteUser}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+  ReadwriteUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref ReadwriteUserSecret
+      TargetId: !Ref RDSCluster
+      TargetType: AWS::RDS::DBCluster
+  ReadonlyUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${AWS::StackName}-ReadonlyUserSecret
+      Description: Givesource database auto-generated readonly user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DatabaseReadonlyUser}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+  ReadonlyUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref ReadonlyUserSecret
+      TargetId: !Ref RDSCluster
+      TargetType: AWS::RDS::DBCluster
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
 {{=<% %>=}}
-      MasterUsername: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
+      MasterUsername: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:password}}'
 <%={{ }}=%>
       Engine: aurora-mysql
       EngineMode: serverless
@@ -89,32 +138,69 @@ Resources:
         AutoPause: true
         MaxCapacity: 16
         MinCapacity: 1
-        SecondsUntilAutoPause: 900 # 15 min
+        SecondsUntilAutoPause: 900
       DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
-        - !GetAtt GivesourceAuroraSecurityGroup.GroupId
-    DependsOn: DBSecret
-  CreateSchemaLambdaFunction:
+        - !GetAtt DBSecurityGroup.GroupId
+    DependsOn: AdminUserSecret
+  LambdaAuroraIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: allows access from lambda into aurora
+      GroupId: !GetAtt DBSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !Ref LambdaSecurityGroupId
+  BootstrapDatabaseLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Path: /
+      Policies:
+      - PolicyName: secrets-manager
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Ref AdminUserSecret
+              - !Ref MaintenanceUserSecret
+              - !Ref ReadwriteUserSecret
+              - !Ref ReadonlyUserSecret
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+  BootstrapDatabaseLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
-        S3Key: fn/{{version}}/CreateSchema.zip
+        S3Key: fn/{{version}}/BootstrapDatabase.zip
       Description: Database Init
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref AWS::StackName
-          DATABASE_USER: !Ref DBMasterUserName
-          DATABASE_SECRET_ARN: !Ref DBSecret
-          AURORA_DB_HOST: !GetAtt RDSCluster.Endpoint.Address
-          SECRETS_MANAGER_SECRET_ID: !Sub "${AWS::StackName}-AuroraUserSecret"
-      FunctionName: !Sub ${StackName}-CreateSchema
-      Handler: "index.handle"
-      MemorySize: 128
-      Role: !GetAtt CreateSchemaLambdaRole.Arn
-      Runtime: "nodejs12.x"
-      Timeout: 120 #seconds
+          DATABASE_HOST: !GetAtt RDSCluster.Endpoint.Address
+          ADMIN_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-AdminUserSecret
+          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-MaintenanceUserSecret
+          READWRITE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-ReadwriteUserSecret
+          READONLY_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-ReadonlyUserSecret
+          DATABASE_NAME: !Ref DatabaseName
+      FunctionName: !Sub ${StackName}-BootstrapDatabase
+      Handler: index.handle
+      MemorySize: 512
+      Role: !GetAtt BootstrapDatabaseLambdaRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 60
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
@@ -122,10 +208,77 @@ Resources:
           - !ImportValue givsource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
     DependsOn: RDSCluster
-  CreateSchemaLambdaCustomResource:
-    Type: "Custom::CreateSchemaLambdaInvoker"
+  BootstrapDatabaseLambdaLambdaInvoker:
+    Type: Custom::BootstrapDatabaseLambdaInvoker
     Properties:
-      ServiceToken: !GetAtt CreateSchemaLambdaFunction.Arn
+      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
+  MigrateDatabaseLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Path: /
+      Policies:
+      - PolicyName: secrets-manager
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Ref MaintenanceUserSecret
+          - Effect: Allow
+            Action:
+            - s3:ListBucket
+            Resource:
+            - arn:aws:s3:::{{awsReleaseBucket}}
+          - Effect: Allow
+            Action:
+            - s3:GetObject*
+            Resource:
+            - arn:aws:s3:::{{awsReleaseBucket}}/*
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+  MigrateDatabaseLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/MigrateDatabase.zip
+      Description: Database Init
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref AWS::StackName
+          DATABASE_HOST: !GetAtt RDSCluster.Endpoint.Address
+          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-MaintenanceUserSecret
+          DATABASE_NAME: !Ref DatabaseName
+          MIGRATIONS_BUCKET: {{awsReleaseBucket}}
+          MIGRATIONS_LOCATION: migrations/{{version}}
+      FunctionName: !Sub ${StackName}-MigrateDatabase
+      Handler: index.handle
+      MemorySize: 512
+      Role: !GetAtt MigrateDatabaseLambdaRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 180
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+    DependsOn: RDSCluster
+  MigrateDatabaseLambdaLambdaInvoker:
+    Type: Custom::MigrateDatabaseLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
+    DependsOn: BootstrapDatabaseLambdaLambdaInvoker
 Outputs:
   StackName:
     Description: Aurora Stack Name
@@ -133,11 +286,17 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-StackName
 
-  DBSecretArn:
-    Description: DBSecret Arn
-    Value: !Ref DBSecret
+  ReadwriteUserSecretId:
+    Description: Secret Id for the readwrite user
+    Value: !Sub ${AWS::StackName}-ReadwriteUserSecret
     Export:
-      Name: !Sub ${AWS::StackName}-DBSecretArn
+      Name: !Sub ${AWS::StackName}-ReadwriteUserSecretId
+
+  ReadonlyUserSecretId:
+    Description: Secret Id for the readonly user
+    Value: !Sub ${AWS::StackName}-ReadonlyUserSecret
+    Export:
+      Name: !Sub ${AWS::StackName}-UserSecretId
 
   DatabaseClusterArn:
     Description: Aurora Cluster ARN
@@ -145,26 +304,8 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-DatabaseClusterArn
 
-  DatabaseSecretArn:
-    Description: Aurora Secret ARN
-    Value: !Ref DBSecret
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseSecretArn
-
-  DatabaseClusterID:
-    Description: Aurora Cluster ID
-    Value: !Ref RDSCluster
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseClusterID
-
-  AuroraDbURL:
-    Description: Aurora Database URL
+  DatabaseEndpoint:
+    Description: Aurora Database Endpoint
     Value: !GetAtt RDSCluster.Endpoint.Address
     Export:
-      Name: !Sub ${AWS::StackName}-DatabaseURL
-
-  DatabaseMasterUserName:
-    Description: Aurora Database User
-    Value: !Ref DBMasterUserName
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseMasterUserName
+      Name: !Sub ${AWS::StackName}-DatabaseEndpoint

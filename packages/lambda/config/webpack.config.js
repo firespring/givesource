@@ -157,7 +157,8 @@ module.exports = {
 		SendRegistrationPendingEmail: './src/custom/sendRegistrationPendingEmail/index.js',
 
 		// Database Lambda Functions
-		CreateSchema: './src/database/createSchema/index.js',
+		BootstrapDatabase: './src/database/bootstrapDatabase/index.js',
+		MigrateDatabase: './src/database/migrateDatabase/index.js',
 	},
 	output: {
 		filename: '[name]/index.js',
