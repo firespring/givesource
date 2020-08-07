@@ -305,7 +305,7 @@ module.exports = {
 				},
 				updatedAt: {
 					type: Sequelize.DATE,
-					allowNull: false
+					allowNull: false,
 					defaultValue: '0000-00-00 00:00:00'
 				}
 			})
