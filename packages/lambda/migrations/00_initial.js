@@ -2,51 +2,52 @@
 
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
-		queryInterface.createTable('Contents', {
-			id: {
-				type: Sequelize.INTEGER(11),
-				allowNull: false,
-				autoIncrement: true,
-				primaryKey: true
-			},
-			parentId: {
-				type: Sequelize.INTEGER(11),
-				allowNull: false,
-				defaultValue: 0,
-			},
-			sortOrder: {
-				type: Sequelize.INTEGER(11),
-				allowNull: false,
-				defaultValue: 0,
-			},
-			type: {
-				type: Sequelize.STRING(50),
-				allowNull: false,
-			},
-			value: {
-				type: Sequelize.STRING(50),
-				allowNull: false,
-			},
-			name: {
-				type: Sequelize.STRING(50),
-				allowNull: false,
-			},
-			isDeleted: {
-				type: Sequelize.BOOLEAN,
-				allowNull: false,
-				defaultValue: false,
-			},
-			createdAt: {
-				type: Sequelize.DATE,
-				allowNull: false,
-				defaultValue: '0000-00-00 00:00:00'
-			},
-			updatedAt: {
-				type: Sequelize.DATE,
-				allowNull: false,
-				defaultValue: '0000-00-00 00:00:00'
-			}
-		}).then(
+		await Promise.all([
+			queryInterface.createTable('Contents', {
+				id: {
+					type: Sequelize.INTEGER(11),
+					allowNull: false,
+					autoIncrement: true,
+					primaryKey: true
+				},
+				parentId: {
+					type: Sequelize.INTEGER(11),
+					allowNull: false,
+					defaultValue: 0,
+				},
+				sortOrder: {
+					type: Sequelize.INTEGER(11),
+					allowNull: false,
+					defaultValue: 0,
+				},
+				type: {
+					type: Sequelize.STRING(50),
+					allowNull: false,
+				},
+				value: {
+					type: Sequelize.STRING(50),
+					allowNull: false,
+				},
+				name: {
+					type: Sequelize.STRING(50),
+					allowNull: false,
+				},
+				isDeleted: {
+					type: Sequelize.BOOLEAN,
+					allowNull: false,
+					defaultValue: false,
+				},
+				createdAt: {
+					type: Sequelize.DATE,
+					allowNull: false,
+					defaultValue: '0000-00-00 00:00:00'
+				},
+				updatedAt: {
+					type: Sequelize.DATE,
+					allowNull: false,
+					defaultValue: '0000-00-00 00:00:00'
+				}
+			}),
 			queryInterface.createTable('Donations', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -76,8 +77,7 @@ module.exports = {
 				//KEY `ix_donations_nonprofit_id` (`nonprofitId`), ' +
 				//KEY `ix_donations_payment_transaction_id` (`paymentTransactionId`), ' +
 				//KEY `ix_donations_donor_id` (`donorId`) ' +
-			})
-		).then(
+			}),
 			queryInterface.createTable('Donors', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -101,8 +101,7 @@ module.exports = {
 				//PRIMARY KEY (`id`), ' +
 				//KEY `ix_donors_email` (`email`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Files', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -117,8 +116,7 @@ module.exports = {
 				//filename` VARCHAR(50) NOT NULL, ' +
 				//PRIMARY KEY (`id`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Messages', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -136,8 +134,7 @@ module.exports = {
 				//type` VARCHAR(50) NOT NULL, ' +
 				//PRIMARY KEY (`id`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Metrics', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -152,8 +149,7 @@ module.exports = {
 				//value` VARCHAR(50) NOT NULL, ' +
 				//PRIMARY KEY (`id`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('NonprofitDonationTiers', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -170,8 +166,7 @@ module.exports = {
 				//PRIMARY KEY (`id`), ' +
 				//KEY `ix_nonprofit_donation_tiers_nonprofit_id` (`nonprofitId`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Nonprofits', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -210,8 +205,7 @@ module.exports = {
 				//KEY `ix_nonprofits_status_legal_name_search_is_deleted` (`status`, `legalNameSearch`, `isDeleted`), ' +
 				//KEY `ix_nonprofits_slug` (`slug`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('NonprofitSlides', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -234,8 +228,7 @@ module.exports = {
 				//PRIMARY KEY (`id`), ' +
 				//KEY `ix_nonprofit_slides_nonprofit_id` (`nonprofitId`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('PaymentTransactions', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -258,8 +251,7 @@ module.exports = {
 				//transactionStatus` VARCHAR(50) NOT NULL, ' +
 				//PRIMARY KEY (`id`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Reports', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -276,8 +268,7 @@ module.exports = {
 				//nonprofitId` INT(11) NOT NULL DEFAULT 0, ' +
 				//PRIMARY KEY (`id`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('Settings', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -308,8 +299,7 @@ module.exports = {
 					allowNull: false,
 					defaultValue: '0000-00-00 00:00:00'
 				}
-			})
-		).then(
+			}),
 			queryInterface.createTable('Sponsors', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -329,8 +319,7 @@ module.exports = {
 				//PRIMARY KEY (`id`), ' +
 				//KEY `ix_sponsors_sponsor_tier_id` (`sponsorTierId`) ' +
 				//
-			})
-		).then(
+			}),
 			queryInterface.createTable('SponsorTiers', {
 				id: {
 					type: Sequelize.INTEGER(11),
@@ -348,35 +337,24 @@ module.exports = {
 				//KEY `ix_sponsor_tiers_name` (`name`) ' +
 				//
 			})
-		);
+		]);
 	},
 	down: async (queryInterface, Sequelize) => {
-		await queryInterface.dropTable('Contents').then(
-			queryInterface.dropTable('Donations')
-		).then(
-			queryInterface.dropTable('Donors')
-		).then(
-			queryInterface.dropTable('Files')
-		).then(
-			queryInterface.dropTable('Messages')
-		).then(
-			queryInterface.dropTable('Metrics')
-		).then(
-			queryInterface.dropTable('NonprofitDonationTiers')
-		).then(
-			queryInterface.dropTable('Nonprofits')
-		).then(
-			queryInterface.dropTable('NonprofitSlides')
-		).then(
-			queryInterface.dropTable('PaymentTransactions')
-		).then(
-			queryInterface.dropTable('Reports')
-		).then(
-			queryInterface.dropTable('Settings')
-		).then(
-			queryInterface.dropTable('Sponsors')
-		).then(
+		await Promise.all([
+			queryInterface.dropTable('Contents'),
+			queryInterface.dropTable('Donations'),
+			queryInterface.dropTable('Donors'),
+			queryInterface.dropTable('Files'),
+			queryInterface.dropTable('Messages'),
+			queryInterface.dropTable('Metrics'),
+			queryInterface.dropTable('NonprofitDonationTiers'),
+			queryInterface.dropTable('Nonprofits'),
+			queryInterface.dropTable('NonprofitSlides'),
+			queryInterface.dropTable('PaymentTransactions'),
+			queryInterface.dropTable('Reports'),
+			queryInterface.dropTable('Settings'),
+			queryInterface.dropTable('Sponsors'),
 			queryInterface.dropTable('SponsorTiers')
-		);
+		]);
 	}
 };
