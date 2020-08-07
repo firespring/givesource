@@ -17,7 +17,7 @@
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const Setting = require('./../models/setting');
+const Setting = require('./../sql-models/setting');
 
 /**
  * SettingsRepository constructor

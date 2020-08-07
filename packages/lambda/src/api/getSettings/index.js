@@ -24,14 +24,18 @@ exports.handle = function (event, context, callback) {
 	const keys = request.queryParam('keys', '').split(',');
 
 	request.validate().then(function () {
+		console.log("KEYS ARE ");
+		console.log(keys);
 		if (keys.length) {
 			return repository.batchGet(keys);
 		} else {
 			return repository.getAll();
 		}
 	}).then(function (settings) {
+		console.log("SETTINGS ARE ");
+		console.log(settings);
 		const results = settings.map(function (setting) {
-			return setting.all();
+			return setting.findAll();
 		});
 		callback(null, results);
 	}).catch(function (err) {

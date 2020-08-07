@@ -17,7 +17,7 @@
 const _ = require('lodash');
 const logger = require('./../../helpers/log');
 const response = require('cfn-response');
-const Setting = require('./../../models/setting');
+const Setting = require('./../../sql-models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const S3 = require('./../../aws/s3');
 
