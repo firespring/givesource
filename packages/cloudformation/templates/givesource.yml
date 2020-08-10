@@ -765,6 +765,12 @@ Outputs:
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
 
+  DatabaseReadwriteSecret:
+    Value: !GetAtt AuroraDbStack.Outputs.ReadwriteUserSecret
+
+  DatabaseReadonlySecret:
+    Value: !GetAtt AuroraDbStack.Outputs.ReadonlyUserSecret
+
   PublicPagesCloudFrontDistribution:
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
 

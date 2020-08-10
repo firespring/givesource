@@ -280,32 +280,11 @@ Resources:
       ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
     DependsOn: BootstrapDatabaseLambdaLambdaInvoker
 Outputs:
-  StackName:
-    Description: Aurora Stack Name
-    Value: !Ref AWS::StackName
-    Export:
-      Name: !Sub ${AWS::StackName}-StackName
-
-  ReadwriteUserSecretId:
-    Description: Secret Id for the readwrite user
+  ReadwriteUserSecret:
     Value: !Sub ${AWS::StackName}-ReadwriteUserSecret
-    Export:
-      Name: !Sub ${AWS::StackName}-ReadwriteUserSecretId
-
-  ReadonlyUserSecretId:
-    Description: Secret Id for the readonly user
+  ReadonlyUserSecret:
     Value: !Sub ${AWS::StackName}-ReadonlyUserSecret
-    Export:
-      Name: !Sub ${AWS::StackName}-UserSecretId
-
   DatabaseClusterArn:
-    Description: Aurora Cluster ARN
     Value: !Ref RDSCluster
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseClusterArn
-
   DatabaseEndpoint:
-    Description: Aurora Database Endpoint
     Value: !GetAtt RDSCluster.Endpoint.Address
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseEndpoint
