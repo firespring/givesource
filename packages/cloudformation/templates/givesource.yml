@@ -304,6 +304,14 @@ Resources:
               - ssm:PutParameter
             Resource: '*'
 
+            # TODO: Create a different policy for this
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: '*'
+#            Resource:
+#              - !Ref ReadonlyUserSecret
+
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -316,6 +324,7 @@ Resources:
                 - lambda.amazonaws.com
                 - edgelambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
