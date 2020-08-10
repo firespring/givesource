@@ -9,14 +9,4 @@ const Setting = sequelize.define('Setting', {
   value: Sequelize.DataTypes.STRING
 });
 
-//class Setting extends Sequelize.Model {}
-//
-//Setting.init({
-//  key: Sequelize.DataTypes.STRING,
-//  value: Sequelize.DataTypes.STRING
-//}, {
-//  sequelize,
-//  modelName: 'Setting'
-//});
-
 module.exports = Setting;
