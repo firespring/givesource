@@ -65,7 +65,7 @@ Resources:
       Name: !Sub ${AWS::StackName}-AdminUserSecret
       Description: Givesource database auto-generated admin user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DatabaseAdminUser}"}'
+        SecretStringTemplate: !Sub '{"username": "${DatabaseAdminUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
@@ -81,7 +81,7 @@ Resources:
       Name: !Sub ${AWS::StackName}-MaintenanceUserSecret
       Description: Givesource database auto-generated maintenance user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DatabaseMaintenanceUser}"}'
+        SecretStringTemplate: !Sub '{"username": "${DatabaseMaintenanceUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludePunctuation: true
@@ -97,7 +97,7 @@ Resources:
       Name: !Sub ${AWS::StackName}-ReadwriteUserSecret
       Description: Givesource database auto-generated readwrite user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DatabaseReadwriteUser}"}'
+        SecretStringTemplate: !Sub '{"username": "${DatabaseReadwriteUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludePunctuation: true
@@ -113,7 +113,7 @@ Resources:
       Name: !Sub ${AWS::StackName}-ReadonlyUserSecret
       Description: Givesource database auto-generated readonly user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DatabaseReadonlyUser}"}'
+        SecretStringTemplate: !Sub '{"username": "${DatabaseReadonlyUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludePunctuation: true
