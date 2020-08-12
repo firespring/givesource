@@ -15,8 +15,8 @@
  */
 
 const assert = require('assert');
-const Model = require('../../src/models/model');
-const NonprofitSlide = require('../../src/models/nonprofitSlide');
+const Model = require('../../src/dynamo-models/model');
+const NonprofitSlide = require('../../src/dynamo-models/nonprofitSlide');
 const NonprofitSlideHelper = require('../../src/helpers/nonprofitSlide');
 const TestHelper = require('../helpers/test');
 

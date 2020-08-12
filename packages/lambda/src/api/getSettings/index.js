@@ -17,6 +17,7 @@
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
+const Setting = require('./../../models/index').Setting;
 
 exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
@@ -26,18 +27,12 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		console.log("KEYS ARE ");
 		console.log(keys);
-		if (keys.length) {
-			return repository.batchGet(keys);
-		} else {
-			return repository.getAll();
-		}
+		console.log(Setting); /*DM: Debug */
+		return Setting.findAll();
 	}).then(function (settings) {
 		console.log("SETTINGS ARE ");
 		console.log(settings);
-		const results = settings.map(function (setting) {
-			return setting.findAll();
-		});
-		callback(null, results);
+		callback(null, settings);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -15,7 +15,7 @@
  */
 
 const NonprofitRepository = require('./nonprofits');
-const NonprofitSlide = require('../models/nonprofitSlide');
+const NonprofitSlide = require('../dynamo-models/nonprofitSlide');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');

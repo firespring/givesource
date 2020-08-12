@@ -15,8 +15,8 @@
  */
 
 const assert = require('assert');
-const Model = require('../../src/models/model');
-const Report = require('../../src/models/report');
+const Model = require('../../src/dynamo-models/model');
+const Report = require('../../src/dynamo-models/report');
 const ReportHelper = require('../../src/helpers/report');
 const TestHelper = require('../helpers/test');
 

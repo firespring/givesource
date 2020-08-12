@@ -17,7 +17,7 @@
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const Setting = require('./../sql-models/setting');
+const Setting = require('../models/index').Setting;
 
 /**
  * SettingsRepository constructor
@@ -46,17 +46,8 @@ SettingsRepository.prototype = new Repository();
  * @return {Promise}
  */
 SettingsRepository.prototype.get = function (key) {
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		repository.getByKey('key', key).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new Setting(data.Item));
-			}
-			reject(new ResourceNotFoundException('The specified setting does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
+	console.log('key is: ', key); /*DM: Debug */
+	return Setting.findOne({ where: {key: key}});
 };
 
 /**
@@ -65,20 +56,8 @@ SettingsRepository.prototype.get = function (key) {
  * @return {Promise}
  */
 SettingsRepository.prototype.getAll = function () {
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Setting(item));
-				});
-			}
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
+	console.log(Setting); /*DM: Debug */
+	return Setting.findAll();
 };
 
 /**

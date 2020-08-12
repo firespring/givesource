@@ -15,7 +15,7 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
+const Donation = require('./../../dynamo-models/donation');
 const EmailHelper = require('./../../helpers/email');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');

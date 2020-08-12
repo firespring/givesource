@@ -16,7 +16,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Message = require('./../../models/message');
+const Message = require('./../../dynamo-models/message');
 const MessagesRepository = require('./../../repositories/messages');
 const Request = require('./../../aws/request');
 

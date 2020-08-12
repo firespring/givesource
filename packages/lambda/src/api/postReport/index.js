@@ -16,7 +16,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Report = require('./../../models/report');
+const Report = require('./../../dynamo-models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');

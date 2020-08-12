@@ -16,7 +16,7 @@
 
 const _ = require('lodash');
 const AWS = require('aws-sdk');
-const Model = require('./../models/model');
+const Model = require('./../dynamo-models/model');
 const QueryBuilder = require('./../aws/queryBuilder');
 
 /**

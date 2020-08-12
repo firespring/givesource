@@ -15,8 +15,8 @@
  */
 
 const assert = require('assert');
-const Model = require('../../src/models/model');
-const Setting = require('../../src/models/setting');
+const Model = require('../../src/dynamo-models/model');
+const Setting = require('../../src/dynamo-models/setting');
 const TestHelper = require('../helpers/test');
 
 describe('Setting', function () {

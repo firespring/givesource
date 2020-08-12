@@ -19,7 +19,7 @@ const HttpException = require('./../../exceptions/http');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
+const User = require('./../../dynamo-models/user');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {

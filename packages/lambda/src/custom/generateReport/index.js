@@ -15,15 +15,15 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
+const Donation = require('./../../dynamo-models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const File = require('./../../models/file');
+const File = require('./../../dynamo-models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
 const QueryBuilder = require('./../../aws/queryBuilder');
-const Report = require('./../../models/report');
+const Report = require('./../../dynamo-models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');

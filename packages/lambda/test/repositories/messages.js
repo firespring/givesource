@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const Message = require('../../src/models/message');
+const Message = require('../../src/dynamo-models/message');
 const MessagesRepository = require('../../src/repositories/messages');
 const Repository = require('../../src/repositories/repository');
 const TestHelper = require('../helpers/test');

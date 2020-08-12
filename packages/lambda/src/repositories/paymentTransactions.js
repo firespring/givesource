@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const PaymentTransaction = require('./../models/paymentTransaction');
+const PaymentTransaction = require('./../dynamo-models/paymentTransaction');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
