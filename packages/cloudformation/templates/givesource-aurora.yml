@@ -84,7 +84,7 @@ Resources:
         SecretStringTemplate: !Sub '{"username": "${DatabaseMaintenanceUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
-        ExcludePunctuation: true
+        ExcludeCharacters: '"@/\'
   MaintenanceUserSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
@@ -100,7 +100,7 @@ Resources:
         SecretStringTemplate: !Sub '{"username": "${DatabaseReadwriteUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
-        ExcludePunctuation: true
+        ExcludeCharacters: '"@/\'
   ReadwriteUserSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
@@ -116,7 +116,7 @@ Resources:
         SecretStringTemplate: !Sub '{"username": "${DatabaseReadonlyUser}", "database": "${DatabaseName}"}'
         GenerateStringKey: password
         PasswordLength: 32
-        ExcludePunctuation: true
+        ExcludeCharacters: '"@/\'
   ReadonlyUserSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
