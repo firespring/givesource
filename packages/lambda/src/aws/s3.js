@@ -16,6 +16,8 @@
 
 const AWS = require('aws-sdk');
 const mime = require('mime');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * S3 constructor
@@ -43,6 +45,37 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
 		awsS3.getObject(params, function (err, result) {
 			if (err) {
 				reject(err);
+			}
+			resolve(result);
+		});
+	});
+};
+
+/**
+ * Download an object from AWS S3
+ *
+ * @param {string} region
+ * @param {string} bucketName
+ * @param {string} objectName
+ * @param {string} destPath
+ * @return {Promise}
+ */
+S3.prototype.downloadObject = function (region, bucketName, objectName, destPath) {
+	const awsS3 = new AWS.S3({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Bucket: bucketName,
+			Key: objectName
+		};
+		awsS3.getObject(params, function (err, result) {
+			if (err) {
+				reject(err);
+			}
+
+			var filepath = path.join(destPath, objectName);
+			fs.mkdirSync(path.dirname(filepath), {recursive: true});
+			if (result['ContentType'] != 'application/x-directory') {
+				fs.writeFileSync(filepath, result.Body.toString());
 			}
 			resolve(result);
 		});

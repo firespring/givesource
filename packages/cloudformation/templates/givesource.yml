@@ -109,6 +109,7 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
+    DependsOn: LambdaSecurityGroup
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
