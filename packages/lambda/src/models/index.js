@@ -6,7 +6,7 @@ const connect = require('./connect.js');
 
 module.exports = function() {
 	return connect().then(function(sequelize) {
-		const models = {};
+		const models = {"sequelize": sequelize};
 		const model = require('./setting')(sequelize);
 		models[model.name] = model;
 		return models;
