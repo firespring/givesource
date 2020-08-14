@@ -138,7 +138,7 @@ Resources:
         AutoPause: true
         MaxCapacity: 16
         MinCapacity: 1
-        SecondsUntilAutoPause: 900
+        SecondsUntilAutoPause: 14400
       DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
         - !GetAtt DBSecurityGroup.GroupId
