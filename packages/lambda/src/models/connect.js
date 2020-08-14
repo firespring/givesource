@@ -25,7 +25,8 @@ module.exports = function() {
 			dialectModule: mysql2,
 			ssl: true,
 			dialectOptions: {
-				ssl: 'Amazon RDS'
+				ssl: 'Amazon RDS',
+				connectTimeout: 60000
 			}
 		});
 	}).then(function (sequelize) {
