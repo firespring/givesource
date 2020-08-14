@@ -1,43 +1,36 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const CloudFormation = require('./../aws/cloudformation');
-const SecretsManager = require('./../aws/secretsManager');
+const CloudFormation = require('../aws/cloudformation');
+const SecretsManager = require('../aws/secretsManager');
 const mysql2 = require('mysql2');
 const Sequelize = require('sequelize');
 
-console.log("IN CONNECT");
-function init() {
-	console.log("Getting stack " + process.env.AWS_STACK_NAME + " in region " + process.env.AWS_REGION);
-
-	return new Sequelize({
-		host: 'dylan-test-two-auroradbstack-19x03f0xu-rdscluster-1bsdxanbndw2a.cluster-cdppswj4bvwh.us-east-1.rds.amazonaws.com',
-		username: 'readonly',
-		password: 'pL0CM[>)mrTjOr((R#]K>f+:p6m,Ha{`',
-		database: 'givesource',
-		port: 3306,
-		dialect: 'mysql',
-		dialectModule: mysql2,
-		ssl: true,
-		dialectOptions: {
-			ssl: 'Amazon RDS'
-		}
+module.exports = function() {
+	const cloudFormation = new CloudFormation();
+	//return cloudFormation.describeStacks(process.env.AWS_REGION, process.env.AWS_STACK_NAME).then(function (stacks) {
+	return cloudFormation.describeStacks('us-east-1', 'JOE-TEST').then(function (stacks) {
+		const secretId = stacks.Stacks[0].Outputs.find(it => it.OutputKey === 'DatabaseReadwriteSecret').OutputValue;
+		const secretsManager = new SecretsManager();
+		//return secretsManager.getSecretValue(process.env.AWS_REGION, secretId);
+		return secretsManager.getSecretValue('us-east-1', secretId);
+	}).then(function (secret) {
+		const readwriteSecret = JSON.parse(secret.SecretString);
+		return new Sequelize({
+			host: readwriteSecret.host,
+			username: readwriteSecret.username,
+			password: readwriteSecret.password,
+			database: readwriteSecret.database,
+			port: readwriteSecret.port,
+			dialect: 'mysql',
+			dialectModule: mysql2,
+			ssl: true,
+			dialectOptions: {
+				ssl: 'Amazon RDS'
+			}
+		});
+	}).then(function (sequelize) {
+		return sequelize;
 	});
-}
 
-const sequelize = new Sequelize({
-	host: 'dylan-test-two-auroradbstack-19x03f0xu-rdscluster-1bsdxanbndw2a.cluster-cdppswj4bvwh.us-east-1.rds.amazonaws.com',
-	username: 'readonly',
-	password: 'pL0CM[>)mrTjOr((R#]K>f+:p6m,Ha{`',
-	database: 'givesource',
-	port: 3306,
-	dialect: 'mysql',
-	dialectModule: mysql2,
-	ssl: true,
-	dialectOptions: {
-		ssl: 'Amazon RDS'
-	}
-});
+};
 
-module.exports = {"sequelize": sequelize, "Sequelize": Sequelize};

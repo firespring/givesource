@@ -1,10 +1,10 @@
 'use strict';
 
-const { sequelize, Sequelize } = require('./connect');
+const { DataTypes } = require('sequelize');
 
-const Setting = sequelize.define('Setting', {
-  key: Sequelize.DataTypes.STRING,
-  value: Sequelize.DataTypes.STRING
-});
-
-console.log(Setting === sequelize.models.Setting);
+module.exports = (sequelize) => {
+	return sequelize.define('Setting', {
+		key: DataTypes.STRING,
+		value: DataTypes.STRING
+	});
+};
