@@ -8,7 +8,8 @@ const Sequelize = require('sequelize');
 module.exports = function() {
 	const cloudFormation = new CloudFormation();
 	//return cloudFormation.describeStacks(process.env.AWS_REGION, process.env.AWS_STACK_NAME).then(function (stacks) {
-	return cloudFormation.describeStacks('us-east-1', 'JOE-TEST').then(function (stacks) {
+	// return cloudFormation.describeStacks('us-east-1', 'JOE-TEST').then(function (stacks) {
+	return cloudFormation.describeStacks('us-east-1', 'DYLAN-TEST-TWO').then(function (stacks) {
 		const secretId = stacks.Stacks[0].Outputs.find(it => it.OutputKey === 'DatabaseReadwriteSecret').OutputValue;
 		const secretsManager = new SecretsManager();
 		//return secretsManager.getSecretValue(process.env.AWS_REGION, secretId);

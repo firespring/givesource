@@ -15,46 +15,58 @@
  */
 
 const _ = require('lodash');
+const Sequelize = require('sequelize');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Setting = require('../../models/setting');
-const SettingsRepository = require('./../../repositories/settings');
+const loadModels = require('../../models/index');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
-	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
 
 	let settings = [];
+	let allModels;
 	request.validate().then(function () {
 		const keys = request.get('settings', []).map(function (setting) {
 			return setting.key;
 		});
-		return repository.batchGet(keys).then(function (models) {
-			request.get('settings', []).forEach(function (data) {
-				let model = _.find(models, {key: data.key});
-				if (model) {
-					model.populate(data);
-				} else {
-					model = new Setting(data);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.findAll({
+				where: {
+					key: {
+						[Sequelize.Op.or]: keys
+					}
 				}
-
-				settings.push(model);
 			});
 		});
-	}).then(function () {
+	}).then(function (models) {
+		request.get('settings', []).forEach(function (data) {
+			let model = _.find(models, {key: data.key});
+			if (model instanceof allModels.Setting) {
+				model.set('value', data.value);
+				settings.push(model);
+			} else {
+				settings.push(new allModels.Setting(data));
+			}
+		});
+
+		return settings;
+	}).then(function (settings) {
 		let promise = Promise.resolve();
 		settings.forEach(function (setting) {
-			promise = promise.then(function () {
-				return setting.validate();
-			});
+			if (setting instanceof allModels.Setting) {
+				promise = promise.then(function () {
+					return allModels.Setting.upsert(setting.toJSON());
+				});
+			}
 		});
+
 		return promise;
-	}).then(function () {
-		return repository.batchUpdate(settings);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
@@ -63,5 +75,7 @@ exports.handle = function (event, context, callback) {
 		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+	}).finally(function () {
+		return allModels.sequelize.close();
 	});
 };

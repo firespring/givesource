@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -96,6 +99,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -125,6 +134,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -154,6 +169,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -183,6 +204,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -212,6 +239,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -241,6 +274,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -393,6 +432,12 @@ Resources:
      Role: !Ref SecureSettingsLambdaFunctionRoleArn
      Runtime: "nodejs12.x"
      Timeout: !Ref DefaultLambdaFunctionTimeout
+     VpcConfig:
+       SecurityGroupIds:
+         - !Ref LambdaSecurityGroupId
+       SubnetIds:
+         - !ImportValue givsource-primary-private-subnet
+         - !ImportValue givesource-secondary-private-subnet
 
   GetSecureSettingLambdaInvokePermission:
    Type: AWS::Lambda::Permission
@@ -420,6 +465,12 @@ Resources:
       Role: !Ref SecureSettingsLambdaFunctionRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSecureSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
