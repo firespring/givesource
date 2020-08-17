@@ -17,17 +17,25 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
+const loadModels = require('./../../models/index');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
-	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
+	let allModels;
 	request.validate().then(function () {
-		return repository.delete(request.urlParam('key'));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Settings.destroy({
+				where: {
+					key: request.urlParam('key')
+				}
+			})
+		});
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
@@ -36,5 +44,7 @@ exports.handle = function (event, context, callback) {
 		callback();
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+	}).finally(function () {
+		return allModels.sequelize.close();
 	});
 };
