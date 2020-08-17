@@ -654,7 +654,7 @@ module.exports = {
 					allowNull: false
 				},
 				value: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false
 				},
 				isDeleted: {

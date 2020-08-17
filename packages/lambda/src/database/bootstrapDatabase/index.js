@@ -32,6 +32,7 @@ exports.handle = function (event, context, callback) {
 		return;
 	}
 
+	let sequelize;
 	request.validate().then(function () {
 		return Promise.all([
 			secretsManager.getSecretValue(process.env.AWS_REGION, process.env.ADMIN_DATABASE_SECRET_ID),
@@ -47,13 +48,13 @@ exports.handle = function (event, context, callback) {
 		const readwriteSecret = JSON.parse(secrets.find(it => it['Name'] === process.env.READWRITE_DATABASE_SECRET_ID).SecretString);
 		const readonlySecret = JSON.parse(secrets.find(it => it['Name'] === process.env.READONLY_DATABASE_SECRET_ID).SecretString);
 
-		const sequelize = new Sequelize({
-			host: dbHost,
+		sequelize = new Sequelize({
+			host: adminSecret.host,
 			username: adminSecret.username,
 			password: adminSecret.password,
+			port: adminSecret.port,
 			dialect: 'mysql',
 			dialectModule: mysql2,
-			port: 3306,
 			logging: false, // don't log the sql so we don't log the passwords
 			ssl: true,
 			dialectOptions: {
@@ -79,5 +80,9 @@ exports.handle = function (event, context, callback) {
 		logger.log(err);
 		response.send(event, context, response.FAILED);
 		callback(err);
+	}).finally(function() {
+		if (sequelize) {
+			sequelize.close();
+		}
 	});
 };
