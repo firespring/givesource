@@ -26,14 +26,6 @@ Parameters:
     MinLength: '1'
     Type: String
     Default: readwrite
-  DatabaseReadonlyUser:
-    AllowedPattern: "[a-zA-Z0-9_]+"
-    ConstraintDescription: must be between 1 to 16 alphanumeric characters.
-    Description: The database readonly account user name, between 1 to 16 alphanumeric characters.
-    MaxLength: '16'
-    MinLength: '1'
-    Type: String
-    Default: readonly
   DatabaseName:
     Type: String
     Default: givesource
@@ -107,22 +99,6 @@ Resources:
       SecretId: !Ref ReadwriteUserSecret
       TargetId: !Ref RDSCluster
       TargetType: AWS::RDS::DBCluster
-  ReadonlyUserSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: !Sub ${AWS::StackName}-ReadonlyUserSecret
-      Description: Givesource database auto-generated readonly user password
-      GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DatabaseReadonlyUser}", "database": "${DatabaseName}"}'
-        GenerateStringKey: password
-        PasswordLength: 32
-        ExcludeCharacters: '"@/\'
-  ReadonlyUserSecretAttachment:
-    Type: AWS::SecretsManager::SecretTargetAttachment
-    Properties:
-      SecretId: !Ref ReadonlyUserSecret
-      TargetId: !Ref RDSCluster
-      TargetType: AWS::RDS::DBCluster
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
@@ -175,7 +151,6 @@ Resources:
               - !Ref AdminUserSecret
               - !Ref MaintenanceUserSecret
               - !Ref ReadwriteUserSecret
-              - !Ref ReadonlyUserSecret
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
   BootstrapDatabaseLambdaFunction:
@@ -193,7 +168,6 @@ Resources:
           ADMIN_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-AdminUserSecret
           MAINTENANCE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-MaintenanceUserSecret
           READWRITE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-ReadwriteUserSecret
-          READONLY_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-ReadonlyUserSecret
           DATABASE_NAME: !Ref DatabaseName
       FunctionName: !Sub ${StackName}-BootstrapDatabase
       Handler: index.handle
@@ -207,11 +181,14 @@ Resources:
         SubnetIds:
           - !ImportValue givsource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
-    DependsOn: RDSCluster
   BootstrapDatabaseLambdaLambdaInvoker:
     Type: Custom::BootstrapDatabaseLambdaInvoker
     Properties:
       ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
+    DependsOn:
+      - AdminUserSecretAttachment
+      - MaintenanceUserSecretAttachment
+      - ReadwriteUserSecretAttachment
   MigrateDatabaseLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -273,7 +250,6 @@ Resources:
         SubnetIds:
           - !ImportValue givsource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
-    DependsOn: RDSCluster
   MigrateDatabaseLambdaLambdaInvoker:
     Type: Custom::MigrateDatabaseLambdaInvoker
     Properties:
@@ -282,8 +258,6 @@ Resources:
 Outputs:
   ReadwriteUserSecret:
     Value: !Sub ${AWS::StackName}-ReadwriteUserSecret
-  ReadonlyUserSecret:
-    Value: !Sub ${AWS::StackName}-ReadonlyUserSecret
   DatabaseClusterArn:
     Value: !Ref RDSCluster
   DatabaseEndpoint:
