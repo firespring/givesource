@@ -16,7 +16,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../models/nonprofit');
+const Nonprofit = require('./../../dynamo-models/nonprofit');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');

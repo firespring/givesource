@@ -16,25 +16,35 @@
 
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
+const Sequelize = require('sequelize');
+const loadModels = require('./../../models/index');
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
 	const request = new Request(event, context);
 	const keys = request.queryParam('keys', '').split(',');
 
+	let allModels;
 	request.validate().then(function () {
-		if (keys.length) {
-			return repository.batchGet(keys);
-		} else {
-			return repository.getAll();
-		}
-	}).then(function (settings) {
-		const results = settings.map(function (setting) {
-			return setting.all();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (keys.length) {
+				return allModels.Setting.findAll({
+					where: {
+						key: {
+							[Sequelize.Op.or]: keys
+						}
+					}
+				});
+			} else {
+				return allModels.Setting.findAll();
+			}
 		});
-		callback(null, results);
+	}).then(function (settings) {
+		callback(null, settings);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+	}).finally(function () {
+		return allModels.sequelize.close();
 	});
 };

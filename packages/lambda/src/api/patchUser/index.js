@@ -16,7 +16,7 @@
 
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
+const User = require('./../../dynamo-models/user');
 const UserResourceMiddleware = require('./../../middleware/userResource');
 const UsersRepository = require('./../../repositories/users');
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const Donation = require('./../models/donation');
+const Donation = require('./../dynamo-models/donation');
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');

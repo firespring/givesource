@@ -111,6 +111,22 @@ Resources:
       TimeoutInMinutes: 40
     DependsOn: LambdaSecurityGroup
 
+  SecretsManagerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: readwrite_user_secret_get
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Sub arn:aws:secretsmanager:::secret:${AuroraDbStack.Outputs.ReadwriteUserSecret}
+      Roles:
+      - !Ref LambdaRole
+    DependsOn: AuroraDbStack
+
   S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -316,6 +332,7 @@ Resources:
                 - lambda.amazonaws.com
                 - edgelambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
@@ -397,6 +414,7 @@ Resources:
               Service:
                 - lambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref SSMManagedPolicy
         - !Ref SecureSettingsEncryptManagedPolicy
@@ -616,6 +634,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -764,6 +783,9 @@ Outputs:
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
+
+  DatabaseReadwriteSecret:
+    Value: !GetAtt AuroraDbStack.Outputs.ReadwriteUserSecret
 
   PublicPagesCloudFrontDistribution:
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution

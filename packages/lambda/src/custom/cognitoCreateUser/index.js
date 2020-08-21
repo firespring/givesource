@@ -17,7 +17,7 @@
 const Cognito = require('./../../aws/cognito');
 const logger = require('./../../helpers/log');
 const response = require('cfn-response');
-const User = require('./../../models/user');
+const User = require('./../../dynamo-models/user');
 const UsersRepository = require('./../../repositories/users');
 
 exports.handle = function (event, context, callback) {

@@ -17,7 +17,7 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Sponsor = require('./../../models/sponsor');
+const Sponsor = require('./../../dynamo-models/sponsor');
 const SponsorsRepository = require('./../../repositories/sponsors');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 

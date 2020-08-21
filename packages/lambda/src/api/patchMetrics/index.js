@@ -16,7 +16,7 @@
 
 const _ = require('lodash');
 const HttpException = require('./../../exceptions/http');
-const Metric = require('./../../models/metric');
+const Metric = require('./../../dynamo-models/metric');
 const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');

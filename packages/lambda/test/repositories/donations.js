@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const Donation = require('../../src/models/donation');
+const Donation = require('../../src/dynamo-models/donation');
 const DonationsRepository = require('../../src/repositories/donations');
 const Repository = require('../../src/repositories/repository');
 const TestHelper = require('../helpers/test');

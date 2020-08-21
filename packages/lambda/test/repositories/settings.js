@@ -18,7 +18,7 @@ const assert = require('assert');
 const AWS = require('aws-sdk-mock');
 const promiseMe = require('mocha-promise-me');
 const Repository = require('./../../src/repositories/repository');
-const Setting = require('./../../src/models/setting');
+const Setting = require('./../../src/dynamo-models/setting');
 const SettingsRepository = require('./../../src/repositories/settings');
 const TestHelper = require('./../helpers/test');
 

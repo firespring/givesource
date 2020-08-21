@@ -18,7 +18,7 @@ const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitReportsRepository = require('./../../repositories/nonprofitReports');
-const Report = require('./../../models/report');
+const Report = require('./../../dynamo-models/report');
 const ReportHelper = require('./../../helpers/report');
 const Request = require('./../../aws/request');
 

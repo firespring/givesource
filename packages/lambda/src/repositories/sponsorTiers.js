@@ -18,7 +18,7 @@ const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const SponsorTier = require('./../models/sponsorTier');
+const SponsorTier = require('./../dynamo-models/sponsorTier');
 
 /**
  * SponsorTiersRepository constructor

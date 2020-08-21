@@ -15,7 +15,7 @@
  */
 
 const _ = require('lodash');
-const Content = require('./../../models/content');
+const Content = require('./../../dynamo-models/content');
 const ContentHelper = require('./../../helpers/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');

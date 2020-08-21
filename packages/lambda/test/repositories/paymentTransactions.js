@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const PaymentTransaction = require('../../src/models/paymentTransaction');
+const PaymentTransaction = require('../../src/dynamo-models/paymentTransaction');
 const PaymentTransactionsRepository = require('../../src/repositories/paymentTransactions');
 const Repository = require('../../src/repositories/repository');
 const TestHelper = require('../helpers/test');

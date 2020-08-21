@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const File = require('./../models/file');
+const File = require('./../dynamo-models/file');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');

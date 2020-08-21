@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const Message = require('./../models/message');
+const Message = require('./../dynamo-models/message');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');

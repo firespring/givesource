@@ -17,11 +17,11 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../models/nonprofit');
+const Nonprofit = require('./../../dynamo-models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
+const User = require('./../../dynamo-models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
 

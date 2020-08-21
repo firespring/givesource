@@ -17,7 +17,7 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
+const User = require('./../../dynamo-models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
 

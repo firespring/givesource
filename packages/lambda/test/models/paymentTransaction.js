@@ -15,8 +15,8 @@
  */
 
 const assert = require('assert');
-const PaymentTransaction = require('../../src/models/paymentTransaction');
-const Model = require('../../src/models/model');
+const PaymentTransaction = require('../../src/dynamo-models/paymentTransaction');
+const Model = require('../../src/dynamo-models/model');
 const TestHelper = require('../helpers/test');
 
 describe('PaymentTransaction', function () {

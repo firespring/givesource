@@ -18,37 +18,43 @@ const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists');
-const Setting = require('./../../models/setting');
-const SettingsRepository = require('./../../repositories/settings');
+const loadModels = require('../../models/index');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
-	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let setting = new Setting(request._body);
+	let setting;
+	let allModels;
 	request.validate().then(function () {
 		return new Promise(function (resolve, reject) {
-			repository.get(request.get('key')).then(function () {
-				reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
-			}).catch(function () {
-				resolve();
+			loadModels().then(function (models) {
+				allModels = models;
+				setting = new allModels.Setting(request._body);
+			}).then(function () {
+				return allModels.Setting.findOne({key: request.get('key')});
+			}).then(function (setting) {
+				if (setting instanceof allModels.Setting) {
+					reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
+				} else {
+					resolve();
+				}
 			});
 		});
 	}).then(function () {
-		return setting.validate();
-	}).then(function () {
-		return repository.save(setting);
+		return allModels.Setting.create(setting.toJSON());
 	}).then(function (response) {
 		setting = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {
-		callback(null, setting.all());
+		callback(null, setting);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+	}).finally(function () {
+		return allModels.sequelize.close();
 	});
 };

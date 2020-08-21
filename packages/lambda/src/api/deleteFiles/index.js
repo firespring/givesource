@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const File = require('./../../models/file');
+const File = require('./../../dynamo-models/file');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');

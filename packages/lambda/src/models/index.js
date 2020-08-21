@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
+'use strict';
 
-exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
-	const request = new Request(event, context);
+const fs = require('fs');
+const path = require('path');
+const connect = require('./connect.js');
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('key'));
-	}).then(function (setting) {
-		callback(null, setting.all());
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+module.exports = function() {
+	return connect().then(function(sequelize) {
+		const models = {"sequelize": sequelize};
+		const model = require('./setting')(sequelize);
+		models[model.name] = model;
+		return models;
 	});
-};
+}

@@ -16,7 +16,7 @@
 
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
-const Metric = require('./../models/metric');
+const Metric = require('./../dynamo-models/metric');
 
 /**
  * MetricsRepository constructor

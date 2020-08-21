@@ -16,7 +16,7 @@
 
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
-const Report = require('./../models/report');
+const Report = require('./../dynamo-models/report');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');

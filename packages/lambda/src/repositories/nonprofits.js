@@ -15,7 +15,7 @@
  */
 
 const _ = require('lodash');
-const Nonprofit = require('./../models/nonprofit');
+const Nonprofit = require('./../dynamo-models/nonprofit');
 const NonprofitHelper = require('./../helpers/nonprofit');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./../repositories/repository');

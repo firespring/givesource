@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const Donation = require('./../../models/donation');
+const Donation = require('./../../dynamo-models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');

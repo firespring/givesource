@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const Metric = require('./../../src/models/metric');
+const Metric = require('./../../src/dynamo-models/metric');
 const MetricsRepository = require('./../../src/repositories/metrics');
 const promiseMe = require('mocha-promise-me');
 const Repository = require('./../../src/repositories/repository');

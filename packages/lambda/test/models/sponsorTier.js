@@ -15,9 +15,9 @@
  */
 
 const assert = require('assert');
-const Model = require('../../src/models/model');
+const Model = require('../../src/dynamo-models/model');
 const SponsorHelper = require('../../src/helpers/sponsor');
-const SponsorTier = require('../../src/models/sponsorTier');
+const SponsorTier = require('../../src/dynamo-models/sponsorTier');
 const TestHelper = require('../helpers/test');
 
 describe('SponsorTier', function () {

@@ -19,7 +19,7 @@ const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const User = require('./../models/user');
+const User = require('./../dynamo-models/user');
 
 /**
  * NonprofitUsersRepository constructor

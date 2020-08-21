@@ -15,13 +15,13 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
+const Donation = require('./../../dynamo-models/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../models/donor');
+const Donor = require('./../../dynamo-models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
-const PaymentTransaction = require('./../../models/paymentTransaction');
+const PaymentTransaction = require('./../../dynamo-models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const QueryBuilder = require('./../../aws/queryBuilder');
 const RenderHelper = require('./../../helpers/render');

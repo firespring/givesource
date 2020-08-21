@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
+const AWS = require('aws-sdk');
 
-exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
-	const request = new Request(event, context);
+/**
+ * CloudFormation constructor
+ *
+ * @constructor
+ */
+function CloudFormation() {
+}
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('key'));
-	}).then(function (setting) {
-		callback(null, setting.all());
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
+/**
+ * Get an output from a cloud formation stack
+ *
+ * @param region
+ * @param stackName
+ * @returns {Promise}
+ */
+CloudFormation.prototype.describeStacks = (region, stackName) => {
+	const cloudFormation = new AWS.CloudFormation({region: region});
+	return cloudFormation.describeStacks({StackName: stackName}).promise();
 };
+
+module.exports = CloudFormation;
