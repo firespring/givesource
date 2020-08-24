@@ -111,6 +111,22 @@ Resources:
       TimeoutInMinutes: 40
     DependsOn: LambdaSecurityGroup
 
+  SecretsManagerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: readwrite_user_secret_get
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Sub arn:aws:secretsmanager:::secret:${AuroraDbStack.Outputs.ReadwriteUserSecret}
+      Roles:
+      - !Ref LambdaRole
+    DependsOn: AuroraDbStack
+
   S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
