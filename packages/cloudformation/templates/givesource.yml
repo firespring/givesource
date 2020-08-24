@@ -320,14 +320,6 @@ Resources:
               - ssm:PutParameter
             Resource: '*'
 
-            # TODO: Create a different policy for this
-          - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-            Resource: '*'
-#            Resource:
-#              - !Ref ReadwriteUserSecret
-
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
