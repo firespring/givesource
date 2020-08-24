@@ -46,7 +46,6 @@ SettingsRepository.prototype = new Repository();
  * @return {Promise}
  */
 SettingsRepository.prototype.get = function (key) {
-	console.log('key is: ', key); /*DM: Debug */
 	return Setting.findOne({ where: {key: key}});
 };
 
@@ -56,7 +55,6 @@ SettingsRepository.prototype.get = function (key) {
  * @return {Promise}
  */
 SettingsRepository.prototype.getAll = function () {
-	console.log(Setting); /*DM: Debug */
 	return Setting.findAll();
 };
 

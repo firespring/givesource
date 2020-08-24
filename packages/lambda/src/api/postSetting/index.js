@@ -34,9 +34,9 @@ exports.handle = function (event, context, callback) {
 				allModels = models;
 				setting = new allModels.Setting(request._body);
 			}).then(function () {
-				return allModels.Setting.findOne({key: request.get('key')});
-			}).then(function (setting) {
-				if (setting instanceof allModels.Setting) {
+				return allModels.Setting.findOne({where: {key: request.get('key')}});
+			}).then(function (existingSetting) {
+				if (existingSetting instanceof allModels.Setting) {
 					reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
 				} else {
 					resolve();

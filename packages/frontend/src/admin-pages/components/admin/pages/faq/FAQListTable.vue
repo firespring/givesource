@@ -17,7 +17,7 @@
 <template>
     <table class="table-reorder table-headless">
         <draggable v-model="localContents" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder" class="ui-sortable">
-            <faq-list-table-row v-for="content in localContents" :content="content" :key="content.uuid"></faq-list-table-row>
+            <faq-list-table-row v-for="content in localContents" :content="content" :key="content.id"></faq-list-table-row>
         </draggable>
     </table>
 </template>

@@ -111,11 +111,11 @@
 			});
 
 			vue.bus.$on('deleteFAQList', function (data) {
-				vue.contents = _.reject(vue.contents, {uuid: data.uuid});
+				vue.contents = _.reject(vue.contents, {id: data.id});
 			});
 
 			vue.bus.$on('updateFAQList', function (data) {
-				const index = _.findIndex(vue.contents, {uuid: data.uuid});
+				const index = _.findIndex(vue.contents, {id: data.id});
 				vue.contents[index > -1 ? index : vue.contents.length] = data;
 			});
 		},

@@ -28,7 +28,7 @@ exports.handle = function (event, context, callback) {
 
 	let content = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('content_uuid'));
+		return repository.get(request.urlParam('content_id'));
 	}).then(function (result) {
 		content = new Content(result);
 		content.populate(request._body);

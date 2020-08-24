@@ -31,15 +31,16 @@ exports.handle = function (event, context, callback) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
+			let promise = Promise.resolve();
 			request.get('settings', []).forEach(function (data) {
-				let promise = Promise.resolve();
-				promise.then(function () {
-					return allModels.Setting.findOne(data).then(function (setting) {
+				promise = promise.then(function () {
+					return allModels.Setting.findOne({where: {data}}).then(function (setting) {
 						settings.push(setting);
 						return setting.destroy();
 					});
 				});
 			});
+			return promise;
 		});
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');

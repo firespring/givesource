@@ -26,19 +26,20 @@ exports.handle = function (event, context, callback) {
 	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let content = new Content(request._body);
+	let content;
 	request.validate().then(function () {
+		return repository.populate(request._body);
+	}).then(function (populatedModel) {
+		content = populatedModel;
 		return repository.getCountByKey(content.key);
-	}).then(function (count) {
-		content.populate({sortOrder: count});
-		return content.validate();
-	}).then(function () {
-		return repository.save(content);
+	}).then(function (contents) {
+		content.set('sortOrder', contents.count);
+		return repository.upsert(content, {});
 	}).then(function (response) {
 		content = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		callback(null, content.all());
+		callback(null, content);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

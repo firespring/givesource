@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Content = require('./../../dynamo-models/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
@@ -28,19 +27,26 @@ exports.handle = function (event, context, callback) {
 
 	let contents = [];
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new Content(data));
-		});
-	}).then(function () {
 		let promise = Promise.resolve();
-		contents.forEach(function (content) {
+		request.get('contents', []).map(function (content) {
 			promise = promise.then(function () {
-				return content.validate();
+				return repository.populate(content);
+			}).then(function (model) {
+				if (Array.isArray(model.get('value'))) {
+					model.set('value', '');
+				}
+				contents.push(model);
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchUpdate(contents);
+		let promise = Promise.resolve();
+		contents.forEach(function (model) {
+			promise = promise.then(function () {
+				return repository.upsert(model, {});
+			});
+		});
+		return promise;
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
