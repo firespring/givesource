@@ -258,6 +258,8 @@ Resources:
 Outputs:
   ReadwriteUserSecret:
     Value: !Sub ${AWS::StackName}-ReadwriteUserSecret
+  ReadwriteUserSecretArn:
+    Value: !Ref ReadwriteUserSecret
   DatabaseClusterArn:
     Value: !Ref RDSCluster
   DatabaseEndpoint:
