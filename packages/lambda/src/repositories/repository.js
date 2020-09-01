@@ -18,6 +18,8 @@ const _ = require('lodash');
 const AWS = require('aws-sdk');
 const Model = require('./../dynamo-models/model');
 const QueryBuilder = require('./../aws/queryBuilder');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * Repository constructor
@@ -246,6 +248,16 @@ Repository.prototype.batchWrite = function (requestItems, retries) {
 			resolve({UnprocessedItems: unprocessed});
 		}
 		resolve();
+	});
+};
+
+Repository.prototype.bulkInsert = function (tableName, data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		return models.bulkInsert(tableName, data);
+	}).finally(function () {
+		return allModels.sequelize.close();
 	});
 };
 

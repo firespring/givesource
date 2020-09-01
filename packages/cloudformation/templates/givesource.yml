@@ -361,6 +361,7 @@ Resources:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3

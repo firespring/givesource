@@ -66,7 +66,7 @@ ContentsRepository.prototype.populate = function (data) {
 ContentsRepository.prototype.get = function (id) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.findOne({
@@ -96,7 +96,7 @@ ContentsRepository.prototype.get = function (id) {
 ContentsRepository.prototype.getByParentId = function (parentId) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.findAll({
@@ -123,7 +123,7 @@ ContentsRepository.prototype.getByParentId = function (parentId) {
 ContentsRepository.prototype.getAllByKey = function (key) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.findAll({
@@ -183,7 +183,7 @@ ContentsRepository.prototype.batchGet = function (keys) {
 ContentsRepository.prototype.batchDelete = function (models) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			let promise = Promise.resolve();
@@ -212,7 +212,7 @@ ContentsRepository.prototype.batchDelete = function (models) {
 ContentsRepository.prototype.getCountByKey = function (key) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.findAndCountAll({where: {key: key}});
@@ -235,7 +235,7 @@ ContentsRepository.prototype.getCountByKey = function (key) {
 ContentsRepository.prototype.delete = function (contentId) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.destroy({where: {id: contentId}});
@@ -258,7 +258,7 @@ ContentsRepository.prototype.delete = function (contentId) {
 ContentsRepository.prototype.batchDeleteByParentId = function (parentId) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.destroy({where: {parentId: parentId}});
@@ -281,7 +281,7 @@ ContentsRepository.prototype.batchDeleteByParentId = function (parentId) {
 ContentsRepository.prototype.batchDeleteByKey = function (key) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.destroy({where: {key: key}});
@@ -304,7 +304,7 @@ ContentsRepository.prototype.save = function (model) {
 	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 			if (!(model instanceof allModels.Content)) {
 				reject(new Error('invalid Content model'));
@@ -330,7 +330,7 @@ ContentsRepository.prototype.save = function (model) {
 ContentsRepository.prototype.upsert = function (model, data) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Content.upsert({

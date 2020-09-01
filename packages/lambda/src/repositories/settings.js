@@ -53,7 +53,7 @@ SettingsRepository.prototype.populate = function (data) {
 		return new models.Setting(data);
 	}).finally(function () {
 		return allModels.sequelize.close();
-	})
+	});
 };
 
 /**
@@ -65,7 +65,7 @@ SettingsRepository.prototype.populate = function (data) {
 SettingsRepository.prototype.get = function (key) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Setting.findOne({
@@ -146,7 +146,7 @@ SettingsRepository.prototype.batchGet = function (keys) {
 SettingsRepository.prototype.delete = function (key) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Setting.destroy({where: {key: key}});
@@ -172,7 +172,7 @@ SettingsRepository.prototype.batchDeleteByKey = function (models) {
 		return model.get('key');
 	});
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Setting.destroy({
@@ -201,7 +201,7 @@ SettingsRepository.prototype.save = function (model) {
 	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 			if (!(model instanceof allModels.Setting)) {
 				reject(new Error('invalid Setting model'));
@@ -227,7 +227,7 @@ SettingsRepository.prototype.save = function (model) {
 SettingsRepository.prototype.upsert = function (model, data) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
-		loadModels().then(function (models) {
+		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
 			return allModels.Setting.upsert({

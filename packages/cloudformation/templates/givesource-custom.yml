@@ -12,6 +12,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -565,6 +568,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   # Secure Settings KMS Resources
 
