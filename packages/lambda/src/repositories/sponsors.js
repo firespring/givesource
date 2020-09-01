@@ -20,6 +20,7 @@ const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const Sponsor = require('./../dynamo-models/sponsor');
 const SponsorTiersRepository = require('./sponsorTiers');
+const loadModels = require('../models/index');
 
 /**
  * SponsorsRepository constructor
@@ -42,29 +43,49 @@ function SponsorsRepository(options) {
 SponsorsRepository.prototype = new Repository();
 
 /**
- * Get a Sponsor
+ * Look to abstract this
  *
- * @param {String} sponsorTierUuid
- * @param {String} uuid
+ * @param data
  * @return {Promise}
  */
-SponsorsRepository.prototype.get = function (sponsorTierUuid, uuid) {
-	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+SponsorsRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		return new models.Sponsor(data);
+	}).finally(function () {
+		return allModels.sequelize.close();
+	})
+};
+
+/**
+ * Get a Sponsor
+ *
+ * @param {String} sponsorTierId
+ * @param {String} id
+ * @return {Promise}
+ */
+SponsorsRepository.prototype.get = function (sponsorTierId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.condition('uuid', '=', uuid).filter('sponsorTierUuid', '=', sponsorTierUuid);
-			repository.batchQuery(builder).then(function (data) {
-				if (data.Items.length === 1) {
-					resolve(new Sponsor(data.Items[0]));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.findOne({
+				where: {
+					id: id,
+					sponsorTierId: sponsorTierId
+				}
+			}).then(function (sponsor) {
+				if (sponsor instanceof allModels.Sponsor) {
+					resolve(sponsor);
 				}
 				reject(new ResourceNotFoundException('The specified sponsor does not exist.'));
-			}).catch(function (err) {
-				reject(err);
 			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -72,29 +93,26 @@ SponsorsRepository.prototype.get = function (sponsorTierUuid, uuid) {
 /**
  * Get all Sponsors for this Sponsor Tier
  *
- * @param {String} sponsorTierUuid
+ * @param {String} sponsorTierId
  * @return {Promise}
  */
-SponsorsRepository.prototype.getAll = function (sponsorTierUuid) {
-	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+SponsorsRepository.prototype.getAll = function (sponsorTierId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid);
-			repository.batchQuery(builder).then(function (data) {
-				const results = [];
-				if (data.Items) {
-					data.Items.forEach(function (item) {
-						results.push(new Sponsor(item));
-					});
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.findAll({
+				where: {
+					sponsorTierId: sponsorTierId
 				}
-				resolve(results);
-			}).catch(function (err) {
-				reject(err);
 			});
+		}).then(function (results) {
+			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -102,23 +120,26 @@ SponsorsRepository.prototype.getAll = function (sponsorTierUuid) {
 /**
  * Get a count of all Sponsors for a SponsorTier
  *
- * @param {String} sponsorTierUuid
+ * @param {String} sponsorTierId
  * @return {Promise}
  */
-SponsorsRepository.prototype.getCount = function (sponsorTierUuid) {
-	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+SponsorsRepository.prototype.getCount = function (sponsorTierId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.index('sponsorTierUuidIndex').condition('sponsorTierUuid', '=', sponsorTierUuid).select('COUNT');
-			repository.batchQuery(builder).then(function (data) {
-				resolve(data.Count);
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.count({
+				where: {
+					sponsorTierId: sponsorTierId
+				}
 			});
+		}).then(function (result) {
+			resolve(result);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -126,54 +147,58 @@ SponsorsRepository.prototype.getCount = function (sponsorTierUuid) {
 /**
  * Delete a Sponsor
  *
- * @param {String} sponsorTierUuid
- * @param {String} uuid
+ * @param {String} sponsorTierId
+ * @param {String} id
  * @return {Promise}
  */
-SponsorsRepository.prototype.delete = function (sponsorTierUuid, uuid) {
-	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+SponsorsRepository.prototype.delete = function (sponsorTierId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			repository.deleteByKey('uuid', uuid).then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.destroy({
+				where:
+					{
+						sponsorTierId: sponsorTierId,
+						id: id
+					}
 			});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
-		})
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
 	});
 };
 
 /**
  * Create or update a Donation Tier
  *
- * @param {String} sponsorTierUuid
+ * @param {String} sponsorTierId
  * @param {Sponsor} model
  */
-SponsorsRepository.prototype.save = function (sponsorTierUuid, model) {
+SponsorsRepository.prototype.save = function (sponsorTierId, model) {
+	let allModels;
 	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+	const sponsorTierRepository = new SponsorTiersRepository();
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			if (!(model instanceof Sponsor)) {
-				reject(new Error('invalid Sponsor model'));
+		return loadModels().then(function (models) {
+			allModels = models;
+			return sponsorTierRepository.get(sponsorTierId);
+		}).then(function (sponsorTier) {
+			if (!sponsorTier instanceof allModels.SponsorTier) {
+				reject('SponsorTier does not exist!');
 			}
-			model.validate().then(function () {
-				const key = {
-					uuid: model.uuid
-				};
-				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new Sponsor(data.Attributes));
-				}).catch(function (err) {
-					reject(err);
-				});
-			}).catch(function (err) {
-				reject(err);
-			});
+			return repository.upsert(model, {}, sponsorTierId);
+		}).then(function (sponsor) {
+			resolve(sponsor);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -181,16 +206,22 @@ SponsorsRepository.prototype.save = function (sponsorTierUuid, model) {
 /**
  * Batch create or update Sponsors
  *
- * @param {string} sponsorTierUuid
+ * @param {string} sponsorTierId
  * @param {[]} models
  * @return {Promise}
  */
-SponsorsRepository.prototype.batchSave = function (sponsorTierUuid, models) {
-	const repository = this;
+SponsorsRepository.prototype.batchSave = function (sponsorTierId, models) {
 	const sponsorTiersRepository = new SponsorTiersRepository();
+	const repository = this;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			return repository.batchUpdate(models);
+		sponsorTiersRepository.get(sponsorTierId).then(function () {
+			let promise = Promise.resolve();
+			promise = promise.then(function () {
+				models.forEach(function (model) {
+					return repository.upsert(model, {})
+				})
+			});
+			return promise;
 		}).then(function () {
 			resolve();
 		}).catch(function (err) {
@@ -202,20 +233,62 @@ SponsorsRepository.prototype.batchSave = function (sponsorTierUuid, models) {
 /**
  * Batch delete Sponsors
  *
- * @param {string} sponsorTierUuid
+ * @param {string} sponsorTierId
  * @param {[]} models
  * @return {Promise}
  */
-SponsorsRepository.prototype.batchRemove = function (sponsorTierUuid, models) {
-	const repository = this;
-	const sponsorTiersRepository = new SponsorTiersRepository();
+SponsorsRepository.prototype.batchRemove = function (sponsorTierId, models) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierUuid).then(function () {
-			return repository.batchDelete(models);
+		return loadModels().then(function (models) {
+			allModels = models;
 		}).then(function () {
-			resolve();
+			let promise = Promise.resolve();
+			promise = promise.then(function () {
+				models.forEach(function (model) {
+					return model.destroy();
+				})
+			});
+			return promise;
+		}).then(function (stuff) {
+			resolve(stuff);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param sponsorTierId
+ * @param model
+ * @param data
+ * @return {Promise<any>}
+ */
+SponsorsRepository.prototype.upsert = function (model, data, sponsorTierId) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.upsert({
+				'id': model.get('id'),
+				'name': typeof data.name !== "undefined" ? data.name : model.get('name'),
+				'url': typeof data.url !== "undefined" ? data.url : model.get('url'),
+				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.get('sortOrder'),
+				'fileId': typeof data.fileId !== "undefined" ? data.fileId : model.get('fileId'),
+				'logoUrl': typeof data.logoUrl !== "undefined" ? data.logoUrl : model.get('logoUrl'),
+				'sponsorTierId': sponsorTierId
+			});
+		}).then(function (sponsor) {
+			resolve(sponsor);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

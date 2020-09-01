@@ -32,7 +32,7 @@ exports.handle = function (event, context, callback) {
 			sponsors.push(new Sponsor(data));
 		});
 	}).then(function () {
-		return repository.batchRemove(request.urlParam('sponsor_tier_uuid'), sponsors);
+		return repository.batchRemove(request.urlParam('sponsor_tier_id'), sponsors);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

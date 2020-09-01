@@ -23,9 +23,9 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('file_uuid'));
+		return repository.get(request.urlParam('file_id'));
 	}).then(function (file) {
-		callback(null, file.all());
+		callback(null, file);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

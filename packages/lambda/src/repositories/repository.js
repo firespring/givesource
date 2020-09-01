@@ -251,16 +251,6 @@ Repository.prototype.batchWrite = function (requestItems, retries) {
 	});
 };
 
-Repository.prototype.bulkInsert = function (tableName, data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		return models.bulkInsert(tableName, data);
-	}).finally(function () {
-		return allModels.sequelize.close();
-	});
-};
-
 /**
  * Batch update models
  *
@@ -268,24 +258,24 @@ Repository.prototype.bulkInsert = function (tableName, data) {
  * @return {Promise}
  */
 Repository.prototype.batchUpdate = function (models) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		const requestItems = [];
-		models = models || [];
-		models.forEach(function (model) {
-			if (model instanceof Model) {
-				model.beforeSave();
-				requestItems.push({
-					PutRequest: {
-						Item: model.nonEmpty()
-					}
-				});
-			}
-		});
-		repository.batchWrite(requestItems, 3).then(function (data) {
-			resolve(data);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			let promise = Promise.resolve();
+			promise = promise.then(function () {
+				models.forEach(function (model) {
+					return model.update();
+				})
+			});
+			return promise;
+		}).then(function (stuff) {
+			resolve(stuff);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -297,23 +287,24 @@ Repository.prototype.batchUpdate = function (models) {
  * @return {Promise}
  */
 Repository.prototype.batchDelete = function (models) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		const requestItems = [];
-		models = models || [];
-		models.forEach(function (model) {
-			requestItems.push({
-				DeleteRequest: {
-					Key: {
-						uuid: model.uuid
-					}
-				}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			let promise = Promise.resolve();
+			promise = promise.then(function () {
+				models.forEach(function (model) {
+					return model.destroy();
+				})
 			});
-		});
-		repository.batchWrite(requestItems, 3).then(function (data) {
-			resolve(data);
+			return promise;
+		}).then(function (stuff) {
+			resolve(stuff);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

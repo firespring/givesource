@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -55,6 +58,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetFileLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -63,7 +72,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/files/{file_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/files/{file_id}
     DependsOn: GetFileLambdaFunction
 
   GetFilesLambdaFunction:
@@ -84,6 +93,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetFilesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -114,6 +129,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostFileLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -144,6 +165,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteFileLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -152,7 +179,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/files/{file_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/files/{file_id}
     DependsOn: DeleteFileLambdaFunction
 
   DeleteFilesLambdaFunction:
@@ -174,6 +201,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteFilesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -199,7 +232,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref FilesApiResource
-      PathPart: "{file_uuid}"
+      PathPart: "{file_id}"
 
   GetFileApiMethod:
     Type: AWS::ApiGateway::Method

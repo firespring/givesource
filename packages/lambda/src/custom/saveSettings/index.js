@@ -49,7 +49,7 @@ exports.handle = function (event, context, callback) {
 	});
 
 	promise = promise.then(function() {
-		return repository.bulkInsert('Settings', bulkData);
+		return repository.bulkCreate(bulkData);
 	});
 
 	promise = promise.then(function () {

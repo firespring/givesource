@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const SponsorTier = require('./../dynamo-models/sponsorTier');
+const loadModels = require('../models/index');
 
 /**
  * SponsorTiersRepository constructor
@@ -41,21 +41,47 @@ function SponsorTiersRepository(options) {
 SponsorTiersRepository.prototype = new Repository();
 
 /**
- * Get a Sponsor Tier
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param data
  * @return {Promise}
  */
-SponsorTiersRepository.prototype.get = function (uuid) {
-	const repository = this;
+SponsorTiersRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		return new models.SponsorTier(data);
+	}).finally(function () {
+		return allModels.sequelize.close();
+	})
+};
+
+/**
+ * Get a Sponsor Tier
+ *
+ * @param {String} id
+ * @return {Promise}
+ */
+SponsorTiersRepository.prototype.get = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new SponsorTier(data.Item));
-			}
-			reject(new ResourceNotFoundException('The specified sponsor tier does not exist.'));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.SponsorTier.findOne({
+				where: {
+					id: id
+				}
+			}).then(function (sponsorTier) {
+				if (sponsorTier instanceof allModels.SponsorTier) {
+					resolve(sponsorTier);
+				}
+				reject(new ResourceNotFoundException('The specified sponsorTier does not exist.'));
+			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -66,18 +92,18 @@ SponsorTiersRepository.prototype.get = function (uuid) {
  * @return {Promise}
  */
 SponsorTiersRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new SponsorTier(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.SponsorTier.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -88,14 +114,18 @@ SponsorTiersRepository.prototype.getAll = function () {
  * @return {Promise}
  */
 SponsorTiersRepository.prototype.getCount = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		const builder = new QueryBuilder('scan');
-		builder.select('COUNT');
-		repository.batchQuery(builder).then(function (data) {
-			resolve(data.Count);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.SponsorTier.count();
+		}).then(function (result) {
+			resolve(result);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -103,16 +133,22 @@ SponsorTiersRepository.prototype.getCount = function () {
 /**
  * Delete a Sponsor Tier
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-SponsorTiersRepository.prototype.delete = function (uuid) {
-	const repository = this;
+SponsorTiersRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.destroy({where: {id: id}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -123,22 +159,50 @@ SponsorTiersRepository.prototype.delete = function (uuid) {
  * @param {SponsorTier} model
  */
 SponsorTiersRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof SponsorTier)) {
-			reject(new Error('invalid SponsorTier model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new SponsorTier(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			if (!(model instanceof allModels.SponsorTier)) {
+				reject(new Error('invalid SponsorTier model'));
+			}
+			return repository.upsert(model, {});
+		}).then(function (sponsorTier) {
+			resolve(sponsorTier);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param model
+ * @param data
+ * @return {Promise<any>}
+ */
+SponsorTiersRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.SponsorTier.upsert({
+				'id': model.get('id'),
+				'name': typeof data.name !== "undefined" ? data.name : model.get('name'),
+				'size': typeof data.size !== "undefined" ? data.size : model.get('size'),
+				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.get('sortOrder'),
+			});
+		}).then(function (sponsorTier) {
+			resolve(sponsorTier);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

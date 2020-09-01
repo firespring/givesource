@@ -28,7 +28,7 @@ exports.handle = function (event, context, callback) {
 
 	let sponsorTier = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('sponsor_tier_uuid'));
+		return repository.get(request.urlParam('sponsor_tier_id'));
 	}).then(function (result) {
 		sponsorTier = new SponsorTier(result);
 		sponsorTier.populate(request._body);
