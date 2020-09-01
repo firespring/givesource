@@ -17,7 +17,6 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Sponsor = require('./../../dynamo-models/sponsor');
 const SponsorsRepository = require('./../../repositories/sponsors');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
@@ -29,12 +28,8 @@ exports.handle = function (event, context, callback) {
 	let sponsor = null;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('sponsor_tier_id'), request.urlParam('sponsor_id'));
-	}).then(function (result) {
-		sponsor = new Sponsor(result);
-		sponsor.populate(request._body);
-		return sponsor.validate();
-	}).then(function () {
-		return repository.save(request.urlParam('sponsor_tier_id'), sponsor);
+	}).then(function (sponsor) {
+		return repository.upsert(sponsor, request._body);
 	}).then(function (response) {
 		sponsor = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');

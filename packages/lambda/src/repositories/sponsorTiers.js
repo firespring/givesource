@@ -17,7 +17,6 @@
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const SponsorTier = require('./../dynamo-models/sponsorTier');
 const loadModels = require('../models/index');
 
 /**

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const Sponsor = require('./../dynamo-models/sponsor');
 const SponsorTiersRepository = require('./sponsorTiers');
 const loadModels = require('../models/index');
 
