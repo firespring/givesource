@@ -28,7 +28,7 @@ exports.handle = function (event, context, callback) {
 
 	let user = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
+		return repository.get(request.urlParam('user_id'));
 	}).then(function (result) {
 		user = new User(result);
 		user.populate(request._body);

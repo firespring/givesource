@@ -763,6 +763,57 @@ module.exports = {
 					allowNull: false,
 					defaultValue: '0000-00-00 00:00:00'
 				}
+			}),
+			queryInterface.createTable('Users', {
+				id: {
+					type: Sequelize.INTEGER(11),
+					allowNull: false,
+					autoIncrement: true,
+					primaryKey: true
+				},
+				email: {
+					type: Sequelize.STRING(2048),
+					allowNull: false,
+				},
+				firstName: {
+					type: Sequelize.STRING(2048),
+					allowNull: false,
+					defaultValue: ''
+				},
+				lastName: {
+					type: Sequelize.STRING(2048),
+					allowNull: false,
+					defaultValue: ''
+				},
+				isVerified: {
+					type: Sequelize.BOOLEAN,
+					allowNull: false,
+				},
+				nonprofitId: {
+					type: Sequelize.INTEGER(11),
+					allowNull: false,
+					defaultValue: 0,
+				},
+				cognitoUuid: {
+					type: Sequelize.STRING(2048),
+					allowNull: false,
+					defaultValue: ''
+				},
+				isDeleted: {
+					type: Sequelize.BOOLEAN,
+					allowNull: false,
+					defaultValue: false,
+				},
+				createdAt: {
+					type: Sequelize.DATE,
+					allowNull: false,
+					defaultValue: '0000-00-00 00:00:00'
+				},
+				updatedAt: {
+					type: Sequelize.DATE,
+					allowNull: false,
+					defaultValue: '0000-00-00 00:00:00'
+				}
 			})
 		]);
 
@@ -778,6 +829,8 @@ module.exports = {
 			queryInterface.addIndex('NonprofitSlides', ['nonprofitId']),
 			queryInterface.addIndex('Sponsors', ['sponsorTierId']),
 			queryInterface.addIndex('SponsorTiers', ['name']),
+			queryInterface.addIndex('Users', ['email']),
+			queryInterface.addIndex('Users', ['cognitoUuid']),
 		]);
 	},
 	down: async (queryInterface, Sequelize) => {
@@ -795,7 +848,8 @@ module.exports = {
 			queryInterface.dropTable('Reports'),
 			queryInterface.dropTable('Settings'),
 			queryInterface.dropTable('Sponsors'),
-			queryInterface.dropTable('SponsorTiers')
+			queryInterface.dropTable('SponsorTiers'),
+			queryInterface.dropTable('Users')
 		]);
 	}
 };

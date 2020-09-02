@@ -835,7 +835,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/users/{user_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/users/{user_id}
     DependsOn: DeleteNonprofitUserLambdaFunction
 
   # Nonprofit Admin Lambda Resources
@@ -3153,7 +3153,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitUsersApiResource
-      PathPart: "{user_uuid}"
+      PathPart: "{user_id}"
 
   GetNonprofitUsersApiMethod:
     Type: AWS::ApiGateway::Method

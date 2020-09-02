@@ -23,11 +23,11 @@ const UsersRepository = require('./../../repositories/users');
 exports.handle = function (event, context, callback) {
 	const repository = new UsersRepository();
 	const request = new Request(event, context);
-	request.middleware(new UserResourceMiddleware(request.urlParam('user_uuid')));
+	request.middleware(new UserResourceMiddleware(request.urlParam('user_id')));
 
 	let user = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
+		return repository.get(request.urlParam('user_id'));
 	}).then(function (result) {
 		user = new User(result);
 		user.populate(request._body);

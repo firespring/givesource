@@ -27,9 +27,9 @@ exports.handle = function (event, context, callback) {
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, request.urlParam('user_uuid'));
+		return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, request.urlParam('user_id'));
 	}).then(function () {
-		return repository.delete(request.urlParam('user_uuid'));
+		return repository.delete(request.urlParam('user_id'));
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

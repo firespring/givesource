@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -55,6 +58,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetUserProfileLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -87,6 +96,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetUsersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -117,6 +132,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: 30
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -146,6 +167,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -154,7 +181,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/users/{user_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/users/{user_id}
     DependsOn: PatchUserLambdaFunction
 
   DeleteUserLambdaFunction:
@@ -176,6 +203,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -184,7 +217,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/users/{user_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/users/{user_id}
     DependsOn: DeleteUserLambdaFunction
 
   # Resend User Email Verification Lambda Resources
@@ -208,6 +241,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: 30
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   ResendUserEmailVerificationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -216,7 +255,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/users/{user_uuid}/resend-verification-email
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/users/{user_id}/resend-verification-email
     DependsOn: ResendUserEmailVerificationLambdaFunction
 
   # User Profile Api Gateway Resources
@@ -342,7 +381,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref UsersApiResource
-      PathPart: "{user_uuid}"
+      PathPart: "{user_id}"
 
   GetUsersApiMethod:
     Type: AWS::ApiGateway::Method
