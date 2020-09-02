@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Content = require('./../dynamo-models/content');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
@@ -298,7 +297,7 @@ ContentsRepository.prototype.batchDeleteByKey = function (key) {
 /**
  * Create or update a Content
  *
- * @param {Content} model
+ * @param {Promise} model
  */
 ContentsRepository.prototype.save = function (model) {
 	let allModels;
