@@ -39,7 +39,8 @@ CloudFormation.prototype.createStack = function (region, stackName, templateUrl,
 		const params = {
 			Capabilities: ['CAPABILITY_IAM'],
 			StackName: stackName,
-			TemplateURL: templateUrl
+			TemplateURL: templateUrl,
+			OnFailure: 'DO_NOTHING'
 		};
 		if (parameters.length) {
 			params.Parameters = parameters;
