@@ -193,6 +193,28 @@ SettingsRepository.prototype.batchDeleteByKey = function (models) {
 };
 
 /**
+ * Bulk create used in initial start up
+ *
+ * @param {[]} data
+ * @return {Promise<any>}
+ */
+SettingsRepository.prototype.bulkCreate = function (data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return models.Setting.bulkCreate(data);
+		}).then(function (setting) {
+			resolve(setting);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Create or update a Setting
  *
  * @param {Setting} model
