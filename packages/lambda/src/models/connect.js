@@ -21,7 +21,7 @@ const mysql2 = require('mysql2');
 const Sequelize = require('sequelize');
 
 module.exports = function() {
-	const readwriteSecretId = process.env.AWS_STACK_NAME + "-ReadwriteUserSecret";
+	const readwriteSecretId = process.env.AWS_STACK_NAME + "/ReadwriteUserSecret";
 	const secretsManager = new SecretsManager();
 	secretsManager.getSecretValue(process.env.AWS_REGION, readwriteSecretId).then(function (secret) {
 		const readwriteSecret = JSON.parse(secret.SecretString);

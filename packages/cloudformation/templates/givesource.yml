@@ -1,4 +1,4 @@
----
+
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS Resources for Givesource(R)
 Parameters:
@@ -107,25 +107,10 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaRole: !Ref LambdaRole
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
     DependsOn: LambdaSecurityGroup
-
-  SecretsManagerPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: readwrite_user_secret_get
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-            Resource:
-              - !GetAtt AuroraDbStack.Outputs.ReadwriteUserSecretArn
-      Roles:
-      - !Ref LambdaRole
-    DependsOn: AuroraDbStack
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -785,9 +770,6 @@ Outputs:
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
-
-  DatabaseReadwriteSecret:
-    Value: !GetAtt AuroraDbStack.Outputs.ReadwriteUserSecret
 
   PublicPagesCloudFrontDistribution:
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
