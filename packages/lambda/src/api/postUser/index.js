@@ -17,9 +17,9 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../dynamo-models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
@@ -34,27 +34,26 @@ exports.handle = function (event, context, callback) {
 			let promise = Promise.resolve();
 			emailAddresses.split(',').forEach(function (email) {
 				email = email.trim();
-				const user = new User({email: email});
+				let user;
 				promise = promise.then(function () {
-					return user.validate(['uuid', 'createdOn', 'email']).then(function () {
-						return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
-					}).then(function (cognitoUser) {
-						cognitoUser.User.Attributes.forEach(function (attribute) {
-							if (attribute.Name === 'sub') {
-								user.cognitoUuid = attribute.Value;
-							}
-						});
-					}).then(function () {
-						return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'Admin');
-					}).then(function () {
-						return user.validate();
-					}).then(function () {
-						return usersRepository.save(user);
-					}).then(function () {
-						users.push(user.all());
-					}).catch(function (err) {
-						reject(err);
+					return usersRepository.populate({email: email, cognitoUsername: UUID.v4()})
+				}).then(function (populatedUser) {
+					user = populatedUser;
+					return cognito.createUser(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername'), user.get('email'));
+				}).then(function (cognitoUser) {
+					cognitoUser.User.Attributes.forEach(function (attribute) {
+						if (attribute.Name === 'sub') {
+							user.set('cognitoUuid', attribute.Value);
+						}
 					});
+				}).then(function () {
+					return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername'), 'Admin');
+				}).then(function () {
+					return usersRepository.upsert(user, {});
+				}).then(function () {
+					users.push(user);
+				}).catch(function (err) {
+					reject(err);
 				});
 			});
 			promise = promise.then(function () {

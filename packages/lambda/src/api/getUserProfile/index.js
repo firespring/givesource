@@ -24,14 +24,14 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		if (request.user().uuid) {
-			return repository.get(request.user().uuid);
+		if (request.user().cognitoUsername) {
+			return repository.getByCognitoUsername(request.user().cognitoUsername);
 		} else {
 			return Promise.reject(new HttpException('Unable to retrieve user'));
 		}
 	}).then(function (user) {
 		const groups = request.user().groups || [];
-		callback(null, _.merge({}, user.all(), {groups: groups}));
+		callback(null, _.merge({}, user, {groups: groups}));
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -794,6 +794,10 @@ module.exports = {
 					allowNull: false,
 					defaultValue: 0,
 				},
+				cognitoUsername: {
+					type: Sequelize.STRING(2048),
+					allowNull: false
+				},
 				cognitoUuid: {
 					type: Sequelize.STRING(2048),
 					allowNull: false,

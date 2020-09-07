@@ -33,12 +33,12 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 
 		users.forEach(function (user) {
-			let result = user.all();
+			let result = user;
 			promise = promise.then(function () {
-				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.uuid).then(function (response) {
-					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
+				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername')).then(function (response) {
+					result.setDataValue('groups', response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
 						return group.GroupName;
-					}) : [];
+					}) : []);
 					results.push(result);
 				});
 			});

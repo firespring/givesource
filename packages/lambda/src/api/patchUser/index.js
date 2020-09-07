@@ -25,17 +25,12 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	request.middleware(new UserResourceMiddleware(request.urlParam('user_id')));
 
-	let user = null;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('user_id'));
-	}).then(function (result) {
-		user = new User(result);
-		user.populate(request._body);
-		return user.validate();
-	}).then(function () {
-		return repository.save(user);
-	}).then(function (model) {
-		callback(null, model.all());
+	}).then(function (populatedUser) {
+		return repository.upsert(populatedUser, request._body);
+	}).then(function (user) {
+		callback(null, user);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

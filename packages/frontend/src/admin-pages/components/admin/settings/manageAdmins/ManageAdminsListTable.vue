@@ -26,7 +26,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <manage-admins-list-table-row v-for="adminUser in adminUsers" :adminUser="adminUser" :key="adminUser.uuid"></manage-admins-list-table-row>
+        <manage-admins-list-table-row v-for="adminUser in adminUsers" :adminUser="adminUser" :key="adminUser.id"></manage-admins-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -90,9 +90,9 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.delete('users/' + vue.selectedAdminUser.uuid).then(function () {
+				vue.$request.delete('users/' + vue.selectedAdminUser.id).then(function () {
 					vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
-						return adminUser.uuid !== vue.selectedAdminUser.uuid;
+						return adminUser.id !== vue.selectedAdminUser.id;
 					});
 					vue.clearModals();
 				}).catch(function (err) {

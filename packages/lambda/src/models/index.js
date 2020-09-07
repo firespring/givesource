@@ -33,6 +33,8 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./file')(sequelize);
 		models[model.name] = model;
+		model = require('./user')(sequelize);
+		models[model.name] = model;
 		return models;
 	});
 }
