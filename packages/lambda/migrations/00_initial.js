@@ -10,6 +10,10 @@ module.exports = {
 					autoIncrement: true,
 					primaryKey: true
 				},
+				key: {
+					type: Sequelize.STRING(2048),
+					allowNull: false
+				},
 				parentId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
@@ -25,11 +29,7 @@ module.exports = {
 					allowNull: false,
 				},
 				value: {
-					type: Sequelize.STRING(50),
-					allowNull: false,
-				},
-				name: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				isDeleted: {

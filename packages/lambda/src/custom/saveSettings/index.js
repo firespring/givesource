@@ -17,7 +17,6 @@
 const _ = require('lodash');
 const logger = require('./../../helpers/log');
 const response = require('cfn-response');
-const Setting = require('../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const S3 = require('./../../aws/s3');
 
@@ -29,7 +28,7 @@ exports.handle = function (event, context, callback) {
 		return;
 	}
 
-	const models = [];
+	const bulkData = [];
 	const repository = new SettingsRepository();
 	const settings = JSON.parse(event.ResourceProperties.Settings);
 	let promise = Promise.resolve();
@@ -41,22 +40,16 @@ exports.handle = function (event, context, callback) {
 					const data = {};
 					data.key = key;
 					data.value = updatedValue;
-					models.push(new Setting(data));
+					data.createdAt = new Date();
+					data.updatedAt = new Date();
+					bulkData.push(data);
 				})
 			});
 		}
 	});
 
 	promise = promise.then(function() {
-		let subPromise = Promise.resolve();
-		models.forEach(function (model) {
-			subPromise = subPromise.then(function () {
-				return model.validate().then(function () {
-					return repository.save(model);
-				});
-			});
-		});
-		return subPromise;
+		return repository.bulkCreate(bulkData);
 	});
 
 	promise = promise.then(function () {

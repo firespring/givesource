@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Content = require('./../../dynamo-models/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
@@ -28,18 +27,14 @@ exports.handle = function (event, context, callback) {
 
 	let content = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('content_uuid'));
+		return repository.get(request.urlParam('content_id'));
 	}).then(function (result) {
-		content = new Content(result);
-		content.populate(request._body);
-		return content.validate();
-	}).then(function () {
-		return repository.save(content);
+		return repository.upsert(result, request._body);
 	}).then(function (response) {
 		content = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		callback(null, content.all());
+		callback(null, content);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -29,22 +29,20 @@ exports.handle = function (event, context, callback) {
 		return repository.batchGet(keys);
 	}).then(function (contents) {
 		let promise = Promise.resolve();
+		results = [];
 		contents.forEach(function (content) {
-			const result = content.all();
-			if (content.type === ContentHelper.TYPE_COLLECTION) {
+			if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
 				promise = promise.then(function () {
-					return repository.getByParentUuid(content.uuid).then(function (response) {
-						result.value = response.map(function (model) {
-							return model.all();
-						});
-						results.push(result);
+					return repository.getByParentId(content.id);
+				}).then(function (models) {
+					let values = [];
+					models.forEach(function (result) {
+						values.push(result);
 					});
-				});
-			} else {
-				promise = promise.then(function () {
-					results.push(result);
+					content.set('value', values);
 				});
 			}
+			results.push(content);
 		});
 		return promise;
 	}).then(function () {

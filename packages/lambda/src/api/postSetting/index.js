@@ -18,33 +18,30 @@ const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists');
-const loadModels = require('../../models/index');
+const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
+	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let setting;
-	let allModels;
 	request.validate().then(function () {
 		return new Promise(function (resolve, reject) {
-			loadModels().then(function (models) {
-				allModels = models;
-				setting = new allModels.Setting(request._body);
-			}).then(function () {
-				return allModels.Setting.findOne({key: request.get('key')});
-			}).then(function (setting) {
-				if (setting instanceof allModels.Setting) {
-					reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
-				} else {
-					resolve();
-				}
+			repository.get(request.get('key')).then(function () {
+				reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
+			}).catch(function () {
+				resolve();
 			});
 		});
 	}).then(function () {
-		return allModels.Setting.create(setting.toJSON());
+		return repository.populate(request._body);
+	}).then(function () {
+		return setting.validate();
+	}).then(function () {
+		return repository.save(setting);
 	}).then(function (response) {
 		setting = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
@@ -54,7 +51,5 @@ exports.handle = function (event, context, callback) {
 		callback(null, setting);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	}).finally(function () {
-		return allModels.sequelize.close();
 	});
 };

@@ -31,6 +31,8 @@ Parameters:
     Default: givesource
   StackName:
     Type: String
+  LambdaRole:
+    Type: String
   LambdaSecurityGroupId:
     Type: String
 Resources:
@@ -54,7 +56,7 @@ Resources:
   AdminUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub ${AWS::StackName}-AdminUserSecret
+      Name: !Sub ${StackName}/AdminUserSecret
       Description: Givesource database auto-generated admin user password
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"username": "${DatabaseAdminUser}", "database": "${DatabaseName}"}'
@@ -70,7 +72,7 @@ Resources:
   MaintenanceUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub ${AWS::StackName}-MaintenanceUserSecret
+      Name: !Sub ${StackName}/MaintenanceUserSecret
       Description: Givesource database auto-generated maintenance user password
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"username": "${DatabaseMaintenanceUser}", "database": "${DatabaseName}"}'
@@ -86,7 +88,7 @@ Resources:
   ReadwriteUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub ${AWS::StackName}-ReadwriteUserSecret
+      Name: !Sub ${StackName}/ReadwriteUserSecret
       Description: Givesource database auto-generated readwrite user password
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"username": "${DatabaseReadwriteUser}", "database": "${DatabaseName}"}'
@@ -99,6 +101,20 @@ Resources:
       SecretId: !Ref ReadwriteUserSecret
       TargetId: !Ref RDSCluster
       TargetType: AWS::RDS::DBCluster
+  SecretsManagerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: readwrite_user_secret_get
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Ref ReadwriteUserSecret
+      Roles:
+      - !Ref LambdaRole
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
@@ -163,11 +179,11 @@ Resources:
       Description: Database Init
       Environment:
         Variables:
-          AWS_STACK_NAME: !Ref AWS::StackName
+          AWS_STACK_NAME: !Ref StackName
           DATABASE_HOST: !GetAtt RDSCluster.Endpoint.Address
-          ADMIN_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-AdminUserSecret
-          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-MaintenanceUserSecret
-          READWRITE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-ReadwriteUserSecret
+          ADMIN_DATABASE_SECRET_ID: !Sub ${StackName}/AdminUserSecret
+          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${StackName}/MaintenanceUserSecret
+          READWRITE_DATABASE_SECRET_ID: !Sub ${StackName}/ReadwriteUserSecret
           DATABASE_NAME: !Ref DatabaseName
       FunctionName: !Sub ${StackName}-BootstrapDatabase
       Handler: index.handle
@@ -232,9 +248,9 @@ Resources:
       Description: Database Init
       Environment:
         Variables:
-          AWS_STACK_NAME: !Ref AWS::StackName
+          AWS_STACK_NAME: !Ref StackName
           DATABASE_HOST: !GetAtt RDSCluster.Endpoint.Address
-          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${AWS::StackName}-MaintenanceUserSecret
+          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${StackName}/MaintenanceUserSecret
           DATABASE_NAME: !Ref DatabaseName
           MIGRATIONS_BUCKET: {{awsReleaseBucket}}
           MIGRATIONS_LOCATION: migrations/{{version}}
@@ -255,12 +271,3 @@ Resources:
     Properties:
       ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
     DependsOn: BootstrapDatabaseLambdaLambdaInvoker
-Outputs:
-  ReadwriteUserSecret:
-    Value: !Sub ${AWS::StackName}-ReadwriteUserSecret
-  ReadwriteUserSecretArn:
-    Value: !Ref ReadwriteUserSecret
-  DatabaseClusterArn:
-    Value: !Ref RDSCluster
-  DatabaseEndpoint:
-    Value: !GetAtt RDSCluster.Endpoint.Address

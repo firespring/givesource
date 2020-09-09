@@ -16,7 +16,6 @@
 
 'use strict';
 
-const CloudFormation = require('../aws/cloudformation');
 const SecretsManager = require('../aws/secretsManager');
 const mysql2 = require('mysql2');
 const Sequelize = require('sequelize');
@@ -44,12 +43,9 @@ rqXRfboQnoZsG4q5WTP468SQvvG5
 
 
 module.exports = function() {
-	const cloudFormation = new CloudFormation();
-	return cloudFormation.describeStacks(process.env.AWS_REGION, process.env.AWS_STACK_NAME).then(function (stacks) {
-		const secretId = stacks.Stacks[0].Outputs.find(it => it.OutputKey === 'DatabaseReadwriteSecret').OutputValue;
-		const secretsManager = new SecretsManager();
-		return secretsManager.getSecretValue(process.env.AWS_REGION, secretId);
-	}).then(function (secret) {
+	const readwriteSecretId = process.env.AWS_STACK_NAME + "/ReadwriteUserSecret";
+	const secretsManager = new SecretsManager();
+	return secretsManager.getSecretValue(process.env.AWS_REGION, readwriteSecretId).then(function (secret) {
 		const readwriteSecret = JSON.parse(secret.SecretString);
 		return new Sequelize({
 			host: readwriteSecret.host,

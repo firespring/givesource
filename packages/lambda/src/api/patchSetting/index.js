@@ -17,7 +17,6 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Setting = require('./../../models/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
@@ -27,22 +26,21 @@ exports.handle = function (event, context, callback) {
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let setting = null;
+	let setting;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('key'));
-	}).then(function (result) {
-		setting = new Setting(result);
-		setting.populate(request._body);
+	}).then(function (setting) {
+		setting.set('value', request._body.value);
 		return setting.validate();
-	}).then(function () {
+	}).then(function (setting) {
 		return repository.save(setting);
 	}).then(function (response) {
 		setting = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
+		return DynamicContentHelper.regenerateDynamicContent([setting.get('key')], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {
-		callback(null, setting.all());
+		callback(null, setting);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

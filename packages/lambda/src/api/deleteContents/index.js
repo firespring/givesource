@@ -15,7 +15,6 @@
  */
 
 const _ = require('lodash');
-const Content = require('./../../dynamo-models/content');
 const ContentHelper = require('./../../helpers/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
@@ -30,17 +29,23 @@ exports.handle = function (event, context, callback) {
 
 	let contents = [];
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new Content(data));
+		let promise = Promise.resolve();
+		request.get('contents', []).forEach(async function (data) {
+			promise = promise.then(function () {
+				return repository.populate(data);
+			}).then(function (content) {
+				contents.push(content);
+			});
 		});
+		return promise;
 	}).then(function () {
 		let promise = Promise.resolve();
 		contents.forEach(function (content) {
-			if (content.type === ContentHelper.TYPE_COLLECTION) {
+			if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
 				promise = promise.then(function () {
-					return repository.getByParentUuid(content.uuid).then(function (response) {
+					return repository.getByParentId(content.id).then(function (response) {
 						response.forEach(function (model) {
-							if (!_.find(contents, {uuid: model.uuid})) {
+							if (!_.find(contents, {id: model.id})) {
 								contents.push(model);
 							}
 						});
