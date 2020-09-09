@@ -139,7 +139,7 @@
                     return;
                 }
 
-                vue.$request.patch('users/' + vue.user.id, params).then(function (response) {
+                vue.$request.patch('users/' + vue.user.cognitoUsername, params).then(function (response) {
                     vue.removeModal();
                     if (response.data.errorMessage) {
                         console.log(response.data);

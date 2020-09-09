@@ -21,11 +21,11 @@ const Middleware = require('./middleware');
 /**
  * UserResourceMiddleware constructor
  *
- * @param {String} userUuid
+ * @param {String} cognitoUsername
  * @constructor
  */
-function UserResourceMiddleware(userUuid) {
-	this.userUuid = userUuid;
+function UserResourceMiddleware(cognitoUsername) {
+	this.cognitoUsername = cognitoUsername;
 }
 
 /**
@@ -44,7 +44,7 @@ UserResourceMiddleware.prototype.handle = function () {
 	const middleware = this;
 	return new Promise(function (resolve, reject) {
 
-		if (middleware.user.uuid === middleware.userUuid) {
+		if (middleware.user.cognitoUsername === middleware.cognitoUsername) {
 			return resolve();
 		}
 

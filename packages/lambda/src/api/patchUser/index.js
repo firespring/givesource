@@ -16,7 +16,6 @@
 
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../dynamo-models/user');
 const UserResourceMiddleware = require('./../../middleware/userResource');
 const UsersRepository = require('./../../repositories/users');
 
@@ -26,7 +25,7 @@ exports.handle = function (event, context, callback) {
 	request.middleware(new UserResourceMiddleware(request.urlParam('user_id')));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_id'));
+		return repository.getByCognitoUsername(request.urlParam('user_id'));
 	}).then(function (populatedUser) {
 		return repository.upsert(populatedUser, request._body);
 	}).then(function (user) {
