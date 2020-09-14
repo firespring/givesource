@@ -44,6 +44,9 @@ exports.handle = function (event, context, callback) {
 					return repository.populate(data);
 				}
 			}).then(function (model) {
+				if (Array.isArray(data.value) || typeof data.value === 'object') {
+					delete data.value;
+				}
 				return repository.upsert(model, data);
 			}).then(function (savedModel) {
 				settings.push(savedModel);

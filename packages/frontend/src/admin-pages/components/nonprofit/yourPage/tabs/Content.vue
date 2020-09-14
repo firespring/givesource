@@ -254,11 +254,11 @@
 					promise = promise.then(function () {
 						return vue.uploadFile('logo').then(function (uploadedFile) {
 							vue.$store.commit('generateCacheKey');
-							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : '';
 						});
 					});
-				} else if (_.isPlainObject(vue.formData.logo) && vue.formData.logo.hasOwnProperty('uuid')) {
-					vue.formData.logoFileUuid = vue.formData.logo.uuid;
+				} else if (_.isPlainObject(vue.formData.logo) && vue.formData.logo.hasOwnProperty('id')) {
+					vue.formData.logoFileUuid = vue.formData.logo.id;
 				} else {
 					vue.formData.logoFileUuid = '';
 				}

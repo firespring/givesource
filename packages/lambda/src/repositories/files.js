@@ -73,9 +73,9 @@ FilesRepository.prototype.get = function (id) {
 				where: {
 					id: id
 				}
-			}).then(function (setting) {
-				if (setting instanceof allModels.File) {
-					resolve(setting);
+			}).then(function (file) {
+				if (file instanceof allModels.File) {
+					resolve(file);
 				}
 				reject(new ResourceNotFoundException('The specified file does not exist.'));
 			});
@@ -141,16 +141,22 @@ FilesRepository.prototype.batchGet = function (fileIds) {
 /**
  * Delete a File
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-FilesRepository.prototype.delete = function (uuid) {
-	const repository = this;
+FilesRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.File.destroy({where: {id: id}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

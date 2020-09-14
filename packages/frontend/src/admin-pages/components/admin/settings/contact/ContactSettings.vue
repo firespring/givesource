@@ -137,10 +137,10 @@
 		},
 		computed: {
 			displayResendContactEmailVerificationLink: function () {
-				return this.settings.length && this.emailSettings.length && !this.contactEmailIsVerified;
+				return this.settings.length && this.contactEmail !== null && this.emailSettings.length && !this.contactEmailIsVerified;
 			},
 			displayResendSenderEmailVerificationLink: function () {
-				return this.settings.length && this.emailSettings.length && !this.senderEmailIsVerified;
+				return this.settings.length && this.senderEmail !== null && this.emailSettings.length && !this.senderEmailIsVerified;
 			},
 			contactEmail: function () {
 				let setting = null;

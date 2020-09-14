@@ -324,7 +324,7 @@
 								vue.$store.commit('generateCacheKey');
 								settings.push({
 									key: key,
-									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''
+									value: uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''
 								});
 							});
 						});
@@ -333,12 +333,12 @@
 							let settingValue = vue.formData[key];
 							if (key === 'ACCENT_COLOR' && vue.formData[key] === vue.defaultColor) {
 								settingValue = '';
-							} else if (_.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('uuid')) {
-								settingValue = vue.formData[key].uuid;
+							} else if (_.isPlainObject(vue.formData[key]) && vue.formData[key].hasOwnProperty('id')) {
+								settingValue = vue.formData[key].id;
 							}
 							settings.push({
 								key: key,
-								value: settingValue
+								value: settingValue.toString()
 							});
 						});
 					}

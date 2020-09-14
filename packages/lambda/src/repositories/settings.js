@@ -43,14 +43,15 @@ SettingsRepository.prototype = new Repository();
 /**
  * Look to abstract this
  *
- * @param data
+ * @param {Object} data
  * @return {Promise}
  */
 SettingsRepository.prototype.populate = function (data) {
 	let allModels;
 	return loadModels().then(function (models) {
 		allModels = models;
-		return new models.Setting(data);
+		const setting = new models.Setting();
+		return new setting.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
 	}).finally(function () {
 		return allModels.sequelize.close();
 	});
