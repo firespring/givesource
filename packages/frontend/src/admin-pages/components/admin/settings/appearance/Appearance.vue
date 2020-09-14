@@ -338,7 +338,7 @@
 							}
 							settings.push({
 								key: key,
-								value: settingValue.toString()
+								value: settingValue !== null ? settingValue.toString() : settingValue
 							});
 						});
 					}
