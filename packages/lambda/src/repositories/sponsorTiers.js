@@ -49,7 +49,8 @@ SponsorTiersRepository.prototype.populate = function (data) {
 	let allModels;
 	return loadModels().then(function (models) {
 		allModels = models;
-		return new models.SponsorTier(data);
+		const sponsorTier = new models.SponsorTier();
+		return new sponsorTier.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
 	}).finally(function () {
 		return allModels.sequelize.close();
 	})

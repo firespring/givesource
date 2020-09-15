@@ -187,13 +187,13 @@
 			}
 		},
 		props: {
-			pageUuid: {
+			pageId: {
 				type: String,
 				default: ''
 			}
 		},
 		beforeRouteEnter(to, from, next) {
-			fetchData(to.params.pageUuid).then((data) => {
+			fetchData(to.params.pageId).then((data) => {
 				next((vm) => {
 					vm.contents = data.contents;
 					vm.settings = data.settings;
@@ -311,7 +311,7 @@
 				vm.addModal('pages-custom-delete-modal', {
 					contents: vm.contents,
 					settings: vm.settings,
-					pageUuid: vm.pageUuid
+					pageId: vm.pageId
 				});
 			},
 			editSlug() {
@@ -320,7 +320,7 @@
 			cancelEditSlug() {
 				const vm = this;
 
-				const identifier = vm.pageUuid.toUpperCase().replace(/-/g, '_');
+				const identifier = vm.pageId.toUpperCase().replace(/-/g, '_');
 				const content = _.find(vm.contents, {key: 'CUSTOM_PAGE_SLUG_' + identifier});
 
 				vm.formData.PAGE_SLUG.value = content.value;

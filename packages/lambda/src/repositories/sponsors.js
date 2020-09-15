@@ -50,7 +50,8 @@ SponsorsRepository.prototype.populate = function (data) {
 	let allModels;
 	return loadModels().then(function (models) {
 		allModels = models;
-		return new models.Sponsor(data);
+		const sponsor = new models.Sponsor();
+		return new sponsor.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
 	}).finally(function () {
 		return allModels.sequelize.close();
 	})

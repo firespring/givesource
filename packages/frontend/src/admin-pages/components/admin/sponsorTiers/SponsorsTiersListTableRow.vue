@@ -105,7 +105,7 @@
 						}
 					});
 					return vue.$request.get('files', {
-						uuids: fileIds
+						fileIds: fileIds
 					});
 				}).then(function (response) {
 					return vue.$request.delete('files', {

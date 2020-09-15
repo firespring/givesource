@@ -30,14 +30,14 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		request.get('sponsors', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return repository.populate(data);
+				return repository.get(request.urlParam('sponsor_tier_id'), data.id);
 			}).then(function (sponsor) {
 				sponsors.push(sponsor);
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchRemove(request.urlParam('sponsor_tier_id'), sponsors);
+		return repository.batchDelete(sponsors);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
