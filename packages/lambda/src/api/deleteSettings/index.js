@@ -31,9 +31,11 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		request.get('settings', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return repository.populate(data);
+				return repository.get(data.key, true);
 			}).then(function (setting) {
-				settings.push(setting);
+				if (setting !== null) {
+					settings.push(setting);
+				}
 			});
 		});
 		return promise;

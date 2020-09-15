@@ -31,7 +31,11 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		request.get('files', []).forEach(function (file) {
 			promise = promise.then(function () {
-				return repository.get(file);
+				if (typeof file === 'object') {
+					return repository.get(file.id);
+				} else {
+					return repository.get(file);
+				}
 			}).then(function (file) {
 				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'));
 			}).then(function () {

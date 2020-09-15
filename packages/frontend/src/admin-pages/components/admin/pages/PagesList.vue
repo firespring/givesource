@@ -222,7 +222,7 @@
                                         <div>
                                             <strong>
                                                 <i class="fa fa-fw fa-file" aria-hidden="true"></i>
-                                                <router-link :to="{name: 'pages-custom-edit', params: { pageUuid: content.uuid } }">{{ content.title }}</router-link>
+                                                <router-link :to="{name: 'pages-custom-edit', params: { pageId: content.id } }">{{ content.title }}</router-link>
                                             </strong> — <a :href="getPageUrl('/' + content.slug)" target="_blank" rel="noopener noreferrer">{{ getPageUrl('/' + content.slug) }}</a>
                                         </div>
                                     </div>
@@ -232,8 +232,8 @@
                                             <div class="c-switch-control">
                                                 <div>
                                                     <input v-model="content.enabled" v-on:change="updateCustomSettingEnabled(content)" type="checkbox"
-                                                           :name="content.uuid" :id="content.uuid" :disabled="content.updating">
-                                                    <label :for="content.uuid" class="c-switch-lever"></label>
+                                                           :name="content.id" :id="content.id" :disabled="content.updating">
+                                                    <label :for="content.id" class="c-switch-lever"></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -273,6 +273,14 @@
 			]
 		}).then((response) => {
 			settings = response.hasOwnProperty('data') ? response.data : [];
+			settings.forEach(function (setting) {
+                if (setting.value === "0") {
+                	setting.value = false;
+                }
+                if (setting.value === "1") {
+                	setting.value = true;
+                }
+			});
 
 			const keys = getSettingKeys(settings);
 			if (keys.length) {
@@ -338,21 +346,21 @@
 					vm.settings = data.settings;
 
 					const setting = _.find(vm.settings, {key: 'CUSTOM_PAGES'});
-					const uuids = (typeof setting === 'object' && setting.hasOwnProperty('value')) ? setting.value.split('|') : [];
+					const ids = (typeof setting === 'object' && setting.hasOwnProperty('value')) ? setting.value.split('|') : [];
 
-					if (uuids.length < 3) {
+					if (ids.length < 3) {
 						vm.canAddPages = true;
 					}
 
-					uuids.forEach((uuid) => {
+					ids.forEach((id) => {
 						const content = {
 							enabled: false,
-							identifier: uuid.toUpperCase().replace(/-/g, '_'),
+							identifier: id.toUpperCase().replace(/-/g, '_'),
 							slug: null,
 							text: null,
 							title: null,
 							updating: false,
-							uuid: uuid,
+							id: id,
 						};
 						vm.contents.forEach((c) => {
 							if (c.key.includes(content.identifier)) {

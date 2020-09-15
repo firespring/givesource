@@ -244,7 +244,7 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/pages/custom/:pageUuid',
+			path: '/pages/custom/:pageId',
 			name: 'pages-custom-edit',
 			props: true,
 			component: ComponentCustomPagesEdit,

@@ -61,9 +61,10 @@ SettingsRepository.prototype.populate = function (data) {
  * Get a Setting
  *
  * @param {String} key
+ * @param {Boolean} returnNull
  * @return {Promise}
  */
-SettingsRepository.prototype.get = function (key) {
+SettingsRepository.prototype.get = function (key, returnNull = false) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
@@ -74,7 +75,7 @@ SettingsRepository.prototype.get = function (key) {
 					key: key
 				}
 			}).then(function (setting) {
-				if (setting instanceof allModels.Setting) {
+				if (setting instanceof allModels.Setting || returnNull) {
 					resolve(setting);
 				}
 				reject(new ResourceNotFoundException('The specified setting does not exist.'));
@@ -169,20 +170,23 @@ SettingsRepository.prototype.delete = function (key) {
  */
 SettingsRepository.prototype.batchDeleteByKey = function (models) {
 	let allModels;
-	const keys = models.forEach(function (model) {
-		return model.get('key');
+	const keys = models.map(function (model) {
+		return model.key;
 	});
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.Setting.destroy({
-				where: {
-					key: {
-						[Sequelize.Op.or]: keys
+			if (keys.length > 0) {
+				return allModels.Setting.destroy({
+					where: {
+						key: {
+							[Sequelize.Op.or]: keys
+						}
 					}
-				}
-			})
+				});
+			}
+			resolve();
 		}).then(function (stuff) {
 			resolve(stuff);
 		}).catch(function (err) {
@@ -226,12 +230,10 @@ SettingsRepository.prototype.save = function (model) {
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;
-			if (!(model instanceof allModels.Setting)) {
+			if (!(model !== null)) {
 				reject(new Error('invalid Setting model'));
 			}
 			return repository.upsert(model, {});
-		}).then(function (setting) {
-			resolve(setting);
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {

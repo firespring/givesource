@@ -30,15 +30,15 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.get(request.urlParam('key'));
 	}).then(function (setting) {
-		setting.set('value', request._body.value);
+		setting.value = request._body.value;
 		return setting.validate();
-	}).then(function (setting) {
-		return repository.save(setting);
+	}).then(function (validSetting) {
+		return repository.save(validSetting);
 	}).then(function (response) {
 		setting = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		return DynamicContentHelper.regenerateDynamicContent([setting.get('key')], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
+		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
 	}).then(function () {
 		callback(null, setting);
 	}).catch(function (err) {

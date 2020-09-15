@@ -32,9 +32,11 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		request.get('contents', []).forEach(async function (data) {
 			promise = promise.then(function () {
-				return repository.populate(data);
+				return repository.get(data.id, true);
 			}).then(function (content) {
-				contents.push(content);
+				if (content !== null) {
+					contents.push(content);
+				}
 			});
 		});
 		return promise;
