@@ -293,10 +293,10 @@ Repository.prototype.batchDelete = function (models) {
 			allModels = models;
 		}).then(function () {
 			let promise = Promise.resolve();
-			promise = promise.then(function () {
-				models.forEach(function (model) {
+			models.forEach(function (model) {
+				promise = promise.then(function () {
 					return model.destroy();
-				})
+				});
 			});
 			return promise;
 		}).then(function (stuff) {

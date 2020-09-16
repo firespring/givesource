@@ -27,6 +27,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['files']);
 	const s3 = new S3();
 
+	let fileToDelete;
 	request.validate().then(function () {
 		let promise = Promise.resolve();
 		request.get('files', []).forEach(function (file) {
@@ -37,9 +38,10 @@ exports.handle = function (event, context, callback) {
 					return repository.get(file);
 				}
 			}).then(function (file) {
+				fileToDelete = file;
 				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'));
 			}).then(function () {
-				return repository.delete(file);
+				return repository.delete(fileToDelete.id);
 			});
 		});
 		return promise;

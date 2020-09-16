@@ -72,12 +72,12 @@ SponsorTiersRepository.prototype.get = function (id) {
 				where: {
 					id: id
 				}
-			}).then(function (sponsorTier) {
-				if (sponsorTier instanceof allModels.SponsorTier) {
-					resolve(sponsorTier);
-				}
-				reject(new ResourceNotFoundException('The specified sponsorTier does not exist.'));
 			});
+		}).then(function (sponsorTier) {
+			if (sponsorTier instanceof allModels.SponsorTier) {
+				resolve(sponsorTier);
+			}
+			reject(new ResourceNotFoundException('The specified sponsorTier does not exist.'));
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {
@@ -142,7 +142,7 @@ SponsorTiersRepository.prototype.delete = function (id) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.Setting.destroy({where: {id: id}});
+			return allModels.SponsorTier.destroy({where: {id: id}});
 		}).then(function () {
 			resolve()
 		}).catch(function (err) {

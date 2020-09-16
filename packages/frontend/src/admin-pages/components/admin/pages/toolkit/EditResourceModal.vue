@@ -332,7 +332,7 @@
 					}).then(function () {
 						toUpdate.forEach(function (content) {
 							if (content.key === 'TOOLKIT_RESOURCE_LIST_ITEM_FILE') {
-								content.value = file.uuid;
+								content.value = file.id;
 							}
 						});
 					});

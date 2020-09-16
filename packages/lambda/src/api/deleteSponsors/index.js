@@ -37,7 +37,7 @@ exports.handle = function (event, context, callback) {
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchDelete(sponsors);
+		return repository.bulkDelete(sponsors);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

@@ -19,6 +19,7 @@ const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const SponsorTiersRepository = require('./sponsorTiers');
 const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * SponsorsRepository constructor
@@ -75,12 +76,12 @@ SponsorsRepository.prototype.get = function (sponsorTierId, id) {
 					id: id,
 					sponsorTierId: sponsorTierId
 				}
-			}).then(function (sponsor) {
-				if (sponsor instanceof allModels.Sponsor) {
-					resolve(sponsor);
-				}
-				reject(new ResourceNotFoundException('The specified sponsor does not exist.'));
 			});
+		}).then(function (sponsor) {
+			if (sponsor instanceof allModels.Sponsor) {
+				resolve(sponsor);
+			}
+			reject(new ResourceNotFoundException('The specified sponsor does not exist.'));
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {
@@ -187,10 +188,7 @@ SponsorsRepository.prototype.save = function (sponsorTierId, model) {
 		return loadModels().then(function (models) {
 			allModels = models;
 			return sponsorTierRepository.get(sponsorTierId);
-		}).then(function (sponsorTier) {
-			if (!sponsorTier instanceof allModels.SponsorTier) {
-				reject('SponsorTier does not exist!');
-			}
+		}).then(function () {
 			return repository.upsert(model, {}, sponsorTierId);
 		}).then(function (sponsor) {
 			resolve(sponsor);
@@ -225,6 +223,38 @@ SponsorsRepository.prototype.batchSave = function (sponsorTierId, models) {
 			resolve();
 		}).catch(function (err) {
 			reject(err);
+		});
+	});
+};
+
+/**
+ * {[]} models
+ *
+ * @param models
+ * @return {Promise<any>}
+ */
+SponsorsRepository.prototype.bulkDelete = function (models) {
+	let allModels;
+	const ids = models.map(function (model) {
+		return model.id;
+	});
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Sponsor.destroy({
+				where: {
+					id: {
+						[Sequelize.Op.in]: ids
+					}
+				}
+			});
+		}).then(function () {
+			resolve();
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
