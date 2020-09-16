@@ -39,15 +39,15 @@ exports.handle = function (event, context, callback) {
 					return usersRepository.populate({email: email, cognitoUsername: UUID.v4()})
 				}).then(function (populatedUser) {
 					user = populatedUser;
-					return cognito.createUser(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername'), user.get('email'));
+					return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email);
 				}).then(function (cognitoUser) {
 					cognitoUser.User.Attributes.forEach(function (attribute) {
 						if (attribute.Name === 'sub') {
-							user.set('cognitoUuid', attribute.Value);
+							user.cognitoUuid = attribute.Value;
 						}
 					});
 				}).then(function () {
-					return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername'), 'Admin');
+					return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Admin');
 				}).then(function () {
 					return usersRepository.upsert(user, {});
 				}).then(function () {

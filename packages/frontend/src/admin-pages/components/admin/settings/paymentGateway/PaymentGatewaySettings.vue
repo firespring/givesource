@@ -303,6 +303,11 @@
 					keys: Object.keys(vue.formData)
 				}).then(function (response) {
 					vue.settings = response.data;
+					vue.settings.forEach(function (setting) {
+						if (setting.key === 'PAYMENT_SPRING_LIVE_MODE' || setting.key === 'TEST_PAYMENTS_DISPLAY') {
+							setting.value = setting.value !== "0";
+						}
+					});
 				});
 			});
 		},
