@@ -29,7 +29,7 @@
             <div class="o-user">
                 <div class="o-user__current o-menubar-popup-parent" ref="oMenubarPopupParent" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                     <a href="#" class="js-user-popup-toggle has-tooltip" title="Manage Your Account" v-on:click="toggleMenu">
-                        <v-gravatar :email="user.email" :size="150" default-img="mm" :alt="gravatarAlt" class="o-user__avatar"></v-gravatar>
+                        <v-gravatar :email="email" :size="150" default-img="mm" :alt="gravatarAlt" class="o-user__avatar"></v-gravatar>
                     </a>
                     <div class="o-menubar-popup o-menubar-popup--current-user" ref="oMenubarPopup">
                         <div class="o-menubar-popup__header o-current-user" v-if="firstName">
@@ -68,9 +68,10 @@
 	export default {
 		data: function () {
 			return {
-				firstName: this.user.firstName,
-				lastName: this.user.lastName,
-				gravatarAlt: this.user.firstName && this.user.lastName ? this.user.firstName + ' ' + this.user.lastName : 'Avatar',
+				firstName: this.user.dataValues.firstName,
+				lastName: this.user.dataValues.lastName,
+                email: this.user.dataValues.email,
+				gravatarAlt: this.user.dataValues.firstName && this.user.dataValues.lastName ? this.user.dataValues.firstName + ' ' + this.user.dataValues.lastName : 'Avatar',
 				navigationComponent: 'navigation-nonprofit',
 
 				displayingMenu: false,

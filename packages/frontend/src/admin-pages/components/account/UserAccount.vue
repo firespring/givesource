@@ -86,9 +86,9 @@
 	export default {
 		data: function () {
 			return {
-				firstName: this.user.firstName || '',
-                lastName: this.user.lastName || '',
-                nonprofitUuid: this.user.nonprofitUuid,
+				firstName: this.user.dataValues.firstName || '',
+                lastName: this.user.dataValues.lastName || '',
+                nonprofitUuid: this.user.dataValues.nonprofitUuid,
             }
         },
 		created: function () {

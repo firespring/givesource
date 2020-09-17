@@ -79,8 +79,8 @@
 
                 // Form Data
                 formData: {
-                    firstName: this.user.firstName,
-                    lastName: this.user.lastName
+                    firstName: this.user.dataValues.firstName,
+                    lastName: this.user.dataValues.lastName
                 },
 
                 // Errors
@@ -139,13 +139,13 @@
                     return;
                 }
 
-                vue.$request.patch('users/' + vue.user.cognitoUsername, params).then(function (response) {
+                vue.$request.patch('users/' + vue.user.dataValues.cognitoUsername, params).then(function (response) {
                     vue.removeModal();
                     if (response.data.errorMessage) {
                         console.log(response.data);
                     } else {
                         vue.clearModals();
-                        vue.bus.$emit('userAccountUpdateInfo', response.data);
+                        vue.bus.$emit('userAccountUpdateInfo', response.data[0]);
                     }
                 }).catch(function (err) {
                     vue.removeModal();
