@@ -149,10 +149,10 @@
 			submitRequest: function () {
 				const vue = this;
 
-				const name = (vue.user.dataValues.firstName && vue.user.dataValues.lastName) ? vue.user.dataValues.firstName + ' ' + vue.user.dataValues.lastName : vue.nonprofit.legalName;
+				const name = (vue.user.firstName && vue.user.lastName) ? vue.user.firstName + ' ' + vue.user.lastName : vue.nonprofit.legalName;
 				vue.$request.post('messages', {
 					name: name,
-					email: vue.user.dataValues.email,
+					email: vue.user.email,
 					message: vue.formatMessage(),
 					type: 'NAME_CHANGE'
 				}).then(function () {

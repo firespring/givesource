@@ -68,10 +68,10 @@
 	export default {
 		data: function () {
 			return {
-				firstName: this.user.dataValues.firstName,
-				lastName: this.user.dataValues.lastName,
-                email: this.user.dataValues.email,
-				gravatarAlt: this.user.dataValues.firstName && this.user.dataValues.lastName ? this.user.dataValues.firstName + ' ' + this.user.dataValues.lastName : 'Avatar',
+				firstName: this.user.firstName,
+				lastName: this.user.lastName,
+                email: this.user.email,
+				gravatarAlt: this.user.firstName && this.user.lastName ? this.user.firstName + ' ' + this.user.lastName : 'Avatar',
 				navigationComponent: 'navigation-nonprofit',
 
 				displayingMenu: false,

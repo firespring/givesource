@@ -31,7 +31,7 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function (user) {
 		const groups = request.user().groups || [];
-		callback(null, _.merge({}, user, {groups: groups}));
+		callback(null, _.merge({}, user.get(), {groups: groups}));
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

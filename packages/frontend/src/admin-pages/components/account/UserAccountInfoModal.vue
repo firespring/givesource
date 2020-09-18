@@ -79,8 +79,8 @@
 
                 // Form Data
                 formData: {
-                    firstName: this.user.dataValues.firstName,
-                    lastName: this.user.dataValues.lastName
+                    firstName: this.user.firstName,
+                    lastName: this.user.lastName
                 },
 
                 // Errors
@@ -139,7 +139,7 @@
                     return;
                 }
 
-                vue.$request.patch('users/' + vue.user.dataValues.cognitoUsername, params).then(function (response) {
+                vue.$request.patch('users/' + vue.user.cognitoUsername, params).then(function (response) {
                     vue.removeModal();
                     if (response.data.errorMessage) {
                         console.log(response.data);

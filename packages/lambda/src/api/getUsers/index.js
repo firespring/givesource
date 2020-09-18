@@ -36,9 +36,9 @@ exports.handle = function (event, context, callback) {
 			let result = user;
 			promise = promise.then(function () {
 				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername')).then(function (response) {
-					result.setDataValue('groups', response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
+					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
 						return group.GroupName;
-					}) : []);
+					}) : [];
 					results.push(result);
 				});
 			});
