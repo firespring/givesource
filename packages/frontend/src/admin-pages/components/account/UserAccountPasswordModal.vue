@@ -69,7 +69,7 @@
                                                 {{ formErrors.password }}
                                             </div>
                                             <div class="c-notes c-notes--below">
-                                                Your password must be at least 8 characters long and contain a combination of numbers and upper and lower case letters.
+                                                Your password must be at least 8 characters long with a combination of numbers, uppercase letters, and lowercase letters.
                                             </div>
                                         </div>
                                     </div>
