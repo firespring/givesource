@@ -222,7 +222,7 @@
 					}
 
 					if (!vm.isEditingSlug) {
-						vm.formData.PAGE_SLUG.value = slug(vm.formData.PAGE_TITLE.value, {lower: true});
+						vm.formData.PAGE_SLUG.value = vm.formData.PAGE_SLUG.value !== vm.formData.PAGE_TITLE.value ? slug(vm.formData.PAGE_SLUG.value, {lower: true}) : slug(vm.formData.PAGE_TITLE.value, {lower: true});
 					}
 				},
 				deep: true
