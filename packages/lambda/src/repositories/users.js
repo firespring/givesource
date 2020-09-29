@@ -226,14 +226,14 @@ UsersRepository.prototype.upsert = function (model, data) {
 			allModels = models;
 		}).then(function () {
 			return allModels.User.upsert({
-				'id': model.get('id'),
-				'email': typeof data.email !== "undefined" ? data.email : model.get('email'),
-				'firstName': typeof data.firstName !== "undefined" ? data.firstName : model.get('firstName'),
-				'lastName': typeof data.lastName !== "undefined" ? data.lastName : model.get('lastName'),
-				'isVerified': typeof data.isVerified !== "undefined" ? data.isVerified : model.get('isVerified'),
-				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.get('nonprofitId'),
-				'cognitoUsername': typeof data.cognitoUsername !== "undefined" ? data.cognitoUsername : model.get('cognitoUsername'),
-				'cognitoUuid': typeof data.cognitoUuid !== "undefined" ? data.cognitoUuid : model.get('cognitoUuid'),
+				'id': model.id,
+				'email': typeof data.email !== "undefined" ? data.email : model.email,
+				'firstName': typeof data.firstName !== "undefined" ? data.firstName : model.firstName,
+				'lastName': typeof data.lastName !== "undefined" ? data.lastName : model.lastName,
+				'isVerified': typeof data.isVerified !== "undefined" ? data.isVerified : model.isVerified,
+				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
+				'cognitoUsername': typeof data.cognitoUsername !== "undefined" ? data.cognitoUsername : model.cognitoUsername,
+				'cognitoUuid': typeof data.cognitoUuid !== "undefined" ? data.cognitoUuid : model.cognitoUuid,
 			});
 		}).then(function (user) {
 			resolve(user);

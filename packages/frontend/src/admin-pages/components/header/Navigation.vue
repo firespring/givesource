@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <component :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'" :nonprofitUuid="nonprofitUuid"></component>
+        <component :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'" :nonprofitId="nonprofitId"></component>
     </div>
 </template>
 
@@ -83,14 +83,14 @@
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
 			logoLink: function () {
-				if (!this.isAdmin && this.nonprofitUuid) {
-					return {name: 'nonprofit-donations-list', params: {nonprofitUuid: this.nonprofitUuid}};
+				if (!this.isAdmin && this.nonprofitId) {
+					return {name: 'nonprofit-donations-list', params: {nonprofitId: this.nonprofitId}};
 				}
 				return {name: 'donations-list'};
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		created: function () {
 			const vue = this;

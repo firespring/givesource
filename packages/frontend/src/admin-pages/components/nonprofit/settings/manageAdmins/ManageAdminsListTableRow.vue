@@ -108,7 +108,7 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.post('users/' + vue.nonprofitUser.uuid + '/resend-verification-email').then(function () {
+				vue.$request.post('users/' + vue.nonprofitUser.id + '/resend-verification-email').then(function () {
 					vue.clearModals();
 				}).catch(function (err) {
 					console.log(err);

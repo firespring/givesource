@@ -27,12 +27,12 @@ exports.handle = function (event, context, callback) {
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 	const request = new Request(event, context).parameters(['email_addresses']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	const userPoolId = process.env.USER_POOL_ID;
 	const emailAddresses = request.get('email_addresses');
 	request.validate().then(function () {
-		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
+		return nonprofitsRepository.get(request.urlParam('nonprofit_id'));
 	}).then(function (nonprofit) {
 		return new Promise(function (resolve, reject) {
 			const users = [];

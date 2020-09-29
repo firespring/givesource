@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -161,11 +161,11 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter(to, from, next) {
 			next(vm => {
-				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitId).then(response => {
 					vm.nonprofit = response.data;
 					return vm.loadSettings();
 				});
@@ -174,7 +174,7 @@
 		beforeRouteUpdate(to, from, next) {
 			const vm = this;
 
-			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+			vm.$request.get('/nonprofits/' + to.params.nonprofitId).then(response => {
 				vm.nonprofit = response.data;
 				return vm.loadSettings();
 			}).catch(() => {
@@ -275,7 +275,7 @@
 
 					if (Object.keys(updatedParams).length) {
 						promise = promise.then(() => {
-							return vm.$request.patch('nonprofits/' + vm.nonprofit.uuid, updatedParams).then(response => {
+							return vm.$request.patch('nonprofits/' + vm.nonprofit.id, updatedParams).then(response => {
 								if (response.data.errorMessage) {
 									console.log(response.data);
 								}

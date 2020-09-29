@@ -14,19 +14,31 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const Request = require('./../../aws/request');
+'use strict';
 
-exports.handle = function (event, context, callback) {
-	const request = new Request(event, context);
-	const repository = new NonprofitsRepository();
+const {DataTypes} = require('sequelize');
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_id'));
-	}).then(function (nonprofit) {
-		callback(null, nonprofit);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+module.exports = (sequelize) => {
+	const NonprofitDonationTier = sequelize.define('NonprofitDonationTier', {
+		amount: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		value: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		nonprofitId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
+		},
 	});
+
+	// NonprofitDonationTier.belongsTo(sequelize.models.Nonprofit, {
+	// 	foreignKey: 'nonprofitId'
+	// });
+
+	return NonprofitDonationTier;
 };

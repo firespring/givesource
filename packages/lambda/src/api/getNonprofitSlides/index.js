@@ -23,12 +23,9 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.getAll(request.urlParam('nonprofit_uuid'));
+		return repository.getAll(request.urlParam('nonprofit_id'));
 	}).then(function (slides) {
-		const results = slides.map(function (slide) {
-			return slide.all();
-		});
-		callback(null, results);
+		callback(null, slides);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

@@ -26,7 +26,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <manage-admins-list-table-row v-for="nonprofitUser in nonprofitUsers" :nonprofitUser="nonprofitUser" :key="nonprofitUser.uuid"></manage-admins-list-table-row>
+        <manage-admins-list-table-row v-for="nonprofitUser in nonprofitUsers" :nonprofitUser="nonprofitUser" :key="nonprofitUser.id"></manage-admins-list-table-row>
         </tbody>
 
         <tbody v-else>
@@ -53,12 +53,12 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		created: function () {
 			const vue = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/users').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitId + '/users').then(function (response) {
 				vue.nonprofitUsers = response.data;
 				vue.loaded = true;
 			});
@@ -90,9 +90,9 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.delete('nonprofits/' + vue.selectedNonprofitUser.nonprofitUuid + '/users/' + vue.selectedNonprofitUser.uuid).then(function () {
+				vue.$request.delete('nonprofits/' + vue.selectedNonprofitUser.nonprofitId + '/users/' + vue.selectedNonprofitUser.id).then(function () {
 					vue.nonprofitUsers = _.filter(vue.nonprofitUsers, function (nonprofitUser) {
-						return nonprofitUser.uuid !== vue.selectedNonprofitUser.uuid;
+						return nonprofitUser.id !== vue.selectedNonprofitUser.id;
 					});
 					vue.clearModals();
 				}).catch(function (err) {

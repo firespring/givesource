@@ -26,11 +26,14 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let nonprofit = new Nonprofit(request._body);
+	let nonprofit;
 	request.validate().then(function () {
+		return repository.populate(request._body);
+	}).then(function (populatedNp) {
+		nonprofit = populatedNp;
 		return nonprofit.validate();
 	}).then(function () {
-		return repository.save(nonprofit);
+		return repository.upsert(nonprofit, request._body);
 	}).then(function (response) {
 		nonprofit = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');

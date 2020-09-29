@@ -30,7 +30,7 @@ export function handle(event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
-	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_id')});
 	request.validate().then(() => {
 		donation.populate(request._body);
 		return donation.validate();
@@ -41,7 +41,7 @@ export function handle(event, context, callback) {
 		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
 		donation.amountForNonprofit = donation.total - donation.fees;
 	}).then(() => {
-		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
+		return nonprofitsRepository.get(request.urlParam('nonprofit_id'));
 	}).then((response) => {
 		nonprofit = response;
 		nonprofit.donationsCount = nonprofit.donationsCount + (donation.count || 1);
@@ -51,7 +51,7 @@ export function handle(event, context, callback) {
 		nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
 		return nonprofit.validate();
 	}).then(() => {
-		return donationsRepository.save(request.urlParam('nonprofit_uuid'), donation);
+		return donationsRepository.save(request.urlParam('nonprofit_id'), donation);
 	}).then((response) => {
 		donation = response;
 		return nonprofitsRepository.save(nonprofit);

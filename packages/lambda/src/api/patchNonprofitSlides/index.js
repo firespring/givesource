@@ -23,7 +23,7 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context).parameters(['slides']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let slides = [];
 	request.validate().then(function () {
@@ -39,7 +39,7 @@ exports.handle = function (event, context, callback) {
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('nonprofit_uuid'), slides);
+		return repository.batchSave(request.urlParam('nonprofit_id'), slides);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

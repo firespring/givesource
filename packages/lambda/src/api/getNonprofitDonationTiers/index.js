@@ -23,7 +23,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.getAll(request.urlParam('nonprofit_uuid'));
+		return repository.getAll(request.urlParam('nonprofit_id'));
 	}).then(function (donationTiers) {
 		const results = donationTiers.map(function (donationTier) {
 			return donationTier.all();

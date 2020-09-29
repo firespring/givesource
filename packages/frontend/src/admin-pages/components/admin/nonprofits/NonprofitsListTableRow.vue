@@ -20,7 +20,7 @@
             <div class="u-flex">
                 <div class="u-flex-expand">
                     <strong v-if="canEditNonprofitDetails">
-                        <router-link :to="{ name: 'nonprofit-settings-manage-organization', params: { nonprofitUuid: nonprofit.uuid } }">{{ nonprofit.legalName }}</router-link>
+                        <router-link :to="{ name: 'nonprofit-settings-manage-organization', params: { nonprofitId: nonprofit.id } }">{{ nonprofit.legalName }}</router-link>
                     </strong>
                     <strong v-else>{{ nonprofit.legalName }}</strong>
                     <div class="c-notes">
@@ -42,7 +42,7 @@
         </td>
 
         <td class="u-nowrap u-text-r" v-if="canAcceptDonations">
-            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofit.uuid } }">{{ donationAmount }}</router-link>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: nonprofit.id } }">{{ donationAmount }}</router-link>
         </td>
         <td class="u-nowrap u-text-r" v-else>
             {{ donationAmount }}
@@ -59,10 +59,10 @@
 
                         <hr v-if="canChangeStatus && canEditNonprofitDetails">
 
-                        <router-link :to="{ name: 'nonprofit-settings-list', params: { nonprofitUuid: nonprofit.uuid } }" v-if="canEditNonprofitDetails">
+                        <router-link :to="{ name: 'nonprofit-settings-list', params: { nonprofitId: nonprofit.id } }" v-if="canEditNonprofitDetails">
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Manage Settings
                         </router-link>
-                        <router-link :to="{ name: 'nonprofit-your-page', params: { nonprofitUuid: nonprofit.uuid } }" v-if="canEditNonprofitDonationPage">
+                        <router-link :to="{ name: 'nonprofit-your-page', params: { nonprofitId: nonprofit.id } }" v-if="canEditNonprofitDonationPage">
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Manage Donation Page
                         </router-link>
 
@@ -93,10 +93,10 @@
 		},
 		computed: {
 			date: function () {
-				return new Date(this.nonprofit.createdOn).toLocaleDateString();
+				return new Date(this.nonprofit.createdAt).toLocaleDateString();
 			},
 			time: function () {
-				return new Date(this.nonprofit.createdOn).toLocaleTimeString();
+				return new Date(this.nonprofit.createdAt).toLocaleTimeString();
 			},
 			donationAmount: function () {
 				return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,0.00');
@@ -192,11 +192,11 @@
 
 				vue.addModal('spinner');
 
-				vue.$request.patch('nonprofits/' + vue.nonprofit.uuid + '/status', {
+				vue.$request.patch('nonprofits/' + vue.nonprofit.id + '/status', {
 					status: status
 				}).then(function () {
 					vue.clearModals();
-					vue.$emit('updateNonprofit', vue.nonprofit.uuid);
+					vue.$emit('updateNonprofit', vue.nonprofit.id);
 				}).catch(function (err) {
 					vue.clearModals();
                     vue.$emit('hasError', err);

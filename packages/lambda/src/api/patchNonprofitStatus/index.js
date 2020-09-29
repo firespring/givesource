@@ -31,13 +31,13 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).parameters(['status']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
 	let status = request.get('status');
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'));
 	}).then(function (result) {
 		nonprofit = new Nonprofit(result);
 

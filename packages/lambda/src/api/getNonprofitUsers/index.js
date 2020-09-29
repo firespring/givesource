@@ -22,10 +22,10 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitUsersRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.getAll(request.urlParam('nonprofit_uuid'));
+		return repository.getAll(request.urlParam('nonprofit_id'));
 	}).then(function (users) {
 		const results = users.map(function (user) {
 			return user.all();

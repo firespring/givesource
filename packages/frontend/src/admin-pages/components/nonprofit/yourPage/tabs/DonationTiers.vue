@@ -169,7 +169,7 @@
 				}
 				if (updated.length) {
 					promise = promise.then(function () {
-						return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+						return vue.$request.patch('nonprofits/' + vue.nonprofitId + '/tiers', {
 							donation_tiers: updated.map(function (donationTier) {
 								return _.pick(donationTier, ['uuid', 'amount', 'description']);
 							}),

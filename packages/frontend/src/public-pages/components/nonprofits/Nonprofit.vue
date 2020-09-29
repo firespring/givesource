@@ -204,7 +204,7 @@
 			}
 
 			promise = promise.then(() => {
-				return axios.get(API_URL + 'nonprofits/' + nonprofit.uuid + '/slides');
+				return axios.get(API_URL + 'nonprofits/' + nonprofit.id + '/slides');
 			}).then(response => {
 				response.data.sort((a, b) => {
 					return a.sortOrder - b.sortOrder;

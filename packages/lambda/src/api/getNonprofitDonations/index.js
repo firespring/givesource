@@ -26,11 +26,11 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationsRepository();
 	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let total = 0;
 	let items = [];
-	const nonprofitUuid = request.urlParam('nonprofit_uuid');
+	const nonprofitUuid = request.urlParam('nonprofit_id');
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);

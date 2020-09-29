@@ -105,7 +105,7 @@
 
 				if (!vm.downloaded) {
 					promise = promise.then(() => {
-						return vm.$request.get('files/' + vm.report.fileUuid);
+						return vm.$request.get('files/' + vm.report.fileId);
 					}).then(response => {
 						vm.file = response.data;
 						vm.downloaded = true;

@@ -18,13 +18,13 @@
     <div class="o-menubar__secondary">
 
         <ul>
-            <router-link tag="li" :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: nonprofitUuid } }">
+            <router-link tag="li" :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: nonprofitId } }">
                 <a><i class="fa fa-fw fa-credit-card" aria-hidden="true"></i>Donations</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'nonprofit-your-page', params: { nonprofitUuid: nonprofitUuid } }">
+            <router-link tag="li" :to="{ name: 'nonprofit-your-page', params: { nonprofitId: nonprofitId } }">
                 <a><i class="fa fa-fw fa-bank" aria-hidden="true"></i>Your Page</a>
             </router-link>
-            <router-link tag="li" :to="{ name: 'nonprofit-settings-list', params: { nonprofitUuid: nonprofitUuid } }">
+            <router-link tag="li" :to="{ name: 'nonprofit-settings-list', params: { nonprofitId: nonprofitId } }">
                 <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
             </router-link>
         </ul>
@@ -50,7 +50,7 @@
 			this.setSelected();
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		methods: {
 			setSelected: function () {

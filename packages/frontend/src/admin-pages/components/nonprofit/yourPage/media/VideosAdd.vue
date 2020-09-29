@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -117,7 +117,7 @@
 			}
 		},
 		props: [
-			'nonprofitUuid',
+			'nonprofitId',
 		],
 		computed: {
 			isAdmin: function () {
@@ -145,7 +145,7 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
 				}).catch(function (err) {
                     vue.apiError = err.response.data.errors;
@@ -156,7 +156,7 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
 			}).catch(function (err) {
@@ -167,7 +167,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitId + '/slides').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
 				} else {
@@ -216,7 +216,7 @@
 				const vue = this;
 
 				MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
-					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
+					return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
 						caption: vue.formData.caption,
 						embedUrl: videoData.embedUrl,
 						externalId: videoData.id,

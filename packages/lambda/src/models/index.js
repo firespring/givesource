@@ -35,6 +35,29 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./user')(sequelize);
 		models[model.name] = model;
+		model = require('./nonprofit')(sequelize);
+		models[model.name] = model;
+		model = require('./nonprofitSlide')(sequelize);
+		models[model.name] = model;
+		model = require('./nonprofitDonationTier')(sequelize);
+		models[model.name] = model;
+
+		models.Nonprofit.hasMany(sequelize.models.NonprofitSlide, {
+			foreignKey: 'nonprofitId'
+		});
+
+		models.Nonprofit.hasMany(sequelize.models.NonprofitDonationTier, {
+			foreignKey: 'nonprofitId'
+		});
+
+		models.NonprofitDonationTier.belongsTo(sequelize.models.Nonprofit, {
+			foreignKey: 'nonprofitId'
+		});
+
+		models.NonprofitSlide.belongsTo(sequelize.models.Nonprofit, {
+			foreignKey: 'nonprofitId'
+		});
+
 		return models;
 	});
 }

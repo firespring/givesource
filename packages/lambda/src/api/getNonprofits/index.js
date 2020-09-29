@@ -21,11 +21,13 @@ const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
+const Sequelize = require('sequelize');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
+	const findAllAndCountParams = {};
 
 	let total = 0;
 	let items = [];
@@ -34,6 +36,10 @@ exports.handle = function (event, context, callback) {
 	const sort = request.queryParam('sort', 'all_created_on_descending');
 	const start = request.queryParam('start', 0);
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
+
+	findAllAndCountParams.limit = size;
+	findAllAndCountParams.order = [['createdAt', 'DESC']];
+	findAllAndCountParams.offset = start;
 
 	const index = getIndex(sort);
 	const hash = getHashCondition(sort);
@@ -56,42 +62,16 @@ exports.handle = function (event, context, callback) {
 
 		return Promise.resolve();
 	}).then(function () {
-		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
 		if (matchFundNonprofitUuid) {
-			builder.filter('uuid', '!=', matchFundNonprofitUuid)
+			findAllAndCountParams.where = {[Sequelize.Op.ne]: [{id: matchFundNonprofitUuid}]}
 		}
-
-		return repository.batchQuery(builder);
+		return repository.queryNonprofits(findAllAndCountParams);
 	}).then(function (response) {
-		total = response.Count;
-		if (start > 0) {
-			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).max(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-			if (matchFundNonprofitUuid) {
-				builder.filter('uuid', '!=', matchFundNonprofitUuid)
-			}
-			return repository.batchQuery(builder);
-		} else {
-			return Promise.resolve({});
-		}
-	}).then(function (response) {
-		const builder = new QueryBuilder('query');
-		builder.limit(size).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-		if (matchFundNonprofitUuid) {
-			builder.filter('uuid', '!=', matchFundNonprofitUuid).limit(parseInt(size) + 1);
-		}
-		if (response.hasOwnProperty('LastEvaluatedKey')) {
-			builder.start(response.LastEvaluatedKey);
-		}
-		return repository.query(builder);
-	}).then(function (response) {
-		if (response.hasOwnProperty('Items')) {
-			items = response.Items;
-		}
-		if (matchFundNonprofitUuid && items.length > size) {
-			items.pop();
-		}
+		total = response.count;
+		items = response.rows;
+	// 	if (matchFundNonprofitUuid && items.length > size) {
+	// 		items.pop();
+	// 	}
 		callback(null, {
 			items: items,
 			size: size,

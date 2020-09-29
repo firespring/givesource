@@ -27,7 +27,7 @@
         </td>
         <td>
             <strong>
-                <router-link :to="{ name: editLink, params: { slideUuid: slide.uuid } }">{{ caption }}</router-link>
+                <router-link :to="{ name: editLink, params: { slideId: slide.id } }">{{ caption }}</router-link>
             </strong>
         </td>
         <td class="icon">

@@ -23,13 +23,13 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationTiersRepository();
 	const request = new Request(event, context).parameters(['donation_tiers']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let donationTiers = [];
 	request.validate().then(function () {
 		request.get('donation_tiers', []).forEach(function (data) {
 			const donationTier = new NonprofitDonationTier(data);
-			donationTier.populate({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+			donationTier.populate({nonprofitUuid: request.urlParam('nonprofit_id')});
 			donationTiers.push(donationTier);
 		});
 	}).then(function () {
@@ -41,7 +41,7 @@ exports.handle = function (event, context, callback) {
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('nonprofit_uuid'), donationTiers);
+		return repository.batchSave(request.urlParam('nonprofit_id'), donationTiers);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

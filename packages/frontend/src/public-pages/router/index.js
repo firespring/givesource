@@ -385,7 +385,7 @@ const updateSettings = () => {
 		const values = Object.keys(files).map(key => files[key]);
 		if (_.compact(values).length) {
 			return axios.get(API_URL + 'files' + Utils.generateQueryString({
-				uuids: _.compact(values)
+				fileIds: _.compact(values)
 			}));
 		}
 
@@ -394,7 +394,7 @@ const updateSettings = () => {
 		if (response.data) {
 			response.data.forEach(file => {
 				Object.keys(files).forEach(key => {
-					if (files[key] === file.uuid) {
+					if (files[key] === file.id) {
 						settings[key] = settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path;
 					}
 				});

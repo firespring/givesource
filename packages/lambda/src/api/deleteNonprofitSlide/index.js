@@ -25,13 +25,13 @@ exports.handle = (event, context, callback) => {
 	const fileRepository = new FileRepository();
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 	const s3 = new S3();
 
 	let file = null;
 	let slide = null;
 	request.validate().then(() => {
-		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('slide_id'));
 	}).then(response => {
 		slide = response;
 		if (slide && slide.fileUuid) {
@@ -53,7 +53,7 @@ exports.handle = (event, context, callback) => {
 			return Promise.resolve();
 		}
 	}).then(() => {
-		return repository.delete(request.urlParam('nonprofit_uuid'), request.urlParam('slide_uuid'));
+		return repository.delete(request.urlParam('nonprofit_id'), request.urlParam('slide_id'));
 	}).then(() => {
 		callback();
 	}).catch(err => {

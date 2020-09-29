@@ -210,7 +210,7 @@
 
 					if (Object.keys(updatedParams).length) {
 						promise = promise.then(function () {
-							return vue.$request.patch('nonprofits/' + vue.nonprofit.uuid, updatedParams).then(function (response) {
+							return vue.$request.patch('nonprofits/' + vue.nonprofit.id, updatedParams).then(function (response) {
 								if (response.data.errorMessage) {
 									console.log(response.data);
 								}

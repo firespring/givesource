@@ -60,9 +60,9 @@
 			}
 		},
 		methods: {
-			updateNonprofit: function (nonprofitUuid) {
+			updateNonprofit: function (nonprofitId) {
 				const vue = this;
-				vue.$emit('updateNonprofit', nonprofitUuid);
+				vue.$emit('updateNonprofit', nonprofitId);
 			},
 
 			hasError: function (err) {

@@ -77,7 +77,7 @@
 
                 vue.addModal('spinner');
 
-                vue.$request.patch('nonprofits/' + vue.data.nonprofit.uuid + '/status', {
+                vue.$request.patch('nonprofits/' + vue.data.nonprofit.id + '/status', {
                     status: 'REVOKED'
                 }).then(function () {
                     vue.clearModals();

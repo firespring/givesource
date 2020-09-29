@@ -333,7 +333,12 @@ module.exports = {
 				nonprofitId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Nonprofits',
+						key: 'id',
+						as: 'nonprofitId'
+					}
 				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,
@@ -420,16 +425,16 @@ module.exports = {
 				logoFileId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Files',
+						key: 'id',
+						as: 'logoFileId'
+					}
 				},
 				longDescription: {
 					type: Sequelize.STRING(255),
 					allowNull: false,
-				},
-				category3: {
-					type: Sequelize.TINYINT(1),
-					allowNull: false,
-					defaultValue: 0
 				},
 				shortDescription: {
 					type: Sequelize.STRING(50),
@@ -446,7 +451,12 @@ module.exports = {
 				socialSharingFileId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Files',
+						key: 'id',
+						as: 'socialSharingFileId'
+					}
 				},
 				status: {
 					type: Sequelize.STRING(50),
@@ -511,12 +521,22 @@ module.exports = {
 				fileId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Files',
+						key: 'id',
+						as: 'fileId'
+					}
 				},
 				nonprofitId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Nonprofits',
+						key: 'id',
+						as: 'nonprofitId'
+					}
 				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,
@@ -619,12 +639,22 @@ module.exports = {
 				fileId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Files',
+						key: 'id',
+						as: 'fileId'
+					}
 				},
 				nonprofitId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Nonprofits',
+						key: 'id',
+						as: 'nonprofitId'
+					}
 				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,
@@ -700,7 +730,12 @@ module.exports = {
 				fileId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'Files',
+						key: 'id',
+						as: 'fileId'
+					}
 				},
 				sponsorTierId: {
 					type: Sequelize.INTEGER(11),
@@ -793,6 +828,11 @@ module.exports = {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
 					defaultValue: 0,
+					references: {
+						model: 'Nonprofits',
+						key: 'id',
+						as: 'nonprofitId'
+					}
 				},
 				cognitoUsername: {
 					type: Sequelize.STRING(2048),

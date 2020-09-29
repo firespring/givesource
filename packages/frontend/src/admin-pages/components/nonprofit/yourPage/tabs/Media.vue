@@ -41,7 +41,7 @@
             </thead>
 
             <draggable v-model="slides" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-                <media-list-table-row v-for="slide in slides" :slide="slide" :file="getFile(slide.fileUuid)" :key="slide.uuid"
+                <media-list-table-row v-for="slide in slides" :slide="slide" :file="getFile(slide.fileId)" :key="slide.id"
                                       v-on:deleteSlide="deleteSlide" v-if="loadedSlides"></media-list-table-row>
             </draggable>
         </table>
@@ -75,7 +75,7 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		computed: {
 			disableAddButton: function () {
@@ -86,7 +86,7 @@
 		beforeMount: function () {
 			const vue = this;
 
-			vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/slides').then(function (response) {
+			vue.$request.get('nonprofits/' + vue.nonprofitId + '/slides').then(function (response) {
 				if (response.data.errorMessage) {
 					console.log(response.data);
 					return Promise.reject();
@@ -95,15 +95,15 @@
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.slides = response.data;
-					const uuids = [];
+					const fileIds = [];
 					vue.slides.forEach(function (slide) {
-						if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
-							uuids.push(slide.fileUuid);
+						if (slide.hasOwnProperty('fileId') && slide.fileId) {
+							fileIds.push(slide.fileId);
 						}
 					});
 
-					if (uuids.length) {
-						return vue.$request.get('files/', {uuids: uuids});
+					if (fileIds.length) {
+						return vue.$request.get('files/', {fileIds: fileIds});
 					} else {
 						return Promise.resolve();
 					}
@@ -130,9 +130,9 @@
 			vue.bus.$off('photoEditorSave-New');
 		},
 		methods: {
-			getFile: function (fileUuid) {
+			getFile: function (fileId) {
 				const vue = this;
-				return _.find(vue.files, {uuid: fileUuid});
+				return _.find(vue.files, {id: fileId});
 			},
 			updateSortOrder: function () {
 				const vue = this;
@@ -143,7 +143,7 @@
 				});
 
 				const toUpdate = _.differenceWith(vue.slides, original, _.isEqual);
-				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides', {
+				vue.$request.patch('nonprofits/' + vue.nonprofitId + '/slides', {
 					slides: toUpdate
 				}).catch(function (err) {
 					vue.apiError = err.response.data.errors;
@@ -195,8 +195,8 @@
 					axios.defaults.headers = defaultHeaders;
 					return instance.put(signedUrl, file);
 				}).then(function () {
-					return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/slides', {
-						fileUuid: vue.file.uuid,
+					return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
+						fileId: vue.file.id,
 						type: MediaHelper.TYPE_IMAGE
 					});
 				}).then(function (response) {
@@ -204,7 +204,7 @@
 					vue.$router.push({
 						name: 'nonprofit-your-page-media-photos-edit',
 						params: {
-							slideUuid: response.data.uuid
+							slideId: response.data.id
 						}
 					});
 					vue.clearModals();
@@ -217,9 +217,9 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/slides/' + slide.uuid).then(function () {
+				vue.$request.delete('nonprofits/' + vue.nonprofitId + '/slides/' + slide.id).then(function () {
 					const current = JSON.parse(JSON.stringify(vue.slides));
-					vue.slides = _.reject(current, {uuid: slide.uuid});
+					vue.slides = _.reject(current, {id: slide.id});
 					vue.clearModals();
 					vue.updateSortOrder();
 				}).catch(function (err) {

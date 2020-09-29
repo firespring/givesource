@@ -16,7 +16,6 @@
 
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../dynamo-models/nonprofit');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
@@ -25,15 +24,13 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'));
 	}).then(function (result) {
-		nonprofit = new Nonprofit(result);
-		nonprofit.populate(request._body);
-		nonprofit.status = result.status;
+		nonprofit = result;
 
 		if (request.get('slug', false)) {
 			return repository.generateUniqueSlug(nonprofit, request.get('slug'));
@@ -43,12 +40,12 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return nonprofit.validate();
 	}).then(function () {
-		return repository.save(nonprofit);
+		return repository.upsert(nonprofit, request._body);
 	}).then(function (response) {
 		nonprofit = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		callback(null, nonprofit.all());
+		callback(null, nonprofit);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

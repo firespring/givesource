@@ -53,7 +53,7 @@
 			},
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		created: function () {
 			const vue = this;

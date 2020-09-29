@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -129,13 +129,13 @@
 			},
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
-					return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+					return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId);
 				}).then(function (response) {
 					vue.slide = response.data;
 					vue.apiError = err.response.data.errors;
@@ -145,9 +145,9 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
-				return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+				return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId);
 			}).then(function (response) {
 				vue.slide = response.data;
 				next();
@@ -222,7 +222,7 @@
 						params['externalId'] = videoData.id;
 						params['thumbnail'] = videoData.thumbnail;
 					}
-					return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides/' + vue.slide.uuid, params);
+					return vue.$request.patch('nonprofits/' + vue.nonprofitId + '/slides/' + vue.slide.id, params);
 				}).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
