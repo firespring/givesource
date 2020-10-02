@@ -271,7 +271,7 @@
 						axios.defaults.headers = defaultHeaders;
 						return instance.put(signedUrl, vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value);
 					}).then(function () {
-						vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value = file.uuid;
+						vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value = file.id;
 					});
 				}
 
@@ -282,11 +282,11 @@
 						type: 'COLLECTION'
 					});
 				}).then(function (response) {
-					toolkitResourceListContent = response.data;
+					toolkitResourceListContent = response.data[0];
 					return vue.$request.patch('contents', {
 						contents: Object.keys(vue.formData).map(function (key) {
 							const content = vue.formData[key];
-							content.parentUuid = toolkitResourceListContent.uuid;
+							content.parentId = toolkitResourceListContent.id;
 							return content;
 						}),
 					});

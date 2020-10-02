@@ -244,7 +244,7 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/pages/custom/:pageUuid',
+			path: '/pages/custom/:pageId',
 			name: 'pages-custom-edit',
 			props: true,
 			component: ComponentCustomPagesEdit,
@@ -361,7 +361,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid',
+			path: '/sponsor-tiers/:sponsorTierId',
 			name: 'sponsor-tiers-edit',
 			props: true,
 			component: ComponentSponsorTiersEdit,
@@ -370,7 +370,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/sponsors',
+			path: '/sponsor-tiers/:sponsorTierId/sponsors',
 			name: 'sponsors-list',
 			props: true,
 			component: ComponentSponsorsList,
@@ -379,7 +379,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/add',
+			path: '/sponsor-tiers/:sponsorTierId/add',
 			name: 'sponsors-add',
 			props: true,
 			component: ComponentSponsorAdd,
@@ -388,7 +388,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/sponsors/:sponsorUuid',
+			path: '/sponsor-tiers/:sponsorTierId/sponsors/:sponsorId',
 			name: 'sponsors-edit',
 			props: true,
 			component: ComponentSponsorEdit,

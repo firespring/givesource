@@ -14,19 +14,35 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
+'use strict';
 
-exports.handle = function (event, context, callback) {
-	const repository = new SponsorTiersRepository();
-	const request = new Request(event, context);
+const {DataTypes} = require('sequelize');
 
-	request.validate().then(function () {
-		return repository.getAll();
-	}).then(function (sponsorTiers) {
-		callback(null, sponsorTiers);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+module.exports = (sequelize) => {
+	const SponsorTier = sequelize.define('SponsorTier', {
+		name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		size: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				isIn: [['LARGE', 'DEFAULT', 'SMALL']]
+			}
+		},
+		sortOrder: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
 	});
+
+	SponsorTier.associate = function (models) {
+		SponsorTier.hasMany(models.Sponsor, {
+			foreignKey: 'sponsorTierId'
+		});
+	};
+
+	return SponsorTier;
 };

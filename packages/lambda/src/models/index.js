@@ -27,6 +27,12 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./content')(sequelize);
 		models[model.name] = model;
+		model = require('./sponsorTier')(sequelize);
+		models[model.name] = model;
+		model = require('./sponsor')(sequelize);
+		models[model.name] = model;
+		model = require('./file')(sequelize);
+		models[model.name] = model;
 		return models;
 	});
 }

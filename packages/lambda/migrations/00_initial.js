@@ -217,7 +217,7 @@ module.exports = {
 					primaryKey: true
 				},
 				path: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				filename: {
@@ -681,11 +681,11 @@ module.exports = {
 					primaryKey: true
 				},
 				logoUrl: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				name: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				sortOrder: {
@@ -694,7 +694,7 @@ module.exports = {
 					defaultValue: 0
 				},
 				url: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				fileId: {
@@ -705,7 +705,12 @@ module.exports = {
 				sponsorTierId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
-					defaultValue: 0
+					defaultValue: 0,
+					references: {
+						model: 'SponsorTiers',
+						key: 'id',
+						as: 'sponsorTierId'
+					}
 				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,
@@ -731,11 +736,11 @@ module.exports = {
 					primaryKey: true
 				},
 				name: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				size: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				sortOrder: {

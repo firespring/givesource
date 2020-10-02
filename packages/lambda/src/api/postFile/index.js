@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-const File = require('./../../dynamo-models/file');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new FilesRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit'])).parameters(['content_type', 'filename']);
 	const s3 = new S3();
+	const uuid = UUID.v4();
 
 	let file = null;
 	request.validate().then(function () {
-		file = new File({filename: request.get('filename')});
-		file.populate({path: `uploads/${file.uuid}`});
-		return file.validate();
-	}).then(function () {
-		return repository.save(file);
+		return repository.populate({filename: request.get('filename')})
+	}).then(function (file) {
+		file.set('path', 'uploads/' + uuid);
+		return repository.upsert(file, {});
 	}).then(function (model) {
-		file = model;
+		file = model[0];
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.path, request.get('content_type'), 'public-read');
+		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'), request.get('content_type'), 'public-read');
 	}).then(function (url) {
 		callback(null, {
 			upload_url: url,
-			file: file.all()
+			file: file
 		});
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

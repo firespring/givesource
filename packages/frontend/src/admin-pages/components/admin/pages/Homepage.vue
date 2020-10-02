@@ -354,6 +354,11 @@
 						]
 					}).then(function (response) {
 						contents = response.data;
+						contents.forEach(function (content) {
+							if (content.key === 'HOMEPAGE_MATCH_IS_ENABLED') {
+								content.value = content.value !== "0";
+							}
+						});
 					});
 				});
 
@@ -522,7 +527,7 @@
 						promise = promise.then(function () {
 							return vue.$request.patch('contents', {
 								contents: toUpdate.map(function (content) {
-									return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+									return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
 								}),
 							});
 						});
@@ -589,12 +594,13 @@
 							return vue.uploadFile(vue.formData.contents[key]).then(function (uploadedFile) {
 								vue.$store.commit('generateCacheKey');
 								contents[key] = _.cloneDeep(vue.formData.contents[key]);
-								contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+								contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : '';
+								contents[key].file = uploadedFile;
 							});
 						});
 					} else {
 						promise = promise.then(function () {
-							const contentValue = _.isPlainObject(vue.formData.contents[key].value) && vue.formData.contents[key].value.hasOwnProperty('uuid') ? vue.formData.contents[key].value.uuid : vue.formData.contents[key].value;
+							const contentValue = _.isPlainObject(vue.formData.contents[key].value) && vue.formData.contents[key].value.hasOwnProperty('id') ? vue.formData.contents[key].value.id.toString() : vue.formData.contents[key].value;
 							contents[key] = _.cloneDeep(vue.formData.contents[key]);
 							contents[key].value = contentValue;
 						});
@@ -618,7 +624,7 @@
 						}
 						settings.push({
 							key: key,
-							value: value
+							value: value.toString()
 						});
 					});
 

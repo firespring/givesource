@@ -18,6 +18,8 @@ const File = require('./../dynamo-models/file');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('./../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * FilesRepository constructor
@@ -40,21 +42,47 @@ function FilesRepository(options) {
 FilesRepository.prototype = new Repository();
 
 /**
- * Get a File
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param data
  * @return {Promise}
  */
-FilesRepository.prototype.get = function (uuid) {
-	const repository = this;
+FilesRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		return new models.File(data);
+	}).finally(function () {
+		return allModels.sequelize.close();
+	})
+};
+
+/**
+ * Get a File
+ *
+ * @param {String} id
+ * @return {Promise}
+ */
+FilesRepository.prototype.get = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new File(data.Item));
-			}
-			reject(new ResourceNotFoundException('The specified file does not exist.'));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.File.findOne({
+				where: {
+					id: id
+				}
+			}).then(function (file) {
+				if (file instanceof allModels.File) {
+					resolve(file);
+				}
+				reject(new ResourceNotFoundException('The specified file does not exist.'));
+			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -82,29 +110,30 @@ FilesRepository.prototype.getAll = function () {
 };
 
 /**
- * Get Files by uuids
+ * Get Files by id
  *
- * @param {[]} uuids
+ * @param {[]} fileIds
  * @return {Promise}
  */
-FilesRepository.prototype.batchGet = function (uuids) {
-	const repository = this;
+FilesRepository.prototype.batchGet = function (fileIds) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		if (!uuids) {
-			reject(new Error('uuids is undefined'));
-		}
-		const map = [];
-		uuids.forEach(function (value) {
-			map.push({uuid: value});
-		});
-		repository.batchGetKeys(map).then(function (data) {
-			let results = [];
-			data.forEach(function (item) {
-				results.push(new File(item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.File.findAll({
+				where: {
+					id: {
+						[Sequelize.Op.or]: fileIds
+					}
+				}
 			});
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -112,16 +141,22 @@ FilesRepository.prototype.batchGet = function (uuids) {
 /**
  * Delete a File
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-FilesRepository.prototype.delete = function (uuid) {
-	const repository = this;
+FilesRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.File.destroy({where: {id: id}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -132,22 +167,49 @@ FilesRepository.prototype.delete = function (uuid) {
  * @param {File} model
  */
 FilesRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof File)) {
-			reject(new Error('invalid File model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new File(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			if (!(model instanceof allModels.File)) {
+				reject(new Error('invalid File model'));
+			}
+			return repository.upsert(model, {});
+		}).then(function (file) {
+			resolve(file);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param model
+ * @param data
+ * @return {Promise<any>}
+ */
+FilesRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.File.upsert({
+				'id': model.get('id'),
+				'path': typeof data.path !== "undefined" ? data.path : model.get('path'),
+				'filename': typeof data.filename !== "undefined" ? data.filename : model.get('filename'),
+			});
+		}).then(function (file) {
+			resolve(file);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

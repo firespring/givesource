@@ -20,16 +20,13 @@ const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new FilesRepository();
-	const request = new Request(event, context).queryParameters(['uuids']);
-	const uuids = request.queryParam('uuids', '').split(',');
+	const request = new Request(event, context).queryParameters(['fileIds']);
+	const fileIds = request.queryParam('fileIds', '').split(',');
 
 	request.validate().then(function () {
-		return repository.batchGet(uuids);
+		return repository.batchGet(fileIds);
 	}).then(function (files) {
-		const results = files.map(function (file) {
-			return file.all();
-		});
-		callback(null, results);
+		callback(null, files);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

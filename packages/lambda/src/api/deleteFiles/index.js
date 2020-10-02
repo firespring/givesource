@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const File = require('./../../dynamo-models/file');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
@@ -28,18 +27,24 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['files']);
 	const s3 = new S3();
 
-	let files = [];
+	let fileToDelete;
 	request.validate().then(function () {
 		let promise = Promise.resolve();
 		request.get('files', []).forEach(function (file) {
-			files.push(new File(file));
 			promise = promise.then(function () {
-				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);
+				if (typeof file === 'object') {
+					return repository.get(file.id);
+				} else {
+					return repository.get(file);
+				}
+			}).then(function (file) {
+				fileToDelete = file;
+				return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'));
+			}).then(function () {
+				return repository.delete(fileToDelete.id);
 			});
 		});
 		return promise;
-	}).then(function () {
-		return repository.batchDelete(files);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

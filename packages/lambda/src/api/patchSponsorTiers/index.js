@@ -17,7 +17,6 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const SponsorTier = require('./../../dynamo-models/sponsorTier');
 const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
@@ -28,14 +27,12 @@ exports.handle = function (event, context, callback) {
 
 	let sponsorTiers = [];
 	request.validate().then(function () {
-		request.get('sponsorTiers', []).forEach(function (data) {
-			sponsorTiers.push(new SponsorTier(data));
-		});
-	}).then(function () {
 		let promise = Promise.resolve();
-		sponsorTiers.forEach(function (sponsorTier) {
+		request.get('sponsorTiers', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return sponsorTier.validate();
+				return repository.populate(data);
+			}).then(function (sponsorTier) {
+				sponsorTiers.push(sponsorTier);
 			});
 		});
 		return promise;

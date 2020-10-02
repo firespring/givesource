@@ -18,7 +18,7 @@
     <select v-model="localValue" :name="name" :id="id" ref="input">
         <option disabled value="" v-if="placeholder">{{ placeholder }}</option>
         <option disabled value="" v-if="placeholder">-----</option>
-        <option v-for="sponsorTier in sponsorTiers" :value="sponsorTier.uuid">
+        <option v-for="sponsorTier in sponsorTiers" :value="sponsorTier.id">
             {{ sponsorTier.name }}
         </option>
     </select>

@@ -50,7 +50,8 @@ ContentsRepository.prototype.populate = function (data) {
 	let allModels;
 	return loadModels().then(function (models) {
 		allModels = models;
-		return new models.Content(data);
+		const content = new models.Content();
+		return new content.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
 	}).finally(function () {
 		return allModels.sequelize.close();
 	})
@@ -60,9 +61,10 @@ ContentsRepository.prototype.populate = function (data) {
  * Get a Content
  *
  * @param {String} id
+ * @param {Boolean} returnNull
  * @return {Promise}
  */
-ContentsRepository.prototype.get = function (id) {
+ContentsRepository.prototype.get = function (id, returnNull = false) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
@@ -73,7 +75,7 @@ ContentsRepository.prototype.get = function (id) {
 					id: id
 				}
 			}).then(function (content) {
-				if (content instanceof allModels.Content) {
+				if (content instanceof allModels.Content || returnNull) {
 					resolve(content);
 				}
 				reject(new ResourceNotFoundException('The specified content does not exist.'));
@@ -181,17 +183,23 @@ ContentsRepository.prototype.batchGet = function (keys) {
  */
 ContentsRepository.prototype.batchDelete = function (models) {
 	let allModels;
+	const ids = models.map(function (model) {
+		return model.id;
+	});
 	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
+		return loadModels().then(function (loadedModels) {
+			allModels = loadedModels;
 		}).then(function () {
-			let promise = Promise.resolve();
-			promise = promise.then(function () {
-				models.forEach(function (model) {
-					return model.destroy();
+			if (ids.length > 0) {
+				return allModels.Content.destroy({
+					where: {
+						id: {
+							[Sequelize.Op.or]: ids
+						}
+					}
 				})
-			});
-			return promise;
+			}
+			resolve();
 		}).then(function (stuff) {
 			resolve(stuff);
 		}).catch(function (err) {
@@ -332,13 +340,17 @@ ContentsRepository.prototype.upsert = function (model, data) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
+			if (typeof model === 'undefined') {
+				const content = new allModels.Content();
+				model = new content.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
+			}
 			return allModels.Content.upsert({
-				'id': model.get('id'),
-				'key': typeof data.key !== "undefined" ? data.key : model.get('key'),
-				'value': typeof data.value !== "undefined" ? data.value : model.get('value'),
-				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.get('sortOrder'),
-				'type': typeof data.type !== "undefined" ? data.type : model.get('type'),
-				'parentId': typeof data.parentId !== "undefined" ? data.parentId : model.get('parentId'),
+				'id': model.id,
+				'key': typeof data.key !== "undefined" ? data.key : model.key,
+				'value': typeof data.value !== "undefined" ? data.value : model.value,
+				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.sortOrder,
+				'type': typeof data.type !== "undefined" ? data.type : model.type,
+				'parentId': typeof data.parentId !== "undefined" ? data.parentId : model.parentId,
 			});
 		}).then(function (content) {
 			resolve(content);

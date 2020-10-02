@@ -38,10 +38,8 @@ exports.handle = function (event, context, callback) {
 		});
 	}).then(function () {
 		return repository.populate(request._body);
-	}).then(function () {
-		return setting.validate();
-	}).then(function () {
-		return repository.save(setting);
+	}).then(function (setting) {
+		return repository.upsert(setting, {});
 	}).then(function (response) {
 		setting = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');

@@ -29,7 +29,7 @@ exports.handle = function (event, context, callback) {
 
 	let file = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('file_uuid'));
+		return repository.get(request.urlParam('file_id'));
 	}).then(function (model) {
 		file = model;
 		return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`);

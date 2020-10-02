@@ -79,7 +79,7 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300
           CachingEnabled: true
-        - ResourcePath: "/sponsor-tiers/{sponsor_tier_uuid}/sponsors"
+        - ResourcePath: "/sponsor-tiers/{sponsor_tier_id}/sponsors"
           HttpMethod: GET
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300

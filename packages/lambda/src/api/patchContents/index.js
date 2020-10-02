@@ -24,26 +24,21 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
+	const keys = request.get('contents', []).map(function (content) {
+		return content.key;
+	});
 
-	let contents = [];
 	request.validate().then(function () {
+		return repository.batchGet(keys);
+	}).then(function (oldContents) {
 		let promise = Promise.resolve();
 		request.get('contents', []).map(function (content) {
 			promise = promise.then(function () {
-				return repository.populate(content);
-			}).then(function (model) {
-				if (Array.isArray(model.get('value'))) {
-					model.set('value', '');
+				if (Array.isArray(content.value) || typeof content.value === 'object') {
+					content.value = '';
 				}
-				contents.push(model);
-			});
-		});
-		return promise;
-	}).then(function () {
-		let promise = Promise.resolve();
-		contents.forEach(function (model) {
-			promise = promise.then(function () {
-				return repository.upsert(model, {});
+				const oldContent = _.find(oldContents, {key: content.key});
+				return repository.upsert(oldContent, content);
 			});
 		});
 		return promise;

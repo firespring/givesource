@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -52,6 +55,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSponsorTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -60,7 +69,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_id}
     DependsOn: GetSponsorTierLambdaFunction
 
   GetSponsorTiersLambdaFunction:
@@ -81,6 +90,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSponsorTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -110,6 +125,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostSponsorTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -139,6 +160,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSponsorTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -147,7 +174,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_id}
     DependsOn: PatchSponsorTierLambdaFunction
 
   PatchSponsorTiersLambdaFunction:
@@ -168,6 +195,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSponsorTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -197,6 +230,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSponsorTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -205,7 +244,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_id}
     DependsOn: DeleteSponsorTierLambdaFunction
 
   # Sponsors Lambda Resources
@@ -228,6 +267,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSponsorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -236,7 +281,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_id}/sponsors/{sponsor_id}
     DependsOn: GetSponsorLambdaFunction
 
   GetSponsorsLambdaFunction:
@@ -257,6 +302,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSponsorsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -265,7 +316,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/sponsor-tiers/{sponsor_tier_id}/sponsors
     DependsOn: GetSponsorsLambdaFunction
 
   PostSponsorLambdaFunction:
@@ -286,6 +337,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostSponsorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -294,7 +351,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/sponsor-tiers/{sponsor_tier_id}/sponsors
     DependsOn: PostSponsorLambdaFunction
 
   PatchSponsorLambdaFunction:
@@ -315,6 +372,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSponsorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -323,7 +386,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_id}/sponsors/{sponsor_id}
     DependsOn: PatchSponsorLambdaFunction
 
   PatchSponsorsLambdaFunction:
@@ -344,6 +407,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSponsorsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -352,7 +421,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/sponsor-tiers/{sponsor_tier_id}/sponsors
     DependsOn: PatchSponsorsLambdaFunction
 
   DeleteSponsorLambdaFunction:
@@ -373,6 +442,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSponsorLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -381,7 +456,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}/sponsors/{sponsor_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_id}/sponsors/{sponsor_id}
     DependsOn: DeleteSponsorLambdaFunction
 
   DeleteSponsorsLambdaFunction:
@@ -402,6 +477,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSponsorsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -410,7 +491,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_uuid}/sponsors
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/sponsor-tiers/{sponsor_tier_id}/sponsors
     DependsOn: DeleteSponsorsLambdaFunction
 
   # Sponsor Tiers Api Gateway Resources
@@ -427,7 +508,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref SponsorTiersApiResource
-      PathPart: "{sponsor_tier_uuid}"
+      PathPart: "{sponsor_tier_id}"
 
   GetSponsorTierApiMethod:
     Type: AWS::ApiGateway::Method
@@ -941,7 +1022,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref SponsorsApiResource
-      PathPart: "{sponsor_uuid}"
+      PathPart: "{sponsor_id}"
 
   GetSponsorApiMethod:
     Type: AWS::ApiGateway::Method
@@ -1025,14 +1106,14 @@ Resources:
       ApiKeyRequired: false
       RequestParameters:
         method.request.querystring.c: false
-        method.request.path.sponsor_tier_uuid: true
+        method.request.path.sponsor_tier_id: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
         CacheKeyParameters:
           - method.request.querystring.c
-          - method.request.path.sponsor_tier_uuid
+          - method.request.path.sponsor_tier_id
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
