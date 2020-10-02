@@ -78,7 +78,7 @@
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
                             <template v-if="slides.length">
                                 <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;" :key="slide.uuid">
-                                    <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide.fileUuid)">
+                                    <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide.fileId)">
                                     <iframe v-else :alt="slide.caption" :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
                                             allowfullscreen></iframe>
                                 </div>
@@ -210,22 +210,22 @@
 					return a.sortOrder - b.sortOrder;
 				});
 				slides = response.data;
-				const uuids = [];
+				const fileIds = [];
 				slides.forEach(slide => {
-					if (slide.hasOwnProperty('fileUuid') && slide.fileUuid) {
-						uuids.push(slide.fileUuid);
+					if (slide.hasOwnProperty('fileId') && slide.fileId) {
+						fileIds.push(slide.fileId);
 					}
 				});
-				return axios.get(API_URL + 'files/' + Utils.generateQueryString({uuids: uuids}));
+				return axios.get(API_URL + 'files/' + Utils.generateQueryString({fileIds: fileIds}));
 			}).then(response => {
 				if (response && response.data) {
 					files = response.data;
 				}
 			});
 
-			if (!_.isEmpty(nonprofit.logoFileUuid)) {
+			if (!_.isEmpty(nonprofit.logoFileId)) {
 				promise = promise.then(() => {
-					return axios.get(API_URL + 'files/' + nonprofit.logoFileUuid);
+					return axios.get(API_URL + 'files/' + nonprofit.logoFileId);
 				}).then(response => {
 					if (response && response.data) {
 						logo = response.data;
@@ -300,9 +300,9 @@
 					vm.apiError = err.response.data.errors;
 				});
 			},
-			getImageUrl(fileUuid) {
+			getImageUrl(fileId) {
 				const vm = this;
-				const file = _.find(vm.files, {uuid: fileUuid});
+				const file = _.find(vm.files, {uuid: fileId});
 
 				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
 			},

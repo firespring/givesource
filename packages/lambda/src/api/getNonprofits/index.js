@@ -37,20 +37,16 @@ exports.handle = function (event, context, callback) {
 	const start = request.queryParam('start', 0);
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
 
-	findAllAndCountParams.limit = size;
+	findAllAndCountParams.limit = parseInt(size);
 	findAllAndCountParams.order = [['createdAt', 'DESC']];
-	findAllAndCountParams.offset = start;
-
-	const index = getIndex(sort);
-	const hash = getHashCondition(sort);
-	const range = getRangeCondition(sort);
-	const scanIndexForward = getScanIndexForward(sort);
-	let matchFundNonprofitUuid = null;
+	findAllAndCountParams.offset = parseInt(start);
+	findAllAndCountParams.where = [getHashCondition(sort)];
+	let matchFundNonprofitId = null;
 
 	request.validate().then(function () {
 		if (!includeMatchFund) {
-			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(function (setting) {
-				matchFundNonprofitUuid = setting.value;
+			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_ID).then(function (setting) {
+				matchFundNonprofitId = setting.value;
 			}).catch(function (err) {
 				if (err instanceof ResourceNotFoundException) {
 					return Promise.resolve();
@@ -62,14 +58,18 @@ exports.handle = function (event, context, callback) {
 
 		return Promise.resolve();
 	}).then(function () {
-		if (matchFundNonprofitUuid) {
-			findAllAndCountParams.where = {[Sequelize.Op.ne]: [{id: matchFundNonprofitUuid}]}
+		if (matchFundNonprofitId) {
+			findAllAndCountParams.where.push({
+				id: {
+					[Sequelize.Op.ne]: matchFundNonprofitId
+				}
+			});
 		}
 		return repository.queryNonprofits(findAllAndCountParams);
 	}).then(function (response) {
 		total = response.count;
 		items = response.rows;
-	// 	if (matchFundNonprofitUuid && items.length > size) {
+		// 	if (matchFundNonprofitId && items.length > size) {
 	// 		items.pop();
 	// 	}
 		callback(null, {
@@ -119,26 +119,26 @@ const getHashCondition = function (sort) {
 		case 'active_subtotal_descending':
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
-			return ['status', '=', 'ACTIVE'];
+			return {status: 'ACTIVE'};
 
 		case 'denied_subtotal_ascending':
 		case 'denied_subtotal_descending':
 		case 'denied_legal_name_ascending':
 		case 'denied_legal_name_descending':
-			return ['status', '=', 'DENIED'];
+			return {status: 'DENIED'};
 
 		case 'pending_subtotal_ascending':
 		case 'pending_subtotal_descending':
 		case 'pending_legal_name_ascending':
 		case 'pending_legal_name_descending':
-			return ['status', '=', 'PENDING'];
+			return {status: 'PENDING'};
 
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
 		case 'all_created_on_ascending':
 		case 'all_created_on_descending':
 		default:
-			return ['isDeleted', '=', 0];
+			return {isDeleted: '0'};
 	}
 };
 

@@ -513,7 +513,7 @@
 						isAnonymous: vm.formData.isAnonymous,
 						isFeeCovered: vm.formData.isFeeCovered,
 						isOfflineDonation: false,
-						nonprofitUuid: cartItem.nonprofit.uuid,
+						nonprofitId: cartItem.nonprofit.id,
 						subtotal: cartItem.amount,
 						total: total,
 						note: cartItem.note

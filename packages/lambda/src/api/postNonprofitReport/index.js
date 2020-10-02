@@ -28,7 +28,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
-	const report = new Report({nonprofitUuid: request.urlParam('nonprofit_id')});
+	const report = new Report({nonprofitId: request.urlParam('nonprofit_id')});
 	request.validate().then(function () {
 		report.populate(request._body);
 		report.populate({status: ReportHelper.STATUS_PENDING});

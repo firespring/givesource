@@ -36,7 +36,7 @@
         </td>
 
         <td>
-            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: donation.nonprofitUuid } }">{{ donation.nonprofitLegalName }}</router-link>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: donation.nonprofitId } }">{{ donation.nonprofitLegalName }}</router-link>
         </td>
 
         <td class="u-nowrap empty" v-if="isOfflineBulk"></td>

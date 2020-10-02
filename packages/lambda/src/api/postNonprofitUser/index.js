@@ -39,7 +39,7 @@ exports.handle = function (event, context, callback) {
 			let promise = Promise.resolve();
 			emailAddresses.split(',').forEach(function (email) {
 				email = email.trim();
-				const user = new User({email: email, nonprofitUuid: nonprofit.uuid});
+				const user = new User({email: email, nonprofitId: nonprofit.id});
 				promise = promise.then(function () {
 					return user.validate(['uuid', 'createdOn', 'email']).then(function () {
 						return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);

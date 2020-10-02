@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitId="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app_main-content o-app_main-content--md">
@@ -88,7 +88,7 @@
 			return {
 				firstName: this.user.firstName || '',
                 lastName: this.user.lastName || '',
-                nonprofitUuid: this.user.nonprofitUuid,
+                nonprofitId: this.user.nonprofitId,
             }
         },
 		created: function () {

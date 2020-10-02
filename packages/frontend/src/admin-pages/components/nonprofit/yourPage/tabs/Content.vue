@@ -119,7 +119,7 @@
 					shortDescription: '',
 					slug: '',
 					logo: null,
-					logoFileUuid: ''
+					logoFileId: 0
 				},
 
 				// Errors
@@ -155,8 +155,8 @@
 					const vue = this;
 
 					vue.formData = vue.sync(vue.formData, vue.nonprofit);
-					if (!_.isEmpty(vue.formData.logoFileUuid)) {
-						vue.$request.get('files/' + vue.formData.logoFileUuid).then(function (response) {
+					if (parseInt(vue.formData.logoFileId) > 0) {
+						vue.$request.get('files/' + vue.formData.logoFileId).then(function (response) {
 							vue.formData.logo = response.data;
 						}).catch(function () {
 							vue.formData.logo = null;
@@ -206,7 +206,7 @@
 
 				vue.getUpdatedNonprofitParams().then(function (updatedParams) {
 					let promise = Promise.resolve();
-					const originalLogoFileUuid = vue.nonprofit.logoFileUuid;
+					const originalLogoFileId = vue.nonprofit.logoFileId;
 
 					if (Object.keys(updatedParams).length) {
 						promise = promise.then(function () {
@@ -215,14 +215,14 @@
 									console.log(response.data);
 								}
 								vue.editSlug = false;
-								vue.$emit('updateNonprofit', response.data);
+								vue.$emit('updateNonprofit', response.data[0]);
 							})
 						});
 					}
 
-					if (updatedParams.hasOwnProperty('logoFileUuid') && !_.isEmpty(originalLogoFileUuid)) {
+					if (updatedParams.hasOwnProperty('logoFileId') && !_.isEmpty(originalLogoFileId)) {
 						promise = promise.then(function () {
-							return vue.$request.delete('files/' + originalLogoFileUuid);
+							return vue.$request.delete('files/' + originalLogoFileId);
 						});
 					}
 
@@ -254,13 +254,13 @@
 					promise = promise.then(function () {
 						return vue.uploadFile('logo').then(function (uploadedFile) {
 							vue.$store.commit('generateCacheKey');
-							vue.formData.logoFileUuid = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : '';
+							vue.formData.logoFileId = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : '';
 						});
 					});
 				} else if (_.isPlainObject(vue.formData.logo) && vue.formData.logo.hasOwnProperty('id')) {
-					vue.formData.logoFileUuid = vue.formData.logo.id;
+					vue.formData.logoFileId = vue.formData.logo.id;
 				} else {
-					vue.formData.logoFileUuid = '';
+					vue.formData.logoFileId = '';
 				}
 
 				promise = promise.then(function () {

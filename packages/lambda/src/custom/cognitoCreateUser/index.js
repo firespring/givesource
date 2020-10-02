@@ -51,7 +51,7 @@ exports.handle = function (event, context, callback) {
 		return repository.populate(userData);
 	}).then(function (populatedUser) {
 		user = populatedUser;
-		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername'), 'SuperAdmin');
+		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'SuperAdmin');
 	}).then(function () {
 		return repository.upsert(user, {});
 	}).then(function () {

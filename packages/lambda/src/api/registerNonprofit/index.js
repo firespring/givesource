@@ -39,8 +39,8 @@ exports.handle = function (event, context, callback) {
 	}).then(function (populatedUser) {
 		user = populatedUser;
 		return nonprofitsRepository.upsert(nonprofit, {});
-	}).then(function () {
-		return usersRepository.upsert(user, {});
+	}).then(function (nonprofit) {
+		return usersRepository.upsert(user, {nonprofitId: nonprofit[0].id});
 	}).then(function () {
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendRegistrationPendingEmail', {body: {email: user.email}});
 	}).then(function () {

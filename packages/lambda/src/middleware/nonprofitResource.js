@@ -51,9 +51,9 @@ NonprofitResourceMiddleware.prototype.handle = function () {
 			return resolve();
 		}
 
-		if (middleware.user.uuid) {
-			usersRepository.get(middleware.user.id).then(function (user) {
-				if (middleware.nonprofitId === user.nonprofitId) {
+		if (middleware.user.cognitoUsername) {
+			usersRepository.getByCognitoUsername(middleware.user.cognitoUsername).then(function (user) {
+				if (parseInt(middleware.nonprofitId) === parseInt(user.nonprofitId)) {
 					return Promise.resolve();
 				} else {
 					return Promise.reject();

@@ -72,12 +72,12 @@ UsersRepository.prototype.get = function (id) {
 				where: {
 					id: id
 				}
-			}).then(function (user) {
-				if (user instanceof allModels.User) {
-					resolve(user);
-				}
-				reject(new ResourceNotFoundException('The specified user does not exist.'));
 			});
+		}).then(function (user) {
+			if (user instanceof allModels.User) {
+				resolve(user);
+			}
+			reject(new ResourceNotFoundException('The specified user does not exist.'));
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {
@@ -198,9 +198,8 @@ UsersRepository.prototype.save = function (model) {
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;
-			if (!(model instanceof allModels.User)) {
-				reject(new Error('invalid User model'));
-			}
+			return repository.get(model.id);
+		}).then(function () {
 			return repository.upsert(model, {});
 		}).then(function (user) {
 			resolve(user);

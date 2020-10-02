@@ -20,6 +20,8 @@ const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const User = require('./../dynamo-models/user');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * NonprofitUsersRepository constructor
@@ -44,17 +46,17 @@ NonprofitUsersRepository.prototype = new Repository();
 /**
  * Get a User
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {String} nonprofitId
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
+NonprofitUsersRepository.prototype.get = function (nonprofitId, id) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
+		nonprofitRepository.get(nonprofitId).then(function () {
 			const builder = new QueryBuilder('query');
-			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
+			builder.condition('id', '=', id).filter('nonprofitId', '=', nonprofitId);
 			repository.batchQuery(builder).then(function (data) {
 				if (data.Items.length === 1) {
 					resolve(new User(data.Items[0]));
@@ -72,29 +74,26 @@ NonprofitUsersRepository.prototype.get = function (nonprofitUuid, uuid) {
 /**
  * Get all Users for a Nonprofit
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitUsersRepository.prototype.getAll = function (nonprofitId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('scan');
-			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				const results = [];
-				if (data.Items) {
-					data.Items.forEach(function (item) {
-						results.push(new User(item));
-					});
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findAll({
+				where: {
+					nonprofitId: nonprofitId
 				}
-				resolve(results);
-			}).catch(function (err) {
-				reject(err);
 			});
+		}).then(function (results) {
+			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -102,16 +101,16 @@ NonprofitUsersRepository.prototype.getAll = function (nonprofitUuid) {
 /**
  * Delete a User
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {String} nonprofitId
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitUsersRepository.prototype.delete = function (nonprofitUuid, uuid) {
+NonprofitUsersRepository.prototype.delete = function (nonprofitId, id) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			repository.deleteByKey('uuid', uuid).then(function () {
+		nonprofitRepository.get(nonprofitId).then(function () {
+			repository.deleteByKey('id', id).then(function () {
 				resolve();
 			}).catch(function (err) {
 				reject(err);
@@ -125,22 +124,22 @@ NonprofitUsersRepository.prototype.delete = function (nonprofitUuid, uuid) {
 /**
  * Create or update a User
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @param {User} model
  */
-NonprofitUsersRepository.prototype.save = function (nonprofitUuid, model) {
+NonprofitUsersRepository.prototype.save = function (nonprofitId, model) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
+		nonprofitRepository.get(nonprofitId).then(function () {
 			if (!(model instanceof User)) {
 				reject(new Error('invalid User model'));
 			}
 			model.validate().then(function () {
 				const key = {
-					uuid: model.uuid
+					id: model.id
 				};
-				repository.put(key, model.except(['uuid'])).then(function (data) {
+				repository.put(key, model.except(['id'])).then(function (data) {
 					resolve(new User(data.Attributes));
 				}).catch(function (err) {
 					reject(err);

@@ -30,7 +30,7 @@ exports.handle = function (event, context, callback) {
 
 	let total = 0;
 	let items = [];
-	const nonprofitUuid = request.urlParam('nonprofit_id');
+	const nonprofitId = request.urlParam('nonprofit_id');
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);
@@ -46,7 +46,7 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function () {
 		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.select('COUNT').limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
 		if (!allowTestPayments) {
 			builder.filter('paymentTransactionIsTestMode', '=', 0);
 		}
@@ -55,7 +55,7 @@ exports.handle = function (event, context, callback) {
 		total = response.Count;
 		if (start > 0) {
 			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).max(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+			builder.select('COUNT').limit(start).max(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
 			if (!allowTestPayments) {
 				builder.filter('paymentTransactionIsTestMode', '=', 0);
 			}
@@ -65,7 +65,7 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function (response) {
 		const builder = new QueryBuilder('query');
-		builder.limit(size).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(false);
+		builder.limit(size).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
 
 		if (!allowTestPayments) {
 			builder.filter('paymentTransactionIsTestMode', '=', 0);

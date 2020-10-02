@@ -81,7 +81,7 @@
                     status: 'REVOKED'
                 }).then(function () {
                     vue.clearModals();
-                    vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.uuid);
+                    vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.id);
                 }).catch(function (err) {
                     vue.apiError = err.response.data.errors;
                     vue.removeModal('spinner');

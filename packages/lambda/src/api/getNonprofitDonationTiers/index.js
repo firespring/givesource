@@ -25,10 +25,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.getAll(request.urlParam('nonprofit_id'));
 	}).then(function (donationTiers) {
-		const results = donationTiers.map(function (donationTier) {
-			return donationTier.all();
-		});
-		callback(null, results);
+		callback(null, donationTiers);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

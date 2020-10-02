@@ -330,6 +330,11 @@ module.exports = {
 					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
+				description: {
+					type: Sequelize.STRING(2048),
+					allowNull: false,
+					defaultValue: ''
+				},
 				nonprofitId: {
 					type: Sequelize.INTEGER(11),
 					allowNull: false,
@@ -465,6 +470,11 @@ module.exports = {
 				taxId: {
 					type: Sequelize.STRING(50),
 					allowNull: false,
+				},
+				receiveDonationNotifications: {
+					type: Sequelize.BOOLEAN,
+					allowNull: false,
+					defaultValue: false
 				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,

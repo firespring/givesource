@@ -17,7 +17,6 @@
 const _ = require('lodash');
 const Nonprofit = require('./../dynamo-models/nonprofit');
 const NonprofitHelper = require('./../helpers/nonprofit');
-const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./../repositories/repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
@@ -92,11 +91,11 @@ NonprofitsRepository.prototype.get = function (id) {
 				resolve(nonprofit);
 			}
 			reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
-		});
 		}).catch(function (err) {
 			reject(err);
-	}).finally(function () {
-		return allModels.sequelize.close();
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
 	});
 };
 
@@ -107,17 +106,26 @@ NonprofitsRepository.prototype.get = function (id) {
  * @return {Promise}
  */
 NonprofitsRepository.prototype.getBySlug = function (slug) {
-	const repository = this;
+	let allModels;
+	console.log('slug', slug); /*DM: Debug */
 	return new Promise(function (resolve, reject) {
-		const builder = new QueryBuilder('query');
-		builder.index('slugIndex').condition('slug', '=', slug);
-		repository.batchQuery(builder).then(function (results) {
-			if (results.hasOwnProperty('Count') && results.hasOwnProperty('Items') && results.Count === 1) {
-				resolve(new Nonprofit(results.Items[0]));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.findOne({
+				where: {
+					slug: slug
+				}
+			});
+		}).then(function (nonprofit) {
+			if (nonprofit instanceof allModels.Nonprofit) {
+				resolve(nonprofit);
 			}
 			reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -128,18 +136,18 @@ NonprofitsRepository.prototype.getBySlug = function (slug) {
  * @return {Promise}
  */
 NonprofitsRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Nonprofit(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -175,58 +183,43 @@ NonprofitsRepository.prototype.queryNonprofits = function (params) {
  * @return {Promise}
  */
 NonprofitsRepository.prototype.search = function (keys, search, filters) {
-	const repository = this;
 	search = search.trim();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FilterExpression: '',
-			ExpressionAttributeNames: {},
-			ExpressionAttributeValues: {},
-		};
+	let allModels;
 
-		keys.forEach(function (key) {
-			const query = isNaN(search) ? `contains(#${key}, :${key})` : `#${key} = :${key}`;
-			params.FilterExpression = params.FilterExpression ? params.FilterExpression + ' OR ' + query : query;
-			params.ExpressionAttributeNames[`#${key}`] = key;
-			params.ExpressionAttributeValues[`:${key}`] = isNaN(search) ? search : parseInt(search);
+	if (filters.hasOwnProperty('legalNameSearch')) {
+		const value = filters.legalNameSearch;
+		filters.legalNameSearch = {[Sequelize.Op.like]: '%' + value + '%'};
+	}
+
+	const findAllParams = {};
+	findAllParams.where = [];
+	if (keys.includes('category1') && keys.includes('category2') && keys.includes('category3')) {
+		findAllParams.where.push({
+			[Sequelize.Op.or]: [
+				{category1: search},
+				{category2: search},
+				{category3: search},
+			],
 		});
+	}
+	if (keys.hasOwnProperty('status')) {
+		findAllParams.where.push({
+			status: search
+		})
+	}
+	findAllParams.where.push(filters);
 
-		if (Object.keys(filters).length) {
-			params.FilterExpression = `(${params.FilterExpression})`;
-			Object.keys(filters).forEach(function (key) {
-				let filterConditional = '=';
-				let filterValue = filters[key];
-				if (_.isPlainObject(filterValue)) {
-					filterConditional = filterValue.conditional;
-					filterValue = filterValue.value;
-				} else if (isNaN(filterValue)) {
-					filterConditional = 'contains';
-				} else {
-					filterValue = parseInt(filterValue);
-				}
-
-				let query = `#${key} ${filterConditional} :${key}`;
-				if (filterConditional === '!=' || filterConditional.toLowerCase() === 'not') {
-					query = `NOT #${key} = :${key}`;
-				} else if (filterConditional === 'contains') {
-					query = `contains(#${key}, :${key})`;
-				}
-				params.FilterExpression = params.FilterExpression + ' AND ' + query;
-				params.ExpressionAttributeNames[`#${key}`] = key;
-				params.ExpressionAttributeValues[`:${key}`] = filterValue;
-			});
-		}
-
-		repository.batchScan(params).then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Nonprofit(item));
-				});
-			}
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.findAll(findAllParams);
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -234,16 +227,27 @@ NonprofitsRepository.prototype.search = function (keys, search, filters) {
 /**
  * Delete a Nonprofit
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitsRepository.prototype.delete = function (uuid) {
-	const repository = this;
+NonprofitsRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.destroy({
+				where:
+					{
+						id: id
+					}
+			});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -254,23 +258,20 @@ NonprofitsRepository.prototype.delete = function (uuid) {
  * @param {Nonprofit} model
  */
 NonprofitsRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof Nonprofit)) {
-			reject(new Error('invalid Nonprofit model'));
-		}
-		model.beforeSave();
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new Nonprofit(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			return repository.get(model.id);
+		}).then(function () {
+			return repository.upsert(model, {});
+		}).then(function (nonprofit) {
+			resolve(nonprofit);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -387,7 +388,7 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 				'state': typeof data.state !== "undefined" ? data.state : model.state,
 				'zip': typeof data.zip !== "undefined" ? data.zip : model.zip,
 				'legalName': typeof data.legalName !== "undefined" ? data.legalName : model.legalName,
-				'legalNameSearch': typeof data.legalNameSearch !== "undefined" ? data.legalNameSearch : model.legalNameSearch,
+				'legalNameSearch': typeof data.legalName !== "undefined" ? data.legalName.toLowerCase() : model.legalName.toLowerCase(),
 				'logoFileId': typeof data.logoFileId !== "undefined" ? data.logoFileId : model.logoFileId,
 				'longDescription': typeof data.longDescription !== "undefined" ? data.longDescription : model.longDescription,
 				'shortDescription': typeof data.shortDescription !== "undefined" ? data.shortDescription : model.shortDescription,
@@ -396,6 +397,7 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 				'socialSharingFileId': typeof data.socialSharingFileId !== "undefined" ? data.socialSharingFileId : model.socialSharingFileId,
 				'status': typeof data.status !== "undefined" ? data.status : model.status,
 				'taxId': typeof data.taxId !== "undefined" ? data.taxId : model.taxId,
+				'receiveDonationNotifications': typeof data.receiveDonationNotifications !== "undefined" ? data.receiveDonationNotifications : model.receiveDonationNotifications,
 			});
 		}).then(function (nonprofit) {
 			resolve(nonprofit);

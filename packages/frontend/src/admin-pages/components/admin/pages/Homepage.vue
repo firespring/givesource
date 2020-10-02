@@ -157,17 +157,17 @@
                                                 <div class="sub-options">
 
                                                     <div class="c-form-item c-form-item--select c-form-item--combobox c-form-item--required"
-                                                         :class="{ 'c-form-item--has-error': formErrors['settings.MATCH_FUND_NONPROFIT_UUID'] }">
+                                                         :class="{ 'c-form-item--has-error': formErrors['settings.MATCH_FUND_NONPROFIT_ID'] }">
                                                         <div class="c-form-item__label">
-                                                            <label for="matchFundNonprofitUuid" class="c-form-item-label-text">Match Fund Nonprofit</label>
+                                                            <label for="matchFundNonprofitId" class="c-form-item-label-text">Match Fund Nonprofit</label>
                                                         </div>
                                                         <div class="c-form-item__control">
-                                                            <forms-select-nonprofit v-model="formData.settings.MATCH_FUND_NONPROFIT_UUID" id="matchFundNonprofitUuid"
-                                                                                    name="matchFundNonprofitUuid" :nonprofits="nonprofits"
-                                                                                    :hasError="formErrors.hasOwnProperty('settings.MATCH_FUND_NONPROFIT_UUID')"></forms-select-nonprofit>
-                                                            <div v-if="formErrors['settings.MATCH_FUND_NONPROFIT_UUID']"
+                                                            <forms-select-nonprofit v-model="formData.settings.MATCH_FUND_NONPROFIT_ID" id="matchFundNonprofitId"
+                                                                                    name="matchFundNonprofitId" :nonprofits="nonprofits"
+                                                                                    :hasError="formErrors.hasOwnProperty('settings.MATCH_FUND_NONPROFIT_ID')"></forms-select-nonprofit>
+                                                            <div v-if="formErrors['settings.MATCH_FUND_NONPROFIT_ID']"
                                                                  class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                                {{ formErrors['settings.MATCH_FUND_NONPROFIT_UUID'] }}
+                                                                {{ formErrors['settings.MATCH_FUND_NONPROFIT_ID'] }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -315,7 +315,7 @@
 						},
 					},
 					settings: {
-						MATCH_FUND_NONPROFIT_UUID: ''
+						MATCH_FUND_NONPROFIT_ID: ''
 					}
 				},
 
@@ -364,7 +364,7 @@
 
 				promise = promise.then(function () {
 					return request.get('settings', {
-						keys: ['MATCH_FUND_NONPROFIT_UUID']
+						keys: ['MATCH_FUND_NONPROFIT_ID']
 					}).then(function (response) {
 						settings = response.data;
 					});
@@ -464,7 +464,7 @@
 						presence: false,
 						image: true
 					},
-					'settings.MATCH_FUND_NONPROFIT_UUID': {
+					'settings.MATCH_FUND_NONPROFIT_ID': {
 						label: 'Match Fund Nonprofit',
 						presence: function (value, data) {
 							return data.contents.HOMEPAGE_MATCH_IS_ENABLED.value;

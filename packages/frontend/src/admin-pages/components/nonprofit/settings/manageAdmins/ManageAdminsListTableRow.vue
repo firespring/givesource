@@ -69,7 +69,7 @@
 		},
 		computed: {
 			formattedDate: function () {
-				return new Date(this.nonprofitUser.createdOn).toLocaleDateString();
+				return new Date(this.nonprofitUser.createdAt).toLocaleDateString();
 			}
 		},
 		props: [

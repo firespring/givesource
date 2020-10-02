@@ -237,7 +237,7 @@
 
 				if (vue.newFile) {
 					vue.addModal('spinner');
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
+					vue.$request.delete('files/' + vue.newFile.id).then(function () {
 						vue.clearModals();
 						vue.newFile = null;
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
@@ -254,7 +254,7 @@
 				const vue = this;
 
 				if (vue.newFile) {
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
+					vue.$request.delete('files/' + vue.newFile.id).then(function () {
 						vue.newFile = null;
 					}).catch(function (err) {
                         vue.apiError = err.response.data.errors;
@@ -309,7 +309,7 @@
 				const params = {};
 
 				if (vue.newFile) {
-					params['fileId'] = vue.newFile.uuid;
+					params['fileId'] = vue.newFile.id;
 				}
 
 				if (vue.formData.caption !== vue.slide.caption) {

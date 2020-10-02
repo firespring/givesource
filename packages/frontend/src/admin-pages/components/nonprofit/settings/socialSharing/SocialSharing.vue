@@ -127,7 +127,7 @@
 
 				formData: {
 					socialSharingDescription: '',
-					socialSharingFileUuid: '',
+					socialSharingFileId: 0,
 					socialSharingImage: null,
 				},
 
@@ -199,8 +199,8 @@
 					const vm = this;
 
 					vm.formData = vm.sync(vm.formData, vm.nonprofit);
-					if (!_.isEmpty(vm.formData.socialSharingFileUuid)) {
-						vm.$request.get('files/' + vm.formData.socialSharingFileUuid).then(response => {
+					if (vm.formData.socialSharingFileId > 0) {
+						vm.$request.get('files/' + vm.formData.socialSharingFileId).then(response => {
 							vm.formData.socialSharingImage = response.data;
 						}).catch(() => {
 							vm.formData.socialSharingImage = null;
@@ -271,7 +271,7 @@
 
 				vm.getUpdatedNonprofitParams().then(updatedParams => {
 					let promise = Promise.resolve();
-					const originalSocialSharingFileUuid = vm.nonprofit.socialSharingFileUuid;
+					const originalSocialSharingFileId = vm.nonprofit.socialSharingFileId;
 
 					if (Object.keys(updatedParams).length) {
 						promise = promise.then(() => {
@@ -279,14 +279,14 @@
 								if (response.data.errorMessage) {
 									console.log(response.data);
 								}
-								vm.$emit('updateNonprofit', response.data);
+								vm.$emit('updateNonprofit', response.data[0]);
 							})
 						});
 					}
 
-					if (updatedParams.hasOwnProperty('socialSharingFileUuid') && !_.isEmpty(originalSocialSharingFileUuid)) {
+					if (updatedParams.hasOwnProperty('socialSharingFileId') && !_.isEmpty(originalSocialSharingFileId)) {
 						promise = promise.then(() => {
-							return vm.$request.delete('files/' + originalSocialSharingFileUuid);
+							return vm.$request.delete('files/' + originalSocialSharingFileId);
 						});
 					}
 
@@ -309,13 +309,13 @@
 					promise = promise.then(() => {
 						return vm.uploadImage('socialSharingImage').then(uploadedFile => {
 							vm.$store.commit('generateCacheKey');
-							vm.formData.socialSharingFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+							vm.formData.socialSharingFileId = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : '';
 						});
 					});
-				} else if (_.isPlainObject(vm.formData.socialSharingImage) && vm.formData.socialSharingImage.hasOwnProperty('uuid')) {
-					vm.formData.socialSharingFileUuid = vm.formData.socialSharingImage.uuid;
+				} else if (_.isPlainObject(vm.formData.socialSharingImage) && vm.formData.socialSharingImage.hasOwnProperty('id')) {
+					vm.formData.socialSharingFileId = vm.formData.socialSharingImage.id;
 				} else {
-					vm.formData.socialSharingFileUuid = '';
+					vm.formData.socialSharingFileId = '';
 				}
 
 				promise = promise.then(() => {

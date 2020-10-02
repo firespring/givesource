@@ -188,7 +188,7 @@
 					promise = promise.then(function () {
 						return vue.$request.patch('contents', {
 							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+								return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
 							}),
 						});
 					});

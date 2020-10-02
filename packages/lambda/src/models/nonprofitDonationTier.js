@@ -19,7 +19,7 @@
 const {DataTypes} = require('sequelize');
 
 module.exports = (sequelize) => {
-	const NonprofitDonationTier = sequelize.define('NonprofitDonationTier', {
+	return sequelize.define('NonprofitDonationTier', {
 		amount: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -29,16 +29,15 @@ module.exports = (sequelize) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		description: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
 		nonprofitId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 0,
 		},
 	});
-
-	// NonprofitDonationTier.belongsTo(sequelize.models.Nonprofit, {
-	// 	foreignKey: 'nonprofitId'
-	// });
-
-	return NonprofitDonationTier;
 };

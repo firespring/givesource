@@ -35,21 +35,22 @@ exports.handle = function (event, context, callback) {
 
 	let user;
 	let nonprofit;
+	let savedNp;
 	request.validate().then(function () {
-		return nonprofitsRepository.generateUniqueSlug(nonprofit);
-	}).then(function () {
 		return nonprofitsRepository.populate(request.get('nonprofit'));
 	}).then(function (populatedNp) {
 		nonprofit = populatedNp;
+		return nonprofitsRepository.generateUniqueSlug(nonprofit);
+	}).then(function () {
 		nonprofit.status = NonprofitHelper.STATUS_ACTIVE;
+		return nonprofitsRepository.upsert(nonprofit, {});
+	}).then(function (nonprofit) {
+		savedNp = nonprofit[0];
 		return usersRepository.populate(request.get('user'));
 	}).then(function (populatedUser) {
 		user = populatedUser;
 		user.cognitoUsername = UUID.v4();
-		return nonprofitsRepository.upsert(nonprofit, {});
-	}).then(function (savedNp) {
 		user.nonprofitId = savedNp.id;
-	}).then(function () {
 		return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email);
 	}).then(function (cognitoUser) {
 		cognitoUser.User.Attributes.forEach(function (attribute) {
@@ -58,11 +59,11 @@ exports.handle = function (event, context, callback) {
 			}
 		});
 	}).then(function () {
-		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'Nonprofit');
+		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Nonprofit');
 	}).then(function () {
 		return user.validate();
 	}).then(function () {
-		return usersRepository.save(user);
+		return usersRepository.upsert(user, {});
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

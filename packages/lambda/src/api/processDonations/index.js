@@ -88,8 +88,8 @@ export function handle(event, context, callback) {
 
 			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, transactionFlatFee, transactionPercentFee);
 			const model = new Donation(donation);
-			if (model.nonprofitUuid && !nonprofitUuids.indexOf(model.nonprofitUuid) > -1) {
-				nonprofitUuids.push(model.nonprofitUuid);
+			if (model.nonprofitId && !nonprofitUuids.indexOf(model.nonprofitId) > -1) {
+				nonprofitUuids.push(model.nonprofitId);
 			}
 			if (model.subtotal) {
 				subtotal += model.subtotal;
@@ -104,7 +104,7 @@ export function handle(event, context, callback) {
 					'isAnonymous',
 					'isFeeCovered',
 					'isOfflineDonation',
-					'nonprofitUuid',
+					'nonprofitId',
 					'subtotal',
 					'total',
 					'note'
@@ -116,9 +116,9 @@ export function handle(event, context, callback) {
 		total = subtotal + fees;
 
 		let promise = Promise.resolve();
-		nonprofitUuids.forEach((nonprofitUuid) => {
+		nonprofitUuids.forEach((nonprofitId) => {
 			promise = promise.then(() => {
-				return nonprofitsRepository.get(nonprofitUuid).then((response) => {
+				return nonprofitsRepository.get(nonprofitId).then((response) => {
 					nonprofits.push(response);
 				});
 			});
@@ -220,7 +220,7 @@ export function handle(event, context, callback) {
 			}
 		});
 		nonprofits.forEach((nonprofit) => {
-			_.filter(donations, {nonprofitUuid: nonprofit.uuid}).forEach((donation) => {
+			_.filter(donations, {nonprofitId: nonprofit.id}).forEach((donation) => {
 				donation.nonprofitLegalName = nonprofit.legalName;
 				donation.nonprofitAddress1 = nonprofit.address1;
 				donation.nonprofitAddress2 = nonprofit.address2;

@@ -21,18 +21,19 @@ const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
+const Sequelize = require('sequelize');
 
 exports.handle = (event, context, callback) => {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context);
 	const settingsRepository = new SettingsRepository();
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
-	let matchFundNonprofitUuid = null;
+	let matchFundNonprofitId = null;
 
 	request.validate().then(() => {
 		if (!includeMatchFund) {
-			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(setting => {
-				matchFundNonprofitUuid = setting.value;
+			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_ID).then(setting => {
+				matchFundNonprofitId = setting.value;
 			}).catch(err => {
 				if (err instanceof ResourceNotFoundException) {
 					return Promise.resolve();
@@ -48,7 +49,7 @@ exports.handle = (event, context, callback) => {
 			return Promise.reject(new Error('Missing required query parameter: category, legalName or status'));
 		}
 		if (request.queryParam('category', false)) {
-			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category', 'c']), matchFundNonprofitUuid));
+			return repository.search(['category1', 'category2', 'category3'], request.queryParam('category'), transformFilters(request.queryParamsExcept(['category', 'c']), matchFundNonprofitId));
 		}
 		if (request.queryParam('legalName', false)) {
 			return repository.getAll().then(nonprofits => {
@@ -66,17 +67,17 @@ exports.handle = (event, context, callback) => {
 				}
 
 				if (!includeMatchFund) {
-					nonprofits = nonprofits.filter(nonprofit => nonprofit.uuid !== matchFundNonprofitUuid);
+					nonprofits = nonprofits.filter(nonprofit => nonprofit.id !== matchFundNonprofitId);
 				}
 
 				const fuse = new Fuse(nonprofits, options);
 				return fuse.search(request.queryParam('legalName')).slice(0, 50);
 			});
 		}
-		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status', 'c']), matchFundNonprofitUuid));
+		return repository.search(['status'], request.queryParam('status'), transformFilters(request.queryParamsExcept(['status', 'c']), matchFundNonprofitId));
 	}).then(response => {
 		const results = response.map(model => {
-			return model.all();
+			return model;
 		});
 		callback(null, results);
 	}).catch(err => {
@@ -84,7 +85,7 @@ exports.handle = (event, context, callback) => {
 	});
 };
 
-const transformFilters = (filters, matchFundNonprofitUuid) => {
+const transformFilters = (filters, matchFundNonprofitId) => {
 	if (filters.hasOwnProperty('legalName')) {
 		filters.legalNameSearch = filters.legalName;
 		delete filters.legalName;
@@ -92,11 +93,10 @@ const transformFilters = (filters, matchFundNonprofitUuid) => {
 
 	if (filters.hasOwnProperty('includeMatchFund')) {
 		const includeMatchFund = parseInt(filters.includeMatchFund);
-		if (!includeMatchFund && matchFundNonprofitUuid) {
-			filters.uuid = {
-				conditional: '!=',
-				value: matchFundNonprofitUuid
-			};
+		if (!includeMatchFund && matchFundNonprofitId) {
+			filters.id = {
+				[Sequelize.Op.ne]: matchFundNonprofitId
+			}
 		}
 		delete filters.includeMatchFund;
 	}

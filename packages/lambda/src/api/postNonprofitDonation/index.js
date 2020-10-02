@@ -30,7 +30,7 @@ export function handle(event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
-	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_id')});
+	let donation = new Donation({nonprofitId: request.urlParam('nonprofit_id')});
 	request.validate().then(() => {
 		donation.populate(request._body);
 		return donation.validate();

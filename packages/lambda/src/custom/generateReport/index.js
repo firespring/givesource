@@ -124,9 +124,9 @@ const getDonationsData = function (report, timezone) {
 		return Promise.resolve();
 	});
 
-	if (report.nonprofitUuid) {
+	if (report.nonprofitId) {
 		promise = promise.then(function () {
-			builder.limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', report.nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(true);
+			builder.limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', report.nonprofitId).condition('createdOn', '>', 0).scanIndexForward(true);
 			return nonprofitDonationsRepository.batchQuery(builder);
 		});
 	} else {

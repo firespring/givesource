@@ -21,6 +21,7 @@ module.exports = (sequelize) => {
 		isVerified: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
+			defaultValue: false
 		},
 		nonprofitId: {
 			type: DataTypes.INTEGER,

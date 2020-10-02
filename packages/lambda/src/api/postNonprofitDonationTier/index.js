@@ -25,14 +25,14 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
-	const donationTier = new NonprofitDonationTier({nonprofitUuid: request.urlParam('nonprofit_id')});
+	let donationTier;
 	request.validate().then(function () {
-		donationTier.populate(request._body);
-		return donationTier.validate();
-	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_id'), donationTier);
+		return repository.populate(request._body);
+	}).then(function (populatedDonationTier) {
+		donationTier = populatedDonationTier;
+		return repository.upsert(donationTier, {nonprofitId: request.urlParam('nonprofit_id')});
 	}).then(function (model) {
-		callback(null, model.all());
+		callback(null, model[0]);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

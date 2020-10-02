@@ -26,7 +26,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.uuid" v-on:updateNonprofit="updateNonprofit"
+        <nonprofits-list-table-row v-for="nonprofit in nonprofits" :nonprofit="nonprofit" :key="nonprofit.id" v-on:updateNonprofit="updateNonprofit"
                                    v-on:hasError="hasError"></nonprofits-list-table-row>
         </tbody>
 

@@ -27,10 +27,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.getAll(request.urlParam('nonprofit_id'));
 	}).then(function (users) {
-		const results = users.map(function (user) {
-			return user.all();
-		});
-		callback(null, results);
+		callback(null, users);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

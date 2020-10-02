@@ -125,13 +125,13 @@
 	/**
 	 * Pre-loaded data
 	 *
-	 * @param {String} uuid
+	 * @param {String} id
 	 * @returns {Promise}
 	 */
-	const fetchData = (uuid) => {
+	const fetchData = (id) => {
 		const request = new Request();
-		const contentKeys = getContentKeys(uuid);
-		const settingKeys = getSettingKeys(uuid);
+		const contentKeys = getContentKeys(id);
+		const settingKeys = getSettingKeys(id);
 		settingKeys.push('CUSTOM_PAGES');
 
 		let settings = [];

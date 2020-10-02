@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitId="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
@@ -63,13 +63,13 @@
 			},
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
-					return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations', to.query);
+					return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query);
 				}).then(function (response) {
 					vue.setPaginationData(response.data);
 				});
@@ -79,9 +79,9 @@
 			const vue = this;
 
 			vue.resetPaginationData();
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
-				return vue.$request.get('/nonprofits/' + to.params.nonprofitUuid + '/donations', to.query);
+				return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query);
 			}).then(function (response) {
 				vue.setPaginationData(response.data);
 				next();

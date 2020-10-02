@@ -85,7 +85,7 @@
 
 				vue.$request.get('nonprofits/' + nonprofitId).then(function (response) {
 					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
-						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
+						return nonprofit.id === response.data.id ? response.data : nonprofit;
 					});
 				}).catch(function (err) {
 					vue.apiError = err.response.data.errors;

@@ -80,9 +80,9 @@
 					contents: vm.data.contents
 				}).then(() => {
 					const setting = _.find(vm.data.settings, {key: 'CUSTOM_PAGES'});
-					const uuids = setting.value.split('|');
-					const updatedUuids = uuids.filter((uuid) => {
-						return uuid !== vm.data.pageId;
+					const ids = setting.value.split('|');
+					const updatedUuids = ids.filter((id) => {
+						return id !== vm.data.pageId;
 					});
 
 					let promise = Promise.resolve();

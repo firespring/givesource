@@ -38,15 +38,15 @@
                             <div class="c-page-section__main" v-else>
 
                                 <div class="c-form-item c-form-item--select c-form-item--combobox c-form-item--required"
-                                     :class="{ 'c-form-item--has-error': formErrors.nonprofitUuid }">
+                                     :class="{ 'c-form-item--has-error': formErrors.nonprofitId }">
                                     <div class="c-form-item__label">
-                                        <label for="nonprofitUuid" class="c-form-item-label-text">Related Nonprofit</label>
+                                        <label for="nonprofitId" class="c-form-item-label-text">Related Nonprofit</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-select-nonprofit v-model="formData.nonprofitUuid" id="nonprofitUuid" name="nonprofitUuid" :nonprofits="nonprofits"
-                                                                :hasError="formErrors.hasOwnProperty('nonprofitUuid')"></forms-select-nonprofit>
-                                        <div v-if="formErrors.nonprofitUuid" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.nonprofitUuid }}
+                                        <forms-select-nonprofit v-model="formData.nonprofitId" id="nonprofitId" name="nonprofitId" :nonprofits="nonprofits"
+                                                                :hasError="formErrors.hasOwnProperty('nonprofitId')"></forms-select-nonprofit>
+                                        <div v-if="formErrors.nonprofitId" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.nonprofitId }}
                                         </div>
                                     </div>
                                 </div>
@@ -253,7 +253,7 @@
 					email: '',
 					firstName: '',
 					lastName: '',
-					nonprofitUuid: '',
+					nonprofitId: '',
 					state: '',
 					subtotal: 0,
 					type: 'SINGLE',
@@ -309,7 +309,7 @@
 				const vm = this;
 
 				const constraints = {
-					nonprofitUuid: {
+					nonprofitId: {
 						label: 'Related nonprofit',
 						presence: true,
 					},
@@ -409,7 +409,7 @@
 				let nonprofit = {};
 				let promise = Promise.resolve();
 				promise = promise.then(() => {
-					return vm.$request.get('nonprofits/' + vm.formData.nonprofitUuid);
+					return vm.$request.get('nonprofits/' + vm.formData.nonprofitId);
 				}).then(response => {
 					nonprofit = response.data;
 					donation['nonprofitLegalName'] = nonprofit.legalName;
@@ -424,7 +424,7 @@
 				if (vm.formData.type === 'BULK') {
 					promise = promise.then(() => {
 						donation['count'] = parseInt(vm.formData.count);
-						return vm.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
+						return vm.$request.post('nonprofits/' + nonprofit.id + '/donations', donation);
 					});
 				}
 
@@ -471,7 +471,7 @@
 						donation['donorEmail'] = response.data.email;
 						donation['donorState'] = response.data.state;
 						donation['donorZip'] = response.data.zip;
-						return vm.$request.post('nonprofits/' + nonprofit.uuid + '/donations', donation);
+						return vm.$request.post('nonprofits/' + nonprofit.id + '/donations', donation);
 					});
 				}
 
@@ -487,7 +487,7 @@
 								email: '',
 								firstName: '',
 								lastName: '',
-								nonprofitUuid: '',
+								nonprofitId: '',
 								subtotal: 0,
 								type: vm.formData.type,
 							};

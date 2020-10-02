@@ -78,6 +78,7 @@ module.exports = (sequelize) => {
 		legalNameSearch: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			defaultValue: ''
 		},
 		logoFileId: {
 			type: DataTypes.INTEGER,
@@ -113,23 +114,12 @@ module.exports = (sequelize) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		receiveDonationNotifications: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
+		}
 	});
-
-	// Nonprofit.hasMany(sequelize.models.NonprofitSlide, {
-	// 	foreignKey: 'nonprofitId'
-	// });
-	//
-	// Nonprofit.hasMany(sequelize.models.NonprofitDonationTier, {
-	// 	foreignKey: 'nonprofitId'
-	// });
-	//
-	// Nonprofit.hasOne(sequelize.models.File, {
-	// 	foreignKey: 'socialSharingFileId'
-	// });
-	//
-	// Nonprofit.hasOne(sequelize.models.File, {
-	// 	foreignKey: 'logoFileId'
-	// });
 
 	return Nonprofit;
 };

@@ -204,7 +204,7 @@
 					vue.$router.push({
 						name: 'nonprofit-your-page-media-photos-edit',
 						params: {
-							slideId: response.data.id
+							slideId: response.data[0].id
 						}
 					});
 					vue.clearModals();

@@ -108,8 +108,8 @@ exports.handle = (event, context, callback) => {
 						if (nonprofit.legalName) {
 							data.title = 'Support ' + nonprofit.legalName + ' at ' + settings.EVENT_TITLE;
 						}
-						if (nonprofit.socialSharingFileUuid) {
-							settings.SOCIAL_SHARING_IMAGE = nonprofit.socialSharingFileUuid;
+						if (nonprofit.socialSharingFileId) {
+							settings.SOCIAL_SHARING_IMAGE = nonprofit.socialSharingFileId;
 						}
 					});
 				});
