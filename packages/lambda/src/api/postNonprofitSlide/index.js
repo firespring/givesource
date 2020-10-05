@@ -31,9 +31,7 @@ exports.handle = function (event, context, callback) {
 		slide = populatedSlide;
 		return repository.getCount(request.urlParam('nonprofit_id'));
 	}).then(function (count) {
-		slide.sortOrder = count;
-	}).then(function () {
-		return repository.upsert(slide, {nonprofitId: request.urlParam('nonprofit_id')});
+		return repository.upsert(slide, {nonprofitId: request.urlParam('nonprofit_id'), sortOrder: count});
 	}).then(function (model) {
 		callback(null, model);
 	}).catch(function (err) {

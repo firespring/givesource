@@ -19,7 +19,7 @@
 const {DataTypes} = require('sequelize');
 
 module.exports = (sequelize) => {
-	const NonprofitSlide = sequelize.define('NonprofitSlide', {
+	return sequelize.define('NonprofitSlide', {
 		sortOrder: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -60,14 +60,4 @@ module.exports = (sequelize) => {
 			defaultValue: 0
 		},
 	});
-
-	// NonprofitSlide.belongsTo(sequelize.models.Nonprofit, {
-	// 	foreignKey: 'nonprofitId'
-	// });
-	//
-	// NonprofitSlide.hasOne(sequelize.models.File, {
-	// 	foreignKey: 'fileId'
-	// });
-
-	return NonprofitSlide;
 };
