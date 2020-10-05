@@ -69,9 +69,6 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		total = response.count;
 		items = response.rows;
-		// 	if (matchFundNonprofitId && items.length > size) {
-	// 		items.pop();
-	// 	}
 		callback(null, {
 			items: items,
 			size: size,
