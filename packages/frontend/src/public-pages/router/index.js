@@ -394,7 +394,7 @@ const updateSettings = () => {
 		if (response.data) {
 			response.data.forEach(file => {
 				Object.keys(files).forEach(key => {
-					if (files[key] === file.id) {
+					if (parseInt(files[key]) === parseInt(file.id)) {
 						settings[key] = settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path;
 					}
 				});

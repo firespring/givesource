@@ -107,7 +107,6 @@ NonprofitsRepository.prototype.get = function (id) {
  */
 NonprofitsRepository.prototype.getBySlug = function (slug) {
 	let allModels;
-	console.log('slug', slug); /*DM: Debug */
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-const NonprofitRepository = require('./nonprofits');
-const QueryBuilder = require('./../aws/queryBuilder');
+const UsersRepository = require('./users');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const User = require('./../dynamo-models/user');
 const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
 
 /**
  * NonprofitUsersRepository constructor
@@ -51,22 +48,26 @@ NonprofitUsersRepository.prototype = new Repository();
  * @return {Promise}
  */
 NonprofitUsersRepository.prototype.get = function (nonprofitId, id) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitId).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.condition('id', '=', id).filter('nonprofitId', '=', nonprofitId);
-			repository.batchQuery(builder).then(function (data) {
-				if (data.Items.length === 1) {
-					resolve(new User(data.Items[0]));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findOne({
+				where: {
+					id: id,
+					nonprofitId: nonprofitId
 				}
-				reject(new ResourceNotFoundException('The specified user does not exist.'));
-			}).catch(function (err) {
-				reject(err);
 			});
+		}).then(function (user) {
+			if (user instanceof allModels.User) {
+				resolve(user);
+			}
+			reject(new ResourceNotFoundException('The specified user does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -106,18 +107,19 @@ NonprofitUsersRepository.prototype.getAll = function (nonprofitId) {
  * @return {Promise}
  */
 NonprofitUsersRepository.prototype.delete = function (nonprofitId, id) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitId).then(function () {
-			repository.deleteByKey('id', id).then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.destroy({where: {id: id, nonprofitId: nonprofitId}});
+		}).then(function () {
+			resolve();
 		}).catch(function (err) {
 			reject(err);
-		})
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
 	});
 };
 
@@ -128,27 +130,21 @@ NonprofitUsersRepository.prototype.delete = function (nonprofitId, id) {
  * @param {User} model
  */
 NonprofitUsersRepository.prototype.save = function (nonprofitId, model) {
+	let allModels;
 	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+	const usersRepository = new UsersRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitId).then(function () {
-			if (!(model instanceof User)) {
-				reject(new Error('invalid User model'));
-			}
-			model.validate().then(function () {
-				const key = {
-					id: model.id
-				};
-				repository.put(key, model.except(['id'])).then(function (data) {
-					resolve(new User(data.Attributes));
-				}).catch(function (err) {
-					reject(err);
-				});
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			return repository.get(nonprofitId, model.id);
+		}).then(function () {
+			return usersRepository.upsert(model, {});
+		}).then(function (user) {
+			resolve(user);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

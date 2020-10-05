@@ -725,7 +725,7 @@ const nonprofitStatusMiddleware = function (to, from, next) {
  */
 const nonprofitMiddleware = function (to, from, next) {
 	if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitId') && to.params.hasOwnProperty('nonprofitId')) {
-		if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && router.app.user.nonprofitId !== to.params.nonprofitId) {
+		if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && parseInt(router.app.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
 			next({name: '404'});
 		} else {
 			next();
