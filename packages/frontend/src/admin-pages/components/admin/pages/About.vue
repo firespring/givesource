@@ -76,7 +76,8 @@
 					ABOUT_TEXT: {
 						key: 'ABOUT_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					}
 				},
 

@@ -176,6 +176,39 @@ ContentsRepository.prototype.batchGet = function (keys) {
 };
 
 /**
+ * Get Contents by ids
+ *
+ * @param {Array} ids
+ * @return {Promise}
+ */
+ContentsRepository.prototype.batchGetById = function (ids) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (ids.length) {
+				return allModels.Content.findAll({
+					where: {
+						id: {
+							[Sequelize.Op.or]: ids
+						},
+					}
+				});
+			} else {
+				return allModels.Content.findAll();
+			}
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Delete an array of Content models
  *
  * @param {Array} models

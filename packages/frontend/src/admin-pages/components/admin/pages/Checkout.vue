@@ -98,12 +98,14 @@
 					CART_CHECKOUT_TEXT: {
 						key: 'CART_CHECKOUT_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					CART_RESPONSE_TEXT: {
 						key: 'CART_RESPONSE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 

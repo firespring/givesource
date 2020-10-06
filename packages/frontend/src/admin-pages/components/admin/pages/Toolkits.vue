@@ -125,12 +125,14 @@
 					TOOLKIT_ADDITIONAL_TEXT: {
 						key: 'TOOLKIT_ADDITIONAL_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					TOOLKIT_LEADING_TEXT: {
 						key: 'TOOLKIT_LEADING_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 

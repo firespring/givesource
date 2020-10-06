@@ -86,11 +86,13 @@
 						key: 'FAQ_LIST_ITEM_QUESTION',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					FAQ_LIST_ITEM_ANSWER: {
 						key: 'FAQ_LIST_ITEM_ANSWER',
 						type: 'RICH_TEXT',
 						value: '',
+                        id: 0
 					},
 				},
 

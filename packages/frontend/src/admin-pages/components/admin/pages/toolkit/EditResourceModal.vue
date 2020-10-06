@@ -149,26 +149,31 @@
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_TYPE: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE',
 						type: 'OPTION',
 						value: 'FILE',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_FILE: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE',
 						type: 'FILE',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_LINK: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_LINK',
 						type: 'LINK',
 						value: '',
+                        id: 0
 					},
 				},
 

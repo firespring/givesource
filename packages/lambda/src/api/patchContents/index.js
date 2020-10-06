@@ -25,11 +25,11 @@ exports.handle = function (event, context, callback) {
 	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
 	const keys = request.get('contents', []).map(function (content) {
-		return content.key;
+		return content.id;
 	});
 
 	request.validate().then(function () {
-		return repository.batchGet(keys);
+		return repository.batchGetById(keys);
 	}).then(function (oldContents) {
 		let promise = Promise.resolve();
 		request.get('contents', []).map(function (content) {
