@@ -162,17 +162,20 @@
 					PAGE_TITLE: {
 						key: 'CUSTOM_PAGE_TITLE',
 						type: 'TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					PAGE_SLUG: {
 						key: 'CUSTOM_PAGE_SLUG',
 						type: 'TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					PAGE_TEXT: {
 						key: 'CUSTOM_PAGE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					}
 				},
 

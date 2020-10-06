@@ -98,12 +98,14 @@
 					REGISTER_FORM_TEXT: {
 						key: 'REGISTER_FORM_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					REGISTER_RESPONSE_TEXT: {
 						key: 'REGISTER_RESPONSE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 

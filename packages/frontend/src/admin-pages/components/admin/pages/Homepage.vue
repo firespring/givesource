@@ -266,52 +266,62 @@
 						HOMEPAGE_TITLE: {
 							key: 'HOMEPAGE_TITLE',
 							type: 'TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 						HOMEPAGE_SPOTLIGHT: {
 							key: 'HOMEPAGE_SPOTLIGHT',
 							type: 'FILE',
-							value: null
+							value: null,
+                            id: 0
 						},
 						HOMEPAGE_MASTHEAD_TEXT: {
 							key: 'HOMEPAGE_MASTHEAD_TEXT',
 							type: 'RICH_TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 						HOMEPAGE_MAIN_TEXT: {
 							key: 'HOMEPAGE_MAIN_TEXT',
 							type: 'RICH_TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 						HOMEPAGE_POST_EVENT_TEXT: {
 							key: 'HOMEPAGE_POST_EVENT_TEXT',
 							type: 'RICH_TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 						HOMEPAGE_REGISTER_BUTTON: {
 							key: 'HOMEPAGE_REGISTER_BUTTON',
 							type: 'TEXT',
-							value: 'Register Your Nonprofit Today'
+							value: 'Register Your Nonprofit Today',
+                            id: 0
 						},
 						HOMEPAGE_REGISTER_DETAILS: {
 							key: 'HOMEPAGE_REGISTER_DETAILS',
 							type: 'RICH_TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 						HOMEPAGE_MATCH_IS_ENABLED: {
 							key: 'HOMEPAGE_MATCH_IS_ENABLED',
 							type: 'OPTION',
-							value: false
+							value: false,
+                            id: 0
 						},
 						HOMEPAGE_MATCH_BUTTON: {
 							key: 'HOMEPAGE_MATCH_BUTTON',
 							type: 'TEXT',
-							value: 'Love Them All'
+							value: 'Love Them All',
+                            id: 0
 						},
 						HOMEPAGE_MATCH_DETAILS: {
 							key: 'HOMEPAGE_MATCH_DETAILS',
 							type: 'TEXT',
-							value: ''
+							value: '',
+                            id: 0
 						},
 					},
 					settings: {

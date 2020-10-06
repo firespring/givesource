@@ -98,12 +98,14 @@
 					CONTACT_FORM_TEXT: {
 						key: 'CONTACT_FORM_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					CONTACT_RESPONSE_TEXT: {
 						key: 'CONTACT_RESPONSE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 

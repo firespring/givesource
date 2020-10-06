@@ -31,10 +31,11 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		results = [];
 		contents.forEach(function (content) {
-			if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
+			if (content.type === ContentHelper.TYPE_COLLECTION) {
 				promise = promise.then(function () {
 					return repository.getByParentId(content.id);
 				}).then(function (models) {
+					console.log('models', models); /*DM: Debug */
 					let values = [];
 					models.forEach(function (result) {
 						values.push(result);
