@@ -67,8 +67,12 @@
                             <hr class="expand">
 
                             <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
+                                <h3 v-if="nonprofit.status === 'ACTIVE'" class="c-page-section-segment__title">
                                     <router-link :to="{ name: 'nonprofit-settings-social-sharing' }">Social Sharing</router-link>
+
+                                </h3>
+                                <h3 v-else class="c-page-section-segment__title">
+                                    Social Sharing
                                 </h3>
                                 <div class="c-notes c-notes--below">
                                     Manage the text and image that is displayed when someone shares your page on social media.

@@ -428,11 +428,11 @@ module.exports = {
 					defaultValue: 0
 				},
 				longDescription: {
-					type: Sequelize.STRING(255),
+					type: Sequelize.STRING(4096),
 					allowNull: false,
 				},
 				shortDescription: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
 				slug: {
@@ -440,7 +440,7 @@ module.exports = {
 					allowNull: false,
 				},
 				socialSharingDescription: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(2048),
 					allowNull: false,
 				},
 				socialSharingFileId: {
