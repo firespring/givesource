@@ -151,7 +151,7 @@ UsersRepository.prototype.getAdminUsers = function () {
 		}).then(function () {
 			return allModels.User.findAll({
 				where: {
-					nonprofitId: ''
+					nonprofitId: 0
 				}
 			});
 		}).then(function (results) {

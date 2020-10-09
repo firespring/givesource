@@ -35,7 +35,7 @@ exports.handle = function (event, context, callback) {
 		users.forEach(function (user) {
 			let result = user;
 			promise = promise.then(function () {
-				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.get('cognitoUsername')).then(function (response) {
+				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername).then(function (response) {
 					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
 						return group.GroupName;
 					}) : [];

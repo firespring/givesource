@@ -133,6 +133,7 @@ Generator.prototype._generators = {
 	 * @return {Object}
 	 */
 	nonprofit: function () {
+		const legalName = faker.company.companyName();
 		return {
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
@@ -143,7 +144,8 @@ Generator.prototype._generators = {
 			email: faker.internet.email(),
 			firstName: faker.random.word(),
 			lastName: faker.random.word(),
-			legalName: faker.company.companyName(),
+			legalName: legalName,
+			legalNameSearch: legalName.toLowerCase(),
 			longDescription: faker.lorem.paragraphs(),
 			phone: faker.phone.phoneNumber(),
 			shortDescription: faker.random.words(),
