@@ -171,11 +171,14 @@ const seedNonprofits = function () {
 		}
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
-		const nonprofits = generator.modelCollection('nonprofit', count, {donationsCount: 0, donationsFees: 0, donationsFeesCovered: 0, donationsSubtotal: 0, donationsTotal: 0, status: 'ACTIVE'});
+		const nonprofits = generator.modelCollection('nonprofit', count, {status: 'ACTIVE'});
+
+		return nonprofitsRepository.batchUpdate(nonprofits);
+	}).then(function (nonprofits) {
 
 		_.each(nonprofits, function (nonprofit) {
 			const slideCount = Math.floor(Math.random() * 8) + 1;
-			const slides = generator.modelCollection('nonprofitSlide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
+			const slides = generator.modelCollection('nonprofitSlide', slideCount, {nonprofitId: nonprofit.id, type: 'IMAGE', fileId: null});
 			_.each(slides, function (slide, i) {
 				slide.sortOrder = i;
 				nonprofitSlides.push(slide);
@@ -183,14 +186,11 @@ const seedNonprofits = function () {
 		});
 
 		_.each(nonprofits, function (nonprofit) {
-			const tiers = generator.modelCollection('nonprofitDonationTier', 4, {nonprofitUuid: nonprofit.uuid});
+			const tiers = generator.modelCollection('nonprofitDonationTier', 4, {nonprofitId: nonprofit.id});
 			tiers.forEach(function (tier) {
 				nonprofitDonationTiers.push(tier);
 			});
 		});
-
-		return nonprofitsRepository.batchUpdate(nonprofits);
-	}).then(function () {
 		return nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
 	}).then(function () {
 		return nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);

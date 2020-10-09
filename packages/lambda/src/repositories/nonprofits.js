@@ -252,6 +252,28 @@ NonprofitsRepository.prototype.delete = function (id) {
 };
 
 /**
+ * Bulk create Nonprofits (seeder)
+ *
+ * @param nonprofits
+ * @return {Promise<any>}
+ */
+NonprofitsRepository.prototype.batchUpdate = function (nonprofits) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.Nonprofit.bulkCreate(nonprofits);
+		}).then(function (savedNonprofits) {
+			resolve(savedNonprofits);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Create or update a Nonprofit
  *
  * @param {Nonprofit} model

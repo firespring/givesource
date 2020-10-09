@@ -224,6 +224,28 @@ NonprofitSlidesRepository.prototype.batchSave = function (nonprofitId, models) {
 };
 
 /**
+ * Bulk create Nonprofits (seeder)
+ *
+ * @param nonprofitSlides
+ * @return {Promise<any>}
+ */
+NonprofitSlidesRepository.prototype.batchUpdate = function (nonprofitSlides) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.NonprofitSlide.bulkCreate(nonprofitSlides);
+		}).then(function (savedNonprofitSlides) {
+			resolve(savedNonprofitSlides);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Insert or update the model
  *
  * @param {Object} model

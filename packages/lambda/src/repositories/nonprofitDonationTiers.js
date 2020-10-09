@@ -269,6 +269,28 @@ NonprofitDonationTiersRepository.prototype.batchRemove = function (nonprofitId, 
 };
 
 /**
+ * Bulk create NonprofitDonationTiers (seeder)
+ *
+ * @param nonprofitDonationTiers
+ * @return {Promise<any>}
+ */
+NonprofitDonationTiersRepository.prototype.batchUpdate = function (nonprofitDonationTiers) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.NonprofitDonationTier.bulkCreate(nonprofitDonationTiers);
+		}).then(function (savedNonprofitDonationTiers) {
+			resolve(savedNonprofitDonationTiers);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Insert or update the model
  *
  * @param {Object} model
