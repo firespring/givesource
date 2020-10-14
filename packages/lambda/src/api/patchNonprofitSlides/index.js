@@ -27,19 +27,27 @@ exports.handle = function (event, context, callback) {
 
 	let slides = [];
 	request.validate().then(function () {
-		request.get('slides', []).forEach(function (data) {
-			slides.push(new NonprofitSlide(data));
-		});
-	}).then(function () {
 		let promise = Promise.resolve();
-		slides.forEach(function (slide) {
+		request.get('slides', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return slide.validate();
+				return repository.populate(data).then(function (slide) {
+					slides.push(slide);
+				});
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('nonprofit_id'), slides);
+		let promise = Promise.resolve();
+		slides.forEach(function (slide) {
+			promise = promise.then(function () {
+				return slide.validate().then(function () {
+					return repository.upsert(slide, {});
+				}).catch(function (err) {
+					(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+				});
+			});
+		});
+		return promise;
 	}).then(function () {
 		callback();
 	}).catch(function (err) {
