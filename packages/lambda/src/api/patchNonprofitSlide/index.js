@@ -25,17 +25,12 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
-	let slide = null;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('slide_id'));
 	}).then(function (result) {
-		slide = new NonprofitSlide(result);
-		slide.populate(request._body);
-		return slide.validate();
-	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_id'), slide);
+		return repository.upsert(result, request._body);
 	}).then(function (model) {
-		callback(null, model.all());
+		callback(null, model[0]);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
