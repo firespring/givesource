@@ -24,7 +24,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('message_uuid'));
+		return repository.get(request.urlParam('message_id'));
 	}).then(function (message) {
 		callback(null, message.all());
 	}).catch(function (err) {

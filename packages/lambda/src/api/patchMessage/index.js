@@ -26,7 +26,7 @@ exports.handle = function (event, context, callback) {
 
 	let message = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('message_uuid'));
+		return repository.get(request.urlParam('message_id'));
 	}).then(function (result) {
 		message = new Message(result);
 		message.populate(request._body);

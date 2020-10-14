@@ -108,9 +108,9 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
+        SecureLambdaRole: !Ref SecureLambdaRole
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
-    DependsOn: LambdaSecurityGroup
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -218,7 +218,6 @@ Resources:
               - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}/index/*
               - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
               - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
-    DependsOn: DynamoDbStack
 
   LambdaManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -360,12 +359,6 @@ Resources:
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CognitoSnsCallerRole
-      - DynamoDbStack
-      - AuroraDbStack
-      - LambdaRole
-      - S3Stack
 
   SecureSettingsEncryptManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -376,7 +369,6 @@ Resources:
           - Effect: Allow
             Action: kms:Encrypt
             Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
-    DependsOn: CustomStack
 
   SecureSettingsDecryptManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -387,7 +379,6 @@ Resources:
           - Effect: Allow
             Action: kms:Decrypt
             Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
-    DependsOn: CustomStack
 
   SecureSettingsLambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -404,7 +395,6 @@ Resources:
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref SSMManagedPolicy
         - !Ref SecureSettingsEncryptManagedPolicy
-    DependsOn: SecureSettingsEncryptManagedPolicy
 
   SecureLambdaRole:
     Type: AWS::IAM::Role
@@ -417,11 +407,11 @@ Resources:
               Service:
                 - lambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref CognitoManagedPolicy
-        - !Ref DynamoDbManagedPolicy
         - !Ref SSMManagedPolicy
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
@@ -444,10 +434,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiDonationsStack:
     Type: AWS::CloudFormation::Stack
@@ -455,6 +441,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         SecureLambdaRoleArn: !GetAtt SecureLambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
@@ -465,10 +452,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiDonorsStack:
     Type: AWS::CloudFormation::Stack
@@ -476,6 +459,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -485,10 +469,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiFilesStack:
     Type: AWS::CloudFormation::Stack
@@ -507,11 +487,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
-      - S3Stack
 
   ApiMessagesStack:
     Type: AWS::CloudFormation::Stack
@@ -519,6 +494,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -528,10 +504,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiMetricsStack:
     Type: AWS::CloudFormation::Stack
@@ -548,10 +520,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiNonprofitsStack:
     Type: AWS::CloudFormation::Stack
@@ -571,10 +539,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiPaymentTransactionsStack:
     Type: AWS::CloudFormation::Stack
@@ -582,6 +546,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -591,10 +556,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiReportsStack:
     Type: AWS::CloudFormation::Stack
@@ -612,10 +573,6 @@ Resources:
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiSettingsStack:
     Type: AWS::CloudFormation::Stack
@@ -638,10 +595,6 @@ Resources:
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiSponsorsStack:
     Type: AWS::CloudFormation::Stack
@@ -659,10 +612,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiUsersStack:
     Type: AWS::CloudFormation::Stack
@@ -681,10 +630,6 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
-    DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiDeployStack:
     Type: AWS::CloudFormation::Stack

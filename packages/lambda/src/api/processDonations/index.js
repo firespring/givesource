@@ -16,15 +16,11 @@
 
 const _ = require('lodash');
 const axios = require('axios');
-const Donation = require('./../../dynamo-models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../dynamo-models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const PaymentTransaction = require('./../../dynamo-models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
 const SettingHelper = require('./../../helpers/setting');
@@ -35,7 +31,6 @@ export function handle(event, context, callback) {
 	const donationsRepository = new DonationsRepository();
 	const donorsRepository = new DonorsRepository();
 	const lambda = new Lambda();
-	const nonprofitsRepository = new NonprofitsRepository();
 	const paymentTransactionsRepository = new PaymentTransactionsRepository();
 	const settingsRepository = new SettingsRepository();
 	const ssm = new SSM();
@@ -45,12 +40,10 @@ export function handle(event, context, callback) {
 	let donations = [];
 	let donor = null;
 	let fees = 0;
-	let nonprofits = [];
-	let nonprofitUuids = [];
+	let nonprofitIds = [];
 	let paymentTransaction = null;
 	let subtotal = 0;
 	let total = 0;
-	let topDonation = 0;
 	let settings = {
 		'EVENT_TIMEZONE': null,
 	};
@@ -87,67 +80,39 @@ export function handle(event, context, callback) {
 			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
 
 			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, transactionFlatFee, transactionPercentFee);
-			const model = new Donation(donation);
-			if (model.nonprofitId && !nonprofitUuids.indexOf(model.nonprofitId) > -1) {
-				nonprofitUuids.push(model.nonprofitId);
-			}
-			if (model.subtotal) {
-				subtotal += model.subtotal;
-			}
-			if (model.isFeeCovered && model.fees) {
-				fees += model.fees;
-			}
-			donations.push(model);
-			promise = promise.then(() => {
-				return model.validate([
-					'fees',
-					'isAnonymous',
-					'isFeeCovered',
-					'isOfflineDonation',
-					'nonprofitId',
-					'subtotal',
-					'total',
-					'note'
-				]);
+			promise = promise.then(function () {
+				return donationsRepository.populate(donation);
+			}).then(function (model) {
+				if (model.nonprofitId && !nonprofitIds.indexOf(model.nonprofitId) > -1) {
+					nonprofitIds.push(model.nonprofitId);
+				}
+				if (model.subtotal) {
+					subtotal += model.subtotal;
+				}
+				if (model.isFeeCovered && model.fees) {
+					fees += model.fees;
+				}
+
+				donations.push(model);
 			});
 		});
+
 		return promise;
 	}).then(() => {
 		total = subtotal + fees;
-
-		let promise = Promise.resolve();
-		nonprofitUuids.forEach((nonprofitId) => {
-			promise = promise.then(() => {
-				return nonprofitsRepository.get(nonprofitId).then((response) => {
-					nonprofits.push(response);
-				});
-			});
-		});
-		return promise;
 	}).then(() => {
 		const data = request.get('donor', {});
 		if (data.hasOwnProperty('email')) {
-			return donorsRepository.queryEmail(data.email);
+			return donorsRepository.queryEmail(data.email).then(function (popDonor) {
+				if (!popDonor) {
+					return donorsRepository.populate(data);
+				}
+				return popDonor;
+			});
 		}
-		return Promise.resolve(new Donor());
-	}).then((response) => {
-		if (response) {
-			donor = response;
-			return Promise.resolve();
-		} else {
-			donor = new Donor();
-			if (!payment.is_test_mode) {
-				const body = {
-					amount: 1,
-					key: 'DONORS_COUNT'
-				};
-				lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-			}
-		}
-	}).then(() => {
-		donor.populate(request.get('donor', {}));
-		return donor.validate();
-	}).then(() => {
+		return donorsRepository.populate(data);
+	}).then((popDonor) => {
+		donor = popDonor;
 		return axios({
 			method: 'post',
 			url: 'https://api.paymentspring.com/api/v1/charge',
@@ -174,7 +139,7 @@ export function handle(event, context, callback) {
 			return Promise.reject(new Error('There was an error processing your payment. Please double check your credit card information.'));
 		});
 	}).then((response) => {
-		paymentTransaction = new PaymentTransaction({
+		return paymentTransactionsRepository.populate({
 			billingZip: response.data.zip,
 			creditCardExpirationMonth: parseInt(response.data.card_exp_month),
 			creditCardExpirationYear: parseInt(response.data.card_exp_year),
@@ -186,99 +151,43 @@ export function handle(event, context, callback) {
 			transactionId: response.data.id,
 			transactionStatus: response.data.status
 		});
-		return paymentTransaction.validate();
-	}).then(() => {
-		return !payment.is_test_mode ? paymentTransactionsRepository.save(paymentTransaction) : Promise.resolve(paymentTransaction);
+	}).then((popPT) => {
+		paymentTransaction = popPT;
+		return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction);
 	}).then((response) => {
 		donations.forEach((donation) => {
-			donation.paymentTransactionUuid = response.uuid;
-			donation.creditCardName = response.creditCardName;
-			donation.creditCardType = response.creditCardType;
-			donation.creditCardLast4 = response.creditCardLast4;
-			donation.creditCardExpirationMonth = response.creditCardExpirationMonth;
-			donation.creditCardExpirationYear = response.creditCardExpirationYear;
-			donation.creditCardZip = response.billingZip;
+			donation.paymentTransactionUuid = response.id;
 			donation.paymentTransactionId = response.transactionId;
-			donation.paymentTransactionAmount = response.transactionAmountInCents;
+			donation.paymentTransactionAmount = response.transactionAmount;
 			donation.paymentTransactionIsTestMode = response.isTestMode;
 			donation.paymentTransactionStatus = response.transactionStatus;
 		});
-		return !payment.is_test_mode ? donorsRepository.save(donor) : Promise.resolve(donor);
-	}).then((response) => {
-		donations.forEach((donation) => {
-			donation.donorUuid = response.uuid;
-			if (!donation.isAnonymous) {
-				donation.donorFirstName = response.firstName;
-				donation.donorLastName = response.lastName;
-				donation.donorEmail = response.email;
-				donation.donorPhone = response.phone;
-				donation.donorAddress1 = response.address1;
-				donation.donorAddress2 = response.address2;
-				donation.donorCity = response.city;
-				donation.donorState = response.state;
-				donation.donorZip = response.zip;
-			}
-		});
-		nonprofits.forEach((nonprofit) => {
-			_.filter(donations, {nonprofitId: nonprofit.id}).forEach((donation) => {
-				donation.nonprofitLegalName = nonprofit.legalName;
-				donation.nonprofitAddress1 = nonprofit.address1;
-				donation.nonprofitAddress2 = nonprofit.address2;
-				donation.nonprofitAddress3 = nonprofit.address3;
-				donation.nonprofitCity = nonprofit.city;
-				donation.nonprofitState = nonprofit.state;
-				donation.nonprofitZip = nonprofit.zip;
-
-				nonprofit.donationsCount = nonprofit.donationsCount + 1;
-				nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
-				nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
-				nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
-				nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
-				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
+	}).then(function () {
+		return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor);
+	}).then(function (donor) {
+		let promise = Promise.resolve();
+		donations.forEach(function (donation) {
+			promise = promise.then(function () {
+				return donationsRepository.upsert(donation, {donorId: donor.id});
 			});
 		});
-		return donationsRepository.batchUpdate(donations);
-	}).then(() => {
-		return !payment.is_test_mode ? nonprofitsRepository.batchUpdate(nonprofits) : Promise.resolve();
-	}).then(() => {
-		if (!payment.is_test_mode) {
-			const body = {
-				amount: donations.length,
-				key: 'DONATIONS_COUNT'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-		}
-	}).then(() => {
-		if (!payment.is_test_mode) {
-			const body = {
-				amount: subtotal,
-				key: 'DONATIONS_TOTAL'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-		}
-	}).then(() => {
-		if (!payment.is_test_mode) {
-			const body = {
-				amount: topDonation,
-				key: 'TOP_DONATION'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricMaxAmount', {body: body});
-		}
+		return promise;
 	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(() => {
 		const body = {
 			donations: donations.map((donation) => {
-				return donation.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+				return donation;
 			}),
-			donor: donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}),
-			paymentTransaction: paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE})
+			donor: donor,
+			paymentTransaction: paymentTransaction,
 		};
+		// there was a mutate function looking like to fix the timezones
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
 	}).then(() => {
 		const body = {
 			donations: donations.map((donation) => {
-				return donation.all();
+				return donation;
 			})
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});

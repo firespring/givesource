@@ -35,7 +35,6 @@ exports.handle = function (event, context, callback) {
 				promise = promise.then(function () {
 					return repository.getByParentId(content.id);
 				}).then(function (models) {
-					console.log('models', models); /*DM: Debug */
 					let values = [];
 					models.forEach(function (result) {
 						values.push(result);

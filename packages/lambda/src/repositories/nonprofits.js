@@ -100,6 +100,37 @@ NonprofitsRepository.prototype.get = function (id) {
 };
 
 /**
+ * Get the donations summary for a nonprofit
+ *
+ * @param nonprofitId
+ * @return {Promise<any>}
+ */
+NonprofitsRepository.prototype.donationsSummary = function (nonprofitId) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			const params = {
+				where: {nonprofitId: nonprofitId},
+				attributes: [
+					'count', [allModels.sequelize.fn('sum', allModels.sequelize.col('count')), 'donationsCount'],
+					'amountForNonprofit', [allModels.sequelize.fn('sum', allModels.sequelize.col('amountForNonprofit')), 'donationsTotal'],
+				],
+				raw: true
+			};
+			return allModels.Donation.findAll(params);
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Get a Nonprofit by slug
  *
  * @param {String} slug
@@ -391,8 +422,8 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 			allModels = models;
 		}).then(function () {
 			if (typeof model === 'undefined') {
-				const content = new allModels.Nonprofit();
-				model = new content.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
+				const nonprofit = new allModels.Nonprofit();
+				model = new nonprofit.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
 			}
 			return allModels.Nonprofit.upsert({
 				'id': model.get('id'),

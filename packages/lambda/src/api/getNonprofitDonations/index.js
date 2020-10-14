@@ -15,15 +15,14 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const NonprofitDonationsRepository = require('./../../repositories/donations');
+const DonationsRepository = require('./../../repositories/donations');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const QueryBuilder = require('./../../aws/queryBuilder');
 const Request = require('./../../aws/request');
 const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitDonationsRepository();
+	const repository = new DonationsRepository();
 	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
@@ -34,51 +33,21 @@ exports.handle = function (event, context, callback) {
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);
+	const findAllAndCountParams = {};
 
-	let allowTestPayments = false;
 	request.validate().then(function () {
 		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).catch(function () {
 			return Promise.resolve({});
 		});
 	}).then(function (response) {
-		if (response && response.hasOwnProperty('value')) {
-			allowTestPayments = response.value;
-		}
-	}).then(function () {
-		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
-		if (!allowTestPayments) {
-			builder.filter('paymentTransactionIsTestMode', '=', 0);
-		}
-		return repository.batchQuery(builder);
+		findAllAndCountParams.limit = parseInt(size);
+		findAllAndCountParams.order = [['createdAt', 'DESC']];
+		findAllAndCountParams.offset = parseInt(start);
+		findAllAndCountParams.where = [getHashCondition(nonprofitId, response)];
+		return repository.queryDonations(findAllAndCountParams);
 	}).then(function (response) {
-		total = response.Count;
-		if (start > 0) {
-			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).max(start).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
-			if (!allowTestPayments) {
-				builder.filter('paymentTransactionIsTestMode', '=', 0);
-			}
-			return repository.batchQuery(builder);
-		} else {
-			return Promise.resolve({});
-		}
-	}).then(function (response) {
-		const builder = new QueryBuilder('query');
-		builder.limit(size).index('nonprofitUuidCreatedOnIndex').condition('nonprofitId', '=', nonprofitId).condition('createdOn', '>', 0).scanIndexForward(false);
-
-		if (!allowTestPayments) {
-			builder.filter('paymentTransactionIsTestMode', '=', 0);
-		}
-		if (response.hasOwnProperty('LastEvaluatedKey')) {
-			builder.start(response.LastEvaluatedKey);
-		}
-
-		return repository.query(builder);
-	}).then(function (response) {
-		if (response.hasOwnProperty('Items')) {
-			items = response.Items;
-		}
+		total = response.count;
+		items = response.rows;
 		callback(null, {
 			items: items,
 			size: size,
@@ -89,4 +58,18 @@ exports.handle = function (event, context, callback) {
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
+};
+
+/**
+ * Get hash condition
+ *
+ * @param nonprofitId
+ * @param response
+ * @return {*}
+ */
+const getHashCondition = function (nonprofitId, response) {
+	if (!response.value) {
+		return {nonprofitId: nonprofitId, paymentTransactionIsTestMode: 0};
+	}
+	return {nonprofitId: nonprofitId, isDeleted: 0};
 };

@@ -25,7 +25,7 @@ exports.handle = function (event, context, callback) {
 	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_id'));
 	}).then(function (donation) {
 		callback(null, donation.all());
 	}).catch(function (err) {

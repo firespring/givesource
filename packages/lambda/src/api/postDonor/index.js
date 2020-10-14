@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Donor = require('./../../dynamo-models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
@@ -26,7 +25,7 @@ export function handle(event, context, callback) {
 	const repository = new DonorsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let donor = null;
+	let donor;
 	request.validate().then(() => {
 		if (request.get('email')) {
 			return repository.queryEmail(request.get('email'));
@@ -35,23 +34,13 @@ export function handle(event, context, callback) {
 	}).then((model) => {
 		if (model) {
 			donor = model;
-		} else {
-			donor = new Donor();
-			const body = {
-				amount: 1,
-				key: 'DONORS_COUNT'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
 		}
 	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(() => {
-		donor.populate(request._body);
-		return donor.validate();
-	}).then(() => {
-		return repository.save(donor);
+		return repository.upsert(donor, request._body);
 	}).then((response) => {
-		callback(null, response.all());
+		callback(null, response);
 	}).catch((err) => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

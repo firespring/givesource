@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Donation = require('./../../dynamo-models/donation');
 const DonationsRepository = require('./../../repositories/donations');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
@@ -24,13 +23,12 @@ exports.handle = (event, context, callback) => {
 	const repository = new DonationsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	const donation = new Donation(request._body);
 	request.validate().then(() => {
-		return donation.validate();
-	}).then(() => {
-		return repository.save(donation);
+		return repository.populate(request._body);
+	}).then((donation) => {
+		return repository.upsert(donation, {});
 	}).then(model => {
-		callback(null, model.all());
+		callback(null, model);
 	}).catch(err => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

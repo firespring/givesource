@@ -212,12 +212,12 @@
 			},
 			displayMatchFund: function () {
 				const vue = this;
-				return (vue.matchFundEnabled && vue.matchFundNonprofit);
+				return (vue.matchFundEnabled === "1" && vue.matchFundNonprofit);
 			}
 		},
 		props: {
 			matchFundEnabled: {
-				type: Boolean,
+				type: Boolean|String,
 				default: false,
 			},
 			matchFundButtonText: {

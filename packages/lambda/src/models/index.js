@@ -41,6 +41,14 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./nonprofitDonationTier')(sequelize);
 		models[model.name] = model;
+		model = require('./donation')(sequelize);
+		models[model.name] = model;
+		model = require('./donor')(sequelize);
+		models[model.name] = model;
+		model = require('./paymentTransaction')(sequelize);
+		models[model.name] = model;
+		model = require('./message')(sequelize);
+		models[model.name] = model;
 
 		models.Nonprofit.hasMany(sequelize.models.NonprofitSlide, {
 			foreignKey: 'nonprofitId'
@@ -56,6 +64,16 @@ module.exports = function() {
 
 		models.NonprofitSlide.belongsTo(sequelize.models.Nonprofit, {
 			foreignKey: 'nonprofitId'
+		});
+
+		models.Donation.belongsTo(sequelize.models.Nonprofit, {
+			foreignKey: 'nonprofitId'
+		});
+
+		models.Donation.belongsTo(sequelize.models.Donor, {});
+
+		models.Donation.hasOne(sequelize.models.PaymentTransaction, {
+			foreignKey: 'paymentTransactionId'
 		});
 
 		return models;

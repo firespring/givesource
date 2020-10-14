@@ -252,7 +252,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: GetNonprofitDonationLambdaFunction
 
   GetNonprofitDonationsLambdaFunction:
@@ -357,7 +357,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: PatchNonprofitDonationLambdaFunction
 
   DeleteNonprofitDonationLambdaFunction:
@@ -392,7 +392,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: DeleteNonprofitDonationLambdaFunction
 
   # Nonprofit Donation Tiers Lambda Resources
@@ -429,7 +429,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/tiers/{donation_tier_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/tiers/{donation_tier_id}
     DependsOn: GetNonprofitDonationTierLambdaFunction
 
   GetNonprofitDonationTiersLambdaFunction:
@@ -1620,7 +1620,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitDonationsApiResource
-      PathPart: "{donation_uuid}"
+      PathPart: "{donation_id}"
 
   GetNonprofitDonationApiMethod:
     Type: AWS::ApiGateway::Method
@@ -2064,7 +2064,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitDonationTiersApiResource
-      PathPart: "{donation_tier_uuid}"
+      PathPart: "{donation_tier_id}"
 
   GetNonprofitDonationTierApiMethod:
     Type: AWS::ApiGateway::Method

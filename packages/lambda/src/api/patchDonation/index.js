@@ -26,7 +26,7 @@ exports.handle = function (event, context, callback) {
 
 	let donation = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('donation_uuid'));
+		return repository.get(request.urlParam('donation_id'));
 	}).then(function (result) {
 		donation = new Donation(result);
 		donation.populate(request._body);

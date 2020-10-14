@@ -24,7 +24,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('donation_uuid'));
+		return repository.get(request.urlParam('donation_id'));
 	}).then(function (donation) {
 		callback(null, donation.all());
 	}).catch(function (err) {

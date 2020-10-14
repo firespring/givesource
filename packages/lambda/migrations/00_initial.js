@@ -256,7 +256,7 @@ module.exports = {
 					allowNull: false,
 				},
 				message: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(4096),
 					allowNull: false,
 				},
 				phone: {
