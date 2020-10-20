@@ -44,6 +44,7 @@ const seedDonations = function () {
 
 	let donors = [];
 	let paymentTransactions = [];
+	let promptAnswers;
 	return nonprofitsRepository.getAll().then(function (results) {
 		if (!results || results.length === 0) {
 			return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
@@ -66,20 +67,28 @@ const seedDonations = function () {
 			}
 		]);
 	}).then(function (answers) {
-		const count = parseInt(answers.count);
+		promptAnswers = answers;
+		const count = parseInt(promptAnswers.count);
 		const chunkSize = Math.floor(Math.random() * 3) + 1;
 
 		const donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
 		donors = generator.modelCollection('donor', donations.length);
 		paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
-
+	}).then(function () {
+		return donorsRepository.batchUpdate(donors);
+	}).then(function (savedDonors) {
+		donors = savedDonors;
+		return paymentTransactionRepository.batchUpdate(paymentTransactions);
+	}).then(function (savedPts) {
+		console.log(savedPts); /*DM: Debug */
+		paymentTransactions = savedPts;
 		let nonprofitDonations = [];
 		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
 		donations.forEach(function (chunk, i) {
 			let paymentTotal = 0;
 			chunk.forEach(function (donation) {
 				donation.donorId = donors[i].id;
-				donation.nonprofitId = answers.nonprofit.id;
+				donation.nonprofitId = promptAnswers.nonprofit.id;
 
 				donation.paymentTransactionId = paymentTransactions[i].id;
 				if (!donation.isOfflineDonation) {
@@ -98,10 +107,6 @@ const seedDonations = function () {
 			nonprofitDonations = nonprofitDonations.concat(chunk);
 		});
 		return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
-	}).then(function () {
-		return donorsRepository.batchUpdate(donors);
-	}).then(function () {
-		return paymentTransactionRepository.batchUpdate(paymentTransactions);
 	}).then(function () {
 		console.log('seeded donations');
 	});
