@@ -26,7 +26,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.get(request.urlParam('donation_id'));
 	}).then(function (donation) {
-		callback(null, donation.all());
+		callback(null, donation);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

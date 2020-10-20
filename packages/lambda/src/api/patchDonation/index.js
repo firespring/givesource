@@ -24,17 +24,12 @@ exports.handle = function (event, context, callback) {
 	const repository = new DonationsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let donation = null;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('donation_id'));
 	}).then(function (result) {
-		donation = new Donation(result);
-		donation.populate(request._body);
-		return donation.validate();
-	}).then(function () {
-		return repository.save(donation);
+		return repository.upsert(result, request._body);
 	}).then(function (model) {
-		callback(null, model.all());
+		callback(null, model);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
