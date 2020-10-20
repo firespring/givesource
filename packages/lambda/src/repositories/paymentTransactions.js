@@ -211,4 +211,26 @@ PaymentTransactionsRepository.prototype.upsert = function (model, data) {
 	});
 };
 
+/**
+ * Bulk create PaymentTransactions (seeder)
+ *
+ * @param {Array} pts
+ * @return {Promise<any>}
+ */
+PaymentTransactionsRepository.prototype.batchUpdate = function (pts) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.PaymentTransaction.bulkCreate(pts);
+		}).then(function (savedPaymentTransactions) {
+			resolve(savedPaymentTransactions);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
 module.exports = PaymentTransactionsRepository;

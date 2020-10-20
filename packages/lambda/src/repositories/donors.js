@@ -233,4 +233,26 @@ DonorsRepository.prototype.upsert = function (model, data) {
 	});
 };
 
+/**
+ * Bulk create Donors (seeder)
+ *
+ * @param {Array} donors
+ * @return {Promise<any>}
+ */
+DonorsRepository.prototype.batchUpdate = function (donors) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.Donor.bulkCreate(donors);
+		}).then(function (savedDonors) {
+			resolve(savedDonors);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
 module.exports = DonorsRepository;

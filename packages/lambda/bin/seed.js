@@ -27,6 +27,8 @@ const NonprofitsRepository = require('./../src/repositories/nonprofits');
 const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
 const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
 const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
+const DonorsRepository = require('./../src/repositories/donors');
+const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
 
 /**
  * Seed Donations
@@ -37,7 +39,11 @@ const seedDonations = function () {
 	const generator = new Generator();
 	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const nonprofitsRepository = new NonprofitsRepository();
+	const donorsRepository = new DonorsRepository();
+	const paymentTransactionRepository = new PaymentTransactionRepository();
 
+	let donors = [];
+	let paymentTransactions = [];
 	return nonprofitsRepository.getAll().then(function (results) {
 		if (!results || results.length === 0) {
 			return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
@@ -64,8 +70,8 @@ const seedDonations = function () {
 		const chunkSize = Math.floor(Math.random() * 3) + 1;
 
 		const donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
-		const donors = generator.modelCollection('donor', donations.length);
-		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
+		donors = generator.modelCollection('donor', donations.length);
+		paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
 
 		let nonprofitDonations = [];
 		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
@@ -92,6 +98,10 @@ const seedDonations = function () {
 			nonprofitDonations = nonprofitDonations.concat(chunk);
 		});
 		return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
+	}).then(function () {
+		return donorsRepository.batchUpdate(donors);
+	}).then(function () {
+		return paymentTransactionRepository.batchUpdate(paymentTransactions);
 	}).then(function () {
 		console.log('seeded donations');
 	});
