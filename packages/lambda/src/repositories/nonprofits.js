@@ -273,6 +273,13 @@ NonprofitsRepository.prototype.search = function (keys, search, filters) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
+			let attr = Object.keys(allModels.Nonprofit.rawAttributes);
+			attr.push([allModels.sequelize.fn('sum', allModels.sequelize.col('Donations.subtotal')), 'donationsSubtotal']);
+			findAllParams.attributes = attr;
+			findAllParams.include = [
+				{model: allModels.Donation, attributes: []}
+			];
+			findAllParams.group = ['Nonprofit.id'];
 			return allModels.Nonprofit.findAll(findAllParams);
 		}).then(function (results) {
 			resolve(results);

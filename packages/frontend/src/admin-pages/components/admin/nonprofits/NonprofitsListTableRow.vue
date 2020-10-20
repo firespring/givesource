@@ -99,14 +99,7 @@
 				return new Date(this.nonprofit.createdAt).toLocaleTimeString();
 			},
 			donationAmount: function () {
-				let subtotal = 0;
-				if (this.nonprofit.Donations && this.nonprofit.Donations.length > 0) {
-					this.nonprofit.Donations.forEach(function (donation) {
-                        subtotal += donation.subtotal;
-					})
-                }
-
-				return numeral(subtotal / 100).format('$0,0.00');
+				return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,0.00');
 			},
 			canAcceptDonations: function () {
 				return this.nonprofit.status === 'ACTIVE';
