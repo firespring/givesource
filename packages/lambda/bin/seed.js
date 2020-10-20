@@ -44,6 +44,7 @@ const seedDonations = function () {
 
 	let donors = [];
 	let paymentTransactions = [];
+	let donations = [];
 	let promptAnswers;
 	return nonprofitsRepository.getAll().then(function (results) {
 		if (!results || results.length === 0) {
@@ -71,7 +72,7 @@ const seedDonations = function () {
 		const count = parseInt(promptAnswers.count);
 		const chunkSize = Math.floor(Math.random() * 3) + 1;
 
-		const donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
+		donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
 		donors = generator.modelCollection('donor', donations.length);
 		paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
 	}).then(function () {
@@ -80,7 +81,6 @@ const seedDonations = function () {
 		donors = savedDonors;
 		return paymentTransactionRepository.batchUpdate(paymentTransactions);
 	}).then(function (savedPts) {
-		console.log(savedPts); /*DM: Debug */
 		paymentTransactions = savedPts;
 		let nonprofitDonations = [];
 		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
