@@ -150,7 +150,7 @@ exports.handle = (event, context, callback) => {
 						transaction = popTransaction;
 						transaction.timezone = settings.EVENT_TIMEZONE;
 						transaction.transactionAmount = transaction.formattedAmount;
-						transaction.donations = [donation];
+						transaction.Donations = [donation];
 						transaction.isAnonymous = donation.isAnonymous;
 						transaction.isFeeCovered = donation.isFeeCovered;
 						transactions.push(transaction);

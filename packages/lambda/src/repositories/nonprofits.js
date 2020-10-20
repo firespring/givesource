@@ -200,7 +200,6 @@ NonprofitsRepository.prototype.queryNonprofits = function (whereParams, offset, 
 				order: allModels.sequelize.literal(order + ' LIMIT ' + offset + ', ' + limit)
 			});
 		}).then(function (results) {
-			console.log(results); /*DM: Debug */
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);

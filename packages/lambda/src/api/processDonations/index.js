@@ -177,6 +177,7 @@ export function handle(event, context, callback) {
 	}).then(() => {
 		const body = {
 			donations: donations.map((donation) => {
+				donation.timezone = settings.EVENT_TIMEZONE;
 				return donation;
 			}),
 			donor: donor,
@@ -187,8 +188,10 @@ export function handle(event, context, callback) {
 	}).then(() => {
 		const body = {
 			donations: donations.map((donation) => {
+				donation.timezone = settings.EVENT_TIMEZONE;
 				return donation;
 			})
+
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 		callback();
