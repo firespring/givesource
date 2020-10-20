@@ -460,7 +460,7 @@
                                             </p>
 
                                             <p>
-                                                Date: {{ createdOn }}<br/>
+                                                Date: {{ createdAt }}<br/>
                                                 Donor: {{ donor.firstName }} {{ donor.lastName }} (<a href="mailto:{{ donor.email }}">{{ donor.email }}</a>)<br/>
                                                 Anonymous Donation: {{#isAnonymous}}Yes{{/isAnonymous}}{{^isAnonymous}}No{{/isAnonymous}}
                                             </p>
@@ -473,22 +473,22 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {{#donations}}
+                                                {{#Donations}}
                                                     <tr>
                                                         <td class="organization expand">
-                                                            {{nonprofitLegalName}}
-                                                            {{#nonprofitAddress1}}<br/>{{nonprofitAddress1}}{{/nonprofitAddress1}}
-                                                            {{#nonprofitAddress2}}<br/>{{nonprofitAddress2}}{{/nonprofitAddress2}}
-                                                            {{#nonprofitAddress3}}<br/>{{nonprofitAddress3}}{{/nonprofitAddress3}}
-                                                            {{#nonprofitCity}}{{#nonprofitState}}{{#nonprofitZip}}
-                                                                <br/>{{nonprofitCity}}, {{nonprofitState}} {{nonprofitZip}}
-                                                            {{/nonprofitZip}}{{/nonprofitState}}{{/nonprofitCity}}
+                                                            {{Nonprofit.legalName}}
+                                                            {{#Nonprofit.address1}}<br/>{{Nonprofit.address1}}{{/Nonprofit.address1}}
+                                                            {{#Nonprofit.address2}}<br/>{{Nonprofit.address2}}{{/Nonprofit.address2}}
+                                                            {{#Nonprofit.address3}}<br/>{{Nonprofit.address3}}{{/Nonprofit.address3}}
+                                                            {{#Nonprofit.city}}{{#Nonprofit.state}}{{#Nonprofit.zip}}
+                                                                <br/>{{Nonprofit.city}}, {{Nonprofit.state}} {{Nonprofit.zip}}
+                                                            {{/Nonprofit.zip}}{{/Nonprofit.state}}{{/Nonprofit.city}}
                                                         </td>
                                                         <td class="amount text-right">
                                                             {{total}}
                                                         </td>
                                                     </tr>
-                                                {{/donations}}
+                                                {{/Donations}}
                                                 </tbody>
                                             </table>
 

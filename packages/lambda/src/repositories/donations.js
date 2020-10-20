@@ -125,9 +125,6 @@ DonationsRepository.prototype.queryDonations = function (params) {
 				{model: allModels.Nonprofit},
 				{model: allModels.Donor},
 			];
-			// params.attributes = [
-			// 	'count', [allModels.sequelize.fn('sum', allModels.sequelize.col('count')), 'donationsCount']
-			// ];
 			return allModels.Donation.findAndCountAll(params);
 		}).then(function (results) {
 			resolve(results);

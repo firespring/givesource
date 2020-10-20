@@ -73,7 +73,16 @@ PaymentTransactionsRepository.prototype.get = function (id) {
 			return allModels.PaymentTransaction.findOne({
 				where: {
 					id: id
-				}
+				},
+				include: [
+					{
+						model: allModels.Donation,
+						include: [
+							{model: allModels.Nonprofit}
+						]
+					}
+				]
+
 			});
 		}).then(function (paymentTransaction) {
 			if (paymentTransaction instanceof allModels.PaymentTransaction) {

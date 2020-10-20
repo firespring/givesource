@@ -38,9 +38,9 @@ exports.handle = function (event, context, callback) {
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
 
 	findAllAndCountParams.limit = parseInt(size);
-	findAllAndCountParams.order = [['createdAt', 'DESC']];
+	findAllAndCountParams.order = [getRangeCondition(sort)];
 	findAllAndCountParams.offset = parseInt(start);
-	findAllAndCountParams.where = [getHashCondition(sort)];
+	const where = [getHashCondition(sort)];
 	let matchFundNonprofitId = null;
 
 	request.validate().then(function () {
@@ -59,16 +59,18 @@ exports.handle = function (event, context, callback) {
 		return Promise.resolve();
 	}).then(function () {
 		if (matchFundNonprofitId) {
-			findAllAndCountParams.where.push({
+			where.push({
 				id: {
 					[Sequelize.Op.ne]: matchFundNonprofitId
 				}
 			});
 		}
-		return repository.queryNonprofits(findAllAndCountParams);
+		return repository.queryNonprofits(where, parseInt(start), parseInt(size), getRangeCondition(sort));
 	}).then(function (response) {
-		total = response.count;
-		items = response.rows;
+		items = response;
+		return repository.countNonprofits(where);
+	}).then(function (count) {
+		total = count;
 		callback(null, {
 			items: items,
 			size: size,
@@ -147,7 +149,7 @@ const getRangeCondition = function (sort) {
 		case 'denied_subtotal_descending':
 		case 'pending_subtotal_ascending':
 		case 'pending_subtotal_descending':
-			return ['donationsSubtotal', '>=', 0];
+			return ['donationsSubtotal DESC'];
 
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
@@ -157,27 +159,11 @@ const getRangeCondition = function (sort) {
 		case 'pending_legal_name_descending':
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
-			return ['legalNameSearch', '>', ' '];
+			return ['legalNameSearch ASC'];
 
 		case 'all_created_on_ascending':
 		case 'all_created_on_descending':
 		default:
-			return ['createdOn', '>', 0];
+			return ['createdAt DESC'];
 	}
-};
-
-const getScanIndexForward = function (sort) {
-	switch (sort) {
-		case 'active_subtotal_ascending':
-		case 'active_legal_name_ascending':
-		case 'denied_subtotal_ascending':
-		case 'denied_legal_name_ascending':
-		case 'pending_subtotal_ascending':
-		case 'pending_legal_name_ascending':
-		case 'all_legal_name_ascending':
-		case 'all_created_on_ascending':
-			return true;
-	}
-
-	return false;
 };

@@ -42,7 +42,7 @@
                                 </div>
 
                                 <div class="donation-metrics__donations">
-                                    <div class="num">{{ nonprofit.donationsCount }}</div>
+                                    <div class="num">{{ displayCount(nonprofit.donationsCount) }}</div>
                                     <div class="caption">{{ donationsLabel }}</div>
                                 </div>
                             </div>

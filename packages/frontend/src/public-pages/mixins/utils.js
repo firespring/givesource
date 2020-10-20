@@ -45,6 +45,9 @@ const mixin = {
 		formatMoney: function (amount) {
 			return numeral(amount / 100).format('$0,0.00');
 		},
+		displayCount: function (count) {
+			return (count) ? count : 0;
+		},
 		calculateFees: function (cartItems) {
 			const vm = this;
 

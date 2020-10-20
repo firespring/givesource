@@ -50,6 +50,10 @@ module.exports = function() {
 		model = require('./message')(sequelize);
 		models[model.name] = model;
 
+		models.Nonprofit.hasMany(sequelize.models.Donation, {
+			foreignKey: 'nonprofitId'
+		});
+
 		models.Nonprofit.hasMany(sequelize.models.NonprofitSlide, {
 			foreignKey: 'nonprofitId'
 		});
@@ -72,9 +76,9 @@ module.exports = function() {
 
 		models.Donation.belongsTo(sequelize.models.Donor, {});
 
-		models.Donation.hasOne(sequelize.models.PaymentTransaction, {
-			foreignKey: 'paymentTransactionId'
-		});
+		models.Donation.belongsTo(sequelize.models.PaymentTransaction, {});
+
+		models.PaymentTransaction.hasMany(sequelize.models.Donation, {});
 
 		return models;
 	});

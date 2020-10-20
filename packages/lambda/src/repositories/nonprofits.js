@@ -78,6 +78,10 @@ NonprofitsRepository.prototype.get = function (id) {
 				},
 				include: [
 					{
+						model: allModels.Donation,
+						required: false
+					},
+					{
 						model: allModels.NonprofitDonationTier
 					},
 					{
@@ -100,37 +104,6 @@ NonprofitsRepository.prototype.get = function (id) {
 };
 
 /**
- * Get the donations summary for a nonprofit
- *
- * @param nonprofitId
- * @return {Promise<any>}
- */
-NonprofitsRepository.prototype.donationsSummary = function (nonprofitId) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			const params = {
-				where: {nonprofitId: nonprofitId},
-				attributes: [
-					'count', [allModels.sequelize.fn('sum', allModels.sequelize.col('count')), 'donationsCount'],
-					'amountForNonprofit', [allModels.sequelize.fn('sum', allModels.sequelize.col('amountForNonprofit')), 'donationsTotal'],
-				],
-				raw: true
-			};
-			return allModels.Donation.findAll(params);
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
-
-/**
  * Get a Nonprofit by slug
  *
  * @param {String} slug
@@ -142,12 +115,21 @@ NonprofitsRepository.prototype.getBySlug = function (slug) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.Nonprofit.findOne({
+			let attr = Object.keys(allModels.Nonprofit.rawAttributes);
+			attr.push([allModels.sequelize.fn('sum', allModels.sequelize.col('Donations.subtotal')), 'donationsSubtotal']);
+			attr.push([allModels.sequelize.fn('sum', allModels.sequelize.col('count')), 'donationsCount']);
+			return allModels.Nonprofit.findAll({
+				attributes: attr,
+				include: [
+					{model: allModels.Donation, attributes: []}
+				],
 				where: {
 					slug: slug
-				}
+				},
+				order: allModels.sequelize.literal('createdAt DESC LIMIT 1')
 			});
-		}).then(function (nonprofit) {
+		}).then(function (result) {
+			const nonprofit = result[0];
 			if (nonprofit instanceof allModels.Nonprofit) {
 				resolve(nonprofit);
 			}
@@ -171,7 +153,15 @@ NonprofitsRepository.prototype.getAll = function () {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.Nonprofit.findAll();
+			let attr = Object.keys(allModels.Nonprofit.rawAttributes);
+			attr.push([allModels.sequelize.fn('sum', allModels.sequelize.col('Donations.subtotal')), 'donationsSubtotal']);
+			return allModels.Nonprofit.findAll({
+				attributes: attr,
+				include: [
+					{model: allModels.Donation, attributes: []}
+				],
+				group: ['Nonprofit.id'],
+			});
 		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
@@ -185,17 +175,58 @@ NonprofitsRepository.prototype.getAll = function () {
 /**
  * Query Nonprofits
  *
- * @param {{}} [params]
+ * NOTE: there is a bug with limits and advanced association in sequelize. Might want to consider a raw query right here
+ *
+ * @param {Object} whereParams
+ * @param {Number} offset
+ * @param {Number} limit
+ * @return {Promise<any>}
  */
-NonprofitsRepository.prototype.queryNonprofits = function (params) {
+NonprofitsRepository.prototype.queryNonprofits = function (whereParams, offset, limit, order) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.Nonprofit.findAndCountAll(params);
+			let attr = Object.keys(allModels.Nonprofit.rawAttributes);
+			attr.push([allModels.sequelize.fn('sum', allModels.sequelize.col('Donations.subtotal')), 'donationsSubtotal']);
+			return allModels.Nonprofit.findAll({
+				attributes: attr,
+				include: [
+					{model: allModels.Donation, attributes: []}
+				],
+				group: ['Nonprofit.id'],
+				where: whereParams,
+				order: allModels.sequelize.literal(order + ' LIMIT ' + offset + ', ' + limit)
+			});
 		}).then(function (results) {
+			console.log(results); /*DM: Debug */
 			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Get count
+ *
+ * @param params
+ * @return {Promise<Number>}
+ */
+NonprofitsRepository.prototype.countNonprofits = function (params) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.count({
+				where: params
+			});
+		}).then(function (count) {
+			resolve(count);
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {

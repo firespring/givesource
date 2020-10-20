@@ -17,6 +17,8 @@
 'use strict';
 
 const {DataTypes} = require('sequelize');
+const numeral = require('numeral');
+const moment = require('moment-timezone');
 
 module.exports = (sequelize) => {
 	return sequelize.define('PaymentTransaction', {
@@ -64,5 +66,21 @@ module.exports = (sequelize) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+	}, {
+		getterMethods: {
+			formattedAmount() {
+				return numeral(this.transactionAmount / 100).format('$0,0.00');
+			}
+		},
+		setterMethods: {
+			timezone(timezone) {
+				if (timezone) {
+					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
+				} else {
+					const date = new Date(this.createdAt);
+					this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+				}
+			}
+		}
 	});
 };

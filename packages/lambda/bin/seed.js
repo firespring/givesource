@@ -73,7 +73,6 @@ const seedDonations = function () {
 			let paymentTotal = 0;
 			chunk.forEach(function (donation) {
 				donation.donorId = donors[i].id;
-
 				donation.nonprofitId = answers.nonprofit.id;
 
 				donation.paymentTransactionId = paymentTransactions[i].id;

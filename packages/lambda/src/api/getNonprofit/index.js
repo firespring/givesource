@@ -22,15 +22,9 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 	const repository = new NonprofitsRepository();
 
-	let nonprofit;
 	request.validate().then(function () {
 		return repository.get(request.urlParam('nonprofit_id'));
-	}).then(function (popNp) {
-		nonprofit = popNp;
-		return repository.donationsSummary(request.urlParam('nonprofit_id'));
-	}).then(function (summary) {
-		nonprofit.setDataValue('donationsCount', summary[0].count);
-		nonprofit.setDataValue('donationsSubtotal', summary[0].amountForNonprofit);
+	}).then(function (nonprofit) {
 		callback(null, nonprofit);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

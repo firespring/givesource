@@ -17,6 +17,8 @@
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const Metric = require('./../dynamo-models/metric');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * MetricsRepository constructor
@@ -44,18 +46,34 @@ MetricsRepository.prototype = new Repository();
  * @return {Promise}
  */
 MetricsRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
+	const metrics = {};
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Metric(item));
-				});
-			}
-			resolve(results);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			const params = {
+				attributes: [
+					'count', [allModels.sequelize.fn('sum', allModels.sequelize.col('count')), 'donationsCount'],
+					'subtotal', [allModels.sequelize.fn('sum', allModels.sequelize.col('subtotal')), 'donationsTotal'],
+					'subtotal', [allModels.sequelize.fn('max', allModels.sequelize.col('subtotal')), 'topDonation'],
+				],
+				raw: true
+			};
+			return allModels.Donation.findAll(params);;
+		}).then(function (results) {
+			const result = results[0];
+			metrics.DONATIONS_COUNT = result.donationsCount;
+			metrics.DONATIONS_TOTAL = result.donationsTotal;
+			metrics.TOP_DONATION = result.topDonation;
+			return allModels.Donor.count({where: {isDeleted: 0}});
+		}).then(function (donorCount) {
+			metrics.DONORS_COUNT = donorCount;
+			resolve(metrics);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

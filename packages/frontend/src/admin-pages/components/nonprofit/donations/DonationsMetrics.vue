@@ -57,11 +57,18 @@
 		},
 		computed: {
 			donationsCount: function () {
-				console.log(this.nonprofit);
-				return numeral(this.nonprofit.donationsCount).format('0,000');
+				const totalDonations = this.nonprofit.Donations ? this.nonprofit.Donations.length : 0;
+				return numeral(totalDonations).format('0,000');
 			},
 			donationsTotal: function () {
-				return numeral(this.nonprofit.donationsSubtotal / 100).format('$0,00.00');
+				let subtotal = 0;
+				if (this.nonprofit.Donations && this.nonprofit.Donations.length > 0) {
+					this.nonprofit.Donations.forEach(function (donation) {
+						subtotal += donation.subtotal;
+					})
+				}
+
+				return numeral(subtotal / 100).format('$0,0.00');
 			}
 		}
 	};
