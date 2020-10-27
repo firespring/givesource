@@ -17,6 +17,7 @@
 'use strict';
 
 const {DataTypes} = require('sequelize');
+const moment = require('moment-timezone');
 
 module.exports = (sequelize) => {
 	return sequelize.define('Message', {
@@ -40,5 +41,16 @@ module.exports = (sequelize) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+	}, {
+		setterMethods: {
+			timezone(timezone) {
+				if (timezone) {
+					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
+				} else {
+					const date = new Date(this.createdAt);
+					this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+				}
+			}
+		}
 	});
 };

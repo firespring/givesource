@@ -26,10 +26,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.getAll();
 	}).then(function (messages) {
-		const results = messages.map(function (message) {
-			return message.all();
-		});
-		callback(null, results);
+		callback(null, messages);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

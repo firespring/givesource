@@ -18,6 +18,8 @@ const Message = require('./../dynamo-models/message');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * MessagesRepository constructor
@@ -40,21 +42,48 @@ function MessagesRepository(options) {
 MessagesRepository.prototype = new Repository();
 
 /**
- * Get a Message
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param {Object} data
  * @return {Promise}
  */
-MessagesRepository.prototype.get = function (uuid) {
-	const repository = this;
+MessagesRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		const message = new models.Message();
+		return new message.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
+	}).finally(function () {
+		return allModels.sequelize.close();
+	});
+};
+
+/**
+ * Get a Message
+ *
+ * @param {String} id
+ * @return {Promise}
+ */
+MessagesRepository.prototype.get = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new Message(data.Item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Message.findOne({
+				where: {
+					id: id
+				},
+			});
+		}).then(function (message) {
+			if (message instanceof allModels.Message) {
+				resolve(message);
 			}
 			reject(new ResourceNotFoundException('The specified message does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -65,18 +94,18 @@ MessagesRepository.prototype.get = function (uuid) {
  * @return {Promise}
  */
 MessagesRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Message(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Message.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -84,16 +113,26 @@ MessagesRepository.prototype.getAll = function () {
 /**
  * Delete a Message
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-MessagesRepository.prototype.delete = function (uuid) {
-	const repository = this;
+MessagesRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Message.destroy({
+				where: {
+					id: id
+				}
+			});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -104,22 +143,55 @@ MessagesRepository.prototype.delete = function (uuid) {
  * @param {Message} model
  */
 MessagesRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof Message)) {
-			reject(new Error('invalid Message model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new Message(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			return repository.get(model.id);
+		}).then(function () {
+			return repository.upsert(model, {});
+		}).then(function (message) {
+			resolve(message);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Promise<any>}
+ */
+MessagesRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (typeof model === 'undefined') {
+				const message = new allModels.Message();
+				model = new message.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
+			}
+			return allModels.Message.upsert({
+				'id': model.id,
+				'email': typeof data.email !== "undefined" ? data.email : model.email,
+				'name': typeof data.name !== "undefined" ? data.name : model.name,
+				'phone': typeof data.phone !== "undefined" ? data.phone : model.phone,
+				'type': typeof data.type !== "undefined" ? data.type : model.type,
+				'message': typeof data.message !== "undefined" ? data.message : model.message,
+			});
+		}).then(function (message) {
+			resolve(message[0]);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
