@@ -37,7 +37,7 @@ exports.handle = function (event, context, callback) {
 				if (Array.isArray(content.value) || typeof content.value === 'object') {
 					content.value = '';
 				}
-				const oldContent = _.find(oldContents, {key: content.key});
+				const oldContent = _.find(oldContents, {id: content.id});
 				return repository.upsert(oldContent, content);
 			});
 		});

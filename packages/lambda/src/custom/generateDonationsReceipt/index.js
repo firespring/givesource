@@ -15,15 +15,11 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../dynamo-models/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../dynamo-models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
-const PaymentTransaction = require('./../../dynamo-models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
-const QueryBuilder = require('./../../aws/queryBuilder');
 const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SettingsRepostiory = require('./../../repositories/settings');
@@ -89,27 +85,29 @@ exports.handle = (event, context, callback) => {
 		}
 		return Promise.resolve({});
 	}).then(response => {
-		donations = response.rows.map(donation => {
-			donation.timezone = settings.EVENT_TIMEZONE;
-			donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
-			donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
-			return donation;
-		});
-
+		if (response.hasOwnProperty('rows')) {
+			donations = response.rows.map(donation => {
+				donation.timezone = settings.EVENT_TIMEZONE;
+				donation.total = donation.formattedAmount;
+				donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
+				donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
+				return donation;
+			});
+		}
 		let promise = Promise.resolve();
 		if (paymentTransaction && donations.length) {
 			donations = donations.map(donation => {
-				const data = donation;
-				data.timezone = settings.EVENT_TIMEZONE;
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
+				donation.timezone = settings.EVENT_TIMEZONE;
+				donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
+				donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
+				return donation;
 			});
 
 			const transaction = paymentTransaction;
-			transaction.donations = donations;
-			transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
-			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
+			transaction.transactionAmount = transaction.formattedAmount;
+			transaction.Donations = donations;
+			transaction.isAnonymous = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isAnonymous : false;
+			transaction.isFeeCovered = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isFeeCovered : false;
 			transactions.push(transaction);
 		} else {
 			const paymentTransactionIds = donations.map(donation => {

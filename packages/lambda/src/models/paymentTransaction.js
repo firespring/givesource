@@ -77,8 +77,8 @@ module.exports = (sequelize) => {
 				if (timezone) {
 					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
 				} else {
-					const date = new Date(this.createdAt);
-					this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+					const date = moment(this.createdAt, 'M/D/YYYY h:mm:ss A');
+					this.setDataValue('createdAt', date);
 				}
 			}
 		}

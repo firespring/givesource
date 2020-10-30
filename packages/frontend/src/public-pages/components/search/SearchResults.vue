@@ -177,7 +177,7 @@
 					if (logoIds.length) {
 						promise = axios.get(API_URL + 'files' + Utils.generateQueryString({fileIds: logoIds})).then(function (response) {
 							_.forEach(nonprofits, function (nonprofit) {
-								nonprofit.logo = _.find(response.data, {uuid: nonprofit.logoFileId});
+								nonprofit.logo = _.find(response.data, {id: nonprofit.logoFileId});
 							});
 						});
 					}

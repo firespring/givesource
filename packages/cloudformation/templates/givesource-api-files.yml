@@ -316,14 +316,14 @@ Resources:
       ApiKeyRequired: false
       RequestParameters:
         method.request.querystring.c: false
-        method.request.querystring.uuids: true
+        method.request.querystring.fileIds: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
         CacheKeyParameters:
           - method.request.querystring.c
-          - method.request.querystring.uuids
+          - method.request.querystring.fileIds
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub

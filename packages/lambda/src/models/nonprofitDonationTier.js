@@ -28,6 +28,9 @@ module.exports = (sequelize) => {
 		value: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			validate: {
+				min: 10
+			}
 		},
 		description: {
 			type: DataTypes.STRING,
