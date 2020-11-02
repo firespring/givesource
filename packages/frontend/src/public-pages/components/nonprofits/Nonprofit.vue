@@ -302,7 +302,7 @@
 			},
 			getImageUrl(fileId) {
 				const vm = this;
-				const file = _.find(vm.files, {uuid: fileId});
+				const file = _.find(vm.files, {id: fileId});
 
 				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
 			},
