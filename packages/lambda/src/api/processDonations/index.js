@@ -38,6 +38,7 @@ export function handle(event, context, callback) {
 
 	let apiKey = null;
 	let donations = [];
+	let savedDonations = [];
 	let donor = null;
 	let fees = 0;
 	let nonprofitIds = [];
@@ -80,6 +81,7 @@ export function handle(event, context, callback) {
 			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
 
 			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, transactionFlatFee, transactionPercentFee);
+			donation.amountForNonprofit = donation.total - donation.fees;
 			promise = promise.then(function () {
 				return donationsRepository.populate(donation);
 			}).then(function (model) {
@@ -153,24 +155,33 @@ export function handle(event, context, callback) {
 		});
 	}).then((popPT) => {
 		paymentTransaction = popPT;
-		return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction);
+		// return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction);
+		return paymentTransactionsRepository.upsert(paymentTransaction, {});
 	}).then((response) => {
+		paymentTransaction = response;
+		paymentTransaction.timezone = settings.EVENT_TIMEZONE;
 		donations.forEach((donation) => {
-			donation.paymentTransactionUuid = response.id;
-			donation.paymentTransactionId = response.transactionId;
+			donation.paymentTransactionId = response.id;
 			donation.paymentTransactionAmount = response.transactionAmount;
 			donation.paymentTransactionIsTestMode = response.isTestMode;
 			donation.paymentTransactionStatus = response.transactionStatus;
 		});
 	}).then(function () {
-		return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor);
-	}).then(function (donor) {
+		// return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor);
+		return donorsRepository.upsert(donor, {});
+	}).then(function (savedDonor) {
+		donor = savedDonor;
 		let promise = Promise.resolve();
 		donations.forEach(function (donation) {
 			promise = promise.then(function () {
 				return donationsRepository.upsert(donation, {donorId: donor.id});
+			}).then(function (donation) {
+				return donationsRepository.get(donation.id);
+			}).then(function (donation) {
+				savedDonations.push(donation);
 			});
 		});
+		donations = savedDonations;
 		return promise;
 	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
@@ -178,6 +189,7 @@ export function handle(event, context, callback) {
 		const body = {
 			donations: donations.map((donation) => {
 				donation.timezone = settings.EVENT_TIMEZONE;
+				donation.total = donation.formattedAmount;
 				return donation;
 			}),
 			donor: donor,

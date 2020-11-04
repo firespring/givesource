@@ -73,7 +73,10 @@ DonationsRepository.prototype.get = function (id) {
 			return allModels.Donation.findOne({
 				where: {
 					id: id
-				}
+				},
+				include: [
+					{model: allModels.Nonprofit}
+				]
 			});
 		}).then(function (donation) {
 			if (donation instanceof allModels.Donation) {

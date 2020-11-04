@@ -12,6 +12,12 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  SecureLambdaRole:
+    Type: String
+
+  SecureSettingsLambdaFunctionRole:
+    Type: String
+
   LambdaSecurityGroupId:
     Type: String
 
@@ -639,6 +645,34 @@ Resources:
         alias/${StackName}/settings/secure
       TargetKeyId: !Ref SecureSettingsKey
     DependsOn: SecureSettingsKey
+
+  SecureSettingsEncryptPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: secure_settings_encrypt
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Encrypt
+            Resource:
+              - !GetAtt SecureSettingsKey.Arn
+      Roles:
+      - !Ref SecureSettingsLambdaFunctionRole
+
+  SecureSettingsDecryptPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: secure_settings_decrypt
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Decrypt
+            Resource:
+              - !GetAtt SecureSettingsKey.Arn
+      Roles:
+      - !Ref SecureLambdaRole
 
   # S3 Lambda Resources
 
