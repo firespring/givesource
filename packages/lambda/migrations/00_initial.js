@@ -129,6 +129,10 @@ module.exports = {
 					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
+				note: {
+					type: Sequelize.STRING(2048),
+					allowNull: false
+				},
 				isDeleted: {
 					type: Sequelize.BOOLEAN,
 					allowNull: false,

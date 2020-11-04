@@ -559,6 +559,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteReportsLambdaFunction:
     Type: AWS::Lambda::Function
@@ -579,6 +585,12 @@ Resources:
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteReportsLambdaInvokePermission:
     Type: AWS::Lambda::Permission

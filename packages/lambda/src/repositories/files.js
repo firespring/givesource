@@ -205,7 +205,7 @@ FilesRepository.prototype.upsert = function (model, data) {
 				'filename': typeof data.filename !== "undefined" ? data.filename : model.get('filename'),
 			});
 		}).then(function (file) {
-			resolve(file);
+			resolve(file[0]);
 		}).catch(function (err) {
 			reject(err);
 		}).finally(function () {

@@ -82,6 +82,7 @@ export function handle(event, context, callback) {
 
 			donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, transactionFlatFee, transactionPercentFee);
 			donation.amountForNonprofit = donation.total - donation.fees;
+			donation.subtotalChargedToCard = donation.isOfflineDonation ? 0 : donation.total;
 			promise = promise.then(function () {
 				return donationsRepository.populate(donation);
 			}).then(function (model) {

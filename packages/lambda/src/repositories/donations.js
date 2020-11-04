@@ -193,6 +193,38 @@ DonationsRepository.prototype.save = function (model) {
 };
 
 /**
+ * Scan all items for reports
+ *
+ * @param {{}} whereParams
+ *
+ * @return {Promise}
+ */
+DonationsRepository.prototype.generateReport = function (whereParams) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			const params = {
+				include: [
+					{model: allModels.Nonprofit},
+					{model: allModels.Donor},
+				],
+				order: [['createdAt', 'DESC']],
+				where: whereParams
+			};
+			return allModels.Donation.findAll(params);
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Insert or update the model
  *
  * @param {Object} model
@@ -226,6 +258,7 @@ DonationsRepository.prototype.upsert = function (model, data) {
 				'type': typeof data.type !== "undefined" ? data.type : model.type,
 				'donorId': typeof data.donorId !== "undefined" ? data.donorId : model.donorId,
 				'name': typeof data.name !== "undefined" ? data.name : model.name,
+				'note': typeof data.note !== "undefined" ? data.note : model.note,
 			});
 		}).then(function (donation) {
 			resolve(donation[0]);

@@ -37,6 +37,7 @@ export function handle(event, context, callback) {
 		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, rates.flatRate, rates.percent);
 		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
 		donation.amountForNonprofit = donation.total - donation.fees;
+		donation.subtotalChargedToCard = donation.isOfflineDonation ? 0 : donation.total;
 	}).then(() => {
 		return donationsRepository.upsert(donation, {});
 	}).then(() => {

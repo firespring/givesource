@@ -643,7 +643,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/reports/{report_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/reports/{report_id}
     DependsOn: GetNonprofitReportLambdaFunction
 
   PostNonprofitReportLambdaFunction:
@@ -2616,7 +2616,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NoprofitReportsApiResource
-      PathPart: "{report_uuid}"
+      PathPart: "{report_id}"
 
   GetNonprofitReportApiMethod:
     Type: AWS::ApiGateway::Method

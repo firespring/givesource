@@ -68,7 +68,7 @@
 					vm.countdown = setInterval(() => {
 						vm.$store.commit('generateCacheKey');
 
-						vm.$request.get('reports/' + vm.report.uuid).then(response => {
+						vm.$request.get('reports/' + vm.report.id).then(response => {
 							vm.report = response.data;
 
 							if (vm.report.status === 'SUCCESS') {

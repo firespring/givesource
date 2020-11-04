@@ -36,7 +36,7 @@ exports.handle = function (event, context, callback) {
 		file.set('path', 'uploads/' + uuid);
 		return repository.upsert(file, {});
 	}).then(function (model) {
-		file = model[0];
+		file = model;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'), request.get('content_type'), 'public-read');

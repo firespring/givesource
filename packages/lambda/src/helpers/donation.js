@@ -32,15 +32,15 @@ exports.TYPE_SINGLE = 'SINGLE';
 exports.reportFields = [
 	{
 		label: 'ID',
-		value: 'uuid'
+		value: 'id'
 	},
 	{
 		label: 'Date',
-		value: 'createdOn',
+		value: 'createdAt',
 	},
 	{
 		label: 'Nonprofit',
-		value: 'nonprofitLegalName',
+		value: 'Nonprofit.legalName',
 	},
 	{
 		label: 'Is Offline',
@@ -52,39 +52,39 @@ exports.reportFields = [
 	},
 	{
 		label: 'Donor First Name',
-		value: 'donorFirstName',
+		value: 'Donor.firstName',
 	},
 	{
 		label: 'Donor Last Name',
-		value: 'donorLastName',
+		value: 'Donor.lastName',
 	},
 	{
 		label: 'Donor Address 1',
-		value: 'donorAddress1',
+		value: 'Donor.address1',
 	},
 	{
 		label: 'Donor Address 2',
-		value: 'donorAddress2',
+		value: 'Donor.address2',
 	},
 	{
 		label: 'Donor City',
-		value: 'donorCity',
+		value: 'Donor.city',
 	},
 	{
 		label: 'Donor State',
-		value: 'donorState',
+		value: 'Donor.state',
 	},
 	{
 		label: 'Donor Zip',
-		value: 'donorZip',
+		value: 'Donor.zip',
 	},
 	{
 		label: 'Donor Email',
-		value: 'donorEmail',
+		value: 'Donor.email',
 	},
 	{
 		label: 'Donor Phone Number',
-		value: 'donorPhone',
+		value: 'Donor.phone',
 	},
 	{
 		label: 'Donation Amount',

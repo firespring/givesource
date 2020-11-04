@@ -69,5 +69,19 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: ''
 		},
+	}, {
+		setterMethods: {
+			donorIsAnonymous() {
+				this.setDataValue('firstName', 'Anonymous');
+				this.setDataValue('lastName', '');
+				this.setDataValue('address1', '');
+				this.setDataValue('address2', '');
+				this.setDataValue('city', '');
+				this.setDataValue('state', '');
+				this.setDataValue('zip', '');
+				this.setDataValue('email', '');
+				this.setDataValue('phone', '');
+			}
+		}
 	});
 };
