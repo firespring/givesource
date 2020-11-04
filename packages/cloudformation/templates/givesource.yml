@@ -345,6 +345,8 @@ Resources:
         StackName: !Ref AWS::StackName
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        SecureLambdaRole: !Ref SecureLambdaRole
+        SecureSettingsLambdaFunctionRole: !Ref SecureSettingsLambdaFunctionRole
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
@@ -359,26 +361,8 @@ Resources:
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
-
-  SecureSettingsEncryptManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Encrypt
-            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
-
-  SecureSettingsDecryptManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Decrypt
-            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
+    DependsOn:
+      - AuroraDbStack
 
   SecureSettingsLambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -394,7 +378,6 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref SSMManagedPolicy
-        - !Ref SecureSettingsEncryptManagedPolicy
 
   SecureLambdaRole:
     Type: AWS::IAM::Role
@@ -416,7 +399,6 @@ Resources:
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
         - !Ref SESManagedPolicy
-        - !Ref SecureSettingsDecryptManagedPolicy
 
   ApiContentsStack:
     Type: AWS::CloudFormation::Stack
@@ -434,6 +416,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiDonationsStack:
     Type: AWS::CloudFormation::Stack
@@ -452,6 +436,9 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
+      - CustomStack
 
   ApiDonorsStack:
     Type: AWS::CloudFormation::Stack
@@ -469,6 +456,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiFilesStack:
     Type: AWS::CloudFormation::Stack
@@ -487,6 +476,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiMessagesStack:
     Type: AWS::CloudFormation::Stack
@@ -504,6 +495,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiMetricsStack:
     Type: AWS::CloudFormation::Stack
@@ -521,6 +514,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiNonprofitsStack:
     Type: AWS::CloudFormation::Stack
@@ -540,6 +535,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiPaymentTransactionsStack:
     Type: AWS::CloudFormation::Stack
@@ -557,6 +554,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiReportsStack:
     Type: AWS::CloudFormation::Stack
@@ -574,6 +573,8 @@ Resources:
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiSettingsStack:
     Type: AWS::CloudFormation::Stack
@@ -596,6 +597,9 @@ Resources:
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
+      - CustomStack
 
   ApiSponsorsStack:
     Type: AWS::CloudFormation::Stack
@@ -613,6 +617,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiUsersStack:
     Type: AWS::CloudFormation::Stack
@@ -631,6 +637,8 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
 
   ApiDeployStack:
     Type: AWS::CloudFormation::Stack
