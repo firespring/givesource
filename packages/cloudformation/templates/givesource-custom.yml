@@ -54,6 +54,12 @@ Parameters:
   UploadsCloudFrontUrl:
     Type: String
 
+  GivesourceCache:
+    Type: String
+
+  CachingCloudFrontUrl:
+    Type: String
+
 Resources:
 
   # Api Gateway Lambda Resources
@@ -859,12 +865,6 @@ Resources:
       StackName: !Ref StackName
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs10.x"
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref LambdaSecurityGroupId
-        SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
-          - !ImportValue givesource-secondary-private-subnet
     DependsOn:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
@@ -880,7 +880,8 @@ Resources:
       Value: !Sub |-
         {
           "AWS_STACK_REGION": "${AWS::Region}",
-          "AWS_STACK_NAME": "${StackName}"
+          "AWS_STACK_NAME": "${StackName}",
+          "AWS_S3_BUCKET_NAME": "${GivesourceCache}"
         }
     DependsOn:
       - CreateParameterLambdaFunction
@@ -1030,6 +1031,8 @@ Resources:
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",
           "UPLOADS_CLOUD_FRONT_URL": "${UploadsCloudFrontUrl}",
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
+          "CACHE_CLOUD_FRONT_URL": "${CachingCloudFrontUrl}",
+          "CACHE_S3_BUCKET_NAME": "${GivesourceCache}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
           "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
         }

@@ -43,6 +43,7 @@ exports.handle = function (event, context, callback) {
 		return repository.upsert(nonprofit, request._body);
 	}).then(function (response) {
 		nonprofit = response;
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: nonprofit[0]}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback(null, nonprofit);
