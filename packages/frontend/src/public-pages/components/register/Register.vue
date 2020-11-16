@@ -234,7 +234,7 @@
 				return Settings.eventTitle();
 			},
 			registrationStartDate: function () {
-				return Settings.registrationStartDate().format('MMMM DDDo YYYY');
+				return Settings.registrationStartDate().format('MMMM DD YYYY');
 			},
 			canRegister: function () {
 				return Settings.isDuringRegistrations();
