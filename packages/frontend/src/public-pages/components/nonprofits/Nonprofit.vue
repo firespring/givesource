@@ -223,7 +223,7 @@
 				}
 			});
 
-			if (!_.isEmpty(nonprofit.logoFileId)) {
+			if (parseInt(nonprofit.logoFileId) > 0) {
 				promise = promise.then(() => {
 					return axios.get(API_URL + 'files/' + nonprofit.logoFileId);
 				}).then(response => {
