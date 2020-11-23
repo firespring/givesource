@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <textarea v-model="formData.SEO_DESCRIPTION" name="description" id="description"
-                                                  :class="{ 'has-error': formErrors.SEO_DESCRIPTION }"></textarea>
+                                                  :class="{ 'has-error': formErrors.SEO_DESCRIPTION }" maxlength="2048"></textarea>
                                         <div v-if="formErrors.SEO_DESCRIPTION" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.SEO_DESCRIPTION }}
                                         </div>

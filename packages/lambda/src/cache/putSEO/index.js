@@ -24,13 +24,9 @@ exports.handle = function (event, context, callback) {
 	const settingsRepository = new SettingsRepository();
 	const s3 = new S3();
 
-	const socialSharingDefaults = {
+	const seoDefaults = {
 		EVENT_TITLE: event.EVENT_TITLE,
-		SOCIAL_SHARING_IMAGE: event.SOCIAL_SHARING_IMAGE,
-		SOCIAL_SHARING_DESCRIPTION: event.SOCIAL_SHARING_DESCRIPTION,
-		EVENT_LOGO: null,
-		EVENT_URL: null,
-		UPLOADS_CLOUD_FRONT_URL: null
+		SEO_DESCRIPTION: event.SEO_DESCRIPTION,
 	};
 
 	const data = {
@@ -40,17 +36,17 @@ exports.handle = function (event, context, callback) {
 	};
 
 	Promise.resolve().then(() => {
-		return settingsRepository.batchGet(Object.keys(socialSharingDefaults));
+		return settingsRepository.batchGet(Object.keys(seoDefaults));
 	}).then(response => {
 		response.forEach(setting => {
-			if (socialSharingDefaults.hasOwnProperty(setting.key) && socialSharingDefaults[setting.key] === null) {
-				socialSharingDefaults[setting.key] = setting.value;
+			if (seoDefaults.hasOwnProperty(setting.key) && seoDefaults[setting.key] === null) {
+				seoDefaults[setting.key] = setting.value;
 			}
 		});
 
-		data.description = socialSharingDefaults.SOCIAL_SHARING_DESCRIPTION;
-		data.event_title = socialSharingDefaults.EVENT_TITLE;
-		data.title = socialSharingDefaults.EVENT_TITLE;
+		data.description = seoDefaults.SOCIAL_SHARING_DESCRIPTION;
+		data.event_title = seoDefaults.EVENT_TITLE;
+		data.title = seoDefaults.EVENT_TITLE;
 
 		console.log('template-data: %j', data);
 		return RenderHelper.renderTemplate('public.seo', data);

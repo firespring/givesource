@@ -37,6 +37,8 @@ exports.handle = function (event, context, callback) {
 		UPLOADS_CLOUD_FRONT_URL: null,
 		EVENT_LOGO: null,
 		EVENT_TITLE: null,
+		SOCIAL_SHARING_DESCRIPTION: null,
+		SOCIAL_SHARING_IMAGE: null,
 	};
 
 	const data = {
@@ -51,7 +53,6 @@ exports.handle = function (event, context, callback) {
 	promise.then(function () {
 		return settingsRepository.batchGet(Object.keys(settings));
 	}).then(response => {
-		console.log('response from settings', response); /*DM: Debug */
 		response.forEach(setting => {
 			if (settings.hasOwnProperty(setting.key)) {
 				settings[setting.key] = setting.value;
@@ -74,11 +75,15 @@ exports.handle = function (event, context, callback) {
 		let promise = Promise.resolve();
 		nonprofits.forEach(nonprofit => {
 			promise = promise.then(() => {
-				data.description = nonprofit.socialSharingDescription;
+				data.description = nonprofit.socialSharingDescription ? nonprofit.socialSharingDescription : settings.SOCIAL_SHARING_DESCRIPTION ? settings.SOCIAL_SHARING_DESCRIPTION : SocialSharingHelper.SOCIAL_SHARING_DEFAULT_DESCRIPTION;
 				data.event_title = 'Support ' + nonprofit.legalName + 'at' + (settings.EVENT_TITLE) ? settings.EVENT_TITLE : SocialSharingHelper.SOCIAL_SHARING_DEFAULT_TITLE;
 				data.title = 'Support ' + nonprofit.legalName + 'at' + (settings.EVENT_TITLE) ? settings.EVENT_TITLE : SocialSharingHelper.SOCIAL_SHARING_DEFAULT_TITLE;
 				if (nonprofit.socialSharingFileId) {
 					return filesRepository.get(nonprofit.socialSharingFileId);
+				}
+				
+				if (settings.SOCIAL_SHARING_IMAGE) {
+					return filesRepository.get(settings.SOCIAL_SHARING_IMAGE);
 				}
 
 				if (settings.EVENT_LOGO) {

@@ -60,6 +60,7 @@ exports.handle = function (event, context, callback) {
 			EVENT_TITLE: null,
 			SOCIAL_SHARING_IMAGE: null,
 			SOCIAL_SHARING_DESCRIPTION: null,
+			SEO_DESCRIPTION: null
 		};
 		request.get('settings', []).forEach(setting => {
 			if (socialSharingData.hasOwnProperty(setting.key)) {

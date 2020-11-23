@@ -29,6 +29,7 @@ exports.handle = function (event, context, callback) {
 		EVENT_TITLE: null,
 		SOCIAL_SHARING_IMAGE: null,
 		SOCIAL_SHARING_DESCRIPTION: null,
+		SEO_DESCRIPTION: null,
 		EVENT_LOGO: null,
 		EVENT_URL: null,
 		UPLOADS_CLOUD_FRONT_URL: null

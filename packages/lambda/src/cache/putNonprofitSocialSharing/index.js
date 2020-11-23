@@ -69,7 +69,7 @@ exports.handle = function (event, context, callback) {
 		return null;
 	}).then(file => {
 		data.image_url = (file) ? socialSharingDefaults.UPLOADS_CLOUD_FRONT_URL + '/' + file.path : socialSharingDefaults.EVENT_URL + '/' + SocialSharingHelper.SOCIAL_SHARING_DEFAULT_IMG;
-		data.description = nonprofit.socialSharingDescription;
+		data.description = nonprofit.socialSharingDescription ? nonprofit.socialSharingDescription : socialSharingDefaults.SOCIAL_SHARING_DESCRIPTION ? socialSharingDefaults.SOCIAL_SHARING_DESCRIPTION : SocialSharingHelper.SOCIAL_SHARING_DEFAULT_DESCRIPTION;
 		data.event_title = 'Support ' + nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE;
 		data.title = 'Support ' + nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE;
 		console.log('template-data: %j', data);
