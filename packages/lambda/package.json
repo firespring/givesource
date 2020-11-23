@@ -59,7 +59,7 @@
 		"sinon": "^2.3.6",
 		"slug": "^0.9.3",
 		"uuid-validate": "0.0.2",
-		"webpack": "^4.29.6",
-		"webpack-cli": "^3.1.2"
+		"webpack": "^5.1.1",
+		"webpack-cli": "^4.0.0"
 	}
 }
