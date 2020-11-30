@@ -65,6 +65,8 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return usersRepository.upsert(user, {});
 	}).then(function () {
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: savedNp}, 'RequestResponse');
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSEO', {nonprofit: savedNp}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback(null, {

@@ -1,0 +1,197 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS Custom resources for Givesource(R)
+Parameters:
+
+  StackName:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  LambdaSecurityGroupId:
+    Type: String
+
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
+  CacheS3:
+    Type: String
+
+Resources:
+
+  # Social Sharing Cache Resources
+
+  PutSocialSharingLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PutSocialSharing.zip
+      Description: "Put social sharing html file into s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-PutSocialSharing
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  PutNonprofitSocialSharingLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PutNonprofitSocialSharing.zip
+      Description: "Put nonprofit social sharing html file into s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-PutNonprofitSocialSharing
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  WarmSocialSharingLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/WarmSocialSharing.zip
+      Description: "Warm social sharing and get initial html s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-WarmSocialSharing
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: 900 # In case there are a lot of Nonprofits to warm
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  WarmGivesourceSocialSharingLambdaLambdaInvoker:
+    Type: Custom::WarmSocialSharingLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt WarmSocialSharingLambdaFunction.Arn
+    DependsOn:
+      - PutSocialSharingLambdaFunction
+      - PutNonprofitSocialSharingLambdaFunction
+
+  # SEO Cache Lambda Functions
+
+  PutSEOLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PutSEO.zip
+      Description: "Put seo file into s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-PutSEO
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  PutNonprofitSEOLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PutNonprofitSEO.zip
+      Description: "Put nonprofit seo file into s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-PutNonprofitSEO
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: 300
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  WarmSEOLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/WarmSEO.zip
+      Description: "Warm social sharing and get initial html s3"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          AWS_S3_BUCKET_NAME: !Ref CacheS3
+      FunctionName: !Sub |-
+        ${StackName}-WarmSEO
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: 900 # In case there are a lot of Nonprofits to warm
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  WarmSEOLambdaLambdaInvoker:
+    Type: Custom::WarmSEOLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt WarmSEOLambdaFunction.Arn
+    DependsOn:
+      - PutSEOLambdaFunction
+      - PutNonprofitSEOLambdaFunction

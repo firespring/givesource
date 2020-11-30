@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="c-form-item__control">
                                         <textarea v-model="formData.socialSharingDescription" name="socialSharingDescription" id="socialSharingDescription"
-                                                  :class="{ 'has-error': formErrors.socialSharingDescription }"></textarea>
+                                                  :class="{ 'has-error': formErrors.socialSharingDescription }" maxlength="2048"></textarea>
                                     <div v-if="formErrors.socialSharingDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.socialSharingDescription }}
                                     </div>

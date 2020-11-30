@@ -159,6 +159,15 @@ module.exports = {
 		// Database Lambda Functions
 		BootstrapDatabase: './src/database/bootstrapDatabase/index.js',
 		MigrateDatabase: './src/database/migrateDatabase/index.js',
+
+		// Cache Lambda Functions
+		PutSocialSharing: './src/cache/putSocialSharing/index.js',
+		PutSEO: './src/cache/putSEO/index.js',
+		PutNonprofitSocialSharing: './src/cache/putNonprofitSocialSharing/index.js',
+		PutNonprofitSEO: './src/cache/putNonprofitSEO/index.js',
+		WarmSocialSharing: './src/cache/warmSocialSharing/index.js',
+		WarmSEO: './src/cache/warmSEO/index.js',
+
 	},
 	output: {
 		filename: '[name]/index.js',

@@ -70,6 +70,11 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.save(nonprofit);
 	}).then(function () {
+		if (nonprofit.status === NonprofitHelper.STATUS_ACTIVE) {
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: nonprofit}, 'RequestResponse');
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSEO', {nonprofit: nonprofit}, 'RequestResponse');
+		}
+	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		if (status === NonprofitHelper.STATUS_DENIED || status === NonprofitHelper.STATUS_REVOKED) {

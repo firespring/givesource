@@ -26,12 +26,12 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
+	const keys = request.get('settings', []).map(function (setting) {
+		return setting.key;
+	});
 
 	let settings = [];
 	request.validate().then(function () {
-		const keys = request.get('settings', []).map(function (setting) {
-			return setting.key;
-		});
 		return repository.batchGet(keys);
 	}).then(function (models) {
 		let promise = Promise.resolve();
@@ -55,6 +55,20 @@ exports.handle = function (event, context, callback) {
 			});
 		});
 		return promise;
+	}).then(function () {
+		const socialSharingData = {
+			EVENT_TITLE: null,
+			SOCIAL_SHARING_IMAGE: null,
+			SOCIAL_SHARING_DESCRIPTION: null,
+			SEO_DESCRIPTION: null
+		};
+		request.get('settings', []).forEach(setting => {
+			if (socialSharingData.hasOwnProperty(setting.key)) {
+				socialSharingData[setting.key] = setting.value;
+			}
+		});
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSocialSharing', socialSharingData, 'RequestResponse');
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSEO', socialSharingData, 'RequestResponse');
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

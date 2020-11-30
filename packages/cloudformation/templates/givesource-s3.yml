@@ -97,6 +97,35 @@ Resources:
             Resource: !Sub |-
               arn:aws:s3:::${UploadsS3}/*
 
+  GivesourceCache:
+    Type: AWS::S3::Bucket
+    Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - PUT
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  GivesourceCacheBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GivesourceCache
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Principal: "*"
+            Resource: !Sub |-
+              arn:aws:s3:::${GivesourceCache}/*
+
   # AWS CloudFront Resources
 
   AdminPagesDistribution:
@@ -202,6 +231,38 @@ Resources:
             ResponsePagePath: /index.html
     DependsOn: UploadsS3
 
+  CachingDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt GivesourceCache.WebsiteURL ] ]
+            Id: !Ref GivesourceCache
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        Enabled: true
+        Comment: Distribution for Givesource(R) uploads S3 bucket
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          TargetOriginId: !Ref GivesourceCache
+          ViewerProtocolPolicy: allow-all
+        PriceClass: PriceClass_200
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+    DependsOn: GivesourceCache
+
+
 Outputs:
 
   AdminPagesCloudFrontDistribution:
@@ -251,3 +312,19 @@ Outputs:
 
   UploadsS3BucketUrl:
     Value: !GetAtt UploadsS3.WebsiteURL
+
+  CachingCloudFrontDistribution:
+    Value: !Ref CachingDistribution
+
+  CachingCloudFrontDomainName:
+    Value: !GetAtt CachingDistribution.DomainName
+
+  CachingCloudFrontUrl:
+    Value: !Sub |-
+      https://${CachingDistribution.DomainName}
+
+  GivesourceCache:
+    Value: !Ref GivesourceCache
+
+  GivesourceCacheBucketUrl:
+    Value: !GetAtt GivesourceCache.WebsiteURL

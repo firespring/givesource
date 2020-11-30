@@ -241,6 +241,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}
               - arn:aws:s3:::{{awsReleaseBucket}}
           - Effect: Allow
             Action: s3:Get*
@@ -248,6 +249,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
               - arn:aws:s3:::{{awsReleaseBucket}}/*
           - Effect: Allow
             Action:
@@ -257,6 +259,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
 
   SESManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -359,6 +362,8 @@ Resources:
         UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
         UploadsCloudFrontDistribution: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
+        GivesourceCache: !GetAtt S3Stack.Outputs.GivesourceCache
+        CachingCloudFrontUrl: !GetAtt S3Stack.Outputs.CachingCloudFrontUrl
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
@@ -708,6 +713,18 @@ Resources:
       TimeoutInMinutes: 20
     DependsOn:
       - CognitoInitialUser
+
+  CacheStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
+      TimeoutInMinutes: 40
 
 Outputs:
 

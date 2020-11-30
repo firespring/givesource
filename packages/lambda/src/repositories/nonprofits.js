@@ -173,6 +173,30 @@ NonprofitsRepository.prototype.getAll = function () {
 };
 
 /**
+ * Return active NPs to warm for SEO and Social Sharing
+ *
+ * @return {Promise<Array>}
+ */
+NonprofitsRepository.prototype.warmNonprofits = function () {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Nonprofit.findAll({
+				where: {status: 'ACTIVE'}
+			});
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
  * Query Nonprofits
  *
  * NOTE: there is a bug with limits and advanced association in sequelize. Might want to consider a raw query right here
