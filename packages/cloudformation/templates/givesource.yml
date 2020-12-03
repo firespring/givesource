@@ -242,6 +242,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}
               - arn:aws:s3:::{{awsReleaseBucket}}
           - Effect: Allow
             Action: s3:Get*
@@ -250,6 +251,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}/*
               - arn:aws:s3:::{{awsReleaseBucket}}/*
           - Effect: Allow
             Action:
@@ -260,6 +262,7 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}/*
 
   SESManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -364,6 +367,7 @@ Resources:
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
         GivesourceCache: !GetAtt S3Stack.Outputs.GivesourceCache
         CachingCloudFrontUrl: !GetAtt S3Stack.Outputs.CachingCloudFrontUrl
+        ReportsS3: !GetAtt S3Stack.Outputs.Reports
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
@@ -478,6 +482,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
+        ReportsBucket: !GetAtt S3Stack.Outputs.Reports
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
