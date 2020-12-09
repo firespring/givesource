@@ -542,6 +542,10 @@ Resources:
       TimeoutInMinutes: 20
     DependsOn:
       - AuroraDbStack
+      # Adding an unnecessary dependency here. Basically we were getting throttled due to too many
+      # EC2 api calls on stack creation because we are creating so many lambdas with vpc configs.
+      # So we are adding a dependency here to slow things down a bit.
+      - ApiSponsorsStack
 
   ApiPaymentTransactionsStack:
     Type: AWS::CloudFormation::Stack
@@ -725,6 +729,8 @@ Resources:
         CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
       TimeoutInMinutes: 40
+    DependsOn:
+      - AuroraDbStack
 
 Outputs:
 
