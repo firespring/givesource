@@ -128,12 +128,17 @@ Resources:
       Engine: aurora-mysql
       EngineMode: serverless
       EngineVersion: 5.7.mysql_aurora.2.07.1
+      EnableCloudwatchLogsExports:
+      - audit
+      - error
+      - general
+      - slowquery
       EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 16
         MinCapacity: 1
-        SecondsUntilAutoPause: 14400
+        SecondsUntilAutoPause: 7200
       DBSubnetGroupName: !Ref DBSubnetGroup
       VpcSecurityGroupIds:
         - !GetAtt DBSecurityGroup.GroupId
