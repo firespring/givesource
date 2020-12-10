@@ -71,7 +71,7 @@
 		"shave": "^2.5.3",
 		"slug": "^0.9.3",
 		"style-loader": "^0.23.1",
-		"terser-webpack-plugin": "^1.2.3",
+		"terser-webpack-plugin": "^2.1.1",
 		"tooltipster": "^4.2.5",
 		"v-money": "^0.8.0",
 		"validate.js": "0.10.0",
@@ -87,8 +87,8 @@
 		"vuedraggable": "^2.14.1",
 		"vuex": "^2.4.1",
 		"vuex-persistedstate": "^2.0.0",
-		"webpack": "^4.29.6",
-		"webpack-cli": "^3.3.5",
+		"webpack": "^5.1.1",
+		"webpack-cli": "^4.0.0",
 		"webpack-dev-server": "^3.2.1",
 		"whatwg-fetch": "^3.0.0"
 	}
