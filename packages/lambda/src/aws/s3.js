@@ -231,4 +231,33 @@ S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType,
 	});
 };
 
+/**
+ * Get a signed url to download
+ *
+ * @param region
+ * @param bucketName
+ * @param filePath
+ * @param acl
+ * @return {Promise<any>}
+ */
+S3.prototype.downloadSignedUrl = function (region, bucketName, filePath, acl) {
+	const awsS3 = new AWS.S3({region: region});
+	return new Promise(function (resolve, reject) {
+		const params = {
+			Bucket: bucketName,
+			Key: filePath,
+			Expires: 3600,
+		};
+		if (acl) {
+			params['ACL'] = acl;
+		}
+		awsS3.getSignedUrl('getObject', params, function (err, url) {
+			if (err) {
+				reject(err);
+			}
+			resolve(url);
+		});
+	});
+};
+
 module.exports = S3;
