@@ -15,7 +15,6 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const NonprofitDonationTier = require('./../../dynamo-models/nonprofitDonationTier');
 const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const Request = require('./../../aws/request');

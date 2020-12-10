@@ -16,7 +16,6 @@
 
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
-const Metric = require('./../dynamo-models/metric');
 const loadModels = require('../models/index');
 const Sequelize = require('sequelize');
 
