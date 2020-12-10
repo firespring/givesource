@@ -66,7 +66,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		if (response) {
 			const csv = json2csv({data: response.data, fields: response.fields});
-			return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `${file.path}`, csv, 'public-read', 'text/csv', `attachment; filename=${file.filename}`).then(function () {
+			return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `${file.path}`, csv, 'private', 'text/csv', `attachment; filename=${file.filename}`).then(function () {
 				return filesRepository.upsert(file, {});
 			}).then(function (file) {
 				report.fileId = file.id;

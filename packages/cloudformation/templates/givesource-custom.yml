@@ -51,6 +51,9 @@ Parameters:
   UploadsS3:
     Type: String
 
+  ReportsS3:
+    Type: String
+
   UploadsCloudFrontUrl:
     Type: String
 
@@ -558,7 +561,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          AWS_S3_BUCKET_NAME: !Ref UploadsS3
+          AWS_S3_BUCKET_NAME: !Ref ReportsS3
       FunctionName: !Sub |-
         ${StackName}-GenerateReport
       Handler: "index.handle"
@@ -1033,6 +1036,7 @@ Resources:
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
           "CACHE_CLOUD_FRONT_URL": "${CachingCloudFrontUrl}",
           "CACHE_S3_BUCKET_NAME": "${GivesourceCache}",
+          "REPORTS_S3_BUCKET_NAME": "${ReportsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
           "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
         }
