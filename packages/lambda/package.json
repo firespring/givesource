@@ -47,7 +47,7 @@
 		"inquirer": "^3.2.1",
 		"inquirer-autocomplete-prompt": "^0.11.0",
 		"js-string-escape": "^1.0.1",
-		"json2csv": "^3.11.5",
+		"json2csv": "^4.0.0",
 		"jsonwebtoken": "^8.1.0",
 		"jwk-to-pem": "^1.2.6",
 		"lodash": "^4.17.15",
