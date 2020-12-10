@@ -34,64 +34,8 @@ Parameters:
     Type: CommaDelimitedList
     Default: ""
 
-  ContentsTable:
-    Description: The name of the contents table
-    Type: String
-
-  DonationsTable:
-    Description: The name of the donations table
-    Type: String
-
-  DonorsTable:
-    Description: The name of the donors table
-    Type: String
-
-  FilesTable:
-    Description: The name of the files table
-    Type: String
-
-  MessagesTable:
-    Description: The name of the messages table
-    Type: String
-
-  MetricsTable:
-    Description: The name of the metrics table
-    Type: String
-
-  NonprofitsTable:
-    Description: The name of the noprofits table
-    Type: String
-
-  NonprofitDonationTiersTable:
-    Description: The name of the nonprofit donations tiers table
-    Type: String
-
-  NonprofitSlidesTable:
-    Description: The name of the nonprofit slides table
-    Type: String
-
-  PaymentTransactionsTable:
-    Description: The name of the payment transactions table
-    Type: String
-
-  ReportsTable:
-    Description: The name of the reports table
-    Type: String
-
-  SettingsTable:
-    Description: The name of the settings table
-    Type: String
-
-  SponsorsTable:
-    Description: The name of the sponsors table
-    Type: String
-
-  SponsorTiersTable:
-    Description: The name of the sponsor tiers table
-    Type: String
-
-  UsersTable:
-    Description: The name of the users table
+  DatabaseIdentifier:
+    Description: The identifier of the rds database
     Type: String
 
 Conditions:
@@ -370,8 +314,91 @@ Resources:
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-      # TODO: CREATE ALARMS FOR CPU AND MEMORY
+  rdsCpuUtilizationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
+      AlarmActions:
+        - !Ref AlertSns
+      OKActions:
+        - !Ref AlertSns
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
+      Dimensions:
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
+      Statistic: Sum
+      Period: 300
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 90
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
 
+  rdsCpuUtilizationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
+      AlarmActions:
+        - !Ref AlertSns
+      OKActions:
+        - !Ref AlertSns
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
+      Dimensions:
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
+      Statistic: Sum
+      Period: 60
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 90
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
+
+  rdsFreeLocalStorageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: !Sub ${StackName} RDS FreeLocalStorage Alarm
+      AlarmActions:
+        - !Ref AlertSns
+      OKActions:
+        - !Ref AlertSns
+      Namespace: AWS/RDS
+      MetricName: FreeLocalStorage
+      Dimensions:
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
+      Statistic: Sum
+      Period: 300
+      ComparisonOperator: LessThanThreshold
+      # < 10GB
+      Threshold: 10737418240
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
+
+  rdsFreeableMemoryAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: !Sub ${StackName} RDS FreeableMemory Alarm
+      AlarmActions:
+        - !Ref AlertSns
+      OKActions:
+        - !Ref AlertSns
+      Namespace: AWS/RDS
+      MetricName: FreeableMemory
+      Dimensions:
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
+      Statistic: Sum
+      Period: 300
+      ComparisonOperator: LessThanThreshold
+      # < 512MB
+      Threshold: 536870912
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
 
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -2123,31 +2150,251 @@ Resources:
                     "position": "hidden"
                   }
                 }
+              },
+              {
+                "type": "metric",
+                "x": 0,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "ServerlessDatabaseCapacity",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Capacity"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 6,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "RDS CPU Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsCpuUtilizationAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 12,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "RDS FreeLocalStorage Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsFreeLocalStorageAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 18,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "RDS FreeableMemory Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsFreeableMemoryAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 0,
+                "y": 30,
+                "width": 12,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "InsertLatency",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "CommitLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "DeleteLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "SelectLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "UpdateLatency",
+                      ".",
+                      "."
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Latency"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 12,
+                "y": 30,
+                "width": 12,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "InsertThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "CommitThroughput",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "DeleteThroughput",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "SelectThroughput",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "UpdateThroughput",
+                      ".",
+                      "."
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Throughput"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 0,
+                "y": 36,
+                "width": 12,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "ConnectionAttempts",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "DatabaseConnections",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "Queries",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "ActiveTransactions",
+                      ".",
+                      "."
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Connection Activity"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 12,
+                "y": 36,
+                "width": 12,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "BlockedTransactions",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "Deadlocks",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "AbortedClients",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "LoginFailures",
+                      ".",
+                      "."
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Unexpected Activity"
+                }
               }
             ]
           }
         - {}
 
-
-#              },
-#              {
-#                "type": "metric",
-#                "x": 0,
-#                "y": 24,
-#                "width": 6,
-#                "height": 3,
-#                "properties": {
-#                  "title": "RDS CPU Utilization",
-#                  "annotations": {
-#                    "alarms": [
-#                      "${NonprofitsTableReadThrottleAlarm.Arn}"
-#                    ]
-#                  },
-#                  "view": "timeSeries",
-#                  "stacked": false,
-#                  "type": "chart"
-#                }
-#              }
-
-          # Need graph for cpu/memory rds usage
-          # Need graph for rds capacity units

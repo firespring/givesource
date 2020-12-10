@@ -279,3 +279,6 @@ Resources:
     Properties:
       ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
     DependsOn: BootstrapDatabaseLambdaLambdaInvoker
+Outputs:
+  Identifier:
+    Value: !Ref RDSCluster

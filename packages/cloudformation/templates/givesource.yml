@@ -699,21 +699,7 @@ Resources:
         PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
         PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
-        ContentsTable: !GetAtt DynamoDbStack.Outputs.ContentsTable
-        DonationsTable: !GetAtt DynamoDbStack.Outputs.DonationsTable
-        DonorsTable: !GetAtt DynamoDbStack.Outputs.DonorsTable
-        FilesTable: !GetAtt DynamoDbStack.Outputs.FilesTable
-        MessagesTable: !GetAtt DynamoDbStack.Outputs.MessagesTable
-        MetricsTable: !GetAtt DynamoDbStack.Outputs.MetricsTable
-        NonprofitsTable: !GetAtt DynamoDbStack.Outputs.NonprofitsTable
-        NonprofitDonationTiersTable: !GetAtt DynamoDbStack.Outputs.NonprofitDonationTiersTable
-        NonprofitSlidesTable: !GetAtt DynamoDbStack.Outputs.NonprofitSlidesTable
-        PaymentTransactionsTable: !GetAtt DynamoDbStack.Outputs.PaymentTransactionsTable
-        ReportsTable: !GetAtt DynamoDbStack.Outputs.ReportsTable
-        SettingsTable: !GetAtt DynamoDbStack.Outputs.SettingsTable
-        SponsorsTable: !GetAtt DynamoDbStack.Outputs.SponsorsTable
-        SponsorTiersTable: !GetAtt DynamoDbStack.Outputs.SponsorTiersTable
-        UsersTable: !GetAtt DynamoDbStack.Outputs.UsersTable
+        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
       TimeoutInMinutes: 20
     DependsOn:
