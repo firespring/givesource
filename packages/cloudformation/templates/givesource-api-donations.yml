@@ -232,7 +232,7 @@ Resources:
       MemorySize: 128
       Role: !Ref SecureLambdaRoleArn
       Runtime: "nodejs12.x"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+      Timeout: 90
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
