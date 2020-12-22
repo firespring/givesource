@@ -88,10 +88,12 @@ module.exports = (sequelize) => {
 		longDescription: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			defaultValue: ''
 		},
 		shortDescription: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			defaultValue: ''
 		},
 		slug: {
 			type: DataTypes.STRING,
@@ -100,6 +102,7 @@ module.exports = (sequelize) => {
 		socialSharingDescription: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			defaultValue: ''
 		},
 		socialSharingFileId: {
 			type: DataTypes.INTEGER,

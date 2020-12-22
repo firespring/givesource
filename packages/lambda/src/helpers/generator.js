@@ -305,19 +305,6 @@ Generator.prototype.data = function (type, data) {
 };
 
 /**
- * Generate a model
- *
- * @param {String} type
- * @param {{}} [data]
- * @return {*}
- */
-Generator.prototype.model = function (type, data) {
-	this._validateType(type);
-	const Model = require(`./../dynamo-models/${type}`);
-	return new Model(this.data(type, data));
-};
-
-/**
  * Generate an array of model data
  *
  * @param {String} type

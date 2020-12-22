@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Donor = require('./../dynamo-models/donor');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');

@@ -37,6 +37,20 @@ Parameters:
     Type: String
   LambdaSecurityGroupId:
     Type: String
+  LogDatabaseDebug:
+    Type: String
+    Default: false
+    AllowedValues:
+    - true
+    - false
+  AutoPause:
+    Type: String
+    Default: true
+    AllowedValues:
+    - true
+    - false
+Conditions:
+  ShouldLogDatabaseDebug: !Equals [!Ref LogDatabaseDebug, 'true']
 Resources:
   DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -118,23 +132,38 @@ Resources:
       Roles:
       - !Ref LambdaRole
       - !Ref SecureLambdaRole
+  DBClusterParameterGroup:
+    Type: AWS::RDS::DBClusterParameterGroup
+    Properties:
+      Description: Parameter group for RDS
+      Family: aurora-mysql5.7
+      Parameters:
+        general_log: !If [ShouldLogDatabaseDebug, 1, 0]
+        slow_query_log: 1
+        log_queries_not_using_indexes: !If [ShouldLogDatabaseDebug, 1, 0]
+        log_warnings: !If [ShouldLogDatabaseDebug, 1, 0]
+        server_audit_logging: !If [ShouldLogDatabaseDebug, 1, 0]
+        server_audit_logs_upload: !If [ShouldLogDatabaseDebug, 1, 0]
+        server_audit_events: !If [ShouldLogDatabaseDebug, 'CONNECT,QUERY,QUERY_DCL,QUERY_DDL,QUERY_DML,TABLE', !Ref AWS::NoValue]
   RDSCluster:
     Type: AWS::RDS::DBCluster
     Properties:
-{{=<% %>=}}
-      MasterUsername: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:password}}'
-<%={{ }}=%>
+      BackupRetentionPeriod: 30
+      DBClusterParameterGroupName: !Ref DBClusterParameterGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
       Engine: aurora-mysql
       EngineMode: serverless
       EngineVersion: 5.7.mysql_aurora.2.07.1
       EnableHttpEndpoint: true
+{{=<% %>=}}
+      MasterUsername: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:password}}'
+<%={{ }}=%>
       ScalingConfiguration:
-        AutoPause: true
+        AutoPause: !Ref AutoPause
         MaxCapacity: 16
         MinCapacity: 1
-        SecondsUntilAutoPause: 14400
-      DBSubnetGroupName: !Ref DBSubnetGroup
+        SecondsUntilAutoPause: 1800
       VpcSecurityGroupIds:
         - !GetAtt DBSecurityGroup.GroupId
     DependsOn: AdminUserSecret
@@ -274,3 +303,6 @@ Resources:
     Properties:
       ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
     DependsOn: BootstrapDatabaseLambdaLambdaInvoker
+Outputs:
+  Identifier:
+    Value: !Ref RDSCluster

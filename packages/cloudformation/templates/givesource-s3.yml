@@ -99,7 +99,6 @@ Resources:
 
   Reports:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
     Properties:
       BucketEncryption:
         ServerSideEncryptionConfiguration:

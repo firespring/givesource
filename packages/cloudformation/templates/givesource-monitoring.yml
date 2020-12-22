@@ -34,64 +34,8 @@ Parameters:
     Type: CommaDelimitedList
     Default: ""
 
-  ContentsTable:
-    Description: The name of the contents table
-    Type: String
-
-  DonationsTable:
-    Description: The name of the donations table
-    Type: String
-
-  DonorsTable:
-    Description: The name of the donors table
-    Type: String
-
-  FilesTable:
-    Description: The name of the files table
-    Type: String
-
-  MessagesTable:
-    Description: The name of the messages table
-    Type: String
-
-  MetricsTable:
-    Description: The name of the metrics table
-    Type: String
-
-  NonprofitsTable:
-    Description: The name of the noprofits table
-    Type: String
-
-  NonprofitDonationTiersTable:
-    Description: The name of the nonprofit donations tiers table
-    Type: String
-
-  NonprofitSlidesTable:
-    Description: The name of the nonprofit slides table
-    Type: String
-
-  PaymentTransactionsTable:
-    Description: The name of the payment transactions table
-    Type: String
-
-  ReportsTable:
-    Description: The name of the reports table
-    Type: String
-
-  SettingsTable:
-    Description: The name of the settings table
-    Type: String
-
-  SponsorsTable:
-    Description: The name of the sponsors table
-    Type: String
-
-  SponsorTiersTable:
-    Description: The name of the sponsor tiers table
-    Type: String
-
-  UsersTable:
-    Description: The name of the users table
+  DatabaseIdentifier:
+    Description: The identifier of the rds database
     Type: String
 
 Conditions:
@@ -370,666 +314,91 @@ Resources:
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-  ContentsTableReadThrottleAlarm:
+  rdsCpuUtilizationAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${ContentsTable} ReadThrottleEvents
+      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
       Dimensions:
-        - Name: TableName
-          Value: !Ref ContentsTable
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
       Statistic: Sum
-      Period: 60
+      Period: 300
       ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
+      Threshold: 90
+      EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-  ContentsTableWriteThrottleAlarm:
+  rdsCpuUtilizationAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${ContentsTable} WriteThrottleEvents
+      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
       Dimensions:
-        - Name: TableName
-          Value: !Ref ContentsTable
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
       Statistic: Sum
       Period: 60
       ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
+      Threshold: 90
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
 
-  DonationsTableReadThrottleAlarm:
+  rdsFreeLocalStorageAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${DonationsTable} ReadThrottleEvents
+      AlarmDescription: !Sub ${StackName} RDS FreeLocalStorage Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
+      Namespace: AWS/RDS
+      MetricName: FreeLocalStorage
       Dimensions:
-        - Name: TableName
-          Value: !Ref DonationsTable
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
       Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
+      Period: 300
+      ComparisonOperator: LessThanThreshold
+      # < 10GB
+      Threshold: 10737418240
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
 
-  DonationsTableWriteThrottleAlarm:
+  rdsFreeableMemoryAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${DonationsTable} WriteThrottleEvents
+      AlarmDescription: !Sub ${StackName} RDS FreeableMemory Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
+      Namespace: AWS/RDS
+      MetricName: FreeableMemory
       Dimensions:
-        - Name: TableName
-          Value: !Ref DonationsTable
+      - Name: DBClusterIdentifier
+        Value: !Ref DatabaseIdentifier
       Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  DonorsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${DonorsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref DonorsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  DonorsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${DonorsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref DonorsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  FilesTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${FilesTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref FilesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  FilesTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${FilesTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref FilesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  MessagesTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${MessagesTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref MessagesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  MessagesTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${MessagesTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref MessagesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  MetricsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${MetricsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref MetricsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  MetricsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${MetricsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref MetricsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitDonationTiersTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitDonationTiersTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitDonationTiersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitDonationTiersTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitDonationTiersTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitDonationTiersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitSlidesTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitSlidesTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitSlidesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  NonprofitSlidesTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${NonprofitSlidesTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref NonprofitSlidesTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  PaymentTransactionsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${PaymentTransactionsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref PaymentTransactionsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  PaymentTransactionsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${PaymentTransactionsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref PaymentTransactionsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  ReportsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${ReportsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref ReportsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  ReportsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${ReportsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref ReportsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SettingsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SettingsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SettingsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SettingsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SettingsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SettingsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SponsorsTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SponsorsTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SponsorsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SponsorsTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SponsorsTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SponsorsTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SponsorTiersTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SponsorTiersTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SponsorTiersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  SponsorTiersTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${SponsorTiersTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref SponsorTiersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  UsersTableReadThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${UsersTable} ReadThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: ReadThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref UsersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
-  UsersTableWriteThrottleAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${UsersTable} WriteThrottleEvents
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/DynamoDB
-      MetricName: WriteThrottleEvents
-      Dimensions:
-        - Name: TableName
-          Value: !Ref UsersTable
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 0
-      EvaluationPeriods: 10
-      DatapointsToAlarm: 3
-      TreatMissingData: notBreaching
-
+      Period: 300
+      ComparisonOperator: LessThanThreshold
+      # < 512MB
+      Threshold: 536870912
+      EvaluationPeriods: 1
+      TreatMissingData: breaching
 
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -1342,6 +711,11 @@ Resources:
                       "AWS/Lambda",
                       "Errors",
                       "FunctionName",
+                      "${StackName}-AdminPostDonationsReceipt",
+                      {"label": "AdminPostDonationsReceipt"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-AdminRegisterNonprofit",
                       {"label": "AdminRegisterNonprofit"}
                     ],
@@ -1359,6 +733,11 @@ Resources:
                       "...",
                       "${StackName}-AuthorizeUsers",
                       {"label": "AuthorizeUsers"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-BootstrapDatabase",
+                      {"label": "BootstrapDatabase"}
                     ],
                     [
                       "...",
@@ -1407,6 +786,16 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeleteDonation",
+                      {"label": "DeleteDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteDonor",
+                      {"label": "DeleteDonor"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteFile",
                       {"label": "DeleteFile"}
                     ],
@@ -1414,6 +803,31 @@ Resources:
                       "...",
                       "${StackName}-DeleteFiles",
                       {"label": "DeleteFiles"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteMessage",
+                      {"label": "DeleteMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteMetrics",
+                      {"label": "DeleteMetrics"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofit",
+                      {"label": "DeleteNonprofit"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofitDonation",
+                      {"label": "DeleteNonprofitDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofitDonationTiers",
+                      {"label": "DeleteNonprofitDonationTiers"}
                     ],
                     [
                       "...",
@@ -1427,8 +841,18 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeletePaymentTransaction",
+                      {"label": "DeletePaymentTransaction"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteReports",
                       {"label": "DeleteReports"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSetting",
+                      {"label": "DeleteSetting"}
                     ],
                     [
                       "...",
@@ -1437,8 +861,28 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeleteSponsor",
+                      {"label": "DeleteSponsor"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSponsorTier",
+                      {"label": "DeleteSponsorTier"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSponsors",
+                      {"label": "DeleteSponsors"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteUser",
                       {"label": "DeleteUser"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DownloadFile",
+                      {"label": "DownloadFile"}
                     ],
                     [
                       "...",
@@ -1457,6 +901,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GeneratePublicPagesHtml",
+                      {"label": "GeneratePublicPagesHtml"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GenerateReport",
                       {"label": "GenerateReport"}
                     ],
@@ -1467,8 +916,28 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetDonation",
+                      {"label": "GetDonation"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetDonations",
                       {"label": "GetDonations"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonationsReceipt",
+                      {"label": "GetDonationsReceipt"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonor",
+                      {"label": "GetDonor"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonors",
+                      {"label": "GetDonors"}
                     ],
                     [
                       "...",
@@ -1487,6 +956,16 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetMessage",
+                      {"label": "GetMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetMessages",
+                      {"label": "GetMessages"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetMetrics",
                       {"label": "GetMetrics"}
                     ],
@@ -1497,8 +976,18 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetNonprofitDonation",
+                      {"label": "GetNonprofitDonation"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetNonprofitDonations",
                       {"label": "GetNonprofitDonations"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetNonprofitDonationTier",
+                      {"label": "GetNonprofitDonationTier"}
                     ],
                     [
                       "...",
@@ -1509,6 +998,11 @@ Resources:
                       "...",
                       "${StackName}-GetNonprofitPage",
                       {"label": "GetNonprofitPage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetNonprofitReport",
+                      {"label": "GetNonprofitReport"}
                     ],
                     [
                       "...",
@@ -1529,6 +1023,16 @@ Resources:
                       "...",
                       "${StackName}-GetNonprofitUsers",
                       {"label": "GetNonprofitUsers"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetPaymentTransaction",
+                      {"label": "GetPaymentTransaction"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetPaymentTransactions",
+                      {"label": "GetPaymentTransactions"}
                     ],
                     [
                       "...",
@@ -1597,13 +1101,43 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-MigrateDatabase",
+                      {"label": "MigrateDatabase"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchContent",
+                      {"label": "PatchContent"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchContents",
                       {"label": "PatchContents"}
                     ],
                     [
                       "...",
+                      "${StackName}-PatchDonation",
+                      {"label": "PatchDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchMessage",
+                      {"label": "PatchMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchMetrics",
+                      {"label": "PatchMetrics"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchNonprofit",
                       {"label": "PatchNonprofit"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchNonprofitDonation",
+                      {"label": "PatchNonprofitDonation"}
                     ],
                     [
                       "...",
@@ -1624,6 +1158,11 @@ Resources:
                       "...",
                       "${StackName}-PatchNonprofitStatus",
                       {"label": "PatchNonprofitStatus"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchPaymentTransaction",
+                      {"label": "PatchPaymentTransaction"}
                     ],
                     [
                       "...",
@@ -1662,6 +1201,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PatchSponsorTiers",
+                      {"label": "PatchSponsorTiers"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchUser",
                       {"label": "PatchUser"}
                     ],
@@ -1669,6 +1213,16 @@ Resources:
                       "...",
                       "${StackName}-PostContent",
                       {"label": "PostContent"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostDonation",
+                      {"label": "PostDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostDonationsReceipt",
+                      {"label": "PostDonationsReceipt"}
                     ],
                     [
                       "...",
@@ -1687,6 +1241,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PostNonprofit",
+                      {"label": "PostNonprofit"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PostNonprofitDonation",
                       {"label": "PostNonprofitDonation"}
                     ],
@@ -1697,6 +1256,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PostNonprofitReport",
+                      {"label": "PostNonprofitReport"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PostNonprofitSlide",
                       {"label": "PostNonprofitSlide"}
                     ],
@@ -1704,6 +1268,11 @@ Resources:
                       "...",
                       "${StackName}-PostNonprofitUser",
                       {"label": "PostNonprofitUser"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostPaymentTransaction",
+                      {"label": "PostPaymentTransaction"}
                     ],
                     [
                       "...",
@@ -1737,6 +1306,26 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PutNonprofitSEO",
+                      {"label": "PutNonprofitSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutNonprofitSocialSharing",
+                      {"label": "PutNonprofitSocialSharing"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutSEO",
+                      {"label": "PutSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutSocialSharing",
+                      {"label": "PutSocialSharing"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-RegisterNonprofit",
                       {"label": "RegisterNonprofit"}
                     ],
@@ -1764,6 +1353,16 @@ Resources:
                       "...",
                       "${StackName}-SearchNonprofits",
                       {"label": "SearchNonprofits"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-SecurityHeadersAdminPages",
+                      {"label": "SecurityHeadersAdminPages"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-SecurityHeadersUploads",
+                      {"label": "SecurityHeadersUploads"}
                     ],
                     [
                       "...",
@@ -1804,12 +1403,25 @@ Resources:
                       "...",
                       "${AWS::Region}.${StackName}-SecurityHeadersUploads",
                       {"label": "SecurityHeadersUploads"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-WarmSEO",
+                      {"label": "WarmSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-WarmSocialSharing",
+                      {"label": "WarmSocialSharing"}
                     ]
                   ],
                   "view": "timeSeries",
                   "stacked": false,
                   "region": "${AWS::Region}",
                   "title": "All Lambda Errors",
+                  "legend": {
+                    "position": "hidden"
+                  },
                   "period": 300,
                   "stat": "Sum"
                 }
@@ -1824,8 +1436,13 @@ Resources:
                   "metrics": [
                     [
                       "AWS/Lambda",
-                      "Duration",
+                      "Errors",
                       "FunctionName",
+                      "${StackName}-AdminPostDonationsReceipt",
+                      {"label": "AdminPostDonationsReceipt"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-AdminRegisterNonprofit",
                       {"label": "AdminRegisterNonprofit"}
                     ],
@@ -1843,6 +1460,11 @@ Resources:
                       "...",
                       "${StackName}-AuthorizeUsers",
                       {"label": "AuthorizeUsers"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-BootstrapDatabase",
+                      {"label": "BootstrapDatabase"}
                     ],
                     [
                       "...",
@@ -1891,6 +1513,16 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeleteDonation",
+                      {"label": "DeleteDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteDonor",
+                      {"label": "DeleteDonor"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteFile",
                       {"label": "DeleteFile"}
                     ],
@@ -1898,6 +1530,31 @@ Resources:
                       "...",
                       "${StackName}-DeleteFiles",
                       {"label": "DeleteFiles"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteMessage",
+                      {"label": "DeleteMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteMetrics",
+                      {"label": "DeleteMetrics"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofit",
+                      {"label": "DeleteNonprofit"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofitDonation",
+                      {"label": "DeleteNonprofitDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteNonprofitDonationTiers",
+                      {"label": "DeleteNonprofitDonationTiers"}
                     ],
                     [
                       "...",
@@ -1911,8 +1568,18 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeletePaymentTransaction",
+                      {"label": "DeletePaymentTransaction"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteReports",
                       {"label": "DeleteReports"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSetting",
+                      {"label": "DeleteSetting"}
                     ],
                     [
                       "...",
@@ -1921,8 +1588,28 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-DeleteSponsor",
+                      {"label": "DeleteSponsor"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSponsorTier",
+                      {"label": "DeleteSponsorTier"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DeleteSponsors",
+                      {"label": "DeleteSponsors"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-DeleteUser",
                       {"label": "DeleteUser"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-DownloadFile",
+                      {"label": "DownloadFile"}
                     ],
                     [
                       "...",
@@ -1941,6 +1628,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GeneratePublicPagesHtml",
+                      {"label": "GeneratePublicPagesHtml"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GenerateReport",
                       {"label": "GenerateReport"}
                     ],
@@ -1951,8 +1643,28 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetDonation",
+                      {"label": "GetDonation"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetDonations",
                       {"label": "GetDonations"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonationsReceipt",
+                      {"label": "GetDonationsReceipt"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonor",
+                      {"label": "GetDonor"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetDonors",
+                      {"label": "GetDonors"}
                     ],
                     [
                       "...",
@@ -1971,6 +1683,16 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetMessage",
+                      {"label": "GetMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetMessages",
+                      {"label": "GetMessages"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetMetrics",
                       {"label": "GetMetrics"}
                     ],
@@ -1981,8 +1703,18 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-GetNonprofitDonation",
+                      {"label": "GetNonprofitDonation"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-GetNonprofitDonations",
                       {"label": "GetNonprofitDonations"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetNonprofitDonationTier",
+                      {"label": "GetNonprofitDonationTier"}
                     ],
                     [
                       "...",
@@ -1993,6 +1725,11 @@ Resources:
                       "...",
                       "${StackName}-GetNonprofitPage",
                       {"label": "GetNonprofitPage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetNonprofitReport",
+                      {"label": "GetNonprofitReport"}
                     ],
                     [
                       "...",
@@ -2013,6 +1750,16 @@ Resources:
                       "...",
                       "${StackName}-GetNonprofitUsers",
                       {"label": "GetNonprofitUsers"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetPaymentTransaction",
+                      {"label": "GetPaymentTransaction"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-GetPaymentTransactions",
+                      {"label": "GetPaymentTransactions"}
                     ],
                     [
                       "...",
@@ -2081,13 +1828,43 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-MigrateDatabase",
+                      {"label": "MigrateDatabase"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchContent",
+                      {"label": "PatchContent"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchContents",
                       {"label": "PatchContents"}
                     ],
                     [
                       "...",
+                      "${StackName}-PatchDonation",
+                      {"label": "PatchDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchMessage",
+                      {"label": "PatchMessage"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchMetrics",
+                      {"label": "PatchMetrics"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchNonprofit",
                       {"label": "PatchNonprofit"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchNonprofitDonation",
+                      {"label": "PatchNonprofitDonation"}
                     ],
                     [
                       "...",
@@ -2108,6 +1885,11 @@ Resources:
                       "...",
                       "${StackName}-PatchNonprofitStatus",
                       {"label": "PatchNonprofitStatus"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PatchPaymentTransaction",
+                      {"label": "PatchPaymentTransaction"}
                     ],
                     [
                       "...",
@@ -2146,6 +1928,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PatchSponsorTiers",
+                      {"label": "PatchSponsorTiers"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PatchUser",
                       {"label": "PatchUser"}
                     ],
@@ -2153,6 +1940,16 @@ Resources:
                       "...",
                       "${StackName}-PostContent",
                       {"label": "PostContent"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostDonation",
+                      {"label": "PostDonation"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostDonationsReceipt",
+                      {"label": "PostDonationsReceipt"}
                     ],
                     [
                       "...",
@@ -2171,6 +1968,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PostNonprofit",
+                      {"label": "PostNonprofit"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PostNonprofitDonation",
                       {"label": "PostNonprofitDonation"}
                     ],
@@ -2181,6 +1983,11 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PostNonprofitReport",
+                      {"label": "PostNonprofitReport"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-PostNonprofitSlide",
                       {"label": "PostNonprofitSlide"}
                     ],
@@ -2188,6 +1995,11 @@ Resources:
                       "...",
                       "${StackName}-PostNonprofitUser",
                       {"label": "PostNonprofitUser"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PostPaymentTransaction",
+                      {"label": "PostPaymentTransaction"}
                     ],
                     [
                       "...",
@@ -2221,6 +2033,26 @@ Resources:
                     ],
                     [
                       "...",
+                      "${StackName}-PutNonprofitSEO",
+                      {"label": "PutNonprofitSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutNonprofitSocialSharing",
+                      {"label": "PutNonprofitSocialSharing"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutSEO",
+                      {"label": "PutSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-PutSocialSharing",
+                      {"label": "PutSocialSharing"}
+                    ],
+                    [
+                      "...",
                       "${StackName}-RegisterNonprofit",
                       {"label": "RegisterNonprofit"}
                     ],
@@ -2248,6 +2080,16 @@ Resources:
                       "...",
                       "${StackName}-SearchNonprofits",
                       {"label": "SearchNonprofits"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-SecurityHeadersAdminPages",
+                      {"label": "SecurityHeadersAdminPages"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-SecurityHeadersUploads",
+                      {"label": "SecurityHeadersUploads"}
                     ],
                     [
                       "...",
@@ -2288,13 +2130,25 @@ Resources:
                       "...",
                       "${AWS::Region}.${StackName}-SecurityHeadersUploads",
                       {"label": "SecurityHeadersUploads"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-WarmSEO",
+                      {"label": "WarmSEO"}
+                    ],
+                    [
+                      "...",
+                      "${StackName}-WarmSocialSharing",
+                      {"label": "WarmSocialSharing"}
                     ]
-
                   ],
                   "view": "timeSeries",
                   "stacked": false,
                   "region": "${AWS::Region}",
-                  "title": "All Lambda Average Request Duration"
+                  "title": "All Lambda Average Request Duration",
+                  "legend": {
+                    "position": "hidden"
+                  }
                 }
               },
               {
@@ -2302,1411 +2156,245 @@ Resources:
                 "x": 0,
                 "y": 24,
                 "width": 6,
-                "height": 3,
+                "height": 6,
                 "properties": {
-                  "title": "Nonprofits Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitsTableReadThrottleAlarm.Arn}"
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "ServerlessDatabaseCapacity",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
                     ]
-                  },
+                  ],
                   "view": "timeSeries",
                   "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 27,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Nonprofits Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
+                  "region": "${AWS::Region}",
+                  "title": "RDS Capacity"
                 }
               },
               {
                 "type": "metric",
                 "x": 6,
                 "y": 24,
-                "width": 9,
+                "width": 6,
                 "height": 6,
                 "properties": {
+                  "title": "RDS CPU Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsCpuUtilizationAlarm.Arn}"
+                    ]
+                  },
                   "view": "timeSeries",
                   "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${NonprofitsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Nonprofits - Read"
+                  "type": "chart"
                 }
               },
               {
                 "type": "metric",
-                "x": 15,
+                "x": 12,
                 "y": 24,
-                "width": 9,
+                "width": 6,
                 "height": 6,
                 "properties": {
+                  "title": "RDS FreeLocalStorage Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsFreeLocalStorageAlarm.Arn}"
+                    ]
+                  },
                   "view": "timeSeries",
                   "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${NonprofitsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 18,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "RDS FreeableMemory Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsFreeableMemoryAlarm.Arn}"
                     ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Nonprofits - Write"
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
                 }
               },
               {
                 "type": "metric",
                 "x": 0,
                 "y": 30,
-                "width": 6,
-                "height": 3,
+                "width": 12,
+                "height": 6,
                 "properties": {
-                  "title": "NonprofitSlides Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitSlidesTableReadThrottleAlarm.Arn}"
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "InsertLatency",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "CommitLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "DeleteLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "SelectLatency",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "UpdateLatency",
+                      ".",
+                      "."
                     ]
-                  },
+                  ],
                   "view": "timeSeries",
                   "stacked": false,
-                  "type": "chart"
+                  "region": "${AWS::Region}",
+                  "title": "RDS Latency"
                 }
               },
               {
                 "type": "metric",
-                "x": 0,
-                "y": 33,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "NonprofitSlides Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitSlidesTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
+                "x": 12,
                 "y": 30,
-                "width": 9,
+                "width": 12,
                 "height": 6,
                 "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
                   "metrics": [
                     [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${NonprofitSlidesTable}",
-                      {"label": "Provisioned"}
+                      "AWS/RDS",
+                      "InsertThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
                     ],
                     [
+                      "...",
+                      "CommitThroughput",
                       ".",
-                      "ConsumedReadCapacityUnits",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "DeleteThroughput",
                       ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "SelectThroughput",
                       ".",
-                      {"label": "Consumed"}
+                      "."
+                    ],
+                    [
+                      "...",
+                      "UpdateThroughput",
+                      ".",
+                      "."
                     ]
                   ],
-                  "region": "${AWS::Region}",
-                  "title": "NonprofitSlides - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 30,
-                "width": 9,
-                "height": 6,
-                "properties": {
                   "view": "timeSeries",
                   "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${NonprofitSlidesTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
                   "region": "${AWS::Region}",
-                  "title": "NonprofitSlides - Write"
+                  "title": "RDS Throughput"
                 }
               },
               {
                 "type": "metric",
                 "x": 0,
                 "y": 36,
-                "width": 6,
-                "height": 3,
+                "width": 12,
+                "height": 6,
                 "properties": {
-                  "title": "Donations Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${DonationsTableReadThrottleAlarm.Arn}"
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "ConnectionAttempts",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
+                    ],
+                    [
+                      "...",
+                      "DatabaseConnections",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "Queries",
+                      ".",
+                      "."
+                    ],
+                    [
+                      "...",
+                      "ActiveTransactions",
+                      ".",
+                      "."
                     ]
-                  },
+                  ],
                   "view": "timeSeries",
                   "stacked": false,
-                  "type": "chart"
+                  "region": "${AWS::Region}",
+                  "title": "RDS Connection Activity"
                 }
               },
               {
                 "type": "metric",
-                "x": 0,
-                "y": 39,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Donations Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${DonationsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
+                "x": 12,
                 "y": 36,
-                "width": 9,
+                "width": 12,
                 "height": 6,
                 "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
                   "metrics": [
                     [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${DonationsTable}",
-                      {"label": "Provisioned"}
+                      "AWS/RDS",
+                      "BlockedTransactions",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}"
                     ],
                     [
+                      "...",
+                      "Deadlocks",
                       ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Donations - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 36,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${DonationsTable}",
-                      {"label": "Provisioned"}
+                      "."
                     ],
                     [
+                      "...",
+                      "AbortedClients",
                       ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Donations - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 42,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Donors Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${DonorsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 45,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Donors Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${DonorsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 42,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${DonorsTable}",
-                      {"label": "Provisioned"}
+                      "."
                     ],
                     [
+                      "...",
+                      "LoginFailures",
                       ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
+                      "."
                     ]
                   ],
+                  "view": "timeSeries",
+                  "stacked": false,
                   "region": "${AWS::Region}",
-                  "title": "Donors - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 42,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${DonorsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Donors - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 48,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "NonprofitDonationTiers Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitDonationTiersTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 51,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "NonprofitDonationTiers Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${NonprofitDonationTiersTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 48,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${NonprofitDonationTiersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "NonprofitDonationTiers - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 48,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${NonprofitDonationTiersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "NonprofitDonationTiers - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 54,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Users Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${UsersTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 57,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Users Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${UsersTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 54,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${UsersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Users - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 54,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${UsersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Users - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 60,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Contents Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${ContentsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 63,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Contents Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${ContentsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 60,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${ContentsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Contents - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 60,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${ContentsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Contents - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 66,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Files Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${FilesTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 69,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Files Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${FilesTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 66,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${FilesTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Files - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 66,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${FilesTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Files - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 72,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Messages Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${MessagesTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 75,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Messages Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${MessagesTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 72,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${MessagesTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Messages - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 72,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${MessagesTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Messages - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 78,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Metrics Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${MetricsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 81,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Metrics Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${MetricsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 78,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${MetricsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Metrics - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 78,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${MetricsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Metrics - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 84,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "PaymentTransactions Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${PaymentTransactionsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 87,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "PaymentTransactions Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${PaymentTransactionsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 84,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${PaymentTransactionsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "PaymentTransactions - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 84,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${PaymentTransactionsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "PaymentTransactions - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 90,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Reports Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${ReportsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 93,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Reports Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${ReportsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 90,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${ReportsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Reports - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 90,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${ReportsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Reports - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 96,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Settings Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SettingsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 99,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Settings Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SettingsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 96,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${SettingsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Settings - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 96,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${SettingsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Settings - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 102,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Sponsors Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SponsorsTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 105,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "Sponsors Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SponsorsTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 102,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${SponsorsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Sponsors - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 102,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${SponsorsTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "Sponsors - Write"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 108,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "SponsorTiers Read Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SponsorTiersTableReadThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 0,
-                "y": 111,
-                "width": 6,
-                "height": 3,
-                "properties": {
-                  "title": "SponsorTiers Write Throttle",
-                  "annotations": {
-                    "alarms": [
-                      "${SponsorTiersTableWriteThrottleAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 6,
-                "y": 108,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedReadCapacityUnits",
-                      "TableName",
-                      "${SponsorTiersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedReadCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "SponsorTiers - Read"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 15,
-                "y": 108,
-                "width": 9,
-                "height": 6,
-                "properties": {
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "metrics": [
-                    [
-                      "AWS/DynamoDB",
-                      "ProvisionedWriteCapacityUnits",
-                      "TableName",
-                      "${SponsorTiersTable}",
-                      {"label": "Provisioned"}
-                    ],
-                    [
-                      ".",
-                      "ConsumedWriteCapacityUnits",
-                      ".",
-                      ".",
-                      {"label": "Consumed"}
-                    ]
-                  ],
-                  "region": "${AWS::Region}",
-                  "title": "SponsorTiers - Write"
+                  "title": "RDS Unexpected Activity"
                 }
               }
             ]
           }
         - {}
+
