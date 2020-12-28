@@ -43,7 +43,7 @@
 		"@claviska/jquery-minicolors": "^2.2.6",
 		"amazon-cognito-identity-js": "^3.0.2",
 		"aws-sdk": "^2.336.0",
-		"axios": "^0.19.0",
+		"axios": "^0.21.1",
 		"babel-loader": "^8.0.4",
 		"browser-sync": "^2.26.9",
 		"browser-sync-middleware-spa": "^1.0.0",
@@ -87,7 +87,7 @@
 		"vuedraggable": "^2.14.1",
 		"vuex": "^2.4.1",
 		"vuex-persistedstate": "^2.0.0",
-		"webpack": "^4.29.6",
+		"webpack": "^5.0.0",
 		"webpack-cli": "^3.3.5",
 		"webpack-dev-server": "^3.2.1",
 		"whatwg-fetch": "^3.0.0"
