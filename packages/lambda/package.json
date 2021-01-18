@@ -18,7 +18,7 @@
 	"author": "Firespring",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"aws-sdk": "^2.380.0",
+		"aws-sdk": "^2.814.0",
 		"config": "^1.30.0",
 		"dotenv": "^4.0.0",
 		"json-loader": "^0.5.7",
