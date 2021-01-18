@@ -19,7 +19,7 @@
 		"rimraf": "^2.6.1"
 	},
 	"dependencies": {
-		"aws-sdk": "^2.404.0",
+		"aws-sdk": "^2.814.0",
 		"config": "^1.30.0",
 		"mime": "^2.2.2"
 	}
