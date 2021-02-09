@@ -32,6 +32,15 @@ Resources:
   AdminPagesS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       WebsiteConfiguration:
         IndexDocument: index.html
 
@@ -41,16 +50,33 @@ Resources:
       Bucket: !Ref AdminPagesS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${AdminPagesS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${AdminPagesS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${AdminPagesS3}/*
 
   PublicPagesS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       WebsiteConfiguration:
         IndexDocument: index.html
 
@@ -60,16 +86,33 @@ Resources:
       Bucket: !Ref PublicPagesS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${PublicPagesS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${PublicPagesS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${PublicPagesS3}/*
 
   UploadsS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       CorsConfiguration:
         CorsRules:
           - AllowedMethods:
@@ -90,12 +133,20 @@ Resources:
       Bucket: !Ref UploadsS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${UploadsS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${UploadsS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${UploadsS3}/*
 
   Reports:
     Type: AWS::S3::Bucket
@@ -128,6 +179,15 @@ Resources:
   GivesourceCache:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       CorsConfiguration:
         CorsRules:
           - AllowedMethods:
@@ -147,12 +207,20 @@ Resources:
       Bucket: !Ref GivesourceCache
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${GivesourceCache}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
 
   # AWS CloudFront Resources
 
@@ -162,11 +230,10 @@ Resources:
       DistributionConfig:
         Aliases: !If [HasAdminPagesCNAMEs, !Ref AdminPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
+          - DomainName: !GetAtt AdminPagesS3.DomainName
             Id: !Ref AdminPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+            S3OriginConfig:
+              OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givsource admin pages S3 bucket
         DefaultRootObject: index.html
@@ -197,11 +264,15 @@ Resources:
       DistributionConfig:
         Aliases: !If [HasPublicPagesCNAMEs, !Ref PublicPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
-            Id: !Ref PublicPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+        - Id: !Join [' ', ['S3 Origin', !Ref PublicPagesS3]]
+          DomainName: !GetAtt PublicPagesS3.DomainName
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
+        - Id: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
+          DomainName:
+            !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
         Enabled: true
         Comment: Distribution for Givesource(R) public pages S3 bucket
         DefaultRootObject: index.html
@@ -213,8 +284,27 @@ Resources:
               Forward: none
             Headers:
               - User-Agent
-          TargetOriginId: !Ref PublicPagesS3
+          TargetOriginId: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
           ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+        - TargetOriginId: !Join [' ', ['S3 Origin', !Ref PublicPagesS3]]
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+            Headers:
+              - User-Agent
+          ViewerProtocolPolicy: redirect-to-https
+          PathPattern: /*
+        - TargetOriginId: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+            Headers:
+              - User-Agent
+          ViewerProtocolPolicy: redirect-to-https
+          PathPattern: img/*.png
         PriceClass: PriceClass_200
         ViewerCertificate:
           AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
@@ -233,11 +323,10 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt UploadsS3.WebsiteURL ] ]
-            Id: !Ref UploadsS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+        - DomainName: !GetAtt UploadsS3.DomainName
+          Id: !Ref UploadsS3
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givesource(R) uploads S3 bucket
         DefaultRootObject: index.html
@@ -259,16 +348,21 @@ Resources:
             ResponsePagePath: /index.html
     DependsOn: UploadsS3
 
+  CloudFrontOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref UploadsS3
+
   CachingDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt GivesourceCache.WebsiteURL ] ]
-            Id: !Ref GivesourceCache
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+        - DomainName: !GetAtt GivesourceCache.DomainName
+          Id: !Ref GivesourceCache
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givesource(R) caching S3 bucket
         DefaultRootObject: index.html
