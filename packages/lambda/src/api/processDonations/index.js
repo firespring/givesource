@@ -156,8 +156,8 @@ export function handle(event, context, callback) {
 		});
 	}).then((popPT) => {
 		paymentTransaction = popPT;
-		// return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction);
-		return paymentTransactionsRepository.upsert(paymentTransaction, {});
+		return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction);
+		// return paymentTransactionsRepository.upsert(paymentTransaction, {}); // uncomment this for testing ease
 	}).then((response) => {
 		paymentTransaction = response;
 		paymentTransaction.timezone = settings.EVENT_TIMEZONE;
@@ -168,8 +168,8 @@ export function handle(event, context, callback) {
 			donation.paymentTransactionStatus = response.transactionStatus;
 		});
 	}).then(function () {
-		// return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor);
-		return donorsRepository.upsert(donor, {});
+		return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor);
+		// return donorsRepository.upsert(donor, {}); // uncomment this for testing ease
 	}).then(function (savedDonor) {
 		donor = savedDonor;
 		let promise = Promise.resolve();

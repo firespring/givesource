@@ -256,6 +256,10 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
     DependsOn: AdminPagesS3
 
   PublicPagesDistribution:
@@ -264,15 +268,10 @@ Resources:
       DistributionConfig:
         Aliases: !If [HasPublicPagesCNAMEs, !Ref PublicPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
-        - Id: !Join [' ', ['S3 Origin', !Ref PublicPagesS3]]
+        - Id: !Ref PublicPagesS3
           DomainName: !GetAtt PublicPagesS3.DomainName
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
-        - Id: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
-          DomainName:
-            !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
-          CustomOriginConfig:
-            OriginProtocolPolicy: http-only
         Enabled: true
         Comment: Distribution for Givesource(R) public pages S3 bucket
         DefaultRootObject: index.html
@@ -282,29 +281,8 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
-            Headers:
-              - User-Agent
-          TargetOriginId: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
+          TargetOriginId: !Ref PublicPagesS3
           ViewerProtocolPolicy: redirect-to-https
-        CacheBehaviors:
-        - TargetOriginId: !Join [' ', ['S3 Origin', !Ref PublicPagesS3]]
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-            Headers:
-              - User-Agent
-          ViewerProtocolPolicy: redirect-to-https
-          PathPattern: /*
-        - TargetOriginId: !Join [' ', ['Custom Origin', !Ref PublicPagesS3]]
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-            Headers:
-              - User-Agent
-          ViewerProtocolPolicy: redirect-to-https
-          PathPattern: img/*.png
         PriceClass: PriceClass_200
         ViewerCertificate:
           AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
@@ -314,6 +292,10 @@ Resources:
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
     DependsOn: PublicPagesS3
@@ -344,6 +326,10 @@ Resources:
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
     DependsOn: UploadsS3
