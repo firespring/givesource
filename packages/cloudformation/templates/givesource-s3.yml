@@ -167,7 +167,7 @@ Resources:
       Bucket: !Ref Reports
       PolicyDocument:
         Statement:
-          Sid: allow-ssl-requests-only
+        - Sid: allow-ssl-requests-only
           Effect: Deny
           Principal: '*'
           Action: s3:*
