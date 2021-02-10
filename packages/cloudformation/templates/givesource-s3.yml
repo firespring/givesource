@@ -62,7 +62,7 @@ Resources:
           Effect: Allow
           Principal:
             CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
-          Action: s3:*
+          Action: s3:Get*
           Resource: !Sub arn:aws:s3:::${AdminPagesS3}/*
 
   PublicPagesS3:
@@ -98,7 +98,7 @@ Resources:
           Effect: Allow
           Principal:
             CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
-          Action: s3:*
+          Action: s3:Get*
           Resource: !Sub arn:aws:s3:::${PublicPagesS3}/*
 
   UploadsS3:
@@ -145,7 +145,7 @@ Resources:
           Effect: Allow
           Principal:
             CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
-          Action: s3:*
+          Action: s3:Get*
           Resource: !Sub arn:aws:s3:::${UploadsS3}/*
 
   Reports:
@@ -219,7 +219,7 @@ Resources:
           Effect: Allow
           Principal:
             CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
-          Action: s3:*
+          Action: s3:Get*
           Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
 
   # AWS CloudFront Resources
@@ -281,6 +281,8 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
+            Headers:
+              - User-Agent
           TargetOriginId: !Ref PublicPagesS3
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200
