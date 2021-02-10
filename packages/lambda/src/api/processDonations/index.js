@@ -162,7 +162,7 @@ export function handle(event, context, callback) {
 		paymentTransaction = response;
 		paymentTransaction.timezone = settings.EVENT_TIMEZONE;
 		donations.forEach((donation) => {
-			donation.paymentTransactionId = response.id;
+			donation.paymentTransactionId = !payment.is_test_mode ? response.id : 0;
 			donation.paymentTransactionAmount = response.transactionAmount;
 			donation.paymentTransactionIsTestMode = response.isTestMode;
 			donation.paymentTransactionStatus = response.transactionStatus;
@@ -172,6 +172,7 @@ export function handle(event, context, callback) {
 		// return donorsRepository.upsert(donor, {}); // uncomment this for testing ease
 	}).then(function (savedDonor) {
 		donor = savedDonor;
+		donor.id = !payment.is_test_mode ? donor.id : 0;
 		let promise = Promise.resolve();
 		donations.forEach(function (donation) {
 			promise = promise.then(function () {
