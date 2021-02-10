@@ -18,6 +18,7 @@ const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
 const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * SponsorTiersRepository constructor
@@ -98,6 +99,37 @@ SponsorTiersRepository.prototype.getAll = function () {
 			allModels = models;
 		}).then(function () {
 			return allModels.SponsorTier.findAll();
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Get Contents by ids
+ *
+ * @param {Array} ids
+ * @return {Promise}
+ */
+SponsorTiersRepository.prototype.batchGetById = function (ids) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (ids.length) {
+				return allModels.SponsorTier.findAll({
+					where: {
+						id: {
+							[Sequelize.Op.or]: ids
+						},
+					}
+				});
+			}
 		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {

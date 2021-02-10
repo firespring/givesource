@@ -24,20 +24,21 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new SponsorTiersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsorTiers']);
+	const keys = request.get('sponsorTiers', []).map(function (tier) {
+		return tier.id;
+	});
 
-	let sponsorTiers = [];
 	request.validate().then(function () {
+		return repository.batchGetById(keys);
+	}).then(function (oldTiers) {
 		let promise = Promise.resolve();
 		request.get('sponsorTiers', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return repository.populate(data);
-			}).then(function (sponsorTier) {
-				sponsorTiers.push(sponsorTier);
+				const oldTier = _.find(oldTiers, {id: data.id});
+				return repository.upsert(oldTier, data);
 			});
 		});
 		return promise;
-	}).then(function () {
-		return repository.batchUpdate(sponsorTiers);
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
