@@ -24,18 +24,27 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new SponsorTiersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsorTiers']);
-	const keys = request.get('sponsorTiers', []).map(function (tier) {
-		return tier.id;
-	});
 
+	let sponsorTiers = [];
 	request.validate().then(function () {
-		return repository.batchGetById(keys);
-	}).then(function (oldTiers) {
 		let promise = Promise.resolve();
 		request.get('sponsorTiers', []).forEach(function (data) {
 			promise = promise.then(function () {
-				const oldTier = _.find(oldTiers, {id: data.id});
-				return repository.upsert(oldTier, data);
+				return repository.populate(data).then(function (sponsorTier) {
+					sponsorTiers.push(sponsorTier);
+				});
+			});
+		});
+		return promise;
+	}).then(function () {
+		let promise = Promise.resolve();
+		sponsorTiers.forEach(function (sponsorTier) {
+			promise = promise.then(function () {
+				return sponsorTier.validate().then(function () {
+					return repository.upsert(sponsorTier, {});
+				}).catch(function (err) {
+					(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+				});
 			});
 		});
 		return promise;

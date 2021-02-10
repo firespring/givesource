@@ -110,37 +110,6 @@ SponsorTiersRepository.prototype.getAll = function () {
 };
 
 /**
- * Get Contents by ids
- *
- * @param {Array} ids
- * @return {Promise}
- */
-SponsorTiersRepository.prototype.batchGetById = function (ids) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (ids.length) {
-				return allModels.SponsorTier.findAll({
-					where: {
-						id: {
-							[Sequelize.Op.or]: ids
-						},
-					}
-				});
-			}
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
-
-/**
  * Get a count of all SponsorTiers
  *
  * @return {Promise}
