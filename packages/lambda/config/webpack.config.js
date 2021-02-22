@@ -21,7 +21,7 @@ const path = require('path');
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
 
 module.exports = {
-	mode: process.env.NODE_ENV || 'development',
+	mode: 'development',
 	entry: {
 		// Api Gateway Authorizer Lambda Function
 		AuthorizeUsers: './src/custom/authorizeUsers/index.js',
