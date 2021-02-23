@@ -666,6 +666,8 @@ Resources:
         CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
       TimeoutInMinutes: 40
+    DependsOn:
+      - AuroraDbStack
 
 Outputs:
 

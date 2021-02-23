@@ -26,7 +26,11 @@
                         <div class="leaderboard-item__num">{{ position(columnIndex, nonprofitIndex) }}.</div>
                         <div class="leaderboard-item__info">
                             <h3>
-                                <router-link :to="{ name: 'nonprofit-landing-page', params: {slug: nonprofit.slug} }">{{ nonprofit.legalName}}</router-link>
+                                <a
+                                  :href="'/nonprofits/' + nonprofit.slug"
+                                  @click="goToNonprofitLandingPage($event, nonprofit)">
+                                    {{ nonprofit.legalName}}
+                                </a>
                             </h3>
                         </div>
                         <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
@@ -81,10 +85,20 @@
 			}
 		},
 		methods: {
-			position: function (columnIndex, nonprofitIndex) {
-				const columnSize = Math.ceil(this.nonprofits.length / 2);
-				return numeral(columnIndex * columnSize + nonprofitIndex + 1).format('00');
-			}
+      position: function (columnIndex, nonprofitIndex) {
+        const columnSize = Math.ceil(this.nonprofits.length / 2);
+        return numeral(columnIndex * columnSize + nonprofitIndex + 1).format('00');
+      },
+      goToNonprofitLandingPage: function (event, nonprofit) {
+        const vue = this;
+        event.preventDefault();
+        $('body').addClass('has-loader');
+        vue.addModal('spinner');
+        vue.$router.push({
+          name: 'nonprofit-landing-page',
+          params: { slug: nonprofit.slug }
+        });
+      }
 		}
 	};
 </script>

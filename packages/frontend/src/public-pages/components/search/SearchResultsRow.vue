@@ -22,7 +22,11 @@
 
         <div class="leaderboard-item__info">
             <h3>
-                <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }">{{ nonprofit.legalName }}</router-link>
+                <a
+                  :href="'/nonprofits/' + nonprofit.slug"
+                  @click="goToNonprofitLandingPage($event, nonprofit)">
+                    {{ nonprofit.legalName}}
+                </a>
             </h3>
             <p v-if="nonprofit.shortDescription">
                 {{ nonprofit.shortDescription }}
@@ -68,13 +72,23 @@
 			'nonprofit'
 		],
 		methods: {
-			donate: function () {
-				const vue = this;
+      donate: function () {
+        const vue = this;
 
-				vue.addModal('donation-tiers', {
-					nonprofit: vue.nonprofit
-				});
-			}
+        vue.addModal('donation-tiers', {
+          nonprofit: vue.nonprofit
+        });
+      },
+      goToNonprofitLandingPage: function (event, nonprofit) {
+        const vue = this;
+        event.preventDefault();
+        $('body').addClass('has-loader');
+        vue.addModal('spinner');
+        vue.$router.push({
+          name: 'nonprofit-landing-page',
+          params: { slug: nonprofit.slug }
+        });
+      }
 		}
 	};
 </script>

@@ -22,8 +22,9 @@
 
 <script>
 	import ComponentDonationCartModal from './donations/DonationCartModal.vue';
-	import ComponentDonationTiersModal from './donations/DonationTiersModal.vue';
-	import ComponentMenuModal from './MenuModal.vue';
+  import ComponentDonationTiersModal from './donations/DonationTiersModal.vue';
+  import ComponentMenuModal from './MenuModal.vue';
+  import ComponentSpinnerModal from './SpinnerModal.vue';
 
 	export default {
 		data: function () {
@@ -96,9 +97,10 @@
 			}
 		},
 		components: {
-			'menu-overlay': ComponentMenuModal,
-			'donation-cart': ComponentDonationCartModal,
-			'donation-tiers': ComponentDonationTiersModal,
+      'menu-overlay': ComponentMenuModal,
+      'donation-cart': ComponentDonationCartModal,
+      'donation-tiers': ComponentDonationTiersModal,
+      'spinner': ComponentSpinnerModal
 		}
 	};
 </script>
