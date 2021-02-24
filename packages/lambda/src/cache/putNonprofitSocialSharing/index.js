@@ -75,7 +75,7 @@ exports.handle = function (event, context, callback) {
 		console.log('template-data: %j', data);
 		return RenderHelper.renderTemplate('public.social-sharing', data);
 	}).then(html => {
-		return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, 'social-sharing/' + nonprofit.slug + '.html', html, 'public-read', 'text/html');
+		return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, 'social-sharing/' + nonprofit.slug + '.html', html, null, 'text/html');
 	}).catch(err => {
 		logger.log('Error!', err);
 		callback();

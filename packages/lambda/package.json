@@ -21,6 +21,7 @@
 		"aws-sdk": "^2.380.0",
 		"config": "^1.30.0",
 		"dotenv": "^4.0.0",
+		"increase-memory-limit": "^1.0.7",
 		"json-loader": "^0.5.7",
 		"mime": "^2.2.2",
 		"mysql2": "^2.1.0",
