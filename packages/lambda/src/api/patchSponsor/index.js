@@ -34,7 +34,7 @@ exports.handle = function (event, context, callback) {
 		sponsor = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		callback(null, sponsor.all());
+		callback(null, sponsor);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

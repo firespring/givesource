@@ -119,7 +119,7 @@
 					file: null,
 					name: null,
 					sponsorTierId: this.sponsorTierId ? this.sponsorTierId : null,
-					url: null,
+					url: '',
 				},
 
 				// Errors
@@ -227,7 +227,7 @@
 
 				promise.then(function () {
 					return vue.$request.post('sponsor-tiers/' + vue.formData.sponsorTierId + '/sponsors', {
-						fileId: file && file.hasOwnProperty('id') ? file.id : null,
+						fileId: file && file.hasOwnProperty('id') ? file.id : 0,
 						name: vue.formData.name,
 						sponsorTierId: vue.formData.sponsorTierId,
 						url: vue.formData.url
