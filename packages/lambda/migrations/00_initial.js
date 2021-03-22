@@ -419,11 +419,11 @@ module.exports = {
 					allowNull: false,
 				},
 				legalName: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
 				legalNameSearch: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
 				logoFileId: {
@@ -440,7 +440,7 @@ module.exports = {
 					allowNull: false,
 				},
 				slug: {
-					type: Sequelize.STRING(50),
+					type: Sequelize.STRING(255),
 					allowNull: false,
 				},
 				socialSharingDescription: {
