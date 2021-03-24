@@ -121,12 +121,10 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
-        #ReplicaRegion: !Ref ReplicaRegion
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 40
 
   RestApi:
-    Condition: NotReplicaRegion
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: !Sub |-
@@ -457,6 +455,7 @@ Resources:
       - AuroraDbStack
 
   ApiMessagesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -649,6 +648,7 @@ Resources:
       - RestApi
 
   CognitoInitialUser:
+    Condition: NotReplicaRegion
     Type: Custom::CognitoSuperAdminUser
     Properties:
       ServiceToken: !GetAtt CustomStack.Outputs.CognitoCreateUserFunctionArn
@@ -698,60 +698,46 @@ Resources:
 Outputs:
 
   AdminPagesCloudFrontDistribution:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
 
   AdminPagesCloudFrontUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
 
   AdminPagesS3BucketName:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3
 
   AdminPagesS3BucketUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3BucketUrl
 
   ApiUrl:
-    Condition: NotReplicaRegion
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
 
   LambdaRoleArn:
-    Condition: NotReplicaRegion
     Value: !GetAtt LambdaRole.Arn
 
   PublicPagesCloudFrontDistribution:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
 
   PublicPagesCloudFrontUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
 
   PublicPagesS3BucketName:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3
 
   PublicPagesS3BucketUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
 
   UploadsCloudFrontDistribution:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
 
   UploadsCloudFrontUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
 
   UploadsS3BucketName:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsS3
 
   UploadsS3BucketUrl:
-    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
@@ -763,5 +749,4 @@ Outputs:
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
 
   Version:
-    Condition: NotReplicaRegion
     Value: {{version}}
