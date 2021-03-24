@@ -33,6 +33,11 @@ Parameters:
     Type: String
     Default: "false"
 
+  ReplicaRegion:
+    Description: The region where this stack will be replicated
+    Type: String
+    Default: ""
+
 Mappings:
   ApiGateway:
     IntegrationRequestTemplate:
@@ -91,9 +96,12 @@ Conditions:
 
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
-Resources:
+  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
+  #IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
 
+Resources:
   AuroraDbStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -101,6 +109,7 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
         SecureLambdaRole: !Ref SecureLambdaRole
+        ReplicaRegion: !Ref ReplicaRegion
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
 
@@ -112,10 +121,12 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
+        #ReplicaRegion: !Ref ReplicaRegion
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 40
 
   RestApi:
+    Condition: NotReplicaRegion
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: !Sub |-
@@ -296,6 +307,7 @@ Resources:
           Value: givesource-lambda
 
   CustomStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -361,6 +373,7 @@ Resources:
         - !Ref SESManagedPolicy
 
   ApiContentsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -380,6 +393,7 @@ Resources:
       - AuroraDbStack
 
   ApiDonationsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -401,6 +415,7 @@ Resources:
       - CustomStack
 
   ApiDonorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -420,6 +435,7 @@ Resources:
       - AuroraDbStack
 
   ApiFilesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -460,6 +476,7 @@ Resources:
       - AuroraDbStack
 
   ApiMetricsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -479,6 +496,7 @@ Resources:
       - AuroraDbStack
 
   ApiNonprofitsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -500,6 +518,7 @@ Resources:
       - AuroraDbStack
 
   ApiPaymentTransactionsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -519,6 +538,7 @@ Resources:
       - AuroraDbStack
 
   ApiReportsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -539,6 +559,7 @@ Resources:
       - AuroraDbStack
 
   ApiSettingsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -564,6 +585,7 @@ Resources:
       - CustomStack
 
   ApiSponsorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -583,6 +605,7 @@ Resources:
       - AuroraDbStack
 
   ApiUsersStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -603,6 +626,7 @@ Resources:
       - AuroraDbStack
 
   ApiDeployStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -636,26 +660,28 @@ Resources:
       - AuroraDbStack
       - S3Stack
 
-  MonitoringStack:
-    Condition: EnableMonitoring
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        AdminEmail: !Ref AdminEmail
-        AdminPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDomainName
-        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
-        AdminPagesCNAMEs: !Join [",", !Ref AdminPagesCNAMEs]
-        PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
-        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
-        PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
-        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
-      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
-      TimeoutInMinutes: 20
-    DependsOn:
-      - CognitoInitialUser
+#  MonitoringStack:
+#    Condition: NotReplicaRegion
+#    Condition: EnableMonitoring
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      Parameters:
+#        StackName: !Ref AWS::StackName
+#        AdminEmail: !Ref AdminEmail
+#        AdminPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDomainName
+#        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
+#        AdminPagesCNAMEs: !Join [",", !Ref AdminPagesCNAMEs]
+#        PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
+#        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
+#        PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
+#        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
+#      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
+#      TimeoutInMinutes: 20
+#    DependsOn:
+#      - CognitoInitialUser
 
   CacheStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -672,53 +698,70 @@ Resources:
 Outputs:
 
   AdminPagesCloudFrontDistribution:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
 
   AdminPagesCloudFrontUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontUrl
 
   AdminPagesS3BucketName:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3
 
   AdminPagesS3BucketUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.AdminPagesS3BucketUrl
 
   ApiUrl:
+    Condition: NotReplicaRegion
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
 
   LambdaRoleArn:
+    Condition: NotReplicaRegion
     Value: !GetAtt LambdaRole.Arn
 
   PublicPagesCloudFrontDistribution:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
 
   PublicPagesCloudFrontUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontUrl
 
   PublicPagesS3BucketName:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3
 
   PublicPagesS3BucketUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.PublicPagesS3BucketUrl
 
   UploadsCloudFrontDistribution:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
 
   UploadsCloudFrontUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
 
   UploadsS3BucketName:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsS3
 
   UploadsS3BucketUrl:
+    Condition: NotReplicaRegion
     Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
 
   UserPoolId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
 
   Version:
+    Condition: NotReplicaRegion
     Value: {{version}}
