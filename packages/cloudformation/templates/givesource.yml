@@ -97,7 +97,6 @@ Conditions:
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
   NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
-  #IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
 
 Resources:
   AuroraDbStack:
@@ -109,7 +108,6 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
         SecureLambdaRole: !Ref SecureLambdaRole
-        ReplicaRegion: !Ref ReplicaRegion
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
 
