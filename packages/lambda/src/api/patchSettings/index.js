@@ -67,6 +67,7 @@ exports.handle = function (event, context, callback) {
 				socialSharingData[setting.key] = setting.value;
 			}
 		});
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSocialSharing', socialSharingData, 'RequestResponse');
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSEO', socialSharingData, 'RequestResponse');
 	}).then(function () {

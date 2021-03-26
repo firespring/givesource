@@ -42,6 +42,7 @@ exports.handle = function (event, context, callback) {
 		return repository.upsert(setting, {});
 	}).then(function (response) {
 		setting = response;
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);

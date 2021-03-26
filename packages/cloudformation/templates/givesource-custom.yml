@@ -6,6 +6,12 @@ Parameters:
   StackName:
     Type: String
 
+  ApiDistributionId:
+    Type: String
+
+  ApiDistributionUrl:
+    Type: String
+
   RestApi:
     Type: String
 
@@ -106,6 +112,27 @@ Resources:
     DependsOn:
       - AuthorizeUsersLambdaFunction
       - AuthorizeUsers
+
+  # Create Lambda Invalidation Function
+
+  ApiDistributionInvalidationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/ApiDistributionInvalidation.zip
+      Description: "Invalidate cloudfront cache for API Distribution for certain path(s)"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          DISTRIBUTION_ID: !Ref ApiDistributionId
+      FunctionName: !Sub |-
+        ${StackName}-ApiDistributionInvalidation
+      Handler: "index.handle"
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   ApiGatewayFlushCacheLambdaFunction:
     Type: AWS::Lambda::Function
@@ -753,7 +780,7 @@ Resources:
                 key: 'Content-Security-Policy',
                 value: "default-src 'none'; " +
                 "base-uri 'none'; " +
-                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
+                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
                 "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
                 "form-action 'self'; " +
                 "frame-ancestors 'self'; " +
@@ -793,7 +820,7 @@ Resources:
                 key: 'Content-Security-Policy',
                 value: "default-src 'none'; " +
                 "base-uri 'none'; " +
-                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
+                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
                 "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
                 "form-action 'self'; " +
                 "frame-ancestors 'self'; " +
@@ -959,7 +986,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+          "API_URL": "${ApiDistributionUrl}"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -989,7 +1016,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+          "API_URL": "${ApiDistributionUrl}"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -1025,7 +1052,7 @@ Resources:
       ServiceToken: !GetAtt SaveSettingsLambdaFunction.Arn
       Settings: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
+          "API_URL": "${ApiDistributionUrl}",
           "ADMIN_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_CLOUD_FRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",

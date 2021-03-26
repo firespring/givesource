@@ -29,6 +29,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.delete(request.urlParam('key'));
 	}).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return DynamicContentHelper.regenerateDynamicContent([request.urlParam('key')], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);

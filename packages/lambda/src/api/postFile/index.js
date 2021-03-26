@@ -37,6 +37,7 @@ exports.handle = function (event, context, callback) {
 		return repository.upsert(file, {});
 	}).then(function (model) {
 		file = model;
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/files*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return s3.getSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.get('path'), request.get('content_type'));

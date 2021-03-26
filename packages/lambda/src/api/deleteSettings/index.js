@@ -42,6 +42,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.batchDeleteByKey(settings);
 	}).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		return DynamicContentHelper.regenerateDynamicContent(_.map(settings, 'key'), process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);

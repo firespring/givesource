@@ -121,6 +121,82 @@ Resources:
       Name: !Sub |-
         ${AWS::StackName}
 
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for long lived caching with Givesource settings, contents, and files
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        Name: !Sub ${AWS::StackName}-Givesource-CachedPolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: ["Authorization"]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+    DependsOn: RestApi
+
+  NoCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for no caching with authorized headers for the admin area
+        DefaultTTL: 0
+        MaxTTL: 30
+        MinTTL: 0
+        Name: !Sub ${AWS::StackName}-Givesource-NoCachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: ["Authorization"]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+    DependsOn: RestApi
+
+  ApiDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - Id: !Ref RestApi
+          DomainName: !Sub ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
+          OriginPath: "/prod"
+          CustomOriginConfig:
+            OriginSSLProtocols: ["TLSv1.2"]
+            OriginProtocolPolicy: "https-only"
+        Enabled: true
+        Comment: Distribution for Givesource(R) api caching
+        DefaultCacheBehavior:
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt NoCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_200
+        CacheBehaviors:
+        - PathPattern: "/settings"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        - PathPattern: "/contents"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        - PathPattern: "/files"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+
   ApiGatewayManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -145,6 +221,16 @@ Resources:
           - Effect: Allow
             Action: cloudformation:DescribeStacks
             Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
+
+  CloudFrontManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: cloudfront:CreateInvalidation
+          Resource: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${ApiDistribution}
 
   CloudWatchLogsManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -277,6 +363,7 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
+        - !Ref CloudFrontManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref CognitoManagedPolicy
         - !Ref LambdaManagedPolicy
@@ -300,6 +387,8 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
+        ApiDistributionId: !Ref ApiDistribution
+        ApiDistributionUrl: !Join ["", ["https://", !GetAtt ApiDistribution.DomainName, "/"]]
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         SecureLambdaRole: !Ref SecureLambdaRole
@@ -685,7 +774,7 @@ Outputs:
 
   ApiUrl:
     Value: !Sub |-
-      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+      https://${ApiDistribution.DomainName}/
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn

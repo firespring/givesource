@@ -132,6 +132,7 @@ module.exports = {
 		VerifyEmail: './src/api/verifyEmail/index.js',
 
 		// Custom Lambda Functions
+    ApiDistributionInvalidation: './src/custom/apiDistributionInvalidation/index.js',
 		ApiGatewayFlushCache: './src/custom/apiGatewayFlushCache/index.js',
 		AssociateLambdaEdgeFunctions: './src/custom/associateLambdaEdgeFunctions/index.js',
 		CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
