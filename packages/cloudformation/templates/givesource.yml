@@ -96,6 +96,8 @@ Conditions:
 
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
+  IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
+
   NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
 
 Resources:
@@ -110,6 +112,14 @@ Resources:
         SecureLambdaRole: !Ref SecureLambdaRole
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
+
+  AuroraDbSnapshotCopyStack:
+    Condition: IsReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora-snapshot-copy.yml
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -658,25 +668,24 @@ Resources:
       - AuroraDbStack
       - S3Stack
 
-#  MonitoringStack:
-#    Condition: NotReplicaRegion
-#    Condition: EnableMonitoring
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      Parameters:
-#        StackName: !Ref AWS::StackName
-#        AdminEmail: !Ref AdminEmail
-#        AdminPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDomainName
-#        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
-#        AdminPagesCNAMEs: !Join [",", !Ref AdminPagesCNAMEs]
-#        PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
-#        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
-#        PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
-#        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
-#      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
-#      TimeoutInMinutes: 20
-#    DependsOn:
-#      - CognitoInitialUser
+  MonitoringStack:
+    Condition: EnableMonitoring
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        AdminEmail: !Ref AdminEmail
+        AdminPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDomainName
+        AdminPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.AdminPagesCloudFrontDistribution
+        AdminPagesCNAMEs: !Join [",", !Ref AdminPagesCNAMEs]
+        PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
+        PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
+        PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
+        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - CognitoInitialUser
 
   CacheStack:
     Condition: NotReplicaRegion
