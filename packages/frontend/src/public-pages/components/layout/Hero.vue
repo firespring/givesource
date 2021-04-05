@@ -31,15 +31,38 @@
 
         <div class="presented-by" v-if="presentedBy && foundationLogoUrl">
 
-            <div class="items-center">
-                Presented by
-                <div class="presented-by__logo">
-                    <a v-if="foundationUrl" :href="foundationUrl" target="_blank" rel="noopener noreferrer"><img alt="Foundation Logo" :src="foundationLogoUrl"></a>
-                    <img v-else alt="Foundation Logo" :src="foundationLogoUrl">
-                </div>
+          <div class="items-center">
+            Presented by
+            <div class="presented-by__logo">
+              <a
+                v-if="foundationUrl"
+                :href="foundationUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              ><img
+                alt="Foundation Logo"
+                :src="foundationLogoUrl"
+              ></a>
+              <img
+                v-else
+                alt="Foundation Logo"
+                :src="foundationLogoUrl"
+              >
             </div>
-
+          </div>
         </div>
+
+      <div class="presenting-sponsor">
+        <header class="presenting-sponsor__header">
+          <h3>Presenting Sponsor</h3>
+        </header>
+
+        <div class="presenting-sponsor__logo">
+          <a href="https://westgate.bank/" target="_blank" rel="noopener noreferrer">
+            <img width="524" height="210" alt="West Gate Bank logo" src="../../assets/img/westgatelogo.png">
+          </a>
+        </div>
+      </div>
     </div>
 </template>
 

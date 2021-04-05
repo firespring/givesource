@@ -119,6 +119,7 @@ Helper classes
 .main__spotlight .day-totals,
 .main__spotlight .day-totals > div,
 .presented-by,
+.presenting-sponsor__header,
 .overlay,
 .page-header__nav-toggle,
 .sponsors__tier-title,
@@ -923,6 +924,39 @@ Presented by
 }
 
 /* ----------------------------------------------------------------------------
+Presenting Sponsor
+---------------------------------------------------------------------------- */
+
+.presenting-sponsor__header {
+    -ms-flex-pack: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    margin: 0 0 .5rem;
+}
+
+.presenting-sponsor__header h3 {
+    margin: 0 0 .5rem;
+    border-bottom: 2px solid #CDCDCB;
+    padding: 0 0 .5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.presenting-sponsor__logo {
+    margin: 1rem 0 0;
+}
+
+.presenting-sponsor__logo img {
+    width: auto;
+    max-width: none;
+    max-height: 50px;
+    border: 0;
+}
+
+/* ----------------------------------------------------------------------------
 Page header
 ---------------------------------------------------------------------------- */
 
@@ -1098,7 +1132,8 @@ Page Hero
 	text-decoration: underline;
 }
 
-.page-hero .presented-by {
+.page-hero .presented-by,
+.page-hero .presenting-sponsor {
 	margin: 1rem 0 0;
 }
 
@@ -2103,7 +2138,8 @@ Global Media Queries
 		font-size: 4rem;
 	}
 
-	.page-hero .presented-by {
+    .page-hero .presented-by,
+    .page-hero .presenting-sponsor {
 		margin-top: 2rem;
 	}
 
@@ -2250,12 +2286,13 @@ Global Media Queries
 		margin: 1.25rem 1rem 0;
 	}
 
+    .presenting-sponsor__logo img,
 	.sponsors__tier--lg .sponsor img {
-		max-height: 80px;
+        max-height: 110px;
 	}
 
 	.sponsors__tier--lg .sponsor--no-logo {
-		font-size: 1.2em;
+        font-size: 1.4em;
 	}
 
 	.sponsors__tier--md .sponsor img {
