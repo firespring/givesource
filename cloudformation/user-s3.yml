@@ -1,0 +1,86 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS S3 resources for Givesource(R)
+Parameters:
+  BucketIdentifier:
+    Type: String
+
+  ReplicaRegion:
+    Type: String
+    Default: ''
+    AllowedValues:
+    - ''
+    - 'us-west-2'
+    - 'us-east-1'
+
+Conditions:
+  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
+
+Resources:
+  StorageBucket:
+    Condition: NotReplicaRegion
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub givesource-${BucketIdentifier}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub givesource-${BucketIdentifier}/
+
+  StorageBucketPolicy:
+    Condition: NotReplicaRegion
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StorageBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: '*'
+          Action: s3:*
+          Resource: !Sub ${StorageBucket.Arn}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+
+  LambdaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub givesource-${BucketIdentifier}-${AWS::Region}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub givesource-${BucketIdentifier}-${AWS::Region}/
+
+  LambdaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LambdaBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: '*'
+          Action: s3:*
+          Resource: !Sub ${LambdaBucket.Arn}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false

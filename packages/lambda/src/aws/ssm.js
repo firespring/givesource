@@ -81,7 +81,7 @@ SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
  */
 SSM.prototype.deleteParameter = (region, name) => {
 	const awsSSM = new AWS.SSM({region: region});
-	return awsSSM({Name: name}).promise();
+	return awsSSM.deleteParameter({Name: name}).promise();
 };
 
 module.exports = SSM;

@@ -1,0 +1,280 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Copies AWS Aurora snapshot to the DR region for Givesource(R)
+Parameters:
+  StackName:
+    Type: String
+  SourceRegion:
+    Type: String
+    Default: us-east-1
+  DestinationRegion:
+    Type: String
+    Default: us-west-2
+Resources:
+  SnapshotCopyFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyName: kms-read
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - kms:DescribeKey
+              Resource:
+              - '*'
+        - PolicyName: rds-read
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - rds:DescribeDbClusters
+              - rds:DescribeDbClusterSnapshots
+              Resource:
+              - '*'
+        - PolicyName: rds-snapshot-modify
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - rds:AddTagsToResource
+              - rds:CopyDBClusterSnapshot
+              Resource:
+              - !Sub 'arn:aws:rds:${SourceRegion}:${AWS::AccountId}:cluster-snapshot:*'
+              - !Sub 'arn:aws:rds:${DestinationRegion}:${AWS::AccountId}:cluster-snapshot:*'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  SnapshotCopyFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          const { RDS, KMS } = require('aws-sdk');
+          exports.handler = async (event, context, callback) => {
+              const clusterPrefix = process.env.CLUSTER_PREFIX.toLowerCase();
+              const sourceRegion = process.env.SOURCE_REGION;
+              const destinationRegion = process.env.DESTINATION_REGION;
+
+              const sourceRds = new RDS({region: sourceRegion});
+              const destinationRds = new RDS({region: destinationRegion});
+              const destinationKms = new KMS({region: destinationRegion});
+
+              // encrypt with the default rds key
+              var { KeyMetadata }  = await destinationKms.describeKey({KeyId: 'alias/aws/rds'}).promise();
+              let destinationRdsDefaultKeyId = KeyMetadata.KeyId;
+
+              // find the db cluster which starts with our name
+              var { DBClusters } = await sourceRds.describeDBClusters().promise();
+              var clusterIdentifier = DBClusters.find(it => it['DBClusterIdentifier'].startsWith(clusterPrefix))['DBClusterIdentifier'];
+
+              // search for all automated snapshots for this cluster
+              let params = {
+                  DBClusterIdentifier: clusterIdentifier,
+                  SnapshotType: 'automated'
+              };
+              const { DBClusterSnapshots } = await sourceRds.describeDBClusterSnapshots(params).promise();
+
+              // iterate over all snapshots and copy any which aren't in the dest region
+              DBClusterSnapshots.forEach(async function(item) {
+                  console.log(`Processing ${item.DBClusterSnapshotIdentifier}`);
+
+                  // Add a snapshot creation tag if not present (to make deleting easier)
+                  let dateTagKey = 'SnapshotCreateTime';
+                  let dateTag = item.TagList.find(tag => tag['Key'] == dateTagKey);
+                  if (!dateTag) {
+                      console.log(`Tagging with ${dateTagKey}`);
+                      let params = {
+                          ResourceName: item.DBClusterSnapshotArn,
+                          Tags: [
+                              {
+                                  Key: dateTagKey,
+                                  Value: item.SnapshotCreateTime.toISOString()
+                              }
+                          ]
+                      };
+                      await sourceRds.addTagsToResource(params).promise();
+                  };
+
+                  // Copy the snapshot if it's not already marked as copied
+                  let copyTagKey = `CopiedTo:${destinationRegion}`;
+                  let copyTag = item.TagList.find(tag => tag['Key'] == copyTagKey);
+                  if (!copyTag) {
+                      console.log(`Starting copy of to ${destinationRegion}`);
+                      let copyParams = {
+                          SourceDBClusterSnapshotIdentifier: item.DBClusterSnapshotArn,
+                          TargetDBClusterSnapshotIdentifier: `copy-${item.DBClusterSnapshotIdentifier.split(':')[1]}`,
+                          CopyTags: true,
+                          SourceRegion: sourceRegion,
+                          KmsKeyId: destinationRdsDefaultKeyId
+                      };
+                      await destinationRds.copyDBClusterSnapshot(copyParams).promise();
+
+                      // Add a tag keeping track of images we have copied
+                      console.log(`Tagging ${copyTagKey}`);
+                      let tagParams = {
+                          ResourceName: item.DBClusterSnapshotArn,
+                          Tags: [
+                              {
+                                  Key: copyTagKey,
+                                  Value: new Date().toISOString()
+                              }
+                          ]
+                      };
+                      await sourceRds.addTagsToResource(tagParams).promise();
+                  };
+              });
+
+              callback(null);
+          };
+      Description: Copies all automated snapshots to the DR Region
+      Environment:
+        Variables:
+          SOURCE_REGION: !Ref SourceRegion
+          DESTINATION_REGION: !Ref DestinationRegion
+          CLUSTER_PREFIX: !Sub "${StackName}-auroradbstack-"
+      MemorySize: 1024
+      Handler: index.handler
+      Role: !GetAtt SnapshotCopyFunctionRole.Arn
+      Timeout: 30
+      Runtime: nodejs12.x
+  SnapshotCopyFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SnapshotCopyFunction}
+      RetentionInDays: 365
+  SnapshotCopyRule:
+    Type: AWS::Events::Rule
+    Properties:
+     Description: The cloudwatch event which copies any new snapshots to the DR every day
+     ScheduleExpression: rate(1 day)
+     State: ENABLED
+     Targets:
+     - Id: start-snapshot-copy-trigger
+       Arn: !GetAtt SnapshotCopyFunction.Arn
+  SnapshotCopyTriggerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt SnapshotCopyFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt SnapshotCopyRule.Arn
+  SnapshotCleanupFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyName: rds-read
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - rds:DescribeDbClusters
+              - rds:DescribeDbClusterSnapshots
+              Resource:
+              - '*'
+        - PolicyName: rds-snapshot-modify
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+              - rds:DeleteDBClusterSnapshot
+              Resource:
+              - !Sub 'arn:aws:rds:${DestinationRegion}:${AWS::AccountId}:cluster-snapshot:*'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  SnapshotCleanupFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          const { RDS } = require('aws-sdk');
+          exports.handler = async (event, context, callback) => {
+              const clusterPrefix = process.env.CLUSTER_PREFIX.toLowerCase();
+              const sourceRegion = process.env.SOURCE_REGION;
+              const destinationRegion = process.env.DESTINATION_REGION;
+              const sourceRds = new RDS({region: sourceRegion});
+              const destinationRds = new RDS({region: destinationRegion});
+              const maxAgeDate = new Date(new Date().setDate(new Date().getDate() - 30));
+
+              // find the db cluster which starts with our name
+              var { DBClusters } = await sourceRds.describeDBClusters().promise();
+              var clusterIdentifier = DBClusters.find(it => it['DBClusterIdentifier'].startsWith(clusterPrefix))['DBClusterIdentifier'];
+
+              // search for all manual (copied) snapshots for this cluster
+              let params = {
+                  DBClusterIdentifier: clusterIdentifier,
+                  SnapshotType: 'manual'
+              };
+              const { DBClusterSnapshots } = await destinationRds.describeDBClusterSnapshots(params).promise();
+
+              // iterate over all snapshots and delete any which are over 30 days old
+              DBClusterSnapshots.forEach(async function(item) {
+                  console.log(`Processing ${item.DBClusterSnapshotIdentifier}`);
+
+                  // Add a snapshot creation tag if not present (to make deleting easier)
+                  let dateTagKey = 'SnapshotCreateTime';
+                  let dateTag = item.TagList.find(tag => tag['Key'] == dateTagKey);
+                  if (dateTag) {
+                      let snapshotCreateTime = dateTag['Value'];
+                      if (Date.parse(snapshotCreateTime) < maxAgeDate)
+                      {
+                          console.log(`Snapshot create tag ${snapshotCreateTime} is more than 30 days in the past. Removing ${item.DBClusterSnapshotIdentifier}`);
+                          let params = {
+                              DBClusterSnapshotIdentifier: item.DBClusterSnapshotIdentifier
+                          };
+                          await destinationRds.deleteDBClusterSnapshot(params).promise();
+                      } else {
+                          console.log(`Snapshot create tag ${snapshotCreateTime} is less than 30 days in the past.`);
+                      }
+                  };
+              });
+
+              callback(null);
+          };
+      Description: Deletes any copied DR snapshots which are older than 30 days
+      Environment:
+        Variables:
+          SOURCE_REGION: !Ref SourceRegion
+          DESTINATION_REGION: !Ref DestinationRegion
+          CLUSTER_PREFIX: !Sub "${StackName}-auroradbstack-"
+      MemorySize: 1024
+      Handler: index.handler
+      Role: !GetAtt SnapshotCleanupFunctionRole.Arn
+      Timeout: 30
+      Runtime: nodejs12.x
+  SnapshotCleanupFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SnapshotCleanupFunction}
+      RetentionInDays: 365
+  SnapshotCleanupRule:
+    Type: AWS::Events::Rule
+    Properties:
+     Description: The cloudwatch event which copies any new snapshots to the DR every day
+     ScheduleExpression: rate(1 day)
+     State: ENABLED
+     Targets:
+     - Id: start-snapshot-cleanup-trigger
+       Arn: !GetAtt SnapshotCleanupFunction.Arn
+  SnapshotCleanupTriggerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt SnapshotCleanupFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt SnapshotCleanupRule.Arn
