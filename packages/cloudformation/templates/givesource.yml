@@ -33,6 +33,11 @@ Parameters:
     Type: String
     Default: "false"
 
+  ReplicaRegion:
+    Description: The region where this stack will be replicated
+    Type: String
+    Default: ""
+
 Mappings:
   ApiGateway:
     IntegrationRequestTemplate:
@@ -91,9 +96,13 @@ Conditions:
 
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
-Resources:
+  IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
 
+  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
+
+Resources:
   AuroraDbStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -103,6 +112,14 @@ Resources:
         SecureLambdaRole: !Ref SecureLambdaRole
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
+
+  AuroraDbSnapshotCopyStack:
+    Condition: IsReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora-snapshot-copy.yml
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -296,6 +313,7 @@ Resources:
           Value: givesource-lambda
 
   CustomStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -361,6 +379,7 @@ Resources:
         - !Ref SESManagedPolicy
 
   ApiContentsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -380,6 +399,7 @@ Resources:
       - AuroraDbStack
 
   ApiDonationsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -401,6 +421,7 @@ Resources:
       - CustomStack
 
   ApiDonorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -420,6 +441,7 @@ Resources:
       - AuroraDbStack
 
   ApiFilesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -441,6 +463,7 @@ Resources:
       - AuroraDbStack
 
   ApiMessagesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -460,6 +483,7 @@ Resources:
       - AuroraDbStack
 
   ApiMetricsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -479,6 +503,7 @@ Resources:
       - AuroraDbStack
 
   ApiNonprofitsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -500,6 +525,7 @@ Resources:
       - AuroraDbStack
 
   ApiPaymentTransactionsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -519,6 +545,7 @@ Resources:
       - AuroraDbStack
 
   ApiReportsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -539,6 +566,7 @@ Resources:
       - AuroraDbStack
 
   ApiSettingsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -564,6 +592,7 @@ Resources:
       - CustomStack
 
   ApiSponsorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -583,6 +612,7 @@ Resources:
       - AuroraDbStack
 
   ApiUsersStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -603,6 +633,7 @@ Resources:
       - AuroraDbStack
 
   ApiDeployStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -625,6 +656,7 @@ Resources:
       - RestApi
 
   CognitoInitialUser:
+    Condition: NotReplicaRegion
     Type: Custom::CognitoSuperAdminUser
     Properties:
       ServiceToken: !GetAtt CustomStack.Outputs.CognitoCreateUserFunctionArn
@@ -656,6 +688,7 @@ Resources:
       - CognitoInitialUser
 
   CacheStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -715,9 +748,11 @@ Outputs:
     Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
 
   UserPoolId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
 
   Version:
