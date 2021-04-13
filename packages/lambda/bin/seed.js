@@ -178,7 +178,7 @@ const seedNonprofits = function () {
         return generator.modelCollection('NonprofitSlide', slideCount, {
           nonprofitId: nonprofit.id,
           type: 'IMAGE',
-          fileId: null
+          fileId: 0
         })
       }).then(function (slides) {
         _.each(slides, function (slide, i) {
