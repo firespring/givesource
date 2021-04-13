@@ -168,46 +168,44 @@ const seedNonprofits = function () {
       }).then(function (popNp) {
         return popNp;
       });
-    })
+    });
     return promise
 	}).then(function (nonprofits) {
-	  console.log(nonprofits); /*DM: Debug */
-    let promise = Promise.resolve(nonprofits)
-    promise.then(function (nonprofit) {
-      const slideCount = Math.floor(Math.random() * 8) + 1;
-      return generator.modelCollection('NonprofitSlide', slideCount, {
-        nonprofitId: nonprofit.id,
-        type: 'IMAGE',
-        fileId: null
+    let promise = Promise.resolve()
+    nonprofits.forEach(function (nonprofit) {
+      promise = promise.then(function () {
+        const slideCount = Math.floor(Math.random() * 8) + 1
+        return generator.modelCollection('NonprofitSlide', slideCount, {
+          nonprofitId: nonprofit.id,
+          type: 'IMAGE',
+          fileId: null
+        })
+      }).then(function (slides) {
+        _.each(slides, function (slide, i) {
+          slide.sortOrder = i
+          nonprofitSlides.push(slide)
+        })
+        return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
+      }).then(function (tiers) {
+        tiers.forEach(function (tier) {
+          nonprofitDonationTiers.push(tier)
+        })
       })
-    }).then(function (slides) {
-      _.each(slides, function (slide, i) {
-        slide.sortOrder = i;
-        nonprofitSlides.push(slide);
-      });
-    });
-
-    promise.then(function (nonprofit) {
-      return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
-    }).then(function (tiers) {
-      tiers.forEach(function (tier) {
-        nonprofitDonationTiers.push(tier);
-      });
     });
     return promise
   }).then(function () {
     let promise = Promise.resolve()
-    nonprofitSlides.forEach(function (sponsor) {
+    nonprofitSlides.forEach(function (slide) {
       promise.then(function () {
-        return nonprofitSlidesRepository.upsert(sponsor, {})
+        return nonprofitSlidesRepository.upsert(slide, {})
       })
     })
     return promise
 	}).then(function () {
     let promise = Promise.resolve()
-    nonprofitDonationTiers.forEach(function (sponsor) {
+    nonprofitDonationTiers.forEach(function (tier) {
       promise.then(function () {
-        return nonprofitDonationTiersRepository.upsert(sponsor, {})
+        return nonprofitDonationTiersRepository.upsert(tier, {})
       })
     })
     return promise
