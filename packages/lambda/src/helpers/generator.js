@@ -332,13 +332,23 @@ Generator.prototype.dataCollection = function (type, count, data) {
  * @return {Array}
  */
 Generator.prototype.modelCollection = function (type, count, data) {
-	this._validateType(type);
-	count = count || 3;
-	const results = [];
-	for (let i = 0; i < count; i++) {
-		results.push(this.model(type, data));
-	}
-	return results;
+  this._validateType(type)
+  let allModels
+  const generatorContext = this
+  count = count || 3
+  const results = []
+  return loadModels().then(function (models) {
+    allModels = models
+    for (let i = 0; i < count; i++) {
+      const model = models[type].build(generatorContext.data(type, data))
+      results.push(model);
+    }
+  }).then(function () {
+    console.log(results); /*DM: Debug */
+    return results;
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
 };
 
 /**
@@ -351,10 +361,11 @@ Generator.prototype.modelCollection = function (type, count, data) {
 Generator.prototype.model = function (type, data) {
   this._validateType(type);
   let allModels;
+  const generatorContext = this
   return loadModels().then(function (models) {
     allModels = models;
-    const model = new models[type]();
-    return new model.constructor(this.data(type, data), {isNewRecord: true});
+    const model = models[type].build(generatorContext.data(type, data))
+    return model
   }).finally(function () {
     return allModels.sequelize.close();
   });
