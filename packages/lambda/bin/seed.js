@@ -102,8 +102,8 @@ const seedDonations = function () {
     return promise;
   }).then(function (savedPts) {
     paymentTransactions = savedPts;
-    let promise = Promise.resolve()
     let nonprofitDonations = [];
+    let promise = Promise.resolve(nonprofitDonations)
     let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
     donations.forEach(function (chunk, i) {
       let paymentTotal = 0;
@@ -127,7 +127,7 @@ const seedDonations = function () {
       paymentTransactions[i].total = paymentTotal;
       nonprofitDonations = nonprofitDonations.concat(chunk);
     });
-    console.log(donations); /*DM: Debug */
+    console.log('FIND ME', donations); /*DM: Debug */
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
         return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
@@ -137,7 +137,7 @@ const seedDonations = function () {
     });
     return promise;
   }).finally(function (savedDonations) {
-    console.log('seeded' + savedDonations.count + ' donations')
+    console.log('seeded' + savedDonations.length + ' donations')
   });
 }
 
