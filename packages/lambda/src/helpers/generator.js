@@ -184,7 +184,7 @@ Generator.prototype._generators = {
 			fileId: faker.random.number(),
 			nonprofitId: faker.random.number(),
 			sortOrder: faker.random.number(),
-			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
+			thumbnail: "https://picsum.photos/640/480",
 			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
 			url: "https://picsum.photos/800/600",
 		}
