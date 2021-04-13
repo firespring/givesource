@@ -179,37 +179,37 @@ const seedNonprofits = function () {
           nonprofitId: nonprofit.id,
           type: 'IMAGE',
           fileId: 0
-        })
+        });
       }).then(function (slides) {
         _.each(slides, function (slide, i) {
-          slide.sortOrder = i
+          slide.sortOrder = i;
           slide.url = slide.url + '?random=' + i;
-          nonprofitSlides.push(slide)
-        })
-        return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
+          nonprofitSlides.push(slide);
+        });
+        return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id });
       }).then(function (tiers) {
         tiers.forEach(function (tier) {
-          nonprofitDonationTiers.push(tier)
-        })
-      })
+          nonprofitDonationTiers.push(tier);
+        });
+      });
     });
-    return promise
+    return promise;
   }).then(function () {
-    let promise = Promise.resolve()
+    let promise = Promise.resolve();
     nonprofitSlides.forEach(function (slide) {
-      promise.then(function () {
-        return nonprofitSlidesRepository.upsert(slide, {})
-      })
-    })
-    return promise
+      promise = promise.then(function () {
+        return nonprofitSlidesRepository.upsert(slide, {});
+      });
+    });
+    return promise;
 	}).then(function () {
     let promise = Promise.resolve()
     nonprofitDonationTiers.forEach(function (tier) {
-      promise.then(function () {
-        return nonprofitDonationTiersRepository.upsert(tier, {})
-      })
-    })
-    return promise
+      promise = promise.then(function () {
+        return nonprofitDonationTiersRepository.upsert(tier, {});
+      });
+    });
+    return promise;
 	}).finally(function () {
 		console.log('seeded nonprofits');
 	});
