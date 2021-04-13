@@ -161,13 +161,23 @@ const seedNonprofits = function () {
     const count = parseInt(answers.count);
     return generator.modelCollection('Nonprofit', count, { status: 'ACTIVE' });
   }).then(function (nonprofits) {
-		return nonprofitsRepository.batchUpdate(nonprofits);
+    let promise = Promise.resolve()
+    nonprofits.forEach(function (sponsor) {
+      promise.then(function () {
+        return nonprofitsRepository.upsert(sponsor, {})
+      })
+    })
+    return promise
 	}).then(function (nonprofits) {
 
-	  let promise = Promise.resolve(nonprofits);
-	  promise.then(function (nonprofit) {
+    let promise = Promise.resolve(nonprofits)
+    promise.then(function (nonprofit) {
       const slideCount = Math.floor(Math.random() * 8) + 1;
-      return generator.modelCollection('NonprofitSlide', slideCount, {nonprofitId: nonprofit.id, type: 'IMAGE', fileId: null});
+      return generator.modelCollection('NonprofitSlide', slideCount, {
+        nonprofitId: nonprofit.id,
+        type: 'IMAGE',
+        fileId: null
+      })
     }).then(function (slides) {
       _.each(slides, function (slide, i) {
         slide.sortOrder = i;
@@ -175,17 +185,30 @@ const seedNonprofits = function () {
       });
     });
 
-	  promise.then(function (nonprofit) {
-      return generator.modelCollection('NonprofitDonationTier', 4, {nonprofitId: nonprofit.id});
+    promise.then(function (nonprofit) {
+      return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
     }).then(function (tiers) {
       tiers.forEach(function (tier) {
         nonprofitDonationTiers.push(tier);
       });
     });
-
-		return nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
+    return promise
+  }).then(function () {
+    let promise = Promise.resolve()
+    nonprofitSlides.forEach(function (sponsor) {
+      promise.then(function () {
+        return nonprofitSlidesRepository.upsert(sponsor, {})
+      })
+    })
+    return promise
 	}).then(function () {
-		return nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);
+    let promise = Promise.resolve()
+    nonprofitDonationTiers.forEach(function (sponsor) {
+      promise.then(function () {
+        return nonprofitDonationTiersRepository.upsert(sponsor, {})
+      })
+    })
+    return promise
 	}).then(function () {
 		console.log('seeded nonprofits');
 	});
