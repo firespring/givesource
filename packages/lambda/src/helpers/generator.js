@@ -17,6 +17,7 @@
 const _ = require('lodash');
 const DonationHelper = require('./donation');
 const faker = require('faker');
+const loadModels = require('../models/index');
 
 /**
  * Generator constructor
@@ -132,7 +133,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofit: function () {
+	Nonprofit: function () {
 		const legalName = faker.company.companyName();
 		return {
 			address1: faker.address.streetAddress(false),
@@ -162,7 +163,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofitDonationTier: function () {
+	NonprofitDonationTier: function () {
 		return {
 			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
 			description: faker.random.words(),
@@ -175,7 +176,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofitSlide: function () {
+	NonprofitSlide: function () {
 		return {
 			caption: faker.random.word(),
 			embedUrl: faker.internet.url(),
@@ -338,6 +339,25 @@ Generator.prototype.modelCollection = function (type, count, data) {
 		results.push(this.model(type, data));
 	}
 	return results;
+};
+
+/**
+ * Generate a model
+ *
+ * @param {String} type
+ * @param {{}} [data]
+ * @return {*}
+ */
+Generator.prototype.model = function (type, data) {
+  this._validateType(type);
+  let allModels;
+  return loadModels().then(function (models) {
+    allModels = models;
+    const model = new models[type]();
+    return new model.constructor(this.data(type, data), {isNewRecord: true});
+  }).finally(function () {
+    return allModels.sequelize.close();
+  });
 };
 
 module.exports = Generator;
