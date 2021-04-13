@@ -101,32 +101,34 @@ const seedDonations = function () {
     });
     return promise;
 	}).then(function (savedPts) {
-		paymentTransactions = savedPts;
-		let nonprofitDonations = [];
-		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
-		donations.forEach(function (chunk, i) {
-			let paymentTotal = 0;
-			chunk.forEach(function (donation) {
-				donation.donorId = donors[i].id;
-				donation.nonprofitId = promptAnswers.nonprofit.id;
+    paymentTransactions = savedPts;
+    let nonprofitDonations = [];
+    let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
+    donations.forEach(function (chunk, i) {
+      let paymentTotal = 0;
+      chunk.forEach(function (donation) {
+        donation.donorId = donors[i].id;
+        donation.nonprofitId = promptAnswers.nonprofit.id;
 
-				donation.paymentTransactionId = paymentTransactions[i].id;
-				if (!donation.isOfflineDonation) {
-					donation.paymentTransactionId = paymentTransactions[i].transactionId;
-					donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode ? 1 : 0;
-				}
+        donation.paymentTransactionId = paymentTransactions[i].id;
+        if (!donation.isOfflineDonation) {
+          donation.paymentTransactionId = paymentTransactions[i].transactionId;
+          donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode ? 1 : 0;
+        }
 
-				donationsFees += donation.fees;
-				donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
-				donationsSubtotal += donation.subtotal;
-				donationsTotal += donation.total;
-				paymentTotal += donation.total;
-				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
-			});
-			paymentTransactions[i].total = paymentTotal;
-			nonprofitDonations = nonprofitDonations.concat(chunk);
-		});
-		let promise = Promise.resolve();
+        donationsFees += donation.fees;
+        donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
+        donationsSubtotal += donation.subtotal;
+        donationsTotal += donation.total;
+        paymentTotal += donation.total;
+        topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
+      });
+      paymentTransactions[i].total = paymentTotal;
+      nonprofitDonations = nonprofitDonations.concat(chunk);
+    });
+    return nonprofitDonations;
+  }).then(function (nonprofitDonations) {
+    let promise = Promise.resolve();
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
         return nonprofitDonationsRepository.upsert(nonprofitDonation, {})
