@@ -70,10 +70,10 @@ const seedDonations = function () {
   }).then(function (answers) {
     promptAnswers = answers;
     const count = parseInt(promptAnswers.count);
-    const chunkSize = Math.floor(Math.random() * 3) + 1;
-    return _.chunk(generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 }), chunkSize);
+    return generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 });
   }).then(function (generatedDonations) {
-    donations = generatedDonations;
+    const chunkSize = Math.floor(Math.random() * 3) + 1;
+    donations = _.chunk(generatedDonations, chunkSize);
     return generator.modelCollection('Donor', donations.length);
   }).then(function (generatedDonors) {
     donors = generatedDonors;
@@ -127,6 +127,7 @@ const seedDonations = function () {
       paymentTransactions[i].total = paymentTotal;
       nonprofitDonations = nonprofitDonations.concat(chunk);
     });
+    console.log(donations); /*DM: Debug */
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
         return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
