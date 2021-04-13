@@ -36,71 +36,71 @@ const PaymentTransactionRepository = require('./../src/repositories/paymentTrans
  * @return {Promise}
  */
 const seedDonations = function () {
-	const generator = new Generator();
-	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
-	const nonprofitsRepository = new NonprofitsRepository();
-	const donorsRepository = new DonorsRepository();
-	const paymentTransactionRepository = new PaymentTransactionRepository();
+  const generator = new Generator();
+  const nonprofitDonationsRepository = new NonprofitDonationsRepository();
+  const nonprofitsRepository = new NonprofitsRepository();
+  const donorsRepository = new DonorsRepository();
+  const paymentTransactionRepository = new PaymentTransactionRepository();
 
-	let donors = [];
-	let paymentTransactions = [];
-	let donations = [];
-	let promptAnswers;
-	return nonprofitsRepository.getAll().then(function (results) {
-		if (!results || results.length === 0) {
-			return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
-		}
-		const options = _.map(results, function (nonprofit) {
-			return {name: nonprofit.legalName, value: nonprofit}
-		});
-		return inquirer.prompt([
-			{
-				type: 'list',
-				message: 'Select a nonprofit:',
-				name: 'nonprofit',
-				choices: options
-			},
-			{
-				type: 'input',
-				message: 'How many donations would you like to seed:',
-				name: 'count',
-				default: '10'
-			}
-		]);
-	}).then(function (answers) {
-    promptAnswers = answers
-    const count = parseInt(promptAnswers.count)
-    const chunkSize = Math.floor(Math.random() * 3) + 1
-    return _.chunk(generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 }), chunkSize)
+  let donors = [];
+  let paymentTransactions = [];
+  let donations = [];
+  let promptAnswers;
+  return nonprofitsRepository.getAll().then(function (results) {
+    if (!results || results.length === 0) {
+      return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
+    }
+    const options = _.map(results, function (nonprofit) {
+      return { name: nonprofit.legalName, value: nonprofit };
+    });
+    return inquirer.prompt([
+      {
+        type: 'list',
+        message: 'Select a nonprofit:',
+        name: 'nonprofit',
+        choices: options
+      },
+      {
+        type: 'input',
+        message: 'How many donations would you like to seed:',
+        name: 'count',
+        default: '10'
+      }
+    ]);
+  }).then(function (answers) {
+    promptAnswers = answers;
+    const count = parseInt(promptAnswers.count);
+    const chunkSize = Math.floor(Math.random() * 3) + 1;
+    return _.chunk(generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 }), chunkSize);
   }).then(function (generatedDonations) {
-    donations = generatedDonations
-    return generator.modelCollection('Donor', donations.length)
+    donations = generatedDonations;
+    return generator.modelCollection('Donor', donations.length);
   }).then(function (generatedDonors) {
-    donors = generatedDonors
-    return generator.modelCollection('PaymentTransaction', donations.length, { isTestMode: true })
+    donors = generatedDonors;
+    return generator.modelCollection('PaymentTransaction', donations.length, { isTestMode: true });
   }).then(function (generatedPTs) {
-    paymentTransactions = generatedPTs
-    let promise = Promise.resolve()
+    paymentTransactions = generatedPTs;
+    let promise = Promise.resolve();
     donors.forEach(function (donor) {
       promise = promise.then(function () {
-        return donorsRepository.upsert(donor, {})
+        return donorsRepository.upsert(donor, {});
       }).then(function (popDonors) {
         return popDonors;
       });
     });
-    return promise
-	}).then(function (savedDonors) {
-		donors = savedDonors;
-		let promise = Promise.resolve();
+    return promise;
+  }).then(function (savedDonors) {
+    donors = savedDonors;
+    let promise = Promise.resolve();
     paymentTransactions.forEach(function (paymentTransaction) {
       promise = promise.then(function () {
-        return paymentTransactionRepository.upsert(paymentTransaction, {})
+        return paymentTransactionRepository.upsert(paymentTransaction, {});
       }).then(function (popPT) {
         return popPT;
       });
     });
     return promise;
-	}).then(function (savedPts) {
+  }).then(function (savedPts) {
     paymentTransactions = savedPts;
     let nonprofitDonations = [];
     let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
@@ -131,16 +131,16 @@ const seedDonations = function () {
     let promise = Promise.resolve();
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
-        return nonprofitDonationsRepository.upsert(nonprofitDonation, {})
+        return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
       }).then(function (popNp) {
         return popNp;
       });
     });
     return promise;
-	}).finally(function () {
-		console.log('seeded donations');
-	});
-};
+  }).finally(function () {
+    console.log('seeded donations');
+  });
+}
 
 /**
  * Seed Messages
