@@ -162,14 +162,16 @@ const seedNonprofits = function () {
     return generator.modelCollection('Nonprofit', count, { status: 'ACTIVE' });
   }).then(function (nonprofits) {
     let promise = Promise.resolve()
-    nonprofits.forEach(function (sponsor) {
-      promise.then(function () {
-        return nonprofitsRepository.upsert(sponsor, {})
-      })
+    nonprofits.forEach(function (nonprofit) {
+      promise = promise.then(function () {
+        return nonprofitsRepository.upsert(nonprofit, {})
+      }).then(function (popNp) {
+        return popNp;
+      });
     })
     return promise
 	}).then(function (nonprofits) {
-
+	  console.log(nonprofits); /*DM: Debug */
     let promise = Promise.resolve(nonprofits)
     promise.then(function (nonprofit) {
       const slideCount = Math.floor(Math.random() * 8) + 1;
