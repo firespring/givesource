@@ -183,6 +183,7 @@ const seedNonprofits = function () {
       }).then(function (slides) {
         _.each(slides, function (slide, i) {
           slide.sortOrder = i
+          slide.url = slide.url + '?random=' + i;
           nonprofitSlides.push(slide)
         })
         return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
@@ -209,7 +210,7 @@ const seedNonprofits = function () {
       })
     })
     return promise
-	}).then(function () {
+	}).finally(function () {
 		console.log('seeded nonprofits');
 	});
 };

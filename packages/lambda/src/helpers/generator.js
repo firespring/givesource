@@ -186,7 +186,7 @@ Generator.prototype._generators = {
 			sortOrder: faker.random.number(),
 			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
 			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
-			url: faker.image.imageUrl(800, 600, 'nature'),
+			url: "https://picsum.photos/800/600",
 		}
 	},
 
