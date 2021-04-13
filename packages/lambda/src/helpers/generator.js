@@ -40,7 +40,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	donation: function () {
+	Donation: function () {
 		const donation = {
 			donorId: faker.random.number(),
 			isAnonymous: faker.random.boolean(),
@@ -66,7 +66,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	donor: function () {
+	Donor: function () {
 		return {
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
@@ -85,7 +85,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	file: function () {
+	File: function () {
 		return {
 			path: faker.system.fileName(),
 			filename: faker.system.fileName()
@@ -97,7 +97,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	message: function () {
+	Message: function () {
 		return {
 			email: faker.internet.email(),
 			message: faker.lorem.sentence(),
@@ -112,7 +112,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	metric: function () {
+	Metric: function () {
 		return {
 			key: faker.random.word(),
 			value: faker.random.number(),
@@ -195,7 +195,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	paymentTransaction: function () {
+	PaymentTransaction: function () {
 		return {
 			billingZip: faker.address.zipCode(),
 			creditCardExpirationMonth: new Date().getMonth(),
@@ -215,7 +215,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	report: function () {
+	Report: function () {
 		return {
 			status: faker.random.arrayElement(['FAILED', 'PENDING', 'SUCCESS']),
 			type: faker.random.arrayElement(['ALL_DONATIONS', 'NONPROFIT_DONATIONS']),
@@ -228,7 +228,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	setting: function () {
+	Setting: function () {
 		return {
 			key: faker.random.word(),
 			value: faker.random.word(),
@@ -240,7 +240,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	sponsor: function () {
+	Sponsor: function () {
 		return {
 			fileId: faker.random.number(),
 			name: faker.random.word(),
@@ -255,7 +255,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	sponsorTier: function () {
+	SponsorTier: function () {
 		return {
 			name: faker.random.word(),
 			size: faker.random.arrayElement(['LARGE', 'DEFAULT', 'SMALL']),
@@ -268,7 +268,7 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	user: function () {
+	User: function () {
 		return {
 			cognitoUuid: faker.random.uuid(),
 			cognitoUsername: faker.random.uuid(),

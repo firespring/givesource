@@ -24,7 +24,7 @@ const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
 const MessagesRepository = require('./../src/repositories/messages');
 const NonprofitsRepository = require('./../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
+const NonprofitDonationsRepository = require('./../src/repositories/donations');
 const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
 const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
 const DonorsRepository = require('./../src/repositories/donors');
@@ -68,18 +68,38 @@ const seedDonations = function () {
 			}
 		]);
 	}).then(function (answers) {
-		promptAnswers = answers;
-		const count = parseInt(promptAnswers.count);
-		const chunkSize = Math.floor(Math.random() * 3) + 1;
-
-		donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
-		donors = generator.modelCollection('donor', donations.length);
-		paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
-	}).then(function () {
-		return donorsRepository.batchUpdate(donors);
+    promptAnswers = answers
+    const count = parseInt(promptAnswers.count)
+    const chunkSize = Math.floor(Math.random() * 3) + 1
+    return _.chunk(generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 }), chunkSize)
+  }).then(function (generatedDonations) {
+    donations = generatedDonations
+    return generator.modelCollection('Donor', donations.length)
+  }).then(function (generatedDonors) {
+    donors = generatedDonors
+    return generator.modelCollection('PaymentTransaction', donations.length, { isTestMode: true })
+  }).then(function (generatedPTs) {
+    paymentTransactions = generatedPTs
+    let promise = Promise.resolve()
+    donors.forEach(function (donor) {
+      promise = promise.then(function () {
+        return donorsRepository.upsert(donor, {})
+      }).then(function (popDonors) {
+        return popDonors;
+      });
+    });
+    return promise
 	}).then(function (savedDonors) {
 		donors = savedDonors;
-		return paymentTransactionRepository.batchUpdate(paymentTransactions);
+		let promise = Promise.resolve();
+    paymentTransactions.forEach(function (paymentTransaction) {
+      promise = promise.then(function () {
+        return paymentTransactionRepository.upsert(paymentTransaction, {})
+      }).then(function (popPT) {
+        return popPT;
+      });
+    });
+    return promise;
 	}).then(function (savedPts) {
 		paymentTransactions = savedPts;
 		let nonprofitDonations = [];
@@ -106,7 +126,15 @@ const seedDonations = function () {
 			paymentTransactions[i].total = paymentTotal;
 			nonprofitDonations = nonprofitDonations.concat(chunk);
 		});
-		return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
+		let promise = Promise.resolve();
+    nonprofitDonations.forEach(function (nonprofitDonation) {
+      promise = promise.then(function () {
+        return nonprofitDonationsRepository.upsert(nonprofitDonation, {})
+      }).then(function (popNp) {
+        return popNp;
+      });
+    });
+    return promise;
 	}).then(function () {
 		console.log('seeded donations');
 	});
