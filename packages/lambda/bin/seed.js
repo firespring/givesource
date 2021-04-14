@@ -167,8 +167,9 @@ const seedMessages = function () {
 			default: '10'
 		}
 	]).then(function (answers) {
-		const count = parseInt(answers.count);
-		const messages = generator.modelCollection('Message', count);
+    const count = parseInt(answers.count);
+    return generator.modelCollection('Message', count);
+  }).then(function (messages) {
 		let promise = Promise.resolve();
 		messages.forEach(function (message) {
       promise = promise.then(function () {
