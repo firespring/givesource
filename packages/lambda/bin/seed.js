@@ -76,7 +76,6 @@ const seedDonations = function () {
   }).then(function (generatedDonations) {
     const chunkSize = Math.floor(Math.random() * 3) + 1;
     donations = _.chunk(generatedDonations, chunkSize);
-    console.log('~~~~~~~~~~~~~~~', donations); /*DM: Debug */
     return generator.modelCollection('Donor', donations.length);
   }).then(function (generatedDonors) {
     donors = generatedDonors;
@@ -105,21 +104,18 @@ const seedDonations = function () {
       });
     });
     return promise;
-  }).then(function (savedPts) {
-    paymentTransactions = savedPts;
-    let promise = Promise.resolve()
+  }).then(function (pts) {
+    paymentTransactions = pts;
     let nonprofitDonations = [];
     let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
-    console.log('DONATIONS BEFORE FOREACH', donations); /*DM: Debug */
     donations.forEach(function (chunk, i) {
-      console.log('THE CHUNK OF THE DONATIONS,', chunk); /*DM: Debug */
       let paymentTotal = 0;
       const donor = _.filter(savedDonors, function (object, key) {
         return key == i;
-      });
+      })[0];
       const pt = _.filter(savedPts, function (object, key) {
         return key == i;
-      });
+      })[0];
       chunk.forEach(function (donation) {
         donation.donorId = donor.id;
         donation.nonprofitId = promptAnswers.nonprofit.id;
@@ -140,6 +136,7 @@ const seedDonations = function () {
       pt.total = paymentTotal;
       nonprofitDonations = nonprofitDonations.concat(chunk);
     });
+    let promise = Promise.resolve(nonprofitDonations)
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
         return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
