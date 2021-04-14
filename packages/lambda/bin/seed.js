@@ -74,6 +74,7 @@ const seedDonations = function () {
   }).then(function (generatedDonations) {
     const chunkSize = Math.floor(Math.random() * 3) + 1;
     donations = _.chunk(generatedDonations, chunkSize);
+    console.log('~~~~~~~~~~~~~~~', donations); /*DM: Debug */
     return generator.modelCollection('Donor', donations.length);
   }).then(function (generatedDonors) {
     donors = generatedDonors;
