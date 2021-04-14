@@ -116,15 +116,18 @@ const seedDonations = function () {
       let paymentTotal = 0;
       const donor = _.filter(savedDonors, function (object, key) {
         return key == i;
-      })
+      });
+      const pt = _.filter(savedPts, function (object, key) {
+        return key == i;
+      });
       chunk.forEach(function (donation) {
-        donation.donorId = donor[i].id;
+        donation.donorId = donor.id;
         donation.nonprofitId = promptAnswers.nonprofit.id;
 
-        donation.paymentTransactionId = savedPts[i].id;
+        donation.paymentTransactionId = pt.id;
         if (!donation.isOfflineDonation) {
-          donation.paymentTransactionId = savedPts[i].transactionId;
-          donation.paymentTransactionIsTestMode = savedPts[i].isTestMode ? 1 : 0;
+          donation.paymentTransactionId = pt.transactionId;
+          donation.paymentTransactionIsTestMode = pt.isTestMode ? 1 : 0;
         }
 
         donationsFees += donation.fees;
@@ -134,7 +137,7 @@ const seedDonations = function () {
         paymentTotal += donation.total;
         topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
       });
-      savedPts[i].total = paymentTotal;
+      pt.total = paymentTotal;
       nonprofitDonations = nonprofitDonations.concat(chunk);
     });
     nonprofitDonations.forEach(function (nonprofitDonation) {
