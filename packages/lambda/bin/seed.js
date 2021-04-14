@@ -145,8 +145,8 @@ const seedDonations = function () {
       });
     });
     return promise;
-  }).then(function (savedDonations) {
-    console.log('seeded' + savedDonations.length + ' donations')
+  }).then(function () {
+    console.log('seeded donations')
   });
 }
 
