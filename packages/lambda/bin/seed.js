@@ -169,7 +169,15 @@ const seedMessages = function () {
 	]).then(function (answers) {
 		const count = parseInt(answers.count);
 		const messages = generator.modelCollection('message', count);
-		return messagesRepository.batchUpdate(messages);
+		let promise = Promise.resolve();
+		messages.forEach(function (message) {
+      promise = promise.then(function () {
+        return messagesRepository.upsert(message, {});
+      }).then(function (popMessage) {
+        return popMessage;
+      });
+    });
+		return promise;
 	}).then(function () {
 		console.log('seeded messages');
 	});
