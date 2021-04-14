@@ -43,7 +43,9 @@ const seedDonations = function () {
   const paymentTransactionRepository = new PaymentTransactionRepository();
 
   let donors = [];
+  let savedDonors = [];
   let paymentTransactions = [];
+  let savedPts = [];
   let donations = [];
   let promptAnswers;
   return nonprofitsRepository.getAll().then(function (results) {
@@ -86,36 +88,40 @@ const seedDonations = function () {
       promise = promise.then(function () {
         return donorsRepository.upsert(donor, {});
       }).then(function (popDonors) {
+        savedDonors.push(popDonors);
         return popDonors;
       });
     });
     return promise;
-  }).then(function (savedDonors) {
-    donors = savedDonors;
+  }).then(function (popDonors) {
+    donors = popDonors;
     let promise = Promise.resolve();
     paymentTransactions.forEach(function (paymentTransaction) {
       promise = promise.then(function () {
         return paymentTransactionRepository.upsert(paymentTransaction, {});
       }).then(function (popPT) {
+        savedPts.push(popPT);
         return popPT;
       });
     });
     return promise;
   }).then(function (savedPts) {
     paymentTransactions = savedPts;
+    let promise = Promise.resolve()
     let nonprofitDonations = [];
-    let promise = Promise.resolve(nonprofitDonations)
     let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
+    console.log('DONATIONS BEFORE FOREACH', donations); /*DM: Debug */
     donations.forEach(function (chunk, i) {
+      console.log('THE CHUNK OF THE DONATIONS,', chunk); /*DM: Debug */
       let paymentTotal = 0;
       chunk.forEach(function (donation) {
-        donation.donorId = donors[i].id;
+        donation.donorId = savedDonors[i].id;
         donation.nonprofitId = promptAnswers.nonprofit.id;
 
-        donation.paymentTransactionId = paymentTransactions[i].id;
+        donation.paymentTransactionId = savedPts[i].id;
         if (!donation.isOfflineDonation) {
-          donation.paymentTransactionId = paymentTransactions[i].transactionId;
-          donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode ? 1 : 0;
+          donation.paymentTransactionId = savedPts[i].transactionId;
+          donation.paymentTransactionIsTestMode = savedPts[i].isTestMode ? 1 : 0;
         }
 
         donationsFees += donation.fees;
@@ -125,10 +131,9 @@ const seedDonations = function () {
         paymentTotal += donation.total;
         topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
       });
-      paymentTransactions[i].total = paymentTotal;
+      savedPts[i].total = paymentTotal;
       nonprofitDonations = nonprofitDonations.concat(chunk);
     });
-    console.log('FIND ME', donations); /*DM: Debug */
     nonprofitDonations.forEach(function (nonprofitDonation) {
       promise = promise.then(function () {
         return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
@@ -137,7 +142,7 @@ const seedDonations = function () {
       });
     });
     return promise;
-  }).finally(function (savedDonations) {
+  }).then(function (savedDonations) {
     console.log('seeded' + savedDonations.length + ' donations')
   });
 }
