@@ -114,8 +114,11 @@ const seedDonations = function () {
     donations.forEach(function (chunk, i) {
       console.log('THE CHUNK OF THE DONATIONS,', chunk); /*DM: Debug */
       let paymentTotal = 0;
+      const donor = _.filter(savedDonors, function (object, key) {
+        return key == i;
+      })
       chunk.forEach(function (donation) {
-        donation.donorId = savedDonors[i].id;
+        donation.donorId = donor[i].id;
         donation.nonprofitId = promptAnswers.nonprofit.id;
 
         donation.paymentTransactionId = savedPts[i].id;
