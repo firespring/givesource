@@ -54,7 +54,7 @@ exports.handle = function (event, context, callback) {
 		}
 
 		// reset the slug for revoked nonprofits so the slug can be reused
-		if (status === NonprofitHelper.STATUS_REVOKED) {
+    if (status === NonprofitHelper.STATUS_REVOKED || (status === NonprofitHelper.STATUS_DENIED && nonprofit.slug === null)) {
 			nonprofit.slug = '';
 		}
 
@@ -103,7 +103,10 @@ const deleteNonprofitUsers = function (nonprofit) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
 			promise = promise.then(function () {
-				return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername)
+			  if (user.cognitoUsername) {
+          return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername)
+        }
+			  return true;
 			}).then(function () {
 				return nonprofitUsersRepository.delete(nonprofit.id, user.id);
 			});

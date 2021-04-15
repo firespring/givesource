@@ -98,6 +98,7 @@ module.exports = (sequelize) => {
 		slug: {
 			type: DataTypes.STRING,
 			allowNull: false,
+      defaultValue: ''
 		},
 		socialSharingDescription: {
 			type: DataTypes.STRING,

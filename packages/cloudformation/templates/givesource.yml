@@ -146,7 +146,7 @@ Resources:
         DefaultTTL: 86400
         MaxTTL: 31536000
         MinTTL: 1
-        Name: !Sub ${AWS::StackName}-Givesource-CachedPolicy
+        Name: !Sub ${AWS::StackName}-Givesource-CachePolicy-${AWS::Region}
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
@@ -166,7 +166,7 @@ Resources:
         DefaultTTL: 0
         MaxTTL: 30
         MinTTL: 0
-        Name: !Sub ${AWS::StackName}-Givesource-NoCachePolicy
+        Name: !Sub ${AWS::StackName}-Givesource-NoCachePolicy-${AWS::Region}
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
