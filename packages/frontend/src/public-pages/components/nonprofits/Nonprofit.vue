@@ -77,8 +77,8 @@
 
                         <div ref="slider" class="nonprofit-campaign__slider" style="overflow: hidden;">
                             <template v-if="slides.length">
-                                <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;" :key="slide.uuid">
-                                    <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide.fileId)">
+                                <div v-for="(slide, index) in slides" class="slide" style="display: flex; align-items: center;" :key="slide.id">
+                                    <img v-if="slide.type === 'IMAGE'" :alt="slide.caption" :src="getImageUrl(slide)">
                                     <iframe v-else :alt="slide.caption" :src="slide.embedUrl" width="770" height="443" style="max-width: 100%;" frameborder="0" webkitallowfullscreen mozallowfullscreen
                                             allowfullscreen></iframe>
                                 </div>
@@ -300,11 +300,11 @@
 					vm.apiError = err.response.data.errors;
 				});
 			},
-			getImageUrl(fileId) {
+			getImageUrl(slideFile) {
 				const vm = this;
-				const file = _.find(vm.files, {id: fileId});
+				const file = _.find(vm.files, {id: slideFile.id});
 
-				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : '';
+				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : slideFile.url;
 			},
 			openDonations() {
 				const vm = this;
