@@ -401,7 +401,7 @@
                                             </p>
 
                                             <p>
-                                                Date: {{ createdOn }}<br/>
+                                                Date: {{ createdAt }}<br/>
                                                 {{#isOfflineDonation}}
                                                     Type: Offline {{#isOfflineBulk}}({{count}}){{/isOfflineBulk}}<br/>
                                                 {{/isOfflineDonation}}
@@ -411,7 +411,7 @@
                                                         Donor: Anonymous <br/>
                                                     {{/isAnonymous}}
                                                     {{^isAnonymous}}
-                                                        Donor: {{donorFirstName}} {{donorLastName}} (<a href="mailto:{{{donorEmail}}}">{{{donorEmail}}}</a>)<br/>
+                                                        Donor: {{donor.firstName}} {{donor.lastName}} (<a href="mailto:{{{donor.email}}}">{{{donor.email}}}</a>)<br/>
                                                     {{/isAnonymous}}
                                                 {{/isOfflineDonation}}
                                                 {{#note}}

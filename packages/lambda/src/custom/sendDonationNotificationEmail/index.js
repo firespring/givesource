@@ -34,6 +34,7 @@ exports.handle = function (event, context, callback) {
 	const settingsRepository = new SettingsRepostiory();
 
 	let donations = request.get('donations', []);
+	let donor = request.get('donor', {});
 	let nonprofits = {};
 
 	let settings = {
@@ -66,19 +67,9 @@ exports.handle = function (event, context, callback) {
 			return Promise.resolve(null);
 		}
 	}).then(function (response) {
-		if (response) {
-			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
-		}
-		if (donations.length) {
-			donations = donations.map(function (donation) {
-				const model = new Donation(donation);
-				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
-			});
-		}
-
+    if (response) {
+      settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+    }
 		let promise = Promise.resolve();
 		donations.forEach(function (donation) {
 			if (!nonprofits.hasOwnProperty(donation.nonprofitId)) {
@@ -122,7 +113,8 @@ exports.handle = function (event, context, callback) {
 						donation['isOfflineBulk'] = donation.type === 'BULK' && donation.isOfflineDonation;
 						return donation;
 					}),
-					settings: settings
+					settings: settings,
+          donor: donor
 				});
 			}).then(function (response) {
 				const toAddresses = nonprofits[nonprofitId].users.map(function (user) {

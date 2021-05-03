@@ -203,9 +203,10 @@ export function handle(event, context, callback) {
 		const body = {
 			donations: donations.map((donation) => {
 				donation.timezone = settings.EVENT_TIMEZONE;
+        donation.subtotal = donation.formattedSubtotal;
 				return donation;
-			})
-
+			}),
+      donor: donor
 		};
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
 		callback();
