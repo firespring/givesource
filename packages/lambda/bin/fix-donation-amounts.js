@@ -27,6 +27,7 @@ const Sequelize = require('sequelize');
 const fixDonations = function() {
     const settingsRepository = new SettingsRepository();
 
+    let numChanged = 0;
     let settings = {};
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
@@ -39,16 +40,13 @@ const fixDonations = function() {
     }).then(function () {
         return getDonationsData();
     }).then(function (donations) {
-		donations.rows.forEach(function (donation) {
-            //console.log("HERE");
-            let transactionFlatFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE];
-            transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
-            //TODO: For testing
-            transactionFlatFee = 20;
+        let transactionFlatFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE];
+        transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
 
-            let transactionPercentFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE];
-            transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
+        let transactionPercentFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE];
+        transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
 
+        donations.rows.forEach(function (donation) {
             donation.fees = DonationHelper.calculateFees(
                 donation.isOfflineDonation,
                 donation.isFeeCovered,
@@ -61,10 +59,12 @@ const fixDonations = function() {
             // Only update if the values have changed
             if (donation.changed())
             {
+                numChanged += 1;
                 showChanges(donation);
                 // TODO: Update
             }
-		});
+        });
+        console.log(`CHANGED ${numChanged} rows`);
 
     }).catch(function (err) {
         console.log('error: %j', err);
@@ -90,8 +90,7 @@ const getDonationsData = function () {
                 {model: allModels.Donor}
             ],
             where: {
-                //TODO: Change this to 0?
-                paymentTransactionIsTestMode: 1,
+                paymentTransactionIsTestMode: 0,
                 isFeeCovered: 1,
                 isDeleted: 0,
                 createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
@@ -109,7 +108,7 @@ const getDonationsData = function () {
 const showChanges = function (donation) {
     let message = `Donation (Id: ${donation.id})`;
     donation.changed().forEach(function (columnName) {
-        message += ` ${columnName}: ${donation.dataValues[columnName]} => ${donation._previousDataValues[columnName]},`;
+        message += ` ${columnName}: ${donation._previousDataValues[columnName]} => ${donation.dataValues[columnName]},`;
     });
     console.log(message);
 };
