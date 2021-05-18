@@ -170,6 +170,34 @@ exports.getFeeRates = function (isOfflineDonation) {
 };
 
 /**
+ * Format values for a bulk create
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Object}
+ */
+exports.formatForBulkCreate = function (model, data) {
+  return {
+    'amountForNonprofit': typeof data.amountForNonprofit !== "undefined" ? data.amountForNonprofit : model.amountForNonprofit,
+    'count': typeof data.count !== "undefined" ? data.count : model.count,
+    'fees': typeof data.fees !== "undefined" ? data.fees : model.fees,
+    'isAnonymous': typeof data.isAnonymous !== "undefined" ? data.isAnonymous : model.isAnonymous,
+    'isFeeCovered': typeof data.isFeeCovered !== "undefined" ? data.isFeeCovered : model.isFeeCovered,
+    'isOfflineDonation': typeof data.isOfflineDonation !== "undefined" ? data.isOfflineDonation : model.isOfflineDonation,
+    'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
+    'paymentTransactionIsTestMode': typeof data.paymentTransactionIsTestMode !== "undefined" ? data.paymentTransactionIsTestMode : model.paymentTransactionIsTestMode,
+    'paymentTransactionId': typeof data.paymentTransactionId !== "undefined" ? data.paymentTransactionId : model.paymentTransactionId,
+    'subtotal': typeof data.subtotal !== "undefined" ? data.subtotal : model.subtotal,
+    'subtotalChargedToCard': typeof data.subtotalChargedToCard !== "undefined" ? data.subtotalChargedToCard : model.subtotalChargedToCard,
+    'total': typeof data.total !== "undefined" ? data.total : model.total,
+    'type': typeof data.type !== "undefined" ? data.type : model.type,
+    'donorId': typeof data.donorId !== "undefined" ? data.donorId : model.donorId,
+    'name': typeof data.name !== "undefined" ? data.name : model.name,
+    'note': typeof data.note !== "undefined" ? data.note : model.note,
+  }
+}
+
+/**
  * Validate PaymentSpring payment
  *
  * @param {{}} data
