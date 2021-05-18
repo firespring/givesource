@@ -20,27 +20,42 @@ const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
 const SES = require('./../../aws/ses');
 const SettingsRepostiory = require('./../../repositories/settings');
+const DonationsRepostiory = require('./../../repositories/donations');
 
 exports.handle = (event, context, callback) => {
 	const lambda = new Lambda();
 	const request = new Request(event, context);
 	const ses = new SES();
 	const settingsRepository = new SettingsRepostiory();
+	const donationsRepository = new DonationsRepostiory();
 
 	let html = null;
 	const donor = request.get('donor', null);
 	const email = request.get('email', null);
 	const settings = {EVENT_TITLE: null};
 	const toAddress = request.get('toAddress', null);
-
+  const body = {
+    email: email,
+    donor: donor,
+    donations: request.get('donations', []),
+    paymentTransaction: request.get('paymentTransaction', null)
+  };
 	request.validate().then(() => {
-		const body = {
-			email: email,
-			donor: donor,
-			donations: request.get('donations', []),
-			paymentTransaction: request.get('paymentTransaction', null)
-		};
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateDonationsReceipt', {body: body}, 'RequestResponse');
+    if (request.get('donationIds', false)) {
+      return donationsRepository.queryDonations({where: { id: request.get('donationIds', [])}})
+    }
+    return Promise.resolve();
+  }).then(response => {
+    if (response && response.hasOwnProperty('rows')) {
+      body.donations = response.rows.map(donation => {
+        donation.timezone = settings.EVENT_TIMEZONE;
+        donation.total = donation.formattedAmount;
+        donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
+        donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
+        return donation;
+      });
+    }
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateDonationsReceipt', { body: body }, 'RequestResponse');
 	}).then(response => {
 		const payload = JSON.parse(response.Payload);
 		if (payload.html) {

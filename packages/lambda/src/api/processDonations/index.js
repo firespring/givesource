@@ -174,25 +174,22 @@ export function handle(event, context, callback) {
 		donor = savedDonor;
 		donor.id = !payment.is_test_mode ? donor.id : 0;
 		let promise = Promise.resolve();
+		let donationValues = [];
 		donations.forEach(function (donation) {
-			promise = promise.then(function () {
-				return donationsRepository.upsert(donation, {donorId: donor.id});
-			}).then(function (donation) {
-				return donationsRepository.get(donation.id);
-			}).then(function (donation) {
-				savedDonations.push(donation);
-			});
-		});
-		donations = savedDonations;
+		  donationValues.push(DonationHelper.formatForBulkCreate(donation, {donorId: donor.id}))
+    })
+    promise = promise.then(function () {
+      return donationsRepository.bulkCreateDonations(donationValues);
+    }).then(function (response ) {
+      donations = response;
+    });
 		return promise;
 	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(() => {
 		const body = {
-			donations: donations.map((donation) => {
-				donation.timezone = settings.EVENT_TIMEZONE;
-				donation.total = donation.formattedAmount;
-				return donation;
+			donationIds: donations.map((donation) => {
+				return donation.id;
 			}),
 			donor: donor,
 			paymentTransaction: paymentTransaction,
