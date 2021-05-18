@@ -17,108 +17,81 @@
 require('./config/bootstrap').bootstrap();
 
 const config = require('config');
-//const Lambda = require('./../src/aws/lambda');
-
-//lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')
-
-//const _ = require('lodash');
 const DonationHelper = require('./../src/helpers/donation');
 const DonationsRepository = require('./../src/repositories/donations');
 const SettingHelper = require('./../src/helpers/setting');
 const SettingsRepository = require('./../src/repositories/settings');
+const loadModels = require('./../src/models/index');
+const Sequelize = require('sequelize');
 
 const fixDonations = function() {
-//        process.env.AWS_DEFAULT_REGION = config.get('stack.AWS_REGION');
-        const settingsRepository = new SettingsRepository();
+    const settingsRepository = new SettingsRepository();
 
+    let settings = {};
+    settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
+    settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
 
-
-
-
-
-
-
-        let settings = {};
-        settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
-        settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
-
-        settingsRepository.batchGet(Object.keys(settings)).then((response) => {
-                response.forEach((setting) => {
-                        settings[setting.key] = setting.value;
-                });
-                console.log(settings);
-//      }).then(function () {
-//              if (report.status === ReportHelper.STATUS_PENDING) {
-//                      switch (report.type) {
-//                              case ReportHelper.TYPE_DONATIONS:
-//                                      return getDonationsData(report, timezone);
-//
-//                              default:
-//                                      return Promise.resolve();
-//                      }
-//              }
-        }).catch(function (err) {
-                console.log('error: %j', err);
+    settingsRepository.batchGet(Object.keys(settings)).then((response) => {
+        response.forEach((setting) => {
+            settings[setting.key] = setting.value;
         });
+    }).then(function () {
+        return getDonationsData();
+    }).then(function (donations) {
+        console.log(donations);
+    }).catch(function (err) {
+        console.log('error: %j', err);
+    });
 };
 
 /**
  * Get donation data
  *
- * @param {Report} report
- * @param {String} timezone
  * @return {Promise}
  */
-const getDonationsData = function (report, timezone) {
-        const donationsRepository = new DonationsRepository();
-        const settingsRepository = new SettingsRepository();
-        const whereParams = {isDeleted: 0};
+const getDonationsData = function () {
+    const donationsRepository = new DonationsRepository();
+    const settingsRepository = new SettingsRepository();
 
-        let displayTestPayments = false;
-        let promise = Promise.resolve();
-        promise = promise.then(function () {
-                return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY);
-        }).then(function (response) {
-                if (response && response.hasOwnProperty('value')) {
-                        displayTestPayments = response.value;
-                }
-        }).catch(function () {
-                return Promise.resolve();
-        });
+    let allModels;
+    return loadModels().then(function (models) {
+        allModels = models;
+//    let promise = Promise.resolve();
+//    promise = promise.then(function () {
+        const params = {
+            include: [
+                {model: allModels.PaymentTransactions},
+                {model: allModels.Donor}
+            ],
+            where: {
+                isDeleted: 0,
+                //TODO: Change this to 0?
+                paymentTransactionIsTestMode: 1
+            }
+        };
+        return donationsRepository.queryDonations(params);
+    }).catch(function (err) {
+        console.log(err);
+    });
 
-        // this needs commented out on dev
-        if (!displayTestPayments) {
-                whereParams.paymentTransactionIsTestMode = 0;
-        }
 
-        if (report.nonprofitId) {
-                whereParams.nonprofitId = report.nonprofitId;
-                promise = promise.then(function () {
-                        return donationsRepository.generateReport(whereParams);
-                });
-        } else {
-                promise = promise.then(function () {
-                        return donationsRepository.generateReport(whereParams);
-                });
-        }
+    //    promise = promise.then(function (donations) {
+    //        return Promise.resolve({
+    //            data: donations.map(function (donation) {
+    //                donation.mutate = '';
+    //                donation.timezone = timezone;
+    //                if (donation.Donor && donation.isAnonymous) {
+    //                    donation.Donor.donorIsAnonymous = '';
+    //                }
+    //                return donation;
+    //            }),
+    //            fields: DonationHelper.reportFields,
+    //        });
+    //    }).catch(function (err) {
+    //        console.log(err);
+    //    });
 
-        promise = promise.then(function (donations) {
-                return Promise.resolve({
-                        data: donations.map(function (donation) {
-                                donation.mutate = '';
-                                donation.timezone = timezone;
-                                if (donation.Donor && donation.isAnonymous) {
-                                        donation.Donor.donorIsAnonymous = '';
-                                }
-                                return donation;
-                        }),
-                        fields: DonationHelper.reportFields,
-                });
-        }).catch(function (err) {
-                console.log(err);
-        });
-
-        return promise;
+    return promise;
 };
 
 fixDonations();
