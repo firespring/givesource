@@ -31,6 +31,7 @@ const fixDonations = function() {
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
 
+    //DonationHelper.getFeeRates(false)
     settingsRepository.batchGet(Object.keys(settings)).then((response) => {
         response.forEach((setting) => {
             settings[setting.key] = setting.value;
@@ -38,7 +39,33 @@ const fixDonations = function() {
     }).then(function () {
         return getDonationsData();
     }).then(function (donations) {
-        console.log(donations);
+		donations.rows.forEach(function (donation) {
+            //console.log("HERE");
+            let transactionFlatFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE];
+            transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
+            transactionFlatFee = 20;
+
+            let transactionPercentFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE];
+            transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
+
+            donation.fees = DonationHelper.calculateFees(
+                donation.isOfflineDonation,
+                donation.isFeeCovered,
+                donation.subtotal,
+                transactionFlatFee,
+                transactionPercentFee
+            );
+            donation.amountForNonprofit = donation.total - donation.fees;
+            donation.subtotalChargedToCard = donation.isOfflineDonation ? 0 : donation.total;
+
+            if (donation.changed())
+            {
+                showChanges(donation);
+            } else {
+                console.log("UNCHANGED");
+            }
+		});
+
     }).catch(function (err) {
         console.log('error: %j', err);
     });
@@ -56,17 +83,18 @@ const getDonationsData = function () {
     let allModels;
     return loadModels().then(function (models) {
         allModels = models;
-//    let promise = Promise.resolve();
-//    promise = promise.then(function () {
+
         const params = {
             include: [
                 {model: allModels.PaymentTransactions},
                 {model: allModels.Donor}
             ],
             where: {
-                isDeleted: 0,
                 //TODO: Change this to 0?
-                paymentTransactionIsTestMode: 1
+                paymentTransactionIsTestMode: 1,
+                isFeeCovered: 1,
+                isDeleted: 0,
+                createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
         };
         return donationsRepository.queryDonations(params);
@@ -75,23 +103,13 @@ const getDonationsData = function () {
     });
 
 
-    //    promise = promise.then(function (donations) {
-    //        return Promise.resolve({
-    //            data: donations.map(function (donation) {
-    //                donation.mutate = '';
-    //                donation.timezone = timezone;
-    //                if (donation.Donor && donation.isAnonymous) {
-    //                    donation.Donor.donorIsAnonymous = '';
-    //                }
-    //                return donation;
-    //            }),
-    //            fields: DonationHelper.reportFields,
-    //        });
-    //    }).catch(function (err) {
-    //        console.log(err);
-    //    });
-
     return promise;
+};
+
+const showChanges = function (donation) {
+    donation.changed().forEach(function (columnName) {
+        console.log(`Donation (Id: ${donation.id}) ${columnName} changed from ${donation.dataValues[columnName]} to ${donation._previousDataValues[columnName]}`);
+    });
 };
 
 fixDonations();
