@@ -400,6 +400,55 @@ Resources:
       EvaluationPeriods: 1
       TreatMissingData: breaching
 
+  processDonationsLambdaSlowAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmDescription: !Sub ${StackName} processDonations Lambda Slow Alarm
+      AlarmActions:
+        - !Ref AlertSns
+      OKActions:
+        - !Ref AlertSns
+      Namespace: AWS/Lambda
+      MetricName: Duration
+      Dimensions:
+      - Name: FunctionName
+        Value: !Sub ${StackName}-ProcessDonations
+      Statistic: Maximum
+      Period: 60
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 27000
+      EvaluationPeriods: 1
+      TreatMissingData: notBreaching
+
+  DbSlowQueryMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Sub /aws/rds/cluster/${DatabaseIdentifier}/slowquery
+      FilterPattern: '"*"'
+      MetricTransformations:
+      - MetricNamespace: !Ref StackName
+        MetricName: SlowQueryLogs
+        MetricValue: 1
+
+  DbSlowQueryAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${StackName}-DbSlowQuery"
+      AlarmDescription: Alarms when query takes >10s on the database
+      #AlarmActions:
+      #  - !Ref AlertSns
+      #OKActions:
+      #  - !Ref AlertSns
+      MetricName: SlowQueryLogs
+      Namespace: !Ref StackName
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      Period: 300
+      Statistic: Sum
+      Threshold: 1
+      TreatMissingData: notBreaching
+
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
@@ -1430,7 +1479,7 @@ Resources:
                 "type": "metric",
                 "x": 12,
                 "y": 18,
-                "width": 12,
+                "width": 6,
                 "height": 6,
                 "properties": {
                   "metrics": [
@@ -2153,6 +2202,24 @@ Resources:
               },
               {
                 "type": "metric",
+                "x": 18,
+                "y": 18,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "Slow ProcessDonations",
+                  "annotations": {
+                    "alarms": [
+                      "${processDonationsLambdaSlowAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
                 "x": 0,
                 "y": 24,
                 "width": 6,
@@ -2359,7 +2426,7 @@ Resources:
                 "type": "metric",
                 "x": 12,
                 "y": 36,
-                "width": 12,
+                "width": 6,
                 "height": 6,
                 "properties": {
                   "metrics": [
@@ -2392,6 +2459,24 @@ Resources:
                   "stacked": false,
                   "region": "${AWS::Region}",
                   "title": "RDS Unexpected Activity"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 18,
+                "y": 36,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "title": "SlowQueries",
+                  "annotations": {
+                    "alarms": [
+                      "${DbSlowQueryAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
                 }
               }
             ]
