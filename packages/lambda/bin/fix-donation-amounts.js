@@ -43,6 +43,7 @@ const fixDonations = function() {
             //console.log("HERE");
             let transactionFlatFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE];
             transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
+            //TODO: For testing
             transactionFlatFee = 20;
 
             let transactionPercentFee = settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE];
@@ -55,14 +56,13 @@ const fixDonations = function() {
                 transactionFlatFee,
                 transactionPercentFee
             );
-            donation.amountForNonprofit = donation.total - donation.fees;
-            donation.subtotalChargedToCard = donation.isOfflineDonation ? 0 : donation.total;
+            donation.total = donation.amountForNonprofit + donation.fees;
 
+            // Only update if the values have changed
             if (donation.changed())
             {
                 showChanges(donation);
-            } else {
-                console.log("UNCHANGED");
+                // TODO: Update
             }
 		});
 
@@ -107,9 +107,11 @@ const getDonationsData = function () {
 };
 
 const showChanges = function (donation) {
+    let message = `Donation (Id: ${donation.id})`;
     donation.changed().forEach(function (columnName) {
-        console.log(`Donation (Id: ${donation.id}) ${columnName} changed from ${donation.dataValues[columnName]} to ${donation._previousDataValues[columnName]}`);
+        message += ` ${columnName}: ${donation.dataValues[columnName]} => ${donation._previousDataValues[columnName]},`;
     });
+    console.log(message);
 };
 
 fixDonations();
