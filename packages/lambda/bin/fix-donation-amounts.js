@@ -45,6 +45,7 @@ const fixDonations = function() {
         paymentTransactions.forEach(function (paymentTransaction) {
             let subtotal = 0;
             let fees = 0;
+            let donationsToSendReceiptsFor = [];
             paymentTransaction.Donations.forEach(function (donation) {
                 numTotal += 1;
 
@@ -87,27 +88,27 @@ const fixDonations = function() {
                 {
                     numChanged += 1;
                     showChanges(donation);
+                    if (donation.isFeeCovered) {
+                        donationsToSendReceiptsFor.push(donation);
+                    }
                 }
             });
             // TODO: Save the PaymentTransaction and ALL Donations
+
+            if (donationsToSendReceiptsFor.length)
+            {
+                const body = {
+                    donations: donationsToSendReceiptsFor,
+                    donor: donationsToSendReceiptsFor[0].Donor,
+                    paymentTransaction: paymentTransaction,
+                };
+                lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
+            }
+
+
+
         });
         console.log(`CHANGED ${numChanged} of ${numTotal} donations`);
-
-//TODO ONLY SEND RECEIPT IF THE DONATION CHANGED
-//TODO NEED TO GET DONOR AS WELL
-//TODO CONSIDER ANONYMOUS
-//    }).then(() => {
-//        const body = {
-//            donations: donations.map((donation) => {
-//                donation.timezone = settings.EVENT_TIMEZONE;
-//                donation.total = donation.formattedAmount;
-//                return donation;
-//            }),
-//            donor: donor,
-//            paymentTransaction: paymentTransaction,
-//        };
-//        // there was a mutate function looking like to fix the timezones
-//        lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
     }).catch(function (err) {
         console.log(`error: ${err}`);
     });
@@ -126,8 +127,16 @@ const queryPaymentTransactions = function () {
         allModels = models;
 
         const params = {
-            include: [{model: allModels.Donation}],
+            include: [
+                {
+                    model: allModels.Donation,
+                    include: [
+                        {model: allModels.Donor}
+                    ]
+                }
+            ],
             where: {
+                id: 1,
                 IsTestMode: 0,
                 createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
