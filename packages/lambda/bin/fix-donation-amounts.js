@@ -29,6 +29,7 @@ const fixDonations = function() {
     const settingsRepository = new SettingsRepository();
 
     let numChanged = 0;
+    let numTotal = 0;
     let transactionFlatFee = 0;
     let transactionPercentFee = 0;
 
@@ -45,6 +46,8 @@ const fixDonations = function() {
             let subtotal = 0;
             let fees = 0;
             paymentTransaction.Donations.forEach(function (donation) {
+                numTotal += 1;
+
                 //re-calculate the fees based off the current settings
                 donation.fees = DonationHelper.calculateFees(
                     donation.isOfflineDonation,
@@ -66,7 +69,7 @@ const fixDonations = function() {
                 else
                 {
                     // If the fees were not covered we increase the amount going to the nonprofit
-                    donation.amountForNonprofit = donation.total + donation.fees;
+                    donation.amountForNonprofit = donation.total - donation.fees;
                 }
             });
 
@@ -88,8 +91,11 @@ const fixDonations = function() {
             });
             // TODO: Save the PaymentTransaction and ALL Donations
         });
-        console.log(`CHANGED ${numChanged} donations`);
+        console.log(`CHANGED ${numChanged} of ${numTotal} donations`);
 
+//TODO ONLY SEND RECEIPT IF THE DONATION CHANGED
+//TODO NEED TO GET DONOR AS WELL
+//TODO CONSIDER ANONYMOUS
 //    }).then(() => {
 //        const body = {
 //            donations: donations.map((donation) => {
@@ -122,7 +128,6 @@ const queryPaymentTransactions = function () {
         const params = {
             include: [{model: allModels.Donation}],
             where: {
-                id: [2, 7],
                 IsTestMode: 0,
                 createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
