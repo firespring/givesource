@@ -34,6 +34,7 @@ const fixDonations = function() {
     let numTotal = 0;
     let transactionFlatFee = 0;
     let transactionPercentFee = 0;
+    let eventTimezone = null;
 
     settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE).then(function(flatFee) {
         transactionFlatFee = parseInt(flatFee.value);
@@ -42,6 +43,10 @@ const fixDonations = function() {
     }).then(function (feePercentage) {
         transactionPercentFee = parseFloat(feePercentage.value);
         console.log(`Transaction percent fee is ${transactionPercentFee}`);
+        return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE);
+    }).then(function (timezone) {
+        eventTimezone = timezone;
+        console.log(`Event Timezone is ${eventTimezone}`);
         return queryPaymentTransactions();
     }).then(function (paymentTransactions) {
         paymentTransactions.forEach(function (paymentTransaction) {
@@ -100,7 +105,11 @@ const fixDonations = function() {
             if (donationsToSendReceiptsFor.length)
             {
                 const body = {
-                    donations: donationsToSendReceiptsFor,
+                    donations: donationsToSendReceiptsFor.map((donation) => {
+                        donation.timezone = settings.EVENT_TIMEZONE;
+                        donation.total = donation.formattedAmount;
+                        return donation;
+                    }),
                     donor: donationsToSendReceiptsFor[0].Donor,
                     paymentTransaction: paymentTransaction,
                 };
