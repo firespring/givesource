@@ -33,18 +33,19 @@ const fixDonations = function() {
     let transactionPercentFee = 0;
 
     settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE).then(function(flatFee) {
-        transactionFlatFee = flatFee.value;
+        transactionFlatFee = parseInt(flatFee.value);
+        console.log(`Transaction flat fee is ${transactionFlatFee}`);
         return settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE);
     }).then(function (feePercentage) {
-        transactionPercentFee = feePercentage.value;
-//        return getDonationsData();
-//    }).then(function (donations) {
+        transactionPercentFee = parseFloat(feePercentage.value);
+        console.log(`Transaction percent fee is ${transactionPercentFee}`);
         return queryPaymentTransactions();
     }).then(function (paymentTransactions) {
         paymentTransactions.forEach(function (paymentTransaction) {
             let subtotal = 0;
             let fees = 0;
             paymentTransaction.Donations.forEach(function (donation) {
+                //re-calculate the fees based off the current settings
                 donation.fees = DonationHelper.calculateFees(
                     donation.isOfflineDonation,
                     donation.isFeeCovered,
@@ -53,51 +54,41 @@ const fixDonations = function() {
                     transactionPercentFee
                 );
 
-                //
-                donation.total = donation.amountForNonprofit + donation.fees;
-
                 subtotal += donation.subtotal;
-
-                // TODO if fee is not covered we need to change the amount for nonprofit???
                 if (donation.isFeeCovered) {
+                    // If the fees were covered by the user we decrease the total amount by however much less the fees are
+                    donation.total = donation.amountForNonprofit + donation.fees;
+                    if (!donation.isOfflineDonation) {
+                        donation.subtotalChargedToCard = donation.total
+                    }
                     fees += donation.fees;
                 }
-
-                //donation.paymentTransaction.transactionAmount = donation.total;
-
-                if (donation.changed())
+                else
                 {
-                    numChanged += 1;
-                    showChanges(donation);
-                    // TODO: Update
+                    // If the fees were not covered we increase the amount going to the nonprofit
+                    donation.amountForNonprofit = donation.total + donation.fees;
                 }
             });
 
+            // Update teh total transaction amount for the paymentTransaction based of
+            // the updated values from all of the donations
             paymentTransaction.transactionAmount = subtotal + fees;
+
+            // Print any changes that were made
             if (paymentTransaction.changed())
             {
                 showChanges(paymentTransaction);
             }
-            foo.bar;
-            // Only update if the values have changed
-            if (donation.changed())
-            {
-                numChanged += 1;
-                showChanges(donation);
-                // TODO: Update
-            }
+            paymentTransaction.Donations.forEach(function (donation) {
+                if (donation.changed())
+                {
+                    numChanged += 1;
+                    showChanges(donation);
+                }
+            });
+            // TODO: Save the PaymentTransaction and ALL Donations
         });
-        //console.log(`CHANGED ${numChanged} rows`);
-
-
-
-
-
-
-
-
-
-
+        console.log(`CHANGED ${numChanged} donations`);
 
 //    }).then(() => {
 //        const body = {
@@ -111,17 +102,6 @@ const fixDonations = function() {
 //        };
 //        // there was a mutate function looking like to fix the timezones
 //        lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
-//    }).then(() => {
-//        const body = {
-//            donations: donations.map((donation) => {
-//                donation.timezone = settings.EVENT_TIMEZONE;
-//        donation.subtotal = donation.formattedSubtotal;
-//                return donation;
-//            }),
-//      donor: donor
-//        };
-//        lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
-//        callback();
     }).catch(function (err) {
         console.log(`error: ${err}`);
     });
@@ -139,13 +119,10 @@ const queryPaymentTransactions = function () {
     return loadModels().then(function (models) {
         allModels = models;
 
-//            include: [
-//                {model: allModels.PaymentTransaction},
-//                {model: allModels.Donations}
-//            ],
         const params = {
             include: [{model: allModels.Donation}],
             where: {
+                id: [2, 7],
                 IsTestMode: 0,
                 createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
@@ -160,8 +137,7 @@ const queryPaymentTransactions = function () {
 };
 
 const showChanges = function (thing) {
-    let message = `${thing} (Id: ${thing.id})`;
-    console.log(message);
+    let message = `${thing} (Id: ${thing.id}),`;
     thing.changed().forEach(function (columnName) {
         message += ` ${columnName}: ${thing._previousDataValues[columnName]} => ${thing.dataValues[columnName]},`;
     });
