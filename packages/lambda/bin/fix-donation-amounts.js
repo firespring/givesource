@@ -45,7 +45,7 @@ const fixDonations = function() {
         console.log(`Transaction percent fee is ${transactionPercentFee}`);
         return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE);
     }).then(function (timezone) {
-        eventTimezone = timezone;
+        eventTimezone = timezone.value;
         console.log(`Event Timezone is ${eventTimezone}`);
         return queryPaymentTransactions();
     }).then(function (paymentTransactions) {
@@ -106,7 +106,7 @@ const fixDonations = function() {
             {
                 const body = {
                     donations: donationsToSendReceiptsFor.map((donation) => {
-                        donation.timezone = settings.EVENT_TIMEZONE;
+                        donation.timezone = eventTimezone;
                         donation.total = donation.formattedAmount;
                         return donation;
                     }),
