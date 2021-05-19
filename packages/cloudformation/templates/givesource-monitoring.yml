@@ -425,11 +425,12 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties:
       LogGroupName: !Sub /aws/rds/cluster/${DatabaseIdentifier}/slowquery
-      FilterPattern: '"*"'
+      FilterPattern: ''
       MetricTransformations:
       - MetricNamespace: !Ref StackName
         MetricName: SlowQueryLogs
         MetricValue: 1
+        DefaultValue: 0
 
   DbSlowQueryAlarm:
     Type: AWS::CloudWatch::Alarm
