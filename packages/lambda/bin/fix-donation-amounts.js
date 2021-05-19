@@ -23,10 +23,12 @@ const PaymentTransactionRepository = require('./../src/repositories/paymentTrans
 const SettingHelper = require('./../src/helpers/setting');
 const SettingsRepository = require('./../src/repositories/settings');
 const loadModels = require('./../src/models/index');
+const Lambda = require('./../src/aws/lambda');
 const Sequelize = require('sequelize');
 
 const fixDonations = function() {
     const settingsRepository = new SettingsRepository();
+    const lambda = new Lambda();
 
     let numChanged = 0;
     let numTotal = 0;
@@ -102,11 +104,8 @@ const fixDonations = function() {
                     donor: donationsToSendReceiptsFor[0].Donor,
                     paymentTransaction: paymentTransaction,
                 };
-                lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
+                //lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
             }
-
-
-
         });
         console.log(`CHANGED ${numChanged} of ${numTotal} donations`);
     }).catch(function (err) {
