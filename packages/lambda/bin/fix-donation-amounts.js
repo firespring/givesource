@@ -32,7 +32,6 @@ const fixDonations = function() {
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE] = null;
     settings[SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE] = null;
 
-    //DonationHelper.getFeeRates(false)
     settingsRepository.batchGet(Object.keys(settings)).then((response) => {
         response.forEach((setting) => {
             settings[setting.key] = setting.value;
@@ -55,6 +54,8 @@ const fixDonations = function() {
                 transactionPercentFee
             );
             donation.total = donation.amountForNonprofit + donation.fees;
+            console.log(donation);
+            donation.paymentTransaction.transactionAmount = donation.total;
 
             // Only update if the values have changed
             if (donation.changed())
@@ -67,7 +68,7 @@ const fixDonations = function() {
         console.log(`CHANGED ${numChanged} rows`);
 
     }).catch(function (err) {
-        console.log('error: %j', err);
+        console.log(`error: ${err}`);
     });
 };
 
