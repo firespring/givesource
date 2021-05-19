@@ -54,8 +54,10 @@ const fixDonations = function() {
                 transactionPercentFee
             );
             donation.total = donation.amountForNonprofit + donation.fees;
-            console.log(donation);
-            donation.paymentTransaction.transactionAmount = donation.total;
+            //console.log(donation);
+            //console.log(donation.donor);
+            //console.log(donation.paymentTransaction);
+            //donation.paymentTransaction.transactionAmount = donation.total;
 
             // Only update if the values have changed
             if (donation.changed())
@@ -87,7 +89,7 @@ const getDonationsData = function () {
 
         const params = {
             include: [
-                {model: allModels.PaymentTransactions},
+                {model: allModels.PaymentTransaction},
                 {model: allModels.Donor}
             ],
             where: {
