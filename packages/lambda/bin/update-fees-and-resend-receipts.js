@@ -28,6 +28,8 @@ const Sequelize = require('sequelize');
 
 const fixDonations = function() {
     const settingsRepository = new SettingsRepository();
+    const paymentTransactionRepository = new PaymentTransactionRepository();
+    const donationsRepository = new DonationsRepository();
     const lambda = new Lambda();
 
     let numChanged = 0;
@@ -37,7 +39,6 @@ const fixDonations = function() {
 
     settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE).then(function(flatFee) {
         transactionFlatFee = parseInt(flatFee.value);
-        transactionFlatFee = 15;
         console.log(`Transaction flat fee is ${transactionFlatFee}`);
         return settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE);
     }).then(function (feePercentage) {
@@ -49,7 +50,7 @@ const fixDonations = function() {
         console.log(`Event Timezone is ${eventTimezone}`);
         return queryPaymentTransactions();
     }).then(function (paymentTransactions) {
-        paymentTransactions.forEach(function (paymentTransaction) {
+        return Promise.all(paymentTransactions.map(function (paymentTransaction) {
             updateFees(paymentTransaction, transactionFlatFee, transactionPercentFee);
 
             // Print any changes that were made
@@ -72,26 +73,35 @@ const fixDonations = function() {
             });
 
             // Save the data and send updated receipts
-            return saveInTransaction(paymentTransaction).then(function () {
-                if (donationsToSendReceiptsFor.length)
-                {
-                    paymentTransaction.timezone = eventTimezone;
-                    donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
-                    const body = {
-                        donations: donationsToSendReceiptsFor.map((donation) => {
-                            donation.timezone = eventTimezone;
-                            donation.total = donation.formattedAmount;
-                            return donation;
-                        }),
-                        donor: donationsToSendReceiptsFor[0].Donor,
-                        paymentTransaction: paymentTransaction,
-                    };
-                    return lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
-                }
+            return paymentTransactionRepository.save(paymentTransaction).then(function () {
+                return Promise.all(paymentTransaction.Donations.map(function (donation) {
+                    return donationsRepository.save(donation);
+                })).then(function () {
+                    if (donationsToSendReceiptsFor.length)
+                    {
+                        paymentTransaction.timezone = eventTimezone;
+                        donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
+                        const body = {
+                            donations: donationsToSendReceiptsFor.map((donation) => {
+                                donation.timezone = eventTimezone;
+                                donation.total = donation.formattedAmount;
+                                return donation;
+                            }),
+                            donor: donationsToSendReceiptsFor[0].Donor,
+                            paymentTransaction: paymentTransaction,
+                        };
+                        return lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
+                    }
+                    else
+                    {
+                        return Promise.resolve();
+                    }
+                })
             }).catch(function (err) {
                 console.log(`Transaction Rolled Back, error: ${err}`);
             });
-        });
+        }));
+    }).then(function () {
         console.log(`CHANGED ${numChanged} donations`);
     }).catch(function (err) {
         console.log(`error: ${err}`);
@@ -166,16 +176,6 @@ const updateFees = function(paymentTransaction, flatFee, percentFee) {
     // Update teh total transaction amount for the paymentTransaction based of
     // the updated values from all of the donations
     paymentTransaction.transactionAmount = subtotal + fees;
-};
-
-const saveInTransaction = function(paymentTransaction) {
-    return paymentTransaction.sequelize.transaction(function (t) {
-        return paymentTransaction.save().then(function () {
-            return Promise.all(paymentTransaction.Donations.map(function (donation) {
-                return donation.save();
-            }));
-        });
-    });
 };
 
 const showChanges = function (thing) {
