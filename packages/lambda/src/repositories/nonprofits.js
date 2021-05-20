@@ -285,7 +285,7 @@ NonprofitsRepository.prototype.search = function (keys, search, filters) {
 			],
 		});
 	}
-	if (keys.hasOwnProperty('status')) {
+	if (keys.includes('status')) {
 		findAllParams.where.push({
 			status: search
 		})

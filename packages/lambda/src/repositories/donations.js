@@ -271,4 +271,26 @@ DonationsRepository.prototype.upsert = function (model, data) {
 	});
 };
 
+/**
+ * bulk create donations
+ *
+ * @param {Array} values
+ * @return {Promise<any>}
+ */
+DonationsRepository.prototype.bulkCreateDonations = function (values) {
+  let allModels;
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models;
+      return allModels.Donation.bulkCreate(values, {returning: true});
+    }).then(function (savedDonations) {
+      resolve(savedDonations);
+    }).catch(function (err) {
+      reject(err);
+    }).finally(function () {
+      return allModels.sequelize.close();
+    });
+  });
+}
+
 module.exports = DonationsRepository;
