@@ -80,13 +80,18 @@ const fixDonations = function() {
                     if (donationsToSendReceiptsFor.length)
                     {
                         paymentTransaction.timezone = eventTimezone;
-                        donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
+
+                        // Gross. I dunno. We couldn't find a better work-around to get it to show the formatted total in the email
+                        paymentTransactionHash = paymentTransaction.dataValues;
+                        paymentTransactionHash.formattedAmount = paymentTransaction.formattedAmount;
+
+                        //donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
                         const body = {
                             donationIds: donationsToSendReceiptsFor.map((donation) => {
                                 return donation.id;
                             }),
                             donor: donationsToSendReceiptsFor[0].Donor,
-                            paymentTransaction: paymentTransaction,
+                            paymentTransaction: paymentTransactionHash,
                         };
                         return lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
                     }
@@ -130,9 +135,9 @@ const queryPaymentTransactions = function () {
                 }
             ],
             where: {
-                //id: 1,
-                //IsTestMode: 0,
-                //createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
+                id: 1,
+                IsTestMode: 0,
+                createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
         };
         return paymentTransactionRepository.getAll(params);
@@ -171,7 +176,7 @@ const updateFees = function(paymentTransaction, flatFee, percentFee) {
         }
     });
 
-    // Update teh total transaction amount for the paymentTransaction based of
+    // Update the total transaction amount for the paymentTransaction based of
     // the updated values from all of the donations
     paymentTransaction.transactionAmount = subtotal + fees;
 };
