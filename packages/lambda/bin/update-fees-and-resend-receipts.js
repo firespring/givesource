@@ -31,14 +31,13 @@ const fixDonations = function() {
     const lambda = new Lambda();
 
     let numChanged = 0;
-    let numTotal = 0;
     let transactionFlatFee = 0;
     let transactionPercentFee = 0;
     let eventTimezone = null;
 
     settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE).then(function(flatFee) {
         transactionFlatFee = parseInt(flatFee.value);
-        transactionFlatFee = 20;
+        transactionFlatFee = 15;
         console.log(`Transaction flat fee is ${transactionFlatFee}`);
         return settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE);
     }).then(function (feePercentage) {
@@ -51,46 +50,16 @@ const fixDonations = function() {
         return queryPaymentTransactions();
     }).then(function (paymentTransactions) {
         paymentTransactions.forEach(function (paymentTransaction) {
-            let subtotal = 0;
-            let fees = 0;
-            let donationsToSendReceiptsFor = [];
-            paymentTransaction.Donations.forEach(function (donation) {
-                numTotal += 1;
-
-                //re-calculate the fees based off the current settings
-                donation.fees = DonationHelper.calculateFees(
-                    donation.isOfflineDonation,
-                    donation.isFeeCovered,
-                    donation.subtotal,
-                    transactionFlatFee,
-                    transactionPercentFee
-                );
-
-                subtotal += donation.subtotal;
-                if (donation.isFeeCovered) {
-                    // If the fees were covered by the user we decrease the total amount by however much less the fees are
-                    donation.total = donation.amountForNonprofit + donation.fees;
-                    if (!donation.isOfflineDonation) {
-                        donation.subtotalChargedToCard = donation.total
-                    }
-                    fees += donation.fees;
-                }
-                else
-                {
-                    // If the fees were not covered we increase the amount going to the nonprofit
-                    donation.amountForNonprofit = donation.total - donation.fees;
-                }
-            });
-
-            // Update teh total transaction amount for the paymentTransaction based of
-            // the updated values from all of the donations
-            paymentTransaction.transactionAmount = subtotal + fees;
+            updateFees(paymentTransaction, transactionFlatFee, transactionPercentFee);
 
             // Print any changes that were made
             if (paymentTransaction.changed())
             {
                 showChanges(paymentTransaction);
             }
+
+            // Print any changes that were made, flag any donations where the fees were covered for a receipt
+            let donationsToSendReceiptsFor = [];
             paymentTransaction.Donations.forEach(function (donation) {
                 if (donation.changed())
                 {
@@ -102,22 +71,12 @@ const fixDonations = function() {
                 }
             });
 
-            // TODO: Save the PaymentTransaction and ALL Donations
-            return paymentTransaction.sequelize.transaction(function (t) {
-                console.log('in transaction');
-                return paymentTransaction.save().then(function () {
-                    console.log('PT saved');
-                    return Promise.all(paymentTransaction.Donations.map(function (donation) {
-                        console.log('saving?');
-                        return donation.save();
-                    }));
-                });
-            }).then(function () {
-                console.log("committed");
+            // Save the data and send updated receipts
+            return saveInTransaction(paymentTransaction).then(function () {
                 if (donationsToSendReceiptsFor.length)
                 {
                     paymentTransaction.timezone = eventTimezone;
-                    //donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
+                    donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
                     const body = {
                         donations: donationsToSendReceiptsFor.map((donation) => {
                             donation.timezone = eventTimezone;
@@ -127,13 +86,13 @@ const fixDonations = function() {
                         donor: donationsToSendReceiptsFor[0].Donor,
                         paymentTransaction: paymentTransaction,
                     };
-                    //lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
+                    return lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
                 }
             }).catch(function (err) {
                 console.log(`Transaction Rolled Back, error: ${err}`);
             });
         });
-        console.log(`CHANGED ${numChanged} of ${numTotal} donations`);
+        console.log(`CHANGED ${numChanged} donations`);
     }).catch(function (err) {
         console.log(`error: ${err}`);
     });
@@ -172,9 +131,51 @@ const queryPaymentTransactions = function () {
     }).catch(function (err) {
         console.log(err);
     });
+};
 
+const updateFees = function(paymentTransaction, flatFee, percentFee) {
+    let subtotal = 0;
+    let fees = 0;
 
-    return promise;
+    paymentTransaction.Donations.forEach(function (donation) {
+        //re-calculate the fees based off the current settings
+        donation.fees = DonationHelper.calculateFees(
+            donation.isOfflineDonation,
+            donation.isFeeCovered,
+            donation.subtotal,
+            flatFee,
+            percentFee
+        );
+
+        subtotal += donation.subtotal;
+        if (donation.isFeeCovered) {
+            // If the fees were covered by the user we decrease the total amount by however much less the fees are
+            donation.total = donation.amountForNonprofit + donation.fees;
+            if (!donation.isOfflineDonation) {
+                donation.subtotalChargedToCard = donation.total
+            }
+            fees += donation.fees;
+        }
+        else
+        {
+            // If the fees were not covered we increase the amount going to the nonprofit
+            donation.amountForNonprofit = donation.total - donation.fees;
+        }
+    });
+
+    // Update teh total transaction amount for the paymentTransaction based of
+    // the updated values from all of the donations
+    paymentTransaction.transactionAmount = subtotal + fees;
+};
+
+const saveInTransaction = function(paymentTransaction) {
+    return paymentTransaction.sequelize.transaction(function (t) {
+        return paymentTransaction.save().then(function () {
+            return Promise.all(paymentTransaction.Donations.map(function (donation) {
+                return donation.save();
+            }));
+        });
+    });
 };
 
 const showChanges = function (thing) {
