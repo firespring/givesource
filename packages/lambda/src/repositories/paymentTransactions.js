@@ -101,13 +101,13 @@ PaymentTransactionsRepository.prototype.get = function (id) {
  *
  * @return {Promise}
  */
-PaymentTransactionsRepository.prototype.getAll = function () {
+PaymentTransactionsRepository.prototype.getAll = function (params = {}) {
 	let allModels;
 	return new Promise(function (resolve, reject) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-			return allModels.PaymentTransaction.findAll();
+			return allModels.PaymentTransaction.findAll(params);
 		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
