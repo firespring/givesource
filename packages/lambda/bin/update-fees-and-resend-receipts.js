@@ -38,6 +38,7 @@ const fixDonations = function() {
 
     settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE).then(function(flatFee) {
         transactionFlatFee = parseInt(flatFee.value);
+        transactionFlatFee = 20;
         console.log(`Transaction flat fee is ${transactionFlatFee}`);
         return settingsRepository.get(SettingHelper.SETTING_PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE);
     }).then(function (feePercentage) {
@@ -100,22 +101,37 @@ const fixDonations = function() {
                     }
                 }
             });
-            // TODO: Save the PaymentTransaction and ALL Donations
 
-            if (donationsToSendReceiptsFor.length)
-            {
-                paymentTransaction.timezone = eventTimezone;
-                const body = {
-                    donations: donationsToSendReceiptsFor.map((donation) => {
-                        donation.timezone = eventTimezone;
-                        donation.total = donation.formattedAmount;
-                        return donation;
-                    }),
-                    donor: donationsToSendReceiptsFor[0].Donor,
-                    paymentTransaction: paymentTransaction,
-                };
-                //lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
-            }
+            // TODO: Save the PaymentTransaction and ALL Donations
+            return paymentTransaction.sequelize.transaction(function (t) {
+                console.log('in transaction');
+                return paymentTransaction.save().then(function () {
+                    console.log('PT saved');
+                    return Promise.all(paymentTransaction.Donations.map(function (donation) {
+                        console.log('saving?');
+                        return donation.save();
+                    }));
+                });
+            }).then(function () {
+                console.log("committed");
+                if (donationsToSendReceiptsFor.length)
+                {
+                    paymentTransaction.timezone = eventTimezone;
+                    //donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
+                    const body = {
+                        donations: donationsToSendReceiptsFor.map((donation) => {
+                            donation.timezone = eventTimezone;
+                            donation.total = donation.formattedAmount;
+                            return donation;
+                        }),
+                        donor: donationsToSendReceiptsFor[0].Donor,
+                        paymentTransaction: paymentTransaction,
+                    };
+                    //lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SendDonationsReceiptEmail', {body: body});
+                }
+            }).catch(function (err) {
+                console.log(`Transaction Rolled Back, error: ${err}`);
+            });
         });
         console.log(`CHANGED ${numChanged} of ${numTotal} donations`);
     }).catch(function (err) {
@@ -142,13 +158,14 @@ const queryPaymentTransactions = function () {
                     include: [
                         {model: allModels.Donor},
                         {model: allModels.Nonprofit}
-                    ]
+                    ],
+                    required: true
                 }
             ],
             where: {
-                id: 1,
-                IsTestMode: 0,
-                createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
+                //id: 1,
+                //IsTestMode: 0,
+                //createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
         };
         return paymentTransactionRepository.getAll(params);
