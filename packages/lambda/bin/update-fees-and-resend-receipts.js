@@ -80,12 +80,10 @@ const fixDonations = function() {
                     if (donationsToSendReceiptsFor.length)
                     {
                         paymentTransaction.timezone = eventTimezone;
-                        //donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
+                        donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';
                         const body = {
-                            donations: donationsToSendReceiptsFor.map((donation) => {
-                                donation.timezone = eventTimezone;
-                                donation.total = donation.formattedAmount;
-                                return donation;
+                            donationIds: donationsToSendReceiptsFor.map((donation) => {
+                                return donation.id;
                             }),
                             donor: donationsToSendReceiptsFor[0].Donor,
                             paymentTransaction: paymentTransaction,
@@ -133,8 +131,8 @@ const queryPaymentTransactions = function () {
             ],
             where: {
                 //id: 1,
-                IsTestMode: 0,
-                createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
+                //IsTestMode: 0,
+                //createdAt: {[Sequelize.Op.lt]: new Date('2021-05-12')}
             }
         };
         return paymentTransactionRepository.getAll(params);
