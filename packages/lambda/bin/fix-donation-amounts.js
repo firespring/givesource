@@ -104,6 +104,7 @@ const fixDonations = function() {
 
             if (donationsToSendReceiptsFor.length)
             {
+                paymentTransaction.timezone = eventTimezone;
                 const body = {
                     donations: donationsToSendReceiptsFor.map((donation) => {
                         donation.timezone = eventTimezone;
@@ -139,7 +140,8 @@ const queryPaymentTransactions = function () {
                 {
                     model: allModels.Donation,
                     include: [
-                        {model: allModels.Donor}
+                        {model: allModels.Donor},
+                        {model: allModels.Nonprofit}
                     ]
                 }
             ],
