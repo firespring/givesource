@@ -123,12 +123,10 @@ DonationsRepository.prototype.queryDonations = function (params) {
 		return loadModels().then(function (models) {
 			allModels = models;
 		}).then(function () {
-            if (!("include" in params)) {
-                params.include = [
-                    {model: allModels.Nonprofit},
-                    {model: allModels.Donor}
-                ];
-            }
+			params.include = [
+				{model: allModels.Nonprofit},
+				{model: allModels.Donor},
+			];
 			return allModels.Donation.findAndCountAll(params);
 		}).then(function (results) {
 			resolve(results);
