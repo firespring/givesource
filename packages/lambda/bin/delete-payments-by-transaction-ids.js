@@ -17,14 +17,9 @@
 require('./config/bootstrap').bootstrap();
 
 const inquirer = require('inquirer');
-const config = require('config');
-const DonationHelper = require('./../src/helpers/donation');
 const DonationsRepository = require('./../src/repositories/donations');
 const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
-const SettingHelper = require('./../src/helpers/setting');
-const SettingsRepository = require('./../src/repositories/settings');
 const loadModels = require('./../src/models/index');
-const Lambda = require('./../src/aws/lambda');
 const Sequelize = require('sequelize');
 
 const deletePaymentsByTransactionIds = function () {
@@ -32,6 +27,7 @@ const deletePaymentsByTransactionIds = function () {
   const donationsRepository = new DonationsRepository();
 
   let numChanged = 0;
+  let deletedPts;
 
   inquirer.prompt([
     {
@@ -46,25 +42,10 @@ const deletePaymentsByTransactionIds = function () {
     return queryPaymentTransactions(answerStringNoWhiteSpace.split(','));
   }).then(paymentTransactions => {
     return Promise.all(paymentTransactions.map(function (paymentTransaction) {
-      updateFees(paymentTransaction);
 
-      // Print any changes that were made
-      if (paymentTransaction.changed())
-      {
-        showChanges(paymentTransaction);
-      }
-
-      // Print any changes that were made, flag any donations where the fees were covered for a receipt
-      paymentTransaction.Donations.forEach(function (donation) {
-        if (donation.changed())
-        {
-          numChanged += 1;
-          showChanges(donation);
-        }
-      });
-
-      // Save the data and send updated receipts
+      // Delete the pt and go through and delete each donation
       return paymentTransactionRepository.delete(paymentTransaction.id).then(function () {
+        console.log(`Payment Transaction: ${paymentTransaction.transactionId} was DELETED.`);
         return Promise.all(paymentTransaction.Donations.map(function (donation) {
           console.log(`${paymentTransaction.transactionId} --- DELETED: Donation ID: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`);
           return donationsRepository.delete(donation.id);
@@ -111,21 +92,6 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
   }).catch(function (err) {
     console.log(err);
   });
-};
-
-const updateFees = function(paymentTransaction) {
-  paymentTransaction.Donations.forEach(function (donation) {
-    donation.total = 0;
-    donation.subtotalChargedToCard = 0;
-    donation.subtotal = 0;
-    donation.amountForNonprofit = 0;
-    donation.isDelete = true;
-  });
-
-  // Update payment transaction status to REFUNDED and set total to 0
-  paymentTransaction.transactionAmount = 0;
-  paymentTransaction.isDeleted = true;
-  paymentTransaction.transactionStatus = 'REFUNDED';
 };
 
 const showChanges = function (thing) {
