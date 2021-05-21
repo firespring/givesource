@@ -38,7 +38,7 @@ const deletePaymentsByTransactionIds = function () {
       type: 'input',
       message: 'Input the payment transaction ids list to clean up from database. Example (pt1,pt2,pt3,exc):',
       name: 'paymentTransactionIds',
-      default: 'a4159a7b56cf4fa59f59e8bbcb30a5f7,83e80984daf749af9bc9816a3b7781f8,2bbfd60f736044dd8202cef63312b6d6'
+      default: 'd06fb82f3c1f408580f25b927b69d3b9,96ca47a097d34ff2be175165d4a1d324'
     }
   ]).then(answers => {
     let answerString = answers.paymentTransactionIds;
@@ -118,10 +118,12 @@ const updateFees = function(paymentTransaction) {
     donation.subtotalChargedToCard = 0;
     donation.subtotal = 0;
     donation.amountForNonprofit = 0;
+    donation.isDelete = true;
   });
 
   // Update payment transaction status to REFUNDED and set total to 0
   paymentTransaction.transactionAmount = 0;
+  paymentTransaction.isDeleted = true;
   paymentTransaction.transactionStatus = 'REFUNDED';
 };
 
