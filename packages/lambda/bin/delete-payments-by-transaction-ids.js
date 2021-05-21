@@ -75,7 +75,7 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
         }
       }
     };
-    return paymentTransactionRepository.getAll(params);
+    return paymentTransactionRepository.get(paymentTransactionIds[0]);
   }).catch(function (err) {
     console.log(err);
   });
