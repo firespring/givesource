@@ -28,6 +28,11 @@ const Lambda = require('./../src/aws/lambda');
 const Sequelize = require('sequelize');
 
 const deletePaymentsByTransactionIds = function () {
+  const paymentTransactionRepository = new PaymentTransactionRepository();
+  const donationsRepository = new DonationsRepository();
+
+  let numChanged = 0;
+
   inquirer.prompt([
     {
       type: 'input',
@@ -53,10 +58,20 @@ const deletePaymentsByTransactionIds = function () {
       paymentTransaction.Donations.forEach(function (donation) {
         if (donation.changed())
         {
+          numChanged += 1;
           showChanges(donation);
         }
       });
+
+      // Save the data and send updated receipts
+      return paymentTransactionRepository.save(paymentTransaction).then(function () {
+        return Promise.all(paymentTransaction.Donations.map(function (donation) {
+          return donationsRepository.save(donation);
+        }));
+      });
     }));
+  }).then(function () {
+    console.log(`CHANGED ${numChanged} donations`);
   }).catch(function (err) {
     console.log(`error: ${err}`);
   });
