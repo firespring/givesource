@@ -26,15 +26,12 @@ const deletePaymentsByTransactionIds = function () {
   const paymentTransactionRepository = new PaymentTransactionRepository();
   const donationsRepository = new DonationsRepository();
 
-  let numChanged = 0;
-  let deletedPts;
-
   inquirer.prompt([
     {
       type: 'input',
       message: 'Input the payment transaction ids list to clean up from database. Example (pt1,pt2,pt3,exc):',
       name: 'paymentTransactionIds',
-      default: 'uey6eucr1o,7m2vlea4w3'
+      default: ''
     }
   ]).then(answers => {
     let answerString = answers.paymentTransactionIds;
@@ -53,7 +50,7 @@ const deletePaymentsByTransactionIds = function () {
       });
     }));
   }).then(function () {
-    console.log(`CHANGED ${numChanged} donations`);
+    console.log(`done.`);
   }).catch(function (err) {
     console.log(`error: ${err}`);
   });
@@ -92,14 +89,6 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
   }).catch(function (err) {
     console.log(err);
   });
-};
-
-const showChanges = function (thing) {
-  let message = `${thing} (Id: ${thing.id}),`;
-  thing.changed().forEach(function (columnName) {
-    message += ` ${columnName}: ${thing._previousDataValues[columnName]} => ${thing.dataValues[columnName]},`;
-  });
-  console.log(message);
 };
 
 deletePaymentsByTransactionIds();
