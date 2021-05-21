@@ -5,6 +5,7 @@
 		"build": "npm run clean && npm run webpack",
 		"clean": "rimraf build",
 		"delete-test-payments": "node bin/delete-test-payments",
+        "delete-payments-by-transaction-ids": "node bin/delete-payments-by-transaction-ids",
 		"deploy": "npm run build && node bin/deploy",
 		"release": "npm run build && node bin/release",
 		"release:force": "npm run release -- --force",
