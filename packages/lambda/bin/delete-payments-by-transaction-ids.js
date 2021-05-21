@@ -38,9 +38,17 @@ const deletePaymentsByTransactionIds = function () {
   ]).then(answers => {
     let answerString = answers.paymentTransactionIds;
     let answerStringNoWhiteSpace = answerString.replace(/\s+/g, '')
-    return queryPaymentTransactions(answerStringNoWhiteSpace);
+    return queryPaymentTransactions(answerStringNoWhiteSpace.split(','));
   }).then(paymentTransactions => {
-    console.log(paymentTransactions)
+    return Promise.all(paymentTransactions.map(function (paymentTransaction) {
+      updateFees(paymentTransaction);
+
+      // Print any changes that were made
+      if (paymentTransaction.changed())
+      {
+        showChanges(paymentTransaction);
+      }
+    }));
   }).catch(function (err) {
     console.log(`error: ${err}`);
   });
@@ -75,10 +83,32 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
         }
       }
     };
-    return paymentTransactionRepository.get(paymentTransactionIds[0]);
+    return paymentTransactionRepository.getAll(params);
   }).catch(function (err) {
     console.log(err);
   });
+};
+
+const updateFees = function(paymentTransaction) {
+  paymentTransaction.Donations.forEach(function (donation) {
+    donation.total = 0;
+    donation.subtotalChargedToCard = 0;
+    donation.subtotal = 0;
+    donation.amountForNonprofit = 0;
+
+  });
+
+  // Update payment transaction status to REFUNDED and set total to 0
+  paymentTransaction.transactionAmount = 0;
+  paymentTransaction.transactionStatus = 'REFUNDED';
+};
+
+const showChanges = function (thing) {
+  let message = `${thing} (Id: ${thing.id}),`;
+  thing.changed().forEach(function (columnName) {
+    message += ` ${columnName}: ${thing._previousDataValues[columnName]} => ${thing.dataValues[columnName]},`;
+  });
+  console.log(message);
 };
 
 deletePaymentsByTransactionIds();
