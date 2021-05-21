@@ -66,7 +66,8 @@ const deletePaymentsByTransactionIds = function () {
       // Save the data and send updated receipts
       return paymentTransactionRepository.delete(paymentTransaction.id).then(function () {
         return Promise.all(paymentTransaction.Donations.map(function (donation) {
-          return donationsRepository.save(donation);
+          console.log(`DELETED: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`);
+          return donationsRepository.delete(donation.id);
         }));
       });
     }));
@@ -95,7 +96,7 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
         {
           model: allModels.Donation,
           include: [
-            {model: allModels.Donor},
+            {model: allModels.Nonprofit},
           ],
           required: true
         }

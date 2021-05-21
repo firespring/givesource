@@ -67,8 +67,6 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 	}, {
-	  paranoid: true,
-    deletedAt: 'updatedAt',
 		getterMethods: {
 			formattedAmount() {
 				return numeral(this.transactionAmount / 100).format('$0,0.00');
