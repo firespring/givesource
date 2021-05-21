@@ -48,6 +48,14 @@ const deletePaymentsByTransactionIds = function () {
       {
         showChanges(paymentTransaction);
       }
+
+      // Print any changes that were made, flag any donations where the fees were covered for a receipt
+      paymentTransaction.Donations.forEach(function (donation) {
+        if (donation.changed())
+        {
+          showChanges(donation);
+        }
+      });
     }));
   }).catch(function (err) {
     console.log(`error: ${err}`);
@@ -95,7 +103,6 @@ const updateFees = function(paymentTransaction) {
     donation.subtotalChargedToCard = 0;
     donation.subtotal = 0;
     donation.amountForNonprofit = 0;
-
   });
 
   // Update payment transaction status to REFUNDED and set total to 0
