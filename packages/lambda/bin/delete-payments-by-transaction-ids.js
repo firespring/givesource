@@ -38,7 +38,7 @@ const deletePaymentsByTransactionIds = function () {
       type: 'input',
       message: 'Input the payment transaction ids list to clean up from database. Example (pt1,pt2,pt3,exc):',
       name: 'paymentTransactionIds',
-      default: 'd06fb82f3c1f408580f25b927b69d3b9,96ca47a097d34ff2be175165d4a1d324'
+      default: 'uey6eucr1o,7m2vlea4w3'
     }
   ]).then(answers => {
     let answerString = answers.paymentTransactionIds;
@@ -64,7 +64,7 @@ const deletePaymentsByTransactionIds = function () {
       });
 
       // Save the data and send updated receipts
-      return paymentTransactionRepository.save(paymentTransaction).then(function () {
+      return paymentTransactionRepository.delete(paymentTransaction.id).then(function () {
         return Promise.all(paymentTransaction.Donations.map(function (donation) {
           return donationsRepository.save(donation);
         }));
