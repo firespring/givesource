@@ -66,7 +66,7 @@ const deletePaymentsByTransactionIds = function () {
       // Save the data and send updated receipts
       return paymentTransactionRepository.delete(paymentTransaction.id).then(function () {
         return Promise.all(paymentTransaction.Donations.map(function (donation) {
-          console.log(`DELETED: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`);
+          console.log(`${paymentTransaction.transactionId} --- DELETED: Donation ID: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`);
           return donationsRepository.delete(donation.id);
         }));
       });
