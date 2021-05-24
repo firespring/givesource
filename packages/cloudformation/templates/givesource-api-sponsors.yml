@@ -51,7 +51,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsorTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -86,7 +86,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsorTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -121,7 +121,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostSponsorTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -156,7 +156,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSponsorTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -191,7 +191,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSponsorTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -226,7 +226,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSponsorTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -263,7 +263,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsor
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -298,7 +298,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsors
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -333,7 +333,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostSponsor
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -368,7 +368,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSponsor
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -403,7 +403,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSponsors
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -438,7 +438,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSponsor
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -473,7 +473,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSponsors
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

@@ -57,7 +57,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -92,7 +92,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofits
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -127,7 +127,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -162,7 +162,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -197,7 +197,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -234,7 +234,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -269,7 +269,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -304,7 +304,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -339,7 +339,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -374,7 +374,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -411,7 +411,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -446,7 +446,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -481,7 +481,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonationTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -516,7 +516,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -551,7 +551,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -588,7 +588,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitPage
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: 30
@@ -625,7 +625,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -660,7 +660,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -697,7 +697,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -732,7 +732,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlides
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -767,7 +767,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -802,7 +802,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -837,7 +837,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlides
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -873,7 +873,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -910,7 +910,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitUsers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -946,7 +946,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitUser
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -982,7 +982,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitUser
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1020,7 +1020,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AdminRegisterNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1057,7 +1057,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-RegisterNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1094,7 +1094,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SearchNonprofits
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1132,7 +1132,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitStatus
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

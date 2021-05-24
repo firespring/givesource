@@ -51,7 +51,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -86,7 +86,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -121,7 +121,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -156,7 +156,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -191,7 +191,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -226,7 +226,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

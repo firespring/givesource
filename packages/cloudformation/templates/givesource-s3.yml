@@ -160,6 +160,9 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub reports-${AWS::StackName}/
 
   ReportsBucketPolicy:
     Type: AWS::S3::BucketPolicy

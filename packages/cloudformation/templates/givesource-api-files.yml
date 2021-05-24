@@ -58,7 +58,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DownloadFile
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -93,7 +93,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetFile
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -128,7 +128,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetFiles
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -164,7 +164,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostFile
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -200,7 +200,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteFile
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -236,7 +236,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteFiles
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

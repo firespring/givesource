@@ -593,8 +593,9 @@ Resources:
         ${StackName}-GenerateReport
       Handler: "index.handle"
       Role: !Ref LambdaRoleArn
+      MemorySize: 2048
       Runtime: "nodejs12.x"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+      Timeout: 900
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
@@ -617,7 +618,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteReports
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
