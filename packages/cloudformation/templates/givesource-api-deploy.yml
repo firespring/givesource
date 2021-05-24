@@ -46,9 +46,7 @@ Resources:
           CachingEnabled: true
         - ResourcePath: "/files/download/{file_id}"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+          CachingEnabled: false
         - ResourcePath: "/metrics"
           HttpMethod: GET
           CacheDataEncrypted: true

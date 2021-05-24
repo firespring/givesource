@@ -54,7 +54,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -89,7 +89,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -124,7 +124,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -159,7 +159,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -194,7 +194,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -229,7 +229,7 @@ Resources:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub ${StackName}-ProcessDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 1024
       Role: !Ref SecureLambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: 90
@@ -265,7 +265,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -300,7 +300,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -337,7 +337,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AdminPostDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
