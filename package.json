@@ -30,6 +30,7 @@
 		"lambda:build": "cd packages/lambda && npm run build",
 		"lambda:clean": "cd packages/lambda && npm run clean",
 		"lambda:delete-test-payments": "cd packages/lambda && npm run delete-test-payments",
+		"lambda:delete-payments-by-transaction-ids": "cd packages/lambda && npm run delete-payments-by-transaction-ids",
 		"lambda:deploy": "cd packages/lambda && npm run deploy",
 		"lambda:install": "cd packages/lambda && npm install",
 		"lambda:release": "cd packages/lambda && npm run release",
