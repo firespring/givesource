@@ -7,6 +7,24 @@ Parameters:
     Type: String
 
 Resources:
+  ApiGatewayLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayLogRole.Arn
 
   ApiProdDeployment:
     Type: AWS::ApiGateway::Deployment
@@ -46,6 +64,8 @@ Resources:
           CachingEnabled: true
         - ResourcePath: "/files/download/{file_id}"
           HttpMethod: GET
+          LoggingLevel: INFO
+          DataTraceEnabled: true
           CachingEnabled: false
         - ResourcePath: "/metrics"
           HttpMethod: GET
@@ -87,3 +107,4 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300
           CachingEnabled: true
+    DependsOn: ApiGatewayAccount
