@@ -47,7 +47,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function (populatedFile) {
 		file = populatedFile;
 		return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE).then(function (response) {
-			if (response && response.hasOwnProperty('value')) {
+			if (response) {
 				timezone = response.value;
 			}
 		}).catch(function () {
