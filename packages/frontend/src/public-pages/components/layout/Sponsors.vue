@@ -18,18 +18,18 @@
     <div class="sponsors wrapper" v-if="displaySponsorTiers">
         <h2 class="sponsors-title">Many Thanks To Our Sponsors</h2>
 
-        <div v-for="sponsorTier in sponsorTiers" class="sponsors__tier" :class="getSponsorTierClass(sponsorTier.size)" :key="sponsorTier.uuid">
+        <div v-for="sponsorTier in sponsorTiers" class="sponsors__tier" :class="getSponsorTierClass(sponsorTier.size)" :key="sponsorTier.id">
             <div class="sponsors__tier-title">
                 <h3>{{ sponsorTier.name }}</h3>
             </div>
 
             <div class="sponsors__tier-list">
-                <div v-for="sponsor in sponsors[sponsorTier.uuid]" :key="sponsor.uuid" class="sponsor" :class="{ 'sponsor--no-logo': !sponsor.fileUuid }">
+                <div v-for="sponsor in sponsors[sponsorTier.id]" :key="sponsor.id" class="sponsor" :class="{ 'sponsor--no-logo': !sponsor.fileId }">
                     <a v-if="sponsor.url" :href="sponsor.url" target="_blank" rel="noopener noreferrer">
-                        <img v-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
+                        <img v-if="sponsor.fileId" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileId)">
                         <span class="logo-text" v-else>{{ sponsor.name }}</span>
                     </a>
-                    <img v-else-if="sponsor.fileUuid" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileUuid)">
+                    <img v-else-if="sponsor.fileId" width="320" :alt="sponsor.name" :src="getSponsorImage(sponsor.fileId)">
                     <span class="logo-text" v-else>{{ sponsor.name }}</span>
                 </div>
             </div>
@@ -66,14 +66,14 @@
 				let promise = Promise.resolve();
 				vue.sponsorTiers.forEach(function (sponsorTier) {
 					promise = promise.then(function () {
-						return axios.get(API_URL + 'sponsor-tiers/' + sponsorTier.uuid + '/sponsors').then(function (response) {
+						return axios.get(API_URL + 'sponsor-tiers/' + sponsorTier.id + '/sponsors').then(function (response) {
 							response.data.sort(function (a, b) {
 								return a.sortOrder - b.sortOrder;
 							});
-							vue.sponsors[sponsorTier.uuid] = response.data;
+							vue.sponsors[sponsorTier.id] = response.data;
 							response.data.forEach(function (sponsor) {
-								if (sponsor.fileUuid) {
-									vue.files[sponsor.fileUuid] = {};
+								if (sponsor.fileId) {
+									vue.files[sponsor.fileId] = {};
 								}
 							});
 						});
@@ -81,16 +81,16 @@
 				});
 				return promise;
 			}).then(function () {
-				const fileUuids = Object.keys(vue.files);
-				if (fileUuids.length) {
-					return axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: fileUuids}));
+				const fileIds = Object.keys(vue.files);
+				if (fileIds.length) {
+					return axios.get(API_URL + 'files' + Utils.generateQueryString({fileIds: fileIds}));
 				} else {
 					return Promise.resolve();
 				}
 			}).then(function (response) {
 				if (response && response.data) {
 					response.data.forEach(function (file) {
-						vue.files[file.uuid] = file;
+						vue.files[file.id] = file;
 					});
 				}
 			}).then(function () {
@@ -108,10 +108,10 @@
 						return 'sponsors__tier--md';
 				}
 			},
-			getSponsorImage: function (fileUuid) {
+			getSponsorImage: function (fileId) {
 				const vue = this;
 
-				const file = vue.files[fileUuid];
+				const file = vue.files[fileId];
 				return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false;
 			}
 		}

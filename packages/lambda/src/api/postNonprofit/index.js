@@ -16,7 +16,6 @@
 
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../models/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
@@ -26,16 +25,19 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let nonprofit = new Nonprofit(request._body);
+	let nonprofit;
 	request.validate().then(function () {
+		return repository.populate(request._body);
+	}).then(function (populatedNp) {
+		nonprofit = populatedNp;
 		return nonprofit.validate();
 	}).then(function () {
-		return repository.save(nonprofit);
+		return repository.upsert(nonprofit, request._body);
 	}).then(function (response) {
 		nonprofit = response;
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
-		callback(null, nonprofit.all());
+		callback(null, nonprofit);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

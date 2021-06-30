@@ -14,82 +14,36 @@
  * limitations under the License.
  */
 
-const Donation = require('./../../models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
+const DonationsRepository = require('./../../repositories/donations');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
 export function handle(event, context, callback) {
-	const donationsRepository = new NonprofitDonationsRepository();
+	const donationsRepository = new DonationsRepository();
 	const lambda = new Lambda();
-	const nonprofitsRepository = new NonprofitsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
-	let nonprofit = null;
-	let donation = new Donation({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+	let donation;
 	request.validate().then(() => {
-		donation.populate(request._body);
-		return donation.validate();
-	}).then(() => {
+		return donationsRepository.populate(request._body);
+	}).then((populatedDonation) => {
+		donation = populatedDonation;
+		donation.nonprofitId = request.urlParam('nonprofit_id');
 		return DonationHelper.getFeeRates(donation.isOfflineDonation);
 	}).then((rates) => {
 		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, rates.flatRate, rates.percent);
 		donation.total = donation.isFeeCovered ? (donation.subtotal + donation.fees) : donation.subtotal;
 		donation.amountForNonprofit = donation.total - donation.fees;
+		donation.subtotalChargedToCard = donation.isOfflineDonation ? 0 : donation.total;
 	}).then(() => {
-		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
-	}).then((response) => {
-		nonprofit = response;
-		nonprofit.donationsCount = nonprofit.donationsCount + (donation.count || 1);
-		nonprofit.donationsFees = nonprofit.donationsFees + donation.fees;
-		nonprofit.donationsFeesCovered = donation.isFeeCovered ? nonprofit.donationsFeesCovered + donation.fees : nonprofit.donationsFeesCovered;
-		nonprofit.donationsSubtotal = nonprofit.donationsSubtotal + donation.subtotal;
-		nonprofit.donationsTotal = nonprofit.donationsTotal + donation.total;
-		return nonprofit.validate();
-	}).then(() => {
-		return donationsRepository.save(request.urlParam('nonprofit_uuid'), donation);
-	}).then((response) => {
-		donation = response;
-		return nonprofitsRepository.save(nonprofit);
-	}).then(() => {
-		const body = {
-			amount: donation.count || 1,
-			key: 'DONATIONS_COUNT'
-		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-	}).then(() => {
-		const body = {
-			amount: donation.subtotal,
-			key: 'DONATIONS_TOTAL'
-		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-	}).then(() => {
-		if (donation.type === 'BULK') {
-			const body = {
-				amount: donation.count || 1,
-				key: 'DONORS_COUNT'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricAddAmount', {body: body});
-		} else {
-			const body = {
-				amount: donation.subtotal,
-				key: 'TOP_DONATION'
-			};
-			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-MetricMaxAmount', {body: body});
-		}
+		return donationsRepository.upsert(donation, {});
 	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(() => {
-		const body = {
-			donations: [donation.all()]
-		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationNotificationEmail', {body: body});
-	}).then(() => {
-		callback(null, donation.all());
+		callback(null, donation);
 	}).catch((err) => {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

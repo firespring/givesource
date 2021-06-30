@@ -14,65 +14,43 @@
  * limitations under the License.
  */
 
-const MessageHelper = require('./../helpers/message');
-const Model = require('./model');
+'use strict';
 
-/**
- * Message constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Message(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
+const moment = require('moment-timezone');
 
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-Message.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Message.prototype.attributes = [
-	'email',
-	'message',
-	'name',
-	'phone',
-	'type'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Message.prototype.constraints = {
-	email: {
-		presence: true,
-		email: true
-	},
-	message: {
-		presence: true,
-		type: 'string'
-	},
-	name: {
-		presence: true,
-		type: 'string'
-	},
-	phone: {
-		presence: false,
-		type: 'string|number'
-	},
-	type: {
-		presence: true,
-		inclusion: [MessageHelper.TYPE_CONTACT, MessageHelper.TYPE_FEEDBACK, MessageHelper.TYPE_NAME_CHANGE]
-	}
+module.exports = (sequelize) => {
+	return sequelize.define('Message', {
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		message: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		phone: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		type: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	}, {
+		setterMethods: {
+			timezone(timezone) {
+				if (timezone) {
+					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
+				} else {
+					const date = new Date(this.createdAt);
+					this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+				}
+			}
+		}
+	});
 };
-
-module.exports = Message;

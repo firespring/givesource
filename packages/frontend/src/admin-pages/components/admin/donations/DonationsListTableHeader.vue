@@ -68,7 +68,7 @@
 					vm.countdown = setInterval(() => {
 						vm.$store.commit('generateCacheKey');
 
-						vm.$request.get('reports/' + vm.report.uuid).then(response => {
+						vm.$request.get('reports/' + vm.report.id).then(response => {
 							vm.report = response.data;
 
 							if (vm.report.status === 'SUCCESS') {
@@ -97,20 +97,24 @@
 
 			downloadFile() {
 				const vm = this;
+				let downloadPath;
 
 				let promise = Promise.resolve();
 
 				if (!vm.downloaded) {
 					promise = promise.then(() => {
-						return vm.$request.get('files/' + vm.report.fileUuid);
+						return vm.$request.get('files/download/' + vm.report.fileId);
 					}).then(response => {
-						vm.file = response.data;
+						downloadPath = response.data.download_url;
+						vm.file = response.data.file;
 						vm.downloaded = true;
 					});
 				}
 
 				promise = promise.then(() => {
-					window.location.href = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.file.path;
+					if (downloadPath) {
+						window.location.href = downloadPath;
+                    }
 				});
 			},
 

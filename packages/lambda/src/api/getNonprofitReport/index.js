@@ -22,12 +22,12 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitReportsRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('report_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('report_id'));
 	}).then(function (report) {
-		callback(null, report.all());
+		callback(null, report);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

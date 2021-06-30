@@ -24,9 +24,11 @@ const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
 const MessagesRepository = require('./../src/repositories/messages');
 const NonprofitsRepository = require('./../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('./../src/repositories/nonprofitDonations');
+const NonprofitDonationsRepository = require('./../src/repositories/donations');
 const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
 const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
+const DonorsRepository = require('./../src/repositories/donors');
+const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
 
 /**
  * Seed Donations
@@ -34,95 +36,119 @@ const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides
  * @return {Promise}
  */
 const seedDonations = function () {
-	const generator = new Generator();
-	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
-	const nonprofitsRepository = new NonprofitsRepository();
+  const generator = new Generator();
+  const nonprofitDonationsRepository = new NonprofitDonationsRepository();
+  const nonprofitsRepository = new NonprofitsRepository();
+  const donorsRepository = new DonorsRepository();
+  const paymentTransactionRepository = new PaymentTransactionRepository();
 
-	return nonprofitsRepository.getAll().then(function (results) {
-		if (!results || results.length === 0) {
-			return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
-		}
-		const options = _.map(results, function (nonprofit) {
-			return {name: nonprofit.legalName, value: nonprofit}
-		});
-		return inquirer.prompt([
-			{
-				type: 'list',
-				message: 'Select a nonprofit:',
-				name: 'nonprofit',
-				choices: options
-			},
-			{
-				type: 'input',
-				message: 'How many donations would you like to seed:',
-				name: 'count',
-				default: '10'
-			}
-		]);
-	}).then(function (answers) {
-		const count = parseInt(answers.count);
-		const chunkSize = Math.floor(Math.random() * 3) + 1;
+  let donors = [];
+  let savedDonors = [];
+  let paymentTransactions = [];
+  let savedPts = [];
+  let donations = [];
+  let promptAnswers;
+  return nonprofitsRepository.getAll().then(function (results) {
+    if (!results || results.length === 0) {
+      return Promise.reject(new Error('No nonprofits found in stack: ' + config.get('stack.AWS_STACK_NAME')));
+    }
+    const options = _.map(results, function (nonprofit) {
+      return { name: nonprofit.legalName, value: nonprofit };
+    });
+    return inquirer.prompt([
+      {
+        type: 'list',
+        message: 'Select a nonprofit:',
+        name: 'nonprofit',
+        choices: options
+      },
+      {
+        type: 'input',
+        message: 'How many donations would you like to seed:',
+        name: 'count',
+        default: '10'
+      }
+    ]);
+  }).then(function (answers) {
+    promptAnswers = answers;
+    const count = parseInt(promptAnswers.count);
+    return generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 });
+  }).then(function (generatedDonations) {
+    const chunkSize = Math.floor(Math.random() * 3) + 1;
+    donations = _.chunk(generatedDonations, chunkSize);
+    return generator.modelCollection('Donor', donations.length);
+  }).then(function (generatedDonors) {
+    donors = generatedDonors;
+    return generator.modelCollection('PaymentTransaction', donations.length, { isTestMode: true });
+  }).then(function (generatedPTs) {
+    paymentTransactions = generatedPTs;
+    let promise = Promise.resolve();
+    donors.forEach(function (donor) {
+      promise = promise.then(function () {
+        return donorsRepository.upsert(donor, {});
+      }).then(function (popDonors) {
+        savedDonors.push(popDonors);
+        return popDonors;
+      });
+    });
+    return promise;
+  }).then(function (popDonors) {
+    donors = popDonors;
+    let promise = Promise.resolve();
+    paymentTransactions.forEach(function (paymentTransaction) {
+      promise = promise.then(function () {
+        return paymentTransactionRepository.upsert(paymentTransaction, {});
+      }).then(function (popPT) {
+        savedPts.push(popPT);
+        return popPT;
+      });
+    });
+    return promise;
+  }).then(function (pts) {
+    paymentTransactions = pts;
+    let nonprofitDonations = [];
+    let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
+    donations.forEach(function (chunk, i) {
+      let paymentTotal = 0;
+      const donor = _.filter(savedDonors, function (object, key) {
+        return key == i;
+      })[0];
+      const pt = _.filter(savedPts, function (object, key) {
+        return key == i;
+      })[0];
+      chunk.forEach(function (donation) {
+        donation.donorId = donor.id;
+        donation.nonprofitId = promptAnswers.nonprofit.id;
 
-		const donations = _.chunk(generator.modelCollection('donation', count, {paymentTransactionIsTestMode: 1}), chunkSize);
-		const donors = generator.modelCollection('donor', donations.length);
-		const paymentTransactions = generator.modelCollection('paymentTransaction', donations.length, {isTestMode: true});
+        donation.paymentTransactionId = pt.id;
+        if (!donation.isOfflineDonation) {
+          donation.paymentTransactionId = pt.transactionId;
+          donation.paymentTransactionIsTestMode = pt.isTestMode ? 1 : 0;
+        }
 
-		let nonprofitDonations = [];
-		let donationsFees = 0, donationsFeesCovered = 0, donationsSubtotal = 0, donationsTotal = 0, topDonation = 0;
-		donations.forEach(function (chunk, i) {
-			let paymentTotal = 0;
-			chunk.forEach(function (donation) {
-				donation.donorUuid = donors[i].uuid;
-				if (!donation.isAnonymous) {
-					donation.donorFirstName = donors[i].firstName;
-					donation.donorLastName = donors[i].lastName;
-					donation.donorEmail = donors[i].email;
-					donation.donorPhone = donors[i].phone;
-					donation.donorAddress1 = donors[i].address1;
-					donation.donorAddress2 = donors[i].address2;
-					donation.donorCity = donors[i].city;
-					donation.donorState = donors[i].state;
-					donation.donorZip = donors[i].zip;
-				}
-
-				donation.nonprofitUuid = answers.nonprofit.uuid;
-				donation.nonprofitLegalName = answers.nonprofit.legalName;
-				donation.nonprofitAddress1 = answers.nonprofit.address1;
-				donation.nonprofitAddress2 = answers.nonprofit.address2;
-				donation.nonprofitAddress3 = answers.nonprofit.address3;
-				donation.nonprofitCity = answers.nonprofit.city;
-				donation.nonprofitState = answers.nonprofit.state;
-				donation.nonprofitZip = answers.nonprofit.zip;
-
-				donation.paymentTransactionUuid = paymentTransactions[i].uuid;
-				if (!donation.isOfflineDonation) {
-					donation.creditCardName = paymentTransactions[i].creditCardName;
-					donation.creditCardType = paymentTransactions[i].creditCardType;
-					donation.creditCardLast4 = paymentTransactions[i].creditCardLast4;
-					donation.creditCardExpirationMonth = paymentTransactions[i].creditCardExpirationMonth;
-					donation.creditCardExpirationYear = paymentTransactions[i].creditCardExpirationYear;
-					donation.creditCardZip = paymentTransactions[i].billingZip;
-					donation.paymentTransactionId = paymentTransactions[i].transactionId;
-					donation.paymentTransactionAmount = paymentTransactions[i].transactionAmountInCents;
-					donation.paymentTransactionIsTestMode = paymentTransactions[i].isTestMode ? 1 : 0;
-					donation.paymentTransactionStatus = paymentTransactions[i].transactionStatus;
-				}
-
-				donationsFees += donation.fees;
-				donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
-				donationsSubtotal += donation.subtotal;
-				donationsTotal += donation.total;
-				paymentTotal += donation.total;
-				topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
-			});
-			paymentTransactions[i].total = paymentTotal;
-			nonprofitDonations = nonprofitDonations.concat(chunk);
-		});
-		return nonprofitDonationsRepository.batchUpdate(nonprofitDonations);
-	}).then(function () {
-		console.log('seeded donations');
-	});
-};
+        donationsFees += donation.fees;
+        donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered;
+        donationsSubtotal += donation.subtotal;
+        donationsTotal += donation.total;
+        paymentTotal += donation.total;
+        topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation;
+      });
+      pt.total = paymentTotal;
+      nonprofitDonations = nonprofitDonations.concat(chunk);
+    });
+    let promise = Promise.resolve(nonprofitDonations)
+    nonprofitDonations.forEach(function (nonprofitDonation) {
+      promise = promise.then(function () {
+        return nonprofitDonationsRepository.upsert(nonprofitDonation, {});
+      }).then(function (popNp) {
+        return popNp;
+      });
+    });
+    return promise;
+  }).then(function () {
+    console.log('seeded donations')
+  });
+}
 
 /**
  * Seed Messages
@@ -141,9 +167,18 @@ const seedMessages = function () {
 			default: '10'
 		}
 	]).then(function (answers) {
-		const count = parseInt(answers.count);
-		const messages = generator.modelCollection('message', count);
-		return messagesRepository.batchUpdate(messages);
+    const count = parseInt(answers.count);
+    return generator.modelCollection('Message', count);
+  }).then(function (messages) {
+		let promise = Promise.resolve();
+		messages.forEach(function (message) {
+      promise = promise.then(function () {
+        return messagesRepository.upsert(message, {});
+      }).then(function (popMessage) {
+        return popMessage;
+      });
+    });
+		return promise;
 	}).then(function () {
 		console.log('seeded messages');
 	});
@@ -170,31 +205,59 @@ const seedNonprofits = function () {
 			default: '10'
 		}
 	]).then(function (answers) {
-		const count = parseInt(answers.count);
-		const nonprofits = generator.modelCollection('nonprofit', count, {donationsCount: 0, donationsFees: 0, donationsFeesCovered: 0, donationsSubtotal: 0, donationsTotal: 0, status: 'ACTIVE'});
-
-		_.each(nonprofits, function (nonprofit) {
-			const slideCount = Math.floor(Math.random() * 8) + 1;
-			const slides = generator.modelCollection('nonprofitSlide', slideCount, {nonprofitUuid: nonprofit.uuid, type: 'IMAGE', fileUuid: null});
-			_.each(slides, function (slide, i) {
-				slide.sortOrder = i;
-				nonprofitSlides.push(slide);
-			});
-		});
-
-		_.each(nonprofits, function (nonprofit) {
-			const tiers = generator.modelCollection('nonprofitDonationTier', 4, {nonprofitUuid: nonprofit.uuid});
-			tiers.forEach(function (tier) {
-				nonprofitDonationTiers.push(tier);
-			});
-		});
-
-		return nonprofitsRepository.batchUpdate(nonprofits);
+    const count = parseInt(answers.count);
+    return generator.modelCollection('Nonprofit', count, { status: 'ACTIVE' });
+  }).then(function (nonprofits) {
+    let promise = Promise.resolve()
+    nonprofits.forEach(function (nonprofit) {
+      promise = promise.then(function () {
+        return nonprofitsRepository.upsert(nonprofit, {})
+      }).then(function (popNp) {
+        return popNp;
+      });
+    });
+    return promise
+	}).then(function (nonprofits) {
+    let promise = Promise.resolve()
+    nonprofits.forEach(function (nonprofit) {
+      promise = promise.then(function () {
+        const slideCount = Math.floor(Math.random() * 8) + 1
+        return generator.modelCollection('NonprofitSlide', slideCount, {
+          nonprofitId: nonprofit.id,
+          type: 'IMAGE',
+          fileId: 0
+        });
+      }).then(function (slides) {
+        _.each(slides, function (slide, i) {
+          slide.sortOrder = i;
+          slide.url = slide.url + '?random=' + i;
+          nonprofitSlides.push(slide);
+        });
+        return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id });
+      }).then(function (tiers) {
+        tiers.forEach(function (tier) {
+          nonprofitDonationTiers.push(tier);
+        });
+      });
+    });
+    return promise;
+  }).then(function () {
+    let promise = Promise.resolve();
+    nonprofitSlides.forEach(function (slide) {
+      promise = promise.then(function () {
+        return nonprofitSlidesRepository.upsert(slide, {});
+      });
+    });
+    return promise;
 	}).then(function () {
-		return nonprofitSlidesRepository.batchUpdate(nonprofitSlides);
-	}).then(function () {
-		return nonprofitDonationTiersRepository.batchUpdate(nonprofitDonationTiers);
-	}).then(function () {
+    let promise = Promise.resolve()
+    nonprofitDonationTiers.forEach(function (tier) {
+      promise = promise.then(function () {
+        return nonprofitDonationTiersRepository.upsert(tier, {});
+      });
+    });
+    return promise;
+	}).finally(function () {
 		console.log('seeded nonprofits');
 	});
 };

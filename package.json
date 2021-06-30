@@ -1,6 +1,6 @@
 {
 	"name": "givesource",
-	"version": "1.4.4",
+	"version": "2.1.1",
 	"description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
 	"license": "Apache-2.0",
 	"repository": {
@@ -30,6 +30,7 @@
 		"lambda:build": "cd packages/lambda && npm run build",
 		"lambda:clean": "cd packages/lambda && npm run clean",
 		"lambda:delete-test-payments": "cd packages/lambda && npm run delete-test-payments",
+		"lambda:delete-payments-by-transaction-ids": "cd packages/lambda && npm run delete-payments-by-transaction-ids",
 		"lambda:deploy": "cd packages/lambda && npm run deploy",
 		"lambda:install": "cd packages/lambda && npm install",
 		"lambda:release": "cd packages/lambda && npm run release",

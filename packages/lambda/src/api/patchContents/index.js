@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Content = require('./../../models/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
@@ -25,23 +24,26 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new ContentsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
+	const keys = request.get('contents', []).map(function (content) {
+		return content.id;
+	});
 
-	let contents = [];
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new Content(data));
-		});
-	}).then(function () {
+		return repository.batchGetById(keys);
+	}).then(function (oldContents) {
 		let promise = Promise.resolve();
-		contents.forEach(function (content) {
+		request.get('contents', []).map(function (content) {
 			promise = promise.then(function () {
-				return content.validate();
+				if (Array.isArray(content.value) || typeof content.value === 'object') {
+					content.value = '';
+				}
+				const oldContent = _.find(oldContents, {id: content.id});
+				return repository.upsert(oldContent, content);
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchUpdate(contents);
-	}).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/contents*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback();

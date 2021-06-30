@@ -32,12 +32,12 @@ const fs = require('fs');
  * @return {*}
  */
 const findOutputKey = (outputs, outputKey) => {
-	const output = _.find(outputs, {OutputKey: outputKey});
-	if (output && output.OutputValue) {
-		return output.OutputValue;
-	} else {
-		throw new Error(outputKey + ' not found');
-	}
+    const output = _.find(outputs, {OutputKey: outputKey});
+    if (output && output.OutputValue) {
+        return output.OutputValue;
+    } else {
+        throw new Error(outputKey + ' not found');
+    }
 };
 
 /**
@@ -46,24 +46,27 @@ const findOutputKey = (outputs, outputKey) => {
  * @return {Promise}
  */
 const getSettings = () => {
-	const cloudFormation = new CloudFormation();
-	return cloudFormation.describeStacks(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')).then(stacks => {
-		if (stacks.length !== 1) {
-			return Promise.reject(new Error('unexpected number of stacks'));
-		} else {
-			const stack = stacks[0];
-			return Promise.resolve({
-				API_URL: findOutputKey(stack.Outputs, 'ApiUrl'),
-				AdminPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'AdminPagesCloudFrontDistribution'),
-				AdminPagesS3BucketName: findOutputKey(stack.Outputs, 'AdminPagesS3BucketName'),
-				AdminPagesS3BucketUrl: findOutputKey(stack.Outputs, 'AdminPagesS3BucketUrl'),
-				PublicPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'PublicPagesCloudFrontDistribution'),
-				PublicPagesS3BucketName: findOutputKey(stack.Outputs, 'PublicPagesS3BucketName'),
-				PublicPagesS3BucketUrl: findOutputKey(stack.Outputs, 'PublicPagesS3BucketUrl'),
-				UploadsCloudFrontDistribution: findOutputKey(stack.Outputs, 'UploadsCloudFrontDistribution'),
-			});
-		}
-	});
+    const cloudFormation = new CloudFormation();
+    return cloudFormation.describeStacks(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME')).then(stacks => {
+        if (stacks.length !== 1) {
+            return Promise.reject(new Error('unexpected number of stacks'));
+        } else {
+            const stack = stacks[0];
+            return Promise.resolve({
+                API_URL: findOutputKey(stack.Outputs, 'ApiUrl'),
+                AdminPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'AdminPagesCloudFrontDistribution'),
+                AdminPagesS3BucketName: findOutputKey(stack.Outputs, 'AdminPagesS3BucketName'),
+                AdminPagesS3BucketUrl: findOutputKey(stack.Outputs, 'AdminPagesS3BucketUrl'),
+                PublicPagesCloudFrontDistribution: findOutputKey(stack.Outputs, 'PublicPagesCloudFrontDistribution'),
+                PublicPagesS3BucketName: findOutputKey(stack.Outputs, 'PublicPagesS3BucketName'),
+                PublicPagesS3BucketUrl: findOutputKey(stack.Outputs, 'PublicPagesS3BucketUrl'),
+                UploadsCloudFrontDistribution: findOutputKey(stack.Outputs, 'UploadsCloudFrontDistribution'),
+            });
+        }
+    }).catch(err => {
+        // This can happen when the app hasn't been created yet - so continue instead of erroring
+        return {};
+    });
 };
 
 /**
@@ -73,36 +76,36 @@ const getSettings = () => {
  * @param {{}} data
  */
 const writeConfig = (filename, data) => {
-	const jsonData = JSON.stringify(data, null, 2);
-	const filePath = path.resolve(__dirname, './../config/' + filename);
-	fs.writeFileSync(filePath, jsonData);
-	console.log(filename + ' created');
+    const jsonData = JSON.stringify(data, null, 2);
+    const filePath = path.resolve(__dirname, './../config/' + filename);
+    fs.writeFileSync(filePath, jsonData);
+    console.log(filename + ' created');
 };
 
 getSettings().then(data => {
-	const settings = {
-		API_URL: null
-	};
-	const deployInfo = {
-		AdminPagesCloudFrontDistribution: null,
-		AdminPagesS3BucketName: null,
-		AdminPagesS3BucketUrl: null,
-		PublicPagesCloudFrontDistribution: null,
-		PublicPagesS3BucketName: null,
-		PublicPagesS3BucketUrl: null,
-		UploadsCloudFrontDistribution: null,
-	};
-	Object.keys(data).forEach(key => {
-		if (settings.hasOwnProperty(key)) {
-			settings[key] = data[key];
-		}
-		if (deployInfo.hasOwnProperty(key)) {
-			deployInfo[key] = data[key];
-		}
-	});
+    const settings = {
+        API_URL: null
+    };
+    const deployInfo = {
+        AdminPagesCloudFrontDistribution: null,
+        AdminPagesS3BucketName: null,
+        AdminPagesS3BucketUrl: null,
+        PublicPagesCloudFrontDistribution: null,
+        PublicPagesS3BucketName: null,
+        PublicPagesS3BucketUrl: null,
+        UploadsCloudFrontDistribution: null,
+    };
+    Object.keys(data).forEach(key => {
+        if (settings.hasOwnProperty(key)) {
+            settings[key] = data[key];
+        }
+        if (deployInfo.hasOwnProperty(key)) {
+            deployInfo[key] = data[key];
+        }
+    });
 
-	writeConfig('settings.json', settings);
-	writeConfig('deploy-info.json', deployInfo);
+    writeConfig('settings.json', settings);
+    writeConfig('deploy-info.json', deployInfo);
 }).catch(err => {
-	console.log(err);
+    console.log(err);
 });

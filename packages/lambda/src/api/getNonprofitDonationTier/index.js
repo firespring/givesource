@@ -23,9 +23,9 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('donation_tier_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_tier_id'));
 	}).then(function (donationTier) {
-		callback(null, donationTier.all());
+		callback(null, donationTier);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

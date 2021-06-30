@@ -110,7 +110,7 @@
 
 			vue.addBodyClasses('has-donation-overlay');
 			vue.nonprofit = vue.data.nonprofit;
-			axios.get(API_URL + 'nonprofits/' + vue.nonprofit.uuid + '/tiers').then(function (response) {
+			axios.get(API_URL + 'nonprofits/' + vue.nonprofit.id + '/tiers').then(function (response) {
 				response.data.sort(function (a, b) {
 					return b.amount - a.amount;
 				});

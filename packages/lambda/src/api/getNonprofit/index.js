@@ -23,9 +23,9 @@ exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'));
 	}).then(function (nonprofit) {
-		callback(null, nonprofit.all());
+		callback(null, nonprofit);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

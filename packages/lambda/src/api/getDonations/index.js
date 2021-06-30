@@ -26,48 +26,27 @@ exports.handle = function (event, context, callback) {
 	const repository = new DonationsRepository();
 	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+	const findAllAndCountParams = {};
 
 	let total = 0;
 	let items = [];
 	const size = request.queryParam('size', 10);
 	const sort = request.queryParam('sort', null);
 	const start = request.queryParam('start', 0);
-	let hashKey = 'isDeleted';
-	let index = 'isDeletedCreatedOnIndex';
 
 	request.validate().then(function () {
 		return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY).catch(function () {
 			return Promise.resolve({});
 		});
 	}).then(function (response) {
-		hashKey = !response.value ? 'paymentTransactionIsTestMode' : hashKey;
-		index = !response.value ? 'paymentTransactionIsTestModeCreatedOnIndex' : index;
-	}).then(function () {
-		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
-		return repository.batchQuery(builder);
+		findAllAndCountParams.limit = parseInt(size);
+		findAllAndCountParams.order = [['createdAt', 'DESC']];
+		findAllAndCountParams.offset = parseInt(start);
+		findAllAndCountParams.where = [getHashCondition(response)];
+		return repository.queryDonations(findAllAndCountParams);
 	}).then(function (response) {
-		total = response.Count;
-		if (start > 0) {
-			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).max(start).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
-			return repository.batchQuery(builder);
-		} else {
-			return Promise.resolve({});
-		}
-	}).then(function (response) {
-		const builder = new QueryBuilder('query');
-		builder.limit(size).index(index).condition(hashKey, '=', 0).condition('createdOn', '>', 0).scanIndexForward(false);
-
-		if (response.hasOwnProperty('LastEvaluatedKey')) {
-			builder.start(response.LastEvaluatedKey);
-		}
-
-		return repository.query(builder);
-	}).then(function (response) {
-		if (response.hasOwnProperty('Items')) {
-			items = response.Items;
-		}
+		total = response.count;
+		items = response.rows;
 		callback(null, {
 			items: items,
 			size: size,
@@ -79,4 +58,17 @@ exports.handle = function (event, context, callback) {
 		console.log(err);
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});
+};
+
+/**
+ * Get hash condition
+ *
+ * @param response
+ * @return {*}
+ */
+const getHashCondition = function (response) {
+	if (parseInt(response.value) === 0) {
+		return {paymentTransactionIsTestMode: 0, isDeleted: 0};
+	}
+	return {isDeleted: 0};
 };

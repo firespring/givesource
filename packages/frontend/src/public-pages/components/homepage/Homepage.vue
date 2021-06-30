@@ -72,7 +72,7 @@
 				keys: [
 					'DATE_DONATIONS_END',
 					'DATE_DONATIONS_START',
-					'MATCH_FUND_NONPROFIT_UUID'
+					'MATCH_FUND_NONPROFIT_ID'
 				]
 			})).then(function (response) {
 				response.data.forEach(function (setting) {
@@ -115,8 +115,8 @@
 		});
 
 		promise = promise.then(function () {
-			if (settings.MATCH_FUND_NONPROFIT_UUID) {
-				return axios.get(API_URL + 'nonprofits/' + settings.MATCH_FUND_NONPROFIT_UUID).then(function (response) {
+			if (settings.MATCH_FUND_NONPROFIT_ID) {
+				return axios.get(API_URL + 'nonprofits/' + settings.MATCH_FUND_NONPROFIT_ID).then(function (response) {
 					matchFundNonprofit = response.data;
 				});
 			} else {
@@ -145,7 +145,7 @@
 				settings: {
 					DATE_DONATIONS_END: null,
 					DATE_DONATIONS_START: null,
-					MATCH_FUND_NONPROFIT_UUID: null
+					MATCH_FUND_NONPROFIT_ID: null
 				}
 			}
 		},

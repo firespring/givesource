@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const AWS = require('aws-sdk-mock');
-const Slide = require('../../src/models/nonprofitSlide');
+const Slide = require('../../src/dynamo-models/nonprofitSlide');
 const NonprofitSlidesRepository = require('../../src/repositories/nonprofitSlides');
 const Repository = require('../../src/repositories/repository');
 const TestHelper = require('../helpers/test');

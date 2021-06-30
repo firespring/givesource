@@ -125,12 +125,14 @@
 					TOOLKIT_ADDITIONAL_TEXT: {
 						key: 'TOOLKIT_ADDITIONAL_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					TOOLKIT_LEADING_TEXT: {
 						key: 'TOOLKIT_LEADING_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 
@@ -187,11 +189,11 @@
 			});
 
 			vue.bus.$on('deleteToolkitResourceList', function (data) {
-				vue.contents = _.reject(vue.contents, {uuid: data.uuid});
+				vue.contents = _.reject(vue.contents, {id: data.id});
 			});
 
 			vue.bus.$on('updateToolkitResourceList', function (data) {
-				const index = _.findIndex(vue.contents, {uuid: data.uuid});
+				const index = _.findIndex(vue.contents, {id: data.id});
 				vue.contents[index > -1 ? index : vue.contents.length] = data;
 			});
 		},
@@ -252,7 +254,7 @@
 					promise = promise.then(function () {
 						return vue.$request.patch('contents', {
 							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+								return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
 							}),
 						});
 					});

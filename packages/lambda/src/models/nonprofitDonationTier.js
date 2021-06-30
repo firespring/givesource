@@ -14,58 +14,33 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
 
-/**
- * NonprofitDonationTier constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function NonprofitDonationTier(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-NonprofitDonationTier.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-NonprofitDonationTier.prototype.attributes = [
-	'amount',
-	'description',
-	'nonprofitUuid',
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-NonprofitDonationTier.prototype.constraints = {
-	amount: {
-		presence: true,
-		type: 'number',
-		numericality: {
-			onlyInteger: true,
-			greaterThanOrEqualTo: 1000,
-		}
-	},
-	description: {
-		presence: false,
-		type: 'string'
-	},
-	nonprofitUuid: {
-		presence: true,
-		uuid: 4
-	},
+module.exports = (sequelize) => {
+	return sequelize.define('NonprofitDonationTier', {
+		amount: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		value: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				min: 10
+			}
+		},
+		description: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		nonprofitId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
+		},
+	});
 };
-
-module.exports = NonprofitDonationTier;

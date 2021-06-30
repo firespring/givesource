@@ -15,7 +15,6 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const Metric = require('./../../models/metric');
 const MetricsRepository = require('./../../repositories/metrics');
 const Request = require('./../../aws/request');
 

@@ -98,12 +98,14 @@
 					CONTACT_FORM_TEXT: {
 						key: 'CONTACT_FORM_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					CONTACT_RESPONSE_TEXT: {
 						key: 'CONTACT_RESPONSE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 
@@ -188,7 +190,7 @@
 					promise = promise.then(function () {
 						return vue.$request.patch('contents', {
 							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+								return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
 							}),
 						});
 					});

@@ -44,7 +44,7 @@
 
             <tbody class="ui-sortable">
             <donation-tiers-list-table-row v-for="(donationTier, index) in donationTiers" :index="index" :amount="donationTier.amount" :description="donationTier.description"
-                                           :key="donationTier.uuid" v-on:change="changeDonationTier">
+                                           :key="donationTier.id" v-on:change="changeDonationTier">
             </donation-tiers-list-table-row>
             </tbody>
         </table>
@@ -68,7 +68,7 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeMount: function () {
 			const vue = this;
@@ -93,7 +93,7 @@
 			fetchDonationTiers: function () {
 				const vue = this;
 
-				return vue.$request.get('nonprofits/' + vue.nonprofitUuid + '/tiers').then(function (response) {
+				return vue.$request.get('nonprofits/' + vue.nonprofitId + '/tiers').then(function (response) {
 					if (response.data.errorMessage) {
 						console.log(response.data);
 					} else {
@@ -144,14 +144,14 @@
 				});
 
 				let created = _.filter(current, function (tier) {
-					return !tier.hasOwnProperty('uuid') && tier.amount !== 0;
+					return !tier.hasOwnProperty('id') && tier.amount !== 0;
 				});
 
 				let deleted = [];
 				let updated = [];
 				let changed = _.differenceWith(original, current, _.isEqual);
 				changed.forEach(function (tier) {
-					const donationTier = _.find(current, {uuid: tier.uuid});
+					const donationTier = _.find(current, {id: tier.id});
 					if (donationTier && donationTier.amount !== 0) {
 						updated.push(donationTier);
 					} else {
@@ -163,26 +163,26 @@
 				if (created.length) {
 					created.forEach(function (donationTier) {
 						promise = promise.then(function () {
-							return vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/tiers', donationTier);
+							return vue.$request.post('nonprofits/' + vue.nonprofitId + '/tiers', donationTier);
 						});
 					});
 				}
 				if (updated.length) {
 					promise = promise.then(function () {
-						return vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+						return vue.$request.patch('nonprofits/' + vue.nonprofitId + '/tiers', {
 							donation_tiers: updated.map(function (donationTier) {
-								return _.pick(donationTier, ['uuid', 'amount', 'description']);
+								return _.pick(donationTier, ['id', 'amount', 'description']);
 							}),
 						});
 					});
 				}
 				if (deleted.length) {
 					promise = promise.then(function () {
-						return vue.$request.delete('nonprofits/' + vue.nonprofitUuid + '/tiers', {
+						return vue.$request.delete('nonprofits/' + vue.nonprofitId + '/tiers', {
 							donation_tiers: deleted
 						}).then(function () {
 							vue.donationTiers = _.reject(vue.donationTiers, function (donationTier) {
-								return _.find(deleted, {uuid: donationTier.uuid});
+								return _.find(deleted, {id: donationTier.id});
 							});
 						})
 					});

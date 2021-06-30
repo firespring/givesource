@@ -19,30 +19,31 @@ const HttpException = require('./../../exceptions/http');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
 const UsersRepository = require('./../../repositories/users');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const nonprofitsRepository = new NonprofitsRepository();
 	const usersRepository = new UsersRepository();
 	const request = new Request(event, context).parameters(['email_addresses']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	const userPoolId = process.env.USER_POOL_ID;
 	const emailAddresses = request.get('email_addresses');
 	request.validate().then(function () {
-		return nonprofitsRepository.get(request.urlParam('nonprofit_uuid'));
+		return nonprofitsRepository.get(request.urlParam('nonprofit_id'));
 	}).then(function (nonprofit) {
 		return new Promise(function (resolve, reject) {
 			const users = [];
 			let promise = Promise.resolve();
 			emailAddresses.split(',').forEach(function (email) {
 				email = email.trim();
-				const user = new User({email: email, nonprofitUuid: nonprofit.uuid});
+				let user;
 				promise = promise.then(function () {
-					return user.validate(['uuid', 'createdOn', 'email']).then(function () {
-						return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
+					return usersRepository.populate({email: email, cognitoUsername: UUID.v4(), nonprofitId: nonprofit.id}).then(function (populatedUser) {
+						user = populatedUser;
+						return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email);
 					}).then(function (cognitoUser) {
 						cognitoUser.User.Attributes.forEach(function (attribute) {
 							if (attribute.Name === 'sub') {
@@ -50,13 +51,11 @@ exports.handle = function (event, context, callback) {
 							}
 						});
 					}).then(function () {
-						return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'Nonprofit');
+						return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Nonprofit');
 					}).then(function () {
-						return user.validate();
-					}).then(function () {
-						return usersRepository.save(user);
-					}).then(function () {
-						users.push(user.all());
+						return usersRepository.upsert(user, {});
+					}).then(function (savedUser) {
+						users.push(savedUser[0]);
 					}).catch(function (err) {
 						reject(err);
 					});

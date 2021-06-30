@@ -17,8 +17,8 @@
 const Cognito = require('./../../aws/cognito');
 const logger = require('./../../helpers/log');
 const response = require('cfn-response');
-const User = require('./../../models/user');
 const UsersRepository = require('./../../repositories/users');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	logger.log('cognitoCreateUser event: %j', event);
@@ -31,25 +31,29 @@ exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const userPoolId = event.ResourceProperties.UserPoolId;
 	const email = event.ResourceProperties.Email;
+	const uuid = UUID.v4();
+	let user;
 
 	const repository = new UsersRepository();
-	const user = new User({email: email});
+	const userData = {email: email, cognitoUsername: uuid};
 
-	user.validate(['uuid', 'createdOn', 'email']).then(function () {
-		return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
+	let promise = Promise.resolve();
+	promise.then(function () {
+		return cognito.createUser(process.env.AWS_REGION, userPoolId, uuid, email);
 	}).then(function (cognitoUser) {
 		logger.log(JSON.stringify(cognitoUser));
 		cognitoUser.User.Attributes.forEach(function (attribute) {
 			if (attribute.Name === 'sub') {
-				user.cognitoUuid = attribute.Value;
+				userData.cognitoUuid = attribute.Value;
 			}
 		});
 	}).then(function () {
-		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'SuperAdmin');
+		return repository.populate(userData);
+	}).then(function (populatedUser) {
+		user = populatedUser;
+		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'SuperAdmin');
 	}).then(function () {
-		return user.validate();
-	}).then(function () {
-		return repository.save(user);
+		return repository.upsert(user, {});
 	}).then(function () {
 		response.send(event, context, response.SUCCESS);
 	}).catch(function (err) {

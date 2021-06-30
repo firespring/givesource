@@ -16,26 +16,24 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitSlide = require('./../../models/nonprofitSlide');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
-	const slide = new NonprofitSlide({nonprofitUuid: request.urlParam('nonprofit_uuid')});
+	let slide;
 	request.validate().then(function () {
-		slide.populate(request._body);
-		return repository.getCount(request.urlParam('nonprofit_uuid'));
+		return repository.populate(request._body);
+	}).then(function (populatedSlide) {
+		slide = populatedSlide;
+		return repository.getCount(request.urlParam('nonprofit_id'));
 	}).then(function (count) {
-		slide.populate({sortOrder: count});
-		return slide.validate();
-	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_uuid'), slide);
+		return repository.upsert(slide, {nonprofitId: request.urlParam('nonprofit_id'), sortOrder: count});
 	}).then(function (model) {
-		callback(null, model.all());
+		callback(null, model);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

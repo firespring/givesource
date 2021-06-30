@@ -15,7 +15,6 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
 const Request = require('./../../aws/request');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
@@ -26,7 +25,7 @@ exports.handle = function (event, context, callback) {
 
 	let paymentTransaction = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('payment_transaction_uuid'));
+		return repository.get(request.urlParam('payment_transaction_id'));
 	}).then(function (result) {
 		paymentTransaction = new PaymentTransaction(result);
 		paymentTransaction.populate(request._body);

@@ -14,49 +14,19 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
 
-/**
- * File constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function File(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-File.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-File.prototype.attributes = [
-	'path',
-	'filename'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-File.prototype.constraints = {
-	path: {
-		presence: true,
-		type: 'string'
-	},
-	filename: {
-		presence: true,
-		type: 'string'
-	}
+module.exports = (sequelize) => {
+	return sequelize.define('File', {
+		path: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		filename: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	});
 };
-
-module.exports = File;

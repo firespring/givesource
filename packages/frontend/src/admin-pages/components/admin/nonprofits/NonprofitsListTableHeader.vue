@@ -157,7 +157,7 @@
 				if (vue.formData.search) {
 					vue.searchNonprofits();
                 } else {
-					vue.$router.push(vue.generatePageLink({sort: vue.sort}));
+					vue.$router.push(vue.generatePageLink({sort: vue.sort, start: 0}));
                 }
 			},
 			generatePageLink: function (query) {

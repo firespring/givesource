@@ -32,7 +32,7 @@
                 </p>
 
                 <div class="leaderboard" v-if="pagination.loaded && pagination.items.length">
-                    <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.uuid"></search-results-row>
+                    <search-results-row v-for="nonprofit in pagination.items" :nonprofit="nonprofit" :key="nonprofit.id"></search-results-row>
                 </div>
 
                 <div class="leaderboard" v-else-if="pagination.loaded && pagination.items.length === 0">
@@ -173,11 +173,11 @@
 			fetchLogos: function (nonprofits) {
 				let promise = Promise.resolve();
 				if (nonprofits) {
-					const logoUuids = _.filter(_.map(nonprofits, 'logoFileUuid'));
-					if (logoUuids.length) {
-						promise = axios.get(API_URL + 'files' + Utils.generateQueryString({uuids: logoUuids})).then(function (response) {
+					const logoIds = _.filter(_.map(nonprofits, 'logoFileId'));
+					if (logoIds.length) {
+						promise = axios.get(API_URL + 'files' + Utils.generateQueryString({fileIds: logoIds})).then(function (response) {
 							_.forEach(nonprofits, function (nonprofit) {
-								nonprofit.logo = _.find(response.data, {uuid: nonprofit.logoFileUuid});
+								nonprofit.logo = _.find(response.data, {id: nonprofit.logoFileId});
 							});
 						});
 					}

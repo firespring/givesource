@@ -66,8 +66,8 @@
 		created: function () {
 			const vue = this;
 
-			vue.bus.$on('revokeNonprofit', function (nonprofitUuid) {
-				vue.updateNonprofit(nonprofitUuid);
+			vue.bus.$on('revokeNonprofit', function (nonprofitId) {
+				vue.updateNonprofit(nonprofitId);
 			});
 
 		},
@@ -80,12 +80,12 @@
 			PaginationMixin
 		],
 		methods: {
-			updateNonprofit: function (nonprofitUuid) {
+			updateNonprofit: function (nonprofitId) {
 				const vue = this;
 
-				vue.$request.get('nonprofits/' + nonprofitUuid).then(function (response) {
+				vue.$request.get('nonprofits/' + nonprofitId).then(function (response) {
 					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
-						return nonprofit.uuid === response.data.uuid ? response.data : nonprofit;
+						return nonprofit.id === response.data.id ? response.data : nonprofit;
 					});
 				}).catch(function (err) {
 					vue.apiError = err.response.data.errors;

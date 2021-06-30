@@ -22,12 +22,12 @@ const UsersRepository = require('../repositories/users');
 /**
  * NonprofitResourceMiddleware constructor
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @param {[]} userGroups
  * @constructor
  */
-function NonprofitResourceMiddleware(nonprofitUuid, userGroups) {
-	this.nonprofitUuid = nonprofitUuid;
+function NonprofitResourceMiddleware(nonprofitId, userGroups) {
+	this.nonprofitId = nonprofitId;
 	this.userGroups = userGroups;
 }
 
@@ -51,9 +51,9 @@ NonprofitResourceMiddleware.prototype.handle = function () {
 			return resolve();
 		}
 
-		if (middleware.user.uuid) {
-			usersRepository.get(middleware.user.uuid).then(function (user) {
-				if (middleware.nonprofitUuid === user.nonprofitUuid) {
+		if (middleware.user.cognitoUsername) {
+			usersRepository.getByCognitoUsername(middleware.user.cognitoUsername).then(function (user) {
+				if (parseInt(middleware.nonprofitId) === parseInt(user.nonprofitId)) {
 					return Promise.resolve();
 				} else {
 					return Promise.reject();

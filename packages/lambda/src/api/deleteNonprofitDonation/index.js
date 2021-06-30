@@ -24,7 +24,7 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.delete(request.urlParam('nonprofit_uuid'), request.urlParam('donation_uuid'));
+		return repository.delete(request.urlParam('nonprofit_id'), request.urlParam('donation_id'));
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

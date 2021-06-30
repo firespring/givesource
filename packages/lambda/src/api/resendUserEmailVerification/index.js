@@ -17,7 +17,6 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
 
@@ -26,17 +25,12 @@ exports.handle = function (event, context, callback) {
 	const repository = new UsersRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
 
-	let user = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('user_uuid'));
-	}).then(function (result) {
-		user = new User(result);
-		user.populate(request._body);
-		return user.validate();
-	}).then(function () {
-		return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email, true).catch(function (err) {
+		return repository.get(request.urlParam('user_id'));
+	}).then(function (user) {
+		return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email, true).catch(function (err) {
 			if (err.code === 'UserNotFoundException') {
-				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email);
+				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email);
 			} else {
 				return Promise.reject(err);
 			}

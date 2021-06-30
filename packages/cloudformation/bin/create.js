@@ -42,6 +42,7 @@ const createStack = function () {
 		PUBLIC_PAGES_CNAMES: 'PublicPagesCNAMEs',
 		PUBLIC_PAGES_SSL_CERTIFICATE_ARN: 'PublicPagesSSLCertificateArn',
 		ENABLE_MONITORING: 'EnableMonitoring',
+		REPLICA_REGION: 'ReplicaRegion'
 	};
 	Object.keys(optionalParams).forEach(function (key) {
 		if (config.app.hasOwnProperty(key) && config.app[key]) {

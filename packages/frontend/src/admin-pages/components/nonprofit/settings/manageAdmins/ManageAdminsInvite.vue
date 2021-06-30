@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -109,11 +109,11 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
 				}).catch(function(err){
                     vue.apiError = err.response.data.errors;
@@ -123,7 +123,7 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
 			}).catch(function (err) {
@@ -155,7 +155,7 @@
 			inviteNonprofitAdmins: function () {
 				const vue = this;
 
-				vue.$request.post('nonprofits/' + vue.nonprofitUuid + '/users', {
+				vue.$request.post('nonprofits/' + vue.nonprofitId + '/users', {
 					email_addresses: vue.formData.emailAddresses
 				}).then(function (response) {
 					vue.clearModals();

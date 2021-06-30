@@ -14,71 +14,38 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
+
+const {DataTypes} = require('sequelize');
 const ReportHelper = require('./../helpers/report');
 
-/**
- * Report constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Report(data) {
-	Model.call(this, data);
-}
-
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-Report.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Report.prototype.attributes = [
-	'fileUuid',
-	'nonprofitUuid',
-	'status',
-	'type'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Report.prototype.constraints = {
-	fileUuid: {
-		presence: false,
-		uuid: 4
-	},
-	nonprofitUuid: {
-		presence: false,
-		uuid: 4,
-	},
-	status: {
-		presence: true,
-		inclusion: [ReportHelper.STATUS_FAILED, ReportHelper.STATUS_PENDING, ReportHelper.STATUS_SUCCESS]
-	},
-	type: {
-		presence: true,
-		inclusion: [ReportHelper.TYPE_DONATIONS]
-	}
+module.exports = (sequelize) => {
+	return sequelize.define('Report', {
+		fileId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		nonprofitId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		status: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ReportHelper.STATUS_PENDING,
+			validate: {
+				isIn: [[ReportHelper.STATUS_FAILED, ReportHelper.STATUS_PENDING, ReportHelper.STATUS_SUCCESS]]
+			}
+		},
+		type: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ReportHelper.TYPE_DONATIONS,
+			validate: {
+				isIn: [[ReportHelper.TYPE_DONATIONS]]
+			}
+		}
+	});
 };
-
-/**
- * Default values for this model
- *
- * @return {{}}
- */
-Report.prototype.defaults = function () {
-	return {
-		status: ReportHelper.STATUS_PENDING
-	}
-};
-
-module.exports = Report;

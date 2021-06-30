@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-const NonprofitRepository = require('./nonprofits');
-const QueryBuilder = require('./../aws/queryBuilder');
-const Report = require('./../models/report');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * NonprofitReportsRepository constructor
@@ -44,27 +43,35 @@ NonprofitReportsRepository.prototype = new Repository();
 /**
  * Get a Report
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {String} nonprofitId
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitReportsRepository.prototype.get = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitReportsRepository.prototype.get = function (nonprofitId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				if (data.Items.length === 1) {
-					resolve(new Report(data.Items[0]));
-				}
-				reject(new ResourceNotFoundException('The specified report does not exist.'));
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.findOne({
+				where: {
+					id: id,
+					nonprofitId: nonprofitId
+				},
+				include: [
+					{model: allModels.Nonprofit},
+					{model: allModels.File}
+				]
 			});
+		}).then(function (report) {
+			if (report instanceof allModels.Report) {
+				resolve(report);
+			}
+			reject(new ResourceNotFoundException('The specified report does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -72,29 +79,30 @@ NonprofitReportsRepository.prototype.get = function (nonprofitUuid, uuid) {
 /**
  * Get all Reports for a Nonprofit
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @return {Promise}
  */
-NonprofitReportsRepository.prototype.getAll = function (nonprofitUuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitReportsRepository.prototype.getAll = function (nonprofitId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('scan');
-			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				const results = [];
-				if (data.Items) {
-					data.Items.forEach(function (item) {
-						results.push(new Report(item));
-					});
-				}
-				resolve(results);
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.findAll({
+				where: {
+					nonprofitId: nonprofitId
+				},
+				include: [
+					{model: allModels.Nonprofit},
+					{model: allModels.File}
+				]
 			});
+		}).then(function (reports) {
+			resolve(reports)
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -102,54 +110,29 @@ NonprofitReportsRepository.prototype.getAll = function (nonprofitUuid) {
 /**
  * Delete a Report
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {String} nonprofitId
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitReportsRepository.prototype.delete = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitReportsRepository.prototype.delete = function (nonprofitId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			repository.deleteByKey('uuid', uuid).then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.destroy({
+				where:
+					{
+						id: id,
+						nonprofitId: nonprofitId
+					}
 			});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
-		})
-	});
-};
-
-/**
- * Create or update a Report
- *
- * @param {String} nonprofitUuid
- * @param {Report} model
- */
-NonprofitReportsRepository.prototype.save = function (nonprofitUuid, model) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof Report)) {
-				reject(new Error('invalid Report model'));
-			}
-			model.validate().then(function () {
-				const key = {
-					uuid: model.uuid
-				};
-				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new Report(data.Attributes));
-				}).catch(function (err) {
-					reject(err);
-				});
-			}).catch(function (err) {
-				reject(err);
-			});
-		}).catch(function (err) {
-			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

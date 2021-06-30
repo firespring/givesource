@@ -15,15 +15,11 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const Donor = require('./../../models/donor');
 const DonorsRepository = require('./../../repositories/donors');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
-const PaymentTransaction = require('./../../models/paymentTransaction');
 const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
-const QueryBuilder = require('./../../aws/queryBuilder');
 const RenderHelper = require('./../../helpers/render');
 const Request = require('./../../aws/request');
 const SettingsRepostiory = require('./../../repositories/settings');
@@ -70,7 +66,6 @@ exports.handle = (event, context, callback) => {
 		}
 
 		if (donor) {
-			donor = (donor instanceof Donor) ? donor.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donor;
 			return Promise.resolve();
 		} else if (request.get('email', false)) {
 			return donorsRepository.queryEmail(request.get('email'));
@@ -79,55 +74,62 @@ exports.handle = (event, context, callback) => {
 		}
 	}).then(response => {
 		if (response) {
-			donor = response.mutate(null, {timezone: settings.EVENT_TIMEZONE});
+			donor = response;
+			donor.timezone = settings.EVENT_TIMEZONE;
 		}
 
 		if (donor && donations.length === 0) {
-			const builder = new QueryBuilder('query');
-			builder.limit(1000).index('donorUuidCreatedOnIndex').condition('donorUuid', '=', donor.uuid).condition('createdOn', '>', 0).scanIndexForward(false);
-			return donationsRepository.batchQuery(builder);
+			const params = {};
+			params.where = {donorId: donor.id};
+			return donationsRepository.queryDonations(params);
 		}
 		return Promise.resolve({});
 	}).then(response => {
-		if (response.hasOwnProperty('Items')) {
-			donations = response.Items.map(donation => {
-				const model = new Donation(donation);
-				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
+		if (response.hasOwnProperty('rows')) {
+			donations = response.rows.map(donation => {
+				donation.timezone = settings.EVENT_TIMEZONE;
+				donation.total = donation.formattedAmount;
+				donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
+				donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
+				return donation;
 			});
 		}
-
 		let promise = Promise.resolve();
 		if (paymentTransaction && donations.length) {
 			donations = donations.map(donation => {
-				const data = (donation instanceof Donation) ? donation.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : donation;
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
+				donation.timezone = settings.EVENT_TIMEZONE;
+				donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true);
+				donation.isOfflineDonation = (donation.isOfflineDonation === 'Yes' || donation.isOfflineDonation === true);
+				return donation;
 			});
 
-			const transaction = (paymentTransaction instanceof PaymentTransaction) ? paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE}) : paymentTransaction;
-			transaction.donations = donations;
-			transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
-			transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
+			const transaction = paymentTransaction;
+			transaction.transactionAmount = transaction.formattedAmount;
+			transaction.Donations = donations;
+			transaction.isAnonymous = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isAnonymous : false;
+			transaction.isFeeCovered = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isFeeCovered : false;
 			transactions.push(transaction);
 		} else {
-			const paymentTransactionUuids = donations.map(donation => {
-				return donation.paymentTransactionUuid || null;
-			}).filter((uuid, index, uuids) => {
-				return uuid !== null && index === uuids.indexOf(uuid);
+			const paymentTransactionIds = donations.map(donation => {
+				return donation.paymentTransactionId || null;
+			}).filter((id, index, ids) => {
+				return id !== null && index === ids.indexOf(id);
 			});
 
-			paymentTransactionUuids.forEach(uuid => {
+			paymentTransactionIds.forEach(id => {
 				promise = promise.then(() => {
-					return paymentTransactionsRepository.get(uuid);
+					return paymentTransactionsRepository.get(id);
 				}).then(paymentTransaction => {
-					const transaction = paymentTransaction.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-					transaction.donations = _.filter(donations, {paymentTransactionUuid: uuid});
-					transaction.isAnonymous = transaction.donations.length ? transaction.donations[0].isAnonymous : false;
-					transaction.isFeeCovered = transaction.donations.length ? transaction.donations[0].isFeeCovered : false;
+					const transaction = paymentTransaction;
+					transaction.timezone = settings.EVENT_TIMEZONE;
+					transaction.transactionAmount = transaction.formattedAmount;
+					transaction.isAnonymous = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isAnonymous : false;
+					transaction.isFeeCovered = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isFeeCovered : false;
+					if (transaction.Donations) {
+						transaction.Donations.forEach(function (donation) {
+							donation.total = donation.formattedAmount;
+						});
+					}
 					transactions.push(transaction);
 				}).catch(() => {
 					// Ignore missing transactions (no transactions are created in test mode)
@@ -137,19 +139,28 @@ exports.handle = (event, context, callback) => {
 
 		return promise.then(() => {
 			if (!transactions.length && donations.length) {
+				let promise = Promise.resolve();
 				donations.forEach(donation => {
-					let transaction = new PaymentTransaction({createdOn: donation.createdOn});
-					transaction = transaction.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-					transaction.donations = [donation];
-					transaction.isAnonymous = donation.isAnonymous;
-					transaction.isFeeCovered = donation.isFeeCovered;
-					transactions.push(transaction);
+					let transaction;
+					promise = promise.then(function () {
+						return paymentTransactionsRepository.populate({createdAt: donation.createdAt});
+					}).then(function (popTransaction) {
+						transaction = popTransaction;
+						transaction.timezone = settings.EVENT_TIMEZONE;
+						transaction.transactionAmount = transaction.formattedAmount;
+						transaction.Donations = [donation];
+						transaction.isAnonymous = donation.isAnonymous;
+						transaction.isFeeCovered = donation.isFeeCovered;
+						transactions.push(transaction);
+					});
 				});
 			}
 
 			if (!transactions.length) {
 				return Promise.reject(new Error('No donations were found'));
 			}
+
+			return promise;
 		});
 	}).then(() => {
 		return RenderHelper.renderTemplate('emails.donation-receipt', {

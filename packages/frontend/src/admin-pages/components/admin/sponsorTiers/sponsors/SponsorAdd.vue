@@ -62,15 +62,15 @@
                                     </div>
                                 </div>
 
-                                <div class="c-form-item c-form-item--select" :class="{ 'c-form-item--has-error': formErrors.sponsorTierUuid }">
+                                <div class="c-form-item c-form-item--select" :class="{ 'c-form-item--has-error': formErrors.sponsorTierId }">
                                     <div class="c-form-item__label">
                                         <label for="sponsorTier" class="c-form-item-label-text">Tier</label>
                                     </div>
                                     <div class="c-form-item__control">
-                                        <forms-sponsor-tier v-model="formData.sponsorTierUuid" :sponsorTiers="sponsorTiers" id="sponsorTier" name="sponsorTier"
-                                                            class="u-width-auto" :class="{ 'c-form-item--has-error': formErrors.sponsorTierUuid }"></forms-sponsor-tier>
-                                        <div v-if="formErrors.sponsorTierUuid" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.sponsorTierUuid }}
+                                        <forms-sponsor-tier v-model="formData.sponsorTierId" :sponsorTiers="sponsorTiers" id="sponsorTier" name="sponsorTier"
+                                                            class="u-width-auto" :class="{ 'c-form-item--has-error': formErrors.sponsorTierId }"></forms-sponsor-tier>
+                                        <div v-if="formErrors.sponsorTierId" class="c-notes c-notes--below c-notes--bad c-form-control-error">
+                                            {{ formErrors.sponsorTierId }}
                                         </div>
                                     </div>
                                 </div>
@@ -118,8 +118,8 @@
 				formData: {
 					file: null,
 					name: null,
-					sponsorTierUuid: this.sponsorTierUuid ? this.sponsorTierUuid : null,
-					url: null,
+					sponsorTierId: this.sponsorTierId ? this.sponsorTierId : null,
+					url: '',
 				},
 
 				// Errors
@@ -128,7 +128,7 @@
 			};
 		},
 		props: {
-			sponsorTierUuid: null,
+			sponsorTierId: null,
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -137,7 +137,7 @@
 						return a.sortOrder - b.sortOrder;
 					});
 					vue.sponsorTiers = response.data;
-					vue.sponsorTier = _.find(vue.sponsorTiers, {uuid: to.params.sponsorTierUuid});
+					vue.sponsorTier = _.find(vue.sponsorTiers, {id: parseInt(to.params.sponsorTierId)});
 				});
 			});
 		},
@@ -176,7 +176,7 @@
 					name: {
 						presence: true,
 					},
-					sponsorTierUuid: {
+					sponsorTierId: {
 						label: 'Tier',
 						presence: true,
 					},
@@ -226,10 +226,10 @@
 				}
 
 				promise.then(function () {
-					return vue.$request.post('sponsor-tiers/' + vue.formData.sponsorTierUuid + '/sponsors', {
-						fileUuid: file && file.hasOwnProperty('uuid') ? file.uuid : null,
+					return vue.$request.post('sponsor-tiers/' + vue.formData.sponsorTierId + '/sponsors', {
+						fileId: file && file.hasOwnProperty('id') ? file.id : 0,
 						name: vue.formData.name,
-						sponsorTierUuid: vue.formData.sponsorTierUuid,
+						sponsorTierId: vue.formData.sponsorTierId,
 						url: vue.formData.url
 					});
 				}).then(function (response) {
@@ -242,7 +242,7 @@
 							vue.formData = {
 								file: null,
 								name: null,
-								sponsorTierUuid: vue.sponsorTierUuid,
+								sponsorTierId: vue.sponsorTierId,
 								url: null
 							};
 						} else {

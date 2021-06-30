@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const User = require('./../models/user');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
 
 /**
  * UsersRepository constructor
@@ -40,21 +40,77 @@ function UsersRepository(options) {
 UsersRepository.prototype = new Repository();
 
 /**
- * Get a User
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param data
  * @return {Promise}
  */
-UsersRepository.prototype.get = function (uuid) {
-	const repository = this;
+UsersRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		return new models.User(data);
+	}).finally(function () {
+		return allModels.sequelize.close();
+	});
+};
+
+/**
+ * Get a User
+ *
+ * @param {String} id
+ * @return {Promise}
+ */
+UsersRepository.prototype.get = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new User(data.Item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findOne({
+				where: {
+					id: id
+				}
+			});
+		}).then(function (user) {
+			if (user instanceof allModels.User) {
+				resolve(user);
 			}
 			reject(new ResourceNotFoundException('The specified user does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Get a User by cognitoUsername
+ *
+ * @param {String} cognitoUsername
+ * @return {Promise}
+ */
+UsersRepository.prototype.getByCognitoUsername = function (cognitoUsername) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findOne({
+				where: {
+					cognitoUsername: cognitoUsername
+				}
+			}).then(function (user) {
+				if (user instanceof allModels.User) {
+					resolve(user);
+				}
+				reject(new ResourceNotFoundException('The specified user does not exist.'));
+			});
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -65,18 +121,18 @@ UsersRepository.prototype.get = function (uuid) {
  * @return {Promise}
  */
 UsersRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new User(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -87,21 +143,22 @@ UsersRepository.prototype.getAll = function () {
  * @return {Promise}
  */
 UsersRepository.prototype.getAdminUsers = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		const params = {
-			FilterExpression: 'attribute_not_exists(nonprofitUuid)'
-		};
-		repository.batchScan(params).then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new User(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.findAll({
+				where: {
+					nonprofitId: 0
+				}
+			});
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -109,42 +166,79 @@ UsersRepository.prototype.getAdminUsers = function () {
 /**
  * Delete a User
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-UsersRepository.prototype.delete = function (uuid) {
-	const repository = this;
+UsersRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.destroy({where: {id: id}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
 
 /**
- * Create or update a User
+ * Update a User
  *
  * @param {User} model
  */
 UsersRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof User)) {
-			reject(new Error('invalid User model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new User(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			return repository.get(model.id);
+		}).then(function () {
+			return repository.upsert(model, {});
+		}).then(function (user) {
+			resolve(user);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Promise<any>}
+ */
+UsersRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.User.upsert({
+				'id': model.id,
+				'email': typeof data.email !== "undefined" ? data.email : model.email,
+				'firstName': typeof data.firstName !== "undefined" ? data.firstName : model.firstName,
+				'lastName': typeof data.lastName !== "undefined" ? data.lastName : model.lastName,
+				'isVerified': typeof data.isVerified !== "undefined" ? data.isVerified : model.isVerified,
+				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
+				'cognitoUsername': typeof data.cognitoUsername !== "undefined" ? data.cognitoUsername : model.cognitoUsername,
+				'cognitoUuid': typeof data.cognitoUuid !== "undefined" ? data.cognitoUuid : model.cognitoUuid,
+			});
+		}).then(function (user) {
+			resolve(user);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

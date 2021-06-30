@@ -17,6 +17,7 @@
 const _ = require('lodash');
 const DonationHelper = require('./donation');
 const faker = require('faker');
+const loadModels = require('../models/index');
 
 /**
  * Generator constructor
@@ -39,49 +40,20 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	donation: function () {
+	Donation: function () {
 		const donation = {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
-			donorUuid: faker.random.uuid(),
+			donorId: faker.random.number(),
 			isAnonymous: faker.random.boolean(),
 			isFeeCovered: faker.random.boolean(),
 			isOfflineDonation: faker.random.boolean(),
-			nonprofitUuid: faker.random.uuid(),
-			nonprofitLegalName: faker.company.companyName(),
-			nonprofitAddress1: faker.address.streetAddress(false),
-			nonprofitAddress2: faker.address.secondaryAddress(),
-			nonprofitCity: faker.address.city(),
-			nonprofitState: faker.address.stateAbbr(),
-			nonprofitZip: faker.address.zipCode(),
+			nonprofitId: faker.random.number(),
 			subtotal: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 7500, 10000, 20000, 25000]),
 		};
 		donation.fees = DonationHelper.calculateFees(donation.isOfflineDonation, donation.isFeeCovered, donation.subtotal, 30, 0.029);
 		donation.total = donation.isFeeCovered ? donation.subtotal + donation.fees : donation.subtotal;
 
-		if (!donation.isAnonymous) {
-			donation.donorFirstName = faker.name.firstName();
-			donation.donorLastName = faker.name.lastName();
-			donation.donorEmail = faker.internet.email();
-			donation.donorPhone = faker.phone.phoneNumber();
-			donation.donorAddress1 = faker.address.streetAddress(false);
-			donation.donorAddress2 = faker.address.secondaryAddress();
-			donation.donorCity = faker.address.city();
-			donation.donorState = faker.address.stateAbbr();
-			donation.donorZip = faker.address.zipCode();
-		}
-
 		if (!donation.isOfflineDonation) {
-			donation.paymentTransactionUuid = faker.random.uuid();
-			donation.creditCardName = faker.name.findName();
-			donation.creditCardType = faker.random.arrayElement(['amex', 'discover', 'mastercard', 'visa']);
-			donation.creditCardLast4 = '1234';
-			donation.creditCardExpirationMonth = new Date().getMonth();
-			donation.creditCardExpirationYear = new Date().getYear() + 1;
-			donation.creditCardZip = faker.address.zipCode();
-			donation.paymentTransactionId = faker.random.alphaNumeric(10);
-			donation.paymentTransactionAmount = faker.random.number();
+			donation.paymentTransactionId = faker.random.number();
 			donation.paymentTransactionIsTestMode = faker.random.boolean();
 			donation.paymentTransactionStatus = 'test';
 		}
@@ -94,11 +66,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	donor: function () {
+	Donor: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			city: faker.address.city(),
@@ -116,11 +85,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	file: function () {
+	File: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			path: faker.system.fileName(),
 			filename: faker.system.fileName()
 		}
@@ -131,11 +97,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	message: function () {
+	Message: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			email: faker.internet.email(),
 			message: faker.lorem.sentence(),
 			name: faker.name.findName(),
@@ -149,11 +112,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	metric: function () {
+	Metric: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			key: faker.random.word(),
 			value: faker.random.number(),
 		}
@@ -165,11 +125,7 @@ Generator.prototype._generators = {
 	 * @return {Object}
 	 */
 	model: function () {
-		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
-		};
+		return {};
 	},
 
 	/**
@@ -177,23 +133,20 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofit: function () {
+	Nonprofit: function () {
+		const legalName = faker.company.companyName();
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			address1: faker.address.streetAddress(false),
 			address2: faker.address.secondaryAddress(),
 			category1: faker.random.number({min: 1, max: 30}),
 			category2: faker.random.number({min: 0, max: 30}),
 			category3: faker.random.number({min: 0, max: 30}),
 			city: faker.address.city(),
-			donationsCount: faker.random.number(),
-			donationsFees: faker.random.number(),
-			donationsFeesCovered: faker.random.number(),
-			donationsSubtotal: faker.random.number(),
-			donationsTotal: faker.random.number(),
-			legalName: faker.company.companyName(),
+			email: faker.internet.email(),
+			firstName: faker.random.word(),
+			lastName: faker.random.word(),
+			legalName: legalName,
+			legalNameSearch: legalName.toLowerCase(),
 			longDescription: faker.lorem.paragraphs(),
 			phone: faker.phone.phoneNumber(),
 			shortDescription: faker.random.words(),
@@ -210,14 +163,11 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofitDonationTier: function () {
+	NonprofitDonationTier: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
 			description: faker.random.words(),
-			nonprofitUuid: faker.random.uuid(),
+			nonprofitId: faker.random.number(),
 		}
 	},
 
@@ -226,20 +176,17 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	nonprofitSlide: function () {
+	NonprofitSlide: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			caption: faker.random.word(),
 			embedUrl: faker.internet.url(),
 			externalId: faker.random.word(),
-			fileUuid: faker.random.uuid(),
-			nonprofitUuid: faker.random.uuid(),
+			fileId: faker.random.number(),
+			nonprofitId: faker.random.number(),
 			sortOrder: faker.random.number(),
-			thumbnail: faker.image.imageUrl(640, 480, 'nature'),
+			thumbnail: "https://picsum.photos/640/480",
 			type: faker.random.arrayElement(['IMAGE', 'VIMEO', 'YOUTUBE']),
-			url: faker.image.imageUrl(800, 600, 'nature'),
+			url: "https://picsum.photos/800/600",
 		}
 	},
 
@@ -248,11 +195,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	paymentTransaction: function () {
+	PaymentTransaction: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			billingZip: faker.address.zipCode(),
 			creditCardExpirationMonth: new Date().getMonth(),
 			creditCardExpirationYear: new Date().getFullYear() + 1,
@@ -271,11 +215,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	report: function () {
+	Report: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			status: faker.random.arrayElement(['FAILED', 'PENDING', 'SUCCESS']),
 			type: faker.random.arrayElement(['ALL_DONATIONS', 'NONPROFIT_DONATIONS']),
 			url: faker.internet.url()
@@ -287,11 +228,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	setting: function () {
+	Setting: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			key: faker.random.word(),
 			value: faker.random.word(),
 		}
@@ -302,15 +240,12 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	sponsor: function () {
+	Sponsor: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
-			fileUuid: faker.random.uuid(),
+			fileId: faker.random.number(),
 			name: faker.random.word(),
 			sortOrder: faker.random.number(),
-			sponsorTierUuid: faker.random.uuid(),
+			sponsorTierId: faker.random.number(),
 			url: faker.internet.url(),
 		};
 	},
@@ -320,11 +255,8 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	sponsorTier: function () {
+	SponsorTier: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			name: faker.random.word(),
 			size: faker.random.arrayElement(['LARGE', 'DEFAULT', 'SMALL']),
 			sortOrder: faker.random.number(),
@@ -336,16 +268,14 @@ Generator.prototype._generators = {
 	 *
 	 * @return {Object}
 	 */
-	user: function () {
+	User: function () {
 		return {
-			uuid: faker.random.uuid(),
-			createdOn: new Date().getTime(),
-			isDeleted: 0,
 			cognitoUuid: faker.random.uuid(),
+			cognitoUsername: faker.random.uuid(),
 			email: faker.internet.email(),
 			lastName: faker.name.firstName(),
 			firstName: faker.name.lastName(),
-			nonprofitUuid: faker.random.uuid()
+			nonprofitId: faker.random.number()
 		};
 	},
 
@@ -376,19 +306,6 @@ Generator.prototype.data = function (type, data) {
 };
 
 /**
- * Generate a model
- *
- * @param {String} type
- * @param {{}} [data]
- * @return {*}
- */
-Generator.prototype.model = function (type, data) {
-	this._validateType(type);
-	const Model = require(`./../models/${type}`);
-	return new Model(this.data(type, data));
-};
-
-/**
  * Generate an array of model data
  *
  * @param {String} type
@@ -415,13 +332,43 @@ Generator.prototype.dataCollection = function (type, count, data) {
  * @return {Array}
  */
 Generator.prototype.modelCollection = function (type, count, data) {
-	this._validateType(type);
-	count = count || 3;
-	const results = [];
-	for (let i = 0; i < count; i++) {
-		results.push(this.model(type, data));
-	}
-	return results;
+  this._validateType(type)
+  let allModels
+  const generatorContext = this
+  count = count || 3
+  const results = []
+  return loadModels().then(function (models) {
+    allModels = models
+    for (let i = 0; i < count; i++) {
+      const model = models[type].build(generatorContext.data(type, data))
+      results.push(model);
+    }
+  }).then(function () {
+    console.log(results); /*DM: Debug */
+    return results;
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+};
+
+/**
+ * Generate a model
+ *
+ * @param {String} type
+ * @param {{}} [data]
+ * @return {*}
+ */
+Generator.prototype.model = function (type, data) {
+  this._validateType(type);
+  let allModels;
+  const generatorContext = this
+  return loadModels().then(function (models) {
+    allModels = models;
+    const model = models[type].build(generatorContext.data(type, data))
+    return model
+  }).finally(function () {
+    return allModels.sequelize.close();
+  });
 };
 
 module.exports = Generator;

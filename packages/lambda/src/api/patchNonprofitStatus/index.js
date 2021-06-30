@@ -19,33 +19,32 @@ const HttpException = require('./../../exceptions/http');
 const InvalidInputException = require('./../../exceptions/invalidInput');
 const InvalidStatusException = require('./../../exceptions/invalidStatus');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const NonprofitUsersRepository = require('./../../repositories/nonprofitUsers');
 const Request = require('./../../aws/request');
 const UsersRepository = require('./../../repositories/users');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new NonprofitsRepository();
 	const request = new Request(event, context).parameters(['status']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let nonprofit = null;
 	let status = request.get('status');
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'));
 	}).then(function (result) {
-		nonprofit = new Nonprofit(result);
+		nonprofit = result;
 
 		if (nonprofit.status !== NonprofitHelper.STATUS_PENDING && nonprofit.status !== NonprofitHelper.STATUS_ACTIVE) {
 			return Promise.reject(new InvalidStatusException('Cannot change the status for this nonprofit.'));
 		}
 
-		status = request.get('status');
 		if (nonprofit.status === NonprofitHelper.STATUS_PENDING && status !== NonprofitHelper.STATUS_ACTIVE && status !== NonprofitHelper.STATUS_DENIED) {
 			return Promise.reject(new InvalidInputException('Invalid status for pending nonprofit: ' + status + '.'));
 		}
@@ -54,14 +53,12 @@ exports.handle = function (event, context, callback) {
 			return Promise.reject(new InvalidInputException('Invalid status for active nonprofit: ' + status + '.'));
 		}
 
-		let attributes = {status: status};
-
 		// reset the slug for revoked nonprofits so the slug can be reused
-		if (status === NonprofitHelper.STATUS_REVOKED) {
-			attributes.slug = '';
+    if (status === NonprofitHelper.STATUS_REVOKED || (status === NonprofitHelper.STATUS_DENIED && nonprofit.slug === null)) {
+			nonprofit.slug = '';
 		}
 
-		nonprofit.populate(attributes);
+		nonprofit.status = status;
 	}).then(function () {
 		if (status === NonprofitHelper.STATUS_ACTIVE) {
 			return repository.generateUniqueSlug(nonprofit).then(function () {
@@ -73,6 +70,11 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.save(nonprofit);
 	}).then(function () {
+		if (nonprofit.status === NonprofitHelper.STATUS_ACTIVE) {
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: nonprofit}, 'RequestResponse');
+			lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSEO', {nonprofit: nonprofit}, 'RequestResponse');
+		}
+	}).then(() => {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		if (status === NonprofitHelper.STATUS_DENIED || status === NonprofitHelper.STATUS_REVOKED) {
@@ -97,13 +99,16 @@ const deleteNonprofitUsers = function (nonprofit) {
 	const cognito = new Cognito();
 	const nonprofitUsersRepository = new NonprofitUsersRepository();
 
-	return nonprofitUsersRepository.getAll(nonprofit.uuid).then(function (users) {
+	return nonprofitUsersRepository.getAll(nonprofit.id).then(function (users) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
 			promise = promise.then(function () {
-				return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid)
+			  if (user.cognitoUsername) {
+          return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername)
+        }
+			  return true;
 			}).then(function () {
-				return nonprofitUsersRepository.delete(nonprofit.uuid, user.uuid);
+				return nonprofitUsersRepository.delete(nonprofit.id, user.id);
 			});
 		});
 		return promise;
@@ -121,18 +126,19 @@ const addNonprofitCognitoUsers = function (nonprofit) {
 	const nonprofitUsersRepository = new NonprofitUsersRepository();
 	const usersRepository = new UsersRepository();
 
-	return nonprofitUsersRepository.getAll(nonprofit.uuid).then(function (users) {
+	return nonprofitUsersRepository.getAll(nonprofit.id).then(function (users) {
 		let promise = Promise.resolve();
 		users.forEach(function (user) {
+			user.cognitoUsername = UUID.v4();
 			promise = promise.then(function () {
-				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, user.email).then(function (cognitoUser) {
+				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email).then(function (cognitoUser) {
 					cognitoUser.User.Attributes.forEach(function (attribute) {
 						if (attribute.Name === 'sub') {
 							user.cognitoUuid = attribute.Value;
 						}
 					});
 				}).then(function () {
-					return cognito.assignUserToGroup(process.env.AWS_REGION, process.env.USER_POOL_ID, user.uuid, 'Nonprofit');
+					return cognito.assignUserToGroup(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, 'Nonprofit');
 				}).then(function () {
 					return user.validate();
 				}).then(function () {

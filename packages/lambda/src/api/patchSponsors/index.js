@@ -17,7 +17,6 @@
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Sponsor = require('./../../models/sponsor');
 const SponsorsRepository = require('./../../repositories/sponsors');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 
@@ -28,19 +27,23 @@ exports.handle = function (event, context, callback) {
 
 	let sponsors = [];
 	request.validate().then(function () {
-		request.get('sponsors', []).forEach(function (data) {
-			sponsors.push(new Sponsor(data));
-		});
-	}).then(function () {
 		let promise = Promise.resolve();
-		sponsors.forEach(function (sponsor) {
+		request.get('sponsors', []).map(function (sponsor) {
 			promise = promise.then(function () {
-				return sponsor.validate();
+				return repository.populate(sponsor);
+			}).then(function (model) {
+				sponsors.push(model);
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('sponsor_tier_uuid'), sponsors);
+		let promise = Promise.resolve();
+		sponsors.forEach(function (sponsor) {
+			promise = promise.then(function () {
+				return repository.upsert(sponsor, {});
+			});
+		});
+		return promise;
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

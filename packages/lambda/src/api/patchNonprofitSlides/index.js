@@ -16,30 +16,37 @@
 
 const HttpException = require('./../../exceptions/http');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitSlide = require('./../../models/nonprofitSlide');
 const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
 const Request = require('./../../aws/request');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitSlidesRepository();
 	const request = new Request(event, context).parameters(['slides']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	let slides = [];
 	request.validate().then(function () {
-		request.get('slides', []).forEach(function (data) {
-			slides.push(new NonprofitSlide(data));
-		});
-	}).then(function () {
 		let promise = Promise.resolve();
-		slides.forEach(function (slide) {
+		request.get('slides', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return slide.validate();
+				return repository.populate(data).then(function (slide) {
+					slides.push(slide);
+				});
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchSave(request.urlParam('nonprofit_uuid'), slides);
+		let promise = Promise.resolve();
+		slides.forEach(function (slide) {
+			promise = promise.then(function () {
+				return slide.validate().then(function () {
+					return repository.upsert(slide, {});
+				}).catch(function (err) {
+					(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
+				});
+			});
+		});
+		return promise;
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

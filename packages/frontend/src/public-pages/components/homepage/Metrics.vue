@@ -167,6 +167,8 @@
 				metrics: {
 					'DONATIONS_COUNT': 0,
 					'DONATIONS_TOTAL': 0,
+					'DONORS_COUNT': 0,
+					'TOP_DONATION': 0,
 				}
 			};
 		},
@@ -212,12 +214,12 @@
 			},
 			displayMatchFund: function () {
 				const vue = this;
-				return (vue.matchFundEnabled && vue.matchFundNonprofit);
+				return (vue.matchFundEnabled === "1" && vue.matchFundNonprofit);
 			}
 		},
 		props: {
 			matchFundEnabled: {
-				type: Boolean,
+				type: Boolean|String,
 				default: false,
 			},
 			matchFundButtonText: {
@@ -245,11 +247,7 @@
 			const vue = this;
 
 			axios.get(API_URL + 'metrics' + Utils.generateQueryString({keys: Object.keys(vue.metrics)})).then(function (response) {
-				response.data.forEach(function (metric) {
-					if (vue.metrics.hasOwnProperty(metric.key)) {
-						vue.metrics[metric.key] = metric.value;
-					}
-				});
+				vue.metrics = response.data;
 			}).catch(function (err) {
 				vue.apiError = err.response.data.errors;
 			});

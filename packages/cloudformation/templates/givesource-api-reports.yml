@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -51,10 +54,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetReportLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -63,7 +72,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/reports/{report_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/reports/{report_id}
     DependsOn: GetReportLambdaFunction
 
   PostReportLambdaFunction:
@@ -80,10 +89,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostReportLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -109,7 +124,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref ReportsApiResource
-      PathPart: "{report_uuid}"
+      PathPart: "{report_id}"
 
   GetReportApiMethod:
     Type: AWS::ApiGateway::Method

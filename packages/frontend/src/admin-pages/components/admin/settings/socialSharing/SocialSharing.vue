@@ -71,7 +71,7 @@
                                     </div>
                                     <div class="c-form-item__control">
                                         <textarea v-model="formData.SOCIAL_SHARING_DESCRIPTION" name="socialSharingDescription" id="socialSharingDescription"
-                                                  :class="{ 'has-error': formErrors.SOCIAL_SHARING_DESCRIPTION }"></textarea>
+                                                  :class="{ 'has-error': formErrors.SOCIAL_SHARING_DESCRIPTION }" maxlength="2048"></textarea>
                                         <div v-if="formErrors.SOCIAL_SHARING_DESCRIPTION" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                             {{ formErrors.SOCIAL_SHARING_DESCRIPTION }}
                                         </div>
@@ -209,42 +209,9 @@
 					const toUpdate = _.reject(settings, setting => {
 						return (setting.value === '' || setting.value === null);
 					});
-					const toDelete = _.filter(settings, setting => {
-						return (setting.value === '' || setting.value === null);
-					});
 
 					vm.$request.patch('settings', {
 						settings: toUpdate
-					}).then(response => {
-						if (response.data.errorMessage) {
-							console.log(response.data);
-						}
-						return vm.$request.delete('settings', {
-							settings: toDelete
-						});
-					}).then(response => {
-						if (response.data.errorMessage) {
-							console.log(response.data);
-						}
-
-						// delete files that were replace or removed
-						const filesToDelete = [];
-						_.forEach(settings, setting => {
-							if (vm.isFileSetting(setting.key)) {
-								const originalSetting = _.find(vm.settings, {key: setting.key});
-								if (originalSetting && originalSetting.value !== setting.value && originalSetting.value !== '' && originalSetting.value !== null) {
-									filesToDelete.push(originalSetting.value);
-								}
-							}
-						});
-
-						if (filesToDelete.length > 0) {
-							return vm.$request.delete('files', {
-								files: filesToDelete
-							});
-						}
-
-						return Promise.resolve();
 					}).then(() => {
 						vm.clearModals();
 						vm.$router.push({name: 'settings-list'});
@@ -268,19 +235,19 @@
 								vm.$store.commit('generateCacheKey');
 								settings.push({
 									key: key,
-									value: uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : ''
+									value: uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''
 								});
 							});
 						});
 					} else {
 						promise = promise.then(() => {
 							let settingValue = vm.formData[key];
-							if (_.isPlainObject(vm.formData[key]) && vm.formData[key].hasOwnProperty('uuid')) {
-								settingValue = vm.formData[key].uuid;
+							if (_.isPlainObject(vm.formData[key]) && vm.formData[key].hasOwnProperty('id')) {
+								settingValue = vm.formData[key].id;
 							}
 							settings.push({
 								key: key,
-								value: settingValue
+								value: settingValue.toString()
 							});
 						});
 					}

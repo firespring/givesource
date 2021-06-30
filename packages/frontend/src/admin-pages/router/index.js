@@ -101,7 +101,7 @@ const router = new VueRouter({
 						next({
 							name: 'nonprofit-donations-list',
 							params: {
-								nonprofitUuid: router.app.user.nonprofitUuid
+								nonprofitId: router.app.user.nonprofitId
 							}
 						});
 					}
@@ -244,7 +244,7 @@ const router = new VueRouter({
 			},
 		},
 		{
-			path: '/pages/custom/:pageUuid',
+			path: '/pages/custom/:pageId',
 			name: 'pages-custom-edit',
 			props: true,
 			component: ComponentCustomPagesEdit,
@@ -361,7 +361,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid',
+			path: '/sponsor-tiers/:sponsorTierId',
 			name: 'sponsor-tiers-edit',
 			props: true,
 			component: ComponentSponsorTiersEdit,
@@ -370,7 +370,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/sponsors',
+			path: '/sponsor-tiers/:sponsorTierId/sponsors',
 			name: 'sponsors-list',
 			props: true,
 			component: ComponentSponsorsList,
@@ -379,7 +379,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/add',
+			path: '/sponsor-tiers/:sponsorTierId/add',
 			name: 'sponsors-add',
 			props: true,
 			component: ComponentSponsorAdd,
@@ -388,7 +388,7 @@ const router = new VueRouter({
 			}
 		},
 		{
-			path: '/sponsor-tiers/:sponsorTierUuid/sponsors/:sponsorUuid',
+			path: '/sponsor-tiers/:sponsorTierId/sponsors/:sponsorId',
 			name: 'sponsors-edit',
 			props: true,
 			component: ComponentSponsorEdit,
@@ -399,124 +399,124 @@ const router = new VueRouter({
 
 		// Nonprofit - Donations
 		{
-			path: '/nonprofits/:nonprofitUuid/donations',
+			path: '/nonprofits/:nonprofitId/donations',
 			name: 'nonprofit-donations-list',
 			props: true,
 			component: ComponentNonprofitDonationsList,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 
 		// Nonprofit - Settings
 		{
-			path: '/nonprofits/:nonprofitUuid/settings',
+			path: '/nonprofits/:nonprofitId/settings',
 			name: 'nonprofit-settings-list',
 			props: true,
 			component: ComponentNonprofitSettingsList,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/manage-organization',
+			path: '/nonprofits/:nonprofitId/settings/manage-organization',
 			name: 'nonprofit-settings-manage-organization',
 			props: true,
 			component: ComponentNonprofitManageOrganization,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/donation-notifications',
+			path: '/nonprofits/:nonprofitId/settings/donation-notifications',
 			name: 'nonprofit-settings-donation-notifications',
 			props: true,
 			component: ComponentNonprofitDonationNotifications,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/admins',
+			path: '/nonprofits/:nonprofitId/settings/admins',
 			name: 'nonprofit-settings-admins-list',
 			props: true,
 			component: ComponentNonprofitManageAdmins,
 			meta: {
 				nonprofitStatus: ['ACTIVE', 'PENDING'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/admins/invite',
+			path: '/nonprofits/:nonprofitId/settings/admins/invite',
 			name: 'nonprofit-settings-admins-invite',
 			props: true,
 			component: ComponentNonprofitManageAdminsInvite,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/request-name-change',
+			path: '/nonprofits/:nonprofitId/settings/request-name-change',
 			name: 'nonprofit-settings-request-name-change',
 			props: true,
 			component: ComponentNonprofitRequestNameChange,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/settings/social-sharing',
+			path: '/nonprofits/:nonprofitId/settings/social-sharing',
 			name: 'nonprofit-settings-social-sharing',
 			props: true,
 			component: ComponentNonprofitSocialSharing,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 
 		// Nonprofit - Your Page
 		{
-			path: '/nonprofits/:nonprofitUuid/your-page',
+			path: '/nonprofits/:nonprofitId/your-page',
 			name: 'nonprofit-your-page',
 			props: true,
 			component: ComponentNonprofitYourPage,
-			meta: {validateNonprofitUuid: true}
+			meta: {validateNonprofitId: true}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/your-page/media/videos/add',
+			path: '/nonprofits/:nonprofitId/your-page/media/videos/add',
 			name: 'nonprofit-your-page-media-videos-add',
 			props: true,
 			component: ComponentNonprofitVideosAdd,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/your-page/media/videos/:slideUuid',
+			path: '/nonprofits/:nonprofitId/your-page/media/videos/:slideId',
 			name: 'nonprofit-your-page-media-videos-edit',
 			props: true,
 			component: ComponentNonprofitVideosEdit,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 		{
-			path: '/nonprofits/:nonprofitUuid/your-page/media/photos/:slideUuid',
+			path: '/nonprofits/:nonprofitId/your-page/media/photos/:slideId',
 			name: 'nonprofit-your-page-media-photos-edit',
 			props: true,
 			component: ComponentNonprofitPhotosEdit,
 			meta: {
 				nonprofitStatus: ['ACTIVE'],
-				validateNonprofitUuid: true
+				validateNonprofitId: true
 			}
 		},
 
@@ -700,9 +700,9 @@ const authMiddleware = function (to, from, next) {
  * @return {Promise}
  */
 const nonprofitStatusMiddleware = function (to, from, next) {
-	if (User.isAuthenticated() && to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitUuid')) {
+	if (User.isAuthenticated() && to.meta.hasOwnProperty('nonprofitStatus') && to.params.hasOwnProperty('nonprofitId')) {
 		const request = new Request();
-		return request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+		return request.get('nonprofits/' + to.params.nonprofitId).then(function (response) {
 			const nonprofit = response.data;
 			const allowed = (to.meta.nonprofitStatus instanceof Array) ? to.meta.nonprofitStatus : [to.meta.nonprofitStatus];
 			if (_.intersection(allowed, [nonprofit.status]).length === 0) {
@@ -724,8 +724,8 @@ const nonprofitStatusMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const nonprofitMiddleware = function (to, from, next) {
-	if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitUuid') && to.params.hasOwnProperty('nonprofitUuid')) {
-		if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && router.app.user.nonprofitUuid !== to.params.nonprofitUuid) {
+	if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitId') && to.params.hasOwnProperty('nonprofitId')) {
+		if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && parseInt(router.app.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
 			next({name: '404'});
 		} else {
 			next();

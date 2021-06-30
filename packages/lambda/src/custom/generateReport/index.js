@@ -15,21 +15,17 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
 const DonationHelper = require('./../../helpers/donation');
 const DonationsRepository = require('./../../repositories/donations');
-const File = require('./../../models/file');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
-const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
-const QueryBuilder = require('./../../aws/queryBuilder');
-const Report = require('./../../models/report');
 const ReportHelper = require('./../../helpers/report');
 const ReportsRepository = require('./../../repositories/reports');
 const Request = require('./../../aws/request');
 const S3 = require('./../../aws/s3');
 const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const filesRepository = new FilesRepository();
@@ -39,18 +35,19 @@ exports.handle = function (event, context, callback) {
 	const settingsRepository = new SettingsRepository();
 
 	let timezone = 'UTC';
-	const report = new Report(request._body);
-	const file = new File();
+	let report;
+	let file;
+	const path = UUID.v4();
 	const filename = request.get('name', 'report') + '-' + getFilenameTimestamp() + '.csv';
 	request.validate().then(function () {
-		file.populate({
-			filename: filename.toLowerCase(),
-			path: 'reports/' + file.uuid,
-		});
-		return file.validate();
-	}).then(function () {
+		return reportsRepository.populate(request._body);
+	}).then(function (populatedReport) {
+		report = populatedReport;
+		return filesRepository.populate({filename: filename.toLowerCase(), path: 'reports/' + path});
+	}).then(function (populatedFile) {
+		file = populatedFile;
 		return settingsRepository.get(SettingHelper.SETTING_EVENT_TIMEZONE).then(function (response) {
-			if (response && response.hasOwnProperty('value')) {
+			if (response) {
 				timezone = response.value;
 			}
 		}).catch(function () {
@@ -69,16 +66,15 @@ exports.handle = function (event, context, callback) {
 	}).then(function (response) {
 		if (response) {
 			const csv = json2csv({data: response.data, fields: response.fields});
-			return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${file.uuid}`, csv, 'public-read', 'text/csv', `attachment; filename=${file.filename}`).then(function () {
-				return filesRepository.save(file);
-			}).then(function () {
-				report.populate({
-					fileUuid: file.uuid,
-					status: ReportHelper.STATUS_SUCCESS,
-				});
-				return reportsRepository.save(report);
+			return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `${file.path}`, csv, 'private', 'text/csv', `attachment; filename=${file.filename}`).then(function () {
+				return filesRepository.upsert(file, {});
+			}).then(function (file) {
+				report.fileId = file.id;
+				report.status = ReportHelper.STATUS_SUCCESS;
+				return reportsRepository.upsert(report, {});
 			});
 		} else {
+			report.status = ReportHelper.STATUS_FAILED;
 			return report.populate({status: ReportHelper.STATUS_FAILED});
 		}
 	}).then(function () {
@@ -107,10 +103,9 @@ const getFilenameTimestamp = function () {
  * @return {Promise}
  */
 const getDonationsData = function (report, timezone) {
-	const builder = new QueryBuilder('query');
 	const donationsRepository = new DonationsRepository();
-	const nonprofitDonationsRepository = new NonprofitDonationsRepository();
 	const settingsRepository = new SettingsRepository();
+	const whereParams = {isDeleted: 0};
 
 	let displayTestPayments = false;
 	let promise = Promise.resolve();
@@ -124,35 +119,31 @@ const getDonationsData = function (report, timezone) {
 		return Promise.resolve();
 	});
 
-	if (report.nonprofitUuid) {
+	// this needs commented out on dev
+	if (!displayTestPayments) {
+		whereParams.paymentTransactionIsTestMode = 0;
+	}
+
+	if (report.nonprofitId) {
+		whereParams.nonprofitId = report.nonprofitId;
 		promise = promise.then(function () {
-			builder.limit(1000).index('nonprofitUuidCreatedOnIndex').condition('nonprofitUuid', '=', report.nonprofitUuid).condition('createdOn', '>', 0).scanIndexForward(true);
-			return nonprofitDonationsRepository.batchQuery(builder);
+			return donationsRepository.generateReport(whereParams);
 		});
 	} else {
 		promise = promise.then(function () {
-			return donationsRepository.batchScan();
+			return donationsRepository.generateReport(whereParams);
 		});
 	}
 
-	promise = promise.then(function (response) {
-		const items = response.hasOwnProperty('Items') ? response.Items : [];
-		let donations = items.map(function (donation) {
-			return new Donation(donation);
-		});
-		donations.sort(function (a, b) {
-			return  a.createdOn - b.createdOn;
-		});
-		if (!displayTestPayments) {
-			donations = donations.filter(function (donation) {
-				return !donation.paymentTransactionIsTestMode;
-			});
-		}
+	promise = promise.then(function (donations) {
 		return Promise.resolve({
 			data: donations.map(function (donation) {
-				const data = donation.mutate(null, {timezone: timezone});
-				data.donorFirstName = data.isAnonymous ? 'Anonymous' : data.donorFirstName;
-				return data;
+				donation.mutate = '';
+				donation.timezone = timezone;
+				if (donation.Donor && donation.isAnonymous) {
+					donation.Donor.donorIsAnonymous = '';
+				}
+				return donation;
 			}),
 			fields: DonationHelper.reportFields,
 		});

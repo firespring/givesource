@@ -28,7 +28,7 @@
         </thead>
 
         <tbody v-if="displayRows">
-        <donations-list-table-row v-for="donation in donations" :donation="donation" :key="donation.uuid"></donations-list-table-row>
+        <donations-list-table-row v-for="donation in donations" :donation="donation" :key="donation.id"></donations-list-table-row>
         </tbody>
 
         <tbody v-else>

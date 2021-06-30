@@ -234,7 +234,7 @@
 				return Settings.eventTitle();
 			},
 			registrationStartDate: function () {
-				return Settings.registrationStartDate().format('MMMM DDDo YYYY');
+				return Settings.registrationStartDate().format('MMMM DD YYYY');
 			},
 			canRegister: function () {
 				return Settings.isDuringRegistrations();
@@ -392,9 +392,9 @@
 						state: vue.formData.state,
 						zip: vue.formData.zip,
 						phone: vue.formData.phone,
-						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : null,
-						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : null,
-						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : null,
+						category1: vue.formData.categories.length >= 1 ? vue.formData.categories[0] : 0,
+						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : 0,
+						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : 0,
 
 					},
 					user: {

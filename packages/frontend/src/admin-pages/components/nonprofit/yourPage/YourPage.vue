@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content">
                 <div class="o-app-main-content">
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
 
-                            <component :is="tabComponent" :nonprofitUuid="nonprofitUuid" :nonprofit="nonprofit" v-on:updateNonprofit="updateNonprofit"></component>
+                            <component :is="tabComponent" :nonprofitId="nonprofitId" :nonprofit="nonprofit" v-on:updateNonprofit="updateNonprofit"></component>
 
                         </div>
                     </div>
@@ -83,7 +83,7 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
@@ -91,7 +91,7 @@
 					vue.tabComponent = vue.getTabComponent(to.query.tab);
 				}
 
-				vue.$request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
 				});
 			});
@@ -103,7 +103,7 @@
 				vue.tabComponent = vue.getTabComponent(to.query.tab);
 			}
 
-			vue.$request.get('nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
 				next();
 			}).catch(function () {

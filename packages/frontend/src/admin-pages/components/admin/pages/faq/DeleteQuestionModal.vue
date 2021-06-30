@@ -71,7 +71,7 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.delete('contents/' + vue.data.content.uuid).then(function () {
+				vue.$request.delete('contents/' + vue.data.content.id).then(function () {
 					vue.bus.$emit('deleteFAQList', vue.data.content);
 					vue.clearModals();
 				});

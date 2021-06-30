@@ -26,7 +26,7 @@
 
         <td>
             <strong>
-                <router-link :to="{ name: 'sponsors-edit', params: {sponsorTierUuid: sponsor.sponsorTierUuid, sponsorUuid: sponsor.uuid} }">{{ sponsor.name }}</router-link>
+                <router-link :to="{ name: 'sponsors-edit', params: {sponsorTierId: sponsor.sponsorTierId, sponsorId: sponsor.id} }">{{ sponsor.name }}</router-link>
             </strong>
         </td>
 
@@ -66,15 +66,15 @@
 
 				vue.addModal('spinner');
 				let promise = Promise.resolve();
-				if (vue.sponsor.hasOwnProperty('fileUuid') && vue.sponsor.fileUuid) {
-					promise = vue.$request.delete('files/' + vue.sponsor.fileUuid);
+				if (vue.sponsor.hasOwnProperty('fileId') && vue.sponsor.fileId) {
+					promise = vue.$request.delete('files/' + vue.sponsor.fileId);
 				}
 
 				promise.then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsor.sponsorTierUuid + '/sponsors/' + vue.sponsor.uuid);
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsor.sponsorTierId + '/sponsors/' + vue.sponsor.id);
 				}).then(function () {
 					vue.clearModals();
-					vue.$emit('deleteSponsor', vue.sponsor.uuid);
+					vue.$emit('deleteSponsor', vue.sponsor.id);
 				}).catch(function (err) {
 					vue.clearModals();
                     vue.$emit('hasError', err);

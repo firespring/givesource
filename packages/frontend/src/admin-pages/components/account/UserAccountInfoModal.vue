@@ -139,13 +139,13 @@
                     return;
                 }
 
-                vue.$request.patch('users/' + vue.user.uuid, params).then(function (response) {
+                vue.$request.patch('users/' + vue.user.cognitoUsername, params).then(function (response) {
                     vue.removeModal();
                     if (response.data.errorMessage) {
                         console.log(response.data);
                     } else {
                         vue.clearModals();
-                        vue.bus.$emit('userAccountUpdateInfo', response.data);
+                        vue.bus.$emit('userAccountUpdateInfo', response.data[0]);
                     }
                 }).catch(function (err) {
                     vue.removeModal();

@@ -7,6 +7,24 @@ Parameters:
     Type: String
 
 Resources:
+  ApiGatewayLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayLogRole.Arn
 
   ApiProdDeployment:
     Type: AWS::ApiGateway::Deployment
@@ -44,6 +62,11 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300
           CachingEnabled: true
+        - ResourcePath: "/files/download/{file_id}"
+          HttpMethod: GET
+          LoggingLevel: INFO
+          DataTraceEnabled: true
+          CachingEnabled: false
         - ResourcePath: "/metrics"
           HttpMethod: GET
           CacheDataEncrypted: true
@@ -64,7 +87,7 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 60
           CachingEnabled: true
-        - ResourcePath: "/nonprofits/{nonprofit_uuid}"
+        - ResourcePath: "/nonprofits/{nonprofit_id}"
           HttpMethod: GET
           CacheDataEncrypted: true
           CacheTtlInSeconds: 60
@@ -79,8 +102,9 @@ Resources:
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300
           CachingEnabled: true
-        - ResourcePath: "/sponsor-tiers/{sponsor_tier_uuid}/sponsors"
+        - ResourcePath: "/sponsor-tiers/{sponsor_tier_id}/sponsors"
           HttpMethod: GET
           CacheDataEncrypted: true
           CacheTtlInSeconds: 300
           CachingEnabled: true
+    DependsOn: ApiGatewayAccount

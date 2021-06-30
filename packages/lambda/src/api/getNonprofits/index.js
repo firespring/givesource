@@ -21,11 +21,13 @@ const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
 const Request = require('./../../aws/request');
 const SettingsRepository = require('./../../repositories/settings');
 const SettingHelper = require('./../../helpers/setting');
+const Sequelize = require('sequelize');
 
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitsRepository();
 	const settingsRepository = new SettingsRepository();
 	const request = new Request(event, context);
+	const findAllAndCountParams = {};
 
 	let total = 0;
 	let items = [];
@@ -35,16 +37,16 @@ exports.handle = function (event, context, callback) {
 	const start = request.queryParam('start', 0);
 	const includeMatchFund = parseInt(request.queryParam('includeMatchFund', 1));
 
-	const index = getIndex(sort);
-	const hash = getHashCondition(sort);
-	const range = getRangeCondition(sort);
-	const scanIndexForward = getScanIndexForward(sort);
-	let matchFundNonprofitUuid = null;
+	findAllAndCountParams.limit = parseInt(size);
+	findAllAndCountParams.order = [getRangeCondition(sort)];
+	findAllAndCountParams.offset = parseInt(start);
+	const where = [getHashCondition(sort)];
+	let matchFundNonprofitId = null;
 
 	request.validate().then(function () {
 		if (!includeMatchFund) {
-			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_UUID).then(function (setting) {
-				matchFundNonprofitUuid = setting.value;
+			return settingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_ID).then(function (setting) {
+				matchFundNonprofitId = setting.value;
 			}).catch(function (err) {
 				if (err instanceof ResourceNotFoundException) {
 					return Promise.resolve();
@@ -56,42 +58,19 @@ exports.handle = function (event, context, callback) {
 
 		return Promise.resolve();
 	}).then(function () {
-		const builder = new QueryBuilder('query');
-		builder.select('COUNT').limit(1000).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-		if (matchFundNonprofitUuid) {
-			builder.filter('uuid', '!=', matchFundNonprofitUuid)
+		if (matchFundNonprofitId) {
+			where.push({
+				id: {
+					[Sequelize.Op.ne]: matchFundNonprofitId
+				}
+			});
 		}
-
-		return repository.batchQuery(builder);
+		return repository.queryNonprofits(where, parseInt(start), parseInt(size), getRangeCondition(sort));
 	}).then(function (response) {
-		total = response.Count;
-		if (start > 0) {
-			const builder = new QueryBuilder('query');
-			builder.select('COUNT').limit(start).max(start).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-			if (matchFundNonprofitUuid) {
-				builder.filter('uuid', '!=', matchFundNonprofitUuid)
-			}
-			return repository.batchQuery(builder);
-		} else {
-			return Promise.resolve({});
-		}
-	}).then(function (response) {
-		const builder = new QueryBuilder('query');
-		builder.limit(size).index(index).condition(hash[0], hash[1], hash[2]).condition(range[0], range[1], range[2]).scanIndexForward(scanIndexForward);
-		if (matchFundNonprofitUuid) {
-			builder.filter('uuid', '!=', matchFundNonprofitUuid).limit(parseInt(size) + 1);
-		}
-		if (response.hasOwnProperty('LastEvaluatedKey')) {
-			builder.start(response.LastEvaluatedKey);
-		}
-		return repository.query(builder);
-	}).then(function (response) {
-		if (response.hasOwnProperty('Items')) {
-			items = response.Items;
-		}
-		if (matchFundNonprofitUuid && items.length > size) {
-			items.pop();
-		}
+		items = response;
+		return repository.countNonprofits(where);
+	}).then(function (count) {
+		total = count;
 		callback(null, {
 			items: items,
 			size: size,
@@ -139,26 +118,26 @@ const getHashCondition = function (sort) {
 		case 'active_subtotal_descending':
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
-			return ['status', '=', 'ACTIVE'];
+			return {status: 'ACTIVE'};
 
 		case 'denied_subtotal_ascending':
 		case 'denied_subtotal_descending':
 		case 'denied_legal_name_ascending':
 		case 'denied_legal_name_descending':
-			return ['status', '=', 'DENIED'];
+			return {status: 'DENIED'};
 
 		case 'pending_subtotal_ascending':
 		case 'pending_subtotal_descending':
 		case 'pending_legal_name_ascending':
 		case 'pending_legal_name_descending':
-			return ['status', '=', 'PENDING'];
+			return {status: 'PENDING'};
 
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
 		case 'all_created_on_ascending':
 		case 'all_created_on_descending':
 		default:
-			return ['isDeleted', '=', 0];
+			return {isDeleted: '0'};
 	}
 };
 
@@ -170,7 +149,7 @@ const getRangeCondition = function (sort) {
 		case 'denied_subtotal_descending':
 		case 'pending_subtotal_ascending':
 		case 'pending_subtotal_descending':
-			return ['donationsSubtotal', '>=', 0];
+			return ['donationsSubtotal DESC'];
 
 		case 'active_legal_name_ascending':
 		case 'active_legal_name_descending':
@@ -180,27 +159,11 @@ const getRangeCondition = function (sort) {
 		case 'pending_legal_name_descending':
 		case 'all_legal_name_ascending':
 		case 'all_legal_name_descending':
-			return ['legalNameSearch', '>', ' '];
+			return ['legalNameSearch ASC'];
 
 		case 'all_created_on_ascending':
 		case 'all_created_on_descending':
 		default:
-			return ['createdOn', '>', 0];
+			return ['createdAt DESC'];
 	}
-};
-
-const getScanIndexForward = function (sort) {
-	switch (sort) {
-		case 'active_subtotal_ascending':
-		case 'active_legal_name_ascending':
-		case 'denied_subtotal_ascending':
-		case 'denied_legal_name_ascending':
-		case 'pending_subtotal_ascending':
-		case 'pending_legal_name_ascending':
-		case 'all_legal_name_ascending':
-		case 'all_created_on_ascending':
-			return true;
-	}
-
-	return false;
 };

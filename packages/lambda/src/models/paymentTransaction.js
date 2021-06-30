@@ -14,124 +14,73 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
+
+const {DataTypes} = require('sequelize');
 const numeral = require('numeral');
+const moment = require('moment-timezone');
 
-/**
- * paymentTransaction constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function PaymentTransaction(data) {
-	Model.call(this, data);
-}
-
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-PaymentTransaction.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-PaymentTransaction.prototype.attributes = [
-	'billingZip',
-	'creditCardExpirationMonth',
-	'creditCardExpirationYear',
-	'creditCardLast4',
-	'creditCardName',
-	'creditCardType',
-	'isTestMode',
-	'transactionAmount',
-	'transactionId',
-	'transactionStatus'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-PaymentTransaction.prototype.constraints = {
-	billingZip: {
-		presence: true,
-		type: 'string'
-	},
-	creditCardExpirationMonth: {
-		presence: true,
-		type: 'number',
-		numericality: {
-			onlyInteger: true
+module.exports = (sequelize) => {
+	return sequelize.define('PaymentTransaction', {
+		billingZip: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		creditCardExpirationMonth: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		creditCardExpirationYear: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		creditCardLast4: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		creditCardName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		creditCardType: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		isTestMode: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
+		},
+		transactionAmount: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		transactionId: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		transactionStatus: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+	}, {
+		getterMethods: {
+			formattedAmount() {
+				return numeral(this.transactionAmount / 100).format('$0,0.00');
+			}
+		},
+		setterMethods: {
+			timezone(timezone) {
+				if (timezone) {
+					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
+				} else {
+					const date = moment(this.createdAt, 'M/D/YYYY h:mm:ss A');
+					this.setDataValue('createdAt', date);
+				}
+			}
 		}
-	},
-	creditCardExpirationYear: {
-		presence: true,
-		type: 'number',
-		numericality: {
-			onlyInteger: true
-		}
-	},
-	creditCardLast4: {
-		presence: true,
-		type: 'string'
-	},
-	creditCardName: {
-		presence: true,
-		type: 'string'
-	},
-	creditCardType: {
-		presence: true,
-		type: 'string',
-	},
-	isTestMode: {
-		presence: true,
-		type: 'boolean'
-	},
-	transactionAmount: {
-		presence: true,
-		type: 'number',
-		numericality: {
-			onlyInteger: true
-		}
-	},
-	transactionId: {
-		presence: true,
-		type: 'string'
-	},
-	transactionStatus: {
-		presence: false,
-		type: 'string'
-	}
+	});
 };
-
-/**
- * Attribute mutators for this model
- *
- * @type {{}}
- */
-PaymentTransaction.prototype.mutators = {
-	creditCardType: function (value) {
-		switch (value) {
-			case 'amex':
-				return 'American Express';
-			case 'discover':
-				return 'Discover';
-			case 'mastercard':
-				return 'MasterCard';
-			case 'visa':
-				return 'Visa';
-			default:
-				return value;
-		}
-	},
-	transactionAmount: function (value) {
-		return numeral(value / 100).format('$0,0.00');
-	},
-};
-
-module.exports = PaymentTransaction;

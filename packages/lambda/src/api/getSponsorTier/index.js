@@ -23,9 +23,9 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context);
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('sponsor_tier_uuid'));
+		return repository.get(request.urlParam('sponsor_tier_id'));
 	}).then(function (sponsorTier) {
-		callback(null, sponsorTier.all());
+		callback(null, sponsorTier);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

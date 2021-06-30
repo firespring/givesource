@@ -15,11 +15,10 @@
  */
 
 const _ = require('lodash');
+const SettingsRepository = require('./../../repositories/settings');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
 const Request = require('./../../aws/request');
-const Setting = require('./../../models/setting');
-const SettingsRepository = require('./../../repositories/settings');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const DynamicContentHelper = require('./../../helpers/dynamicContent');
 
@@ -27,34 +26,50 @@ exports.handle = function (event, context, callback) {
 	const lambda = new Lambda();
 	const repository = new SettingsRepository();
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['settings']);
+	const keys = request.get('settings', []).map(function (setting) {
+		return setting.key;
+	});
 
 	let settings = [];
 	request.validate().then(function () {
-		const keys = request.get('settings', []).map(function (setting) {
-			return setting.key;
-		});
-		return repository.batchGet(keys).then(function (models) {
-			request.get('settings', []).forEach(function (data) {
-				let model = _.find(models, {key: data.key});
-				if (model) {
-					model.populate(data);
-				} else {
-					model = new Setting(data);
-				}
-
-				settings.push(model);
-			});
-		});
-	}).then(function () {
+		return repository.batchGet(keys);
+	}).then(function (models) {
 		let promise = Promise.resolve();
-		settings.forEach(function (setting) {
+		request.get('settings', []).forEach(function (data) {
 			promise = promise.then(function () {
-				return setting.validate();
+				let model = _.find(models, {key: data.key});
+				if (typeof model !== "undefined") {
+					return model;
+				} else {
+					return repository.populate(data);
+				}
+			}).then(function (model) {
+				if (Array.isArray(data.value) || typeof data.value === 'object') {
+					delete data.value;
+				}
+				return repository.upsert(model, data);
+			}).then(function (savedModel) {
+				settings.push(savedModel);
+			}).catch(function (err) {
+				(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 			});
 		});
 		return promise;
 	}).then(function () {
-		return repository.batchUpdate(settings);
+		const socialSharingData = {
+			EVENT_TITLE: null,
+			SOCIAL_SHARING_IMAGE: null,
+			SOCIAL_SHARING_DESCRIPTION: null,
+			SEO_DESCRIPTION: null
+		};
+		request.get('settings', []).forEach(setting => {
+			if (socialSharingData.hasOwnProperty(setting.key)) {
+				socialSharingData[setting.key] = setting.value;
+			}
+		});
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSocialSharing', socialSharingData, 'RequestResponse');
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutSEO', socialSharingData, 'RequestResponse');
 	}).then(function () {
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {

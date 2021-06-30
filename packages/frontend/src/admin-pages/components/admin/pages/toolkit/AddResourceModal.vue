@@ -142,26 +142,31 @@
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_DESCRIPTION',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_TYPE: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE',
 						type: 'OPTION',
 						value: 'FILE',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_FILE: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE',
 						type: 'FILE',
 						value: '',
+                        id: 0
 					},
 					TOOLKIT_RESOURCE_LIST_ITEM_LINK: {
 						key: 'TOOLKIT_RESOURCE_LIST_ITEM_LINK',
 						type: 'LINK',
 						value: '',
+                        id: 0
 					},
 				},
 
@@ -271,7 +276,7 @@
 						axios.defaults.headers = defaultHeaders;
 						return instance.put(signedUrl, vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value);
 					}).then(function () {
-						vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value = file.uuid;
+						vue.formData.TOOLKIT_RESOURCE_LIST_ITEM_FILE.value = file.id;
 					});
 				}
 
@@ -282,11 +287,11 @@
 						type: 'COLLECTION'
 					});
 				}).then(function (response) {
-					toolkitResourceListContent = response.data;
+					toolkitResourceListContent = response.data[0];
 					return vue.$request.patch('contents', {
 						contents: Object.keys(vue.formData).map(function (key) {
 							const content = vue.formData[key];
-							content.parentUuid = toolkitResourceListContent.uuid;
+							content.parentId = toolkitResourceListContent.id;
 							return content;
 						}),
 					});

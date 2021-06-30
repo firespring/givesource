@@ -17,7 +17,8 @@
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const Setting = require('./../models/setting');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * SettingsRepository constructor
@@ -40,21 +41,49 @@ function SettingsRepository(options) {
 SettingsRepository.prototype = new Repository();
 
 /**
+ * Look to abstract this
+ *
+ * @param {Object} data
+ * @return {Promise}
+ */
+SettingsRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		const setting = new models.Setting();
+		return new setting.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
+	}).finally(function () {
+		return allModels.sequelize.close();
+	});
+};
+
+/**
  * Get a Setting
  *
  * @param {String} key
+ * @param {Boolean} returnNull
  * @return {Promise}
  */
-SettingsRepository.prototype.get = function (key) {
-	const repository = this;
+SettingsRepository.prototype.get = function (key, returnNull = false) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('key', key).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new Setting(data.Item));
-			}
-			reject(new ResourceNotFoundException('The specified setting does not exist.'));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.findOne({
+				where: {
+					key: key
+				}
+			}).then(function (setting) {
+				if (setting instanceof allModels.Setting || returnNull) {
+					resolve(setting);
+				}
+				reject(new ResourceNotFoundException('The specified setting does not exist.'));
+			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -65,18 +94,18 @@ SettingsRepository.prototype.get = function (key) {
  * @return {Promise}
  */
 SettingsRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Setting(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -88,23 +117,24 @@ SettingsRepository.prototype.getAll = function () {
  * @return {Promise}
  */
 SettingsRepository.prototype.batchGet = function (keys) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		if (!keys) {
-			reject(new Error('keys is undefined'));
-		}
-		const map = [];
-		keys.forEach(function (value) {
-			map.push({key: value});
-		});
-		repository.batchGetKeys(map).then(function (data) {
-			let results = [];
-			data.forEach(function (item) {
-				results.push(new Setting(item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.findAll({
+				where: {
+					key: {
+						[Sequelize.Op.or]: keys
+					}
+				}
 			});
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -116,12 +146,18 @@ SettingsRepository.prototype.batchGet = function (keys) {
  * @return {Promise}
  */
 SettingsRepository.prototype.delete = function (key) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('key', key).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.destroy({where: {key: key}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -133,23 +169,52 @@ SettingsRepository.prototype.delete = function (key) {
  * @return {Promise}
  */
 SettingsRepository.prototype.batchDeleteByKey = function (models) {
-	const repository = this;
+	let allModels;
+	const keys = models.map(function (model) {
+		return model.key;
+	});
 	return new Promise(function (resolve, reject) {
-		const requestItems = [];
-		models = models || [];
-		models.forEach(function (model) {
-			requestItems.push({
-				DeleteRequest: {
-					Key: {
-						key: model.key
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (keys.length > 0) {
+				return allModels.Setting.destroy({
+					where: {
+						key: {
+							[Sequelize.Op.or]: keys
+						}
 					}
-				}
-			});
-		});
-		repository.batchWrite(requestItems, 3).then(function (data) {
-			resolve(data);
+				});
+			}
+			resolve();
+		}).then(function (stuff) {
+			resolve(stuff);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Bulk create used in initial start up
+ *
+ * @param {[]} data
+ * @return {Promise<any>}
+ */
+SettingsRepository.prototype.bulkCreate = function (data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return models.Setting.bulkCreate(data);
+		}).then(function (setting) {
+			resolve(setting);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -160,22 +225,47 @@ SettingsRepository.prototype.batchDeleteByKey = function (models) {
  * @param {Setting} model
  */
 SettingsRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof Setting)) {
-			reject(new Error('invalid Setting model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				key: model.key
-			};
-			repository.put(key, model.except(['key'])).then(function (data) {
-				resolve(new Setting(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			if (!(model !== null)) {
+				reject(new Error('invalid Setting model'));
+			}
+			return repository.upsert(model, {});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Promise<any>}
+ */
+SettingsRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Setting.upsert({
+				'id': model.get('id'),
+				'key': typeof data.key !== "undefined" ? data.key : model.get('key'),
+				'value': typeof data.value !== "undefined" ? data.value : model.get('value'),
+			});
+		}).then(function (setting) {
+			resolve(setting);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

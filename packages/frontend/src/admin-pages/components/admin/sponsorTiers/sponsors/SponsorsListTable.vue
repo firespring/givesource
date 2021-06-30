@@ -26,7 +26,7 @@
         </thead>
 
         <draggable v-model="localSponsors" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileUuid)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.uuid"
+            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileId)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.id"
                                      :v-on:hasError="hasError">
             </sponsors-list-table-row>
         </draggable>
@@ -63,8 +63,8 @@
 					return [];
 				}
 			},
-			sponsorTierUuid: {
-				type: String,
+			sponsorTierId: {
+				type: String|Number,
 				default: null,
 			}
 		},
@@ -77,8 +77,8 @@
 			},
 		},
 		methods: {
-			getFile: function (fileUuid) {
-				return _.find(this.files, {uuid: fileUuid});
+			getFile: function (fileId) {
+				return _.find(this.files, {id: fileId});
 			},
 			updateSortOrder: function () {
 				const vue = this;
@@ -89,17 +89,17 @@
 				});
 
 				const toUpdate = _.differenceWith(vue.localSponsors, original, _.isEqual);
-				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierUuid + '/sponsors', {
+				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors', {
 					sponsors: toUpdate
 				}).catch(function (err) {
 					vue.$emit('hasError', err);
 				});
 			},
-			deleteSponsor: function (sponsorUuid) {
+			deleteSponsor: function (sponsorId) {
 				const vue = this;
 
 				vue.localSponsors = _.filter(vue.localSponsors, function (sponsor) {
-					return sponsor.uuid !== sponsorUuid;
+					return sponsor.id !== sponsorId;
 				});
 			},
 			hasError: function (err) {

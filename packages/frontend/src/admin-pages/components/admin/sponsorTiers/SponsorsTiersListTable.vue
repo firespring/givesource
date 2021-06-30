@@ -25,7 +25,7 @@
         </thead>
 
         <draggable v-model="localSponsorTiers" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-            <sponsors-list-table-row v-for="sponsorTier in localSponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.uuid" v-on:deleteSponsorTier="deleteSponsorTier"
+            <sponsors-list-table-row v-for="sponsorTier in localSponsorTiers" :sponsorTier="sponsorTier" :key="sponsorTier.id" v-on:deleteSponsorTier="deleteSponsorTier"
                                      v-on:hasError="hasError">
             </sponsors-list-table-row>
         </draggable>
@@ -83,11 +83,11 @@
 					vue.$emit('hasError', err);
 				});
 			},
-			deleteSponsorTier: function (sponsorTierUuid) {
+			deleteSponsorTier: function (sponsorTierId) {
 				const vue = this;
 
 				vue.localSponsorTiers = _.filter(vue.localSponsorTiers, function (sponsorTier) {
-					return sponsorTier.uuid !== sponsorTierUuid;
+					return sponsorTier.id !== sponsorTierId;
 				});
 			},
 			hasError: function (err) {

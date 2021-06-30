@@ -30,10 +30,7 @@ exports.handle = function (event, context, callback) {
 			return repository.getAll();
 		}
 	}).then(function (settings) {
-		const results = settings.map(function (setting) {
-			return setting.all();
-		});
-		callback(null, results);
+		callback(null, settings);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

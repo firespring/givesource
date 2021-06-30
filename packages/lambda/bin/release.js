@@ -59,6 +59,19 @@ const release = function (region) {
 	});
 };
 
+const releaseMigrations = function () {
+	const s3 = new S3();
+	const migrationsDir = path.resolve(__dirname, './../migrations');
+	const migrations = fs.readdirSync(migrationsDir);
+	const bucketName = config.get('release.AWS_RELEASE_BUCKET');
+	const bucketRegion = config.get('release.AWS_RELEASE_BUCKET_REGION');
+	migrations.forEach(function (migrationName) {
+		const objectName = 'migrations/' + packageJson.version + '/' + migrationName;
+		const body = fs.readFileSync(migrationsDir + '/' + migrationName);
+		return s3.putObject(bucketRegion, bucketName, objectName, body);
+	});
+};
+
 let promise = Promise.resolve();
 if (process.argv[2] !== '--force' && process.argv[2] !== '-F') {
 	config.get('release.AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS').forEach(function (region) {
@@ -81,3 +94,12 @@ promise.then(function () {
 }).catch(function (err) {
 	console.log(err);
 });
+
+promise.then(function () {
+	return releaseMigrations();
+}).then(function () {
+	console.log('Database migrations released');
+}).catch(function (err) {
+	console.log(err);
+});
+

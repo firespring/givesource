@@ -27,16 +27,17 @@ exports.handle = function (event, context, callback) {
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return repository.get(request.urlParam('content_uuid'));
+		return repository.get(request.urlParam('content_id'));
 	}).then(function (content) {
 		if (content.type === ContentHelper.TYPE_COLLECTION) {
-			return repository.batchDeleteByParentUuid(request.urlParam('content_uuid')).then(function () {
-				return repository.delete(request.urlParam('content_uuid'));
+			return repository.batchDeleteByParentId(request.urlParam('content_id')).then(function () {
+				return repository.delete(request.urlParam('content_id'));
 			});
 		} else {
-			return repository.delete(request.urlParam('content_uuid'));
+			return repository.delete(request.urlParam('content_id'));
 		}
 	}).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/contents*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback();

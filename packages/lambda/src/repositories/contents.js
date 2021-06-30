@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-const Content = require('./../models/content');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const QueryBuilder = require('./../aws/queryBuilder');
+const loadModels = require('./../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * ContentsRepository constructor
@@ -41,46 +41,76 @@ function ContentsRepository(options) {
 ContentsRepository.prototype = new Repository();
 
 /**
- * Get a Content
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param data
  * @return {Promise}
  */
-ContentsRepository.prototype.get = function (uuid) {
-	const repository = this;
+ContentsRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		const content = new models.Content();
+		return new content.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
+	}).finally(function () {
+		return allModels.sequelize.close();
+	})
+};
+
+/**
+ * Get a Content
+ *
+ * @param {String} id
+ * @param {Boolean} returnNull
+ * @return {Promise}
+ */
+ContentsRepository.prototype.get = function (id, returnNull = false) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new Content(data.Item));
-			}
-			reject(new ResourceNotFoundException('The specified content does not exist.'));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Content.findOne({
+				where: {
+					id: id
+				}
+			}).then(function (content) {
+				if (content instanceof allModels.Content || returnNull) {
+					resolve(content);
+				}
+				reject(new ResourceNotFoundException('The specified content does not exist.'));
+			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
 
 /**
- * Get all contents by parentUuid
+ * Get all contents by parentId
  *
- * @param {String} parentUuid
+ * @param {String} parentId
  * @return {Promise}
  */
-ContentsRepository.prototype.getByParentUuid = function (parentUuid) {
-	const repository = this;
-	const builder = new QueryBuilder('query');
+ContentsRepository.prototype.getByParentId = function (parentId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		builder.index('parentUuidIndex').condition('parentUuid', '=', parentUuid);
-		repository.batchQuery(builder).then(function (data) {
-			const results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Content(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Content.findAll({
+				where: {
+					parentId: parentId
+				}
+			});
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -92,20 +122,22 @@ ContentsRepository.prototype.getByParentUuid = function (parentUuid) {
  * @return {Promise}
  */
 ContentsRepository.prototype.getAllByKey = function (key) {
-	const repository = this;
-	const builder = new QueryBuilder('query');
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		builder.index('keyIndex').condition('key', '=', key);
-		repository.batchQuery(builder).then(function (data) {
-			const results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Content(item));
-				});
-			}
-			resolve(results);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Content.findAll({
+				where: {
+					key: key
+				}
+			}).then(function (results) {
+				resolve(results);
+			});
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -113,38 +145,100 @@ ContentsRepository.prototype.getAllByKey = function (key) {
 /**
  * Get Contents by keys
  *
- * @param {[]} keys
+ * @param {Array} keys
  * @return {Promise}
  */
 ContentsRepository.prototype.batchGet = function (keys) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		if (!keys) {
-			reject(new Error('keys is undefined'));
-		}
-
-		const params = {
-			FilterExpression: '',
-			ExpressionAttributeNames: {'#key': 'key'},
-			ExpressionAttributeValues: {},
-		};
-
-		keys.forEach(function (key) {
-			const expression = `#key = :${key}`;
-			params.FilterExpression = params.FilterExpression ? params.FilterExpression + ' OR ' + expression : expression;
-			params.ExpressionAttributeValues[`:${key}`] = key;
-		});
-
-		repository.batchScan(params).then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Content(item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (keys.length) {
+				return allModels.Content.findAll({
+					where: {
+						key: {
+							[Sequelize.Op.or]: keys
+						}
+					}
 				});
+			} else {
+				return allModels.Content.findAll();
 			}
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Get Contents by ids
+ *
+ * @param {Array} ids
+ * @return {Promise}
+ */
+ContentsRepository.prototype.batchGetById = function (ids) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (ids.length) {
+				return allModels.Content.findAll({
+					where: {
+						id: {
+							[Sequelize.Op.or]: ids
+						},
+					}
+				});
+			} else {
+				return allModels.Content.findAll();
+			}
+		}).then(function (results) {
+			resolve(results);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Delete an array of Content models
+ *
+ * @param {Array} models
+ * @returns {Promise<any>}
+ */
+ContentsRepository.prototype.batchDelete = function (models) {
+	let allModels;
+	const ids = models.map(function (model) {
+		return model.id;
+	});
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (loadedModels) {
+			allModels = loadedModels;
+		}).then(function () {
+			if (ids.length > 0) {
+				return allModels.Content.destroy({
+					where: {
+						id: {
+							[Sequelize.Op.or]: ids
+						}
+					}
+				})
+			}
+			resolve();
+		}).then(function (stuff) {
+			resolve(stuff);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -156,14 +250,18 @@ ContentsRepository.prototype.batchGet = function (keys) {
  * @return {Promise}
  */
 ContentsRepository.prototype.getCountByKey = function (key) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		const builder = new QueryBuilder('query');
-		builder.index('keyIndex').condition('key', '=', key).select('COUNT');
-		repository.batchQuery(builder).then(function (data) {
-			resolve(data.Count);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Content.findAndCountAll({where: {key: key}});
+		}).then(function (data) {
+			resolve(data)
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -171,35 +269,45 @@ ContentsRepository.prototype.getCountByKey = function (key) {
 /**
  * Delete a Content
  *
- * @param {String} uuid
+ * @param {String} contentId
  * @return {Promise}
  */
-ContentsRepository.prototype.delete = function (uuid) {
-	const repository = this;
+ContentsRepository.prototype.delete = function (contentId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Content.destroy({where: {id: contentId}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
 
 /**
- * Batch delete Contents by parentUuid
+ * Batch delete Contents by parentId
  *
- * @param {String} parentUuid
+ * @param {String} parentId
  * @return {Promise}
  */
-ContentsRepository.prototype.batchDeleteByParentUuid = function (parentUuid) {
-	const repository = this;
+ContentsRepository.prototype.batchDeleteByParentId = function (parentId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByParentUuid(parentUuid).then(function (models) {
-			return repository.batchDelete(models);
+		return loadModels().then(function (models) {
+			allModels = models;
 		}).then(function () {
-			resolve();
+			return allModels.Content.destroy({where: {parentId: parentId}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -211,14 +319,18 @@ ContentsRepository.prototype.batchDeleteByParentUuid = function (parentUuid) {
  * @return {Promise}
  */
 ContentsRepository.prototype.batchDeleteByKey = function (key) {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getAllByKey(key).then(function (models) {
-			return repository.batchDelete(models);
+		return loadModels().then(function (models) {
+			allModels = models;
 		}).then(function () {
-			resolve();
+			return allModels.Content.destroy({where: {key: key}});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -226,20 +338,59 @@ ContentsRepository.prototype.batchDeleteByKey = function (key) {
 /**
  * Create or update a Content
  *
- * @param {Content} model
+ * @param {Promise} model
  */
 ContentsRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof Content)) {
-			reject(new Error('invalid Content model'));
-		}
-		model.validate().then(function () {
-			return repository.put({uuid: model.uuid}, model.except(['uuid']));
-		}).then(function (data) {
-			resolve(new Content(data.Attributes));
+		return loadModels().then(function (models) {
+			allModels = models;
+			if (!(model instanceof allModels.Content)) {
+				reject(new Error('invalid Content model'));
+			}
+			return repository.upsert(model, {});
+		}).then(function (content) {
+			resolve(content);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param model
+ * @param data
+ * @return {Promise<any>}
+ */
+ContentsRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (typeof model === 'undefined') {
+				const content = new allModels.Content();
+				model = new content.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
+			}
+			return allModels.Content.upsert({
+				'id': model.id,
+				'key': typeof data.key !== "undefined" ? data.key : model.key,
+				'value': typeof data.value !== "undefined" ? data.value : model.value,
+				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.sortOrder,
+				'type': typeof data.type !== "undefined" ? data.type : model.type,
+				'parentId': typeof data.parentId !== "undefined" ? data.parentId : model.parentId,
+			});
+		}).then(function (content) {
+			resolve(content);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

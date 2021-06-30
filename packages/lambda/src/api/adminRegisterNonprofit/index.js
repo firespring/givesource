@@ -17,13 +17,12 @@
 const Cognito = require('./../../aws/cognito');
 const HttpException = require('./../../exceptions/http');
 const Lambda = require('./../../aws/lambda');
-const Nonprofit = require('./../../models/nonprofit');
 const NonprofitHelper = require('./../../helpers/nonprofit');
 const NonprofitsRepository = require('./../../repositories/nonprofits');
 const Request = require('./../../aws/request');
-const User = require('./../../models/user');
 const UserGroupMiddleware = require('./../../middleware/userGroup');
 const UsersRepository = require('./../../repositories/users');
+const UUID = require('node-uuid');
 
 exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
@@ -32,21 +31,27 @@ exports.handle = function (event, context, callback) {
 	const usersRepository = new UsersRepository();
 
 	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['nonprofit', 'user']);
-	const user = new User(request.get('user'));
-	const nonprofit = new Nonprofit(request.get('nonprofit'));
 	const userPoolId = process.env.USER_POOL_ID;
 
-	nonprofit.populate({status: NonprofitHelper.STATUS_ACTIVE});
+	let user;
+	let nonprofit;
+	let savedNp;
 	request.validate().then(function () {
+		return nonprofitsRepository.populate(request.get('nonprofit'));
+	}).then(function (populatedNp) {
+		nonprofit = populatedNp;
 		return nonprofitsRepository.generateUniqueSlug(nonprofit);
 	}).then(function () {
-		return nonprofit.validate();
-	}).then(function () {
-		user.populate({nonprofitUuid: nonprofit.uuid});
-	}).then(function () {
-		user.validate(['uuid', 'createdOn', 'email']);
-	}).then(function () {
-		return cognito.createUser(process.env.AWS_REGION, userPoolId, user.uuid, user.email);
+		nonprofit.status = NonprofitHelper.STATUS_ACTIVE;
+		return nonprofitsRepository.upsert(nonprofit, {});
+	}).then(function (nonprofit) {
+		savedNp = nonprofit[0];
+		return usersRepository.populate(request.get('user'));
+	}).then(function (populatedUser) {
+		user = populatedUser;
+		user.cognitoUsername = UUID.v4();
+		user.nonprofitId = savedNp.id;
+		return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email);
 	}).then(function (cognitoUser) {
 		cognitoUser.User.Attributes.forEach(function (attribute) {
 			if (attribute.Name === 'sub') {
@@ -54,19 +59,19 @@ exports.handle = function (event, context, callback) {
 			}
 		});
 	}).then(function () {
-		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.uuid, 'Nonprofit');
+		return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Nonprofit');
 	}).then(function () {
 		return user.validate();
 	}).then(function () {
-		return nonprofitsRepository.save(nonprofit);
+		return usersRepository.upsert(user, {});
 	}).then(function () {
-		return usersRepository.save(user);
-	}).then(function () {
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: savedNp}, 'RequestResponse');
+		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSEO', {nonprofit: savedNp}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback(null, {
-			nonprofit: nonprofit.all(),
-			user: user.all()
+			nonprofit: nonprofit,
+			user: user
 		});
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);

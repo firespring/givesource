@@ -24,12 +24,14 @@ exports.handle = function (event, context, callback) {
 	const cognito = new Cognito();
 	const repository = new UsersRepository();
 	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
 
 	request.validate().then(function () {
-		return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, request.urlParam('user_uuid'));
+		return repository.get(request.urlParam('user_id'))
+	}).then(function (user) {
+		return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername);
 	}).then(function () {
-		return repository.delete(request.urlParam('user_uuid'));
+		return repository.delete(request.urlParam('user_id'));
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

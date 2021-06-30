@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -128,8 +128,8 @@
 			}
 		},
 		props: [
-			'nonprofitUuid',
-			'slideUuid'
+			'nonprofitId',
+			'slideId'
 		],
 		watch: {
 			formData: {
@@ -151,13 +151,13 @@
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
-					return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+					return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId);
 				}).then(function (response) {
 					vue.slide = response.data;
-					if (vue.slide.fileUuid) {
-						return vue.$request.get('files/' + vue.slide.fileUuid);
+					if (vue.slide.fileId) {
+						return vue.$request.get('files/' + vue.slide.fileId);
 					} else {
 						return Promise.resolve(null);
 					}
@@ -174,13 +174,13 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
-				return vue.$request.get('nonprofits/' + to.params.nonprofitUuid + '/slides/' + to.params.slideUuid);
+				return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId);
 			}).then(function (response) {
 				vue.slide = response.data;
-				if (vue.slide.fileUuid) {
-					return vue.$request.get('files/' + vue.slide.fileUuid);
+				if (vue.slide.fileId) {
+					return vue.$request.get('files/' + vue.slide.fileId);
 				} else {
 					return Promise.resolve(null);
 				}
@@ -237,7 +237,7 @@
 
 				if (vue.newFile) {
 					vue.addModal('spinner');
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
+					vue.$request.delete('files/' + vue.newFile.id).then(function () {
 						vue.clearModals();
 						vue.newFile = null;
 						vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
@@ -254,7 +254,7 @@
 				const vue = this;
 
 				if (vue.newFile) {
-					vue.$request.delete('files/' + vue.newFile.uuid).then(function () {
+					vue.$request.delete('files/' + vue.newFile.id).then(function () {
 						vue.newFile = null;
 					}).catch(function (err) {
                         vue.apiError = err.response.data.errors;
@@ -309,7 +309,7 @@
 				const params = {};
 
 				if (vue.newFile) {
-					params['fileUuid'] = vue.newFile.uuid;
+					params['fileId'] = vue.newFile.id;
 				}
 
 				if (vue.formData.caption !== vue.slide.caption) {
@@ -321,9 +321,9 @@
 					return vue.$router.push({name: 'nonprofit-your-page', query: {tab: 'media'}});
 				}
 
-				vue.$request.patch('nonprofits/' + vue.nonprofitUuid + '/slides/' + vue.slideUuid, params).then(function () {
+				vue.$request.patch('nonprofits/' + vue.nonprofitId + '/slides/' + vue.slideId, params).then(function () {
 					if (vue.newFile) {
-						return vue.$request.delete('files/' + vue.slide.fileUuid);
+						return vue.$request.delete('files/' + vue.slide.fileId);
 					}
 				}).then(function () {
 					vue.$store.commit('generateCacheKey');

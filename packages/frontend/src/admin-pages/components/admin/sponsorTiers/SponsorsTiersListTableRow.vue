@@ -26,13 +26,13 @@
 
         <td class="item-actions">
             <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <router-link :to="{ name: 'sponsors-list', params: {sponsorTierUuid: sponsorTier.uuid} }" role="button" class="c-btn c-btn--sm">
+                <router-link :to="{ name: 'sponsors-list', params: {sponsorTierId: sponsorTier.id} }" role="button" class="c-btn c-btn--sm">
                     Manage Tier
                 </router-link>
                 <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger"></a>
                 <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
                     <div class="c-btn-dropdown-menu__options">
-                        <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierUuid: sponsorTier.uuid }}">
+                        <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierId: sponsorTier.id }}">
                             <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings
                         </router-link>
                         <hr>
@@ -96,30 +96,30 @@
 				vue.addModal('spinner');
 
 				const sponsors = [];
-				const fileUuids = [];
-				vue.$request.get('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors').then(function (response) {
+				const fileIds = [];
+				vue.$request.get('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors').then(function (response) {
 					response.data.forEach(function (sponsor) {
 						sponsors.push(sponsor);
-						if (sponsor.fileUuid) {
-							fileUuids.push(sponsor.fileUuid);
+						if (sponsor.fileId) {
+							fileIds.push(sponsor.fileId);
 						}
 					});
 					return vue.$request.get('files', {
-						uuids: fileUuids
+						fileIds: fileIds
 					});
 				}).then(function (response) {
 					return vue.$request.delete('files', {
 						files: response.data
 					});
 				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid + '/sponsors', {
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors', {
 						sponsors: sponsors
 					});
 				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.uuid);
+					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id);
 				}).then(function () {
 					vue.clearModals();
-					vue.$emit('deleteSponsorTier', vue.sponsorTier.uuid);
+					vue.$emit('deleteSponsorTier', vue.sponsorTier.id);
 				}).catch(function (err) {
 					vue.clearModals();
                     vue.$emit('hasError', err);

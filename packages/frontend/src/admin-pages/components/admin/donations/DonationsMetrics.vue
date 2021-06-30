@@ -86,11 +86,7 @@
 			const vue = this;
 
 			vue.$request.get('metrics', {keys: Object.keys(vue.metrics)}).then(function (response) {
-				response.data.forEach(function (metric) {
-					if (vue.metrics.hasOwnProperty(metric.key)) {
-						vue.metrics[metric.key] = metric.value;
-					}
-				});
+				vue.metrics = response.data;
 			}).catch(function (err) {
                 vue.$emit('hasError', err);
             });

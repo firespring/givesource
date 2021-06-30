@@ -14,56 +14,35 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
-const SponsorHelper = require('./../helpers/sponsor');
+'use strict';
 
-/**
- * SponsorTier constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function SponsorTier(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {model}
- */
-SponsorTier.prototype = new Model();
+module.exports = (sequelize) => {
+	const SponsorTier = sequelize.define('SponsorTier', {
+		name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		size: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				isIn: [['LARGE', 'DEFAULT', 'SMALL']]
+			}
+		},
+		sortOrder: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+	});
 
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-SponsorTier.prototype.attributes = [
-	'name',
-	'size',
-	'sortOrder',
-];
+	SponsorTier.associate = function (models) {
+		SponsorTier.hasMany(models.Sponsor, {
+			foreignKey: 'sponsorTierId'
+		});
+	};
 
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-SponsorTier.prototype.constraints = {
-	name: {
-		presence: true,
-		type: 'string'
-	},
-	size: {
-		presence: true,
-		type: 'string',
-		inclusion: [SponsorHelper.SIZE_LARGE, SponsorHelper.SIZE_DEFAULT, SponsorHelper.SIZE_SMALL]
-	},
-	sortOrder: {
-		presence: true,
-		type: 'number'
-	},
+	return SponsorTier;
 };
-
-module.exports = SponsorTier;

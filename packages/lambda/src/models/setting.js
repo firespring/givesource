@@ -14,48 +14,21 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
 
-/**
- * Setting constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Setting(data) {
-	Model.call(this, data);
-}
+const { DataTypes } = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-Setting.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Setting.prototype.attributes = [
-	'key',
-	'value'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Setting.prototype.constraints = {
-	key: {
-		presence: true,
-		type: 'string',
-	},
-	value: {
-		presence: false,
-	},
+module.exports = (sequelize) => {
+	return sequelize.define('Setting', {
+		key: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				notEmpty: true
+			}
+		},
+		value: {
+			type: DataTypes.STRING,
+		}
+	});
 };
-
-module.exports = Setting;

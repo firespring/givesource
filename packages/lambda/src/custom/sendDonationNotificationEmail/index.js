@@ -15,7 +15,6 @@
  */
 
 const _ = require('lodash');
-const Donation = require('./../../models/donation');
 const EmailHelper = require('./../../helpers/email');
 const FilesRepository = require('./../../repositories/files');
 const HttpException = require('./../../exceptions/http');
@@ -35,6 +34,7 @@ exports.handle = function (event, context, callback) {
 	const settingsRepository = new SettingsRepostiory();
 
 	let donations = request.get('donations', []);
+	let donor = request.get('donor', {});
 	let nonprofits = {};
 
 	let settings = {
@@ -67,42 +67,32 @@ exports.handle = function (event, context, callback) {
 			return Promise.resolve(null);
 		}
 	}).then(function (response) {
-		if (response) {
-			settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
-		}
-		if (donations.length) {
-			donations = donations.map(function (donation) {
-				const model = new Donation(donation);
-				const data = model.mutate(null, {timezone: settings.EVENT_TIMEZONE});
-				data.isFeeCovered = (data.isFeeCovered === 'Yes' || data.isFeeCovered === true);
-				data.isOfflineDonation = (data.isOfflineDonation === 'Yes' || data.isOfflineDonation === true);
-				return data;
-			});
-		}
-
+    if (response) {
+      settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path;
+    }
 		let promise = Promise.resolve();
 		donations.forEach(function (donation) {
-			if (!nonprofits.hasOwnProperty(donation.nonprofitUuid)) {
-				nonprofits[donation.nonprofitUuid] = {
+			if (!nonprofits.hasOwnProperty(donation.nonprofitId)) {
+				nonprofits[donation.nonprofitId] = {
 					donations: [],
 					users: []
 				};
 
 				promise = promise.then(function () {
-					return nonprofitsRepository.get(donation.nonprofitUuid);
+					return nonprofitsRepository.get(donation.nonprofitId);
 				}).then(function (response) {
 					if (response.receiveDonationNotifications) {
-						return nonprofitUsersRepository.getAll(donation.nonprofitUuid);
+						return nonprofitUsersRepository.getAll(donation.nonprofitId);
 					} else {
 						return Promise.resolve([]);
 					}
 				}).then(function (response) {
-					nonprofits[donation.nonprofitUuid].users = response.filter(function (user) {
+					nonprofits[donation.nonprofitId].users = response.filter(function (user) {
 						return (user && user.isVerified);
 					});
 				});
 			}
-			nonprofits[donation.nonprofitUuid].donations.push(donation);
+			nonprofits[donation.nonprofitId].donations.push(donation);
 		});
 
 		return promise;
@@ -116,17 +106,18 @@ exports.handle = function (event, context, callback) {
 		}
 	}).then(function (fromAddress) {
 		let promise = Promise.resolve();
-		Object.keys(nonprofits).forEach(function (nonprofitUuid) {
+		Object.keys(nonprofits).forEach(function (nonprofitId) {
 			promise = promise.then(function () {
 				return RenderHelper.renderTemplate('emails.donation-notification', {
-					donations: nonprofits[nonprofitUuid].donations.map(function (donation) {
+					donations: nonprofits[nonprofitId].donations.map(function (donation) {
 						donation['isOfflineBulk'] = donation.type === 'BULK' && donation.isOfflineDonation;
 						return donation;
 					}),
-					settings: settings
+					settings: settings,
+          donor: donor
 				});
 			}).then(function (response) {
-				const toAddresses = nonprofits[nonprofitUuid].users.map(function (user) {
+				const toAddresses = nonprofits[nonprofitId].users.map(function (user) {
 					return user.email;
 				});
 				const subject = 'Your organization just received a donation.';

@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   SecureLambdaRoleArn:
     Type: String
 
@@ -51,10 +54,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -63,7 +72,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/donations/{donation_id}
     DependsOn: GetDonationLambdaFunction
 
   GetDonationsLambdaFunction:
@@ -80,10 +89,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -109,10 +124,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -138,10 +159,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -150,7 +177,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/donations/{donation_id}
     DependsOn: PatchDonationLambdaFunction
 
   DeleteDonationLambdaFunction:
@@ -167,10 +194,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -179,7 +212,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/donations/{donation_id}
     DependsOn: DeleteDonationLambdaFunction
 
   # Process Donations Lambda Resources
@@ -196,10 +229,16 @@ Resources:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub ${StackName}-ProcessDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 1024
       Role: !Ref SecureLambdaRoleArn
       Runtime: "nodejs12.x"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+      Timeout: 90
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   ProcessDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -226,10 +265,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostDonationsReceiptLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -255,10 +300,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetDonationsReceiptLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -286,10 +337,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AdminPostDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   AdminPostDonationsReceiptLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -315,7 +372,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref DonationsApiResource
-      PathPart: "{donation_uuid}"
+      PathPart: "{donation_id}"
 
   GetDonationApiMethod:
     Type: AWS::ApiGateway::Method

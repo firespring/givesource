@@ -130,7 +130,7 @@ UserAuthorizer.prototype.authorize = function () {
 		}).then(function (policy) {
 			const user = {
 				groups: authorizer.payload['cognito:groups'],
-				uuid: authorizer.payload['cognito:username'],
+				cognitoUsername: authorizer.payload['cognito:username'],
 			};
 			policy.context = {user: JSON.stringify(user, null, 2)};
 			resolve(policy);

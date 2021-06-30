@@ -14,85 +14,74 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
 
-/**
- * Donor constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Donor(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
 
-/**
- * Extend the base Model
- *
- *@type {model}
- */
-Donor.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Donor.prototype.attributes = [
-	'address1',
-	'address2',
-	'city',
-	'email',
-	'firstName',
-	'lastName',
-	'phone',
-	'state',
-	'zip'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Donor.prototype.constraints = {
-	address1: {
-		presence: false,
-		type: 'string'
-	},
-	address2: {
-		presence: false,
-		type: 'string'
-	},
-	city: {
-		presence: false,
-		type: 'string'
-	},
-	email: {
-		presence: false,
-		email: true,
-		type: 'string'
-	},
-	firstName: {
-		presence: true,
-		type: 'string'
-	},
-	lastName: {
-		presence: true,
-		type: 'string'
-	},
-	phone: {
-		presence: false,
-		type: 'string'
-	},
-	state: {
-		presence: false,
-		type: 'string'
-	},
-	zip: {
-		presence: false,
-		type: 'string'
-	}
+module.exports = (sequelize) => {
+	return sequelize.define('Donor', {
+		amountForNonprofit: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		address1: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		address2: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		city: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		firstName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		lastName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		phone: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		state: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		zip: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+	}, {
+		setterMethods: {
+			donorIsAnonymous() {
+				this.setDataValue('firstName', 'Anonymous');
+				this.setDataValue('lastName', '');
+				this.setDataValue('address1', '');
+				this.setDataValue('address2', '');
+				this.setDataValue('city', '');
+				this.setDataValue('state', '');
+				this.setDataValue('zip', '');
+				this.setDataValue('email', '');
+				this.setDataValue('phone', '');
+			}
+		}
+	});
 };
-
-module.exports = Donor;

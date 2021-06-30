@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -48,10 +51,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetMetrics
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetMetricsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -77,7 +86,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchMetrics
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -106,7 +115,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteMetrics
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

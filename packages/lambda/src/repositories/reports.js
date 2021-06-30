@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-const Report = require('./../models/report');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * ReportsRepository constructor
@@ -40,21 +41,52 @@ function ReportsRepository(options) {
 ReportsRepository.prototype = new Repository();
 
 /**
- * Get a Report
+ * Look to abstract this
  *
- * @param {String} uuid
+ * @param {Object} data
  * @return {Promise}
  */
-ReportsRepository.prototype.get = function (uuid) {
-	const repository = this;
+ReportsRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		const report = new models.Report();
+		return new report.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
+	}).finally(function () {
+		return allModels.sequelize.close();
+	});
+};
+
+/**
+ * Get a Report
+ *
+ * @param {String} id
+ * @return {Promise}
+ */
+ReportsRepository.prototype.get = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.getByKey('uuid', uuid).then(function (data) {
-			if (data.hasOwnProperty('Item')) {
-				resolve(new Report(data.Item));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.findOne({
+				where: {
+					id: id
+				},
+				include: [
+					{model: allModels.Nonprofit},
+					{model: allModels.File}
+				]
+			});
+		}).then(function (report) {
+			if (report instanceof allModels.Report) {
+				resolve(report);
 			}
 			reject(new ResourceNotFoundException('The specified report does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -65,18 +97,18 @@ ReportsRepository.prototype.get = function (uuid) {
  * @return {Promise}
  */
 ReportsRepository.prototype.getAll = function () {
-	const repository = this;
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.batchScan().then(function (data) {
-			let results = [];
-			if (data.Items) {
-				data.Items.forEach(function (item) {
-					results.push(new Report(item));
-				});
-			}
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.findAll();
+		}).then(function (results) {
 			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -84,16 +116,27 @@ ReportsRepository.prototype.getAll = function () {
 /**
  * Delete a Report
  *
- * @param {String} uuid
+ * @param {String} id
  * @return {Promise}
  */
-ReportsRepository.prototype.delete = function (uuid) {
-	const repository = this;
+ReportsRepository.prototype.delete = function (id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		repository.deleteByKey('uuid', uuid).then(function () {
-			resolve();
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.Report.destroy({
+				where:
+					{
+						id: id
+					}
+			});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -104,22 +147,54 @@ ReportsRepository.prototype.delete = function (uuid) {
  * @param {Report} model
  */
 ReportsRepository.prototype.save = function (model) {
+	let allModels;
 	const repository = this;
 	return new Promise(function (resolve, reject) {
-		if (!(model instanceof Report)) {
-			reject(new Error('invalid Report model'));
-		}
-		model.validate().then(function () {
-			const key = {
-				uuid: model.uuid
-			};
-			repository.put(key, model.except(['uuid'])).then(function (data) {
-				resolve(new Report(data.Attributes));
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+			return repository.get(model.id);
+		}).then(function () {
+			return repository.upsert(model, {});
+		}).then(function (report) {
+			resolve(report);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Promise<any>}
+ */
+ReportsRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			if (typeof model === 'undefined') {
+				const report = new allModels.Report();
+				model = new report.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
+			}
+			return allModels.Report.upsert({
+				'id': model.id,
+				'fileId': typeof data.fileId !== "undefined" ? data.fileId : model.fileId,
+				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
+				'status': typeof data.status !== "undefined" ? data.status : model.status,
+				'type': typeof data.type !== "undefined" ? data.type : model.type,
+			});
+		}).then(function (report) {
+			resolve(report[0]);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

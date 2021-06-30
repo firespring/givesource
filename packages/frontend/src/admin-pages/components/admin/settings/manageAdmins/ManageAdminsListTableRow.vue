@@ -65,7 +65,7 @@
         },
         computed: {
             formattedDate: function () {
-                return new Date(this.adminUser.createdOn).toLocaleDateString();
+                return new Date(this.adminUser.createdAt).toLocaleDateString();
             },
             isSuperAdmin: function () {
                 return _.includes(this.adminUser.groups, 'SuperAdmin');
@@ -106,7 +106,7 @@
 				const vue = this;
 
 				vue.addModal('spinner');
-				vue.$request.post('users/' + vue.adminUser.uuid + '/resend-verification-email').then(function () {
+				vue.$request.post('users/' + vue.adminUser.id + '/resend-verification-email').then(function () {
 					vue.clearModals();
 				}).catch(function (err) {
 					console.log(err);

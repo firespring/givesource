@@ -125,13 +125,13 @@
 	/**
 	 * Pre-loaded data
 	 *
-	 * @param {String} uuid
+	 * @param {String} id
 	 * @returns {Promise}
 	 */
-	const fetchData = (uuid) => {
+	const fetchData = (id) => {
 		const request = new Request();
-		const contentKeys = getContentKeys(uuid);
-		const settingKeys = getSettingKeys(uuid);
+		const contentKeys = getContentKeys(id);
+		const settingKeys = getSettingKeys(id);
 		settingKeys.push('CUSTOM_PAGES');
 
 		let settings = [];
@@ -162,17 +162,20 @@
 					PAGE_TITLE: {
 						key: 'CUSTOM_PAGE_TITLE',
 						type: 'TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					PAGE_SLUG: {
 						key: 'CUSTOM_PAGE_SLUG',
 						type: 'TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					PAGE_TEXT: {
 						key: 'CUSTOM_PAGE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					}
 				},
 
@@ -187,13 +190,13 @@
 			}
 		},
 		props: {
-			pageUuid: {
+			pageId: {
 				type: String,
 				default: ''
 			}
 		},
 		beforeRouteEnter(to, from, next) {
-			fetchData(to.params.pageUuid).then((data) => {
+			fetchData(to.params.pageId).then((data) => {
 				next((vm) => {
 					vm.contents = data.contents;
 					vm.settings = data.settings;
@@ -222,7 +225,7 @@
 					}
 
 					if (!vm.isEditingSlug) {
-						vm.formData.PAGE_SLUG.value = slug(vm.formData.PAGE_TITLE.value, {lower: true});
+						vm.formData.PAGE_SLUG.value = vm.formData.PAGE_SLUG.value !== vm.formData.PAGE_TITLE.value ? slug(vm.formData.PAGE_SLUG.value, {lower: true}) : slug(vm.formData.PAGE_TITLE.value, {lower: true});
 					}
 				},
 				deep: true
@@ -311,7 +314,7 @@
 				vm.addModal('pages-custom-delete-modal', {
 					contents: vm.contents,
 					settings: vm.settings,
-					pageUuid: vm.pageUuid
+					pageId: vm.pageId
 				});
 			},
 			editSlug() {
@@ -320,7 +323,7 @@
 			cancelEditSlug() {
 				const vm = this;
 
-				const identifier = vm.pageUuid.toUpperCase().replace(/-/g, '_');
+				const identifier = vm.pageId.toUpperCase().replace(/-/g, '_');
 				const content = _.find(vm.contents, {key: 'CUSTOM_PAGE_SLUG_' + identifier});
 
 				vm.formData.PAGE_SLUG.value = content.value;

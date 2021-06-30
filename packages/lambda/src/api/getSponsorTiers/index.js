@@ -25,10 +25,7 @@ exports.handle = function (event, context, callback) {
 	request.validate().then(function () {
 		return repository.getAll();
 	}).then(function (sponsorTiers) {
-		const results = sponsorTiers.map(function (sponsorTier) {
-			return sponsorTier.all();
-		});
-		callback(null, results);
+		callback(null, sponsorTiers);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

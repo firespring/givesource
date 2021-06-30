@@ -84,11 +84,13 @@
 						key: 'FAQ_LIST_ITEM_QUESTION',
 						type: 'TEXT',
 						value: '',
+                        id: 0
 					},
 					FAQ_LIST_ITEM_ANSWER: {
 						key: 'FAQ_LIST_ITEM_ANSWER',
 						type: 'RICH_TEXT',
 						value: '',
+                        id: 0
 					},
 				},
 
@@ -153,11 +155,11 @@
 					key: 'FAQ_LIST',
 					type: 'COLLECTION'
 				}).then(function (response) {
-					faqListContent = response.data;
+					faqListContent = response.data[0];
 					return vue.$request.patch('contents', {
 						contents: Object.keys(vue.formData).map(function (key) {
 							const content = vue.formData[key];
-							content.parentUuid = faqListContent.uuid;
+							content.parentId = faqListContent.id;
 							return content;
 						}),
 					});

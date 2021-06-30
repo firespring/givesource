@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -48,10 +51,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -77,10 +86,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -106,10 +121,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -118,7 +139,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/contents/{content_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/contents/{content_id}
     DependsOn: PatchContentLambdaFunction
 
   PatchContentsLambdaFunction:
@@ -135,10 +156,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -164,10 +191,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteContent
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteContentLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -176,7 +209,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/contents/{content_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/contents/{content_id}
     DependsOn: DeleteContentLambdaFunction
 
   DeleteContentsLambdaFunction:
@@ -193,10 +226,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteContents
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteContentsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -222,7 +261,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref ContentsApiResource
-      PathPart: "{content_uuid}"
+      PathPart: "{content_id}"
 
   GetContentsApiMethod:
     Type: AWS::ApiGateway::Method

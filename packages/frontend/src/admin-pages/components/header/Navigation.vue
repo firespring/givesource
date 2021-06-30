@@ -29,7 +29,7 @@
             <div class="o-user">
                 <div class="o-user__current o-menubar-popup-parent" ref="oMenubarPopupParent" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
                     <a href="#" class="js-user-popup-toggle has-tooltip" title="Manage Your Account" v-on:click="toggleMenu">
-                        <v-gravatar :email="user.email" :size="150" default-img="mm" :alt="gravatarAlt" class="o-user__avatar"></v-gravatar>
+                        <v-gravatar :email="email" :size="150" default-img="mm" :alt="gravatarAlt" class="o-user__avatar"></v-gravatar>
                     </a>
                     <div class="o-menubar-popup o-menubar-popup--current-user" ref="oMenubarPopup">
                         <div class="o-menubar-popup__header o-current-user" v-if="firstName">
@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <component :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'" :nonprofitUuid="nonprofitUuid"></component>
+        <component :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'" :nonprofitId="nonprofitId"></component>
     </div>
 </template>
 
@@ -70,6 +70,7 @@
 			return {
 				firstName: this.user.firstName,
 				lastName: this.user.lastName,
+                email: this.user.email,
 				gravatarAlt: this.user.firstName && this.user.lastName ? this.user.firstName + ' ' + this.user.lastName : 'Avatar',
 				navigationComponent: 'navigation-nonprofit',
 
@@ -82,14 +83,14 @@
 				return this.isSuperAdminUser() || this.isAdminUser();
 			},
 			logoLink: function () {
-				if (!this.isAdmin && this.nonprofitUuid) {
-					return {name: 'nonprofit-donations-list', params: {nonprofitUuid: this.nonprofitUuid}};
+				if (!this.isAdmin && this.nonprofitId) {
+					return {name: 'nonprofit-donations-list', params: {nonprofitId: this.nonprofitId}};
 				}
 				return {name: 'donations-list'};
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		created: function () {
 			const vue = this;

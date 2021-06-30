@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-const Donation = require('./../models/donation');
 const NonprofitRepository = require('./nonprofits');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
 
 /**
  * NonprofitDonationsRepository constructor
@@ -153,5 +153,28 @@ NonprofitDonationsRepository.prototype.save = function (nonprofitUuid, model) {
 		});
 	});
 };
+
+/**
+ * Bulk create Donations (seeder)
+ *
+ * @param donations
+ * @return {Promise<any>}
+ */
+NonprofitDonationsRepository.prototype.batchUpdate = function (donations) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.Donation.bulkCreate(donations);
+		}).then(function (savedDonations) {
+			resolve(savedDonations);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
 
 module.exports = NonprofitDonationsRepository;

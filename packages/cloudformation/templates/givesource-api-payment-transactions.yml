@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -48,10 +51,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetPaymentTransactionLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -60,7 +69,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/paymentTransactions/{payment_transaction_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/paymentTransactions/{payment_transaction_id}
     DependsOn: GetPaymentTransactionLambdaFunction
 
   GetPaymentTransactionsLambdaFunction:
@@ -77,10 +86,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransactions
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetPaymentTransactionsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -106,10 +121,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostPaymentTransactionLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -135,10 +156,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchPaymentTransactionLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -147,7 +174,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/paymentTransactions/{payment_transaction_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/paymentTransactions/{payment_transaction_id}
     DependsOn: PatchPaymentTransactionLambdaFunction
 
   DeletePaymentTransactionLambdaFunction:
@@ -164,10 +191,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeletePaymentTransaction
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeletePaymentTransactionLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -176,7 +209,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/paymentTransactions/{payment_transaction_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/paymentTransactions/{payment_transaction_id}
     DependsOn: DeletePaymentTransactionLambdaFunction
 
   # Payment Transactions Api Gateway Resources
@@ -193,7 +226,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref PaymentTransactionsApiResource
-      PathPart: "{paymen_transaction_uuid}"
+      PathPart: "{payment_transaction_id}"
 
   GetPaymentTransactionApiMethod:
     Type: AWS::ApiGateway::Method

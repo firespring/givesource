@@ -15,7 +15,6 @@
  */
 
 const HttpException = require('./../../exceptions/http');
-const NonprofitDonationTier = require('./../../models/nonprofitDonationTier');
 const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
 const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
 const Request = require('./../../aws/request');
@@ -23,15 +22,15 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new NonprofitDonationTiersRepository();
 	const request = new Request(event, context).parameters(['donation_tiers']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_uuid'), ['SuperAdmin', 'Admin']));
+	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
+	const ids = request.get('donation_tiers', []).map(function (tier) {
+		return tier.id;
+	});
 
-	let donationTiers = [];
 	request.validate().then(function () {
-		request.get('donation_tiers', []).forEach(function (data) {
-			donationTiers.push(new NonprofitDonationTier(data));
-		});
-	}).then(function () {
-		return repository.batchRemove(request.urlParam('nonprofit_uuid'), donationTiers);
+		return repository.batchGet(ids);
+	}).then(function (donationTiers) {
+		return repository.batchRemove(request.urlParam('nonprofit_id'), donationTiers);
 	}).then(function () {
 		callback();
 	}).catch(function (err) {

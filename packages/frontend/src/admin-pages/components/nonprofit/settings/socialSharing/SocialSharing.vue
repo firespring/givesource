@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
                 <api-error v-model="apiError"></api-error>
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="c-form-item__control">
                                         <textarea v-model="formData.socialSharingDescription" name="socialSharingDescription" id="socialSharingDescription"
-                                                  :class="{ 'has-error': formErrors.socialSharingDescription }"></textarea>
+                                                  :class="{ 'has-error': formErrors.socialSharingDescription }" maxlength="2048"></textarea>
                                     <div v-if="formErrors.socialSharingDescription" class="c-notes c-notes--below c-notes--bad c-form-control-error">
                                         {{ formErrors.socialSharingDescription }}
                                     </div>
@@ -127,7 +127,7 @@
 
 				formData: {
 					socialSharingDescription: '',
-					socialSharingFileUuid: '',
+					socialSharingFileId: 0,
 					socialSharingImage: null,
 				},
 
@@ -161,11 +161,11 @@
 			}
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter(to, from, next) {
 			next(vm => {
-				vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+				vm.$request.get('/nonprofits/' + to.params.nonprofitId).then(response => {
 					vm.nonprofit = response.data;
 					return vm.loadSettings();
 				});
@@ -174,7 +174,7 @@
 		beforeRouteUpdate(to, from, next) {
 			const vm = this;
 
-			vm.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(response => {
+			vm.$request.get('/nonprofits/' + to.params.nonprofitId).then(response => {
 				vm.nonprofit = response.data;
 				return vm.loadSettings();
 			}).catch(() => {
@@ -199,8 +199,8 @@
 					const vm = this;
 
 					vm.formData = vm.sync(vm.formData, vm.nonprofit);
-					if (!_.isEmpty(vm.formData.socialSharingFileUuid)) {
-						vm.$request.get('files/' + vm.formData.socialSharingFileUuid).then(response => {
+					if (vm.formData.socialSharingFileId > 0) {
+						vm.$request.get('files/' + vm.formData.socialSharingFileId).then(response => {
 							vm.formData.socialSharingImage = response.data;
 						}).catch(() => {
 							vm.formData.socialSharingImage = null;
@@ -271,22 +271,22 @@
 
 				vm.getUpdatedNonprofitParams().then(updatedParams => {
 					let promise = Promise.resolve();
-					const originalSocialSharingFileUuid = vm.nonprofit.socialSharingFileUuid;
+					const originalSocialSharingFileId = vm.nonprofit.socialSharingFileId;
 
 					if (Object.keys(updatedParams).length) {
 						promise = promise.then(() => {
-							return vm.$request.patch('nonprofits/' + vm.nonprofit.uuid, updatedParams).then(response => {
+							return vm.$request.patch('nonprofits/' + vm.nonprofit.id, updatedParams).then(response => {
 								if (response.data.errorMessage) {
 									console.log(response.data);
 								}
-								vm.$emit('updateNonprofit', response.data);
+								vm.$emit('updateNonprofit', response.data[0]);
 							})
 						});
 					}
 
-					if (updatedParams.hasOwnProperty('socialSharingFileUuid') && !_.isEmpty(originalSocialSharingFileUuid)) {
+					if (updatedParams.hasOwnProperty('socialSharingFileId') && !_.isEmpty(originalSocialSharingFileId)) {
 						promise = promise.then(() => {
-							return vm.$request.delete('files/' + originalSocialSharingFileUuid);
+							return vm.$request.delete('files/' + originalSocialSharingFileId);
 						});
 					}
 
@@ -309,13 +309,13 @@
 					promise = promise.then(() => {
 						return vm.uploadImage('socialSharingImage').then(uploadedFile => {
 							vm.$store.commit('generateCacheKey');
-							vm.formData.socialSharingFileUuid = uploadedFile && uploadedFile.hasOwnProperty('uuid') ? uploadedFile.uuid : '';
+							vm.formData.socialSharingFileId = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : '';
 						});
 					});
-				} else if (_.isPlainObject(vm.formData.socialSharingImage) && vm.formData.socialSharingImage.hasOwnProperty('uuid')) {
-					vm.formData.socialSharingFileUuid = vm.formData.socialSharingImage.uuid;
+				} else if (_.isPlainObject(vm.formData.socialSharingImage) && vm.formData.socialSharingImage.hasOwnProperty('id')) {
+					vm.formData.socialSharingFileId = vm.formData.socialSharingImage.id;
 				} else {
-					vm.formData.socialSharingFileUuid = '';
+					vm.formData.socialSharingFileId = '';
 				}
 
 				promise = promise.then(() => {

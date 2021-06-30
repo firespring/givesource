@@ -32,6 +32,15 @@ Resources:
   AdminPagesS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       WebsiteConfiguration:
         IndexDocument: index.html
 
@@ -41,16 +50,33 @@ Resources:
       Bucket: !Ref AdminPagesS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${AdminPagesS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${AdminPagesS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:Get*
+          Resource: !Sub arn:aws:s3:::${AdminPagesS3}/*
 
   PublicPagesS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       WebsiteConfiguration:
         IndexDocument: index.html
 
@@ -60,16 +86,33 @@ Resources:
       Bucket: !Ref PublicPagesS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${PublicPagesS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${PublicPagesS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:Get*
+          Resource: !Sub arn:aws:s3:::${PublicPagesS3}/*
 
   UploadsS3:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       CorsConfiguration:
         CorsRules:
           - AllowedMethods:
@@ -90,12 +133,97 @@ Resources:
       Bucket: !Ref UploadsS3
       PolicyDocument:
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:GetObject
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${UploadsS3}/*
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${UploadsS3}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:Get*
+          Resource: !Sub arn:aws:s3:::${UploadsS3}/*
+
+  Reports:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub reports-${AWS::StackName}/
+
+  ReportsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Reports
+      PolicyDocument:
+        Statement:
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: '*'
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${Reports}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+
+  GivesourceCache:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - PUT
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  GivesourceCacheBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GivesourceCache
+      PolicyDocument:
+        Statement:
+        - Sid: allow-ssl-requests-only
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+        - Sid: allow-cloudfront-access
+          Effect: Allow
+          Principal:
+            CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+          Action: s3:Get*
+          Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
 
   # AWS CloudFront Resources
 
@@ -105,11 +233,10 @@ Resources:
       DistributionConfig:
         Aliases: !If [HasAdminPagesCNAMEs, !Ref AdminPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt AdminPagesS3.WebsiteURL ] ]
+          - DomainName: !GetAtt AdminPagesS3.DomainName
             Id: !Ref AdminPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+            S3OriginConfig:
+              OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givsource admin pages S3 bucket
         DefaultRootObject: index.html
@@ -132,6 +259,10 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
     DependsOn: AdminPagesS3
 
   PublicPagesDistribution:
@@ -140,11 +271,10 @@ Resources:
       DistributionConfig:
         Aliases: !If [HasPublicPagesCNAMEs, !Ref PublicPagesCNAMEs, !Ref "AWS::NoValue"]
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt PublicPagesS3.WebsiteURL ] ]
-            Id: !Ref PublicPagesS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+        - Id: !Ref PublicPagesS3
+          DomainName: !GetAtt PublicPagesS3.DomainName
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givesource(R) public pages S3 bucket
         DefaultRootObject: index.html
@@ -169,6 +299,10 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
     DependsOn: PublicPagesS3
 
   UploadsDistribution:
@@ -176,11 +310,10 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt UploadsS3.WebsiteURL ] ]
-            Id: !Ref UploadsS3
-            CustomOriginConfig:
-              OriginProtocolPolicy: http-only
+        - DomainName: !GetAtt UploadsS3.DomainName
+          Id: !Ref UploadsS3
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
         Comment: Distribution for Givesource(R) uploads S3 bucket
         DefaultRootObject: index.html
@@ -200,7 +333,48 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
     DependsOn: UploadsS3
+
+  CloudFrontOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref UploadsS3
+
+  CachingDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !GetAtt GivesourceCache.DomainName
+          Id: !Ref GivesourceCache
+          S3OriginConfig:
+            OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
+        Enabled: true
+        Comment: Distribution for Givesource(R) caching S3 bucket
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          TargetOriginId: !Ref GivesourceCache
+          ViewerProtocolPolicy: allow-all
+        PriceClass: PriceClass_200
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+    DependsOn: GivesourceCache
+
 
 Outputs:
 
@@ -251,3 +425,25 @@ Outputs:
 
   UploadsS3BucketUrl:
     Value: !GetAtt UploadsS3.WebsiteURL
+
+  CachingCloudFrontDistribution:
+    Value: !Ref CachingDistribution
+
+  CachingCloudFrontDomainName:
+    Value: !GetAtt CachingDistribution.DomainName
+
+  CachingCloudFrontUrl:
+    Value: !Sub |-
+      https://${CachingDistribution.DomainName}
+
+  GivesourceCache:
+    Value: !Ref GivesourceCache
+
+  GivesourceCacheBucketUrl:
+    Value: !GetAtt GivesourceCache.WebsiteURL
+
+  Reports:
+    Value: !Ref Reports
+
+  ReportsBucketUrl:
+    Value: !GetAtt Reports.WebsiteURL

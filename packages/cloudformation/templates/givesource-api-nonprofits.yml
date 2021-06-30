@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -47,17 +50,23 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofit.zip
-      Description: "Get a nonprofit by uuid"
+      Description: "Get a nonprofit by id"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -66,7 +75,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}
     DependsOn: GetNonprofitLambdaFunction
 
   GetNonprofitsLambdaFunction:
@@ -83,10 +92,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofits
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -112,10 +127,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -141,10 +162,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -153,7 +180,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}
     DependsOn: PatchNonprofitLambdaFunction
 
   DeleteNonprofitLambdaFunction:
@@ -170,10 +197,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -182,7 +215,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}
     DependsOn: DeleteNonprofitLambdaFunction
 
   # Nonprofit Donations Lambda Resources
@@ -194,17 +227,23 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonation.zip
-      Description: "Get a nonprofit's donation by uuid"
+      Description: "Get a nonprofit's donation by id"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -213,7 +252,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: GetNonprofitDonationLambdaFunction
 
   GetNonprofitDonationsLambdaFunction:
@@ -230,10 +269,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonations
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -242,7 +287,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/donations
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/donations
     DependsOn: GetNonprofitDonationsLambdaFunction
 
   PostNonprofitDonationLambdaFunction:
@@ -259,10 +304,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -271,7 +322,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/donations
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_id}/donations
     DependsOn: PostNonprofitDonationLambdaFunction
 
   PatchNonprofitDonationLambdaFunction:
@@ -288,10 +339,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -300,7 +357,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: PatchNonprofitDonationLambdaFunction
 
   DeleteNonprofitDonationLambdaFunction:
@@ -317,10 +374,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitDonationLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -329,7 +392,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/donations/{donation_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/donations/{donation_id}
     DependsOn: DeleteNonprofitDonationLambdaFunction
 
   # Nonprofit Donation Tiers Lambda Resources
@@ -348,10 +411,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -360,7 +429,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/tiers/{donation_tier_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/tiers/{donation_tier_id}
     DependsOn: GetNonprofitDonationTierLambdaFunction
 
   GetNonprofitDonationTiersLambdaFunction:
@@ -377,10 +446,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -389,7 +464,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/tiers
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/tiers
     DependsOn: GetNonprofitDonationTiersLambdaFunction
 
   PostNonprofitDonationTierLambdaFunction:
@@ -406,10 +481,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitDonationTier
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitDonationTierLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -418,7 +499,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/tiers
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_id}/tiers
     DependsOn: PostNonprofitDonationTierLambdaFunction
 
   PatchNonprofitDonationTiersLambdaFunction:
@@ -435,10 +516,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -447,7 +534,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/tiers
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/tiers
     DependsOn: PatchNonprofitDonationTiersLambdaFunction
 
   DeleteNonprofitDonationTiersLambdaFunction:
@@ -464,10 +551,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitDonationTiers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitDonationTiersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -476,7 +569,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/tiers
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/tiers
     DependsOn: DeleteNonprofitDonationTiersLambdaFunction
 
   # Nonprofit Pages Lambda Resources
@@ -488,17 +581,23 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitPage.zip
-      Description: "Get a nonprofit by uuid"
+      Description: "Get a nonprofit by id"
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitPage
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: 30
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitPageLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -526,10 +625,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitReportLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -538,7 +643,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/reports/{report_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/reports/{report_id}
     DependsOn: GetNonprofitReportLambdaFunction
 
   PostNonprofitReportLambdaFunction:
@@ -555,10 +660,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitReport
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitReportLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -567,7 +678,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/reports
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_id}/reports
     DependsOn: PostNonprofitReportLambdaFunction
 
   # Nonprofit Slides Lambda Resources
@@ -586,10 +697,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -598,7 +715,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/slides/{slide_id}
     DependsOn: GetNonprofitSlideLambdaFunction
 
   GetNonprofitSlidesLambdaFunction:
@@ -615,10 +732,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitSlides
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -627,7 +750,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/slides
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/slides
     DependsOn: GetNonprofitSlidesLambdaFunction
 
   PostNonprofitSlideLambdaFunction:
@@ -644,10 +767,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -656,7 +785,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/slides
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_id}/slides
     DependsOn: PostNonprofitSlideLambdaFunction
 
   PatchNonprofitSlideLambdaFunction:
@@ -673,10 +802,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -685,7 +820,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/slides/{slide_id}
     DependsOn: PatchNonprofitSlideLambdaFunction
 
   PatchNonprofitSlidesLambdaFunction:
@@ -702,10 +837,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitSlides
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitSlidesLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -714,7 +855,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/slides
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/slides
     DependsOn: PatchNonprofitSlidesLambdaFunction
 
   DeleteNonprofitSlideLambdaFunction:
@@ -732,10 +873,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitSlide
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitSlideLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -744,7 +891,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/slides/{slide_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/slides/{slide_id}
     DependsOn: PatchNonprofitSlideLambdaFunction
 
   # Nonprofit Users Lambda Resources
@@ -763,10 +910,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetNonprofitUsers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitUsersLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -775,7 +928,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_uuid}/users
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/nonprofits/{nonprofit_id}/users
     DependsOn: GetNonprofitUsersLambdaFunction
 
   PostNonprofitUserLambdaFunction:
@@ -793,10 +946,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostNonprofitUser
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -805,7 +964,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_uuid}/users
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/nonprofits/{nonprofit_id}/users
     DependsOn: PostNonprofitUserLambdaFunction
 
   DeleteNonprofitUserLambdaFunction:
@@ -823,10 +982,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteNonprofitUser
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitUserLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -835,7 +1000,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_uuid}/users/{user_uuid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/nonprofits/{nonprofit_id}/users/{user_id}
     DependsOn: DeleteNonprofitUserLambdaFunction
 
   # Nonprofit Admin Lambda Resources
@@ -855,10 +1020,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AdminRegisterNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   NonprofitAdminRegisterLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -886,10 +1057,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-RegisterNonprofit
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   NonprofitRegisterLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -917,10 +1094,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SearchNonprofits
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   SearchNonprofitsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -949,10 +1132,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchNonprofitStatus
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitStatusLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -961,7 +1150,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_uuid}/status
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/nonprofits/{nonprofit_id}/status
     DependsOn: PatchNonprofitStatusLambdaFunction
 
   # Nonprofits Api Gateway Resources
@@ -978,7 +1167,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitsApiResource
-      PathPart: "{nonprofit_uuid}"
+      PathPart: "{nonprofit_id}"
 
   GetNonprofitApiMethod:
     Type: AWS::ApiGateway::Method
@@ -990,14 +1179,14 @@ Resources:
       ApiKeyRequired: false
       RequestParameters:
         method.request.querystring.c: false
-        method.request.path.nonprofit_uuid: true
+        method.request.path.nonprofit_id: true
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
         PassthroughBehavior: NEVER
         CacheKeyParameters:
           - method.request.querystring.c
-          - method.request.path.nonprofit_uuid
+          - method.request.path.nonprofit_id
         RequestTemplates:
           application/json: !Ref IntegrationRequestTemplate
         Uri: !Sub
@@ -1431,7 +1620,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitDonationsApiResource
-      PathPart: "{donation_uuid}"
+      PathPart: "{donation_id}"
 
   GetNonprofitDonationApiMethod:
     Type: AWS::ApiGateway::Method
@@ -1875,7 +2064,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitDonationTiersApiResource
-      PathPart: "{donation_tier_uuid}"
+      PathPart: "{donation_tier_id}"
 
   GetNonprofitDonationTierApiMethod:
     Type: AWS::ApiGateway::Method
@@ -2427,7 +2616,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NoprofitReportsApiResource
-      PathPart: "{report_uuid}"
+      PathPart: "{report_id}"
 
   GetNonprofitReportApiMethod:
     Type: AWS::ApiGateway::Method
@@ -2643,7 +2832,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitSlidesApiResource
-      PathPart: "{slide_uuid}"
+      PathPart: "{slide_id}"
 
   GetNonprofitSlideApiMethod:
     Type: AWS::ApiGateway::Method
@@ -3153,7 +3342,7 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       ParentId: !Ref NonprofitUsersApiResource
-      PathPart: "{user_uuid}"
+      PathPart: "{user_id}"
 
   GetNonprofitUsersApiMethod:
     Type: AWS::ApiGateway::Method

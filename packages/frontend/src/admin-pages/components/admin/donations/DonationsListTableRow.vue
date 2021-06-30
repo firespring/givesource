@@ -36,39 +36,39 @@
         </td>
 
         <td>
-            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitUuid: donation.nonprofitUuid } }">{{ donation.nonprofitLegalName }}</router-link>
+            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: donation.nonprofitId } }">{{ donation.Nonprofit.legalName}}</router-link>
         </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk"></td>
+        <td class="u-nowrap empty" v-if="isOfflineBulk || noDonor"></td>
         <td v-else-if="isAnonymous">
             Anonymous
         </td>
         <td v-else>
-            {{ donation.donorFirstName }} {{ donation.donorLastName }}
+            {{ donation.Donor.firstName }} {{ donation.Donor.lastName }}
         </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous || !donation.donorEmail"></td>
+        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous || noDonor || !donation.Donor.email"></td>
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="'mailto:' + donation.donorEmail">{{ donation.donorEmail }}</a>
+                        <a :href="'mailto:' + donation.Donor.email">{{ donation.Donor.email }}</a>
                     </div>
-                    <div class="c-user-strip__phone u-icon u-flex u-items-center" v-if="donation.donorPhone">
-                        {{ donation.donorPhone }}
+                    <div class="c-user-strip__phone u-icon u-flex u-items-center" v-if="donation.Donor.phone">
+                        {{ donation.Donor.phone }}
                     </div>
                 </div>
             </div>
         </td>
 
-        <td class="u-nowrap empty" v-if="!hasAddress || isAnonymous"></td>
+        <td class="u-nowrap empty" v-if="!hasAddress || isAnonymous || noDonor"></td>
         <td class="u-nowrap" v-else>
             <div class="c-user-strip u-flex u-items-center">
                 <div class="c-user-strip__content">
                     <div class="c-user-strip__address u-icon u-flex">
-                        {{ donation.donorAddress1 }}<br v-if="donation.donorAddress2">
-                        {{ donation.donorAddress2 }}<br v-if="donation.donorCity || donation.donorState || donation.donorZip">
-                        {{ donation.donorCity }}, {{ donation.donorState }} {{ donation.donorZip }}
+                        {{ donation.Donor.address1 }}<br v-if="donation.Donor.address2">
+                        {{ donation.Donor.address2 }}<br v-if="donation.Donor.city || donation.Donor.state || donation.Donor.zip">
+                        {{ donation.Donor.city }}, {{ donation.Donor.state }} {{ donation.Donor.zip }}
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
 			},
 
 			hasAddress() {
-				return this.donation.donorAddress1 || this.donation.donorAddress2 || this.donation.donorCity || this.donation.donorState || this.donation.donorZip;
+				return this.donation.Donor !== null && (this.donation.Donor.address1 || this.donation.Donor.address2 || this.donation.Donor.city || this.donation.Donor.state || this.donation.Donor.zip);
 			},
 
 			formattedAmount() {
@@ -102,12 +102,16 @@
 			},
 
 			formattedDate() {
-				return new Date(this.donation.createdOn).toLocaleDateString();
+				return new Date(this.donation.createdAt).toLocaleDateString();
 			},
 
 			formattedTime() {
-				return new Date(this.donation.createdOn).toLocaleTimeString();
+				return new Date(this.donation.createdAt).toLocaleTimeString();
 			},
+
+			noDonor() {
+				return this.donation.Donor === null;
+			}
 		},
 
 		props: {

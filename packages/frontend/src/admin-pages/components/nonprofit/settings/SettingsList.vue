@@ -16,7 +16,7 @@
 
 <template>
     <div class="o-app">
-        <navigation :nonprofitUuid="nonprofitUuid"></navigation>
+        <navigation :nonprofitId="nonprofitId"></navigation>
         <main class="o-app__main o-app__main--compact">
             <div class="o-app_main-content o-app_main-content--md">
 
@@ -67,8 +67,12 @@
                             <hr class="expand">
 
                             <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
+                                <h3 v-if="nonprofit.status === 'ACTIVE'" class="c-page-section-segment__title">
                                     <router-link :to="{ name: 'nonprofit-settings-social-sharing' }">Social Sharing</router-link>
+
+                                </h3>
+                                <h3 v-else class="c-page-section-segment__title">
+                                    Social Sharing
                                 </h3>
                                 <div class="c-notes c-notes--below">
                                     Manage the text and image that is displayed when someone shares your page on social media.
@@ -107,11 +111,11 @@
 			},
 		},
 		props: [
-			'nonprofitUuid'
+			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 					vue.nonprofit = response.data;
 				});
 			});
@@ -119,7 +123,7 @@
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitUuid).then(function (response) {
+			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
 				vue.nonprofit = response.data;
 			}).then(function () {
 				next();

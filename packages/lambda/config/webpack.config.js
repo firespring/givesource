@@ -21,7 +21,7 @@ const path = require('path');
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
 
 module.exports = {
-	mode: process.env.NODE_ENV || 'development',
+	mode: 'development',
 	entry: {
 		// Api Gateway Authorizer Lambda Function
 		AuthorizeUsers: './src/custom/authorizeUsers/index.js',
@@ -49,6 +49,7 @@ module.exports = {
 		DeleteSponsors: './src/api/deleteSponsors/index.js',
 		DeleteSponsorTier: './src/api/deleteSponsorTier/index.js',
 		DeleteUser: './src/api/deleteUser/index.js',
+		DownloadFile: './src/api/downloadFile/index.js',
 		GetContents: './src/api/getContents/index.js',
 		GetDonation: './src/api/getDonation/index.js',
 		GetDonations: './src/api/getDonations/index.js',
@@ -131,6 +132,7 @@ module.exports = {
 		VerifyEmail: './src/api/verifyEmail/index.js',
 
 		// Custom Lambda Functions
+    ApiDistributionInvalidation: './src/custom/apiDistributionInvalidation/index.js',
 		ApiGatewayFlushCache: './src/custom/apiGatewayFlushCache/index.js',
 		AssociateLambdaEdgeFunctions: './src/custom/associateLambdaEdgeFunctions/index.js',
 		CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
@@ -155,6 +157,19 @@ module.exports = {
 		SendDonationNotificationEmail: './src/custom/sendDonationNotificationEmail/index.js',
 		SendDonationsReceiptEmail: './src/custom/sendDonationsReceiptEmail/index.js',
 		SendRegistrationPendingEmail: './src/custom/sendRegistrationPendingEmail/index.js',
+
+		// Database Lambda Functions
+		BootstrapDatabase: './src/database/bootstrapDatabase/index.js',
+		MigrateDatabase: './src/database/migrateDatabase/index.js',
+
+		// Cache Lambda Functions
+		PutSocialSharing: './src/cache/putSocialSharing/index.js',
+		PutSEO: './src/cache/putSEO/index.js',
+		PutNonprofitSocialSharing: './src/cache/putNonprofitSocialSharing/index.js',
+		PutNonprofitSEO: './src/cache/putNonprofitSEO/index.js',
+		WarmSocialSharing: './src/cache/warmSocialSharing/index.js',
+		WarmSEO: './src/cache/warmSEO/index.js',
+
 	},
 	output: {
 		filename: '[name]/index.js',

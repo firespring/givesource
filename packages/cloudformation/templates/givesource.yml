@@ -1,4 +1,4 @@
----
+
 AWSTemplateFormatVersion: 2010-09-09
 Description: AWS Resources for Givesource(R)
 Parameters:
@@ -32,6 +32,11 @@ Parameters:
     Description: Conditionally the creation/deletion of the monitoring stack
     Type: String
     Default: "false"
+
+  ReplicaRegion:
+    Description: The region where this stack will be replicated
+    Type: String
+    Default: ""
 
 Mappings:
   ApiGateway:
@@ -91,15 +96,30 @@ Conditions:
 
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
-Resources:
+  IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
 
-  DynamoDbStack:
+  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
+
+Resources:
+  AuroraDbStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
-      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-dynamo.yml
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaRole: !Ref LambdaRole
+        SecureLambdaRole: !Ref SecureLambdaRole
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 40
+
+  AuroraDbSnapshotCopyStack:
+    Condition: IsReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora-snapshot-copy.yml
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -117,6 +137,83 @@ Resources:
     Properties:
       Name: !Sub |-
         ${AWS::StackName}
+
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for long lived caching with Givesource settings, contents, and files
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        Name: !Sub ${AWS::StackName}-Givesource-CachePolicy-${AWS::Region}
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: ["Authorization"]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+    DependsOn: RestApi
+
+  NoCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for no caching with authorized headers for the admin area
+        DefaultTTL: 0
+        MaxTTL: 30
+        MinTTL: 0
+        Name: !Sub ${AWS::StackName}-Givesource-NoCachePolicy-${AWS::Region}
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: ["Authorization"]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+    DependsOn: RestApi
+
+  ApiDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - Id: !Ref RestApi
+          DomainName: !Sub ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
+          OriginPath: "/prod"
+          CustomOriginConfig:
+            OriginSSLProtocols: ["TLSv1.2"]
+            OriginProtocolPolicy: "https-only"
+        Enabled: true
+        Comment: Distribution for Givesource(R) api caching
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt NoCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_200
+        CacheBehaviors:
+        - PathPattern: "/settings"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        - PathPattern: "/contents"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
+        - PathPattern: "/files"
+          AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          TargetOriginId: !Ref RestApi
+          ViewerProtocolPolicy: redirect-to-https
 
   ApiGatewayManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -143,6 +240,16 @@ Resources:
             Action: cloudformation:DescribeStacks
             Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
 
+  CloudFrontManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: cloudfront:CreateInvalidation
+          Resource: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${ApiDistribution}
+
   CloudWatchLogsManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -168,47 +275,6 @@ Resources:
               - iam:PassRole
             Resource: '*'
 
-  DynamoDbManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: dynamodb:*
-            Resource:
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ContentsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonationsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.DonorsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.FilesTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MessagesTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.MetricsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitDonationTiersTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.NonprofitSlidesTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.PaymentTransactionsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.ReportsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SettingsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorsTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.SponsorTiersTable}/index/*
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}
-              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DynamoDbStack.Outputs.UsersTable}/index/*
-    DependsOn: DynamoDbStack
-
   LambdaManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -231,6 +297,8 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}
               - arn:aws:s3:::{{awsReleaseBucket}}
           - Effect: Allow
             Action: s3:Get*
@@ -238,6 +306,8 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}/*
               - arn:aws:s3:::{{awsReleaseBucket}}/*
           - Effect: Allow
             Action:
@@ -247,6 +317,8 @@ Resources:
               - !Sub arn:aws:s3:::${S3Stack.Outputs.AdminPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.PublicPagesS3}/*
               - !Sub arn:aws:s3:::${S3Stack.Outputs.UploadsS3}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.GivesourceCache}/*
+              - !Sub arn:aws:s3:::${S3Stack.Outputs.Reports}/*
 
   SESManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -306,23 +378,41 @@ Resources:
                 - lambda.amazonaws.com
                 - edgelambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
+        - !Ref CloudFrontManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref CognitoManagedPolicy
-        - !Ref DynamoDbManagedPolicy
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
         - !Ref SESManagedPolicy
         - !Ref SSMManagedPolicy
 
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Ingress/egress rules for lambda
+      VpcId: !ImportValue givesource-vpc
+      SecurityGroupIngress: []
+      SecurityGroupEgress: []
+      Tags:
+        - Key: Name
+          Value: givesource-lambda
+
   CustomStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
+        ApiDistributionId: !Ref ApiDistribution
+        ApiDistributionUrl: !Join ["", ["https://", !GetAtt ApiDistribution.DomainName, "/"]]
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        SecureLambdaRole: !Ref SecureLambdaRole
+        SecureSettingsLambdaFunctionRole: !Ref SecureSettingsLambdaFunctionRole
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
@@ -334,35 +424,13 @@ Resources:
         UploadsS3: !GetAtt S3Stack.Outputs.UploadsS3
         UploadsCloudFrontDistribution: !GetAtt S3Stack.Outputs.UploadsCloudFrontDistribution
         UploadsCloudFrontUrl: !GetAtt S3Stack.Outputs.UploadsCloudFrontUrl
+        GivesourceCache: !GetAtt S3Stack.Outputs.GivesourceCache
+        CachingCloudFrontUrl: !GetAtt S3Stack.Outputs.CachingCloudFrontUrl
+        ReportsS3: !GetAtt S3Stack.Outputs.Reports
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CognitoSnsCallerRole
-      - DynamoDbStack
-      - LambdaRole
-      - S3Stack
-
-  SecureSettingsEncryptManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Encrypt
-            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
-    DependsOn: CustomStack
-
-  SecureSettingsDecryptManagedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Decrypt
-            Resource: !GetAtt CustomStack.Outputs.SecureSettingsKeyArn
-    DependsOn: CustomStack
+      - AuroraDbStack
 
   SecureSettingsLambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -375,10 +443,9 @@ Resources:
               Service:
                 - lambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref SSMManagedPolicy
-        - !Ref SecureSettingsEncryptManagedPolicy
-    DependsOn: SecureSettingsEncryptManagedPolicy
 
   SecureLambdaRole:
     Type: AWS::IAM::Role
@@ -391,23 +458,24 @@ Resources:
               Service:
                 - lambda.amazonaws.com
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
         - !Ref CloudFormationManagedPolicy
         - !Ref CloudWatchLogsManagedPolicy
         - !Ref CognitoManagedPolicy
-        - !Ref DynamoDbManagedPolicy
         - !Ref SSMManagedPolicy
         - !Ref LambdaManagedPolicy
         - !Ref S3ManagedPolicy
         - !Ref SESManagedPolicy
-        - !Ref SecureSettingsDecryptManagedPolicy
 
   ApiContentsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -418,16 +486,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiDonationsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         SecureLambdaRoleArn: !GetAtt SecureLambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
@@ -439,16 +507,17 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - AuroraDbStack
       - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiDonorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -459,16 +528,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiFilesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -476,21 +545,21 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
+        ReportsBucket: !GetAtt S3Stack.Outputs.Reports
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
-      - S3Stack
+      - AuroraDbStack
 
   ApiMessagesStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -501,16 +570,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiMetricsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -521,16 +590,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiNonprofitsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -543,16 +612,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiPaymentTransactionsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -563,16 +632,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiReportsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -584,16 +653,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiSettingsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -609,16 +678,17 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 20
     DependsOn:
+      - AuroraDbStack
       - CustomStack
-      - LambdaRole
-      - RestApi
 
   ApiSponsorsStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -629,16 +699,16 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiUsersStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -650,11 +720,10 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 20
     DependsOn:
-      - CustomStack
-      - LambdaRole
-      - RestApi
+      - AuroraDbStack
 
   ApiDeployStack:
+    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -677,6 +746,7 @@ Resources:
       - RestApi
 
   CognitoInitialUser:
+    Condition: NotReplicaRegion
     Type: Custom::CognitoSuperAdminUser
     Properties:
       ServiceToken: !GetAtt CustomStack.Outputs.CognitoCreateUserFunctionArn
@@ -685,7 +755,7 @@ Resources:
     DependsOn:
       - ApiDeployStack
       - CustomStack
-      - DynamoDbStack
+      - AuroraDbStack
       - S3Stack
 
   MonitoringStack:
@@ -701,25 +771,26 @@ Resources:
         PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
         PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
-        ContentsTable: !GetAtt DynamoDbStack.Outputs.ContentsTable
-        DonationsTable: !GetAtt DynamoDbStack.Outputs.DonationsTable
-        DonorsTable: !GetAtt DynamoDbStack.Outputs.DonorsTable
-        FilesTable: !GetAtt DynamoDbStack.Outputs.FilesTable
-        MessagesTable: !GetAtt DynamoDbStack.Outputs.MessagesTable
-        MetricsTable: !GetAtt DynamoDbStack.Outputs.MetricsTable
-        NonprofitsTable: !GetAtt DynamoDbStack.Outputs.NonprofitsTable
-        NonprofitDonationTiersTable: !GetAtt DynamoDbStack.Outputs.NonprofitDonationTiersTable
-        NonprofitSlidesTable: !GetAtt DynamoDbStack.Outputs.NonprofitSlidesTable
-        PaymentTransactionsTable: !GetAtt DynamoDbStack.Outputs.PaymentTransactionsTable
-        ReportsTable: !GetAtt DynamoDbStack.Outputs.ReportsTable
-        SettingsTable: !GetAtt DynamoDbStack.Outputs.SettingsTable
-        SponsorsTable: !GetAtt DynamoDbStack.Outputs.SponsorsTable
-        SponsorTiersTable: !GetAtt DynamoDbStack.Outputs.SponsorTiersTable
-        UsersTable: !GetAtt DynamoDbStack.Outputs.UsersTable
+        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
       TimeoutInMinutes: 20
     DependsOn:
       - CognitoInitialUser
+
+  CacheStack:
+    Condition: NotReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
+      TimeoutInMinutes: 40
+    DependsOn:
+      - AuroraDbStack
 
 Outputs:
 
@@ -737,7 +808,7 @@ Outputs:
 
   ApiUrl:
     Value: !Sub |-
-      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+      https://${ApiDistribution.DomainName}/
 
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
@@ -767,9 +838,11 @@ Outputs:
     Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
 
   UserPoolId:
+    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
 
   Version:

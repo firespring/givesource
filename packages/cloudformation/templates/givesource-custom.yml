@@ -6,10 +6,25 @@ Parameters:
   StackName:
     Type: String
 
+  ApiDistributionId:
+    Type: String
+
+  ApiDistributionUrl:
+    Type: String
+
   RestApi:
     Type: String
 
   LambdaRoleArn:
+    Type: String
+
+  SecureLambdaRole:
+    Type: String
+
+  SecureSettingsLambdaFunctionRole:
+    Type: String
+
+  LambdaSecurityGroupId:
     Type: String
 
   DefaultLambdaFunctionTimeout:
@@ -42,7 +57,16 @@ Parameters:
   UploadsS3:
     Type: String
 
+  ReportsS3:
+    Type: String
+
   UploadsCloudFrontUrl:
+    Type: String
+
+  GivesourceCache:
+    Type: String
+
+  CachingCloudFrontUrl:
     Type: String
 
 Resources:
@@ -65,9 +89,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AuthorizeUsers
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
     DependsOn: CognitoUserPool
 
   AuthorizeUsersLambdaInvokePermission:
@@ -82,6 +113,28 @@ Resources:
     DependsOn:
       - AuthorizeUsersLambdaFunction
       - AuthorizeUsers
+
+  # Create Lambda Invalidation Function
+
+  ApiDistributionInvalidationLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/ApiDistributionInvalidation.zip
+      Description: "Invalidate cloudfront cache for API Distribution for certain path(s)"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          DISTRIBUTION_ID: !Ref ApiDistributionId
+      FunctionName: !Sub |-
+        ${StackName}-ApiDistributionInvalidation
+      Handler: "index.handle"
+      MemorySize: 128
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs12.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
 
   ApiGatewayFlushCacheLambdaFunction:
     Type: AWS::Lambda::Function
@@ -98,6 +151,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-ApiGatewayFlushCache
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -150,9 +204,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPool
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
     DependsOn: CognitoCustomMessageFunction
 
   CognitoCreateUserPoolClientFunction:
@@ -169,9 +230,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPoolClient
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   CognitoCreateUserFunction:
     Type: AWS::Lambda::Function
@@ -187,9 +255,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUser
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   CognitoCreateUserGroupFunction:
     Type: AWS::Lambda::Function
@@ -205,9 +280,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserGroup
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   CognitoCustomMessageFunction:
     Type: AWS::Lambda::Function
@@ -226,9 +308,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   CognitoCustomMessageLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -321,6 +410,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateCustomFrontendCss
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -342,6 +432,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateDynamicContent
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -448,7 +539,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CreateLambdaEdgeFunction
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -468,7 +559,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AssociateLambdaEdgeFunctions
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -490,6 +581,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CreateParameter
       Handler: "index.handle"
+      MemorySize: 128
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -507,13 +599,20 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          AWS_S3_BUCKET_NAME: !Ref UploadsS3
+          AWS_S3_BUCKET_NAME: !Ref ReportsS3
       FunctionName: !Sub |-
         ${StackName}-GenerateReport
       Handler: "index.handle"
+      MemorySize: 2048
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
-      Timeout: !Ref DefaultLambdaFunctionTimeout
+      Timeout: 900
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteReportsLambdaFunction:
     Type: AWS::Lambda::Function
@@ -530,10 +629,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteReports
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteReportsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -562,9 +667,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SaveSettings
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   # Secure Settings KMS Resources
 
@@ -595,6 +707,34 @@ Resources:
       TargetKeyId: !Ref SecureSettingsKey
     DependsOn: SecureSettingsKey
 
+  SecureSettingsEncryptPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: secure_settings_encrypt
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Encrypt
+            Resource:
+              - !GetAtt SecureSettingsKey.Arn
+      Roles:
+      - !Ref SecureSettingsLambdaFunctionRole
+
+  SecureSettingsDecryptPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: secure_settings_decrypt
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: kms:Decrypt
+            Resource:
+              - !GetAtt SecureSettingsKey.Arn
+      Roles:
+      - !Ref SecureLambdaRole
+
   # S3 Lambda Resources
 
   S3PutObjectFunction:
@@ -611,6 +751,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-S3PutObject
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -629,6 +770,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-S3SyncObjects
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -653,7 +795,7 @@ Resources:
                 key: 'Content-Security-Policy',
                 value: "default-src 'none'; " +
                 "base-uri 'none'; " +
-                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
+                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
                 "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
                 "form-action 'self'; " +
                 "frame-ancestors 'self'; " +
@@ -693,7 +835,7 @@ Resources:
                 key: 'Content-Security-Policy',
                 value: "default-src 'none'; " +
                 "base-uri 'none'; " +
-                "connect-src 'self' https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
+                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
                 "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
                 "form-action 'self'; " +
                 "frame-ancestors 'self'; " +
@@ -783,7 +925,8 @@ Resources:
       Value: !Sub |-
         {
           "AWS_STACK_REGION": "${AWS::Region}",
-          "AWS_STACK_NAME": "${StackName}"
+          "AWS_STACK_NAME": "${StackName}",
+          "AWS_S3_BUCKET_NAME": "${GivesourceCache}"
         }
     DependsOn:
       - CreateParameterLambdaFunction
@@ -858,7 +1001,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+          "API_URL": "${ApiDistributionUrl}"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -888,7 +1031,7 @@ Resources:
       Key: "settings.json"
       Body: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+          "API_URL": "${ApiDistributionUrl}"
         }
     DependsOn:
       - S3PutObjectFunction
@@ -924,7 +1067,7 @@ Resources:
       ServiceToken: !GetAtt SaveSettingsLambdaFunction.Arn
       Settings: !Sub |-
         {
-          "API_URL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/",
+          "API_URL": "${ApiDistributionUrl}",
           "ADMIN_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_CLOUD_FRONT_URL": "${AdminPagesCloudFrontUrl}",
           "ADMIN_PAGES_S3_BUCKET_NAME": "${AdminPagesS3}",
@@ -933,6 +1076,9 @@ Resources:
           "PUBLIC_PAGES_S3_BUCKET_NAME": "${PublicPagesS3}",
           "UPLOADS_CLOUD_FRONT_URL": "${UploadsCloudFrontUrl}",
           "UPLOADS_S3_BUCKET_NAME": "${UploadsS3}",
+          "CACHE_CLOUD_FRONT_URL": "${CachingCloudFrontUrl}",
+          "CACHE_S3_BUCKET_NAME": "${GivesourceCache}",
+          "REPORTS_S3_BUCKET_NAME": "${ReportsS3}",
           "USER_POOL_CLIENT_ID": "${CognitoUserPoolClient.UserPoolClientId}",
           "USER_POOL_ID": "${CognitoUserPool.UserPoolId}"
         }
@@ -957,9 +1103,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateDonationsReceipt
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   SendDonationNotificationEmailLambdaFunction:
     Type: AWS::Lambda::Function
@@ -975,9 +1128,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendDonationNotificationEmail
       Handler: "index.handle"
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   SendDonationsReceiptEmailLambdaFunction:
     Type: AWS::Lambda::Function
@@ -993,9 +1153,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendDonationsReceiptEmail
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   SendContactMessageEmailLambdaFunction:
     Type: AWS::Lambda::Function
@@ -1011,9 +1178,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendContactMessageEmail
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   SendRegistrationPendingEmailLambdaFunction:
     Type: AWS::Lambda::Function
@@ -1029,9 +1203,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendRegistrationPendingEmail
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   # Metrics lambda functions
 
@@ -1049,9 +1230,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-MetricAddAmount
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   MetricMaxAmountLambdaFunction:
     Type: AWS::Lambda::Function
@@ -1067,9 +1255,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-MetricMaxAmount
       Handler: "index.handle"
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
 Outputs:
 

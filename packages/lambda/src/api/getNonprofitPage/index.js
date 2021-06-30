@@ -30,7 +30,7 @@ exports.handle = function (event, context, callback) {
 		if (nonprofit.status !== NonprofitHelper.STATUS_ACTIVE) {
 			return Promise.reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
 		}
-		callback(null, nonprofit.all());
+		callback(null, nonprofit);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

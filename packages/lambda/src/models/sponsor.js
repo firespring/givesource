@@ -14,68 +14,47 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+'use strict';
 
-/**
- * Sponsor constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Sponsor(data) {
-	Model.call(this, data);
-}
+const { DataTypes } = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {model}
- */
-Sponsor.prototype = new Model();
+module.exports = (sequelize) => {
+	const Sponsor = sequelize.define('Sponsor', {
+		logoUrl: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ""
+		},
+		name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		sortOrder: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		url: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		fileId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		sponsorTierId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+	});
 
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Sponsor.prototype.attributes = [
-	'fileUuid',
-	'name',
-	'sortOrder',
-	'sponsorTierUuid',
-	'url',
-];
+	Sponsor.associate = function (models) {
+		Sponsor.hasOne(models.SponsorTier, {
+			foreignKey: 'sponsorTierId'
+		});
+	};
 
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Sponsor.prototype.constraints = {
-	fileUuid: {
-		presence: false,
-		uuid: 4
-	},
-	logoUrl: {
-		presence: false,
-		type: 'string'
-	},
-	name: {
-		presence: true,
-		type: 'string'
-	},
-	sortOrder: {
-		presence: true,
-		type: 'number'
-	},
-	sponsorTierUuid: {
-		presence: true,
-		uuid: 4
-	},
-	url: {
-		presence: false,
-		url: true,
-	},
+	return Sponsor;
 };
-
-module.exports = Sponsor;

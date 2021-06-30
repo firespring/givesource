@@ -15,11 +15,12 @@
  */
 
 const NonprofitRepository = require('./nonprofits');
-const NonprofitSlide = require('../models/nonprofitSlide');
 const QueryBuilder = require('./../aws/queryBuilder');
 const Repository = require('./repository');
 const RepositoryHelper = require('./../helpers/repository');
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
+const loadModels = require('../models/index');
+const Sequelize = require('sequelize');
 
 /**
  * NonprofitSlidesRepository constructor
@@ -42,29 +43,50 @@ function NonprofitSlidesRepository(options) {
 NonprofitSlidesRepository.prototype = new Repository();
 
 /**
- * Get a NonprofitSlide
+ * Look to abstract this
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {Object} data
  * @return {Promise}
  */
-NonprofitSlidesRepository.prototype.get = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitSlidesRepository.prototype.populate = function (data) {
+	let allModels;
+	return loadModels().then(function (models) {
+		allModels = models;
+		const nonprofitSlide = new models.NonprofitSlide();
+		return new nonprofitSlide.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
+	}).finally(function () {
+		return allModels.sequelize.close();
+	});
+};
+
+/**
+ * Get a NonprofitSlide
+ *
+ * @param {String} nonprofitId
+ * @param {String} id
+ * @return {Promise}
+ */
+NonprofitSlidesRepository.prototype.get = function (nonprofitId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				if (data.Items.length === 1) {
-					resolve(new NonprofitSlide(data.Items[0]));
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.NonprofitSlide.findOne({
+				where: {
+					id: id,
+					nonprofitId: nonprofitId
 				}
-				reject(new ResourceNotFoundException('The specified slide does not exist.'));
-			}).catch(function (err) {
-				reject(err);
 			});
+		}).then(function (nonprofitSlide) {
+			if (nonprofitSlide instanceof allModels.NonprofitSlide) {
+				resolve(nonprofitSlide);
+			}
+			reject(new ResourceNotFoundException('The specified nonprofitSlide does not exist.'));
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -72,29 +94,26 @@ NonprofitSlidesRepository.prototype.get = function (nonprofitUuid, uuid) {
 /**
  * Get all Slides for a Nonprofit
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @return {Promise}
  */
-NonprofitSlidesRepository.prototype.getAll = function (nonprofitUuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitSlidesRepository.prototype.getAll = function (nonprofitId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('scan');
-			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				const results = [];
-				if (data.Items) {
-					data.Items.forEach(function (item) {
-						results.push(new NonprofitSlide(item));
-					});
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.NonprofitSlide.findAll({
+				where: {
+					nonprofitId: nonprofitId
 				}
-				resolve(results);
-			}).catch(function (err) {
-				reject(err);
 			});
+		}).then(function (results) {
+			resolve(results);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -102,23 +121,26 @@ NonprofitSlidesRepository.prototype.getAll = function (nonprofitUuid) {
 /**
  * Get a count of all Slides for a Nonprofit
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @return {Promise}
  */
-NonprofitSlidesRepository.prototype.getCount = function (nonprofitUuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitSlidesRepository.prototype.getCount = function (nonprofitId) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('scan');
-			builder.filter('nonprofitUuid', '=', nonprofitUuid).select('COUNT');
-			repository.batchQuery(builder).then(function (data) {
-				resolve(data.Count);
-			}).catch(function (err) {
-				reject(err);
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.NonprofitSlide.count({
+				where: {
+					nonprofitId: nonprofitId
+				}
 			});
+		}).then(function (result) {
+			resolve(result);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -126,54 +148,55 @@ NonprofitSlidesRepository.prototype.getCount = function (nonprofitUuid) {
 /**
  * Delete a NonprofitSlide
  *
- * @param {String} nonprofitUuid
- * @param {String} uuid
+ * @param {String} nonprofitId
+ * @param {String} id
  * @return {Promise}
  */
-NonprofitSlidesRepository.prototype.delete = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
+NonprofitSlidesRepository.prototype.delete = function (nonprofitId, id) {
+	let allModels;
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			repository.deleteByKey('uuid', uuid).then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
-			});
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.NonprofitSlide.destroy(
+				{
+					where: {
+						id: id,
+						nonprofitId: nonprofitId
+					}
+				});
+		}).then(function () {
+			resolve()
 		}).catch(function (err) {
 			reject(err);
-		})
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
 	});
 };
 
 /**
  * Create or update a NonprofitSlide
  *
- * @param {String} nonprofitUuid
+ * @param {String} nonprofitId
  * @param {NonprofitSlide} model
  */
-NonprofitSlidesRepository.prototype.save = function (nonprofitUuid, model) {
+NonprofitSlidesRepository.prototype.save = function (nonprofitId, model) {
+	let allModels;
 	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof NonprofitSlide)) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			if (!(model instanceof allModels.NonprofitSlide)) {
 				reject(new Error('invalid NonprofitSlide model'));
 			}
-			model.validate().then(function () {
-				const key = {
-					uuid: model.uuid
-				};
-				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new NonprofitSlide(data.Attributes));
-				}).catch(function (err) {
-					reject(err);
-				});
-			}).catch(function (err) {
-				reject(err);
-			});
+			return repository.upsert(model, {});
+		}).then(function (nonprofitSlide) {
+			resolve(nonprofitSlide);
 		}).catch(function (err) {
 			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };
@@ -181,20 +204,77 @@ NonprofitSlidesRepository.prototype.save = function (nonprofitUuid, model) {
 /**
  * Batch create or update Slides
  *
- * @param {string} nonprofitUuid
+ * @param {string} nonprofitId
  * @param {[]} models
  * @return {Promise}
  */
-NonprofitSlidesRepository.prototype.batchSave = function (nonprofitUuid, models) {
+NonprofitSlidesRepository.prototype.batchSave = function (nonprofitId, models) {
 	const repository = this;
 	const nonprofitRepository = new NonprofitRepository();
 	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
+		nonprofitRepository.get(nonprofitId).then(function () {
 			return repository.batchUpdate(models);
 		}).then(function () {
 			resolve();
 		}).catch(function (err) {
 			reject(err);
+		});
+	});
+};
+
+/**
+ * Bulk create Nonprofits (seeder)
+ *
+ * @param nonprofitSlides
+ * @return {Promise<any>}
+ */
+NonprofitSlidesRepository.prototype.batchUpdate = function (nonprofitSlides) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+			return allModels.NonprofitSlide.bulkCreate(nonprofitSlides);
+		}).then(function (savedNonprofitSlides) {
+			resolve(savedNonprofitSlides);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
+		});
+	});
+};
+
+/**
+ * Insert or update the model
+ *
+ * @param {Object} model
+ * @param {Object} data
+ * @return {Promise<any>}
+ */
+NonprofitSlidesRepository.prototype.upsert = function (model, data) {
+	let allModels;
+	return new Promise(function (resolve, reject) {
+		return loadModels().then(function (models) {
+			allModels = models;
+		}).then(function () {
+			return allModels.NonprofitSlide.upsert({
+				'id': model.id,
+				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.sortOrder,
+				'caption': typeof data.caption !== "undefined" ? data.caption : model.caption,
+				'embedUrl': typeof data.embedUrl !== "undefined" ? data.embedUrl : model.embedUrl,
+				'externalId': typeof data.externalId !== "undefined" ? data.externalId : model.externalId,
+				'thumbnail': typeof data.thumbnail !== "undefined" ? data.thumbnail : model.thumbnail,
+				'type': typeof data.type !== "undefined" ? data.type : model.type,
+				'url': typeof data.url !== "undefined" ? data.url : model.url,
+				'fileId': typeof data.fileId !== "undefined" ? data.fileId : model.fileId,
+				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
+			});
+		}).then(function (nonprofitSlide) {
+			resolve(nonprofitSlide);
+		}).catch(function (err) {
+			reject(err);
+		}).finally(function () {
+			return allModels.sequelize.close();
 		});
 	});
 };

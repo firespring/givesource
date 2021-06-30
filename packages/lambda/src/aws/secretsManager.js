@@ -14,49 +14,26 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
+const AWS = require('aws-sdk');
 
 /**
- * Metric constructor
+ * Secrets Manager constructor
  *
- * @param {{}} [data]
  * @constructor
  */
-function Metric(data) {
-	Model.call(this, data);
+function SecretsManager() {
 }
 
 /**
- * Extend the base Model
+ * Get a secret value from the secrets manager
  *
- * @type {Model}
+ * @param region
+ * @param secretId
+ * @returns {Promise}
  */
-Metric.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Metric.prototype.attributes = [
-	'key',
-	'value'
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Metric.prototype.constraints = {
-	key: {
-		presence: true,
-		type: 'string',
-	},
-	value: {
-		presence: false,
-		type: 'number'
-	},
+SecretsManager.prototype.getSecretValue = (region, secretId) => {
+	const secretManger = new AWS.SecretsManager({region: region});
+	return secretManger.getSecretValue({SecretId: secretId}).promise();
 };
 
-module.exports = Metric;
+module.exports = SecretsManager;

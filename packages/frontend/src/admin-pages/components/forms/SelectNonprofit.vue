@@ -17,7 +17,7 @@
 <template>
     <select v-model="localValue" :id="id" :name="name" class="combobox" :data-placeholder="placeholder" ref="select" :class="{'has-error': hasError}">
         <option value=""></option>
-        <option v-for="nonprofit in nonprofits" :value="nonprofit.uuid">{{ nonprofit.legalName }}</option>
+        <option v-for="nonprofit in nonprofits" :value="nonprofit.id">{{ nonprofit.legalName }}</option>
     </select>
 </template>
 

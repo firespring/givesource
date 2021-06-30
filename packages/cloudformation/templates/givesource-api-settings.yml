@@ -9,6 +9,9 @@ Parameters:
   LambdaRoleArn:
     Type: String
 
+  LambdaSecurityGroupId:
+    Type: String
+
   DefaultLambdaFunctionTimeout:
     Type: Number
 
@@ -63,10 +66,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSetting
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -92,10 +101,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSettings
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   GetSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -121,10 +136,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostSetting
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PostSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -150,10 +171,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSetting
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -179,10 +206,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSettings
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -208,10 +241,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSetting
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -237,10 +276,16 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSettings
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   DeleteSettingsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -268,7 +313,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetEmail
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -298,7 +343,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSenderEmailAddress
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -331,7 +376,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSenderEmailAddress
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -360,7 +405,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-VerifyEmail
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -389,10 +434,16 @@ Resources:
          AWS_STACK_NAME: !Ref StackName
      FunctionName: !Sub ${StackName}-GetSecureSetting
      Handler: "index.handle"
-     MemorySize: 128
+     MemorySize: 256
      Role: !Ref SecureSettingsLambdaFunctionRoleArn
      Runtime: "nodejs12.x"
      Timeout: !Ref DefaultLambdaFunctionTimeout
+     VpcConfig:
+       SecurityGroupIds:
+         - !Ref LambdaSecurityGroupId
+       SubnetIds:
+         - !ImportValue givsource-primary-private-subnet
+         - !ImportValue givesource-secondary-private-subnet
 
   GetSecureSettingLambdaInvokePermission:
    Type: AWS::Lambda::Permission
@@ -416,10 +467,16 @@ Resources:
           KMS_KEY: !Ref SecureSettingsKeyAlias
       FunctionName: !Sub ${StackName}-PatchSecureSetting
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref SecureSettingsLambdaFunctionRoleArn
       Runtime: "nodejs12.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
 
   PatchSecureSettingLambdaInvokePermission:
     Type: AWS::Lambda::Permission

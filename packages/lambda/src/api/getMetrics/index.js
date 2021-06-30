@@ -21,19 +21,11 @@ const Request = require('./../../aws/request');
 exports.handle = function (event, context, callback) {
 	const repository = new MetricsRepository();
 	const request = new Request(event, context);
-	const keys = request.queryParam('keys', '').split(',');
 
 	request.validate().then(function () {
-		if (keys.length) {
-			return repository.batchGet(keys);
-		} else {
-			return repository.getAll();
-		}
+		return repository.getAll();
 	}).then(function (metrics) {
-		const results = metrics.map(function (metric) {
-			return metric.all();
-		});
-		callback(null, results);
+		callback(null, metrics);
 	}).catch(function (err) {
 		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
 	});

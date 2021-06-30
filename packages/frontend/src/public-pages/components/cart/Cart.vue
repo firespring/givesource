@@ -479,7 +479,8 @@
 
 				vm.getPaymentToken().then(response => {
 					const payment = response.data;
-					payment.is_test_mode = !_.find(vm.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'}).value;
+					const mode = _.find(vm.settings, {key: 'PAYMENT_SPRING_LIVE_MODE'}).value;
+					payment.is_test_mode = mode === "0";
 					return axios.post(API_URL + 'donations/process', {
 						donor: vm.donor,
 						donations: vm.getDonations(),
@@ -513,7 +514,7 @@
 						isAnonymous: vm.formData.isAnonymous,
 						isFeeCovered: vm.formData.isFeeCovered,
 						isOfflineDonation: false,
-						nonprofitUuid: cartItem.nonprofit.uuid,
+						nonprofitId: cartItem.nonprofit.id,
 						subtotal: cartItem.amount,
 						total: total,
 						note: cartItem.note
@@ -539,11 +540,11 @@
 					const publicApiKey = _.find(vm.settings, {key: 'PAYMENT_SPRING_PUBLIC_API_KEY'});
 					const testPublicApiKey = _.find(vm.settings, {key: 'PAYMENT_SPRING_TEST_PUBLIC_API_KEY'});
 
-					if (paymentMode && paymentMode.value === true && publicApiKey.value) {
+					if (paymentMode && paymentMode.value === "1" && publicApiKey.value) {
 						return Promise.resolve(publicApiKey.value);
 					}
 
-					if (paymentMode && paymentMode.value === false && testPublicApiKey.value) {
+					if (paymentMode && paymentMode.value === "0" && testPublicApiKey.value) {
 						return Promise.resolve(testPublicApiKey.value);
 					}
 

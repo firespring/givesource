@@ -31,7 +31,11 @@
                             <div class="leaderboard-item__num">{{ position(nonprofitIndex) }}.</div>
                             <div class="leaderboard-item__info">
                                 <h3>
-                                    <router-link :to="{ name: 'nonprofit-landing-page', params: {slug: nonprofit.slug} }">{{ nonprofit.legalName }}</router-link>
+                                    <a
+                                      :href="'/nonprofits/' + nonprofit.slug"
+                                      @click="goToNonprofitLandingPage($event, nonprofit)">
+                                        {{ nonprofit.legalName}}
+                                    </a>
                                 </h3>
                             </div>
                             <div class="leaderboard-item__amount">{{ formatMoney(nonprofit.donationsSubtotal) }}</div>
@@ -102,17 +106,27 @@
 			});
 		},
 		methods: {
-			position: function (nonprofitIndex) {
-				const position = parseInt(this.pagination.start) + nonprofitIndex + 1;
-				return numeral(position).format('00');
-			},
-			donate: function (nonprofit) {
-				const vue = this;
+      position: function (nonprofitIndex) {
+        const position = parseInt(this.pagination.start) + nonprofitIndex + 1;
+        return numeral(position).format('00');
+      },
+      donate: function (nonprofit) {
+        const vue = this;
 
-				vue.addModal('donation-tiers', {
-					nonprofit: nonprofit
-				});
-			}
+        vue.addModal('donation-tiers', {
+          nonprofit: nonprofit
+        });
+      },
+      goToNonprofitLandingPage: function (event, nonprofit) {
+        const vue = this;
+        event.preventDefault();
+        $('body').addClass('has-loader');
+        vue.addModal('spinner');
+        vue.$router.push({
+          name: 'nonprofit-landing-page',
+          params: { slug: nonprofit.slug }
+        });
+      }
 		},
 		mixins: [
 			PaginationMixin,

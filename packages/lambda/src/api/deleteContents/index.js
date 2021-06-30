@@ -15,7 +15,6 @@
  */
 
 const _ = require('lodash');
-const Content = require('./../../models/content');
 const ContentHelper = require('./../../helpers/content');
 const ContentsRepository = require('./../../repositories/contents');
 const HttpException = require('./../../exceptions/http');
@@ -30,17 +29,25 @@ exports.handle = function (event, context, callback) {
 
 	let contents = [];
 	request.validate().then(function () {
-		request.get('contents', []).forEach(function (data) {
-			contents.push(new Content(data));
+		let promise = Promise.resolve();
+		request.get('contents', []).forEach(async function (data) {
+			promise = promise.then(function () {
+				return repository.get(data.id, true);
+			}).then(function (content) {
+				if (content !== null) {
+					contents.push(content);
+				}
+			});
 		});
+		return promise;
 	}).then(function () {
 		let promise = Promise.resolve();
 		contents.forEach(function (content) {
-			if (content.type === ContentHelper.TYPE_COLLECTION) {
+			if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
 				promise = promise.then(function () {
-					return repository.getByParentUuid(content.uuid).then(function (response) {
+					return repository.getByParentId(content.id).then(function (response) {
 						response.forEach(function (model) {
-							if (!_.find(contents, {uuid: model.uuid})) {
+							if (!_.find(contents, {id: model.id})) {
 								contents.push(model);
 							}
 						});
@@ -52,6 +59,7 @@ exports.handle = function (event, context, callback) {
 	}).then(function () {
 		return repository.batchDelete(contents);
 	}).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/contents*']}, 'RequestResponse');
 		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
 	}).then(function () {
 		callback();

@@ -98,12 +98,14 @@
 					REGISTER_FORM_TEXT: {
 						key: 'REGISTER_FORM_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 					REGISTER_RESPONSE_TEXT: {
 						key: 'REGISTER_RESPONSE_TEXT',
 						type: 'RICH_TEXT',
-						value: ''
+						value: '',
+                        id: 0
 					},
 				},
 
@@ -191,7 +193,7 @@
 					promise = promise.then(function () {
 						return vue.$request.patch('contents', {
 							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'uuid', 'value']);
+								return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
 							}),
 						});
 					});

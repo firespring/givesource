@@ -63,7 +63,7 @@
 				default: {
 					contents: [],
 					settings: [],
-					pageUuid: null
+					pageId: null
 				}
 			}
 		},
@@ -80,9 +80,9 @@
 					contents: vm.data.contents
 				}).then(() => {
 					const setting = _.find(vm.data.settings, {key: 'CUSTOM_PAGES'});
-					const uuids = setting.value.split('|');
-					const updatedUuids = uuids.filter((uuid) => {
-						return uuid !== vm.data.pageUuid;
+					const ids = setting.value.split('|');
+					const updatedUuids = ids.filter((id) => {
+						return id !== vm.data.pageId;
 					});
 
 					let promise = Promise.resolve();
@@ -102,7 +102,7 @@
 					}
 
 					promise = promise.then(() => {
-						const keys = getSettingKeys(vm.data.pageUuid);
+						const keys = getSettingKeys(vm.data.pageId);
 						const toDelete = [];
 
 						keys.forEach((key) => {

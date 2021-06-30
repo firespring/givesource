@@ -14,203 +14,116 @@
  * limitations under the License.
  */
 
-const Model = require('./model');
-const NonprofitHelper = require('./../helpers/nonprofit');
+'use strict';
 
-/**
- * Nonprofit constructor
- *
- * @param {{}} [data]
- * @constructor
- */
-function Nonprofit(data) {
-	Model.call(this, data);
-}
+const {DataTypes} = require('sequelize');
 
-/**
- * Extend the base Model
- *
- * @type {Model}
- */
-Nonprofit.prototype = new Model();
-
-/**
- * The allowed attributes for this model
- *
- * @type {[*]}
- */
-Nonprofit.prototype.attributes = [
-	'address1',
-	'address2',
-	'address3',
-	'category1',
-	'category2',
-	'category3',
-	'city',
-	'donationsCount',
-	'donationsFees',
-	'donationsFeesCovered',
-	'donationsSubtotal',
-	'donationsTotal',
-	'legalName',
-	'legalNameSearch',
-	'logoFileUuid',
-	'longDescription',
-	'phone',
-	'receiveDonationNotifications',
-	'shortDescription',
-	'slug',
-	'socialSharingDescription',
-	'socialSharingFileUuid',
-	'state',
-	'status',
-	'taxId',
-	'zip',
-];
-
-/**
- * Validation constraints for this model
- *
- * @type {{}}
- */
-Nonprofit.prototype.constraints = {
-	address1: {
-		presence: true,
-		type: 'string'
-	},
-	address2: {
-		presence: false,
-		type: 'string'
-	},
-	address3: {
-		presence: false,
-		type: 'string'
-	},
-	category1: {
-		presence: true,
-		type: 'number',
-	},
-	category2: {
-		presence: false,
-		type: 'number',
-	},
-	category3: {
-		presence: false,
-		type: 'number',
-	},
-	city: {
-		presence: true,
-		type: 'string'
-	},
-	donationsCount: {
-		presence: true,
-		numericality: {
-			onlyInteger: true
+module.exports = (sequelize) => {
+	const Nonprofit = sequelize.define('Nonprofit', {
+		address1: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		address2: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		category1: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		category2: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		category3: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		city: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		firstName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		lastName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		phone: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		state: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		zip: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		legalName: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		legalNameSearch: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		logoFileId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		longDescription: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		shortDescription: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		slug: {
+			type: DataTypes.STRING,
+			allowNull: false,
+      defaultValue: ''
+		},
+		socialSharingDescription: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: ''
+		},
+		socialSharingFileId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		status: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		taxId: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		receiveDonationNotifications: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
 		}
-	},
-	donationsFees: {
-		presence: true,
-		numericality: true
-	},
-	donationsFeesCovered: {
-		presence: true,
-		numericality: true
-	},
-	donationsSubtotal: {
-		presence: true,
-		numericality: true
-	},
-	donationsTotal: {
-		presence: true,
-		numericality: true
-	},
-	legalName: {
-		presence: true,
-		type: 'string',
-	},
-	legalNameSearch: {
-		presence: true,
-		type: 'string',
-	},
-	logoFileUuid: {
-		presence: false,
-		uuid: 4
-	},
-	longDescription: {
-		presence: false,
-		type: 'string'
-	},
-	phone: {
-		presence: false,
-		type: 'string|number'
-	},
-	receiveDonationNotifications: {
-		presence: false,
-		type: 'boolean',
-	},
-	shortDescription: {
-		presence: false,
-		type: 'string'
-	},
-	slug: {
-		presence: false,
-		type: 'string'
-	},
-	socialSharingDescription: {
-		presence: false,
-		type: 'string',
-	},
-	socialSharingFileUuid: {
-		presence: false,
-		uuid: 4
-	},
-	state: {
-		presence: true,
-		type: 'string',
-	},
-	status: {
-		presence: true,
-		inclusion: [NonprofitHelper.STATUS_ACTIVE, NonprofitHelper.STATUS_DENIED, NonprofitHelper.STATUS_PENDING, NonprofitHelper.STATUS_REVOKED]
-	},
-	taxId: {
-		presence: true,
-		type: 'string'
-	},
-	zip: {
-		presence: true,
-		type: 'string|number'
-	}
-};
+	});
 
-/**
- * Default values for this model
- *
- * @return {{}}
- */
-Nonprofit.prototype.defaults = function () {
-	return {
-		donationsCount: 0,
-		donationsFees: 0,
-		donationsFeesCovered: 0,
-		donationsSubtotal: 0,
-		donationsTotal: 0,
-		receiveDonationNotifications: true,
-		status: NonprofitHelper.STATUS_PENDING
-	};
+	return Nonprofit;
 };
-
-/**
- * Event fired for this model before validation
- */
-Nonprofit.prototype.beforeValidate = function () {
-	this.legalNameSearch = this.legalName.toLowerCase();
-};
-
-/**
- * Event fired for this model before saving
- */
-Nonprofit.prototype.beforeSave = function () {
-	this.legalNameSearch = this.legalName.toLowerCase();
-};
-
-module.exports = Nonprofit;

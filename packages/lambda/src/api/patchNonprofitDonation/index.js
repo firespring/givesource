@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const Donation = require('./../../models/donation');
 const HttpException = require('./../../exceptions/http');
 const NonprofitDonationsRepository = require('./../../repositories/nonprofitDonations');
 const Request = require('./../../aws/request');
@@ -26,13 +25,13 @@ exports.handle = function (event, context, callback) {
 
 	let donation = null;
 	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_uuid'), request.urlParam('donation_uuid'));
+		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_id'));
 	}).then(function (result) {
 		donation = new Donation(result);
 		donation.populate(request._body);
 		return donation.validate();
 	}).then(function () {
-		return repository.save(request.urlParam('nonprofit_uuid'), donation);
+		return repository.save(request.urlParam('nonprofit_id'), donation);
 	}).then(function (model) {
 		callback(null, model.all());
 	}).catch(function (err) {
