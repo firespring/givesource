@@ -56,7 +56,7 @@
 		"file-loader": "^2.0.0",
 		"fireSlider.js": "github:mmonkey/fireSlider",
 		"html-webpack-plugin": "^3.2.0",
-		"inquirer": "^5.1.0",
+		"inquirer": "^7.0.5",
 		"jquery": "^3.5.0",
 		"jquery-datetimepicker": "^2.5.4",
 		"lodash": "^4.17.15",
@@ -88,8 +88,8 @@
 		"vuex": "^2.4.1",
 		"vuex-persistedstate": "^2.0.0",
 		"webpack": "^4.29.6",
-		"webpack-cli": "^3.3.5",
-		"webpack-dev-server": "^3.2.1",
+		"webpack-cli": "^4.0.0",
+		"webpack-dev-server": "^4.0.0",
 		"whatwg-fetch": "^3.0.0"
 	}
 }
