@@ -26,7 +26,7 @@
           class="fa fa-plus-circle"
           aria-hidden="true"
         ></i>
-        Add Offline Donations
+        Add Single Donation
       </router-link>
       <router-link
         :to="{ name: 'donations-add-bulk' }"
