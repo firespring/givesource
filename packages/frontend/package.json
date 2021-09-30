@@ -10,8 +10,8 @@
 		"fetch": "node bin/fetch-settings",
 		"release": "npm run webpack && node bin/release.js",
 		"release:force": "npm run webpack && node bin/release.js --force",
-		"webpack": "npm run fetch && webpack --config config/webpack.config.admin.js --config config/webpack.config.public.js --hide-modules",
-		"webpack:watch": "npm run fetch && webpack --config config/webpack.config.admin.js --config config/webpack.config.public.js --hide-modules --watch"
+		"webpack": "npm run fetch && webpack --config config/webpack.config.admin.js --config config/webpack.config.public.js",
+		"webpack:watch": "npm run fetch && webpack --config config/webpack.config.admin.js --config config/webpack.config.public.js --watch"
 	},
 	"author": "Firespring",
 	"license": "Apache-2.0",
@@ -56,7 +56,7 @@
 		"file-loader": "^2.0.0",
 		"fireSlider.js": "github:mmonkey/fireSlider",
 		"html-webpack-plugin": "^3.2.0",
-		"inquirer": "^5.1.0",
+		"inquirer": "^7.0.5",
 		"jquery": "^3.5.0",
 		"jquery-datetimepicker": "^2.5.4",
 		"lodash": "^4.17.15",
@@ -88,8 +88,8 @@
 		"vuex": "^2.4.1",
 		"vuex-persistedstate": "^2.0.0",
 		"webpack": "^4.29.6",
-		"webpack-cli": "^3.3.5",
-		"webpack-dev-server": "^3.2.1",
+		"webpack-cli": "^4.0.0",
+		"webpack-dev-server": "^4.0.0",
 		"whatwg-fetch": "^3.0.0"
 	}
 }
