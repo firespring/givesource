@@ -29,7 +29,7 @@ module.exports = {
 					allowNull: false,
 				},
 				value: {
-					type: Sequelize.STRING(8192),
+					type: Sequelize.TEXT,
 					allowNull: false,
 				},
 				isDeleted: {
