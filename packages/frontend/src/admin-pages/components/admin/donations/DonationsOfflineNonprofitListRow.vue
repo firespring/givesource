@@ -35,7 +35,8 @@
       <div class="u-control-icon u-control-icon--dollar">
         <input
           v-model="dollarAmount"
-          type="text"
+          type="number"
+          step="0.01"
           :name="dollarAmountFieldName"
           :id="dollarAmountFieldName"
           :class="{ 'has-error': errors[dollarAmountFieldName] }"
