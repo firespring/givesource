@@ -333,13 +333,13 @@ export default {
     validateDonationRowData () {
       const vm = this
       _.each(vm.donationRows, function (donation) {
-        if (parseInt(donation.selectedNonprofit) === 0) {
+        if (parseInt(donation.selectedNonprofit) === 0 || donation.selectedNonprofit === '') {
           vm.formErrors[vm.constructNonprofitId(donation.row)] = 'This field is required.'
         }
-        if (parseInt(donation.dollarAmount) === 0) {
+        if (parseInt(donation.dollarAmount) === 0 || donation.dollarAmount === '') {
           vm.formErrors[vm.constructDonationAmount(donation.row)] = 'This field is required.'
         }
-        if (parseInt(donation.dollarAmount) < 0) {
+        if (parseFloat(donation.dollarAmount) < 0) {
           vm.formErrors[vm.constructDonationAmount(donation.row)] = 'This field must be greater than 0.'
         }
       })
@@ -390,6 +390,9 @@ export default {
               firstName: '',
               lastName: ''
             }
+            vm.donationRows = []
+            vm.donationRowTracker = 0
+            vm.addDonationRowData()
           } else {
             vm.$router.push({ name: 'donations-list' })
           }
@@ -414,7 +417,7 @@ export default {
       const vm = this
       vm.donationRows.push({
         selectedNonprofit: 0,
-        dollarAmount: 0,
+        dollarAmount: '',
         note: '',
         row: vm.donationRowTracker
       })
