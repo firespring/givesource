@@ -1,0 +1,28 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.22.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - webpack-cli > webpack-merge > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-environment > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-generator > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-environment > grouped-queue > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-generator > grouped-queue > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-generator > async > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-generator > yeoman-environment > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-environment > yeoman-generator > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-generator > yeoman-environment > grouped-queue > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-environment > yeoman-generator > grouped-queue > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
+    - webpack-cli > @webpack-cli/init > @webpack-cli/generators > yeoman-environment > yeoman-generator > async > lodash:
+        patched: '2021-10-04T22:36:27.152Z'
