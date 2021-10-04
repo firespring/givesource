@@ -133,7 +133,7 @@
                 <div class="c-form-item">
 
                   <!-- BEGIN table -->
-                  <table class="table-middle">
+                  <table>
                     <thead>
                     <tr>
                       <th class="u-width-33p">Related Nonprofit (Required)</th>
@@ -161,6 +161,7 @@
                     <div class="c-table-footer__actions">
                       <button
                         class="c-btn c-btn--icon c-btn--good c-btn--sm"
+                        type="button"
                         @click="addDonationRowData"
                       >
                         <i
@@ -305,6 +306,7 @@ export default {
      *
      */
     submit (event) {
+      console.log(event) // DM: DEBUG
       event.preventDefault()
     },
 
@@ -413,7 +415,8 @@ export default {
     /**
      * add donation row
      */
-    addDonationRowData () {
+    addDonationRowData (event) {
+      console.log('hit?', event) // DM: DEBUG
       const vm = this
       vm.donationRows.push({
         selectedNonprofit: 0,
