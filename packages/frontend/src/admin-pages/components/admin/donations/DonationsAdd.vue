@@ -15,501 +15,487 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content o-app_main-content--md">
-                <div class="o-app-main-content">
+  <div class="o-app">
+    <navigation></navigation>
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content o-app_main-content--lg">
+        <div class="o-app-main-content">
 
-                    <div class="o-page-header">
-                        <div class="o-page-header__text">
-                            <nav class="o-page-header-nav c-breadcrumb">
-                                <span><router-link :to="{ name: 'donations-list' }">Donations</router-link></span>
-                            </nav>
-                            <h1 class="o-page-header-title">Add Offline Donations</h1>
-                        </div>
-                    </div>
-
-                    <api-error v-model="apiError"></api-error>
-
-                    <form v-on:submit="submit">
-                        <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
-                            <layout-spinner v-if="!loaded" height="496px"></layout-spinner>
-                            <div class="c-page-section__main" v-else>
-
-                                <div class="c-form-item c-form-item--select c-form-item--combobox c-form-item--required"
-                                     :class="{ 'c-form-item--has-error': formErrors.nonprofitId }">
-                                    <div class="c-form-item__label">
-                                        <label for="nonprofitId" class="c-form-item-label-text">Related Nonprofit</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <forms-select-nonprofit v-model="formData.nonprofitId" id="nonprofitId" name="nonprofitId" :nonprofits="nonprofits"
-                                                                :hasError="formErrors.hasOwnProperty('nonprofitId')"></forms-select-nonprofit>
-                                        <div v-if="formErrors.nonprofitId" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.nonprofitId }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="c-form-item c-form-item--number c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.subtotal }">
-                                    <div class="c-form-item__label">
-                                        <label for="donationAmount" class="c-form-item-label-text">Donation Amount</label>
-                                    </div>
-                                    <div class="c-form-item__control">
-                                        <div class="u-control-icon u-control-icon--dollar">
-                                            <input v-model="formData.subtotal" type="text" name="donationAmount" id="donationAmount" style="width: 10rem;"
-                                                   :class="{ 'has-error': formErrors.subtotal }" v-money="currencyOptions">
-                                        </div>
-                                        <div v-if="formErrors.subtotal" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                            {{ formErrors.subtotal }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="c-form-item c-form-item--radio">
-                                    <div class="c-form-item__label">
-                                        <div class="c-form-item-label-text" id="radioSubOptionInline">Donation Type</div>
-                                    </div>
-
-                                    <div class="c-form-item__control">
-                                        <ul class="c-input-list c-input-list--radio c-input-list--inline has-sub-options--show" aria-labelledby="radioSubOptionInline">
-                                            <li class="has-sub-options">
-                                                <input v-model="formData.type" type="radio" name="donationType" id="donationType-1" value="SINGLE">
-                                                <label for="donationType-1">Single Donor</label>
-                                            </li>
-                                            <li class="has-sub-options has-sub-options--show">
-                                                <input v-model="formData.type" type="radio" name="donationType" id="donationType-2" value="BULK">
-                                                <label for="donationType-2">Bulk Donation</label>
-                                            </li>
-                                        </ul>
-
-                                        <div class="sub-options-inline-wrapper sub-options-inline-wrapper--show">
-                                            <div id="donationType-1-sub-options" class="sub-options-inline" :class="{'sub-options-inline--show': formData.type === 'SINGLE'}">
-                                                <div class="c-form-item c-form-item--text c-form-item--required"
-                                                     :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }">
-                                                    <div class="c-form-item__label">
-                                                        <label for="donorNameFirst" class="c-form-item-label-text">Donor Name</label>
-                                                    </div>
-                                                    <div class="c-form-item__control">
-                                                        <div class="c-form-control-grid">
-                                                            <div class="c-form-control-grid__item">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.firstName" type="text" name="donorNameFirst" id="donorNameFirst"
-                                                                           :class="{ 'has-error': formErrors.firstName }">
-                                                                    <label for="donorNameFirst">First Name</label>
-                                                                </div>
-                                                                <div v-if="formErrors.firstName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                                    {{ formErrors.firstName }}
-                                                                </div>
-                                                            </div>
-                                                            <div class="c-form-control-grid__item">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.lastName" type="text" name="donorNameLast" id="donorNameLast"
-                                                                           :class="{ 'has-error': formErrors.lastName }">
-                                                                    <label for="donorNameLast">Last Name</label>
-                                                                </div>
-                                                                <div v-if="formErrors.lastName" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                                    {{ formErrors.lastName }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="c-form-item c-form-item--email" :class="{ 'c-form-item--has-error': formErrors.email }">
-                                                    <div class="c-form-item__label">
-                                                        <label for="donorEmail" class="c-form-item-label-text">Donor Email</label>
-                                                    </div>
-                                                    <div class="c-form-item__control">
-                                                        <div class="u-control-icon u-control-icon--email">
-                                                            <input v-model="formData.email" type="email" name="donorEmail" id="donorEmail"
-                                                                   :class="{ 'has-error': formErrors.email }">
-                                                        </div>
-                                                        <div v-if="formErrors.email" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                            {{ formErrors.email }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="c-form-item c-form-item--control-group c-form-item--control-group--address">
-                                                    <div class="c-form-item__label">
-                                                        <div class="c-form-item-label-text">Address</div>
-                                                    </div>
-
-                                                    <div class="c-form-item__control u-margin-top-thick">
-                                                        <div class="c-form-control-grid">
-                                                            <div class="c-form-control-grid__item">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.address1" type="text" name="address1" id="address1"
-                                                                           :class="{ 'has-error': formErrors.address1 }">
-                                                                    <label for="address1">Address Line 1</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div v-if="formErrors.address1" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                                                            {{ formErrors.address1 }}
-                                                        </div>
-
-                                                        <div class="c-form-control-grid">
-                                                            <div class="c-form-control-grid__item">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.address2" type="text" name="address2" id="address2"
-                                                                           :class="{ 'has-error': formErrors.address2 }">
-                                                                    <label for="address2">Address Line 2</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div v-if="formErrors.address2" class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                                                            {{ formErrors.address2 }}
-                                                        </div>
-
-                                                        <div class="c-form-control-grid">
-                                                            <div class="c-form-control-grid__item">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.city" type="text" name="city" id="city" :class="{ 'has-error': formErrors.city }">
-                                                                    <label for="city">City</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="c-form-control-grid__item u-flex-collapse" id="addressGroupDefaultCountryOptions-US">
-                                                                <state-select v-model="formData.state" name="state" id="state" placeholder="State"
-                                                                              :class="{ 'has-error': formErrors.state }"></state-select>
-                                                            </div>
-                                                            <div class="c-form-control-grid__item" style="flex: 1 0 11rem; max-width: 11rem;">
-                                                                <div class="has-floating-label js-floating-label" v-floating-label>
-                                                                    <input v-model="formData.zip" type="text" name="zip" id="zip" :class="{ 'has-error': formErrors.zip }">
-                                                                    <label for="zip">ZIP Code</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div v-if="formErrors.city || formErrors.state || formErrors.zip"
-                                                             class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick">
-                                                            <span v-if="formErrors.city">{{ formErrors.city }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
-                                                                v-if="formErrors.zip">{{ formErrors.zip }}.</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <div id="donationType-2-sub-options" class="sub-options-inline" :class="{'sub-options-inline--show': formData.type === 'BULK'}">
-                                                <div class="c-form-item c-form-item--number c-form-item--required" :class="{ 'c-form-item--has-error': formErrors.count}">
-                                                    <div class="c-form-item__label">
-                                                        <label for="donationNum" class="c-form-item-label-text"># of Donations</label>
-                                                    </div>
-                                                    <div class="c-form-item__control">
-                                                        <input v-model="formData.count" type="number" name="donationNum" id="donationNum"
-                                                               :class="{ 'has-error': formErrors.count }">
-                                                    </div>
-                                                    <div v-if="formErrors.count" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                                        {{ formErrors.count }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </section>
-
-                        <footer class="c-form-actions">
-                            <button v-on:click="save('close')" type="submit" class="c-btn">Save & Finish</button>
-                            <button v-on:click="save('add')" type="submit" class="c-btn">Save & Add Another</button>
-                            <router-link :to="{ name: 'donations-list' }" class="c-btn c-btn--text c-btn--neutral">Cancel</router-link>
-                        </footer>
-
-                    </form>
-                </div>
+          <div class="o-page-header">
+            <div class="o-page-header__text">
+              <nav class="o-page-header-nav c-breadcrumb">
+                <span><router-link :to="{ name: 'donations-list' }">Donations</router-link></span>
+              </nav>
+              <h1 class="o-page-header-title">Add Offline Single Donation</h1>
             </div>
-        </main>
-    </div>
+          </div>
+
+          <api-error v-model="apiError"></api-error>
+
+          <form v-on:submit="submit">
+            <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
+              <layout-spinner
+                v-if="!loaded"
+                height="496px"
+              ></layout-spinner>
+              <div
+                class="c-page-section__main"
+                v-else
+              >
+
+                <div
+                  class="c-form-item c-form-item--text c-form-item--required"
+                  :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }"
+                >
+                  <div class="c-form-item__label">
+                    <label
+                      for="donorNameFirst"
+                      class="c-form-item-label-text"
+                    >Donor Name</label>
+                  </div>
+                  <div class="c-form-item__control">
+                    <div class="c-form-control-grid">
+                      <div class="c-form-control-grid__item">
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.firstName"
+                            type="text"
+                            name="donorNameFirst"
+                            id="donorNameFirst"
+                            :class="{ 'has-error': formErrors.firstName }"
+                          >
+                          <label for="donorNameFirst">First Name</label>
+                        </div>
+                        <div
+                          v-if="formErrors.firstName"
+                          class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                        >
+                          {{ formErrors.firstName }}
+                        </div>
+                      </div>
+                      <div class="c-form-control-grid__item">
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.lastName"
+                            type="text"
+                            name="donorNameLast"
+                            id="donorNameLast"
+                            :class="{ 'has-error': formErrors.lastName }"
+                          >
+                          <label for="donorNameLast">Last Name</label>
+                        </div>
+                        <div
+                          v-if="formErrors.lastName"
+                          class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                        >
+                          {{ formErrors.lastName }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="c-form-item c-form-item--email"
+                  :class="{ 'c-form-item--has-error': formErrors.email }"
+                >
+                  <div class="c-form-item__label">
+                    <label
+                      for="donorEmail"
+                      class="c-form-item-label-text"
+                    >Donor Email</label>
+                  </div>
+                  <div class="c-form-item__control">
+                    <div class="u-control-icon u-control-icon--email">
+                      <input
+                        v-model="formData.email"
+                        type="email"
+                        name="donorEmail"
+                        id="donorEmail"
+                        :class="{ 'has-error': formErrors.email }"
+                      >
+                    </div>
+                    <div
+                      v-if="formErrors.email"
+                      class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                    >
+                      {{ formErrors.email }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="c-form-item">
+
+                  <!-- BEGIN table -->
+                  <table>
+                    <thead>
+                    <tr>
+                      <th class="u-width-33p">Related Nonprofit (Required)</th>
+                      <th class="u-width-33p">Donation Amount (Required)</th>
+                      <th class="u-width-33p">Note (Optional)</th>
+                      <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template v-for="data in donationRows">
+                      <donations-options
+                        :errors="formErrors"
+                        :nonprofits="nonprofits"
+                        :donation-data="data"
+                        :nonprofit-field-name="constructNonprofitId(data.row)"
+                        :dollar-amount-field-name="constructDonationAmount(data.row)"
+                        :note-field-name="constructNote(data.row)"
+                        @change="updateDonationDataRow"
+                        @remove="removeDonationDataRow"
+                      />
+                    </template>
+                    </tbody>
+                  </table>
+                  <div class="c-table-footer">
+                    <div class="c-table-footer__actions">
+                      <button
+                        class="c-btn c-btn--icon c-btn--good c-btn--sm"
+                        type="button"
+                        @click="addDonationRowData"
+                      >
+                        <i
+                          class="fa fa-plus-circle"
+                          aria-hidden="true"
+                        />Add Nonprofit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="c-form-actions">
+              <button
+                v-on:click="save('close')"
+                type="submit"
+                class="c-btn"
+              >Save & Finish
+              </button>
+              <button
+                v-on:click="save('add')"
+                type="submit"
+                class="c-btn"
+              >Save & Add Another
+              </button>
+              <router-link
+                :to="{ name: 'donations-list' }"
+                class="c-btn c-btn--text c-btn--neutral"
+              >Cancel
+              </router-link>
+            </footer>
+
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue';
-	import ComponentSpinner from './../../layout/Spinner.vue';
-	import ComponentSelectState from './../../forms/SelectState.vue';
+import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue'
+import ComponentSpinner from './../../layout/Spinner.vue'
+import ComponentSelectState from './../../forms/SelectState.vue'
+import ComponentDonationsOfflineNonprofitListRow from './DonationsOfflineNonprofitListRow.vue'
 
-	export default {
+export default {
 
-		data() {
-			return {
-				nonprofits: [],
-				loaded: false,
+  data () {
+    return {
+      donationRows: [],
+      donationRowTracker: 0,
+      nonprofits: [],
+      loaded: false,
 
-				currencyOptions: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				},
+      currencyOptions: {
+        precision: 2,
+        masked: true,
+        thousands: ''
+      },
 
-				// Form Data
-				formData: {
-					address1: '',
-					address2: '',
-					city: '',
-					count: '',
-					email: '',
-					firstName: '',
-					lastName: '',
-					nonprofitId: '',
-					state: '',
-					subtotal: 0,
-					type: 'SINGLE',
-					zip: ''
-				},
+      // Form Data
+      formData: {
+        email: '',
+        firstName: '',
+        lastName: ''
+      },
 
-				// Errors
-				formErrors: {},
-				apiError: {}
-			};
-		},
+      // Errors
+      formErrors: {},
+      apiError: {}
+    }
+  },
 
-		beforeRouteEnter(to, from, next) {
-			next(vm => {
-				vm.$request.get('nonprofits/search', {
-					status: 'ACTIVE'
-				}).then(response => {
-					vm.nonprofits = response.data;
-					vm.loaded = true;
-				});
-			});
-		},
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$request.get('nonprofits/search', {
+        status: 'ACTIVE'
+      }).then(response => {
+        vm.nonprofits = response.data
+        vm.loaded = true
+      })
+    })
+  },
 
-		beforeRouteUpdate(to, from, next) {
-			const vm = this;
+  beforeRouteUpdate (to, from, next) {
+    const vm = this
 
-			vm.$request.get('nonprofits/search', {
-				status: 'ACTIVE'
-			}).then(response => {
-				vm.nonprofits = response.data;
-				vm.loaded = true;
-				next();
-			}).catch(() => {
-				next();
-			});
-		},
+    vm.$request.get('nonprofits/search', {
+      status: 'ACTIVE'
+    }).then(response => {
+      vm.nonprofits = response.data
+      vm.loaded = true
+      next()
+    }).catch(() => {
+      next()
+    })
+  },
 
-		watch: {
-			formData: {
-				handler() {
-					const vm = this;
-					if (Object.keys(vm.formErrors).length) {
-						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
-					}
-				},
-				deep: true
-			}
-		},
+  created () {
+    const vm = this
+    vm.addDonationRowData()
+  },
 
-		methods: {
+  watch: {
+    formData: {
+      handler () {
+        const vm = this
+        if (Object.keys(vm.formErrors).length) {
+          vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+        }
+      },
+      deep: true
+    }
+  },
 
-			getConstraints() {
-				const vm = this;
+  methods: {
+    /**
+     * Validate the normal form data
+     *
+     * @return {{firstName: {label: string, presence: boolean}, lastName: {label: string, presence: boolean}, email: {label: string, presence: boolean, email: boolean}}}
+     */
+    getConstraints () {
+      return {
+        email: {
+          label: 'Donor email address',
+          presence: false,
+          email: true
+        },
+        firstName: {
+          label: 'Donor first name',
+          presence: true
+        },
+        lastName: {
+          label: 'Donor last name',
+          presence: true
+        }
+      }
+    },
 
-				const constraints = {
-					nonprofitId: {
-						label: 'Related nonprofit',
-						presence: true,
-					},
-					subtotal: {
-						label: 'Donation amount',
-						presence: true,
-						numericality: {
-							greaterThan: 0,
-						}
-					},
-				};
+    /**
+     *
+     */
+    submit (event) {
+      console.log(event) // DM: DEBUG
+      event.preventDefault()
+    },
 
-				if (vm.formData.type === 'BULK') {
-					constraints['count'] = {
-						label: 'Number of donations',
-						presence: true,
-						numericality: {
-							greaterThan: 0,
-						}
-					};
-				}
+    /**
+     * Submit and save form
+     *
+     * @param action
+     */
+    save (action) {
+      const vm = this
 
-				if (vm.formData.type === 'SINGLE') {
-					constraints['address1'] = {
-						label: 'Address line 1',
-						presence: false,
-					};
+      vm.addModal('spinner')
 
-					constraints['address2'] = {
-						label: 'Address line 2',
-						presence: false,
-					};
+      vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+      vm.validateDonationRowData()
+      if (Object.keys(vm.formErrors).length) {
+        vm.clearModals()
+      } else {
+        vm.addDonation(action)
+      }
+    },
 
-					constraints['city'] = {
-						presence: false,
-					};
+    /**
+     * Validate the option rows
+     */
+    validateDonationRowData () {
+      const vm = this
+      _.each(vm.donationRows, function (donation) {
+        if (parseInt(donation.selectedNonprofit) === 0 || donation.selectedNonprofit === '') {
+          vm.formErrors[vm.constructNonprofitId(donation.row)] = 'This field is required.'
+        }
+        if (parseInt(donation.dollarAmount) === 0 || donation.dollarAmount === '') {
+          vm.formErrors[vm.constructDonationAmount(donation.row)] = 'This field is required.'
+        }
+        if (parseFloat(donation.dollarAmount) < 0) {
+          vm.formErrors[vm.constructDonationAmount(donation.row)] = 'This field must be greater than 0.'
+        }
+      })
+    },
 
-					constraints['email'] = {
-						label: 'Donor email address',
-						presence: false,
-						email: true,
-					};
+    /**
+     * Add the donation create/find donor
+     *
+     * @param action
+     */
+    addDonation (action) {
+      const vm = this
+      let donations
+      let promise = Promise.resolve()
+      promise = promise.then(() => {
+        const donor = {
+          firstName: vm.formData.firstName,
+          lastName: vm.formData.lastName
+        }
+        if (vm.formData.email) {
+          donor.email = vm.formData.email
+        }
+        return vm.$request.post('donors', donor)
+      }).then(response => {
+        donations = _.map(vm.donationRows, function (donation) {
+          return {
+            isAnonymous: false,
+            isFeeCovered: false,
+            isOfflineDonation: true,
+            subtotal: vm.getSubtotal(donation.dollarAmount),
+            total: vm.getSubtotal(donation.dollarAmount),
+            nonprofitId: parseInt(donation.selectedNonprofit),
+            note: donation.note
+          }
+        })
+        return vm.$request.post('donations/offline', { donorId: response.data.id, donations: donations })
+      })
 
-					constraints['firstName'] = {
-						label: 'Donor first name',
-						presence: true,
-					};
+      promise.then(response => {
+        vm.clearModals()
 
-					constraints['lastName'] = {
-						label: 'Donor last name',
-						presence: true,
-					};
+        if (response.data.errorMessage) {
+          console.log(response.data)
+        } else {
+          if (action === 'add') {
+            vm.formData = {
+              email: '',
+              firstName: '',
+              lastName: ''
+            }
+            vm.donationRows = []
+            vm.donationRowTracker = 0
+            vm.addDonationRowData()
+          } else {
+            vm.$router.push({ name: 'donations-list' })
+          }
+        }
+      }).catch(err => {
+        vm.clearModals()
+        vm.apiError = err.response.data.errors
+      })
+    },
 
-					constraints['state'] = {
-						label: 'Address line 2',
-						presence: false,
-					};
+    /**
+     * Get the subtotal
+     */
+    getSubtotal (subtotal) {
+      return Math.floor(Math.round(subtotal * 100))
+    },
 
-					constraints['zip'] = {
-						label: 'Zip code',
-						presence: false,
-					};
-				}
+    /**
+     * add donation row
+     */
+    addDonationRowData (event) {
+      console.log('hit?', event) // DM: DEBUG
+      const vm = this
+      vm.donationRows.push({
+        selectedNonprofit: 0,
+        dollarAmount: '',
+        note: '',
+        row: vm.donationRowTracker
+      })
+      vm.donationRowTracker++
+    },
 
-				return constraints;
-			},
+    /**
+     * Update row
+     *
+     * @param data
+     */
+    updateDonationDataRow (data) {
+      const vm = this
+      let dataIndex = 0
+      _.each(vm.donationRows, function (rowData, index) {
+        if (rowData.row === data.row) {
+          dataIndex = index
+        }
+      })
+      vm.donationRows[dataIndex] = data
+    },
 
-			submit(event) {
-				event.preventDefault();
-			},
+    /**
+     * Remove row
+     *
+     * @param data
+     */
+    removeDonationDataRow (data) {
+      const vm = this
+      vm.donationRows = _.filter(vm.donationRows, function (rowData) {
+        return data.row !== rowData.row
+      })
+      vm.donationRowTracker = 0
+      _.each(vm.donationRows, function (rowData) {
+        rowData.row = vm.donationRowTracker
+        vm.donationRowTracker++
+      })
+    },
 
-			save(action) {
-				const vm = this;
+    /**
+     * get field name
+     *
+     * @param row
+     * @return {string}
+     */
+    constructNonprofitId (row) {
+      return 'donationOption.' + row + '.nonprofitId'
+    },
 
-				vm.addModal('spinner');
+    /**
+     * get field name
+     *
+     * @param row
+     * @return {string}
+     */
+    constructDonationAmount (row) {
+      return 'donationOption.' + row + '.dollarAmount'
+    },
 
-				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
-				if (Object.keys(vm.formErrors).length) {
-					vm.clearModals();
-				} else {
-					vm.addDonation(action);
-				}
-			},
+    /**
+     * get field name
+     *
+     * @param row
+     * @return {string}
+     */
+    constructNote (row) {
+      return 'donationOption.' + row + '.note'
+    }
+  },
 
-			addDonation(action) {
-				const vm = this;
-
-				const donation = {
-					isAnonymous: false,
-					isFeeCovered: false,
-					isOfflineDonation: true,
-					subtotal: vm.getSubtotal(),
-					total: vm.getSubtotal(),
-					type: vm.formData.type,
-				};
-
-				let nonprofit = {};
-				let promise = Promise.resolve();
-				promise = promise.then(() => {
-					return vm.$request.get('nonprofits/' + vm.formData.nonprofitId);
-				}).then(response => {
-					nonprofit = response.data;
-					donation['nonprofitLegalName'] = nonprofit.legalName;
-					donation['nonprofitAddress1'] = nonprofit.address1;
-					donation['nonprofitAddress2'] = nonprofit.address2;
-					donation['nonprofitAddress3'] = nonprofit.address3;
-					donation['nonprofitCity'] = nonprofit.city;
-					donation['nonprofitState'] = nonprofit.state;
-					donation['nonprofitZip'] = nonprofit.zip;
-				});
-
-				if (vm.formData.type === 'BULK') {
-					promise = promise.then(() => {
-						donation['count'] = parseInt(vm.formData.count);
-						return vm.$request.post('nonprofits/' + nonprofit.id + '/donations', donation);
-					});
-				}
-
-				if (vm.formData.type === 'SINGLE') {
-					promise = promise.then(() => {
-						const donor = {
-							firstName: vm.formData.firstName,
-							lastName: vm.formData.lastName,
-						};
-
-						if (vm.formData.email) {
-							donor.email = vm.formData.email;
-						}
-
-						if (vm.formData.address1) {
-							donor.address1 = vm.formData.address1;
-						}
-
-						if (vm.formData.address2) {
-							donor.address2 = vm.formData.address2;
-						}
-
-						if (vm.formData.city) {
-							donor.city = vm.formData.city;
-						}
-
-						if (vm.formData.state) {
-							donor.state = vm.formData.state;
-						}
-
-						if (vm.formData.zip) {
-							donor.zip = vm.formData.zip;
-						}
-
-						return vm.$request.post('donors', donor);
-
-					}).then(response => {
-						donation['donorId'] = response.data.id;
-						donation['donorAddress1'] = response.data.address1;
-						donation['donorAddress2'] = response.data.address2;
-						donation['donorCity'] = response.data.city;
-						donation['donorFirstName'] = response.data.firstName;
-						donation['donorLastName'] = response.data.lastName;
-						donation['donorEmail'] = response.data.email;
-						donation['donorState'] = response.data.state;
-						donation['donorZip'] = response.data.zip;
-						return vm.$request.post('nonprofits/' + nonprofit.id + '/donations', donation);
-					});
-				}
-
-				promise.then(response => {
-					vm.clearModals();
-
-					if (response.data.errorMessage) {
-						console.log(response.data);
-					} else {
-						if (action === 'add') {
-							vm.formData = {
-								count: '',
-								email: '',
-								firstName: '',
-								lastName: '',
-								nonprofitId: '',
-								subtotal: 0,
-								type: vm.formData.type,
-							};
-						} else {
-							vm.$router.push({name: 'donations-list'});
-						}
-					}
-				}).catch(err => {
-					vm.clearModals();
-					vm.apiError = err.response.data.errors;
-				});
-			},
-
-			getSubtotal() {
-				return Math.floor(Math.round(this.formData.subtotal * 100));
-			}
-		},
-
-		components: {
-			'forms-select-nonprofit': ComponentSelectNonprofit,
-			'layout-spinner': ComponentSpinner,
-			'state-select': ComponentSelectState,
-		}
-	};
+  components: {
+    'donations-options': ComponentDonationsOfflineNonprofitListRow,
+    'forms-select-nonprofit': ComponentSelectNonprofit,
+    'layout-spinner': ComponentSpinner,
+    'state-select': ComponentSelectState
+  }
+}
 </script>

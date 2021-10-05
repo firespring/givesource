@@ -74,7 +74,7 @@
                     <label
                       for="donationAmount"
                       class="c-form-item-label-text"
-                    >Donation Amount</label>
+                    >Total Donation Amount</label>
                   </div>
                   <div class="c-form-item__control">
                     <div class="u-control-icon u-control-icon--dollar">
