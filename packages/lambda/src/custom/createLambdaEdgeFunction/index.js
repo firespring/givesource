@@ -31,7 +31,7 @@ exports.handle = (event, context, callback) => {
 	const functionName = process.env.AWS_STACK_NAME + '-' + event.ResourceProperties.FunctionName;
 	const region = 'us-east-1';
 	const role = event.ResourceProperties.Role;
-	const runtime = 'nodejs10.x';
+	const runtime = 'nodejs14.x';
 
 	if (event.RequestType === 'Delete') {
 		lambda.deleteFunction(region, event.PhysicalResourceId).then(() => {
@@ -55,7 +55,7 @@ exports.handle = (event, context, callback) => {
 
 					output.on('close', () => {
 						const data = fs.readFileSync(filePath);
-						code = new Buffer(data, 'binary');
+						code = Buffer.from(data, 'binary');
 						resolve();
 					});
 
