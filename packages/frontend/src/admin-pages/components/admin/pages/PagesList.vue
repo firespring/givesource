@@ -373,7 +373,7 @@
 						});
 						const setting = _.find(vm.settings, {key: 'CUSTOM_PAGE_ENABLED_' + content.identifier});
 						if (typeof setting === 'object' && setting.hasOwnProperty('value')) {
-							content.enabled = setting.value;
+							content.enabled = setting.value === '1';
 						}
 						vm.custom.push(content);
 					});
@@ -470,7 +470,7 @@
 						key: key,
 						value: content.enabled
 					}).then((response) => {
-						vm.settings.push(response.data);
+						vm.settings.push(response.data[0]);
 						content.updating = false;
 					}).catch((err) => {
 						vm.apiError = err.response.data.errors;
