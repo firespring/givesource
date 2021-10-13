@@ -208,7 +208,21 @@
                     <div v-html="text" style="margin: 0 0 1.5rem;"></div>
 
                     <div class="form-actions flex justify-center items-center" v-if="!isCartEmpty">
+                      <vue-recaptcha
+                        v-if="getSiteKey"
+                        :loadRecaptchaScript="true"
+                        :sitekey="getSiteKey"
+                        @verify="validateRecaptcha"
+                      >
                         <forms-submit :processing="processing" color="accent" size="lg">Complete Your Donation</forms-submit>
+                      </vue-recaptcha>
+                      <forms-submit
+                        v-else
+                        :processing="processing"
+                        color="accent"
+                        size="lg">
+                        Complete Your Donation
+                      </forms-submit>
                     </div>
                 </form>
 
@@ -222,6 +236,7 @@
 </template>
 
 <script>
+  import VueRecaptcha from 'vue-recaptcha';
 	import * as Settings from './../../helpers/settings';
 	import * as Utils from './../../helpers/utils';
 	import ComponentAddressState from './../forms/AddressState.vue';
@@ -293,7 +308,15 @@
 			},
 			isCartEmpty() {
 				return this.$store.state.cartItems.length === 0;
-			}
+			},
+      /**
+       * Check to see if recaptcha key exists
+       *
+       * @return {string|null|undefined}
+       */
+      getSiteKey () {
+        return this.$store.getters.setting('RECAPTCHA_KEY');
+      }
 		},
 		beforeRouteEnter(to, from, next) {
 			next(vm => {
@@ -474,6 +497,22 @@
 					vm.processDonations();
 				}
 			},
+      /**
+       * Validate the form against recaptcha
+       *
+       * @param response
+       * @return {Promise<AxiosResponse<any>>}
+       */
+      validateRecaptcha (response) {
+			  const vm = this
+        return axios.post(API_URL + 'recaptcha/validate', {
+          recaptchaToken: response
+        }).then(response => {
+          vm.submit();
+        }).catch(err => {
+          vm.apiError = err.errorMessage ? err.errorMessage : 'Oops, something went wrong on our side.';
+        })
+      },
 			processDonations() {
 				const vm = this;
 
@@ -586,6 +625,7 @@
 			'layout-header': ComponentHeader,
 			'layout-hero': ComponentHero,
 			'layout-sponsors': ComponentSponsors,
+      VueRecaptcha
 		}
 	};
 </script>

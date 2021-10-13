@@ -25,7 +25,7 @@ return inquirer.prompt([
 		type: 'list',
 		message: 'What setting would you like to update?',
 		name: 'key',
-		choices: ['ADMIN_URL', 'EVENT_URL']
+		choices: ['ADMIN_URL', 'EVENT_URL', 'RECAPTCHA_KEY']
 	},
 	{
 		type: 'input',
@@ -55,6 +55,7 @@ return inquirer.prompt([
 		};
 		lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
 			console.log('Setting updated');
+      lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
 		}).catch(function (err) {
 			console.log(err);
 		});

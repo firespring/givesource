@@ -16,6 +16,39 @@ Mappings:
       '948629139753': '172.135'
 
 Resources:
+  RecaptchaParameterStore:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: "The recaptcha key for all the Givesource(R) stacks."
+      Name: "/recaptcha/secure/recaptcha-key"
+      Type: String
+      Value: "temp-must-change"
+
+  RecaptchaKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt/decrypt recaptcha key
+      Enabled: true
+      EnableKeyRotation: true
+      KeyPolicy:
+        Id: "Global-RecaptchaKey"
+        Version: 2012-10-17
+        Statement:
+          - Sid: Recaptcha key policy
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: '*'
+
+  RecaptchaKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: "alias/global/recaptcha/secure"
+      TargetKeyId: !Ref RecaptchaKey
+    DependsOn: RecaptchaKey
+
   internetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -385,4 +418,10 @@ Outputs:
     Value: !Ref secondaryPrivateSubnet
     Export:
       Name: givesource-secondary-private-subnet
+
+  globalRecaptchaKey:
+    Description: Recaptcha key for Givesource
+    Value: !GetAtt RecaptchaKey.Arn
+    Export:
+      Name: global-recaptcha-key
 

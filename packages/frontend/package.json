@@ -19,7 +19,8 @@
 		"@ckeditor/ckeditor5-image": "^13.0.1",
 		"config": "^1.30.0",
 		"jquery.payment": "^3.0.0",
-		"mime": "^2.2.2"
+		"mime": "^2.2.2",
+		"vue-recaptcha": "^1.3.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.2",

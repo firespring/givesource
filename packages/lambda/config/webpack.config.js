@@ -130,6 +130,7 @@ module.exports = {
 		RegisterNonprofit: './src/api/registerNonprofit/index.js',
 		ResendUserEmailVerification: './src/api/resendUserEmailVerification/index.js',
 		SearchNonprofits: './src/api/searchNonprofits/index.js',
+    ValidateRecaptcha: './src/api/validateRecaptcha/index.js',
 		VerifyEmail: './src/api/verifyEmail/index.js',
 
 		// Custom Lambda Functions
