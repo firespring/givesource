@@ -22,8 +22,14 @@ exports.handle = function (event, context, callback) {
   const cloudFront = new CloudFront();
   const request = new Request(event, context);
 
+  let paths;
+  if (event.paths.indexOf(',') !== -1) {
+    paths = event.paths.split(',')
+  } else {
+    paths = event.paths
+  }
   request.validate().then(function () {
-    return cloudFront.createInvalidation(process.env.DISTRIBUTION_ID, event.paths);
+    return cloudFront.createMultipleInvalidations(process.env.DISTRIBUTION_ID, paths);
   }).then(function () {
     callback();
   }).catch(function (err) {

@@ -306,7 +306,6 @@ export default {
      *
      */
     submit (event) {
-      console.log(event) // DM: DEBUG
       event.preventDefault()
     },
 
@@ -416,7 +415,6 @@ export default {
      * add donation row
      */
     addDonationRowData (event) {
-      console.log('hit?', event) // DM: DEBUG
       const vm = this
       vm.donationRows.push({
         selectedNonprofit: 0,

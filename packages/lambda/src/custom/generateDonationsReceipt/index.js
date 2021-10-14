@@ -137,15 +137,12 @@ exports.handle = (event, context, callback) => {
       })
     }
     if (!transactions.length && donations.length) {
-      console.log('here?', donations) // DM: DEBUG
       let promise = Promise.resolve()
       donations.forEach(donation => {
         let transaction
         promise = promise.then(function () {
-          console.log('get ready to pop') // DM: DEBUG
           return paymentTransactionsRepository.populate({ createdAt: donation.createdAt })
         }).then(function (popTransaction) {
-          console.log('popTransaction', popTransaction) // DM: DEBUG
           transaction = popTransaction
           transaction.timezone = settings.EVENT_TIMEZONE
           transaction.transactionAmount = transaction.formattedAmount
@@ -153,14 +150,11 @@ exports.handle = (event, context, callback) => {
           transaction.isAnonymous = donation.isAnonymous
           transaction.isFeeCovered = donation.isFeeCovered
           transactions.push(transaction)
-          console.log('make it!') // DM: DEBUG
         }).catch(function (err) {
           console.log('error?', err) // DM: DEBUG
         })
       })
     }
-
-    console.log('!transactions.length', transactions.length) // DM: DEBUG
 
     return promise.then(() => {
       if (!transactions.length) {
