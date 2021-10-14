@@ -234,7 +234,9 @@ SettingsRepository.prototype.save = function (model) {
 				reject(new Error('invalid Setting model'));
 			}
 			return repository.upsert(model, {});
-		}).catch(function (err) {
+		}).then(function (setting) {
+		  resolve(setting)
+    }).catch(function (err) {
 			reject(err);
 		}).finally(function () {
 			return allModels.sequelize.close();
