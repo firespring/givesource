@@ -119,6 +119,7 @@ module.exports = {
 		PostNonprofitReport: './src/api/postNonprofitReport/index.js',
 		PostNonprofitSlide: './src/api/postNonprofitSlide/index.js',
 		PostNonprofitUser: './src/api/postNonprofitUser/index.js',
+    PostDonationsOffline: './src/api/postDonationsOffline/index.js',
 		PostPaymentTransaction: './src/api/postPaymentTransaction/index.js',
 		PostReport: './src/api/postReport/index.js',
 		PostSetting: './src/api/postSetting/index.js',

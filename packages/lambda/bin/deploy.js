@@ -38,7 +38,7 @@ const deploy = function (functionName) {
 	return lambda.getFunction(config.get('stack.AWS_REGION'), name).then(function () {
 		const filepath = buildDir + '/' + functionName + '.zip';
 		const body = fs.readFileSync(filepath);
-		const zip = new Buffer(body, 'binary');
+		const zip = Buffer.from(body, 'binary');
 		return lambda.updateFunctionCode(config.get('stack.AWS_REGION'), name, zip);
 	});
 };
