@@ -302,7 +302,7 @@
 			},
 			getImageUrl(slideFile) {
 				const vm = this;
-				const file = _.find(vm.files, {id: slideFile.id});
+				const file = _.find(vm.files, {id: slideFile.fileId});
 
 				return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : slideFile.url;
 			},

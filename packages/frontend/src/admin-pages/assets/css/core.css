@@ -5857,6 +5857,9 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 .u-control-icon--time:before {
   content: '\f017'; }
 
+.u-control-icon--dollar > input {
+    padding-left: calc(1.125em + 12px) !important; }
+
 .u-control-icon--dollar:before {
   content: '\f155'; }
 
