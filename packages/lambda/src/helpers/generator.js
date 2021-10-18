@@ -344,7 +344,6 @@ Generator.prototype.modelCollection = function (type, count, data) {
       results.push(model);
     }
   }).then(function () {
-    console.log(results); /*DM: Debug */
     return results;
   }).finally(function () {
     return allModels.sequelize.close()

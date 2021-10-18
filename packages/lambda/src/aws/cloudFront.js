@@ -57,6 +57,36 @@ CloudFront.prototype.createInvalidation = function (id, paths) {
 };
 
 /**
+ * Create an AWS CloudFront invalidation
+ *
+ * @param {String} id
+ * @param {[]} paths
+ * @return {Promise}
+ */
+CloudFront.prototype.createMultipleInvalidations = function (id, paths) {
+  const awsCloudFront = new AWS.CloudFront();
+  return new Promise(function (resolve, reject) {
+    const timestamp = new Date().getTime();
+    const params = {
+      DistributionId: id,
+      InvalidationBatch: {
+        CallerReference: timestamp.toString(),
+        Paths: {
+          Quantity: paths.length,
+          Items: paths
+        }
+      }
+    };
+    awsCloudFront.createInvalidation(params, function (err, data) {
+      if (err) {
+        reject(err);
+      }
+      resolve(data);
+    });
+  });
+};
+
+/**
  * Get an AWS CloudFront distribution config
  *
  * @param {String} id

@@ -26,7 +26,7 @@
             <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
             <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
 
-            <router-link v-for="page in pages" :key="page.id" :to="{ path: page.slug }" v-if="page.enabled">{{ page.title }}</router-link>
+            <router-link v-for="page in pages" :key="page.id" :to="{ path: page.slug }" v-if="isPageEnabled(page)">{{ page.title }}</router-link>
         </nav>
 
         <form v-on:submit.prevent="submit" class="page-header__search flex justify-center items-center">
@@ -160,7 +160,10 @@
 					name: 'search-results',
 					query: query
 				};
-			}
+			},
+      isPageEnabled (page) {
+        return page.enabled === '1'
+      }
 		}
 	};
 </script>
