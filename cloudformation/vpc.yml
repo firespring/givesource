@@ -260,6 +260,27 @@ Resources:
       SubnetId: !Ref secondaryPrivateSubnet
       RouteTableId: !Ref secondaryPrivateRouteTable
 
+  databaseArchiveBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub firespring-database-archive-${AWS::AccountId}-${AWS::Region}
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub firespring-database-archive-${AWS::AccountId}-${AWS::Region}/
+
   vpcDashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
