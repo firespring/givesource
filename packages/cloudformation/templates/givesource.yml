@@ -722,6 +722,26 @@ Resources:
     DependsOn:
       - AuroraDbStack
 
+  ApiRecaptchaStack:
+    Condition: NotReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        DefaultLambdaFunctionTimeout: !FindInMap [ Lambda, Timeout, Default ]
+        IntegrationRequestTemplate: !FindInMap [ ApiGateway, IntegrationRequestTemplate, Default ]
+        IntegrationResponsesTemplate: !FindInMap [ ApiGateway, IntegrationResponsesTemplate, Default ]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-recaptcha.yml
+      TimeoutInMinutes: 20
+    DependsOn:
+      - AuroraDbStack
+
   ApiDeployStack:
     Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
@@ -743,6 +763,7 @@ Resources:
       - ApiSettingsStack
       - ApiSponsorsStack
       - ApiUsersStack
+      - ApiRecaptchaStack
       - RestApi
 
   CognitoInitialUser:

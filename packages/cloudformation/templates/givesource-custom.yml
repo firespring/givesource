@@ -732,6 +732,7 @@ Resources:
             Action: kms:Decrypt
             Resource:
               - !GetAtt SecureSettingsKey.Arn
+              - !ImportValue global-recaptcha-key
       Roles:
       - !Ref SecureLambdaRole
 
