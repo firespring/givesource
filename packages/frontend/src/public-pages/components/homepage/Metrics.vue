@@ -121,6 +121,10 @@
                         </div>
                     </div>
                 </form>
+              <p
+                v-if="eventEnded"
+                v-html="postEventText"
+              />
             </div>
 
         </div>
@@ -241,7 +245,11 @@
 			registerDetails: {
 				type: String,
 				default: null,
-			}
+			},
+      postEventText: {
+			  type: String,
+        default: null
+      }
 		},
 		created: function () {
 			const vue = this;
@@ -255,6 +263,9 @@
 			if (vue.displayEventCountdown) {
 				vue.initializeCountdown();
 			}
+			if (Settings.isAfterEvent()) {
+			  vue.eventEnded = true
+      }
 		},
 		watch: {
 			category: function (value) {
@@ -282,6 +293,7 @@
 
 				let countdown = {};
 				vue.countdown.timer = setInterval(function () {
+				  console.log('here?') // DM: DEBUG
 					if (Settings.isAfterEvent()) {
 						vue.countdown.loaded = false;
 						vue.eventEnded = true;
