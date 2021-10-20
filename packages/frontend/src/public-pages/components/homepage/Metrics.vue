@@ -293,7 +293,6 @@
 
 				let countdown = {};
 				vue.countdown.timer = setInterval(function () {
-				  console.log('here?') // DM: DEBUG
 					if (Settings.isAfterEvent()) {
 						vue.countdown.loaded = false;
 						vue.eventEnded = true;
