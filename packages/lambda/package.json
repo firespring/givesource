@@ -5,7 +5,7 @@
 		"build": "npm run clean && npm run webpack",
 		"clean": "rimraf build",
 		"delete-test-payments": "node bin/delete-test-payments",
-        "delete-payments-by-transaction-ids": "node bin/delete-payments-by-transaction-ids",
+		"delete-payments-by-transaction-ids": "node bin/delete-payments-by-transaction-ids",
 		"deploy": "npm run build && node bin/deploy",
 		"release": "npm run build && node bin/release",
 		"release:force": "npm run release -- --force",
@@ -14,7 +14,7 @@
 		"test": "NODE_ENV=development mocha test/ --recursive",
 		"test:coverage": "nyc --reporter=lcov --reporter=text --include src/ --all npm run test",
 		"test:dev": "npm run test -- --watch",
-		"webpack": "webpack --config config/webpack.config.js --hide-modules"
+		"webpack": "webpack --config config/webpack.config.js"
 	},
 	"author": "Firespring",
 	"license": "Apache-2.0",
@@ -67,7 +67,8 @@
 		"sinon": "^2.3.6",
 		"slug": "^0.9.3",
 		"uuid-validate": "0.0.2",
-		"webpack": "^4.29.6",
-		"webpack-cli": "^4.0.0"
+		"webpack": "^5.0.0",
+		"webpack-cli": "^4.1.0",
+		"webpack-node-externals": "^3.0.0"
 	}
 }
