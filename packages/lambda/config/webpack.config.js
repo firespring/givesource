@@ -181,7 +181,11 @@ module.exports = {
 		libraryTarget: 'commonjs2',
 	},
 	target: 'node',
-	externals: [nodeExternals({'aws-sdk': 'commonjs aws-sdk'})],
+	externals: {
+	  'aws-sdk': 'commonjs aws-sdk',
+    sequelize: 'sequelize',
+    'umzug': 'umzug'
+  },
 	module: {
 		rules: [
 			{
