@@ -34,7 +34,8 @@
                          :matchFundDetails="getContentValue('HOMEPAGE_MATCH_DETAILS')"
                          :matchFundNonprofit="matchFundNonprofit"
                          :registerButtonText="getContentValue('HOMEPAGE_REGISTER_BUTTON', 'Register Your Nonprofit Today')"
-                         :registerDetails="getContentValue('HOMEPAGE_REGISTER_DETAILS')"></metrics>
+                         :registerDetails="getContentValue('HOMEPAGE_REGISTER_DETAILS')"
+                          :postEventText="getContentValue('HOMEPAGE_POST_EVENT_TEXT', '')"></metrics>
 
                 <div class="main__content">
                     <div class="main__content-text wrapper wrapper--sm" v-html="getContentValue('HOMEPAGE_MAIN_TEXT')"></div>
