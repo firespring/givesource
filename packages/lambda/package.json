@@ -19,7 +19,7 @@
 	"author": "Firespring",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"aws-sdk": "^2.380.0",
+		"aws-sdk": "^2.1012.0",
 		"config": "^1.30.0",
 		"dotenv": "^4.0.0",
 		"increase-memory-limit": "^1.0.7",
@@ -67,8 +67,8 @@
 		"sinon": "^2.3.6",
 		"slug": "^0.9.3",
 		"uuid-validate": "0.0.2",
-		"webpack": "^5.0.0",
-		"webpack-cli": "^4.1.0",
+		"webpack": "^5.59.1",
+		"webpack-cli": "^4.9.1",
 		"webpack-node-externals": "^3.0.0"
 	}
 }

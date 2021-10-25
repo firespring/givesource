@@ -18,7 +18,6 @@ const dotenv = require('dotenv');
 dotenv.config({path: `${__dirname}/../../../.env`});
 
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');
 
 module.exports = {
@@ -177,14 +176,11 @@ module.exports = {
 	output: {
 		filename: '[name]/index.js',
 		path: path.resolve(__dirname, '../build/functions'),
-		library: '[name]',
 		libraryTarget: 'commonjs2',
 	},
 	target: 'node',
 	externals: {
-	  'aws-sdk': 'commonjs aws-sdk',
-    sequelize: 'sequelize',
-    'umzug': 'umzug'
+	  'aws-sdk': 'commonjs aws-sdk'
   },
 	module: {
 		rules: [
