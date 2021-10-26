@@ -176,11 +176,12 @@ module.exports = {
 	output: {
 		filename: '[name]/index.js',
 		path: path.resolve(__dirname, '../build/functions'),
-		library: '[name]',
 		libraryTarget: 'commonjs2',
 	},
 	target: 'node',
-	externals: {'aws-sdk': 'commonjs aws-sdk'},
+	externals: {
+	  'aws-sdk': 'commonjs aws-sdk'
+  },
 	module: {
 		rules: [
 			{

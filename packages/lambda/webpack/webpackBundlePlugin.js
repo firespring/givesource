@@ -37,10 +37,10 @@ function WebpackLambdaArchivePlugin(options) {
 WebpackLambdaArchivePlugin.prototype.apply = function (compiler) {
 	const options = this.options;
 
-	compiler.plugin('after-emit', function (compilation, callback) {
-		const outputPath = compilation.options.output.path;
+  compiler.hooks.done.tapAsync('after-emit', function (compilation, callback) {
+		const outputPath = compilation.compilation.options.output.path
 
-		compilation.chunks.forEach(function (chunk) {
+		compilation.compilation.chunks.forEach(function (chunk) {
 			const stream = archiver('zip', {zlib: {level: 9}});
 			const output = options.output ? options.output : outputPath;
 
