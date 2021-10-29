@@ -195,7 +195,7 @@ exports.formatForBulkCreate = function (model, data) {
     'name': typeof data.name !== "undefined" ? data.name : model.name,
     'note': typeof data.note !== "undefined" ? data.note : model.note,
   }
-}
+};
 
 /**
  * Validate PaymentSpring payment
@@ -225,4 +225,22 @@ exports.validatePaymentSpringPayment = function (data) {
 
 		resolve();
 	});
+};
+
+/**
+ * Validate each donation to make sure a nonprofitId is associated with it
+ *
+ * @param donations
+ * @return {Promise<unknown>}
+ */
+exports.validateDonationsBeforeProcessing = function (donations) {
+  return new Promise(function (resolve, reject) {
+    donations.forEach(function (donation) {
+      if (!donation.hasOwnProperty('nonprofitId')) {
+        reject(new MissingRequiredParameter('Missing required parameter: donation.nonprofitId'))
+      }
+    });
+
+    resolve();
+  });
 };

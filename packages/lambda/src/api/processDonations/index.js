@@ -55,7 +55,9 @@ export function handle(event, context, callback) {
 
 	const payment = request.get('payment', {});
 	request.validate().then(() => {
-		return DonationHelper.validatePaymentSpringPayment(payment);
+    return DonationHelper.validatePaymentSpringPayment(payment);
+  }).then(() => {
+    return DonationHelper.validateDonationsBeforeProcessing(request.get('donations', []));
 	}).then(() => {
 		return settingsRepository.batchGet(Object.keys(settings));
 	}).then((response) => {
