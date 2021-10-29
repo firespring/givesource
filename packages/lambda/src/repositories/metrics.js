@@ -59,7 +59,7 @@ MetricsRepository.prototype.getAll = function () {
 				],
 				raw: true
 			};
-			return allModels.Donation.findAll(params);;
+			return allModels.Donation.findAll(params);
 		}).then(function (results) {
 			const result = results[0];
 			metrics.DONATIONS_COUNT = result.donationsCount;

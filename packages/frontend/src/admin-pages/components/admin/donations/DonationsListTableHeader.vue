@@ -40,7 +40,7 @@
         Add Bulk Donation
       </router-link>
       <a
-        v-on:click.prevent="exportDonations"
+        v-on:click.prevent="exportReport('DONATIONS')"
         href="#"
         role="button"
         class="c-btn c-btn--sm c-btn--icon"
@@ -57,6 +57,26 @@
         class="fa fa-file-text"
         aria-hidden="true"
       ></i>Donor Receipt</a>
+      <a
+        v-if="isSuperAdmin"
+        v-on:click.prevent="exportReport('PAYOUT_REPORT')"
+        href="#"
+        role="button"
+        class="c-btn c-btn--sm c-btn--icon c-btn--good"
+      ><i
+        class="fa fa-cloud-download"
+        aria-hidden="true"
+      ></i>Export Payout Report</a>
+      <a
+        v-if="isSuperAdmin"
+        v-on:click.prevent="exportReport('LAST_4_REPORT')"
+        href="#"
+        role="button"
+        class="c-btn c-btn--sm c-btn--icon c-btn--good"
+      ><i
+        class="fa fa-cloud-download"
+        aria-hidden="true"
+      ></i>Export Last 4 CC Report</a>
     </div>
   </div>
 </template>
@@ -74,15 +94,21 @@ export default {
     }
   },
 
+  computed: {
+    isSuperAdmin: function () {
+      return this.isSuperAdminUser();
+    }
+  },
+
   methods: {
-    exportDonations () {
+    exportReport (exportType) {
       const vm = this
 
       vm.addModal('spinner')
 
       vm.$request.post('reports', {
-        type: 'DONATIONS',
-        name: 'donations'
+        type: exportType,
+        name: exportType.toLowerCase()
       }).then(response => {
         vm.report = response.data
         vm.pollReport()
