@@ -57,26 +57,16 @@
         class="fa fa-file-text"
         aria-hidden="true"
       ></i>Donor Receipt</a>
-      <a
-        v-if="isSuperAdmin"
-        v-on:click.prevent="exportReport('PAYOUT_REPORT')"
-        href="#"
-        role="button"
-        class="c-btn c-btn--sm c-btn--icon c-btn--good"
-      ><i
-        class="fa fa-cloud-download"
-        aria-hidden="true"
-      ></i>Export Payout Report</a>
-      <a
-        v-if="isSuperAdmin"
-        v-on:click.prevent="exportReport('LAST_4_REPORT')"
-        href="#"
-        role="button"
-        class="c-btn c-btn--sm c-btn--icon c-btn--good"
-      ><i
-        class="fa fa-cloud-download"
-        aria-hidden="true"
-      ></i>Export Last 4 CC Report</a>
+    </div>
+    <div v-if="isSuperAdmin" class="c-btn-dropdown" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
+      <a href="#" role="button" v-on:click.prevent="toggleMenu" class="c-btn c-btn--sm c-btn--neutral c-btn-dropdown-trigger c-btn-dropdown-trigger--only"><span>Internal</span></a>
+      <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
+        <div class="c-btn-dropdown-menu__options">
+          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Payout Report</a>
+          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Last 4 CC Report</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -86,6 +76,7 @@ export default {
 
   data () {
     return {
+      displayingMenu: false,
       report: {},
       file: {},
       downloaded: false,
@@ -101,6 +92,29 @@ export default {
   },
 
   methods: {
+    toggleMenu: function (event) {
+      const vm = this;
+      if (vm.displayingMenu) {
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeOut();
+      } else {
+        $(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeIn();
+      }
+      vm.displayingMenu = !vm.displayingMenu;
+    },
+    closeMenu: function () {
+      const vm = this;
+      vm.timer = setTimeout(function () {
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeOut();
+        vm.displayingMenu = false;
+      }, 250);
+    },
+    cancelCloseMenu: function () {
+      const vm = this;
+      clearTimeout(vm.timer);
+    },
     exportReport (exportType) {
       const vm = this
 
