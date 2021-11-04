@@ -62,7 +62,7 @@
       <a href="#" role="button" v-on:click.prevent="toggleMenu" class="c-btn c-btn--sm c-btn--neutral c-btn-dropdown-trigger c-btn-dropdown-trigger--only"><span>Internal</span></a>
       <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
         <div class="c-btn-dropdown-menu__options">
-          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Payout Report</a>
+          <a v-on:click.prevent="exportReport('PAYOUT_REPORT')" href="#">Export Payout Report</a>
           <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Last 4 CC Report</a>
         </div>
       </div>
