@@ -29,3 +29,43 @@ exports.STATUS_REVOKED = 'REVOKED';
 exports.generateSlug = function (string) {
 	return slug(string, {lower: true});
 };
+
+/**
+ * Get fields for Report
+ *
+ * @type {[]}
+ */
+exports.reportFields = [
+  {
+    label: 'Nonprofit',
+    value: 'legalName'
+  },
+  {
+    label: 'Address 1',
+    value: 'address1'
+  },
+  {
+    label: 'Address 2',
+    value: 'address2'
+  },
+  {
+    label: 'City',
+    value: 'city'
+  },
+  {
+    label: 'State',
+    value: 'state'
+  },
+  {
+    label: 'Zip',
+    value: 'zip'
+  },
+  {
+    label: 'Amount for Nonprofit',
+    value: 'donationsSubtotal'
+  },
+  {
+    label: 'EIN',
+    value: 'taxId'
+  }
+];

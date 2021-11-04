@@ -24,6 +24,41 @@ const SettingHelper = require('./setting');
 exports.TYPE_BULK = 'BULK';
 exports.TYPE_SINGLE = 'SINGLE';
 
+exports.last4Fields = [
+  {
+    label: 'createdAt',
+    value: 'createdAt'
+  },
+  {
+    label: 'firstName',
+    value: 'firstName'
+  },
+  {
+    label: 'lastName',
+    value: 'lastName'
+  },
+  {
+    label: 'email',
+    value: 'email'
+  },
+  {
+    label: 'subtotalCharged',
+    value: 'subtotalCharged'
+  },
+  {
+    label: 'creditCardLast4',
+    value: 'creditCardLast4'
+  },
+  {
+    label: 'chargeInCents',
+    value: 'chargeInCents'
+  },
+  {
+    label: 'transactionId',
+    value: 'transactionId'
+  }
+]
+
 /**
  * Get fields for Report
  *

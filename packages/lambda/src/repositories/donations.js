@@ -224,6 +224,37 @@ DonationsRepository.prototype.generateReport = function (whereParams) {
 };
 
 /**
+ * Generate a specific report with CC info
+ *
+ * @param whereParams
+ * @return {Promise<unknown>}
+ */
+DonationsRepository.prototype.generateLastFourReport = function (whereParams) {
+  let allModels;
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models;
+    }).then(function () {
+      const params = {
+        include: [
+          {model: allModels.PaymentTransaction},
+          {model: allModels.Donor},
+        ],
+        order: [['createdAt', 'DESC']],
+        where: whereParams
+      };
+      return allModels.Donation.findAll(params);
+    }).then(function (results) {
+      resolve(results);
+    }).catch(function (err) {
+      reject(err);
+    }).finally(function () {
+      return allModels.sequelize.close();
+    });
+  });
+};
+
+/**
  * Insert or update the model
  *
  * @param {Object} model

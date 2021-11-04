@@ -16,7 +16,9 @@
 
 const _ = require('lodash');
 const DonationHelper = require('./../../helpers/donation');
+const NonprofitHelper = require('./../../helpers/nonprofit');
 const DonationsRepository = require('./../../repositories/donations');
+const NonprofitsRepository = require('./../../repositories/nonprofits');
 const FilesRepository = require('./../../repositories/files');
 const json2csv = require('json2csv');
 const ReportHelper = require('./../../helpers/report');
@@ -26,6 +28,7 @@ const S3 = require('./../../aws/s3');
 const SettingHelper = require('./../../helpers/setting');
 const SettingsRepository = require('./../../repositories/settings');
 const UUID = require('node-uuid');
+const Sequelize = require('sequelize');
 
 exports.handle = function (event, context, callback) {
 	const filesRepository = new FilesRepository();
@@ -58,6 +61,10 @@ exports.handle = function (event, context, callback) {
 			switch (report.type) {
 				case ReportHelper.TYPE_DONATIONS:
 					return getDonationsData(report, timezone);
+        case ReportHelper.TYPE_PAYOUT_REPORT:
+          return getPayoutReportData();
+        case ReportHelper.TYPE_LAST_4:
+          return getLastFourPaymentTransactionReportData(timezone);
 
 				default:
 					return Promise.resolve();
@@ -152,4 +159,100 @@ const getDonationsData = function (report, timezone) {
 	});
 
 	return promise;
+};
+
+/**
+ * Get the payout report data
+ *
+ * @return {Promise<{data: Promise | void, fields: *[]} | void>}
+ */
+const getPayoutReportData = function () {
+  const nonprofitsRepository = new NonprofitsRepository();
+  let promise = Promise.resolve();
+  promise = promise.then(function () {
+    return nonprofitsRepository.getAll();
+  }).then(function (response) {
+    return response.filter(nonprofit => nonprofit.status.toLowerCase() === 'active');
+  }).catch(function () {
+    return Promise.resolve();
+  });
+
+  promise = promise.then(function (nonprofits) {
+    return {
+      data: nonprofits.map(function (nonprofit) {
+        return {
+          legalName: nonprofit.legalName,
+          address1: nonprofit.address1,
+          address2: nonprofit.address2,
+          city: nonprofit.city,
+          state: nonprofit.state,
+          zip: nonprofit.zip,
+          donationsSubtotal: '$' + (parseInt(nonprofit.getDataValue('donationsSubtotal')) / 100).toFixed(2),
+          taxId: nonprofit.taxId
+        }
+      }),
+      fields: NonprofitHelper.reportFields
+    }
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+  return promise
+};
+
+const getLastFourPaymentTransactionReportData = function (timezone) {
+  const donationsRepository = new DonationsRepository();
+  const settingsRepository = new SettingsRepository();
+  const whereParams = {
+    isDeleted: 0,
+    paymentTransactionId: {
+      [Sequelize.Op.ne]: 0
+    }
+  };
+
+  let displayTestPayments = false;
+  let promise = Promise.resolve();
+  promise = promise.then(function () {
+    return settingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY);
+  }).then(function (response) {
+    if (response && response.hasOwnProperty('value')) {
+      displayTestPayments = response.value;
+    }
+  }).catch(function () {
+    return Promise.resolve();
+  });
+
+  // // this needs commented out on dev
+  if (!displayTestPayments) {
+    whereParams.paymentTransactionIsTestMode = 0;
+  }
+
+  promise = promise.then(function () {
+    return donationsRepository.generateLastFourReport(whereParams);
+  });
+
+  promise = promise.then(function (donations) {
+    return Promise.resolve({
+      data: donations.map(function (donation) {
+        const totalInCents = donation.subtotal
+        donation.mutate = '';
+        donation.timezone = timezone;
+        return {
+          createdAt: donation.createdAt,
+          firstName: donation.Donor.firstName,
+          lastName: donation.Donor.lastName,
+          email: donation.Donor.email,
+          subtotalCharged: donation.subtotal,
+          creditCardLast4: donation.PaymentTransaction.creditCardLast4,
+          chargeInCents: totalInCents,
+          transactionId: donation.PaymentTransaction.transactionId
+        }
+      }),
+      fields: DonationHelper.last4Fields,
+    });
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+  return promise;
 };

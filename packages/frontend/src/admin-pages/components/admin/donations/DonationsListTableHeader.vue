@@ -40,7 +40,7 @@
         Add Bulk Donation
       </router-link>
       <a
-        v-on:click.prevent="exportDonations"
+        v-on:click.prevent="exportReport('DONATIONS')"
         href="#"
         role="button"
         class="c-btn c-btn--sm c-btn--icon"
@@ -58,6 +58,16 @@
         aria-hidden="true"
       ></i>Donor Receipt</a>
     </div>
+    <div v-if="isSuperAdmin" class="c-btn-dropdown" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
+      <a href="#" role="button" v-on:click.prevent="toggleMenu" class="c-btn c-btn--sm c-btn--neutral c-btn-dropdown-trigger c-btn-dropdown-trigger--only"><span>Internal</span></a>
+      <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
+        <div class="c-btn-dropdown-menu__options">
+          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Payout Report</a>
+          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Last 4 CC Report</a>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -66,6 +76,7 @@ export default {
 
   data () {
     return {
+      displayingMenu: false,
       report: {},
       file: {},
       downloaded: false,
@@ -74,15 +85,44 @@ export default {
     }
   },
 
+  computed: {
+    isSuperAdmin: function () {
+      return this.isSuperAdminUser();
+    }
+  },
+
   methods: {
-    exportDonations () {
+    toggleMenu: function (event) {
+      const vm = this;
+      if (vm.displayingMenu) {
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeOut();
+      } else {
+        $(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeIn();
+      }
+      vm.displayingMenu = !vm.displayingMenu;
+    },
+    closeMenu: function () {
+      const vm = this;
+      vm.timer = setTimeout(function () {
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
+        $(vm.$refs.cBtnDropdownMenu).fadeOut();
+        vm.displayingMenu = false;
+      }, 250);
+    },
+    cancelCloseMenu: function () {
+      const vm = this;
+      clearTimeout(vm.timer);
+    },
+    exportReport (exportType) {
       const vm = this
 
       vm.addModal('spinner')
 
       vm.$request.post('reports', {
-        type: 'DONATIONS',
-        name: 'donations'
+        type: exportType,
+        name: exportType.toLowerCase()
       }).then(response => {
         vm.report = response.data
         vm.pollReport()

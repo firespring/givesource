@@ -44,7 +44,7 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: ReportHelper.TYPE_DONATIONS,
 			validate: {
-				isIn: [[ReportHelper.TYPE_DONATIONS]]
+				isIn: [[ReportHelper.TYPE_DONATIONS, ReportHelper.TYPE_PAYOUT_REPORT, ReportHelper.TYPE_LAST_4]]
 			}
 		}
 	});
