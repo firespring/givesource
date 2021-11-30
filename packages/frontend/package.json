@@ -41,7 +41,7 @@
 		"@ckeditor/ckeditor5-theme-lark": "^13.0.1",
 		"@ckeditor/ckeditor5-ui": "^12.1.0",
 		"@ckeditor/ckeditor5-vue": "^1.0.0-beta.1",
-		"@claviska/jquery-minicolors": "^2.2.6",
+		"@claviska/jquery-minicolors": "^2.3.6",
 		"amazon-cognito-identity-js": "^3.0.2",
 		"aws-sdk": "^2.336.0",
 		"axios": "^0.19.0",
