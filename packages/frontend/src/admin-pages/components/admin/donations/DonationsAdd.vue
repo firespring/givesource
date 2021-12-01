@@ -101,6 +101,121 @@
                   </div>
                 </div>
 
+                <div class="c-form-item c-form-item--control-group c-form-item--control-group--address">
+                  <div class="c-form-item__label">
+                    <div class="c-form-item-label-text">Address</div>
+                  </div>
+
+                  <div class="c-form-item__control u-margin-top-thick">
+                    <div class="c-form-control-grid">
+                      <div class="c-form-control-grid__item">
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.address1"
+                            type="text"
+                            name="address1"
+                            id="address1"
+                            :class="{ 'has-error': formErrors.address1 }"
+                          >
+                          <label for="address1">Address Line 1</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      v-if="formErrors.address1"
+                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
+                    >
+                      {{ formErrors.address1 }}
+                    </div>
+
+                    <div class="c-form-control-grid">
+                      <div class="c-form-control-grid__item">
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.address2"
+                            type="text"
+                            name="address2"
+                            id="address2"
+                            :class="{ 'has-error': formErrors.address2 }"
+                          >
+                          <label for="address2">Address Line 2</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      v-if="formErrors.address2"
+                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
+                    >
+                      {{ formErrors.address2 }}
+                    </div>
+
+                    <div class="c-form-control-grid">
+                      <div class="c-form-control-grid__item">
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.city"
+                            type="text"
+                            name="city"
+                            id="city"
+                            :class="{ 'has-error': formErrors.city }"
+                          >
+                          <label for="city">City</label>
+                        </div>
+                      </div>
+                      <div
+                        class="c-form-control-grid__item u-flex-collapse"
+                        id="addressGroupDefaultCountryOptions-US"
+                      >
+                        <state-select
+                          v-model="formData.state"
+                          name="state"
+                          id="state"
+                          placeholder="State"
+                          :class="{ 'has-error': formErrors.state }"
+                        ></state-select>
+                      </div>
+                      <div
+                        class="c-form-control-grid__item"
+                        style="flex: 1 0 11rem; max-width: 11rem;"
+                      >
+                        <div
+                          class="has-floating-label js-floating-label"
+                          v-floating-label
+                        >
+                          <input
+                            v-model="formData.zip"
+                            type="text"
+                            name="zip"
+                            id="zip"
+                            :class="{ 'has-error': formErrors.zip }"
+                          >
+                          <label for="zip">ZIP Code</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      v-if="formErrors.city || formErrors.state || formErrors.zip"
+                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
+                    >
+                      <span v-if="formErrors.city">{{
+                          formErrors.city
+                        }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                      v-if="formErrors.zip"
+                    >{{ formErrors.zip }}.</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div
                   class="c-form-item c-form-item--email"
                   :class="{ 'c-form-item--has-error': formErrors.email }"
@@ -227,7 +342,12 @@ export default {
       formData: {
         email: '',
         firstName: '',
-        lastName: ''
+        lastName: '',
+        address1: '',
+        address2: '',
+        city: '',
+        state: '',
+        zip: ''
       },
 
       // Errors
@@ -298,6 +418,25 @@ export default {
         lastName: {
           label: 'Donor last name',
           presence: true
+        },
+        state: {
+          label: 'Address line 2',
+          presence: false
+        },
+        zip: {
+          label: 'Zip code',
+          presence: false
+        },
+        address1: {
+          label: 'Address line 1',
+          presence: false
+        },
+        address2: {
+          label: 'Address line 2',
+          presence: false
+        },
+        city: {
+          presence: false
         }
       }
     },
@@ -358,7 +497,12 @@ export default {
       promise = promise.then(() => {
         const donor = {
           firstName: vm.formData.firstName,
-          lastName: vm.formData.lastName
+          lastName: vm.formData.lastName,
+          address1: vm.formData.address1,
+          address2: vm.formData.address2,
+          city: vm.formData.city,
+          state: vm.formData.state,
+          zip: vm.formData.zip
         }
         if (vm.formData.email) {
           donor.email = vm.formData.email
@@ -389,7 +533,12 @@ export default {
             vm.formData = {
               email: '',
               firstName: '',
-              lastName: ''
+              lastName: '',
+              address1: '',
+              address2: '',
+              city: '',
+              state: '',
+              zip: ''
             }
             vm.donationRows = []
             vm.donationRowTracker = 0
