@@ -420,7 +420,7 @@ export default {
           presence: true
         },
         state: {
-          label: 'Address line 2',
+          label: 'State',
           presence: false
         },
         zip: {
