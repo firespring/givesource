@@ -46,7 +46,7 @@
 		"aws-sdk": "^2.336.0",
 		"axios": "^0.19.0",
 		"babel-loader": "^8.0.4",
-		"browser-sync": "^2.26.9",
+		"browser-sync": "^2.27.8",
 		"browser-sync-middleware-spa": "^1.0.0",
 		"browser-sync-webpack-plugin": "^2.2.2",
 		"chosen-js": "^1.8.2",
@@ -90,7 +90,7 @@
 		"vuex-persistedstate": "^2.0.0",
 		"webpack": "^4.29.6",
 		"webpack-cli": "^4.0.0",
-		"webpack-dev-server": "^4.0.0",
+		"webpack-dev-server": "^4.1.1",
 		"whatwg-fetch": "^3.0.0"
 	}
 }
