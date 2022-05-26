@@ -155,11 +155,12 @@ exports.handle = (event, context, callback) => {
         })
       }
 
-    return promise.then(() => {
-      if (!transactions.length) {
-        return Promise.reject(new Error('No donations were found'))
-      }
-      return promise
+      return promise.then(() => {
+        if (!transactions.length) {
+          return Promise.reject(new Error('No donations were found'))
+        }
+        return promise
+      })
     })
   }).then(() => {
     return RenderHelper.renderTemplate('emails.donation-receipt', {
