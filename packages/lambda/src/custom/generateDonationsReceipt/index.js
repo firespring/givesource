@@ -1,7 +1,7 @@
 /*
  * Copyright 2019 Firespring, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -136,25 +136,24 @@ exports.handle = (event, context, callback) => {
         })
       })
     }
-    if (!transactions.length && donations.length) {
-      let promise = Promise.resolve()
-      donations.forEach(donation => {
-        let transaction
-        promise = promise.then(function () {
-          return paymentTransactionsRepository.populate({ createdAt: donation.createdAt })
-        }).then(function (popTransaction) {
-          transaction = popTransaction
-          transaction.timezone = settings.EVENT_TIMEZONE
-          transaction.transactionAmount = transaction.formattedAmount
-          transaction.Donations = [donation]
-          transaction.isAnonymous = donation.isAnonymous
-          transaction.isFeeCovered = donation.isFeeCovered
-          transactions.push(transaction)
-        }).catch(function (err) {
-          console.log('error?', err) // DM: DEBUG
+    return promise.then(() => {
+      if (!transactions.length && donations.length) {
+        let promise = Promise.resolve()
+        donations.forEach(donation => {
+          let transaction
+          promise = promise.then(function () {
+            return paymentTransactionsRepository.populate({createdAt: donation.createdAt})
+          }).then(function (popTransaction) {
+            transaction = popTransaction
+            transaction.timezone = settings.EVENT_TIMEZONE
+            transaction.transactionAmount = transaction.formattedAmount
+            transaction.Donations = [donation]
+            transaction.isAnonymous = donation.isAnonymous
+            transaction.isFeeCovered = donation.isFeeCovered
+            transactions.push(transaction)
+          })
         })
-      })
-    }
+      }
 
     return promise.then(() => {
       if (!transactions.length) {
@@ -173,7 +172,7 @@ exports.handle = (event, context, callback) => {
       html: response
     })
   }).catch(err => {
-    console.log('Error: %j', err);
+    console.log('Error: %j', err)
     (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
   })
 }
