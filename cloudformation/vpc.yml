@@ -16,6 +16,44 @@ Mappings:
       '948629139753': '172.135'
 
 Resources:
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for long lived caching with Givesource settings, contents, and files
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        Name: Givesource-CachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: [ "Authorization" ]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+
+  NoCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: Policy for no caching with authorized headers for the admin area
+        DefaultTTL: 0
+        MaxTTL: 30
+        MinTTL: 0
+        Name: Givesource-NoCachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers: [ "Authorization" ]
+          QueryStringsConfig:
+            QueryStringBehavior: all
+
   RecaptchaParameterStore:
     Type: AWS::SSM::Parameter
     Properties:
@@ -445,4 +483,16 @@ Outputs:
     Value: !GetAtt RecaptchaKey.Arn
     Export:
       Name: global-recaptcha-key
+
+  globalCachePolicy:
+    Description: Cache policy for Givesource
+    Value: !GetAtt ApiCachePolicy.Id
+    Export:
+      Name: global-cache-policy
+
+  globalNoCachePolicy:
+    Description: No cache policy for Givesource
+    Value: !GetAtt NoCachePolicy.Id
+    Export:
+      Name: global-no-cache-policy
 

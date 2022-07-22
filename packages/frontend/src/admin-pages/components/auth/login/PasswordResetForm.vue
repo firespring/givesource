@@ -136,6 +136,7 @@
 
 				if (vue.cognitoUser) {
 					delete vue.userAttributes['email_verified'];
+					delete vue.userAttributes['email']
 					vue.cognitoUser.completeNewPasswordChallenge(vue.formData.password, vue.userAttributes, {
 						onSuccess: function () {
 							vue.$request.patch('users/' + vue.cognitoUser.username, {isVerified: true}).then(function () {

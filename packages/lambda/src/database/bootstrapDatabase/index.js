@@ -49,6 +49,7 @@ exports.handle = function (event, context, callback) {
 
 	if (event.RequestType === 'Delete') {
 		response.send(event, context, response.SUCCESS);
+		callback()
 		return;
 	}
 
