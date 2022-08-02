@@ -101,15 +101,17 @@ exports.handle = (event, context, callback) => {
 			});
 		}
 
-		promise.then(() => {
-			return lambda.publishVersion(region, functionName);
-		}).then(data => {
-			response.send(event, context, response.SUCCESS, {LambdaFunctionARN: data.FunctionArn}, data.FunctionArn);
-		}).catch(err => {
-			logger.log(err);
-			response.send(event, context, response.FAILED);
-		});
-
+		// this is necessary because of nodejs14 update... sorry to whoever sees this in the future
+		setTimeout(() => {
+      promise.then(() => {
+        return lambda.publishVersion(region, functionName);
+      }).then(data => {
+        response.send(event, context, response.SUCCESS, {LambdaFunctionARN: data.FunctionArn}, data.FunctionArn);
+      }).catch(err => {
+        logger.log(err);
+        response.send(event, context, response.FAILED);
+      });
+    }, 5000)
 	} else {
 		response.send(event, context, response.SUCCESS);
 	}

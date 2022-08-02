@@ -138,46 +138,6 @@ Resources:
       Name: !Sub |-
         ${AWS::StackName}
 
-  ApiCachePolicy:
-    Type: AWS::CloudFront::CachePolicy
-    Properties:
-      CachePolicyConfig:
-        Comment: Policy for long lived caching with Givesource settings, contents, and files
-        DefaultTTL: 86400
-        MaxTTL: 31536000
-        MinTTL: 1
-        Name: !Sub ${AWS::StackName}-Givesource-CachePolicy-${AWS::Region}
-        ParametersInCacheKeyAndForwardedToOrigin:
-          CookiesConfig:
-            CookieBehavior: none
-          EnableAcceptEncodingGzip: true
-          HeadersConfig:
-            HeaderBehavior: whitelist
-            Headers: ["Authorization"]
-          QueryStringsConfig:
-            QueryStringBehavior: all
-    DependsOn: RestApi
-
-  NoCachePolicy:
-    Type: AWS::CloudFront::CachePolicy
-    Properties:
-      CachePolicyConfig:
-        Comment: Policy for no caching with authorized headers for the admin area
-        DefaultTTL: 0
-        MaxTTL: 30
-        MinTTL: 0
-        Name: !Sub ${AWS::StackName}-Givesource-NoCachePolicy-${AWS::Region}
-        ParametersInCacheKeyAndForwardedToOrigin:
-          CookiesConfig:
-            CookieBehavior: none
-          EnableAcceptEncodingGzip: true
-          HeadersConfig:
-            HeaderBehavior: whitelist
-            Headers: ["Authorization"]
-          QueryStringsConfig:
-            QueryStringBehavior: all
-    DependsOn: RestApi
-
   ApiDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -194,24 +154,24 @@ Resources:
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
-          CachePolicyId: !GetAtt NoCachePolicy.Id
+          CachePolicyId: !ImportValue global-no-cache-policy
           TargetOriginId: !Ref RestApi
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200
         CacheBehaviors:
         - PathPattern: "/settings"
           AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
-          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          CachePolicyId: !ImportValue global-cache-policy
           TargetOriginId: !Ref RestApi
           ViewerProtocolPolicy: redirect-to-https
         - PathPattern: "/contents"
           AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
-          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          CachePolicyId: !ImportValue global-cache-policy
           TargetOriginId: !Ref RestApi
           ViewerProtocolPolicy: redirect-to-https
         - PathPattern: "/files"
           AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
-          CachePolicyId: !GetAtt ApiCachePolicy.Id
+          CachePolicyId: !ImportValue global-cache-policy
           TargetOriginId: !Ref RestApi
           ViewerProtocolPolicy: redirect-to-https
 
