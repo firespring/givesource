@@ -1,7 +1,7 @@
 GEM
   remote: https://library.firespring.com/9cde3a77-e676-4699-8972-75acd6bfaadc/
   specs:
-    dev-commands (0.0.3)
+    dev-commands (0.0.4)
       aws-sdk-ecr (~> 1.56.0)
       aws-sdk-ssm (~> 1.141.0)
       aws-sdk-sts (~> 1.7.0)
@@ -49,7 +49,7 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
-  dev-commands (~> 0.0.3)!
+  dev-commands (~> 0.0.4)!
   rake
 
 BUNDLED WITH
