@@ -1,0 +1,56 @@
+GEM
+  remote: https://library.firespring.com/9cde3a77-e676-4699-8972-75acd6bfaadc/
+  specs:
+    dev-commands (0.0.2)
+      aws-sdk-ecr (~> 1.56.0)
+      aws-sdk-ssm (~> 1.141.0)
+      aws-sdk-sts (~> 1.7.0)
+      colorize (~> 0.8.1)
+      docker-api (~> 2.2.0)
+      dotenv (~> 2.8.1)
+      inifile (~> 3.0.0)
+      libxml-ruby (= 3.2.1)
+      rake (~> 13.0.6)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    aws-eventstream (1.2.0)
+    aws-partitions (1.655.0)
+    aws-sdk-core (3.166.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.5)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sdk-ecr (1.56.0)
+      aws-sdk-core (~> 3, >= 3.127.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-ssm (1.141.0)
+      aws-sdk-core (~> 3, >= 3.127.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-sts (1.7.0)
+      aws-sdk-core (~> 3, >= 3.110.0)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.5.2)
+      aws-eventstream (~> 1, >= 1.0.2)
+    colorize (0.8.1)
+    docker-api (2.2.0)
+      excon (>= 0.47.0)
+      multi_json
+    dotenv (2.8.1)
+    excon (0.93.1)
+    inifile (3.0.0)
+    jmespath (1.6.1)
+    libxml-ruby (3.2.1)
+    multi_json (1.15.0)
+    rake (13.0.6)
+
+PLATFORMS
+  x86_64-darwin-21
+
+DEPENDENCIES
+  dev-commands (~> 0.0.2)!
+  rake
+
+BUNDLED WITH
+   2.3.14
