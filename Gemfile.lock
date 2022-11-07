@@ -1,7 +1,7 @@
 GEM
   remote: https://library.firespring.com/9cde3a77-e676-4699-8972-75acd6bfaadc/
   specs:
-    dev-commands (0.0.2)
+    dev-commands (0.0.3)
       aws-sdk-ecr (~> 1.56.0)
       aws-sdk-ssm (~> 1.141.0)
       aws-sdk-sts (~> 1.7.0)
@@ -16,7 +16,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     aws-eventstream (1.2.0)
-    aws-partitions (1.655.0)
+    aws-partitions (1.656.0)
     aws-sdk-core (3.166.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
@@ -49,7 +49,7 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
-  dev-commands (~> 0.0.2)!
+  dev-commands (~> 0.0.3)!
   rake
 
 BUNDLED WITH
