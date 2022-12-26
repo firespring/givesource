@@ -20,7 +20,7 @@
 	"license": "Apache-2.0",
 	"dependencies": {
 		"aws-sdk": "^2.1012.0",
-		"config": "^1.30.0",
+		"config": "^3.3.1",
 		"dotenv": "^4.0.0",
 		"increase-memory-limit": "^1.0.7",
 		"json-loader": "^0.5.7",
@@ -50,7 +50,7 @@
 		"inquirer-autocomplete-prompt": "^1.0.1",
 		"js-string-escape": "^1.0.1",
 		"json2csv": "^3.11.5",
-		"jsonwebtoken": "^8.1.0",
+		"jsonwebtoken": "^9.0.0",
 		"jwk-to-pem": "^1.2.6",
 		"lodash": "^4.17.15",
 		"mocha": "^5.2.0",
