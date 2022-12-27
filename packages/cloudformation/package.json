@@ -20,7 +20,7 @@
 	},
 	"dependencies": {
 		"aws-sdk": "^2.404.0",
-		"config": "^1.30.0",
+		"config": "^3.3.1",
 		"mime": "^2.2.2"
 	}
 }
