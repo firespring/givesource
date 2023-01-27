@@ -33,27 +33,7 @@
     },
     {
       "files": [
-        "common/components/ui/SalesforceChat.vue"
-      ],
-      "rules": {
-        "vue/valid-template-root": "off"
-      }
-    },
-    {
-      "files": [
-        "common/components/layout/NoticeAlertBar.vue",
-        "common/components/layout/PageMainContentSidebar.vue",
-        "common/components/ui/forms/AppFormFieldRadioButton.vue",
-        "common/components/ui/forms/AppFormItemLabel.vue",
-        "common/components/ui/forms/AppFormSection.vue",
-        "common/components/ui/websiteContents/contentText/previews/AppPreviewContentText.vue",
-        "apps/account/components/accountNotices/PageAccountNoticeDetails.vue",
-        "apps/websiteUsers/components/manageUsers/WebsiteUserListRow.vue",
-        "apps/onlineTools/components/orderAdministration/PageOrderAdministrationEdit.vue",
-        "apps/websiteUsers/components/manageUsers/PageEditWebsiteUser.vue",
-        "apps/websiteUsers/components/manageUsers/PageWebsiteUsersList.vue",
-        "apps/portals/components/ManageUsersListRow.vue",
-        "apps/portals/components/UserDetailsModal.vue"
+        "Foo.vue"
       ],
       "rules": {
         "vue/no-v-html": "off"
