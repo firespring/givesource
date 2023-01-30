@@ -496,3 +496,8 @@ Outputs:
     Export:
       Name: global-no-cache-policy
 
+  primaryPrivateRouteTable:
+    Description: Primary private route table for Givesource
+    Value: !Ref primaryPrivateRouteTable
+    Export:
+      Name: givesource-primary-private-route-table
