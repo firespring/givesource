@@ -348,3 +348,7 @@ Resources:
 Outputs:
   Identifier:
     Value: !Ref RDSCluster
+  DbSecurityGroup:
+    Value: !Ref DBSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-rds-security-group'
