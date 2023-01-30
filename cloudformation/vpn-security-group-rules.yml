@@ -1,0 +1,51 @@
+---
+
+  #====================================================================================================
+  # AWS CloudFormation template for creating client VPN security group rules for Givesource
+  #====================================================================================================
+
+  AWSTemplateFormatVersion: 2010-09-09
+  Description: Creates client VPN security group rules for Givesource
+
+  #==================================================
+  # Metadata
+  #==================================================
+  Metadata:
+
+    AWS::CloudFormation::Interface:
+
+      ParameterGroups:
+        - Label:
+            default: Setup
+          Parameters:
+            - StackName
+
+      ParameterLabels:
+        StackName:
+          default: Stack name
+
+  #==================================================
+  # Parameters
+  #==================================================
+  Parameters:
+
+    StackName:
+      Description: Name of the Givesource stack to add VPN access to
+      Type: String
+
+  #==================================================
+  # Resources
+  #==================================================
+  Resources:
+
+    RdsSecurityGroupVpnIngress:
+      Type: 'AWS::EC2::SecurityGroupIngress'
+      Properties:
+        Description: All traffic from the client VPN endpoint to RDS
+        GroupId:
+          Fn::ImportValue:
+            !Sub '${StackName}-rds-security-group' # imported from packages/cloudformation/templates/givesource-aurora.yml
+        FromPort: 3306
+        IpProtocol: tcp
+        SourceSecurityGroupId: !ImportValue vpn-security-group # imported from engineering-devops/aws/cloudformation/internal-applications/vpn.yml
+        ToPort: 3306
