@@ -53,6 +53,8 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./agreement')(sequelize);
 		models[model.name] = model;
+		model = require('./nonprofitAgreement')(sequelize);
+		models[model.name] = model;
 
 		models.Nonprofit.hasMany(sequelize.models.Donation, {
 			foreignKey: 'nonprofitId'
@@ -73,6 +75,9 @@ module.exports = function() {
 		models.NonprofitSlide.belongsTo(sequelize.models.Nonprofit, {
 			foreignKey: 'nonprofitId'
 		});
+
+		models.Agreement.belongsToMany(models.Nonprofit, { through: models.NonprofitAgreement });
+		models.Nonprofit.belongsToMany(models.Agreement, { through: models.NonprofitAgreement });
 
 		models.Donation.belongsTo(sequelize.models.Nonprofit, {
 			foreignKey: 'nonprofitId'
