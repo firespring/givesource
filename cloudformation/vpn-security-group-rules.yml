@@ -47,3 +47,13 @@
         IpProtocol: tcp
         SourceSecurityGroupId: !ImportValue vpn-security-group # imported from engineering-devops/aws/cloudformation/internal-applications/vpn.yml
         ToPort: 3306
+
+    VpnSecurityGroupRdsEgress:
+      Type: 'AWS::EC2::SecurityGroupEgress'
+      Properties:
+        Description: MySQL traffic to the RDS instances
+        DestinationSecurityGroupId: !Ref RdsSecurityGroupId
+        GroupId: !ImportValue vpn-security-group # imported from engineering-devops/aws/cloudformation/internal-applications/vpn.yml
+        FromPort: 3306
+        IpProtocol: tcp
+        ToPort: 3306
