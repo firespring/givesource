@@ -100,8 +100,13 @@ exports.handle = function (event, context, callback) {
 				sequelize: sequelize
 			}
 		})
-
-		return umzug.up();
+		return umzug;
+	}).then(function (umzug) {
+		if (event.down) {
+			return umzug.down({ to: ''+event.down });
+		} else {
+			return umzug.up();
+		}
 	}).then(function (migrations) {
 		logger.log("Ran migrations:" + migrations.map(it => { return it['file'] }));
 		response.send(event, context, response.SUCCESS, {});
