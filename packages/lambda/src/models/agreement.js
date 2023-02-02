@@ -21,6 +21,10 @@ const moment = require('moment-timezone');
 
 module.exports = (sequelize) => {
 	return sequelize.define('Agreement', {
+		agreementTitle: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		agreementText: {
 			type: DataTypes.STRING,
 			allowNull: false,

@@ -39,6 +39,17 @@
 
                                 <div class="c-page-section-segment">
                                     <h3 class="c-page-section-segment__title">
+                                        <router-link :to="{ name: 'settings-agreements' }">Event Agreements</router-link>
+                                    </h3>
+                                    <div class="c-notes c-notes--below">
+                                      Manage your event's various agreements and policies.
+                                    </div>
+                                </div>
+
+                                <hr class="expand">
+
+                                <div class="c-page-section-segment">
+                                    <h3 class="c-page-section-segment__title">
                                         <router-link :to="{ name: 'settings-contact' }">Contact Settings</router-link>
                                     </h3>
                                     <div class="c-notes c-notes--below">
