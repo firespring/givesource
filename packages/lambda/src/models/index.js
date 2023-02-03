@@ -76,8 +76,19 @@ module.exports = function() {
 			foreignKey: 'nonprofitId'
 		});
 
-		models.Agreement.belongsToMany(models.Nonprofit, { through: models.NonprofitAgreement });
-		models.Nonprofit.belongsToMany(models.Agreement, { through: models.NonprofitAgreement });
+		models.Agreement.belongsToMany(models.Nonprofit, {
+			through: models.NonprofitAgreement,
+			foreignKey: 'agreementId',
+			otherKey: 'nonprofitId'
+		});
+		models.Nonprofit.belongsToMany(models.Agreement, {
+			through: models.NonprofitAgreement,
+			foreignKey: 'nonprofitId',
+			otherKey: 'agreementId'
+		});
+
+		models.Nonprofit.hasMany(models.NonprofitAgreement);
+		models.Agreement.hasMany(models.NonprofitAgreement);
 
 		models.Donation.belongsTo(sequelize.models.Nonprofit, {
 			foreignKey: 'nonprofitId'
