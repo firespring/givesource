@@ -165,6 +165,31 @@
                         </div>
                     </fieldset>
 
+                    <fieldset v-for="agreement in agreements">
+                      <div class="form-item">
+                        <h2>{{ agreement.agreementTitle }}</h2>
+                        <div v-html="agreement.agreementText" />
+                      </div>
+                      <div class="form-item" :class="{'form-item--required': agreement.isRequired}">
+                        <div class="form-item__label">
+                          Do you agree to the <strong>{{ agreement.agreementTitle }}</strong>?
+                        </div>
+                        <div class="form-item__control">
+                          <ul class="list-plain list-checkbox">
+                            <li>
+                              <label>
+                                <input type="checkbox" v-model="formData.agreedIds" name="agreedIds[]" :value="agreement.id" :required="agreement.isRequired">
+                                <span>Yes, I agree to the <strong>{{ agreement.agreementTitle }}</strong>.</span>
+                              </label>
+                            </li>
+                          </ul>
+                          <div v-if="formErrors['agreedIds.'+agreement.id]" class="notes notes--above notes--error">
+                            {{ formErrors['agreedIds.'+agreement.id] }}
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+
                     <div class="form-actions flex justify-center items-center">
                         <forms-submit :processing="processing" color="accent">Register Now</forms-submit>
                     </div>
@@ -202,6 +227,7 @@
 	export default {
 		data: function () {
 			return {
+        agreements: [],
 				contents: [],
 				processing: false,
 
@@ -219,6 +245,8 @@
 					firstName: '',
 					lastName: '',
 					email: '',
+
+          agreedIds: []
 				},
 
 				formErrors: {},
@@ -244,17 +272,112 @@
 			},
 			isBeforeRegistrations: function () {
 				return Settings.isBeforeRegistrations();
-			}
+			},
+      constraints: function () {
+        const vue = this;
+        return {
+          legalName: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter your organization\'s legal name'
+            },
+          },
+          taxId: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter your organization\'s tax ID number'
+            },
+          },
+          address1: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter your organization\'s address'
+            },
+          },
+          address2: {
+            label: 'Address line 2',
+            presence: false,
+          },
+          address3: {
+            label: 'Address line 3',
+            presence: false,
+          },
+          categories: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter at least one category for your organization'
+            },
+            length: {
+              minimum: 1,
+              maximum: 3,
+              tooLong: 'Enter up to three categories for your organization'
+            }
+          },
+          city: {
+            presence: true,
+          },
+          state: {
+            presence: true,
+          },
+          zip: {
+            label: 'Zip',
+            presence: true,
+          },
+          phone: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter your organization\'s phone number'
+            },
+          },
+          firstName: {
+            presence: true,
+          },
+          lastName: {
+            presence: true,
+          },
+          email: {
+            label: '',
+            presence: {
+              allowEmpty: false,
+              message: 'Enter your email'
+            },
+            email: {
+              message: 'The email entered is not valid'
+            },
+          },
+
+          // reduces to uniq keys for each agreement to validate
+          // e.g. 'agreedIds.10': { arrayIncludes: {...} }
+          ...vue.agreements.filter(a => a.isRequired).reduce((acc, curr) => {
+            acc['agreedIds.'+curr.id] = {
+              label: '',
+              arrayIncludes: {
+                attributeName: 'agreedIds',
+                required: [curr.id],
+                message: `You must agree to "${curr.agreementTitle}"`
+              }
+            };
+            return acc;
+          }, {}),
+
+        }
+      },
 		},
 		beforeRouteEnter: function (to, from, next) {
 			next(function (vue) {
-				axios.get(API_URL + 'contents' + Utils.generateQueryString({
-					keys: 'REGISTER_FORM_TEXT'
-				})).then(function (response) {
-					vue.contents = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-				});
+        return Promise.all([
+          axios.get(API_URL + 'agreements').then(response => { vue.agreements = response.data; }),
+          axios.get(API_URL + 'contents' + Utils.generateQueryString({
+            keys: 'REGISTER_FORM_TEXT'
+          })).then(response => { vue.contents = response.data; }).catch(function (err) {
+            vue.apiError = err.response.data.errors;
+          })
+        ]);
 			});
 		},
 		beforeRouteUpdate: function (to, from, next) {
@@ -288,84 +411,10 @@
 			}
 		},
 		methods: {
-			getConstraints: function () {
-				return {
-					legalName: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter your organization\'s legal name'
-						},
-					},
-					taxId: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter your organization\'s tax ID number'
-						},
-					},
-					address1: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter your organization\'s address'
-						},
-					},
-					address2: {
-						label: 'Address line 2',
-						presence: false,
-					},
-					address3: {
-						label: 'Address line 3',
-						presence: false,
-					},
-					categories: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter at least one category for your organization'
-						},
-						length: {
-							minimum: 1,
-							maximum: 3,
-							tooLong: 'Enter up to three categories for your organization'
-						}
-					},
-					city: {
-						presence: true,
-					},
-					state: {
-						presence: true,
-					},
-					zip: {
-						label: 'Zip',
-						presence: true,
-					},
-					phone: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter your organization\'s phone number'
-						},
-					},
-					firstName: {
-						presence: true,
-					},
-					lastName: {
-						presence: true,
-					},
-					email: {
-						label: '',
-						presence: {
-							allowEmpty: false,
-							message: 'Enter your email'
-						},
-						email: {
-							message: 'The email entered is not valid'
-						},
-					},
-				}
-			},
+      getConstraints: function () {
+        const vue = this;
+        return vue.constraints;
+      },
 			submit: function (event) {
 				event.preventDefault();
 				const vue = this;
@@ -396,6 +445,9 @@
 						category2: vue.formData.categories.length >= 2 ? vue.formData.categories[1] : 0,
 						category3: vue.formData.categories.length >= 3 ? vue.formData.categories[2] : 0,
 
+            NonprofitAgreements: vue.agreements.map(agreement => {
+              return { agreementId: agreement.id, isChecked: vue.formData.agreedIds.includes(agreement.id) };
+            })
 					},
 					user: {
 						firstName: vue.formData.firstName,

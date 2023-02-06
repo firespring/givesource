@@ -38,9 +38,14 @@ exports.handle = function (event, context, callback) {
 		return usersRepository.populate(request.get('user'));
 	}).then(function (populatedUser) {
 		user = populatedUser;
-		return nonprofitsRepository.upsert(nonprofit, {});
+		const data = {};
+		const dataNonprofitAgreements = request.get('nonprofit').NonprofitAgreements
+		if (dataNonprofitAgreements) {
+			data.NonprofitAgreements = dataNonprofitAgreements;
+		}
+		return nonprofitsRepository.upsert(nonprofit, data);
 	}).then(function (nonprofit) {
-		return usersRepository.upsert(user, {nonprofitId: nonprofit[0].id});
+		return usersRepository.upsert(user, {nonprofitId: nonprofit.id});
 	}).then(function () {
 		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendRegistrationPendingEmail', {body: {email: user.email}});
 	}).then(function () {

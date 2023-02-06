@@ -537,7 +537,7 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 					return agreement;
 				});
 
-				return updatedModel.setAgreements(configuredAgreements);
+				return await updatedModel.setAgreements(configuredAgreements);
 			});
 		}).then(function (nonprofit) {
 			resolve(nonprofit);
