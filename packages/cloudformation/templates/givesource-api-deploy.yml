@@ -47,6 +47,11 @@ Resources:
           CachingEnabled: true
           ThrottlingBurstLimit: 5000
           ThrottlingRateLimit: 10000
+        - ResourcePath: "/agreements"
+          HttpMethod: GET
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/contents"
           HttpMethod: GET
           CacheDataEncrypted: true

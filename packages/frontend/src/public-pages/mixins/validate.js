@@ -62,6 +62,35 @@ validate.validators.ccCvv = function (value, options) {
 	return null;
 };
 
+/**
+ * Validate that an array contains required options
+ *
+ * @param {*} value
+ * @param {{}} [options]
+ * @return {*}
+ */
+validate.validators.arrayIncludes = function (value, options, attribute, allValues) {
+	if (typeof value === 'undefined') {
+		value = allValues[options.attributeName]
+	}
+	if (options.required.length === 0) {
+		return null;
+	}
+	if (! Array.isArray(value)) {
+		return 'is not an array'
+	}
+
+	for (let i=0; i<options.required.length; i++) {
+		const requiredValue = options.required[i];
+		if (! value.includes(requiredValue)) {
+			return options.message || 'is not valid';
+		}
+	}
+
+	return null;
+};
+
+
 const mixin = {
 	methods: {
 		validate: function (data, constraints) {

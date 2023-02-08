@@ -35,6 +35,13 @@ exports.handle = function (event, context, callback) {
 		users.forEach(function (user) {
 			let result = user;
 			promise = promise.then(function () {
+				if (! user.cognitoUsername) {
+					// user's without username shouldn't exist, but will throw on cognito.listGroupsForUser if they don't
+					// testing/garbage data can cause a user without a username
+					result.groups = [];
+					results.push(result);
+					return;
+				}
 				return cognito.listGroupsForUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername).then(function (response) {
 					result.groups = response.hasOwnProperty('Groups') ? response.Groups.map(function (group) {
 						return group.GroupName;

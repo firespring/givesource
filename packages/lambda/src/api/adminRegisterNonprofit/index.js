@@ -45,7 +45,7 @@ exports.handle = function (event, context, callback) {
 		nonprofit.status = NonprofitHelper.STATUS_ACTIVE;
 		return nonprofitsRepository.upsert(nonprofit, {});
 	}).then(function (nonprofit) {
-		savedNp = nonprofit[0];
+		savedNp = nonprofit;
 		return usersRepository.populate(request.get('user'));
 	}).then(function (populatedUser) {
 		user = populatedUser;
