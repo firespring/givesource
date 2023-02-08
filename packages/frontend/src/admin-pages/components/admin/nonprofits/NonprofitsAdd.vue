@@ -452,7 +452,13 @@
                           name="agreementId[]"
                           :value="agreement.id"
                         >
-                        <label :for="'agreementId-'+agreement.id">{{ agreement.agreementTitle }}</label>
+                        <label :for="'agreementId-'+agreement.id">
+                          {{ agreement.agreementTitle }}
+                          <span
+                            v-if="agreement.isRequired"
+                            class="c-label c-label--bad"
+                          >Required</span>
+                        </label>
                       </li>
                     </ul>
                   </div>
