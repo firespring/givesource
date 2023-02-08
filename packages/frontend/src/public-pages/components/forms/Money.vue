@@ -16,13 +16,13 @@
 
 <template>
   <input
+    v-if="isInternetExplorer"
     :id="id"
+    ref="input"
     v-model.lazy="localValue"
     type="text"
     :name="name"
-    v-if="isInternetExplorer"
     :class="{'has-error': hasError}"
-    ref="input"
     @input="format"
   >
   <input

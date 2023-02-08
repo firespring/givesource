@@ -18,8 +18,8 @@
   <div class="c-form-item__control">
     <input
       :id="id"
-      type="file"
       ref="input"
+      type="file"
       :name="name"
       class="u-none"
       @change="onChange"

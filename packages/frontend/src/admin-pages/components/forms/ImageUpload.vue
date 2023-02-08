@@ -18,10 +18,10 @@
   <div class="c-form-item__control">
     <input
       :id="id"
+      ref="input"
       type="file"
       accept="image/*"
       :name="name"
-      ref="input"
       class="u-none"
       @change="onChange"
     >
