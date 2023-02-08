@@ -21,8 +21,8 @@
  * @param {*} value
  * @returns {number}
  */
-function fromPercent(value) {
-	return (value * 100);
+function fromPercent (value) {
+  return (value * 100)
 }
 
-export default fromPercent;
+export default fromPercent

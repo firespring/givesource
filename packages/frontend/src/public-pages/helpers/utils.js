@@ -15,19 +15,19 @@
  */
 
 const isInternetExplorer = function () {
-	return (navigator.appVersion.indexOf("MSIE 10") > -1) || (navigator.userAgent.indexOf("Trident") > -1 && navigator.userAgent.indexOf("rv:11") > -1);
-};
+  return (navigator.appVersion.indexOf('MSIE 10') > -1) || (navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf('rv:11') > -1)
+}
 
 const generateQueryString = function (object) {
-	const params = [];
-	Object.keys(object).forEach(function (key) {
-		if (object.hasOwnProperty(key)) {
-			const value = encodeURIComponent(object[key]);
-			params.push(key + '=' + value);
-		}
-	});
-	return '?' + params.join('&');
-};
+  const params = []
+  Object.keys(object).forEach(function (key) {
+    if (object.hasOwnProperty(key)) {
+      const value = encodeURIComponent(object[key])
+      params.push(key + '=' + value)
+    }
+  })
+  return '?' + params.join('&')
+}
 
 /**
  * Sort two objects alphabetically by key
@@ -37,17 +37,17 @@ const generateQueryString = function (object) {
  * @return {number}
  */
 const sortAlphabetically = function (a, b, key) {
-	if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key].toLowerCase() < b[key].toLowerCase()) {
-		return -1;
-	} else if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key].toLowerCase() > b[key].toLowerCase()) {
-		return 1;
-	}
+  if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key].toLowerCase() < b[key].toLowerCase()) {
+    return -1
+  } else if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key].toLowerCase() > b[key].toLowerCase()) {
+    return 1
+  }
 
-	return 0;
-};
+  return 0
+}
 
 export {
-	isInternetExplorer,
-	generateQueryString,
-	sortAlphabetically
+  isInternetExplorer,
+  generateQueryString,
+  sortAlphabetically
 }

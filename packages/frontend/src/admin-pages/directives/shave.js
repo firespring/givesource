@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import shave from 'shave';
+import shave from 'shave'
 
 /* ============================================================================
  Shave
  ============================================================================ */
 const directive = {
-	inserted: function (el, binding) {
-		if (binding.value) {
-			shave(el, binding.value);
-		}
-	}
-};
+  inserted: function (el, binding) {
+    if (binding.value) {
+      shave(el, binding.value)
+    }
+  }
+}
 
-export default directive;
+export default directive

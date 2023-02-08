@@ -15,120 +15,142 @@
   -->
 
 <template>
-    <tr>
-        <td class="organization">
-            <strong>{{ nonprofit.legalName }}</strong>
-            <div class="form-item mt2">
-                <div class="form-item__control">
-                    <input v-model="localNote" type="text" name="note1" class="sm" :placeholder="placeHolder" maxlength="200">
-                </div>
-            </div>
-        </td>
-        <td class="donation">
-            <div class="donation-amount">
-                <forms-money v-model="localAmount" name="amount" :hasError="formErrors.hasOwnProperty('amount')" required></forms-money>
-            </div>
-            <div v-if="error" class="notes notes--below notes--error">
-                A donation amount must be at least $10.00
-            </div>
-        </td>
-        <td class="actions nowrap">
-            <a v-on:click.prevent="deleteCartItem" href="#" class="btn btn--sm btn--icon btn--red">
-                <i class="fas fa-trash-alt" aria-hidden="true"></i>Delete
-            </a>
-        </td>
-    </tr>
+  <tr>
+    <td class="organization">
+      <strong>{{ nonprofit.legalName }}</strong>
+      <div class="form-item mt2">
+        <div class="form-item__control">
+          <input
+            v-model="localNote"
+            type="text"
+            name="note1"
+            class="sm"
+            :placeholder="placeHolder"
+            maxlength="200"
+          >
+        </div>
+      </div>
+    </td>
+    <td class="donation">
+      <div class="donation-amount">
+        <forms-money
+          v-model="localAmount"
+          name="amount"
+          :has-error="formErrors.hasOwnProperty('amount')"
+          required
+        />
+      </div>
+      <div
+        v-if="error"
+        class="notes notes--below notes--error"
+      >
+        A donation amount must be at least $10.00
+      </div>
+    </td>
+    <td class="actions nowrap">
+      <a
+        href="#"
+        class="btn btn--sm btn--icon btn--red"
+        @click.prevent="deleteCartItem"
+      >
+        <i
+          class="fas fa-trash-alt"
+          aria-hidden="true"
+        />Delete
+      </a>
+    </td>
+  </tr>
 </template>
 
 <script>
-	import * as Utils from './../../helpers/utils';
-	import ComponentMoney from './../forms/Money.vue';
+import * as Utils from './../../helpers/utils'
+import ComponentMoney from './../forms/Money.vue'
 
-	export default {
-		data() {
-			const vm = this;
+export default {
+  components: {
+    'forms-money': ComponentMoney
+  },
+  props: [
+    'amount',
+    'nonprofit',
+    'timestamp',
+    'note',
+    'index'
+  ],
+  data () {
+    const vm = this
 
-			return {
-				localAmount: vm.amount,
-				localNote: vm.note,
-				error: null,
+    return {
+      localAmount: vm.amount,
+      localNote: vm.note,
+      error: null,
 
-				formErrors: {},
-			};
-		},
-		computed: {
-			donationAmount() {
-				return this.formatMoney(this.amount);
-			},
-			placeHolder() {
-				return "Leave " + this.nonprofit.legalName + " a note with your donation";
-			}
-		},
-		props: [
-			'amount',
-			'nonprofit',
-			'timestamp',
-			'note',
-			'index'
-		],
-		watch: {
-			localAmount(value, oldValue) {
-				const vm = this;
+      formErrors: {}
+    }
+  },
+  computed: {
+    donationAmount () {
+      return this.formatMoney(this.amount)
+    },
+    placeHolder () {
+      return 'Leave ' + this.nonprofit.legalName + ' a note with your donation'
+    }
+  },
+  watch: {
+    localAmount (value, oldValue) {
+      const vm = this
 
-				if (value !== oldValue) {
-					vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote);
-				}
-			},
-			amount(value, oldValue) {
-				const vm = this;
+      if (value !== oldValue) {
+        vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote)
+      }
+    },
+    amount (value, oldValue) {
+      const vm = this
 
-				if (value === oldValue) {
-					return;
-				}
-				vm.formErrors = vm.validate({amount: value}, vm.getConstraints());
-				vm.error = !!Object.keys(vm.formErrors).length;
-				vm.$emit('hasError', vm.error);
+      if (value === oldValue) {
+        return
+      }
+      vm.formErrors = vm.validate({ amount: value }, vm.getConstraints())
+      vm.error = !!Object.keys(vm.formErrors).length
+      vm.$emit('hasError', vm.error)
 
-				vm.localAmount = value;
-			},
-			localNote(value, oldValue) {
-				const vm = this;
+      vm.localAmount = value
+    },
+    localNote (value, oldValue) {
+      const vm = this
 
-				if (value !== oldValue) {
-					vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote);
-				}
-			},
-			note: function (value, oldValue) {
-				const vue = this;
+      if (value !== oldValue) {
+        vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote)
+      }
+    },
+    note: function (value, oldValue) {
+      const vue = this
 
-				if (value === oldValue) {
-					return;
-				}
+      if (value === oldValue) {
+        return
+      }
 
-				vue.localNote = value;
-			}
-		},
-		methods: {
-			getConstraints() {
-				return {
-					amount: {
-						presence: true,
-						numericality: {
-							onlyInteger: true,
-							greaterThanOrEqualTo: 1000,
-						}
-					},
-				};
-			},
-			deleteCartItem() {
-				const vm = this;
+      vue.localNote = value
+    }
+  },
+  methods: {
+    getConstraints () {
+      return {
+        amount: {
+          presence: true,
+          numericality: {
+            onlyInteger: true,
+            greaterThanOrEqualTo: 1000
+          }
+        }
+      }
+    },
+    deleteCartItem () {
+      const vm = this
 
-				vm.$store.commit('removeCartItem', vm.timestamp);
-				vm.$emit('removeCartItem', vm.index);
-			}
-		},
-		components: {
-			'forms-money': ComponentMoney,
-		}
-	};
+      vm.$store.commit('removeCartItem', vm.timestamp)
+      vm.$emit('removeCartItem', vm.index)
+    }
+  }
+}
 </script>

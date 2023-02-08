@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import Vue from 'vue';
+import Vue from 'vue'
 
-const bus = new Vue();
+const bus = new Vue()
 const mixin = {
-	data: function () {
-		return {
-			bus: bus
-		};
-	}
-};
+  data: function () {
+    return {
+      bus: bus
+    }
+  }
+}
 
-export default mixin;
+export default mixin

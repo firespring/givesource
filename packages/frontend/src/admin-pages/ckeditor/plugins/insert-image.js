@@ -14,74 +14,74 @@
  * limitations under the License.
  */
 
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
-import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import Request from './../../helpers/request';
-import store from './../../store';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview'
+import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg'
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin'
+import Request from './../../helpers/request'
+import store from './../../store'
 
 export default class InsertImage extends Plugin {
-	init() {
-		const plugin = this;
-		const editor = plugin.editor;
+  init () {
+    const plugin = this
+    const editor = plugin.editor
 
-		editor.ui.componentFactory.add('insertImage', locale => {
-			const view = new ButtonView(locale);
+    editor.ui.componentFactory.add('insertImage', locale => {
+      const view = new ButtonView(locale)
 
-			view.set({
-				label: 'Insert image',
-				icon: imageIcon,
-				tooltip: true,
-			});
+      view.set({
+        label: 'Insert image',
+        icon: imageIcon,
+        tooltip: true
+      })
 
-			view.on('execute', () => {
-				const input = document.createElement('input');
-				input.setAttribute('type', 'file');
-				input.setAttribute('accept', '.jpg,.jpeg,.png,.tif,.gif');
-				input.click();
+      view.on('execute', () => {
+        const input = document.createElement('input')
+        input.setAttribute('type', 'file')
+        input.setAttribute('accept', '.jpg,.jpeg,.png,.tif,.gif')
+        input.click()
 
-				input.onchange = () => {
-					if (input.files.length) {
-						plugin.uploadImage(input.files[0]).then(file => {
-							const src = store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path;
-							editor.model.change(writer => {
-								const imageElement = writer.createElement('image', {
-									src: src
-								});
-								editor.model.insertContent(imageElement, editor.model.document.selection);
-							});
-						}).catch(err => {
-							console.log(err);
-						});
-					}
-				};
-			});
+        input.onchange = () => {
+          if (input.files.length) {
+            plugin.uploadImage(input.files[0]).then(file => {
+              const src = store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path
+              editor.model.change(writer => {
+                const imageElement = writer.createElement('image', {
+                  src: src
+                })
+                editor.model.insertContent(imageElement, editor.model.document.selection)
+              })
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        }
+      })
 
-			return view;
-		});
-	}
+      return view
+    })
+  }
 
-	uploadImage(image) {
-		const request = new Request();
-		let file = null;
+  uploadImage (image) {
+    const request = new Request()
+    let file = null
 
-		return request.post('files', {
-			content_type: image.type,
-			filename: image.name,
-		}).then(response => {
-			file = response.data.file;
+    return request.post('files', {
+      content_type: image.type,
+      filename: image.name
+    }).then(response => {
+      file = response.data.file
 
-			const signedUrl = response.data.upload_url;
+      const signedUrl = response.data.upload_url
 
-			const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers));
-			let instance = axios.create();
-			instance.defaults.headers.common['Content-Type'] = image.type || 'application/octet-stream';
-			instance.defaults.headers.put['Content-Type'] = image.type || 'application/octet-stream';
-			axios.defaults.headers = defaultHeaders;
+      const defaultHeaders = JSON.parse(JSON.stringify(axios.defaults.headers))
+      const instance = axios.create()
+      instance.defaults.headers.common['Content-Type'] = image.type || 'application/octet-stream'
+      instance.defaults.headers.put['Content-Type'] = image.type || 'application/octet-stream'
+      axios.defaults.headers = defaultHeaders
 
-			return instance.put(signedUrl, image);
-		}).then(() => {
-			return file;
-		});
-	}
+      return instance.put(signedUrl, image)
+    }).then(() => {
+      return file
+    })
+  }
 }

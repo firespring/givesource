@@ -15,54 +15,60 @@
   -->
 
 <template>
-    <div style="justify-content: center; align-items: center; display: flex;" :style="{ height: height + 'px' }">
-        <div class="c-progress c-progress--spinner c-spinner-active" :class="spinnerClass">
-            <div class="c-spinner-layer c-spinner-orange-only">
-                <div class="c-spinner-circle-clipper left">
-                    <div class="c-spinner-circle"></div>
-                </div><div class="gap-patch">
-                <div class="c-spinner-circle"></div>
-            </div><div class="c-spinner-circle-clipper right">
-                <div class="c-spinner-circle"></div>
-            </div>
-            </div>
+  <div
+    style="justify-content: center; align-items: center; display: flex;"
+    :style="{ height: height + 'px' }"
+  >
+    <div
+      class="c-progress c-progress--spinner c-spinner-active"
+      :class="spinnerClass"
+    >
+      <div class="c-spinner-layer c-spinner-orange-only">
+        <div class="c-spinner-circle-clipper left">
+          <div class="c-spinner-circle" />
+        </div><div class="gap-patch">
+          <div class="c-spinner-circle" />
+        </div><div class="c-spinner-circle-clipper right">
+          <div class="c-spinner-circle" />
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-    export default {
-        computed: {
+export default {
+    	props: {
+    		size: {
+    			type: String,
+      default: ''
+    },
+    height: {
+    			type: String,
+      default: ''
+    }
+  },
+  computed: {
         	spinnerClass: function () {
         		switch (this.size) {
 			        case 'lg':
         			case 'large':
-        				return 'c-spinner-lg';
+        				return 'c-spinner-lg'
 
-                    case 'sm':
-                    case 'small':
-                    	return 'c-spinner-sm';
+        case 'sm':
+        case 'small':
+                    	return 'c-spinner-sm'
 
-                    case 'xm':
-                    case 'extrasmall':
-                    	return 'c-spinner-xs';
+        case 'xm':
+        case 'extrasmall':
+                    	return 'c-spinner-xs'
 
-                    case 'md':
-                    case 'medium':
-                    default:
-                    	return '';
-                }
-            }
-        },
-    	props: {
-    		size: {
-    			type: String,
-                default: ''
-            },
-            height: {
-    			type: String,
-                default: ''
-            }
-        }
-    };
+        case 'md':
+        case 'medium':
+        default:
+                    	return ''
+      }
+    }
+  }
+}
 </script>

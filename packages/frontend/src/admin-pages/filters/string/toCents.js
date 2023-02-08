@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const numeral = require('numeral');
+const numeral = require('numeral')
 
 /**
  * Convert the provided dollar amount into cents.
@@ -23,8 +23,8 @@ const numeral = require('numeral');
  * @param {*} value
  * @returns {*}
  */
-function toCents(value) {
-	return numeral(value * 100).format('0');
+function toCents (value) {
+  return numeral(value * 100).format('0')
 }
 
-export default toCents;
+export default toCents

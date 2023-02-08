@@ -15,63 +15,69 @@
   -->
 
 <template>
-    <ckeditor v-model="localValue" :editor="editor" tag-name="textarea" :class="{'has-errors': hasErrors}" :id="id"></ckeditor>
+  <ckeditor
+    :id="id"
+    v-model="localValue"
+    :editor="editor"
+    tag-name="textarea"
+    :class="{'has-errors': hasErrors}"
+  />
 </template>
 
 <script>
-	import AdvancedEditor from './../../ckeditor/editors/advanced';
-	import BasicEditor from './../../ckeditor/editors/basic';
-	import ComponentSpinner from './../layout/Spinner.vue';
-	import ModerateEditor from './../../ckeditor/editors/moderate';
+import AdvancedEditor from './../../ckeditor/editors/advanced'
+import BasicEditor from './../../ckeditor/editors/basic'
+import ComponentSpinner from './../layout/Spinner.vue'
+import ModerateEditor from './../../ckeditor/editors/moderate'
 
-	export default {
-		data() {
-			return {
-				localValue: this.value ? this.value : '',
-				editors: {
-					advanced: AdvancedEditor,
-					basic: BasicEditor,
-					moderate: ModerateEditor,
-				},
-			}
-		},
-		computed: {
-			editor() {
-				const vm = this;
-				return vm.type && vm.editors.hasOwnProperty(vm.type) ? vm.editors[vm.type] : vm.editors.basic;
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: ''
-			},
-			hasErrors: {
-				type: Boolean,
-				default: false
-			},
-			type: {
-				type: String,
-				default: 'basic',
-			}
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				if (value === oldValue) {
-					return;
-				}
-				this.$emit('input', value);
-			},
-			value: function (value, oldValue) {
-				if (value === oldValue) {
-					return;
-				}
-				this.localValue = value;
-			}
-		},
-		components: {
-			'layout-spinner': ComponentSpinner,
-		}
-	};
+export default {
+  components: {
+    'layout-spinner': ComponentSpinner
+  },
+  props: {
+    value: {},
+    id: {
+      type: String,
+      default: ''
+    },
+    hasErrors: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: 'basic'
+    }
+  },
+  data () {
+    return {
+      localValue: this.value ? this.value : '',
+      editors: {
+        advanced: AdvancedEditor,
+        basic: BasicEditor,
+        moderate: ModerateEditor
+      }
+    }
+  },
+  computed: {
+    editor () {
+      const vm = this
+      return vm.type && vm.editors.hasOwnProperty(vm.type) ? vm.editors[vm.type] : vm.editors.basic
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      if (value === oldValue) {
+        return
+      }
+      this.$emit('input', value)
+    },
+    value: function (value, oldValue) {
+      if (value === oldValue) {
+        return
+      }
+      this.localValue = value
+    }
+  }
+}
 </script>

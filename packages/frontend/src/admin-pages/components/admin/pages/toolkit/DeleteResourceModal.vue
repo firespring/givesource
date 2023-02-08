@@ -15,78 +15,88 @@
   -->
 
 <template>
-    <div id="modal-confirm-delete" class="c-modal c-modal--warning c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
+  <div
+    id="modal-confirm-delete"
+    class="c-modal c-modal--warning c-modal--sm"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div class="c-modal-header">
+            <h1>Do you want to delete this item?</h1>
+          </div>
 
-                    <div class="c-modal-header">
-                        <h1>Do you want to delete this item?</h1>
-                    </div>
-
-
-                    <div class="c-modal-content">
-                        <div class="c-page-section">
-                            <div class="c-page-section__main">
-                                <p>
-
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="c-modal-footer">
-                            <div class="c-modal-footer__actions">
-                                <button v-on:click="deleteResource" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete This Item</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep This Item</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
+          <div class="c-modal-content">
+            <div class="c-page-section">
+              <div class="c-page-section__main">
+                <p />
+              </div>
             </div>
+
+            <div class="c-modal-footer">
+              <div class="c-modal-footer__actions">
+                <button
+                  type="button"
+                  class="c-btn c-btn--bad js-modal-close"
+                  @click="deleteResource"
+                >
+                  Yes, Delete This Item
+                </button>
+                <button
+                  type="button"
+                  class="c-btn c-btn--neutral c-btn--text js-modal-close"
+                  @click="cancel"
+                >
+                  No, Keep This Item
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			},
-			data: {
-				type: Object,
-				default: {
-					content: {}
-				}
-			}
-		},
-		methods: {
-			cancel: function () {
-				this.clearModals();
-			},
-			deleteResource: function () {
-				const vue = this;
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    },
+    data: {
+      type: Object,
+      default: {
+        content: {}
+      }
+    }
+  },
+  methods: {
+    cancel: function () {
+      this.clearModals()
+    },
+    deleteResource: function () {
+      const vue = this
 
-				vue.addModal('spinner');
+      vue.addModal('spinner')
 
-				let promise = Promise.resolve();
-				const file = _.find(vue.data.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE'});
-				if (file && file.value) {
-					promise = promise.then(function () {
-						return vue.$request.delete('files/' + file.value);
-					});
-				}
+      let promise = Promise.resolve()
+      const file = _.find(vue.data.content.value, { key: 'TOOLKIT_RESOURCE_LIST_ITEM_FILE' })
+      if (file && file.value) {
+        promise = promise.then(function () {
+          return vue.$request.delete('files/' + file.value)
+        })
+      }
 
-				promise.then(function () {
-					return vue.$request.delete('contents/' + vue.data.content.id);
-				}).then(function () {
-					vue.bus.$emit('deleteToolkitResourceList', vue.data.content);
-					vue.clearModals();
-				});
-			},
-		}
-	};
+      promise.then(function () {
+        return vue.$request.delete('contents/' + vue.data.content.id)
+      }).then(function () {
+        vue.bus.$emit('deleteToolkitResourceList', vue.data.content)
+        vue.clearModals()
+      })
+    }
+  }
+}
 </script>

@@ -14,17 +14,17 @@
   ~ limitations under the License.
   -->
 
-<template></template>
+<template />
 
 <script>
-    const User = require('../../helpers/user');
+const User = require('../../helpers/user')
 
-    export default {
+export default {
     	mounted: function () {
-    		const vue = this;
+    		const vue = this
 
-            User.logout();
-            vue.$router.push({ name: 'login' });
-        }
-    };
+    User.logout()
+    vue.$router.push({ name: 'login' })
+  }
+}
 </script>

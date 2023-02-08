@@ -18,8 +18,8 @@
   <tr>
     <td class="input input--text">
       <SelectNonprofit
-        v-model="selectedNonprofit"
         :id="nonprofitFieldName"
+        v-model="selectedNonprofit"
         :name="nonprofitFieldName"
         :nonprofits="nonprofits"
         :has-error="hasNonprofitIdError"
@@ -34,11 +34,11 @@
     <td class="input input--text">
       <div class="u-control-icon u-control-icon--dollar">
         <input
+          :id="dollarAmountFieldName"
           v-model="dollarAmount"
           type="number"
           step="0.01"
           :name="dollarAmountFieldName"
-          :id="dollarAmountFieldName"
           :class="{ 'has-error': errors[dollarAmountFieldName] }"
         >
       </div>
@@ -51,10 +51,10 @@
     </td>
     <td class="input input--text">
       <input
+        :id="noteFieldName"
         v-model="note"
         type="text"
         :name="noteFieldName"
-        :id="noteFieldName"
         :class="{ 'has-error': errors[noteFieldName] }"
       >
       <div
@@ -74,7 +74,7 @@
       ><i
         class="fa fa-minus-circle"
         aria-hidden="true"
-      ></i></a>
+      /></a>
     </td>
   </tr>
 </template>

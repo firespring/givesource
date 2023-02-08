@@ -89,8 +89,8 @@
                       type="advanced"
                     />
                     <div
-                        v-if="formErrors.agreementText"
-                        class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                      v-if="formErrors.agreementText"
+                      class="c-notes c-notes--below c-notes--bad c-form-control-error"
                     >
                       {{ formErrors.agreementText }}
                     </div>
@@ -205,11 +205,11 @@ export default {
       return {
         agreementTitle: {
           label: 'Agreement Title',
-          presence: true,
+          presence: true
         },
         agreementText: {
           label: 'Agreement Text',
-          presence: true,
+          presence: true
         }
       }
     },

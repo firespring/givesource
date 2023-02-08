@@ -15,15 +15,15 @@
  */
 
 const generateQueryString = function (object) {
-	const params = [];
-	Object.keys(object).forEach(function (key) {
-		if (object.hasOwnProperty(key)) {
-			const value = encodeURIComponent(object[key]);
-			params.push(key + '=' + value);
-		}
-	});
-	return '?' + params.join('&');
-};
+  const params = []
+  Object.keys(object).forEach(function (key) {
+    if (object.hasOwnProperty(key)) {
+      const value = encodeURIComponent(object[key])
+      params.push(key + '=' + value)
+    }
+  })
+  return '?' + params.join('&')
+}
 
 /**
  * Sort two objects alphabetically by key
@@ -33,16 +33,16 @@ const generateQueryString = function (object) {
  * @return {number}
  */
 const sortAlphabetically = function (a, b, key) {
-	if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] < b[key]) {
-		return -1;
-	} else if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] > b[key]) {
-		return 1;
-	}
+  if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] < b[key]) {
+    return -1
+  } else if (a.hasOwnProperty(key) && b.hasOwnProperty(key) && a[key] > b[key]) {
+    return 1
+  }
 
-	return 0;
-};
+  return 0
+}
 
 export {
-	generateQueryString,
-	sortAlphabetically
+  generateQueryString,
+  sortAlphabetically
 }

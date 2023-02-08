@@ -15,52 +15,52 @@
   -->
 
 <template>
-    <div class="o-wrap">
-        <router-view></router-view>
-        <modals></modals>
-    </div>
+  <div class="o-wrap">
+    <router-view />
+    <modals />
+  </div>
 </template>
 
 <script>
-	import ComponentModals from './modals/Modals.vue';
+import ComponentModals from './modals/Modals.vue'
 
-	export default {
-		components: {
-			'modals': ComponentModals
-		}
-	};
+export default {
+  components: {
+    modals: ComponentModals
+  }
+};
 
-	// Ripple-effect animation
-	(function ($) {
-		$('body').delegate('.c-btn', 'click', function (e) {
-			const rippler = $(this);
+// Ripple-effect animation
+(function ($) {
+  $('body').delegate('.c-btn', 'click', function (e) {
+    const rippler = $(this)
 
-			// create .ink element if it doesn't exist
-			if (rippler.find('.ink').length === 0) {
-				rippler.append('<span class="ink"></span>');
-			}
+    // create .ink element if it doesn't exist
+    if (rippler.find('.ink').length === 0) {
+      rippler.append('<span class="ink"></span>')
+    }
 
-			const ink = rippler.find('.ink');
+    const ink = rippler.find('.ink')
 
-			// prevent quick double clicks
-			ink.removeClass('animate');
+    // prevent quick double clicks
+    ink.removeClass('animate')
 
-			// set .ink diametr
-			if (!ink.height() && !ink.width()) {
-				const d = Math.max(rippler.outerWidth(), rippler.outerHeight());
-				ink.css({height: d, width: d});
-			}
+    // set .ink diametr
+    if (!ink.height() && !ink.width()) {
+      const d = Math.max(rippler.outerWidth(), rippler.outerHeight())
+      ink.css({ height: d, width: d })
+    }
 
-			// get click coordinates
-			const x = e.pageX - rippler.offset().left - ink.width() / 2;
-			const y = e.pageY - rippler.offset().top - ink.height() / 2;
+    // get click coordinates
+    const x = e.pageX - rippler.offset().left - ink.width() / 2
+    const y = e.pageY - rippler.offset().top - ink.height() / 2
 
-			// set .ink position and add class .animate
-			ink.css({
-				top: y + 'px',
-				left: x + 'px'
-			}).addClass('animate');
-		})
-	})(jQuery);
+    // set .ink position and add class .animate
+    ink.css({
+      top: y + 'px',
+      left: x + 'px'
+    }).addClass('animate')
+  })
+})(jQuery)
 
 </script>

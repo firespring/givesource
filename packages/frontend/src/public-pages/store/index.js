@@ -14,104 +14,103 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate';
-import Vue from 'vue';
-import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate'
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const store = new Vuex.Store({
-	state: {
-		settings: {},
-		cartItems: [],
-		updated: 0,
-		pages: [],
-	},
-	mutations: {
-		addCartItem: function (state, payload) {
-			if (payload.amount && payload.nonprofit !== null) {
-				let amount = payload.amount;
-				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
-					amount = Math.round(parseFloat(payload.amount) * 100);
-				}
+  state: {
+    settings: {},
+    cartItems: [],
+    updated: 0,
+    pages: []
+  },
+  mutations: {
+    addCartItem: function (state, payload) {
+      if (payload.amount && payload.nonprofit !== null) {
+        let amount = payload.amount
+        if (typeof amount === 'string' && amount.indexOf('.') > -1) {
+          amount = Math.round(parseFloat(payload.amount) * 100)
+        }
 
-				let isNew = true;
-				state.cartItems.forEach(function (item) {
-					if (item.nonprofit.id === payload.nonprofit.id) {
-						item.amount = item.amount += amount;
-						item.timestamp = Date.now();
-						isNew = false;
-					}
-				});
+        let isNew = true
+        state.cartItems.forEach(function (item) {
+          if (item.nonprofit.id === payload.nonprofit.id) {
+            item.amount = item.amount += amount
+            item.timestamp = Date.now()
+            isNew = false
+          }
+        })
 
-				if (isNew) {
-					state.cartItems.push({
-						amount: amount,
-						nonprofit: payload.nonprofit,
-						timestamp: Date.now()
-					})
-				}
-			}
-		},
-		removeCartItem: function (state, timestamp) {
-			state.cartItems = _.reject(state.cartItems, {timestamp: timestamp});
-		},
-		updateCartItem: function (state, payload) {
-			if (payload.amount && payload.timestamp) {
+        if (isNew) {
+          state.cartItems.push({
+            amount: amount,
+            nonprofit: payload.nonprofit,
+            timestamp: Date.now()
+          })
+        }
+      }
+    },
+    removeCartItem: function (state, timestamp) {
+      state.cartItems = _.reject(state.cartItems, { timestamp: timestamp })
+    },
+    updateCartItem: function (state, payload) {
+      if (payload.amount && payload.timestamp) {
+        let amount = payload.amount
+        if (typeof amount === 'string' && amount.indexOf('.') > -1) {
+          amount = Math.round(parseFloat(payload.amount) * 100)
+        }
 
-				let amount = payload.amount;
-				if (typeof amount === 'string' && amount.indexOf('.') > -1) {
-					amount = Math.round(parseFloat(payload.amount) * 100);
-				}
+        const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
+        cartItem.amount = amount
+      }
+    },
+    clearCartItems: function (state) {
+      state.cartItems = []
+    },
+    settings: function (state, settings) {
+      Object.keys(settings).forEach(function (key) {
+        state.settings[key] = settings[key]
+      })
+    },
+    updated: function (state) {
+      state.updated = new Date().getTime()
+    },
+    pages: function (state, pages) {
+      state.pages = pages
+    }
+  },
+  getters: {
+    cartItems: function (state) {
+      return state.cartItems
+    },
+    settings: function (state) {
+      return state.settings
+    },
+    setting: function (state) {
+      return function (key) {
+        return state.settings.hasOwnProperty(key) ? state.settings[key] : null
+      }
+    },
+    booleanSetting: function (state) {
+      return function (key, defaultValue) {
+        defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue
+        const value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue
+        return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true')
+      }
+    },
+    updated: function (state) {
+      return state.updated
+    },
+    pages: function (state) {
+      return state.pages
+    }
+  },
+  plugins: [
+    createPersistedState()
+  ]
+})
 
-				const cartItem = _.find(state.cartItems, {timestamp: payload.timestamp});
-				cartItem.amount = amount;
-			}
-		},
-		clearCartItems: function (state) {
-			state.cartItems = [];
-		},
-		settings: function (state, settings) {
-			Object.keys(settings).forEach(function (key) {
-				state.settings[key] = settings[key];
-			});
-		},
-		updated: function (state) {
-			state.updated = new Date().getTime();
-		},
-		pages: function (state, pages) {
-			state.pages = pages;
-		}
-	},
-	getters: {
-		cartItems: function (state) {
-			return state.cartItems;
-		},
-		settings: function (state) {
-			return state.settings;
-		},
-		setting: function (state) {
-			return function (key) {
-				return state.settings.hasOwnProperty(key) ? state.settings[key] : null;
-			}
-		},
-		booleanSetting: function (state) {
-			return function (key, defaultValue) {
-				defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue;
-				let value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue;
-				return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true');
-			}
-		},
-		updated: function (state) {
-			return state.updated;
-		},
-		pages: function (state) {
-			return state.pages;
-		}
-	},
-	plugins: [
-		createPersistedState()
-	]
-});
-
-export default store;
+export default store

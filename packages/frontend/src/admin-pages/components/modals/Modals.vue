@@ -15,122 +15,128 @@
   -->
 
 <template>
-    <div v-if="modals.length">
-        <div
-            v-for="(modal, index) in modals"
-            class="c-modal-overlay"
-            :class="data[modal]?.overlayClass"
-            :style="{'z-index': calculateOverlayZIndex(index), display: 'block' }"
-        ></div>
-        <component v-for="(modal, index) in modals" :is="modal" :key="index" :zIndex="calculateModalZIndex(index)" :data="data[modal]"></component>
-    </div>
+  <div v-if="modals.length">
+    <div
+      v-for="(modal, index) in modals"
+      class="c-modal-overlay"
+      :class="data[modal]?.overlayClass"
+      :style="{'z-index': calculateOverlayZIndex(index), display: 'block' }"
+    />
+    <component
+      :is="modal"
+      v-for="(modal, index) in modals"
+      :key="index"
+      :z-index="calculateModalZIndex(index)"
+      :data="data[modal]"
+    />
+  </div>
 </template>
 
 <script>
-	import ComponentContactEmailModal from './../admin/settings/contact/ContactEmailModal.vue';
-	import ComponentContactPhoneModal from './../admin/settings/contact/ContactPhoneModal.vue';
-	import ComponentCustomPagesDeleteModal from './../admin/pages/custom/CustomPagesDeleteModal.vue';
-	import ComponentDeleteModal from './DeleteModal.vue';
-	import ComponentDonorReceiptModal from './../admin/donations/DonorReceiptModal.vue';
-	import ComponentDonorReceiptEmailModal from './../admin/donations/DonorReceiptEmailModal.vue';
-	import ComponentErrorModal from './ErrorModal.vue';
-	import ComponentFAQAddQuestionModal from './../admin/pages/faq/AddQuestionModal.vue';
-	import ComponentFAQDeleteQuestionModal from './../admin/pages/faq/DeleteQuestionModal.vue';
-	import ComponentFAQEditQuestionModal from './../admin/pages/faq/EditQuestionModal.vue';
-	import ComponentModalSpinner from './ModalSpinner.vue';
-	import ComponentPhotoEditorModal from './photoEditor/PhotoEditorModal.vue';
-	import ComponentResendVerifyEmailModal from './../admin/settings/contact/ResendVerifyEmailModal.vue';
-	import ComponentRevokeNonprofitModal from './../admin/nonprofits/RevokeNonprofitModal.vue';
-	import ComponentSenderEmailModal from './../admin/settings/contact/SenderEmailModal.vue';
-	import ComponentToolkitAddResourceModal from './../admin/pages/toolkit/AddResourceModal.vue';
-	import ComponentToolkitDeleteResourceModal from './../admin/pages/toolkit/DeleteResourceModal.vue';
-	import ComponentToolkitEditResourceModal from './../admin/pages/toolkit/EditResourceModal.vue';
-	import ComponentUserAccountInfoModal from './../account/UserAccountInfoModal.vue';
-	import ComponentUserAccountPasswordModal from './../account/UserAccountPasswordModal.vue';
+import ComponentContactEmailModal from './../admin/settings/contact/ContactEmailModal.vue'
+import ComponentContactPhoneModal from './../admin/settings/contact/ContactPhoneModal.vue'
+import ComponentCustomPagesDeleteModal from './../admin/pages/custom/CustomPagesDeleteModal.vue'
+import ComponentDeleteModal from './DeleteModal.vue'
+import ComponentDonorReceiptModal from './../admin/donations/DonorReceiptModal.vue'
+import ComponentDonorReceiptEmailModal from './../admin/donations/DonorReceiptEmailModal.vue'
+import ComponentErrorModal from './ErrorModal.vue'
+import ComponentFAQAddQuestionModal from './../admin/pages/faq/AddQuestionModal.vue'
+import ComponentFAQDeleteQuestionModal from './../admin/pages/faq/DeleteQuestionModal.vue'
+import ComponentFAQEditQuestionModal from './../admin/pages/faq/EditQuestionModal.vue'
+import ComponentModalSpinner from './ModalSpinner.vue'
+import ComponentPhotoEditorModal from './photoEditor/PhotoEditorModal.vue'
+import ComponentResendVerifyEmailModal from './../admin/settings/contact/ResendVerifyEmailModal.vue'
+import ComponentRevokeNonprofitModal from './../admin/nonprofits/RevokeNonprofitModal.vue'
+import ComponentSenderEmailModal from './../admin/settings/contact/SenderEmailModal.vue'
+import ComponentToolkitAddResourceModal from './../admin/pages/toolkit/AddResourceModal.vue'
+import ComponentToolkitDeleteResourceModal from './../admin/pages/toolkit/DeleteResourceModal.vue'
+import ComponentToolkitEditResourceModal from './../admin/pages/toolkit/EditResourceModal.vue'
+import ComponentUserAccountInfoModal from './../account/UserAccountInfoModal.vue'
+import ComponentUserAccountPasswordModal from './../account/UserAccountPasswordModal.vue'
 
-	export default {
-		data: function () {
-			return {
-				modals: [],
-				data: {}
-			}
-		},
-		created: function () {
-			const vue = this;
+export default {
+  components: {
+    spinner: ComponentModalSpinner,
+    'account-edit-info': ComponentUserAccountInfoModal,
+    'account-edit-password': ComponentUserAccountPasswordModal,
+    'confirm-delete': ComponentDeleteModal,
+    error: ComponentErrorModal,
+    'donor-receipt-modal': ComponentDonorReceiptModal,
+    'donor-receipt-email-modal': ComponentDonorReceiptEmailModal,
+    'nonprofits-revoke': ComponentRevokeNonprofitModal,
+    'photo-editor': ComponentPhotoEditorModal,
+    'pages-custom-delete-modal': ComponentCustomPagesDeleteModal,
+    'pages-faq-add-question-modal': ComponentFAQAddQuestionModal,
+    'pages-faq-delete-question-modal': ComponentFAQDeleteQuestionModal,
+    'pages-faq-edit-question-modal': ComponentFAQEditQuestionModal,
+    'pages-toolkit-add-resource-modal': ComponentToolkitAddResourceModal,
+    'pages-toolkit-delete-resource-modal': ComponentToolkitDeleteResourceModal,
+    'pages-toolkit-edit-resource-modal': ComponentToolkitEditResourceModal,
+    'settings-edit-contact-email': ComponentContactEmailModal,
+    'settings-edit-contact-phone': ComponentContactPhoneModal,
+    'settings-edit-sender-email': ComponentSenderEmailModal,
+    'settings-resend-verify-email': ComponentResendVerifyEmailModal
+  },
+  data: function () {
+    return {
+      modals: [],
+      data: {}
+    }
+  },
+  created: function () {
+    const vue = this
 
-			/**
+    /**
 			 * Add a modal to the top of the stack
 			 *
 			 * @param {String} modal
 			 */
-			vue.bus.$on('addModal', function (modal, data) {
-				vue.modals.push(modal);
-				vue.data[modal] = data || null;
-			});
+    vue.bus.$on('addModal', function (modal, data) {
+      vue.modals.push(modal)
+      vue.data[modal] = data || null
+    })
 
-			/**
+    /**
 			 * Remove the top-most modal from the stack
 			 */
-			vue.bus.$on('removeModal', function (modal) {
-				if (vue.modals.indexOf(modal) > -1) {
-					vue.modals.splice(vue.modals.indexOf(modal), 1);
-				} else if (vue.modals.length) {
-					vue.modals = vue.modals.slice(0, -1);
-				}
-			});
+    vue.bus.$on('removeModal', function (modal) {
+      if (vue.modals.indexOf(modal) > -1) {
+        vue.modals.splice(vue.modals.indexOf(modal), 1)
+      } else if (vue.modals.length) {
+        vue.modals = vue.modals.slice(0, -1)
+      }
+    })
 
-			/**
+    /**
 			 * Replace the top-most modal
 			 */
-			vue.bus.$on('replaceModal', function (modal, data) {
-				if (vue.modals.length > 0) {
-					vue.modals[vue.modals.length - 1] = modal;
-					vue.data[modal] = data || null;
-				} else {
-					vue.modals.push(modal);
-					vue.data[modal] = data || null;
-				}
-			});
+    vue.bus.$on('replaceModal', function (modal, data) {
+      if (vue.modals.length > 0) {
+        vue.modals[vue.modals.length - 1] = modal
+        vue.data[modal] = data || null
+      } else {
+        vue.modals.push(modal)
+        vue.data[modal] = data || null
+      }
+    })
 
-			/**
+    /**
 			 * Clear all modals from the stack
 			 */
-			vue.bus.$on('clearModals', function () {
-				vue.modals = [];
-				vue.data = {};
-			});
-		},
-		methods: {
-			calculateOverlayZIndex: function (index) {
-				return 999 + (index * 1000);
-			},
-			calculateModalZIndex: function (index) {
-				return this.calculateOverlayZIndex(index) + 1;
-			}
-		},
-		components: {
-			'spinner': ComponentModalSpinner,
-			'account-edit-info': ComponentUserAccountInfoModal,
-			'account-edit-password': ComponentUserAccountPasswordModal,
-			'confirm-delete': ComponentDeleteModal,
-			'error': ComponentErrorModal,
-			'donor-receipt-modal': ComponentDonorReceiptModal,
-			'donor-receipt-email-modal': ComponentDonorReceiptEmailModal,
-			'nonprofits-revoke': ComponentRevokeNonprofitModal,
-			'photo-editor': ComponentPhotoEditorModal,
-			'pages-custom-delete-modal': ComponentCustomPagesDeleteModal,
-			'pages-faq-add-question-modal': ComponentFAQAddQuestionModal,
-			'pages-faq-delete-question-modal': ComponentFAQDeleteQuestionModal,
-			'pages-faq-edit-question-modal': ComponentFAQEditQuestionModal,
-			'pages-toolkit-add-resource-modal': ComponentToolkitAddResourceModal,
-			'pages-toolkit-delete-resource-modal': ComponentToolkitDeleteResourceModal,
-			'pages-toolkit-edit-resource-modal': ComponentToolkitEditResourceModal,
-			'settings-edit-contact-email': ComponentContactEmailModal,
-			'settings-edit-contact-phone': ComponentContactPhoneModal,
-			'settings-edit-sender-email': ComponentSenderEmailModal,
-			'settings-resend-verify-email': ComponentResendVerifyEmailModal,
-		}
-	};
+    vue.bus.$on('clearModals', function () {
+      vue.modals = []
+      vue.data = {}
+    })
+  },
+  methods: {
+    calculateOverlayZIndex: function (index) {
+      return 999 + (index * 1000)
+    },
+    calculateModalZIndex: function (index) {
+      return this.calculateOverlayZIndex(index) + 1
+    }
+  }
+}
 </script>
 
 <style>

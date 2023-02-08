@@ -15,68 +15,114 @@
   -->
 
 <template>
-    <div class="o-menubar__secondary">
+  <div class="o-menubar__secondary">
+    <ul>
+      <router-link
+        tag="li"
+        :to="{ name: 'donations-list' }"
+      >
+        <a><i
+          class="fa fa-fw fa-credit-card"
+          aria-hidden="true"
+        />Donations</a>
+      </router-link>
+      <router-link
+        tag="li"
+        :to="{ name: 'nonprofits-list' }"
+      >
+        <a><i
+          class="fa fa-fw fa-bank"
+          aria-hidden="true"
+        />Nonprofits</a>
+      </router-link>
+      <router-link
+        tag="li"
+        :to="{ name: 'sponsor-tiers-list' }"
+      >
+        <a><i
+          class="fa fa-fw fa-star"
+          aria-hidden="true"
+        />Sponsors</a>
+      </router-link>
+      <router-link
+        tag="li"
+        :to="{ name: 'pages-list' }"
+      >
+        <a><i
+          class="fa fa-fw fa-files-o"
+          aria-hidden="true"
+        />Pages</a>
+      </router-link>
+      <router-link
+        tag="li"
+        :to="{ name: 'settings-list' }"
+      >
+        <a><i
+          class="fa fa-fw fa-cogs"
+          aria-hidden="true"
+        />Settings</a>
+      </router-link>
+    </ul>
 
-        <ul>
-            <router-link tag="li" :to="{ name: 'donations-list' }">
-                <a><i class="fa fa-fw fa-credit-card" aria-hidden="true"></i>Donations</a>
-            </router-link>
-            <router-link tag="li" :to="{ name: 'nonprofits-list' }">
-                <a><i class="fa fa-fw fa-bank" aria-hidden="true"></i>Nonprofits</a>
-            </router-link>
-            <router-link tag="li" :to="{ name: 'sponsor-tiers-list' }">
-                <a><i class="fa fa-fw fa-star" aria-hidden="true"></i>Sponsors</a>
-            </router-link>
-            <router-link tag="li" :to="{ name: 'pages-list' }">
-                <a><i class="fa fa-fw fa-files-o" aria-hidden="true"></i>Pages</a>
-            </router-link>
-            <router-link tag="li" :to="{ name: 'settings-list' }">
-                <a><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Settings</a>
-            </router-link>
-        </ul>
-
-        <select v-on:change="mobileSelect" v-model="selected">
-            <option disabled value="">Navigation</option>
-            <option value="donations-list">Donations</option>
-            <option value="nonprofits-list">Nonprofits</option>
-            <option value="sponsor-tiers-list">Sponsors</option>
-            <option value="pages-list">Pages</option>
-            <option value="settings-list">Settings</option>
-        </select>
-
-    </div>
+    <select
+      v-model="selected"
+      @change="mobileSelect"
+    >
+      <option
+        disabled
+        value=""
+      >
+        Navigation
+      </option>
+      <option value="donations-list">
+        Donations
+      </option>
+      <option value="nonprofits-list">
+        Nonprofits
+      </option>
+      <option value="sponsor-tiers-list">
+        Sponsors
+      </option>
+      <option value="pages-list">
+        Pages
+      </option>
+      <option value="settings-list">
+        Settings
+      </option>
+    </select>
+  </div>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				selected: ''
-			};
-		},
-		created: function () {
-			this.setSelected();
-		},
-		methods: {
-			setSelected: function () {
-				const vue = this;
+export default {
+  data: function () {
+    return {
+      selected: ''
+    }
+  },
+  created: function () {
+    this.setSelected()
+  },
+  methods: {
+    setSelected: function () {
+      const vue = this
 
-				if (vue.$route.path.indexOf('/donations') === 0) {
-					vue.selected = 'donations-list';
-				} else if (vue.$route.path.indexOf('/nonprofits') === 0) {
-					vue.selected = 'nonprofits-list';
-				} else if (vue.$route.path.indexOf('/sponsor-tiers') === 0) {
-					vue.selected = 'sponsor-tiers-list';
-				} else if (vue.$route.path.indexOf('/pages') === 0) {
-					vue.selected = 'pages-list';
-				} else if (vue.$route.path.indexOf('/settings') === 0) {
-					vue.selected = 'settings-list';
-				}
-			},
-			mobileSelect: function () {
-				const vue = this;
-				vue.$router.push({name: vue.selected});
-			}
-		}
-	}
+      if (vue.$route.path.indexOf('/donations') === 0) {
+        vue.selected = 'donations-list'
+      } else if (vue.$route.path.indexOf('/nonprofits') === 0) {
+        vue.selected = 'nonprofits-list'
+      } else if (vue.$route.path.indexOf('/sponsor-tiers') === 0) {
+        vue.selected = 'sponsor-tiers-list'
+      } else if (vue.$route.path.indexOf('/pages') === 0) {
+        vue.selected = 'pages-list'
+      } else if (vue.$route.path.indexOf('/settings') === 0) {
+        vue.selected = 'settings-list'
+      }
+    },
+    mobileSelect: function () {
+      const vue = this
+      vue.$router.push({ name: vue.selected })
+    }
+  }
+}
 </script>

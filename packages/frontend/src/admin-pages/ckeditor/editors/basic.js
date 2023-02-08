@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
+import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classiceditor'
 
-import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold';
-import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
-import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic';
-import LinkPlugin from '@ckeditor/ckeditor5-link/src/link';
-import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph';
+import BoldPlugin from '@ckeditor/ckeditor5-basic-styles/src/bold'
+import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials'
+import ItalicPlugin from '@ckeditor/ckeditor5-basic-styles/src/italic'
+import LinkPlugin from '@ckeditor/ckeditor5-link/src/link'
+import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph'
 
 export default class BasicEditor extends ClassicEditorBase {
 }
 
 // Plugins to include in the build.
 BasicEditor.builtinPlugins = [
-	EssentialsPlugin,
-	BoldPlugin,
-	ItalicPlugin,
-	LinkPlugin,
-	ParagraphPlugin,
-];
+  EssentialsPlugin,
+  BoldPlugin,
+  ItalicPlugin,
+  LinkPlugin,
+  ParagraphPlugin
+]
 
 BasicEditor.defaultConfig = {
-	toolbar: ['bold', 'italic', '|', 'link', 'undo', 'redo'],
-	language: 'en'
-};
+  toolbar: ['bold', 'italic', '|', 'link', 'undo', 'redo'],
+  language: 'en'
+}

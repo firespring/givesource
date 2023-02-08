@@ -15,72 +15,77 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content">
+  <div class="o-app">
+    <navigation />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content">
+        <div class="o-app-main-content">
+          <paymentspring-keys-banner />
 
-                <div class="o-app-main-content">
-                    <paymentspring-keys-banner/>
-
-                    <donations-metrics v-on:hasError="hasError"></donations-metrics>
-                    <api-error v-model="apiError"></api-error>
-                    <donations-list-table-header v-on:hasError="hasError"></donations-list-table-header>
-                    <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
-                    <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
-                </div>
-            </div>
-        </main>
-    </div>
+          <donations-metrics @has-error="hasError" />
+          <api-error v-model="apiError" />
+          <donations-list-table-header @has-error="hasError" />
+          <donations-list-table
+            :donations="pagination.items"
+            :loaded="pagination.loaded"
+          />
+          <paginated-table-footer
+            v-if="pagination.loaded"
+            :pagination="pagination"
+          />
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
-	import ComponentDonationsListTable from './DonationsListTable.vue';
-	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
-	import ComponentDonationsMetrics from './DonationsMetrics.vue';
-	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
-	import PaginationMixin from './../../../mixins/pagination';
+import * as Utils from './../../../helpers/utils'
+import ComponentDonationsListTable from './DonationsListTable.vue'
+import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue'
+import ComponentDonationsMetrics from './DonationsMetrics.vue'
+import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue'
+import PaginationMixin from './../../../mixins/pagination'
 
-	export default {
-		data: function () {
-			return {
-				apiError: {}
-			};
-		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('donations', to.query).then(function (response) {
-					vue.setPaginationData(response.data)
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  components: {
+    'donations-list-table': ComponentDonationsListTable,
+    'donations-list-table-header': ComponentDonationsListTableHeader,
+    'donations-metrics': ComponentDonationsMetrics,
+    'paginated-table-footer': ComponentPaginatedTableFooter
+  },
+  mixins: [
+    PaginationMixin
+  ],
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('donations', to.query).then(function (response) {
+        vue.setPaginationData(response.data)
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.resetPaginationData();
-			vue.$request.get('donations', to.query).then(function (response) {
-				vue.setPaginationData(response.data);
-				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
-				next();
-			});
-		},
-		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
-			}
-		},
-		mixins: [
-			PaginationMixin
-		],
-		components: {
-			'donations-list-table': ComponentDonationsListTable,
-			'donations-list-table-header': ComponentDonationsListTableHeader,
-			'donations-metrics': ComponentDonationsMetrics,
-			'paginated-table-footer': ComponentPaginatedTableFooter,
-		}
-	};
+    vue.resetPaginationData()
+    vue.$request.get('donations', to.query).then(function (response) {
+      vue.setPaginationData(response.data)
+      next()
+    }).catch(function (err) {
+      vue.apiError = err.response.data.errors
+      next()
+    })
+  },
+  data: function () {
+    return {
+      apiError: {}
+    }
+  },
+  methods: {
+    hasError: function (err) {
+      const vue = this
+      vue.apiError = err.response.data.errors
+    }
+  }
+}
 </script>
