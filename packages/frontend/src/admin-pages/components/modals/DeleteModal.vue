@@ -48,14 +48,14 @@
                   class="c-btn c-btn--bad js-modal-close"
                   @click="remove"
                 >
-                  Yes, Delete Them
+                  {{ confirmText }}
                 </button>
                 <button
                   type="button"
                   class="c-btn c-btn--neutral c-btn--text js-modal-close"
                   @click="cancel"
                 >
-                  No, Keep Them
+                  {{ cancelText }}
                 </button>
               </div>
             </div>
@@ -89,7 +89,9 @@ export default {
     return {
       modalTitle: this.data.modalTitle,
       modalText: this.data.modalText,
-      callback: this.data.callback
+      callback: this.data.callback,
+      cancelText: this.data.cancelText || 'No, Keep Them',
+      confirmText: this.data.confirmText || 'Yes, Delete Them'
     }
   },
   methods: {
