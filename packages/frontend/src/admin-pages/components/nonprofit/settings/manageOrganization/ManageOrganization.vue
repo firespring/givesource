@@ -209,6 +209,26 @@
                         </div>
                     </section>
 
+                    <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
+                      <header class="c-page-section__header">
+                        <div class="c-page-section-header-text">
+                          <h2 class="c-page-section-title">Event Agreements</h2>
+                        </div>
+                      </header>
+                      <div class="c-page-section__main">
+                        <div class="c-form-item c-form-item--checkbox">
+                          <div class="c-form-item__control">
+                            <ul class="c-input-list c-input-list--checkbox">
+                              <li v-for="agreement in agreements">
+                                <input type="checkbox" name="agreementId[]" :id="'agreementId-'+agreement.id" :value="agreement.id" v-model="formData.agreedIds">
+                                <label :for="'agreementId-'+agreement.id">{{ agreement.agreementTitle }}</label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
                     <footer class="c-form-actions">
                         <button type="submit" class="c-btn">Save Changes</button>
                         <router-link :to="{ name: 'nonprofit-settings-list' }" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
@@ -229,6 +249,7 @@
 		data: function () {
 			return {
 				nonprofit: {},
+        agreements: [],
 				loaded: false,
 
 				formData: {
@@ -243,7 +264,9 @@
 					phone: '',
 					category1: '',
 					category2: '',
-					category3: ''
+					category3: '',
+
+          agreedIds: []
 				},
 
 				categoryOptions: [
@@ -318,11 +341,12 @@
 			'nonprofitId'
 		],
 		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-					vue.nonprofit = response.data;
-				});
-			});
+      next(function (vue) {
+        return Promise.all([
+          vue.$request.get('agreements').then(response => { vue.agreements = response.data; }),
+          vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(response => { vue.nonprofit = response.data; })
+        ]);
+      });
 		},
 		beforeRouteUpdate: function (to, from, next) {
 			const vue = this;
@@ -354,6 +378,7 @@
 					const vue = this;
 
 					vue.formData = vue.sync(vue.formData, vue.nonprofit);
+          vue.formData.agreedIds = vue.nonprofit.NonprofitAgreements.filter(a => a.isChecked).map(a => a.agreementId);
 					vue.loaded = true;
 					vue.removeModal('spinner');
 				},
@@ -438,7 +463,13 @@
 					vue.$router.push({name: 'nonprofit-settings-list'});
 					return;
 				}
-				vue.$request.patch('nonprofits/' + vue.nonprofitId, params).then(function (response) {
+
+        params.NonprofitAgreements = vue.agreements.map(agreement => {
+          return { agreementId: agreement.id, isChecked: params.agreedIds.includes(agreement.id) };
+        });
+        delete params.agreedIds;
+
+        vue.$request.patch('nonprofits/' + vue.nonprofitId, params).then(function (response) {
 					vue.clearModals();
 					if (response.data.errorMessage) {
 						console.log(response.data);

@@ -86,6 +86,12 @@ NonprofitsRepository.prototype.get = function (id) {
 					{
 						model: allModels.NonprofitSlide
 					},
+					{
+						model: allModels.Agreement
+					},
+					{
+						model: allModels.NonprofitAgreement
+					},
 
 				]
 			});
@@ -485,7 +491,7 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 				const nonprofit = new allModels.Nonprofit();
 				model = new nonprofit.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
 			}
-			return allModels.Nonprofit.upsert({
+			const params = {
 				'id': model.get('id'),
 				'address1': typeof data.address1 !== "undefined" ? data.address1 : model.address1,
 				'address2': typeof data.address2 !== "undefined" ? data.address2 : model.address2,
@@ -510,6 +516,28 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 				'status': typeof data.status !== "undefined" ? data.status : model.status,
 				'taxId': typeof data.taxId !== "undefined" ? data.taxId : model.taxId,
 				'receiveDonationNotifications': typeof data.receiveDonationNotifications !== "undefined" ? data.receiveDonationNotifications : model.receiveDonationNotifications,
+			};
+
+			return allModels.Nonprofit.upsert(params).then(async response => {
+				const updatedModel = response[0];
+
+				if (! data.NonprofitAgreements) {
+					return updatedModel;
+				}
+
+				// set the agreements
+
+				// data.NonprofitAgreements: [{ agreementId: 10, isChecked: true }, { agreementId: 11, isChecked: false }];
+				const agreementIds = data.NonprofitAgreements.map(na => +na.agreementId);
+
+				const agreements = await allModels.Agreement.findAll({where: {id: agreementIds}});
+				const configuredAgreements = agreements.map(agreement => {
+					const agreed = data.NonprofitAgreements.find(na => na.agreementId === agreement.id);
+					agreement.NonprofitAgreement = {isChecked: !!agreed.isChecked};
+					return agreement;
+				});
+
+				return updatedModel.setAgreements(configuredAgreements);
 			});
 		}).then(function (nonprofit) {
 			resolve(nonprofit);
