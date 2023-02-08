@@ -432,6 +432,34 @@
               </div>
             </section>
 
+            <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
+              <header class="c-page-section__header">
+                <div class="c-page-section-header-text">
+                  <h2 class="c-page-section-title">
+                    Event Agreements
+                  </h2>
+                </div>
+              </header>
+              <div class="c-page-section__main">
+                <div class="c-form-item c-form-item--checkbox">
+                  <div class="c-form-item__control">
+                    <ul class="c-input-list c-input-list--checkbox">
+                      <li v-for="agreement in agreements">
+                        <input
+                          :id="'agreementId-'+agreement.id"
+                          v-model="formData.agreedIds"
+                          type="checkbox"
+                          name="agreementId[]"
+                          :value="agreement.id"
+                        >
+                        <label :for="'agreementId-'+agreement.id">{{ agreement.agreementTitle }}</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <footer class="c-form-actions">
               <button
                 type="submit"
@@ -470,6 +498,11 @@ export default {
     'category-select': ComponentSelectNonprofitCategory,
     'state-select': ComponentSelectState
   },
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      return vue.$request.get('agreements').then(response => { vue.agreements = response.data })
+    })
+  },
   data: function () {
     return {
       formData: {
@@ -487,8 +520,12 @@ export default {
         category3: 0,
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
+
+        agreedIds: []
       },
+
+      agreements: [],
 
       categoryOptions: [
         { value: 1, text: 'Animal-Related' },
@@ -659,7 +696,7 @@ export default {
     registerNonprofit: function () {
       const vue = this
 
-      vue.$request.post('nonprofits/register', {
+      const params = {
         nonprofit: {
           legalName: vue.formData.legalName,
           taxId: vue.formData.taxId,
@@ -672,14 +709,20 @@ export default {
           phone: vue.formData.phone,
           category1: vue.formData.category1,
           category2: vue.formData.category2,
-          category3: vue.formData.category3
+          category3: vue.formData.category3,
+
+          NonprofitAgreements: vue.agreements.map(agreement => {
+            return { agreementId: agreement.id, isChecked: vue.formData.agreedIds.includes(agreement.id) }
+          })
         },
         user: {
           firstName: vue.formData.firstName,
           lastName: vue.formData.lastName,
           email: vue.formData.email
         }
-      }).then(function (response) {
+      }
+
+      vue.$request.post('nonprofits/register', params).then(function (response) {
         vue.clearModals()
         if (response.data.errorMessage) {
           console.log(response.data)
