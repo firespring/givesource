@@ -16,6 +16,7 @@
 
 const stackName = process.env.AWS_STACK_NAME;
 
+exports.AgreementsTable = `${stackName}-Agreements`;
 exports.ContentsTable = `${stackName}-Contents`;
 exports.DonationsTable = `${stackName}-Donations`;
 exports.DonorsTable = `${stackName}-Donors`;

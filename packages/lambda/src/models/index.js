@@ -51,6 +51,8 @@ module.exports = function() {
 		models[model.name] = model;
 		model = require('./report')(sequelize);
 		models[model.name] = model;
+		model = require('./agreement')(sequelize);
+		models[model.name] = model;
 
 		models.Nonprofit.hasMany(sequelize.models.Donation, {
 			foreignKey: 'nonprofitId'
