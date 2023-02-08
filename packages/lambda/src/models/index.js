@@ -89,8 +89,6 @@ module.exports = function() {
 
 		models.Nonprofit.hasMany(models.NonprofitAgreement);
 		models.Agreement.hasMany(models.NonprofitAgreement);
-		models.Agreement.belongsToMany(models.Nonprofit, { through: models.NonprofitAgreement });
-		models.Nonprofit.belongsToMany(models.Agreement, { through: models.NonprofitAgreement });
 
 		models.Donation.belongsTo(sequelize.models.Nonprofit, {
 			foreignKey: 'nonprofitId'
