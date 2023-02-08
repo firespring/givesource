@@ -1,6 +1,6 @@
 {
 	"name": "givesource",
-	"version": "2.2.5",
+	"version": "2.2.6-mkalpha",
 	"description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
 	"license": "Apache-2.0",
 	"repository": {
@@ -45,8 +45,15 @@
 		"postinstall": "[ -f \".env\" ] || cp .env.example .env",
 		"release": "npm run cloudformation:release && npm run frontend:release && npm run lambda:release",
 		"release:force": "npm run cloudformation:release:force && npm run frontend:release:force && npm run lambda:release:force",
-		"test": "cd packages/lambda && npm run test"
+		"test": "cd packages/lambda && npm run test",
+		"lint": "eslint --cache --ext .js,.vue packages/frontend/src",
+		"lint-fix": "eslint --cache --ext .js,.vue --fix packages/frontend/src"
 	},
 	"author": "Firespring",
-	"devDependencies": {}
+	"devDependencies": {
+		"eslint": "^8.18.0",
+		"eslint-config-firespring": "git+ssh://github.com/firespring/firespring-code-standards.git#master",
+		"eslint-plugin-cypress": "^2.12.1",
+		"eslint-plugin-vue": "^9.1.1"
+	}
 }
