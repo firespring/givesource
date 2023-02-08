@@ -15,81 +15,87 @@
   -->
 
 <template>
-    <div class="c-page-section c-page-section--headless c-page-section--shadow c-page-section--border u-margin-bottom-scale">
-        <div class="c-page-section__main">
-            <div class="c-leaderboard">
-
-                <div class="c-leaderboard__metric">
-                    <h6 class="metric-title">Donations</h6>
-                    <div class="metric-value">
-                        {{ donationsCount }}
-                    </div>
-                </div>
-
-                <div class="c-leaderboard__metric">
-                    <h6 class="metric-title">Donors</h6>
-                    <div class="metric-value">
-                        {{ donorsCount }}
-                    </div>
-                </div>
-
-                <div class="c-leaderboard__metric">
-                    <h6 class="metric-title">Total $</h6>
-                    <div class="metric-value">
-                        {{ donationsTotal }}
-                    </div>
-                </div>
-
-                <div class="c-leaderboard__metric">
-                    <h6 class="metric-title">Top Donation</h6>
-                    <div class="metric-value">
-                        {{ topDonation }}
-                    </div>
-                </div>
-
-            </div>
+  <div class="c-page-section c-page-section--headless c-page-section--shadow c-page-section--border u-margin-bottom-scale">
+    <div class="c-page-section__main">
+      <div class="c-leaderboard">
+        <div class="c-leaderboard__metric">
+          <h6 class="metric-title">
+            Donations
+          </h6>
+          <div class="metric-value">
+            {{ donationsCount }}
+          </div>
         </div>
+
+        <div class="c-leaderboard__metric">
+          <h6 class="metric-title">
+            Donors
+          </h6>
+          <div class="metric-value">
+            {{ donorsCount }}
+          </div>
+        </div>
+
+        <div class="c-leaderboard__metric">
+          <h6 class="metric-title">
+            Total $
+          </h6>
+          <div class="metric-value">
+            {{ donationsTotal }}
+          </div>
+        </div>
+
+        <div class="c-leaderboard__metric">
+          <h6 class="metric-title">
+            Top Donation
+          </h6>
+          <div class="metric-value">
+            {{ topDonation }}
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
+import * as Utils from './../../../helpers/utils'
 
-	const numeral = require('numeral');
+const numeral = require('numeral')
 
-	export default {
-		data: function () {
-			return {
-				metrics: {
-					'DONATIONS_COUNT': 0,
-					'DONATIONS_TOTAL': 0,
-					'DONORS_COUNT': 0,
-					'TOP_DONATION': 0,
-				}
-			};
-		},
-		computed: {
-			donationsCount: function () {
-				return numeral(this.metrics.DONATIONS_COUNT).format('0,000');
-			},
-			donationsTotal: function () {
-				return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00');
-			},
-			donorsCount: function () {
-				return numeral(this.metrics.DONORS_COUNT).format('0,000');
-			},
-			topDonation: function () {
-				return numeral(this.metrics.TOP_DONATION / 100).format('$0,00.00');
-			}
-		},
-		created: function () {
-			const vue = this;
+export default {
+  data: function () {
+    return {
+      metrics: {
+        DONATIONS_COUNT: 0,
+        DONATIONS_TOTAL: 0,
+        DONORS_COUNT: 0,
+        TOP_DONATION: 0
+      }
+    }
+  },
+  computed: {
+    donationsCount: function () {
+      return numeral(this.metrics.DONATIONS_COUNT).format('0,000')
+    },
+    donationsTotal: function () {
+      return numeral(this.metrics.DONATIONS_TOTAL / 100).format('$0,00.00')
+    },
+    donorsCount: function () {
+      return numeral(this.metrics.DONORS_COUNT).format('0,000')
+    },
+    topDonation: function () {
+      return numeral(this.metrics.TOP_DONATION / 100).format('$0,00.00')
+    }
+  },
+  created: function () {
+    const vue = this
 
-			vue.$request.get('metrics', {keys: Object.keys(vue.metrics)}).then(function (response) {
-				vue.metrics = response.data;
-			}).catch(function (err) {
-                vue.$emit('hasError', err);
-            });
-		}
-	};
+    vue.$request.get('metrics', { keys: Object.keys(vue.metrics) }).then(function (response) {
+      vue.metrics = response.data
+    }).catch(function (err) {
+      vue.$emit('hasError', err)
+    })
+  }
+}
 </script>

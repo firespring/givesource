@@ -16,14 +16,12 @@
 
 <template>
   <div class="overlay overlay--loader">
-
     <div class="fa-4x">
-      <i class="fas fa-spinner fa-spin"></i>
+      <i class="fas fa-spinner fa-spin" />
     </div>
-
   </div>
 </template>
 
 <script>
-  export default {}
+export default {}
 </script>

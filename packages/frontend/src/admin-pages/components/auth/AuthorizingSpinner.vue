@@ -15,21 +15,21 @@
   -->
 
 <template>
-    <!-- DO NOT FORMAT THIS FILE - SPACES BREAK THE SPINNER -->
-    <div class="u-flex u-items-center">
-        <div class="c-progress c-progress--spinner c-spinner-sm c-spinner-active">
-            <div class="c-spinner-layer c-spinner-orange-only">
-                <div class="c-spinner-circle-clipper left">
-                    <div class="c-spinner-circle"></div>
-                </div><div class="gap-patch">
-                <div class="c-spinner-circle"></div>
-            </div><div class="c-spinner-circle-clipper right">
-                <div class="c-spinner-circle"></div>
-            </div>
-            </div>
+  <!-- DO NOT FORMAT THIS FILE - SPACES BREAK THE SPINNER -->
+  <div class="u-flex u-items-center">
+    <div class="c-progress c-progress--spinner c-spinner-sm c-spinner-active">
+      <div class="c-spinner-layer c-spinner-orange-only">
+        <div class="c-spinner-circle-clipper left">
+          <div class="c-spinner-circle" />
+        </div><div class="gap-patch">
+          <div class="c-spinner-circle" />
+        </div><div class="c-spinner-circle-clipper right">
+          <div class="c-spinner-circle" />
         </div>
-        <div class="u-margin-left-thick">
-            Authorizing...
-        </div>
+      </div>
     </div>
+    <div class="u-margin-left-thick">
+      Authorizing...
+    </div>
+  </div>
 </template>

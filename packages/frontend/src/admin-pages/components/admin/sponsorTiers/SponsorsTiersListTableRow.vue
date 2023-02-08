@@ -15,117 +15,145 @@
   -->
 
 <template>
-    <tr>
-        <td class="icon">
-            <div class="c-drag-handle ui-sortable-handle"></div>
-        </td>
+  <tr>
+    <td class="icon">
+      <div class="c-drag-handle ui-sortable-handle" />
+    </td>
 
-        <td>
-            <strong>{{ sponsorTier.name }}</strong>
-        </td>
+    <td>
+      <strong>{{ sponsorTier.name }}</strong>
+    </td>
 
-        <td class="item-actions">
-            <div class="c-btn-group c-btn-dropdown c-btn-dropdown--r" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-                <router-link :to="{ name: 'sponsors-list', params: {sponsorTierId: sponsorTier.id} }" role="button" class="c-btn c-btn--sm">
-                    Manage Tier
-                </router-link>
-                <a v-on:click="toggleMenu" href="#" role="button" class="c-btn c-btn--sm c-btn-dropdown-trigger"></a>
-                <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
-                    <div class="c-btn-dropdown-menu__options">
-                        <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierId: sponsorTier.id }}">
-                            <i class="fa fa-fw fa-gear" aria-hidden="true"></i>Edit Tier Settings
-                        </router-link>
-                        <hr>
-                        <a v-on:click="deleteSponsorTier" href="#" class="js-modal-trigger" rel="modal-confirm-delete">
-                            <i class="fa fa-fw fa-trash" aria-hidden="true"></i>Delete This Tier
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </td>
-    </tr>
+    <td class="item-actions">
+      <div
+        ref="cBtnDropdown"
+        class="c-btn-group c-btn-dropdown c-btn-dropdown--r"
+        @mouseout="closeMenu"
+        @mouseover="cancelCloseMenu"
+      >
+        <router-link
+          :to="{ name: 'sponsors-list', params: {sponsorTierId: sponsorTier.id} }"
+          role="button"
+          class="c-btn c-btn--sm"
+        >
+          Manage Tier
+        </router-link>
+        <a
+          href="#"
+          role="button"
+          class="c-btn c-btn--sm c-btn-dropdown-trigger"
+          @click="toggleMenu"
+        />
+        <div
+          ref="cBtnDropdownMenu"
+          class="c-btn-dropdown-menu"
+        >
+          <div class="c-btn-dropdown-menu__options">
+            <router-link :to="{name: 'sponsor-tiers-edit', params: {sponsorTierId: sponsorTier.id }}">
+              <i
+                class="fa fa-fw fa-gear"
+                aria-hidden="true"
+              />Edit Tier Settings
+            </router-link>
+            <hr>
+            <a
+              href="#"
+              class="js-modal-trigger"
+              rel="modal-confirm-delete"
+              @click="deleteSponsorTier"
+            >
+              <i
+                class="fa fa-fw fa-trash"
+                aria-hidden="true"
+              />Delete This Tier
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
+import * as Utils from './../../../helpers/utils'
 
-	export default {
-		data: function () {
-			return {
-				displayingMenu: false,
-				timer: null,
-			};
-		},
-		props: {
-			sponsorTier: {
-				type: Object,
-				default: function () {
-					return {};
-				}
-			},
-		},
-		methods: {
-			toggleMenu: function (event) {
-				event.preventDefault();
-				const vue = this;
-				if (vue.displayingMenu) {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-				} else {
-					$(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeIn();
-				}
-				vue.displayingMenu = !vue.displayingMenu;
-			},
-			closeMenu: function () {
-				const vue = this;
-				vue.timer = setTimeout(function () {
-					$(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-					$(vue.$refs.cBtnDropdownMenu).fadeOut();
-					vue.displayingMenu = false;
-				}, 250);
-			},
-			cancelCloseMenu: function () {
-				const vue = this;
-				clearTimeout(vue.timer);
-			},
-			deleteSponsorTier: function (event) {
-				event.preventDefault();
-				const vue = this;
+export default {
+  props: {
+    sponsorTier: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
+  },
+  data: function () {
+    return {
+      displayingMenu: false,
+      timer: null
+    }
+  },
+  methods: {
+    toggleMenu: function (event) {
+      event.preventDefault()
+      const vue = this
+      if (vue.displayingMenu) {
+        $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active')
+        $(vue.$refs.cBtnDropdownMenu).fadeOut()
+      } else {
+        $(vue.$refs.cBtnDropdown).addClass('c-btn-dropdown--active')
+        $(vue.$refs.cBtnDropdownMenu).fadeIn()
+      }
+      vue.displayingMenu = !vue.displayingMenu
+    },
+    closeMenu: function () {
+      const vue = this
+      vue.timer = setTimeout(function () {
+        $(vue.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active')
+        $(vue.$refs.cBtnDropdownMenu).fadeOut()
+        vue.displayingMenu = false
+      }, 250)
+    },
+    cancelCloseMenu: function () {
+      const vue = this
+      clearTimeout(vue.timer)
+    },
+    deleteSponsorTier: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.addModal('spinner');
+      vue.addModal('spinner')
 
-				const sponsors = [];
-				const fileIds = [];
-				vue.$request.get('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors').then(function (response) {
-					response.data.forEach(function (sponsor) {
-						sponsors.push(sponsor);
-						if (sponsor.fileId) {
-							fileIds.push(sponsor.fileId);
-						}
-					});
-					return vue.$request.get('files', {
-						fileIds: fileIds
-					});
-				}).then(function (response) {
-					return vue.$request.delete('files', {
-						files: response.data
-					});
-				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors', {
-						sponsors: sponsors
-					});
-				}).then(function () {
-					return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id);
-				}).then(function () {
-					vue.clearModals();
-					vue.$emit('deleteSponsorTier', vue.sponsorTier.id);
-				}).catch(function (err) {
-					vue.clearModals();
-                    vue.$emit('hasError', err);
-				});
-			}
-		}
+      const sponsors = []
+      const fileIds = []
+      vue.$request.get('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors').then(function (response) {
+        response.data.forEach(function (sponsor) {
+          sponsors.push(sponsor)
+          if (sponsor.fileId) {
+            fileIds.push(sponsor.fileId)
+          }
+        })
+        return vue.$request.get('files', {
+          fileIds: fileIds
+        })
+      }).then(function (response) {
+        return vue.$request.delete('files', {
+          files: response.data
+        })
+      }).then(function () {
+        return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id + '/sponsors', {
+          sponsors: sponsors
+        })
+      }).then(function () {
+        return vue.$request.delete('sponsor-tiers/' + vue.sponsorTier.id)
+      }).then(function () {
+        vue.clearModals()
+        vue.$emit('deleteSponsorTier', vue.sponsorTier.id)
+      }).catch(function (err) {
+        vue.clearModals()
+        vue.$emit('hasError', err)
+      })
+    }
+  }
 
-	}
+}
 </script>

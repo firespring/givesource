@@ -15,206 +15,230 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content--md">
-                <div class="o-app-main-content">
-                    <api-error v-model="apiError"></api-error>
+  <div class="o-app">
+    <navigation />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content--md">
+        <div class="o-app-main-content">
+          <api-error v-model="apiError" />
 
-                    <div class="o-page-header">
-                        <div class="o-page-header__text">
-                            <nav class="o-page-header-nav c-breadcrumb">
-                                <span><router-link :to="{name: 'pages-list'}">Pages</router-link></span>
-                            </nav>
-                            <h1 class="o-page-header-title">Donation Checkout</h1>
-                        </div>
-                    </div>
-
-                    <form v-on:submit="submit">
-
-                        <section class="c-page-section c-page-section--border c-page-section--shadow">
-                            <header class="c-page-section__header">
-                                <div class="c-page-section-header-text">
-                                    <h2 class="c-page-section-title">Checkout Text</h2>
-                                    <div class="c-notes c-notes--below">
-                                        This text displays directly below your site's checkout form.
-                                    </div>
-                                </div>
-                            </header>
-
-                            <div class="c-page-section__main">
-                                <div class="c-form-item c-form-item--rich-text">
-                                    <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.CART_CHECKOUT_TEXT.value" :loaded="loaded" id="formText" type="advanced"></forms-ckeditor>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="c-page-section c-page-section--border c-page-section--shadow">
-                            <header class="c-page-section__header">
-                                <div class="c-page-section-header-text">
-                                    <h2 class="c-page-section-title">Message Text</h2>
-                                    <div class="c-notes c-notes--below">
-                                        This text displays after a donor makes a successful donation.
-                                    </div>
-                                </div>
-                            </header>
-
-                            <div class="c-page-section__main">
-                                <div class="c-form-item c-form-item--rich-text">
-                                    <div class="c-form-item__control">
-                                        <forms-ckeditor v-model="formData.CART_RESPONSE_TEXT.value" :loaded="loaded" id="responseText" type="advanced"></forms-ckeditor>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <footer class="c-form-actions">
-                            <button type="submit" class="c-btn">Save Changes</button>
-                            <router-link :to="{name: 'pages-list'}" class="c-btn c-btn--neutral c-btn--text">Cancel</router-link>
-                        </footer>
-
-                    </form>
-                </div>
+          <div class="o-page-header">
+            <div class="o-page-header__text">
+              <nav class="o-page-header-nav c-breadcrumb">
+                <span><router-link :to="{name: 'pages-list'}">Pages</router-link></span>
+              </nav>
+              <h1 class="o-page-header-title">
+                Donation Checkout
+              </h1>
             </div>
-        </main>
-    </div>
+          </div>
+
+          <form @submit="submit">
+            <section class="c-page-section c-page-section--border c-page-section--shadow">
+              <header class="c-page-section__header">
+                <div class="c-page-section-header-text">
+                  <h2 class="c-page-section-title">
+                    Checkout Text
+                  </h2>
+                  <div class="c-notes c-notes--below">
+                    This text displays directly below your site's checkout form.
+                  </div>
+                </div>
+              </header>
+
+              <div class="c-page-section__main">
+                <div class="c-form-item c-form-item--rich-text">
+                  <div class="c-form-item__control">
+                    <forms-ckeditor
+                      id="formText"
+                      v-model="formData.CART_CHECKOUT_TEXT.value"
+                      :loaded="loaded"
+                      type="advanced"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="c-page-section c-page-section--border c-page-section--shadow">
+              <header class="c-page-section__header">
+                <div class="c-page-section-header-text">
+                  <h2 class="c-page-section-title">
+                    Message Text
+                  </h2>
+                  <div class="c-notes c-notes--below">
+                    This text displays after a donor makes a successful donation.
+                  </div>
+                </div>
+              </header>
+
+              <div class="c-page-section__main">
+                <div class="c-form-item c-form-item--rich-text">
+                  <div class="c-form-item__control">
+                    <forms-ckeditor
+                      id="responseText"
+                      v-model="formData.CART_RESPONSE_TEXT.value"
+                      :loaded="loaded"
+                      type="advanced"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="c-form-actions">
+              <button
+                type="submit"
+                class="c-btn"
+              >
+                Save Changes
+              </button>
+              <router-link
+                :to="{name: 'pages-list'}"
+                class="c-btn c-btn--neutral c-btn--text"
+              >
+                Cancel
+              </router-link>
+            </footer>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import ComponentCKEditor from './../../forms/Ckeditor.vue';
+import ComponentCKEditor from './../../forms/Ckeditor.vue'
 
-	export default {
-		data: function () {
-			return {
-				contents: [],
-				original: [],
-				loaded: false,
+export default {
+  components: {
+    'forms-ckeditor': ComponentCKEditor
+  },
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('contents', {
+        keys: Object.keys(vue.formData)
+      }).then(function (response) {
+        vue.contents = response.data
+        vue.original = JSON.parse(JSON.stringify(response.data))
+        vue.loaded = true
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-				// Form Data
-				formData: {
-					CART_CHECKOUT_TEXT: {
-						key: 'CART_CHECKOUT_TEXT',
-						type: 'RICH_TEXT',
-						value: '',
-                        id: 0
-					},
-					CART_RESPONSE_TEXT: {
-						key: 'CART_RESPONSE_TEXT',
-						type: 'RICH_TEXT',
-						value: '',
-                        id: 0
-					},
-				},
+    vue.loaded = false
+    vue.$request.get('contents', {
+      keys: Object.keys(vue.formData)
+    }).then(function (response) {
+      vue.contents = response.data
+      vue.original = JSON.parse(JSON.stringify(response.data))
+      vue.loaded = true
+      next()
+    }).catch(function () {
+      next()
+    })
+  },
+  data: function () {
+    return {
+      contents: [],
+      original: [],
+      loaded: false,
 
-				// Errors
-				formErrors: {},
-				apiError: {},
-			};
-		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('contents', {
-					keys: Object.keys(vue.formData)
-				}).then(function (response) {
-					vue.contents = response.data;
-					vue.original = JSON.parse(JSON.stringify(response.data));
-					vue.loaded = true;
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+      // Form Data
+      formData: {
+        CART_CHECKOUT_TEXT: {
+          key: 'CART_CHECKOUT_TEXT',
+          type: 'RICH_TEXT',
+          value: '',
+          id: 0
+        },
+        CART_RESPONSE_TEXT: {
+          key: 'CART_RESPONSE_TEXT',
+          type: 'RICH_TEXT',
+          value: '',
+          id: 0
+        }
+      },
 
-			vue.loaded = false;
-			vue.$request.get('contents', {
-				keys: Object.keys(vue.formData)
-			}).then(function (response) {
-				vue.contents = response.data;
-				vue.original = JSON.parse(JSON.stringify(response.data));
-				vue.loaded = true;
-				next();
-			}).catch(function () {
-				next();
-			});
-		},
-		watch: {
-			contents: {
-				handler: function () {
-					const vue = this;
-					if (vue.contents.length) {
-						Object.keys(vue.formData).forEach(function (key) {
-							const content = _.find(vue.contents, {key: key});
-							if (content) {
-								vue.formData[key] = content;
-							}
-						});
-					}
-				},
-				deep: true
-			}
-		},
-		methods: {
-			submit: function (event) {
-				event.preventDefault();
-				const vue = this;
+      // Errors
+      formErrors: {},
+      apiError: {}
+    }
+  },
+  watch: {
+    contents: {
+      handler: function () {
+        const vue = this
+        if (vue.contents.length) {
+          Object.keys(vue.formData).forEach(function (key) {
+            const content = _.find(vue.contents, { key: key })
+            if (content) {
+              vue.formData[key] = content
+            }
+          })
+        }
+      },
+      deep: true
+    }
+  },
+  methods: {
+    submit: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.addModal('spinner');
-				vue.updateContents();
-			},
-			updateContents: function () {
-				const vue = this;
+      vue.addModal('spinner')
+      vue.updateContents()
+    },
+    updateContents: function () {
+      const vue = this
 
-				const created = [];
-				const changed = _.differenceWith(vue.contents, vue.original, _.isEqual);
-				const toUpdate = _.reject(changed, {value: ''});
-				const toDelete = _.filter(changed, {value: ''});
-				Object.keys(vue.formData).forEach(function (key) {
-					if (!_.find(vue.original, {key: key}) && vue.formData[key].value !== '') {
-						created.push(vue.formData[key]);
-					}
-				});
+      const created = []
+      const changed = _.differenceWith(vue.contents, vue.original, _.isEqual)
+      const toUpdate = _.reject(changed, { value: '' })
+      const toDelete = _.filter(changed, { value: '' })
+      Object.keys(vue.formData).forEach(function (key) {
+        if (!_.find(vue.original, { key: key }) && vue.formData[key].value !== '') {
+          created.push(vue.formData[key])
+        }
+      })
 
-				let promise = Promise.resolve();
-				if (created.length) {
-					created.forEach(function (content) {
-						promise = promise.then(function () {
-							return vue.$request.post('contents', content);
-						});
-					});
-				}
+      let promise = Promise.resolve()
+      if (created.length) {
+        created.forEach(function (content) {
+          promise = promise.then(function () {
+            return vue.$request.post('contents', content)
+          })
+        })
+      }
 
-				if (toUpdate.length) {
-					promise = promise.then(function () {
-						return vue.$request.patch('contents', {
-							contents: toUpdate.map(function (content) {
-								return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value']);
-							}),
-						});
-					});
-				}
+      if (toUpdate.length) {
+        promise = promise.then(function () {
+          return vue.$request.patch('contents', {
+            contents: toUpdate.map(function (content) {
+              return _.pick(content, ['key', 'sortOrder', 'type', 'id', 'value'])
+            })
+          })
+        })
+      }
 
-				if (toDelete.length) {
-					promise = promise.then(function () {
-						return vue.$request.delete('contents', {
-							contents: toDelete
-						});
-					});
-				}
+      if (toDelete.length) {
+        promise = promise.then(function () {
+          return vue.$request.delete('contents', {
+            contents: toDelete
+          })
+        })
+      }
 
-				promise.then(function () {
-					vue.clearModals();
-					vue.$router.push({name: 'pages-list'});
-				}).catch(function (err) {
-					vue.clearModals();
-					vue.apiError = err.response.data.errors;
-				});
-			}
-		},
-		components: {
-			'forms-ckeditor': ComponentCKEditor,
-		}
-	};
+      promise.then(function () {
+        vue.clearModals()
+        vue.$router.push({ name: 'pages-list' })
+      }).catch(function (err) {
+        vue.clearModals()
+        vue.apiError = err.response.data.errors
+      })
+    }
+  }
+}
 </script>

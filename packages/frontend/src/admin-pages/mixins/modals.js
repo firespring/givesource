@@ -15,20 +15,20 @@
  */
 
 const mixin = {
-	methods: {
-		addModal: function (modal, data) {
-			this.bus.$emit('addModal', modal, data);
-		},
-		removeModal: function (modal) {
-			this.bus.$emit('removeModal', modal);
-		},
-		replaceModal: function (modal, data) {
-			this.bus.$emit('replaceModal', modal, data);
-		},
-		clearModals: function () {
-			this.bus.$emit('clearModals');
-		}
-	}
-};
+  methods: {
+    addModal: function (modal, data) {
+      this.bus.$emit('addModal', modal, data)
+    },
+    removeModal: function (modal) {
+      this.bus.$emit('removeModal', modal)
+    },
+    replaceModal: function (modal, data) {
+      this.bus.$emit('replaceModal', modal, data)
+    },
+    clearModals: function () {
+      this.bus.$emit('clearModals')
+    }
+  }
+}
 
-export default mixin;
+export default mixin

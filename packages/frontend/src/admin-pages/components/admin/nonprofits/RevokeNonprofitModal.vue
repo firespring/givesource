@@ -15,79 +15,91 @@
   -->
 
 <template>
-    <div id="modal-confirm-nonprofit-revoke" class="c-modal c-modal--warning c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
+  <div
+    id="modal-confirm-nonprofit-revoke"
+    class="c-modal c-modal--warning c-modal--sm"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div class="c-modal-header">
+            <h1>Do you want to revoke this Nonprofit? This can't be undone.</h1>
+          </div>
 
-                    <div class="c-modal-header">
-                        <h1>Do you want to revoke this Nonprofit? This can't be undone.</h1>
-                    </div>
-
-                    <div class="c-modal-content">
-                        <api-error v-model="apiError"></api-error>
-                        <div class="c-page-section">
-                            <div class="c-page-section__main">
-                                <p>
-                                    Revoking a nonprofit's access will remove their access to the admin area and remove their donation page from the website.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="c-modal-footer">
-                            <div class="c-modal-footer__actions">
-                                <button v-on:click="revokeNonprofit" type="button" class="c-btn c-btn--bad js-modal-close">Revoke Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Cancel</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
+          <div class="c-modal-content">
+            <api-error v-model="apiError" />
+            <div class="c-page-section">
+              <div class="c-page-section__main">
+                <p>
+                  Revoking a nonprofit's access will remove their access to the admin area and remove their donation page from the website.
+                </p>
+              </div>
             </div>
+
+            <div class="c-modal-footer">
+              <div class="c-modal-footer__actions">
+                <button
+                  type="button"
+                  class="c-btn c-btn--bad js-modal-close"
+                  @click="revokeNonprofit"
+                >
+                  Revoke Them
+                </button>
+                <button
+                  type="button"
+                  class="c-btn c-btn--neutral c-btn--text js-modal-close"
+                  @click="cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-    export default {
-        data: function () {
-            return {
-                apiError: {}
-            };
-        },
-        props: {
-            zIndex: {
-                type: [Number, String],
-                default: 1000
-            },
-            data: {
-                type: Object,
-                default: {
-                    nonprofit: {}
-                }
-            }
-        },
-        methods: {
-            cancel: function () {
-                this.clearModals();
-            },
-            revokeNonprofit: function () {
-                const vue = this;
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    },
+    data: {
+      type: Object,
+      default: {
+        nonprofit: {}
+      }
+    }
+  },
+  data: function () {
+    return {
+      apiError: {}
+    }
+  },
+  methods: {
+    cancel: function () {
+      this.clearModals()
+    },
+    revokeNonprofit: function () {
+      const vue = this
 
-                vue.addModal('spinner');
+      vue.addModal('spinner')
 
-                vue.$request.patch('nonprofits/' + vue.data.nonprofit.id + '/status', {
-                    status: 'REVOKED'
-                }).then(function () {
-                    vue.clearModals();
-                    vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.id);
-                }).catch(function (err) {
-                    vue.apiError = err.response.data.errors;
-                    vue.removeModal('spinner');
-                });
-
-            },
-        }
-    };
+      vue.$request.patch('nonprofits/' + vue.data.nonprofit.id + '/status', {
+        status: 'REVOKED'
+      }).then(function () {
+        vue.clearModals()
+        vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.id)
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+        vue.removeModal('spinner')
+      })
+    }
+  }
+}
 </script>

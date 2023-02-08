@@ -15,137 +15,164 @@
   -->
 
 <template>
-    <div id="modal-donations-generate-receipt" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
+  <div
+    id="modal-donations-generate-receipt"
+    class="c-modal c-modal--sm"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div class="c-modal-header">
+            <h1>Donor Receipt</h1>
+          </div>
 
-                    <div class="c-modal-header">
-                        <h1>Donor Receipt</h1>
-                    </div>
-
-                    <div class="c-modal-content">
-                        <div class="c-page-section">
-                            <div class="c-page-section__main">
-                                <api-error v-model="apiError"></api-error>
-                                <fieldset class="c-page-section__fieldset" aria-labelledby="section-donor-email">
-                                    <div class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label" v-floating-label>
-                                        <input v-model="formData.DONOR_EMAIL" type="email" name="donorEmail" id="donorEmail"
-                                               :class="{ 'has-error': formErrors.DONOR_EMAIL }" v-auto-focus>
-                                        <label for="donorEmail">Donor Email Address</label>
-                                    </div>
-                                    <div v-if="formErrors.DONOR_EMAIL" class="c-notes c-notes--below c-notes--bad c-form-control-error">
-                                        {{ formErrors.DONOR_EMAIL }}
-                                    </div>
-                                    <div class="c-notes c-notes--below">
-                                        Enter the email address of the donor.
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </div>
-
-                        <div class="c-modal-footer">
-                            <div class="c-modal-footer__actions">
-                                <button v-on:click.prevent="view" class="c-btn">View</button>
-                                <button v-on:click.prevent="cancel" class="c-btn c-btn--neutral c-btn--text">Cancel</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+          <div class="c-modal-content">
+            <div class="c-page-section">
+              <div class="c-page-section__main">
+                <api-error v-model="apiError" />
+                <fieldset
+                  class="c-page-section__fieldset"
+                  aria-labelledby="section-donor-email"
+                >
+                  <div
+                    v-floating-label
+                    class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label"
+                  >
+                    <input
+                      id="donorEmail"
+                      v-model="formData.DONOR_EMAIL"
+                      v-auto-focus
+                      type="email"
+                      name="donorEmail"
+                      :class="{ 'has-error': formErrors.DONOR_EMAIL }"
+                    >
+                    <label for="donorEmail">Donor Email Address</label>
+                  </div>
+                  <div
+                    v-if="formErrors.DONOR_EMAIL"
+                    class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                  >
+                    {{ formErrors.DONOR_EMAIL }}
+                  </div>
+                  <div class="c-notes c-notes--below">
+                    Enter the email address of the donor.
+                  </div>
+                </fieldset>
+              </div>
             </div>
+
+            <div class="c-modal-footer">
+              <div class="c-modal-footer__actions">
+                <button
+                  class="c-btn"
+                  @click.prevent="view"
+                >
+                  View
+                </button>
+                <button
+                  class="c-btn c-btn--neutral c-btn--text"
+                  @click.prevent="cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	import {mapActions} from 'vuex';
+import { mapActions } from 'vuex'
 
-	export default {
-		data() {
-			return {
-				// Form Data
-				formData: {
-					DONOR_EMAIL: null,
-				},
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    }
+  },
+  data () {
+    return {
+      // Form Data
+      formData: {
+        DONOR_EMAIL: null
+      },
 
-				// Errors
-				formErrors: {},
-				apiError: {},
-			};
-		},
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			}
-		},
-		watch: {
-			formData: {
-				handler() {
-					const vm = this;
-					if (Object.keys(vm.formErrors).length) {
-						vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
-					}
-				},
-				deep: true
-			}
-		},
-		methods: {
-			...mapActions([
-				'setReceipt'
-			]),
+      // Errors
+      formErrors: {},
+      apiError: {}
+    }
+  },
+  watch: {
+    formData: {
+      handler () {
+        const vm = this
+        if (Object.keys(vm.formErrors).length) {
+          vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+        }
+      },
+      deep: true
+    }
+  },
+  methods: {
+    ...mapActions([
+      'setReceipt'
+    ]),
 
-			getConstraints() {
-				return {
-					DONOR_EMAIL: {
-						label: 'Donor email address',
-						presence: true,
-						email: true,
-					}
-				};
-			},
+    getConstraints () {
+      return {
+        DONOR_EMAIL: {
+          label: 'Donor email address',
+          presence: true,
+          email: true
+        }
+      }
+    },
 
-            cancel() {
-				this.clearModals();
-			},
+    cancel () {
+      this.clearModals()
+    },
 
-			view() {
-				const vm = this;
+    view () {
+      const vm = this
 
-				vm.addModal('spinner');
-				vm.formErrors = vm.validate(vm.formData, vm.getConstraints());
-				if (Object.keys(vm.formErrors).length) {
-					vm.removeModal();
-				} else {
-					vm.generateReceipt();
-				}
-			},
+      vm.addModal('spinner')
+      vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+      if (Object.keys(vm.formErrors).length) {
+        vm.removeModal()
+      } else {
+        vm.generateReceipt()
+      }
+    },
 
-			generateReceipt() {
-				const vm = this;
+    generateReceipt () {
+      const vm = this
 
-				vm.$request.get('donations/receipt', {email: vm.formData.DONOR_EMAIL}).then(function (response) {
-					if (response.data.html) {
-						vm.setReceipt({
-                            html: response.data.html,
-                            email: vm.formData.DONOR_EMAIL
-                        });
+      vm.$request.get('donations/receipt', { email: vm.formData.DONOR_EMAIL }).then(function (response) {
+        if (response.data.html) {
+          vm.setReceipt({
+            html: response.data.html,
+            email: vm.formData.DONOR_EMAIL
+          })
 
-                        vm.clearModals();
-						vm.$router.push({name: 'donations-receipt'});
-					}
+          vm.clearModals()
+          vm.$router.push({ name: 'donations-receipt' })
+        }
 
-					if (response.data.errorMessage) {
-                        vm.formErrors = {};
-                        vm.formErrors.DONOR_EMAIL = 'Unable to generate a receipt for: ' + vm.formData.DONOR_EMAIL;
-						vm.removeModal('spinner');
-                    }
-				}).catch(err => {
-					vm.clearModals();
-					console.log(err);
-				});
-			}
-		}
-	};
+        if (response.data.errorMessage) {
+          vm.formErrors = {}
+          vm.formErrors.DONOR_EMAIL = 'Unable to generate a receipt for: ' + vm.formData.DONOR_EMAIL
+          vm.removeModal('spinner')
+        }
+      }).catch(err => {
+        vm.clearModals()
+        console.log(err)
+      })
+    }
+  }
+}
 </script>

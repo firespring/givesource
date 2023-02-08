@@ -15,60 +15,101 @@
   -->
 
 <template>
-    <div class="overlay" :style="{ 'z-index': zIndex }">
+  <div
+    class="overlay"
+    :style="{ 'z-index': zIndex }"
+  >
+    <nav class="overlay__nav">
+      <router-link :to="{ name: 'homepage' }">
+        Home
+      </router-link>
+      <router-link
+        v-if="displayAbout"
+        :to="{ name: 'about' }"
+      >
+        About
+      </router-link>
+      <router-link
+        v-if="displayToolkits"
+        :to="{ name: 'toolkits' }"
+      >
+        Toolkits
+      </router-link>
+      <router-link
+        v-if="displayFAQ"
+        :to="{ name: 'faq' }"
+      >
+        FAQ
+      </router-link>
+      <router-link :to="{ name: 'contact' }">
+        Contact Us
+      </router-link>
+      <router-link
+        v-if="displayCart"
+        :to="{ name: 'cart' }"
+      >
+        Your Donations
+      </router-link>
 
-        <nav class="overlay__nav">
-            <router-link :to="{ name: 'homepage' }">Home</router-link>
-            <router-link :to="{ name: 'about' }" v-if="displayAbout">About</router-link>
-            <router-link :to="{ name: 'toolkits' }" v-if="displayToolkits">Toolkits</router-link>
-            <router-link :to="{ name: 'faq' }" v-if="displayFAQ">FAQ</router-link>
-            <router-link :to="{ name: 'contact' }">Contact Us</router-link>
-            <router-link :to="{ name: 'cart' }" v-if="displayCart">Your Donations</router-link>
+      <router-link
+        v-for="page in pages"
+        v-if="page.enabled"
+        :key="page.uuid"
+        :to="{ path: page.slug }"
+      >
+        {{ page.title }}
+      </router-link>
+    </nav>
 
-            <router-link v-for="page in pages" :key="page.uuid" :to="{ path: page.slug }" v-if="page.enabled">{{ page.title }}</router-link>
-        </nav>
-
-        <a v-on:click="close" href="#" id="overlay__close" role="button"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
-    </div>
+    <a
+      id="overlay__close"
+      href="#"
+      role="button"
+      @click="close"
+    ><i
+      class="fas fa-times-circle"
+      aria-hidden="true"
+    /></a>
+  </div>
 </template>
 
 <script>
-	export default {
-		computed: {
-			displayAbout: function () {
-				return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED');
-			},
-			displayFAQ: function () {
-				return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED');
-			},
-			displayToolkits: function () {
-				return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED');
-			},
-			displayCart: function () {
-				return this.$store.getters.cartItems.length > 0;
-			},
-			pages: function () {
-				return this.$store.getters.pages;
-			},
-		},
-		props: {
-			data: {},
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			}
-		},
-		created: function () {
-			this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav');
-		},
-		methods: {
-			close: function (event) {
-				event.preventDefault();
-				const vue = this;
+export default {
+  props: {
+    data: {},
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    }
+  },
+  computed: {
+    displayAbout: function () {
+      return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED')
+    },
+    displayFAQ: function () {
+      return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED')
+    },
+    displayToolkits: function () {
+      return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')
+    },
+    displayCart: function () {
+      return this.$store.getters.cartItems.length > 0
+    },
+    pages: function () {
+      return this.$store.getters.pages
+    }
+  },
+  created: function () {
+    this.addBodyClasses('has-overlay', 'has-overlay--mobile-nav')
+  },
+  methods: {
+    close: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.removeModal('menu-overlay');
-				vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav');
-			}
-		}
-	};
+      vue.removeModal('menu-overlay')
+      vue.removeBodyClasses('has-overlay', 'has-overlay--mobile-nav')
+    }
+  }
+}
 </script>

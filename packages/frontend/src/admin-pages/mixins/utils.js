@@ -15,46 +15,46 @@
  */
 
 const mixin = {
-	methods: {
-		sync(object, sources) {
-			object = JSON.parse(JSON.stringify(object));
-			sources = Array.isArray(sources) ? sources : [sources];
-			Object.keys(object).forEach(key => {
-				sources.forEach(source => {
-					source = JSON.parse(JSON.stringify(source));
-					if (source.hasOwnProperty(key) && source[key] !== undefined && source[key] !== null) {
-						object[key] = source[key];
-					}
-				});
-			});
-			return object;
-		},
-		getUpdatedParameters(data, originals) {
-			const mixin = this;
+  methods: {
+    sync (object, sources) {
+      object = JSON.parse(JSON.stringify(object))
+      sources = Array.isArray(sources) ? sources : [sources]
+      Object.keys(object).forEach(key => {
+        sources.forEach(source => {
+          source = JSON.parse(JSON.stringify(source))
+          if (source.hasOwnProperty(key) && source[key] !== undefined && source[key] !== null) {
+            object[key] = source[key]
+          }
+        })
+      })
+      return object
+    },
+    getUpdatedParameters (data, originals) {
+      const mixin = this
 
-			const params = {};
-			data = JSON.parse(JSON.stringify(data));
-			originals = Array.isArray(originals) ? originals : [originals];
-			Object.keys(data).forEach(key => {
-				originals.forEach(original => {
-					original = JSON.parse(JSON.stringify(original));
-					if (!original.hasOwnProperty(key) || original[key] !== data[key] || (mixin.isEmptyParam(original[key]) && !mixin.isEmptyParam(data[key])) || (!mixin.isEmptyParam(original[key]) && mixin.isEmptyParam(data[key]))) {
-						params[key] = data[key];
-					}
-				});
-			});
-			return params;
-		},
-		isEmptyParam(param) {
-			return param === undefined || param === null || param === '';
-		},
-		isInternetExplorer() {
-			return (navigator.appVersion.indexOf("MSIE 10") > -1) || (navigator.userAgent.indexOf("Trident") > -1 && navigator.userAgent.indexOf("rv:11") > -1);
-		},
-		isMicrosoftEdge() {
-			return (/Edge/.test(navigator.userAgent));
-		}
-	}
-};
+      const params = {}
+      data = JSON.parse(JSON.stringify(data))
+      originals = Array.isArray(originals) ? originals : [originals]
+      Object.keys(data).forEach(key => {
+        originals.forEach(original => {
+          original = JSON.parse(JSON.stringify(original))
+          if (!original.hasOwnProperty(key) || original[key] !== data[key] || (mixin.isEmptyParam(original[key]) && !mixin.isEmptyParam(data[key])) || (!mixin.isEmptyParam(original[key]) && mixin.isEmptyParam(data[key]))) {
+            params[key] = data[key]
+          }
+        })
+      })
+      return params
+    },
+    isEmptyParam (param) {
+      return param === undefined || param === null || param === ''
+    },
+    isInternetExplorer () {
+      return (navigator.appVersion.indexOf('MSIE 10') > -1) || (navigator.userAgent.indexOf('Trident') > -1 && navigator.userAgent.indexOf('rv:11') > -1)
+    },
+    isMicrosoftEdge () {
+      return (/Edge/.test(navigator.userAgent))
+    }
+  }
+}
 
-export default mixin;
+export default mixin

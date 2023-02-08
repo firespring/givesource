@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-require('jquery.payment');
-const validate = require('validate.js');
+require('jquery.payment')
+const validate = require('validate.js')
 
 // Add "label" validator to allow custom label mapping functionality
 validate.validators.label = function () {
-	return [];
-};
+  return []
+}
 
 /**
  * Credit card number validator
@@ -30,17 +30,17 @@ validate.validators.label = function () {
  * @return {*}
  */
 validate.validators.ccNumber = function (value, options) {
-	if (!value || value === false || typeof value === 'undefined' || value === null) {
-		return null;
-	}
-	if (!$.payment.validateCardNumber(value)) {
-		if (options && options.hasOwnProperty('message')) {
-			return options.message;
-		}
-		return 'is not valid';
-	}
-	return null;
-};
+  if (!value || value === false || typeof value === 'undefined' || value === null) {
+    return null
+  }
+  if (!$.payment.validateCardNumber(value)) {
+    if (options && options.hasOwnProperty('message')) {
+      return options.message
+    }
+    return 'is not valid'
+  }
+  return null
+}
 
 /**
  * Credit card security code validator
@@ -50,17 +50,17 @@ validate.validators.ccNumber = function (value, options) {
  * @return {*}
  */
 validate.validators.ccCvv = function (value, options) {
-	if (!value || value === false || typeof value === 'undefined' || value === null) {
-		return null;
-	}
-	if (!$.payment.validateCardCVC(value)) {
-		if (options && options.hasOwnProperty('message')) {
-			return options.message;
-		}
-		return 'is not valid';
-	}
-	return null;
-};
+  if (!value || value === false || typeof value === 'undefined' || value === null) {
+    return null
+  }
+  if (!$.payment.validateCardCVC(value)) {
+    if (options && options.hasOwnProperty('message')) {
+      return options.message
+    }
+    return 'is not valid'
+  }
+  return null
+}
 
 /**
  * Validate that an array contains required options
@@ -70,48 +70,47 @@ validate.validators.ccCvv = function (value, options) {
  * @return {*}
  */
 validate.validators.arrayIncludes = function (value, options, attribute, allValues) {
-	if (typeof value === 'undefined') {
-		value = allValues[options.attributeName]
-	}
-	if (options.required.length === 0) {
-		return null;
-	}
-	if (! Array.isArray(value)) {
-		return 'is not an array'
-	}
+  if (typeof value === 'undefined') {
+    value = allValues[options.attributeName]
+  }
+  if (options.required.length === 0) {
+    return null
+  }
+  if (!Array.isArray(value)) {
+    return 'is not an array'
+  }
 
-	for (let i=0; i<options.required.length; i++) {
-		const requiredValue = options.required[i];
-		if (! value.includes(requiredValue)) {
-			return options.message || 'is not valid';
-		}
-	}
+  for (let i = 0; i < options.required.length; i++) {
+    const requiredValue = options.required[i]
+    if (!value.includes(requiredValue)) {
+      return options.message || 'is not valid'
+    }
+  }
 
-	return null;
-};
-
+  return null
+}
 
 const mixin = {
-	methods: {
-		validate: function (data, constraints) {
-			return this.getErrorMessages(validate(data, constraints, {fullMessages: false}), constraints);
-		},
-		getErrorMessages: function (errors, constraints) {
-			const validationErrors = {};
-			for (let field in errors) {
-				if (errors.hasOwnProperty(field) && errors[field].length > 0) {
-					const label = constraints[field].hasOwnProperty('label') ? constraints[field].label : validate.capitalize(validate.prettify(field));
-					validationErrors[field] = label + ' ' + errors[field][0];
-				}
-			}
-			return validationErrors;
-		},
-		scrollToError: function () {
-			this.$nextTick(function () {
-				$('.has-error:first').closest('.form-item').first('.form-item__label')[0].scrollIntoView(true);
-			});
-		}
-	}
-};
+  methods: {
+    validate: function (data, constraints) {
+      return this.getErrorMessages(validate(data, constraints, { fullMessages: false }), constraints)
+    },
+    getErrorMessages: function (errors, constraints) {
+      const validationErrors = {}
+      for (const field in errors) {
+        if (errors.hasOwnProperty(field) && errors[field].length > 0) {
+          const label = constraints[field].hasOwnProperty('label') ? constraints[field].label : validate.capitalize(validate.prettify(field))
+          validationErrors[field] = label + ' ' + errors[field][0]
+        }
+      }
+      return validationErrors
+    },
+    scrollToError: function () {
+      this.$nextTick(function () {
+        $('.has-error:first').closest('.form-item').first('.form-item__label')[0].scrollIntoView(true)
+      })
+    }
+  }
+}
 
-export default mixin;
+export default mixin

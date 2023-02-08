@@ -15,36 +15,40 @@
   -->
 
 <template>
-    <div id="modal-spinner" class="c-modal c-modal--spinner" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
-                    <div class="c-modal-content">
-                        <div class="c-progress c-progress--spinner c-spinner-lg c-spinner-active">
-                            <div class="c-spinner-layer c-spinner-orange-only">
-                                <div class="c-spinner-circle-clipper left">
-                                    <div class="c-spinner-circle"></div>
-                                </div><div class="gap-patch">
-                                <div class="c-spinner-circle"></div>
-                            </div><div class="c-spinner-circle-clipper right">
-                                <div class="c-spinner-circle"></div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
+  <div
+    id="modal-spinner"
+    class="c-modal c-modal--spinner"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div class="c-modal-content">
+            <div class="c-progress c-progress--spinner c-spinner-lg c-spinner-active">
+              <div class="c-spinner-layer c-spinner-orange-only">
+                <div class="c-spinner-circle-clipper left">
+                  <div class="c-spinner-circle" />
+                </div><div class="gap-patch">
+                  <div class="c-spinner-circle" />
+                </div><div class="c-spinner-circle-clipper right">
+                  <div class="c-spinner-circle" />
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			}
-		}
-	}
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    }
+  }
+}
 </script>

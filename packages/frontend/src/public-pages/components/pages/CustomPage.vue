@@ -15,74 +15,79 @@
   -->
 
 <template>
-    <div>
-        <layout-header></layout-header>
+  <div>
+    <layout-header />
 
-        <layout-hero>
-            <h1 slot="title">{{ page.title }}</h1>
-        </layout-hero>
+    <layout-hero>
+      <h1 slot="title">
+        {{ page.title }}
+      </h1>
+    </layout-hero>
 
-        <main class="main">
-            <div class="wrapper wrapper--sm" v-html="page.text"></div>
-        </main>
+    <main class="main">
+      <div
+        class="wrapper wrapper--sm"
+        v-html="page.text"
+      />
+    </main>
 
-        <layout-footer>
-            <layout-sponsors></layout-sponsors>
-        </layout-footer>
-    </div>
+    <layout-footer>
+      <layout-sponsors />
+    </layout-footer>
+  </div>
 </template>
 
 <script>
-	import * as Settings from './../../helpers/settings';
-	import ComponentFooter from './../layout/Footer.vue';
-	import ComponentHeader from './../layout/Header.vue';
-	import ComponentHero from './../layout/Hero.vue';
-	import ComponentSponsors from './../layout/Sponsors.vue';
+import * as Settings from './../../helpers/settings'
+import ComponentFooter from './../layout/Footer.vue'
+import ComponentHeader from './../layout/Header.vue'
+import ComponentHero from './../layout/Hero.vue'
+import ComponentSponsors from './../layout/Sponsors.vue'
 
-	export default {
-		data: function () {
-			return {
-				page: {},
-			};
-		},
-		computed: {
-			eventTitle() {
-				return Settings.eventTitle();
-			},
-		},
-		beforeRouteEnter(to, from, next) {
-			next((vm) => {
-				vm.page = to.meta.page;
+export default {
+  components: {
+    'layout-footer': ComponentFooter,
+    'layout-header': ComponentHeader,
+    'layout-hero': ComponentHero,
+    'layout-sponsors': ComponentSponsors
+  },
+  beforeRouteEnter (to, from, next) {
+    next((vm) => {
+      vm.page = to.meta.page
 
-				vm.setBodyClasses('page');
-				vm.setPageTitle(vm.eventTitle + ' - ' + vm.page.title);
-			});
-		},
-		beforeRouteUpdate(to, from, next) {
-			const vm = this;
+      vm.setBodyClasses('page')
+      vm.setPageTitle(vm.eventTitle + ' - ' + vm.page.title)
+    })
+  },
+  beforeRouteUpdate (to, from, next) {
+    const vm = this
 
-			const pages = vm.$store.getters.pages;
-			const slug = to.path;
+    const pages = vm.$store.getters.pages
+    const slug = to.path
 
-			let matched = null;
-			pages.forEach((page) => {
-				if (slug === '/' + page.slug) {
-					matched = page;
-				}
-			});
+    let matched = null
+    pages.forEach((page) => {
+      if (slug === '/' + page.slug) {
+        matched = page
+      }
+    })
 
-			if (matched && matched.enabled) {
-				vm.page = matched;
-				next();
-			} else {
-				next({name: '404'});
-			}
-		},
-		components: {
-			'layout-footer': ComponentFooter,
-			'layout-header': ComponentHeader,
-			'layout-hero': ComponentHero,
-			'layout-sponsors': ComponentSponsors,
-		}
-	};
+    if (matched && matched.enabled) {
+      vm.page = matched
+      next()
+    } else {
+      next({ name: '404' })
+    }
+  },
+  data: function () {
+    return {
+      page: {}
+    }
+  },
+  computed: {
+    eventTitle () {
+      return Settings.eventTitle()
+    }
+  }
+}
 </script>

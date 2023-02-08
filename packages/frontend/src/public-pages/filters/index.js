@@ -17,9 +17,9 @@
 import pluralize from './string/pluralize'
 
 const VueFilters = {
-	install: function (Vue) {
-		Vue.filter('pluralize', pluralize);
-	}
-};
+  install: function (Vue) {
+    Vue.filter('pluralize', pluralize)
+  }
+}
 
-export default VueFilters;
+export default VueFilters

@@ -14,74 +14,74 @@
  * limitations under the License.
  */
 
-const validate = require('validate.js');
+const validate = require('validate.js')
 
 // Add "label" validator to allow custom label mapping functionality
 validate.validators.label = function () {
-	return [];
-};
+  return []
+}
 
 // Add image validator
 validate.validators.image = function (value, options) {
-	let extensions = ['gif', 'jpeg', 'jpg', 'png'];
-	options = options || true;
+  let extensions = ['gif', 'jpeg', 'jpg', 'png']
+  options = options || true
 
-	if (!value || value === false || typeof value === 'undefined' || value === null) {
-		return null;
-	}
+  if (!value || value === false || typeof value === 'undefined' || value === null) {
+    return null
+  }
 
-	if (Array.isArray(options)) {
-		extensions = options;
-	}
+  if (Array.isArray(options)) {
+    extensions = options
+  }
 
-	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
-		return 'is not a valid image.';
-	}
+  if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
+    return 'is not a valid image.'
+  }
 
-	return null;
-};
+  return null
+}
 
 // Add favicon validator
 validate.validators.favicon = function (value, options) {
-	let extensions = ['gif', 'ico', 'png'];
-	options = options || true;
+  let extensions = ['gif', 'ico', 'png']
+  options = options || true
 
-	if (!value || value === false || typeof value === 'undefined' || value === null) {
-		return null;
-	}
+  if (!value || value === false || typeof value === 'undefined' || value === null) {
+    return null
+  }
 
-	if (Array.isArray(options)) {
-		extensions = options;
-	}
+  if (Array.isArray(options)) {
+    extensions = options
+  }
 
-	if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
-		return 'is not a valid favicon.';
-	}
+  if ((value instanceof File && extensions.indexOf(value.name.split('.').pop().toLowerCase()) < 0) || (!(value instanceof File) && extensions.indexOf(value.filename.split('.').pop().toLowerCase()) < 0)) {
+    return 'is not a valid favicon.'
+  }
 
-	return null;
-};
+  return null
+}
 
 const mixin = {
-	methods: {
-		validate: function (data, constraints) {
-			return this.getErrorMessages(validate(data, constraints, {fullMessages: false}), constraints);
-		},
-		getErrorMessages: function (errors, constraints) {
-			const validationErrors = {};
-			for (let field in errors) {
-				if (errors.hasOwnProperty(field) && errors[field].length > 0) {
-					const label = constraints[field].hasOwnProperty('label') ? constraints[field].label : validate.capitalize(validate.prettify(field));
-					validationErrors[field] = label + ' ' + errors[field][0];
-				}
-			}
-			return validationErrors;
-		},
-		scrollToError: function () {
-			this.$nextTick(function () {
-				$('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text')[0].scrollIntoView(true);
-			});
-		}
-	}
-};
+  methods: {
+    validate: function (data, constraints) {
+      return this.getErrorMessages(validate(data, constraints, { fullMessages: false }), constraints)
+    },
+    getErrorMessages: function (errors, constraints) {
+      const validationErrors = {}
+      for (const field in errors) {
+        if (errors.hasOwnProperty(field) && errors[field].length > 0) {
+          const label = constraints[field].hasOwnProperty('label') ? constraints[field].label : validate.capitalize(validate.prettify(field))
+          validationErrors[field] = label + ' ' + errors[field][0]
+        }
+      }
+      return validationErrors
+    },
+    scrollToError: function () {
+      this.$nextTick(function () {
+        $('.c-form-control-error:first').closest('.c-form-item').first('.c-form-item-label-text')[0].scrollIntoView(true)
+      })
+    }
+  }
+}
 
-export default mixin;
+export default mixin

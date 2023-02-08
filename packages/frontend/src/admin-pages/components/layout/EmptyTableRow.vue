@@ -15,52 +15,65 @@
   -->
 
 <template>
-    <tr>
-        <td v-if="loaded" :colspan="colspan" class="u-text-c">
-            <p>{{ message }}</p>
-            <p v-if="displayButton">
-                <router-link :to="buttonLink" class="c-btn c-btn--sm">{{ buttonText }}</router-link>
-            </p>
-        </td>
-        <td v-else :colspan="colspan" class="u-text-c">
-            <layout-spinner></layout-spinner>
-        </td>
-    </tr>
+  <tr>
+    <td
+      v-if="loaded"
+      :colspan="colspan"
+      class="u-text-c"
+    >
+      <p>{{ message }}</p>
+      <p v-if="displayButton">
+        <router-link
+          :to="buttonLink"
+          class="c-btn c-btn--sm"
+        >
+          {{ buttonText }}
+        </router-link>
+      </p>
+    </td>
+    <td
+      v-else
+      :colspan="colspan"
+      class="u-text-c"
+    >
+      <layout-spinner />
+    </td>
+  </tr>
 </template>
 
 <script>
-	import ComponentSpinner from './Spinner.vue';
+import ComponentSpinner from './Spinner.vue'
 
-	export default {
-		computed: {
-			displayButton: function () {
-				return this.buttonText && this.buttonLink;
-			}
-		},
-		props: {
-			colspan: {
-				type: [String, Number],
-				default: null
-			},
-			loaded: {
-				type: Boolean,
-				default: false
-			},
-			message: {
-				type: String,
-				default: 'This table is empty.'
-			},
-			buttonText: {
-				type: String,
-				default: null
-			},
-			buttonLink: {
-				type: Object,
-				default: null
-			}
-		},
-		components: {
-			'layout-spinner': ComponentSpinner,
-		}
-	};
+export default {
+  components: {
+    'layout-spinner': ComponentSpinner
+  },
+  props: {
+    colspan: {
+      type: [String, Number],
+      default: null
+    },
+    loaded: {
+      type: Boolean,
+      default: false
+    },
+    message: {
+      type: String,
+      default: 'This table is empty.'
+    },
+    buttonText: {
+      type: String,
+      default: null
+    },
+    buttonLink: {
+      type: Object,
+      default: null
+    }
+  },
+  computed: {
+    displayButton: function () {
+      return this.buttonText && this.buttonLink
+    }
+  }
+}
 </script>

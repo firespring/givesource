@@ -15,49 +15,50 @@
   -->
 
 <template>
-    <div>
-        <layout-header></layout-header>
+  <div>
+    <layout-header />
 
-        <layout-hero :presentedBy="false">
-            <h1 slot="title">Oops!</h1>
-        </layout-hero>
+    <layout-hero :presented-by="false">
+      <h1 slot="title">
+        Oops!
+      </h1>
+    </layout-hero>
 
-        <main class="main">
-            <div class="wrapper wrapper--sm text-c">
+    <main class="main">
+      <div class="wrapper wrapper--sm text-c">
+        <h2>Page Not Found.</h2>
+        <p>
+          <a href="/">Return to the homepage</a>
+        </p>
+      </div>
+    </main>
 
-                <h2>Page Not Found.</h2>
-                <p>
-                    <a href="/">Return to the homepage</a>
-                </p>
-            </div>
-        </main>
-
-        <layout-footer></layout-footer>
-    </div>
+    <layout-footer />
+  </div>
 </template>
 
 <script>
-	import * as Settings from './../../helpers/settings';
-	import ComponentFooter from './../layout/Footer.vue';
-	import ComponentHeader from './../layout/Header.vue';
-	import ComponentHero from './../layout/Hero.vue';
+import * as Settings from './../../helpers/settings'
+import ComponentFooter from './../layout/Footer.vue'
+import ComponentHeader from './../layout/Header.vue'
+import ComponentHero from './../layout/Hero.vue'
 
-	export default {
-		beforeMount: function () {
-			const vue = this;
+export default {
+  components: {
+    'layout-footer': ComponentFooter,
+    'layout-header': ComponentHeader,
+    'layout-hero': ComponentHero
+  },
+  computed: {
+    eventTitle: function () {
+      return Settings.eventTitle()
+    }
+  },
+  beforeMount: function () {
+    const vue = this
 
-			vue.setBodyClasses('page');
-			vue.setPageTitle(vue.eventTitle + ' - Oops!');
-		},
-		computed: {
-			eventTitle: function () {
-				return Settings.eventTitle();
-			}
-		},
-		components: {
-			'layout-footer': ComponentFooter,
-			'layout-header': ComponentHeader,
-			'layout-hero': ComponentHero,
-		}
-	};
+    vue.setBodyClasses('page')
+    vue.setPageTitle(vue.eventTitle + ' - Oops!')
+  }
+}
 </script>

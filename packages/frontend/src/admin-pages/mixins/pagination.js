@@ -15,40 +15,40 @@
  */
 
 export default {
-	data: function () {
-		return {
-			pagination: {
-				items: [],
-				loaded: false,
-				size: 0,
-				sort: '',
-				start: 0,
-				total: 0
-			}
-		};
-	},
-	methods: {
-		resetPaginationData: function () {
-			const vue = this;
+  data: function () {
+    return {
+      pagination: {
+        items: [],
+        loaded: false,
+        size: 0,
+        sort: '',
+        start: 0,
+        total: 0
+      }
+    }
+  },
+  methods: {
+    resetPaginationData: function () {
+      const vue = this
 
-			vue.pagination = {
-				items: [],
-				loaded: false,
-				size: 0,
-				sort: '',
-				start: 0,
-				total: 0
-			};
-		},
-		setPaginationData: function (data) {
-			const vue = this;
+      vue.pagination = {
+        items: [],
+        loaded: false,
+        size: 0,
+        sort: '',
+        start: 0,
+        total: 0
+      }
+    },
+    setPaginationData: function (data) {
+      const vue = this
 
-			Object.keys(vue.pagination).forEach(function (key) {
-				if (data.hasOwnProperty(key)) {
-					vue.pagination[key] = data[key];
-				}
-			});
-			vue.pagination.loaded = true;
-		}
-	}
-};
+      Object.keys(vue.pagination).forEach(function (key) {
+        if (data.hasOwnProperty(key)) {
+          vue.pagination[key] = data[key]
+        }
+      })
+      vue.pagination.loaded = true
+    }
+  }
+}

@@ -15,72 +15,100 @@
   -->
 
 <template>
-    <div v-if="hasError" class="alert alert--bad" ref="alert">
-        <div class="alert__message">
-            <h3 class="alert__title">There was an error processing your request.</h3>
-            <ul>
-                <li v-if="localValue.type">Type: {{localValue.type}}</li>
-                <li v-if="localValue.message">Message: {{localValue.message}}</li>
-                <li v-if="localValue.request_id">ID: {{localValue.request_id}}</li>
-            </ul>
-        </div>
-        <a href="#" v-on:click="close" class="alert__close" role="button">
-            <svg class="svg-inline--fa fa-times-circle fa-w-16" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="times-circle" role="img"
-                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                <path fill="currentColor"
-                      d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"></path>
-            </svg><!-- <i class="fas fa-times-circle"></i> --></a></div>
+  <div
+    v-if="hasError"
+    ref="alert"
+    class="alert alert--bad"
+  >
+    <div class="alert__message">
+      <h3 class="alert__title">
+        There was an error processing your request.
+      </h3>
+      <ul>
+        <li v-if="localValue.type">
+          Type: {{ localValue.type }}
+        </li>
+        <li v-if="localValue.message">
+          Message: {{ localValue.message }}
+        </li>
+        <li v-if="localValue.request_id">
+          ID: {{ localValue.request_id }}
+        </li>
+      </ul>
+    </div>
+    <a
+      href="#"
+      class="alert__close"
+      role="button"
+      @click="close"
+    >
+      <svg
+        class="svg-inline--fa fa-times-circle fa-w-16"
+        aria-hidden="true"
+        data-fa-processed=""
+        data-prefix="fas"
+        data-icon="times-circle"
+        role="img"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+      >
+        <path
+          fill="currentColor"
+          d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"
+        />
+      </svg><!-- <i class="fas fa-times-circle"></i> --></a>
+  </div>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: {}
-			};
-		},
-		props: {
-			value: {}
-		},
-		computed: {
-			hasError: function () {
-				return this.localValue && Object.keys(this.localValue).length;
-			}
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.$emit('input', vue.localValue);
-			},
-			value: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				//paymentSpring returns an array of errors but not multiple errors
-				if (_.isArray(value)) {
-					value = value[0];
-				}
-				vue.localValue = value;
-			},
-            hasError: function (value) {
-				const vue = this;
-				if (value) {
-					vue.$nextTick(function () {
-						vue.$refs.alert.scrollIntoView(true);
-					});
-                }
-            }
-		},
-		methods: {
-			close: function () {
-				const vue = this;
-				vue.localValue = {};
-			}
-		},
-	}
+export default {
+  props: {
+    value: {}
+  },
+  data: function () {
+    return {
+      localValue: {}
+    }
+  },
+  computed: {
+    hasError: function () {
+      return this.localValue && Object.keys(this.localValue).length
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.$emit('input', vue.localValue)
+    },
+    value: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      // paymentSpring returns an array of errors but not multiple errors
+      if (_.isArray(value)) {
+        value = value[0]
+      }
+      vue.localValue = value
+    },
+    hasError: function (value) {
+      const vue = this
+      if (value) {
+        vue.$nextTick(function () {
+          vue.$refs.alert.scrollIntoView(true)
+        })
+      }
+    }
+  },
+  methods: {
+    close: function () {
+      const vue = this
+      vue.localValue = {}
+    }
+  }
+}
 
 </script>

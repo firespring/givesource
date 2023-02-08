@@ -14,72 +14,72 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate';
-import Vue from 'vue';
-import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate'
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const store = new Vuex.Store({
-	state: {
-		cacheKey: 0,
-		settings: {},
-		updated: 0,
-		receipt: null,
-		donorEmail: null,
-	},
-	mutations: {
-		generateCacheKey: function (state) {
-			state.cacheKey = new Date().getTime();
-		},
-		settings: function (state, settings) {
-			Object.keys(settings).forEach(function (key) {
-				state.settings[key] = settings[key];
-			});
-		},
-		setDonorEmail(state, email) {
-			state.donorEmail = email;
-		},
-		setReceipt(state, receiptHtml) {
-			state.receipt = receiptHtml;
-		},
-		updated: function (state) {
-			state.updated = new Date().getTime();
-		}
-	},
-	getters: {
-		cacheKey: function (state) {
-			if (!state.cacheKey) {
-				state.cacheKey = new Date().getTime();
-			}
-			return state.cacheKey;
-		},
-		settings: function (state) {
-			return state.settings;
-		},
-		setting: function (state) {
-			return function (key) {
-				return state.settings.hasOwnProperty(key) ? state.settings[key] : null;
-			}
-		},
-		updated: function (state) {
-			return state.updated;
-		}
-	},
-	actions: {
-		async setReceipt({commit}, payload) {
-			commit('setReceipt', payload.html);
-			commit('setDonorEmail', payload.email);
-		},
+  state: {
+    cacheKey: 0,
+    settings: {},
+    updated: 0,
+    receipt: null,
+    donorEmail: null
+  },
+  mutations: {
+    generateCacheKey: function (state) {
+      state.cacheKey = new Date().getTime()
+    },
+    settings: function (state, settings) {
+      Object.keys(settings).forEach(function (key) {
+        state.settings[key] = settings[key]
+      })
+    },
+    setDonorEmail (state, email) {
+      state.donorEmail = email
+    },
+    setReceipt (state, receiptHtml) {
+      state.receipt = receiptHtml
+    },
+    updated: function (state) {
+      state.updated = new Date().getTime()
+    }
+  },
+  getters: {
+    cacheKey: function (state) {
+      if (!state.cacheKey) {
+        state.cacheKey = new Date().getTime()
+      }
+      return state.cacheKey
+    },
+    settings: function (state) {
+      return state.settings
+    },
+    setting: function (state) {
+      return function (key) {
+        return state.settings.hasOwnProperty(key) ? state.settings[key] : null
+      }
+    },
+    updated: function (state) {
+      return state.updated
+    }
+  },
+  actions: {
+    async setReceipt ({ commit }, payload) {
+      commit('setReceipt', payload.html)
+      commit('setDonorEmail', payload.email)
+    },
 
-		async clearReceipt({commit}) {
-			commit('setReceipt', null);
-			commit('setDonorEmail', null);
-		}
-	},
-	plugins: [
-		createPersistedState()
-	]
-});
+    async clearReceipt ({ commit }) {
+      commit('setReceipt', null)
+      commit('setDonorEmail', null)
+    }
+  },
+  plugins: [
+    createPersistedState()
+  ]
+})
 
-export default store;
+export default store

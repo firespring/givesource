@@ -15,64 +15,69 @@
   -->
 
 <template>
-    <button type="submit" class="btn" :class="buttonClasses" :disabled="processing">
-        <slot>Submit</slot>
-    </button>
+  <button
+    type="submit"
+    class="btn"
+    :class="buttonClasses"
+    :disabled="processing"
+  >
+    <slot>Submit</slot>
+  </button>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				classes: {
-					// Color
-                    'btn--accent': this.color.toLowerCase() === 'accent',
-					'btn--blue': this.color.toLowerCase() === 'blue',
-					'btn--dark': this.color.toLowerCase() === 'dark',
-					'btn--green': this.color.toLowerCase() === 'green',
-					'btn--lite': this.color.toLowerCase() === 'lite',
-					'btn--red': this.color.toLowerCase() === 'red',
-					'btn--reverse': this.color.toLowerCase() === 'reverse',
+export default {
+  props: {
+    processing: {
+      type: Boolean,
+      default: false
+    },
+    color: {
+      type: String,
+      default: 'accent'
+    },
+    size: {
+      type: String,
+      default: ''
+    },
+    rounded: {
+      type: Boolean,
+      default: true
+    },
+    hasIcon: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data: function () {
+    return {
+      classes: {
+        // Color
+        'btn--accent': this.color.toLowerCase() === 'accent',
+        'btn--blue': this.color.toLowerCase() === 'blue',
+        'btn--dark': this.color.toLowerCase() === 'dark',
+        'btn--green': this.color.toLowerCase() === 'green',
+        'btn--lite': this.color.toLowerCase() === 'lite',
+        'btn--red': this.color.toLowerCase() === 'red',
+        'btn--reverse': this.color.toLowerCase() === 'reverse',
 
-                    // Has Icon
-                    'btn--icon': this.hasIcon,
+        // Has Icon
+        'btn--icon': this.hasIcon,
 
-					// Rounded
-                    'btn--round': this.rounded,
+        // Rounded
+        'btn--round': this.rounded,
 
-					// Size
-					'btn--xs': this.size.toLowerCase() === 'xs',
-					'btn--sm': this.size.toLowerCase() === 'sm',
-					'btn--lg': this.size.toLowerCase() === 'lg',
-				}
-			};
-		},
-		computed: {
-			buttonClasses: function () {
-				return _.extend({}, this.classes, {'btn--loading': this.processing});
-			},
-		},
-		props: {
-			processing: {
-				type: Boolean,
-				default: false,
-			},
-			color: {
-				type: String,
-				default: 'accent'
-			},
-			size: {
-				type: String,
-				default: '',
-			},
-            rounded: {
-				type: Boolean,
-                default: true,
-            },
-            hasIcon: {
-				type: Boolean,
-                default: true,
-            }
-		},
-	};
+        // Size
+        'btn--xs': this.size.toLowerCase() === 'xs',
+        'btn--sm': this.size.toLowerCase() === 'sm',
+        'btn--lg': this.size.toLowerCase() === 'lg'
+      }
+    }
+  },
+  computed: {
+    buttonClasses: function () {
+      return _.extend({}, this.classes, { 'btn--loading': this.processing })
+    }
+  }
+}
 </script>

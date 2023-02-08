@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const numeral = require('numeral');
+const numeral = require('numeral')
 
 /**
  * Format the provided value into the standard format used for percents.
@@ -22,8 +22,8 @@ const numeral = require('numeral');
  * @param {*} value
  * @returns {*}
  */
-function percent(value) {
-	return numeral(value).format('0.0[0000]');
+function percent (value) {
+  return numeral(value).format('0.0[0000]')
 }
 
-export default percent;
+export default percent
