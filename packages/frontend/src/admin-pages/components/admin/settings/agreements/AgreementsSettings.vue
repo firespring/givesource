@@ -132,7 +132,9 @@ export default {
         modalTitle: 'Do you want to delete this agreement?',
         modalText: 'Deletion is permanent. Once an agreement is deleted, you will need to recreate it if you want it back.',
         callback: 'deleteAgreement',
-        overlayClass: 'c-modal-overlay-warning'
+        overlayClass: 'c-modal-overlay-warning',
+        cancelText: 'No, Keep It',
+        confirmText: 'Yes, Delete It'
       })
     }
   }

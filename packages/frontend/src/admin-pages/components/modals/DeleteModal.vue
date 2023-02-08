@@ -39,8 +39,8 @@
 
                         <div class="c-modal-footer">
                             <div class="c-modal-footer__actions">
-                                <button v-on:click="remove" type="button" class="c-btn c-btn--bad js-modal-close">Yes, Delete Them</button>
-                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">No, Keep Them</button>
+                                <button v-on:click="remove" type="button" class="c-btn c-btn--bad js-modal-close">{{confirmText}}</button>
+                                <button v-on:click="cancel" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">{{cancelText}}</button>
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,9 @@
 			return {
 				modalTitle: this.data.modalTitle,
 				modalText: this.data.modalText,
-				callback: this.data.callback
+				callback: this.data.callback,
+        cancelText: this.data.cancelText || 'No, Keep Them',
+        confirmText: this.data.confirmText || 'Yes, Delete Them'
 			}
 		},
 		props: {
