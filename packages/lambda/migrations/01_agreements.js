@@ -10,6 +10,10 @@ module.exports = {
                     autoIncrement: true,
                     primaryKey: true
                 },
+                agreementTitle: {
+                    type: Sequelize.STRING(255),
+                    allowNull: false,
+                },
                 agreementText: {
                     type: Sequelize.TEXT,
                     allowNull: false,

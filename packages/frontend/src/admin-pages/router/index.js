@@ -18,6 +18,8 @@ import * as User from './../helpers/user';
 import * as Utils from './../helpers/utils';
 import Component404 from './../components/errors/404.vue';
 import ComponentAbout from './../components/admin/pages/About.vue';
+import ComponentAddAgreement from './../components/admin/settings/agreements/AddAgreement.vue';
+import ComponentAgreementsSettings from './../components/admin/settings/agreements/AgreementsSettings.vue';
 import ComponentAnalytics from './../components/admin/settings/analytics/Analytics.vue';
 import ComponentAppearance from './../components/admin/settings/appearance/Appearance.vue';
 import ComponentCheckout from './../components/admin/pages/Checkout.vue';
@@ -267,6 +269,22 @@ const router = new VueRouter({
 			path: '/settings',
 			name: 'settings-list',
 			component: ComponentSettingsList,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/agreements',
+			name: 'settings-agreements',
+			component: ComponentAgreementsSettings,
+			meta: {
+				allowedGroups: ['SuperAdmin', 'Admin']
+			},
+		},
+		{
+			path: '/settings/agreements/add',
+			name: 'settings-add-agreement',
+			component: ComponentAddAgreement,
 			meta: {
 				allowedGroups: ['SuperAdmin', 'Admin']
 			},

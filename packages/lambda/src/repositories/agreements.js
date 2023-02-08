@@ -179,6 +179,7 @@ AgreementsRepository.prototype.upsert = function (model, data) {
 			}
 			return allModels.Agreement.upsert({
 				'id': model.id,
+				'agreementTitle': typeof data.agreementTitle !== "undefined" ? data.agreementTitle : model.agreementTitle,
 				'agreementText': typeof data.agreementText !== "undefined" ? data.agreementText : model.agreementText,
 				'isRequired': typeof data.isRequired !== "undefined" ? data.isRequired : model.isRequired,
 				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.sortOrder
