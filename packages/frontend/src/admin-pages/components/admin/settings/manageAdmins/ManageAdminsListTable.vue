@@ -84,6 +84,7 @@
 					modalTitle: 'Remove Admin User',
 					modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
 					callback: 'deleteUserAdmin',
+          overlayClass: 'c-modal-overlay-warning'
 				});
 			},
 			removeUser: function () {

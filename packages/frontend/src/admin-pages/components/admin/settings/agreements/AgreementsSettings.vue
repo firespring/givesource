@@ -109,6 +109,7 @@ export default {
   created: function () {
     const vue = this
 
+    vue.bus.$off('deleteAgreement');
     vue.bus.$on('deleteAgreement', function () {
       vue.addModal('spinner')
       vue.$request.delete('agreements/' + vue.agreementToDelete.id).then(function (response) {
@@ -128,9 +129,10 @@ export default {
       vue.agreementToDelete = agreement
 
       vue.addModal('confirm-delete', {
-        modalTitle: 'Do you want to delete the selected item(s)?',
-        modalText: 'Proactively harness backward-compatible best practices through enterprise technology. Objectively maximize leveraged catalysts for change with goal-oriented core competencies. Progressively exploit superior technology with end-to-end communities.',
-        callback: 'deleteAgreement'
+        modalTitle: 'Do you want to delete this agreement?',
+        modalText: 'Deletion is permanent. Once an agreement is deleted, you will need to recreate it if you want it back.',
+        callback: 'deleteAgreement',
+        overlayClass: 'c-modal-overlay-warning'
       })
     }
   }

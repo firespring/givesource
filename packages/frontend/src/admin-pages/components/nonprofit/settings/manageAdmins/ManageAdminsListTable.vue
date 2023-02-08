@@ -84,6 +84,7 @@
 					modalTitle: 'Remove Nonprofit User',
 					modalText: 'Are you sure you want to remove ' + selectedNonprofitUser.email + ' ?',
 					callback: 'deleteUserNonprofit',
+          overlayClass: 'c-modal-overlay-warning'
 				});
 			},
 			removeUser: function () {

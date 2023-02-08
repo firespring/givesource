@@ -16,7 +16,12 @@
 
 <template>
     <div v-if="modals.length">
-        <div v-for="(modal, index) in modals" class="c-modal-overlay" :style="{'z-index': calculateOverlayZIndex(index), display: 'block' }"></div>
+        <div
+            v-for="(modal, index) in modals"
+            class="c-modal-overlay"
+            :class="data[modal]?.overlayClass"
+            :style="{'z-index': calculateOverlayZIndex(index), display: 'block' }"
+        ></div>
         <component v-for="(modal, index) in modals" :is="modal" :key="index" :zIndex="calculateModalZIndex(index)" :data="data[modal]"></component>
     </div>
 </template>
