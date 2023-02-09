@@ -43,7 +43,12 @@ exports.handle = function (event, context, callback) {
 		return nonprofitsRepository.generateUniqueSlug(nonprofit);
 	}).then(function () {
 		nonprofit.status = NonprofitHelper.STATUS_ACTIVE;
-		return nonprofitsRepository.upsert(nonprofit, {});
+		const data = {};
+		const dataNonprofitAgreements = request.get('nonprofit').NonprofitAgreements
+		if (dataNonprofitAgreements) {
+			data.NonprofitAgreements = dataNonprofitAgreements;
+		}
+		return nonprofitsRepository.upsert(nonprofit, data);
 	}).then(function (nonprofit) {
 		savedNp = nonprofit;
 		return usersRepository.populate(request.get('user'));

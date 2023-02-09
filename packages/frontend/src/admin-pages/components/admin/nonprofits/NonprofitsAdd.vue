@@ -756,7 +756,11 @@ export default {
           phone: vue.formData.phone,
           category1: vue.formData.category1,
           category2: vue.formData.category2,
-          category3: vue.formData.category3
+          category3: vue.formData.category3,
+
+          NonprofitAgreements: vue.agreements.map(agreement => {
+            return { agreementId: agreement.id, isChecked: vue.formData.agreedIds.includes(agreement.id) }
+          })
         },
         user: {
           firstName: vue.formData.firstName,

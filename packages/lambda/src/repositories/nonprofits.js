@@ -526,7 +526,6 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 				}
 
 				// set the agreements
-
 				// data.NonprofitAgreements: [{ agreementId: 10, isChecked: true }, { agreementId: 11, isChecked: false }];
 				const agreementIds = data.NonprofitAgreements.map(na => +na.agreementId);
 
@@ -537,7 +536,8 @@ NonprofitsRepository.prototype.upsert = function (model, data) {
 					return agreement;
 				});
 
-				return await updatedModel.setAgreements(configuredAgreements);
+				await updatedModel.setAgreements(configuredAgreements);
+				return updatedModel;
 			});
 		}).then(function (nonprofit) {
 			resolve(nonprofit);
