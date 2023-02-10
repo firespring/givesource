@@ -209,11 +209,13 @@ const seedNonprofits = function () {
     return generator.modelCollection('Nonprofit', count, { status: 'ACTIVE' });
   }).then(function (nonprofits) {
     let promise = Promise.resolve()
+    const insertedNonprofits = []
     nonprofits.forEach(function (nonprofit) {
       promise = promise.then(function () {
         return nonprofitsRepository.upsert(nonprofit, {})
       }).then(function (popNp) {
-        return popNp;
+        insertedNonprofits.push(popNp);
+        return insertedNonprofits;
       });
     });
     return promise
