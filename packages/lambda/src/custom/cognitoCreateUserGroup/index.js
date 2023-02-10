@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
+const Cognito = require('./../../aws/cognito')
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
 
 exports.handle = function (event, context, callback) {
-	logger.log('cognitoCreateGroup event: %j', event);
+  logger.log('cognitoCreateGroup event: %j', event)
 
-	if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-		response.send(event, context, response.SUCCESS);
-		return;
-	}
+  if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
+    response.send(event, context, response.SUCCESS)
+    return
+  }
 
-	const cognito = new Cognito();
-	const userPoolId = event.ResourceProperties.UserPoolId;
-	const groupName = event.ResourceProperties.GroupName;
-	const roleArn = event.ResourceProperties.RoleArn;
+  const cognito = new Cognito()
+  const userPoolId = event.ResourceProperties.UserPoolId
+  const groupName = event.ResourceProperties.GroupName
+  const roleArn = event.ResourceProperties.RoleArn
 
-	cognito.createCognitoGroup(process.env.AWS_REGION, userPoolId, groupName, roleArn).then(function (group) {
-		logger.log(group);
-		response.send(event, context, response.SUCCESS);
-	}).catch(function (err) {
-		logger.log(err);
-		response.send(event, context, response.FAILED);
-	});
-};
+  cognito.createCognitoGroup(process.env.AWS_REGION, userPoolId, groupName, roleArn).then(function (group) {
+    logger.log(group)
+    response.send(event, context, response.SUCCESS)
+  }).catch(function (err) {
+    logger.log(err)
+    response.send(event, context, response.FAILED)
+  })
+}

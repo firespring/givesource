@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * CloudFormation constructor
  *
  * @constructor
  */
-function CloudFormation() {
+function CloudFormation () {
 }
 
 /**
@@ -34,31 +34,31 @@ function CloudFormation() {
  * @return {Promise}
  */
 CloudFormation.prototype.describeStacks = (region, stackName, nextToken, stacks) => {
-    const cloudFormation = this;
-    const awsCloudFormation = new AWS.CloudFormation({region: region});
-    return new Promise((resolve, reject) => {
-        stacks = stacks || [];
-        const params = {};
-        if (stackName) {
-            params.StackName = stackName;
-        }
-        if (nextToken) {
-            params.NextToken = nextToken;
-        }
-        awsCloudFormation.describeStacks(params, (err, data) => {
-            if (err) {
-                reject(err);
-                return;
-            }
+  const cloudFormation = this
+  const awsCloudFormation = new AWS.CloudFormation({ region: region })
+  return new Promise((resolve, reject) => {
+    stacks = stacks || []
+    const params = {}
+    if (stackName) {
+      params.StackName = stackName
+    }
+    if (nextToken) {
+      params.NextToken = nextToken
+    }
+    awsCloudFormation.describeStacks(params, (err, data) => {
+      if (err) {
+        reject(err)
+        return
+      }
 
-            stacks = stacks.concat(data.Stacks);
-            if (data.NextToken) {
-                resolve(cloudFormation.describeStacks(region, stackName, data.nextToken, stacks));
-            } else {
-                resolve(stacks);
-            }
-        });
-    });
-};
+      stacks = stacks.concat(data.Stacks)
+      if (data.NextToken) {
+        resolve(cloudFormation.describeStacks(region, stackName, data.nextToken, stacks))
+      } else {
+        resolve(stacks)
+      }
+    })
+  })
+}
 
-module.exports = CloudFormation;
+module.exports = CloudFormation

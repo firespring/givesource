@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-const CloudFront = require('./../../aws/cloudFront');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const CloudFront = require('./../../aws/cloudFront')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-  const cloudFront = new CloudFront();
-  const request = new Request(event, context);
+  const cloudFront = new CloudFront()
+  const request = new Request(event, context)
 
-  let paths;
+  let paths
   if (event.paths.indexOf(',') !== -1) {
     paths = event.paths.split(',')
   } else {
     paths = event.paths
   }
   request.validate().then(function () {
-    return cloudFront.createMultipleInvalidations(process.env.DISTRIBUTION_ID, paths);
+    return cloudFront.createMultipleInvalidations(process.env.DISTRIBUTION_ID, paths)
   }).then(function () {
-    callback();
+    callback()
   }).catch(function (err) {
     console.log('Error: %j', err);
-    (err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-  });
-};
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

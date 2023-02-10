@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const DeletePaymentTransaction = require('../../../src/api/deletePaymentTransaction/index');
-const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const DeletePaymentTransaction = require('../../../src/api/deletePaymentTransaction/index')
+const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
+const TestHelper = require('../../helpers/test')
 
 describe('DeletePaymentTransaction', function () {
+  afterEach(function () {
+    PaymentTransactionsRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		PaymentTransactionsRepository.prototype.delete.restore();
-	});
+  it('should delete a paymentTransaction', function () {
+    const model = TestHelper.generate.model('paymentTransaction')
+    sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        payment_transaction_uuid: model.uuid
+      }
+    }
+    return DeletePaymentTransaction.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a paymentTransaction', function () {
-		const model = TestHelper.generate.model('paymentTransaction');
-		sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				payment_transaction_uuid: model.uuid
-			}
-		};
-		return DeletePaymentTransaction.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(PaymentTransactionsRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				payment_transaction_uuid: '1234'
-			}
-		};
-		return DeletePaymentTransaction.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(PaymentTransactionsRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        payment_transaction_uuid: '1234'
+      }
+    }
+    return DeletePaymentTransaction.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

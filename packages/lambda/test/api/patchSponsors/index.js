@@ -14,58 +14,56 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const PatchSponsors = require('./../../../src/api/patchSponsors/index');
-const sinon = require('sinon');
-const SponsorsRepository = require('./../../../src/repositories/sponsors');
-const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const PatchSponsors = require('./../../../src/api/patchSponsors/index')
+const sinon = require('sinon')
+const SponsorsRepository = require('./../../../src/repositories/sponsors')
+const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers')
+const TestHelper = require('./../../helpers/test')
 
 describe('PatchSponsors', function () {
+  afterEach(function () {
+    SponsorTiersRepository.prototype.get.restore()
+    SponsorsRepository.prototype.batchSave.restore()
+  })
 
-	afterEach(function () {
-		SponsorTiersRepository.prototype.get.restore();
-		SponsorsRepository.prototype.batchSave.restore();
-	});
+  it('should return an updated sponsor', function () {
+    const sponsorTier = TestHelper.generate.model('sponsorTier')
+    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
+    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
+    sinon.stub(SponsorsRepository.prototype, 'batchSave').resolves()
+    const params = {
+      body: {
+        sponsors: models.map(function (model) {
+          return model.all()
+        })
+      },
+      params: {
+        sponsor_tier_uuid: sponsorTier.uuid
+      }
+    }
+    return PatchSponsors.handle(params, null, function (error) {
+      assert(error === undefined)
+    })
+  })
 
-	it('should return an updated sponsor', function () {
-		const sponsorTier = TestHelper.generate.model('sponsorTier');
-		const models = TestHelper.generate.modelCollection('sponsor', 3, {sponsorTierUuid: sponsorTier.uuid});
-		sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier);
-		sinon.stub(SponsorsRepository.prototype, 'batchSave').resolves();
-		const params = {
-			body: {
-				sponsors: models.map(function (model) {
-					return model.all()
-				}),
-			},
-			params: {
-				sponsor_tier_uuid: sponsorTier.uuid,
-			}
-		};
-		return PatchSponsors.handle(params, null, function (error) {
-			assert(error === undefined);
-		});
-	});
-
-	it('should return error on exception thrown - batchSave', function () {
-		const sponsorTier = TestHelper.generate.model('sponsorTier');
-		const models = TestHelper.generate.modelCollection('sponsor', 3, {sponsorTierUuid: sponsorTier.uuid});
-		const params = {
-			body: {
-				sponsors: models.map(function (model) {
-					return model.all()
-				}),
-			},
-			params: {
-				sponsor_tier_uuid: sponsorTier.uuid,
-			}
-		};
-		sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier);
-		sinon.stub(SponsorsRepository.prototype, 'batchSave').rejects('Error');
-		return PatchSponsors.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown - batchSave', function () {
+    const sponsorTier = TestHelper.generate.model('sponsorTier')
+    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
+    const params = {
+      body: {
+        sponsors: models.map(function (model) {
+          return model.all()
+        })
+      },
+      params: {
+        sponsor_tier_uuid: sponsorTier.uuid
+      }
+    }
+    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
+    sinon.stub(SponsorsRepository.prototype, 'batchSave').rejects('Error')
+    return PatchSponsors.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

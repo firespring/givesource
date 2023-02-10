@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
-const moment = require('moment-timezone');
+const { DataTypes } = require('sequelize')
+const moment = require('moment-timezone')
 
 module.exports = (sequelize) => {
-	return sequelize.define('Agreement', {
-		agreementTitle: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		agreementText: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		isRequired: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: false
-		},
-		sortOrder: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		}
-	}, {
-		paranoid: true,
-		timestamps: true
-	});
-};
+  return sequelize.define('Agreement', {
+    agreementTitle: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    agreementText: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    isRequired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
+  }, {
+    paranoid: true,
+    timestamps: true
+  })
+}

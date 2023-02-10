@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * InvalidPermissionsException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function InvalidPermissionsException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 403;
-	this._type = 'invalid_permissions';
-	this.defaultMessage = 'Invalid permissions on resource.';
+  this._status = 403
+  this._type = 'invalid_permissions'
+  this.defaultMessage = 'Invalid permissions on resource.'
 }
 
 /**
@@ -35,6 +35,6 @@ function InvalidPermissionsException (message) {
  *
  * @type {HttpException}
  */
-InvalidPermissionsException.prototype = new HttpException();
+InvalidPermissionsException.prototype = new HttpException()
 
-module.exports = InvalidPermissionsException;
+module.exports = InvalidPermissionsException

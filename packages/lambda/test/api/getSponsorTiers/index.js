@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const GetSponsorTiers = require('../../../src/api/getSponsorTiers/index');
-const sinon = require('sinon');
-const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const GetSponsorTiers = require('../../../src/api/getSponsorTiers/index')
+const sinon = require('sinon')
+const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
+const TestHelper = require('../../helpers/test')
 
 describe('GetSponsorTiers', function () {
+  afterEach(function () {
+    SponsorTiersRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		SponsorTiersRepository.prototype.getAll.restore();
-	});
+  it('should return a list of sponsor tiers', function () {
+    const models = TestHelper.generate.modelCollection('sponsorTier', 3)
+    sinon.stub(SponsorTiersRepository.prototype, 'getAll').resolves(models)
+    return GetSponsorTiers.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of sponsor tiers', function () {
-		const models = TestHelper.generate.modelCollection('sponsorTier', 3);
-		sinon.stub(SponsorTiersRepository.prototype, 'getAll').resolves(models);
-		return GetSponsorTiers.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(SponsorTiersRepository.prototype, 'getAll').rejects('Error');
-		return GetSponsorTiers.handle({}, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(SponsorTiersRepository.prototype, 'getAll').rejects('Error')
+    return GetSponsorTiers.handle({}, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

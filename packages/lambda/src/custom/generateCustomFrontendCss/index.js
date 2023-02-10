@@ -14,68 +14,67 @@
  * limitations under the License.
  */
 
-const logger = require('./../../helpers/log');
-const HttpException = require('./../../exceptions/http');
-const ResourceNotFoundException = require('./../../exceptions/resourceNotFound');
-const S3 = require('./../../aws/s3');
-const SettingsRepository = require('./../../repositories/settings');
-const Request = require('./../../aws/request');
-const SettingHelper = require('./../../helpers/setting');
-const RenderHelper = require('./../../helpers/render');
+const logger = require('./../../helpers/log')
+const HttpException = require('./../../exceptions/http')
+const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
+const S3 = require('./../../aws/s3')
+const SettingsRepository = require('./../../repositories/settings')
+const Request = require('./../../aws/request')
+const SettingHelper = require('./../../helpers/setting')
+const RenderHelper = require('./../../helpers/render')
 
 exports.handle = function (event, context, callback) {
-	logger.log('generateCustomFrontendCss event: %j', event);
+  logger.log('generateCustomFrontendCss event: %j', event)
 
-	const request = new Request(event, context);
-	const repository = new SettingsRepository();
+  const request = new Request(event, context)
+  const repository = new SettingsRepository()
 
-	request.validate().then(function () {
-		return repository.get(SettingHelper.SETTING_ACCENT_COLOR);
-	}).then(function (setting) {
-		return generateCssBody(setting.value);
-	}).then(function (response) {
-		return writeCssFile(response);
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		if (err instanceof ResourceNotFoundException) {
-			// write empty file
-			return writeCssFile('').then(function () {
-				callback();
-			}).catch(function (err) {
-				throw err;
-			});
-		} else {
-			throw err;
-		}
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
+  request.validate().then(function () {
+    return repository.get(SettingHelper.SETTING_ACCENT_COLOR)
+  }).then(function (setting) {
+    return generateCssBody(setting.value)
+  }).then(function (response) {
+    return writeCssFile(response)
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    if (err instanceof ResourceNotFoundException) {
+      // write empty file
+      return writeCssFile('').then(function () {
+        callback()
+      }).catch(function (err) {
+        throw err
+      })
+    } else {
+      throw err
+    }
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
 
-	/**
+  /**
 	 * Generate custom css body
 	 *
 	 * @param {String} color
 	 * @returns {String}
 	 */
-	const generateCssBody = function (color) {
-		return RenderHelper.renderTemplate('css/custom', {
-			color: color
-		});
-	};
+  const generateCssBody = function (color) {
+    return RenderHelper.renderTemplate('css/custom', {
+      color: color
+    })
+  }
 
-	/**
+  /**
 	 * Write custom css file to s3
 	 *
 	 * @param {String} body
 	 * @returns {Promise}
 	 */
-	const writeCssFile = function (body) {
-		const s3 = new S3();
-		const region = process.env.AWS_REGION;
-		const bucket = process.env.PUBLIC_PAGES_S3_BUCKET;
+  const writeCssFile = function (body) {
+    const s3 = new S3()
+    const region = process.env.AWS_REGION
+    const bucket = process.env.PUBLIC_PAGES_S3_BUCKET
 
-		return s3.putObject(region, bucket, 'assets/css/custom.css', body);
-	};
-
-};
+    return s3.putObject(region, bucket, 'assets/css/custom.css', body)
+  }
+}

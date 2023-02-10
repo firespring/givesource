@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const InvalidPermissionsException = require('./../exceptions/invalidPermissions');
-const Middleware = require('./middleware');
-const UsersRepository = require('../repositories/users');
+const _ = require('lodash')
+const InvalidPermissionsException = require('./../exceptions/invalidPermissions')
+const Middleware = require('./middleware')
+const UsersRepository = require('../repositories/users')
 
 /**
  * NonprofitResourceMiddleware constructor
@@ -26,9 +26,9 @@ const UsersRepository = require('../repositories/users');
  * @param {[]} userGroups
  * @constructor
  */
-function NonprofitResourceMiddleware(nonprofitId, userGroups) {
-	this.nonprofitId = nonprofitId;
-	this.userGroups = userGroups;
+function NonprofitResourceMiddleware (nonprofitId, userGroups) {
+  this.nonprofitId = nonprofitId
+  this.userGroups = userGroups
 }
 
 /**
@@ -36,7 +36,7 @@ function NonprofitResourceMiddleware(nonprofitId, userGroups) {
  *
  * @type {Middleware}
  */
-NonprofitResourceMiddleware.prototype = new Middleware();
+NonprofitResourceMiddleware.prototype = new Middleware()
 
 /**
  * Handle the middleware
@@ -44,29 +44,29 @@ NonprofitResourceMiddleware.prototype = new Middleware();
  * @return {Promise}
  */
 NonprofitResourceMiddleware.prototype.handle = function () {
-	const middleware = this;
-	const usersRepository = new UsersRepository();
-	return new Promise(function (resolve, reject) {
-		if (middleware.user.groups && _.intersection(middleware.user.groups, middleware.userGroups).length > 0) {
-			return resolve();
-		}
+  const middleware = this
+  const usersRepository = new UsersRepository()
+  return new Promise(function (resolve, reject) {
+    if (middleware.user.groups && _.intersection(middleware.user.groups, middleware.userGroups).length > 0) {
+      return resolve()
+    }
 
-		if (middleware.user.cognitoUsername) {
-			usersRepository.getByCognitoUsername(middleware.user.cognitoUsername).then(function (user) {
-				if (parseInt(middleware.nonprofitId) === parseInt(user.nonprofitId)) {
-					return Promise.resolve();
-				} else {
-					return Promise.reject();
-				}
-			}).then(function () {
-				return resolve();
-			}).catch(function () {
-				return reject(new InvalidPermissionsException());
-			});
-		} else {
-			reject(new InvalidPermissionsException());
-		}
-	});
-};
+    if (middleware.user.cognitoUsername) {
+      usersRepository.getByCognitoUsername(middleware.user.cognitoUsername).then(function (user) {
+        if (parseInt(middleware.nonprofitId) === parseInt(user.nonprofitId)) {
+          return Promise.resolve()
+        } else {
+          return Promise.reject()
+        }
+      }).then(function () {
+        return resolve()
+      }).catch(function () {
+        return reject(new InvalidPermissionsException())
+      })
+    } else {
+      reject(new InvalidPermissionsException())
+    }
+  })
+}
 
-module.exports = NonprofitResourceMiddleware;
+module.exports = NonprofitResourceMiddleware

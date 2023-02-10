@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetNonprofits = require('../../../src/api/getNonprofits/index');
-const NonprofitRepository = require('../../../src/repositories/nonprofits');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetNonprofits = require('../../../src/api/getNonprofits/index')
+const NonprofitRepository = require('../../../src/repositories/nonprofits')
+const TestHelper = require('../../helpers/test')
 
 describe('GetNonprofits', function () {
+  afterEach(function () {
+    NonprofitRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		NonprofitRepository.prototype.getAll.restore();
-	});
+  it('should return a list of nonprofits', function () {
+    const models = TestHelper.generate.modelCollection('nonprofit', 3)
+    sinon.stub(NonprofitRepository.prototype, 'getAll').resolves(models)
+    return GetNonprofits.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of nonprofits', function () {
-		const models = TestHelper.generate.modelCollection('nonprofit', 3);
-		sinon.stub(NonprofitRepository.prototype, 'getAll').resolves(models);
-		return GetNonprofits.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(NonprofitRepository.prototype, 'getAll').rejects('Error');
-		return GetNonprofits.handle({}, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(NonprofitRepository.prototype, 'getAll').rejects('Error')
+    return GetNonprofits.handle({}, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

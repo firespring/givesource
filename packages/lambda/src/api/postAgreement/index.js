@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const AgreementsRepository = require('./../../repositories/agreements');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const AgreementsRepository = require('./../../repositories/agreements')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new AgreementsRepository();
-	const request = new Request(event, context);
+  const lambda = new Lambda()
+  const repository = new AgreementsRepository()
+  const request = new Request(event, context)
 
-	let agreement;
-	request.validate().then(function () {
-		return repository.populate(request._body);
-	}).then(function (agreement) {
-		return repository.upsert(agreement, {});
-	}).then(function () {
-		callback(null, agreement);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let agreement
+  request.validate().then(function () {
+    return repository.populate(request._body)
+  }).then(function (agreement) {
+    return repository.upsert(agreement, {})
+  }).then(function () {
+    callback(null, agreement)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

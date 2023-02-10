@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitDonationTiersRepository();
-	const request = new Request(event, context);
+  const repository = new NonprofitDonationTiersRepository()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_tier_id'));
-	}).then(function (donationTier) {
-		callback(null, donationTier);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_tier_id'))
+  }).then(function (donationTier) {
+    callback(null, donationTier)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

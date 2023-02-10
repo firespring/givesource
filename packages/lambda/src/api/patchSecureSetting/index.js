@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SSM = require('./../../aws/ssm');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const SSM = require('./../../aws/ssm')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['value']);
-	const ssm = new SSM();
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['value'])
+  const ssm = new SSM()
 
-	request.validate().then(function () {
-		const key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/' + request.urlParam('key');
-		return ssm.putParameter(process.env.AWS_REGION, key, request.get('value'), 'SecureString', process.env.KMS_KEY, true);
-	}).then(function (response) {
-		console.log('response: %j', response);
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    const key = '/' + process.env.AWS_STACK_NAME + '/settings/secure/' + request.urlParam('key')
+    return ssm.putParameter(process.env.AWS_REGION, key, request.get('value'), 'SecureString', process.env.KMS_KEY, true)
+  }).then(function (response) {
+    console.log('response: %j', response)
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

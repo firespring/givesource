@@ -14,56 +14,56 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const ContentHelper = require('./../../helpers/content');
-const ContentsRepository = require('./../../repositories/contents');
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const _ = require('lodash')
+const ContentHelper = require('./../../helpers/content')
+const ContentsRepository = require('./../../repositories/contents')
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new ContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents']);
+  const lambda = new Lambda()
+  const repository = new ContentsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['contents'])
 
-	let contents = [];
-	request.validate().then(function () {
-		let promise = Promise.resolve();
-		request.get('contents', []).forEach(async function (data) {
-			promise = promise.then(function () {
-				return repository.get(data.id, true);
-			}).then(function (content) {
-				if (content !== null) {
-					contents.push(content);
-				}
-			});
-		});
-		return promise;
-	}).then(function () {
-		let promise = Promise.resolve();
-		contents.forEach(function (content) {
-			if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
-				promise = promise.then(function () {
-					return repository.getByParentId(content.id).then(function (response) {
-						response.forEach(function (model) {
-							if (!_.find(contents, {id: model.id})) {
-								contents.push(model);
-							}
-						});
-					});
-				});
-			}
-		});
-		return promise;
-	}).then(function () {
-		return repository.batchDelete(contents);
-	}).then(function () {
-    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/contents*']}, 'RequestResponse');
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const contents = []
+  request.validate().then(function () {
+    let promise = Promise.resolve()
+    request.get('contents', []).forEach(async function (data) {
+      promise = promise.then(function () {
+        return repository.get(data.id, true)
+      }).then(function (content) {
+        if (content !== null) {
+          contents.push(content)
+        }
+      })
+    })
+    return promise
+  }).then(function () {
+    let promise = Promise.resolve()
+    contents.forEach(function (content) {
+      if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
+        promise = promise.then(function () {
+          return repository.getByParentId(content.id).then(function (response) {
+            response.forEach(function (model) {
+              if (!_.find(contents, { id: model.id })) {
+                contents.push(model)
+              }
+            })
+          })
+        })
+      }
+    })
+    return promise
+  }).then(function () {
+    return repository.batchDelete(contents)
+  }).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/contents*'] }, 'RequestResponse')
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

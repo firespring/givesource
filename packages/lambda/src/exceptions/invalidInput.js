@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * InvalidInputException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function InvalidInputException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 400;
-	this._type = 'invalid_input';
-	this.defaultMessage = 'One of the request inputs is not valid.';
+  this._status = 400
+  this._type = 'invalid_input'
+  this.defaultMessage = 'One of the request inputs is not valid.'
 }
 
 /**
@@ -35,6 +35,6 @@ function InvalidInputException (message) {
  *
  * @type {HttpException}
  */
-InvalidInputException.prototype = new HttpException();
+InvalidInputException.prototype = new HttpException()
 
-module.exports = InvalidInputException;
+module.exports = InvalidInputException

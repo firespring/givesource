@@ -14,41 +14,39 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostDonor = require('../../../src/api/postDonor/index');
-const DonorsRepository = require('../../../src/repositories/donors');
-const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostDonor = require('../../../src/api/postDonor/index')
+const DonorsRepository = require('../../../src/repositories/donors')
+const sinon = require('sinon')
+const TestHelper = require('../../helpers/test')
 
 describe('PostDonor', function () {
+  afterEach(function () {
+    DonorsRepository.prototype.queryEmail.restore()
+    DonorsRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		DonorsRepository.prototype.queryEmail.restore();
-		DonorsRepository.prototype.save.restore();
-	});
+  it('should update a donor by email', function () {
+    const data = TestHelper.generate.model('donor')
+    const donor = TestHelper.generate.model('donor', { email: data.email })
+    sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
+    sinon.stub(DonorsRepository.prototype, 'save').resolves(data)
+    const params = {
+      body: data.except(['uuid', 'createdOn'])
+    }
+    return PostDonor.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, data, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should update a donor by email', function () {
-		const data = TestHelper.generate.model('donor');
-		const donor = TestHelper.generate.model('donor', {email: data.email});
-		sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data);
-		sinon.stub(DonorsRepository.prototype, 'save').resolves(data);
-		const params = {
-			body: data.except(['uuid', 'createdOn'])
-		};
-		return PostDonor.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, data, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		const data = TestHelper.generate.model('donor');
-		sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data);
-		sinon.stub(DonorsRepository.prototype, 'save').rejects('Error');
-		return PostDonor.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    const data = TestHelper.generate.model('donor')
+    sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
+    sinon.stub(DonorsRepository.prototype, 'save').rejects('Error')
+    return PostDonor.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const SponsorsRepository = require('./../../repositories/sponsors');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const SponsorsRepository = require('./../../repositories/sponsors')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new SponsorsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsors']);
+  const lambda = new Lambda()
+  const repository = new SponsorsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsors'])
 
-	let sponsors = [];
-	request.validate().then(function () {
-		let promise = Promise.resolve();
-		request.get('sponsors', []).forEach(function (data) {
-			promise = promise.then(function () {
-				return repository.get(request.urlParam('sponsor_tier_id'), data.id);
-			}).then(function (sponsor) {
-				sponsors.push(sponsor);
-			});
-		});
-		return promise;
-	}).then(function () {
-		return repository.bulkDelete(sponsors);
-	}).then(function () {
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const sponsors = []
+  request.validate().then(function () {
+    let promise = Promise.resolve()
+    request.get('sponsors', []).forEach(function (data) {
+      promise = promise.then(function () {
+        return repository.get(request.urlParam('sponsor_tier_id'), data.id)
+      }).then(function (sponsor) {
+        sponsors.push(sponsor)
+      })
+    })
+    return promise
+  }).then(function () {
+    return repository.bulkDelete(sponsors)
+  }).then(function () {
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

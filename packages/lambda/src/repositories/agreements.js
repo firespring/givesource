@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const loadModels = require('../models/index')
+const Sequelize = require('sequelize')
 
 /**
  * AgreementsRepository constructor
  *
  * @constructor
  */
-function AgreementsRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.AgreementsTable;
-	}
-	Repository.call(this, options);
+function AgreementsRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.AgreementsTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -38,7 +38,7 @@ function AgreementsRepository(options) {
  *
  * @type {Repository}
  */
-AgreementsRepository.prototype = new Repository();
+AgreementsRepository.prototype = new Repository()
 
 /**
  * Look to abstract this
@@ -47,15 +47,15 @@ AgreementsRepository.prototype = new Repository();
  * @return {Promise}
  */
 AgreementsRepository.prototype.populate = function (data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		const agreement = new models.Agreement();
-		return new agreement.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
-	}).finally(function () {
-		return allModels.sequelize.close();
-	});
-};
+  let allModels
+  return loadModels().then(function (models) {
+    allModels = models
+    const agreement = new models.Agreement()
+    return new agreement.constructor(data, { isNewRecord: typeof data.id === 'undefined' })
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+}
 
 /**
  * Get a Agreement
@@ -64,28 +64,28 @@ AgreementsRepository.prototype.populate = function (data) {
  * @return {Promise}
  */
 AgreementsRepository.prototype.get = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Agreement.findOne({
-				where: {
-					id: id
-				},
-			});
-		}).then(function (agreement) {
-			if (agreement instanceof allModels.Agreement) {
-				resolve(agreement);
-			}
-			reject(new ResourceNotFoundException('The specified agreement does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Agreement.findOne({
+        where: {
+          id: id
+        }
+      })
+    }).then(function (agreement) {
+      if (agreement instanceof allModels.Agreement) {
+        resolve(agreement)
+      }
+      reject(new ResourceNotFoundException('The specified agreement does not exist.'))
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get all Agreements
@@ -93,21 +93,21 @@ AgreementsRepository.prototype.get = function (id) {
  * @return {Promise}
  */
 AgreementsRepository.prototype.getAll = function () {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Agreement.findAll();
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Agreement.findAll()
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Delete a Agreement
@@ -116,25 +116,25 @@ AgreementsRepository.prototype.getAll = function () {
  * @return {Promise}
  */
 AgreementsRepository.prototype.delete = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Agreement.destroy({
-				where: {
-					id: id
-				}
-			});
-		}).then(function () {
-			resolve()
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Agreement.destroy({
+        where: {
+          id: id
+        }
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Create or update a Agreement
@@ -142,23 +142,23 @@ AgreementsRepository.prototype.delete = function (id) {
  * @param {Agreement} model
  */
 AgreementsRepository.prototype.save = function (model) {
-	let allModels;
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return repository.get(model.id);
-		}).then(function () {
-			return repository.upsert(model, {});
-		}).then(function (agreement) {
-			resolve(agreement);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const repository = this
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return repository.get(model.id)
+    }).then(function () {
+      return repository.upsert(model, {})
+    }).then(function (agreement) {
+      resolve(agreement)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Insert or update the model
@@ -168,30 +168,30 @@ AgreementsRepository.prototype.save = function (model) {
  * @return {Promise<any>}
  */
 AgreementsRepository.prototype.upsert = function (model, data) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (typeof model === 'undefined') {
-				const agreement = new allModels.Agreement();
-				model = new agreement.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
-			}
-			return allModels.Agreement.upsert({
-				'id': model.id,
-				'agreementTitle': typeof data.agreementTitle !== "undefined" ? data.agreementTitle : model.agreementTitle,
-				'agreementText': typeof data.agreementText !== "undefined" ? data.agreementText : model.agreementText,
-				'isRequired': typeof data.isRequired !== "undefined" ? data.isRequired : model.isRequired,
-				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.sortOrder
-			});
-		}).then(function (agreement) {
-			resolve(agreement[0]);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      if (typeof model === 'undefined') {
+        const agreement = new allModels.Agreement()
+        model = new agreement.constructor({}, { isNewRecord: typeof data.id === 'undefined' })
+      }
+      return allModels.Agreement.upsert({
+        id: model.id,
+        agreementTitle: typeof data.agreementTitle !== 'undefined' ? data.agreementTitle : model.agreementTitle,
+        agreementText: typeof data.agreementText !== 'undefined' ? data.agreementText : model.agreementText,
+        isRequired: typeof data.isRequired !== 'undefined' ? data.isRequired : model.isRequired,
+        sortOrder: typeof data.sortOrder !== 'undefined' ? data.sortOrder : model.sortOrder
+      })
+    }).then(function (agreement) {
+      resolve(agreement[0])
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-module.exports = AgreementsRepository;
+module.exports = AgreementsRepository

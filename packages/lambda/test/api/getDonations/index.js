@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetDonations = require('../../../src/api/getDonations/index');
-const DonationsRepository = require('../../../src/repositories/donations');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetDonations = require('../../../src/api/getDonations/index')
+const DonationsRepository = require('../../../src/repositories/donations')
+const TestHelper = require('../../helpers/test')
 
 describe('GetDonations', function () {
+  afterEach(function () {
+    DonationsRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		DonationsRepository.prototype.getAll.restore();
-	});
+  it('should return a list of donations', function () {
+    const models = TestHelper.generate.modelCollection('donation', 3)
+    sinon.stub(DonationsRepository.prototype, 'getAll').resolves(models)
+    return GetDonations.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of donations', function () {
-		const models = TestHelper.generate.modelCollection('donation', 3);
-		sinon.stub(DonationsRepository.prototype, 'getAll').resolves(models);
-		return GetDonations.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(DonationsRepository.prototype, 'getAll').rejects('Error');
-		return GetDonations.handle({}, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(DonationsRepository.prototype, 'getAll').rejects('Error')
+    return GetDonations.handle({}, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

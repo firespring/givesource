@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-const Lambda = require('./../../aws/lambda');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Lambda = require('./../../aws/lambda')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = (event, context, callback) => {
-	const lambda = new Lambda();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	const email = request.queryParam('email', null);
+  const email = request.queryParam('email', null)
 
-	request.validate().then(() => {
-		if (email) {
-			return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateDonationsReceipt', {body: {email: email}}, 'RequestResponse');
-		}
-		return Promise.resolve();
-	}).then(response => {
-		const payload = JSON.parse(response.Payload);
-		if (payload.html) {
-			callback(null, {
-				html: payload.html,
-			});
-		} else {
-			return Promise.reject(new Error('Unable to process your request'));
-		}
-	}).catch(err => {
-		console.log('Error: %j', err);
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(() => {
+    if (email) {
+      return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateDonationsReceipt', { body: { email: email } }, 'RequestResponse')
+    }
+    return Promise.resolve()
+  }).then(response => {
+    const payload = JSON.parse(response.Payload)
+    if (payload.html) {
+      callback(null, {
+        html: payload.html
+      })
+    } else {
+      return Promise.reject(new Error('Unable to process your request'))
+    }
+  }).catch(err => {
+    console.log('Error: %j', err);
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

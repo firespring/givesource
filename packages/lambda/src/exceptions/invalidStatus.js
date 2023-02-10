@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * InvalidStatusException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function InvalidStatusException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 400;
-	this._type = 'invalid_status';
-	this.defaultMessage = 'Cannot change this resources status.';
+  this._status = 400
+  this._type = 'invalid_status'
+  this.defaultMessage = 'Cannot change this resources status.'
 }
 
 /**
@@ -35,6 +35,6 @@ function InvalidStatusException (message) {
  *
  * @type {HttpException}
  */
-InvalidStatusException.prototype = new HttpException();
+InvalidStatusException.prototype = new HttpException()
 
-module.exports = InvalidStatusException;
+module.exports = InvalidStatusException

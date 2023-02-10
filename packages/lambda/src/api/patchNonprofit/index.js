@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const NonprofitsRepository = require('./../../repositories/nonprofits')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new NonprofitsRepository();
-	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new NonprofitsRepository()
+  const request = new Request(event, context)
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
 
-	let nonprofit = null;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_id'));
-	}).then(function (result) {
-		nonprofit = result;
+  let nonprofit = null
+  request.validate().then(function () {
+    return repository.get(request.urlParam('nonprofit_id'))
+  }).then(function (result) {
+    nonprofit = result
 
-		if (request.get('slug', false)) {
-			return repository.generateUniqueSlug(nonprofit, request.get('slug'));
-		} else {
-			return Promise.resolve();
-		}
-	}).then(function () {
-		return nonprofit.validate();
-	}).then(function () {
-		return repository.upsert(nonprofit, request._body);
-	}).then(function (response) {
-		nonprofit = response;
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', {nonprofit: nonprofit[0]}, 'RequestResponse');
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback(null, nonprofit);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+    if (request.get('slug', false)) {
+      return repository.generateUniqueSlug(nonprofit, request.get('slug'))
+    } else {
+      return Promise.resolve()
+    }
+  }).then(function () {
+    return nonprofit.validate()
+  }).then(function () {
+    return repository.upsert(nonprofit, request._body)
+  }).then(function (response) {
+    nonprofit = response
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-PutNonprofitSocialSharing', { nonprofit: nonprofit[0] }, 'RequestResponse')
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback(null, nonprofit)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

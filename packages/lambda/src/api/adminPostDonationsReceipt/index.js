@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const Lambda = require('./../../aws/lambda');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Lambda = require('./../../aws/lambda')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = (event, context, callback) => {
-	const lambda = new Lambda();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email']);
+  const lambda = new Lambda()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email'])
 
-	request.validate().then(() => {
-		const body = {
-			email: request.get('email'),
-			toAddress: request.get('toAddress', null)
-		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
-		callback();
-	}).catch(err => {
-		console.log('Error: %j', err);
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(() => {
+    const body = {
+      email: request.get('email'),
+      toAddress: request.get('toAddress', null)
+    }
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', { body: body })
+    callback()
+  }).catch(err => {
+    console.log('Error: %j', err);
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

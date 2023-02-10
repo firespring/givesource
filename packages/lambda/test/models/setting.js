@@ -14,63 +14,57 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const Model = require('../../src/dynamo-models/model');
-const Setting = require('../../src/dynamo-models/setting');
-const TestHelper = require('../helpers/test');
+const assert = require('assert')
+const Model = require('../../src/dynamo-models/model')
+const Setting = require('../../src/dynamo-models/setting')
+const TestHelper = require('../helpers/test')
 
 describe('Setting', function () {
+  describe('#construct()', function () {
+    it('should be an instance of Model', function () {
+      const model = new Setting()
+      assert.ok(model instanceof Model)
+    })
 
-	describe('#construct()', function () {
+    it('should be an instance of Setting', function () {
+      const model = new Setting()
+      assert.ok(model instanceof Setting)
+    })
+  })
 
-		it('should be an instance of Model', function () {
-			const model = new Setting();
-			assert.ok(model instanceof Model);
-		});
+  describe('#populate()', function () {
+    it('should only allow defined attributes', function () {
+      const model = new Setting({ test1: 123, test2: 'test', test3: true })
+      assert.equal(model.test1, undefined)
+      assert.equal(model.test2, undefined)
+      assert.equal(model.test3, undefined)
+    })
+  })
 
-		it('should be an instance of Setting', function () {
-			const model = new Setting();
-			assert.ok(model instanceof Setting);
-		});
-
-	});
-
-	describe('#populate()', function () {
-
-		it('should only allow defined attributes', function () {
-			const model = new Setting({test1: 123, test2: 'test', test3: true});
-			assert.equal(model.test1, undefined);
-			assert.equal(model.test2, undefined);
-			assert.equal(model.test3, undefined);
-		});
-
-	});
-
-	describe('#validate()', function () {
-		const tests = [
-			{model: TestHelper.generate.model('setting'), param: 'uuid', value: null, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'uuid', value: '1234567890', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false},
-			{model: TestHelper.generate.model('setting'), param: 'createdOn', value: null, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'createdOn', value: 'test', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'createdOn', value: '123456', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'createdOn', value: 123456, error: false},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: null, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 'test', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: '123456', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 123456, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 0, error: false},
-			{model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 1, error: false},
-			{model: TestHelper.generate.model('setting'), param: 'key', value: null, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'key', value: '', error: true},
-			{model: TestHelper.generate.model('setting'), param: 'key', value: 'test', error: false},
-			{model: TestHelper.generate.model('setting'), param: 'key', value: 123456, error: true},
-			{model: TestHelper.generate.model('setting'), param: 'value', value: null, error: false},
-			{model: TestHelper.generate.model('setting'), param: 'value', value: '', error: false},
-			{model: TestHelper.generate.model('setting'), param: 'value', value: 'test', error: false},
-			{model: TestHelper.generate.model('setting'), param: 'value', value: 123456, error: false},
-		];
-		TestHelper.validate(tests);
-	});
-
-});
+  describe('#validate()', function () {
+    const tests = [
+      { model: TestHelper.generate.model('setting'), param: 'uuid', value: null, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'uuid', value: '1234567890', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
+      { model: TestHelper.generate.model('setting'), param: 'createdOn', value: null, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'createdOn', value: 'test', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'createdOn', value: '123456', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'createdOn', value: 123456, error: false },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: null, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 'test', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: '123456', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 123456, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 0, error: false },
+      { model: TestHelper.generate.model('setting'), param: 'isDeleted', value: 1, error: false },
+      { model: TestHelper.generate.model('setting'), param: 'key', value: null, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'key', value: '', error: true },
+      { model: TestHelper.generate.model('setting'), param: 'key', value: 'test', error: false },
+      { model: TestHelper.generate.model('setting'), param: 'key', value: 123456, error: true },
+      { model: TestHelper.generate.model('setting'), param: 'value', value: null, error: false },
+      { model: TestHelper.generate.model('setting'), param: 'value', value: '', error: false },
+      { model: TestHelper.generate.model('setting'), param: 'value', value: 'test', error: false },
+      { model: TestHelper.generate.model('setting'), param: 'value', value: 123456, error: false }
+    ]
+    TestHelper.validate(tests)
+  })
+})

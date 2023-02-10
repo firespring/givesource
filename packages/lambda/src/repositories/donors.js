@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const loadModels = require('../models/index')
+const Sequelize = require('sequelize')
 
 /**
  * DonorsRepository constructor
  *
  * @constructor
  */
-function DonorsRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.DonorsTable;
-	}
-	Repository.call(this, options);
+function DonorsRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.DonorsTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -38,7 +38,7 @@ function DonorsRepository(options) {
  *
  * @type {Repository}
  */
-DonorsRepository.prototype = new Repository();
+DonorsRepository.prototype = new Repository()
 
 /**
  * Look to abstract this
@@ -47,15 +47,15 @@ DonorsRepository.prototype = new Repository();
  * @return {Promise}
  */
 DonorsRepository.prototype.populate = function (data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		const donor = new models.Donor();
-		return new donor.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
-	}).finally(function () {
-		return allModels.sequelize.close();
-	});
-};
+  let allModels
+  return loadModels().then(function (models) {
+    allModels = models
+    const donor = new models.Donor()
+    return new donor.constructor(data, { isNewRecord: typeof data.id === 'undefined' })
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+}
 
 /**
  * Get a Donor
@@ -64,28 +64,28 @@ DonorsRepository.prototype.populate = function (data) {
  * @return {Promise}
  */
 DonorsRepository.prototype.get = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Donor.findOne({
-				where: {
-					id: id
-				}
-			});
-		}).then(function (donor) {
-			if (donor instanceof allModels.Donor) {
-				resolve(donor);
-			}
-			reject(new ResourceNotFoundException('The specified donor does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Donor.findOne({
+        where: {
+          id: id
+        }
+      })
+    }).then(function (donor) {
+      if (donor instanceof allModels.Donor) {
+        resolve(donor)
+      }
+      reject(new ResourceNotFoundException('The specified donor does not exist.'))
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get all Donors
@@ -93,21 +93,21 @@ DonorsRepository.prototype.get = function (id) {
  * @return {Promise}
  */
 DonorsRepository.prototype.getAll = function () {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Donor.findAll();
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Donor.findAll()
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Delete a Donor
@@ -116,26 +116,26 @@ DonorsRepository.prototype.getAll = function () {
  * @return {Promise}
  */
 DonorsRepository.prototype.delete = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Donor.destroy({
-				where:
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Donor.destroy({
+        where:
 					{
-						id: id
+					  id: id
 					}
-			});
-		}).then(function () {
-			resolve()
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Create or update a Donor
@@ -144,23 +144,23 @@ DonorsRepository.prototype.delete = function (id) {
  * @return {Promise}
  */
 DonorsRepository.prototype.save = function (model) {
-	let allModels;
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return repository.get(model.id);
-		}).then(function () {
-			return repository.upsert(model, {});
-		}).then(function (donor) {
-			resolve(donor);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const repository = this
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return repository.get(model.id)
+    }).then(function () {
+      return repository.upsert(model, {})
+    }).then(function (donor) {
+      resolve(donor)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * See if email is already being used
@@ -169,28 +169,28 @@ DonorsRepository.prototype.save = function (model) {
  * @return {Promise}
  */
 DonorsRepository.prototype.queryEmail = function (email) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Donor.findOne({
-				where: {
-					email: email
-				}
-			});
-		}).then(function (donor) {
-			if (donor instanceof allModels.Donor) {
-				resolve(donor);
-			}
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Donor.findOne({
+        where: {
+          email: email
+        }
+      })
+    }).then(function (donor) {
+      if (donor instanceof allModels.Donor) {
+        resolve(donor)
+      }
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Insert or update the model
@@ -200,37 +200,37 @@ DonorsRepository.prototype.queryEmail = function (email) {
  * @return {Promise<any>}
  */
 DonorsRepository.prototype.upsert = function (model, data) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (typeof model === 'undefined') {
-				const donor = new allModels.Donor();
-				model = new donor.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
-			}
-			return allModels.Donor.upsert({
-				'id': model.id,
-				'amountForNonprofit': typeof data.amountForNonprofit !== "undefined" ? data.amountForNonprofit : model.amountForNonprofit,
-				'address1': typeof data.address1 !== "undefined" ? data.address1 : model.address1,
-				'address2': typeof data.address2 !== "undefined" ? data.address2 : model.address2,
-				'city': typeof data.city !== "undefined" ? data.city : model.city,
-				'email': typeof data.email !== "undefined" ? data.email : model.email,
-				'firstName': typeof data.firstName !== "undefined" ? data.firstName : model.firstName,
-				'lastName': typeof data.lastName !== "undefined" ? data.lastName : model.lastName,
-				'phone': typeof data.phone !== "undefined" ? data.phone : model.phone,
-				'state': typeof data.state !== "undefined" ? data.state : model.state,
-				'zip': typeof data.zip !== "undefined" ? data.zip : model.zip,
-			});
-		}).then(function (donor) {
-			resolve(donor[0]);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      if (typeof model === 'undefined') {
+        const donor = new allModels.Donor()
+        model = new donor.constructor({}, { isNewRecord: typeof data.id === 'undefined' })
+      }
+      return allModels.Donor.upsert({
+        id: model.id,
+        amountForNonprofit: typeof data.amountForNonprofit !== 'undefined' ? data.amountForNonprofit : model.amountForNonprofit,
+        address1: typeof data.address1 !== 'undefined' ? data.address1 : model.address1,
+        address2: typeof data.address2 !== 'undefined' ? data.address2 : model.address2,
+        city: typeof data.city !== 'undefined' ? data.city : model.city,
+        email: typeof data.email !== 'undefined' ? data.email : model.email,
+        firstName: typeof data.firstName !== 'undefined' ? data.firstName : model.firstName,
+        lastName: typeof data.lastName !== 'undefined' ? data.lastName : model.lastName,
+        phone: typeof data.phone !== 'undefined' ? data.phone : model.phone,
+        state: typeof data.state !== 'undefined' ? data.state : model.state,
+        zip: typeof data.zip !== 'undefined' ? data.zip : model.zip
+      })
+    }).then(function (donor) {
+      resolve(donor[0])
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Bulk create Donors (seeder)
@@ -239,19 +239,19 @@ DonorsRepository.prototype.upsert = function (model, data) {
  * @return {Promise<any>}
  */
 DonorsRepository.prototype.batchUpdate = function (donors) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return allModels.Donor.bulkCreate(donors);
-		}).then(function (savedDonors) {
-			resolve(savedDonors);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return allModels.Donor.bulkCreate(donors)
+    }).then(function (savedDonors) {
+      resolve(savedDonors)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-module.exports = DonorsRepository;
+module.exports = DonorsRepository

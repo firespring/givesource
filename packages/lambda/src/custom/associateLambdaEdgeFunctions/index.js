@@ -14,85 +14,85 @@
  * limitations under the License.
  */
 
-const CloudFront = require('./../../aws/cloudFront');
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
+const CloudFront = require('./../../aws/cloudFront')
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
 
 exports.handle = (event, context, callback) => {
-	logger.log('associateLambdaEdgeFunctions event: %j', event);
+  logger.log('associateLambdaEdgeFunctions event: %j', event)
 
-	const cloudFront = new CloudFront();
+  const cloudFront = new CloudFront()
 
-	const cloudFrontDistribution = event.ResourceProperties.CloudFrontDistribution;
-	let functions = event.ResourceProperties.Functions;
+  const cloudFrontDistribution = event.ResourceProperties.CloudFrontDistribution
+  let functions = event.ResourceProperties.Functions
 
-	if (!functions || !cloudFrontDistribution) {
-		logger.log('Missing required parameter(s).');
-		response.send(event, context, response.SUCCESS);
-		return;
-	}
+  if (!functions || !cloudFrontDistribution) {
+    logger.log('Missing required parameter(s).')
+    response.send(event, context, response.SUCCESS)
+    return
+  }
 
-	functions = JSON.parse(event.ResourceProperties.Functions).functions;
-	if (event.RequestType === 'Delete') {
-		cloudFront.getDistributionConfig(cloudFrontDistribution).then(data => {
-			const eTag = data.ETag;
-			const config = data.DistributionConfig;
+  functions = JSON.parse(event.ResourceProperties.Functions).functions
+  if (event.RequestType === 'Delete') {
+    cloudFront.getDistributionConfig(cloudFrontDistribution).then(data => {
+      const eTag = data.ETag
+      const config = data.DistributionConfig
 
-			if (config.DefaultCacheBehavior) {
-				const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
-				if (associations.Quantity && associations.Items) {
-					associations.Items.forEach((item, index) => {
-						functions.forEach(fn => {
-							if (item.LambdaFunctionARN === fn.arn) {
-								associations.Items.splice(index, 1);
-								associations.Quantity = associations.Quantity - 1;
-							}
-						});
-					});
-				}
-			}
-			return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config);
-		}).then(() => {
-			response.send(event, context, response.SUCCESS);
-		}).catch(err => {
-			logger.log(err);
-			response.send(event, context, response.SUCCESS);
-		});
-	}
+      if (config.DefaultCacheBehavior) {
+        const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : { Quantity: 0 }
+        if (associations.Quantity && associations.Items) {
+          associations.Items.forEach((item, index) => {
+            functions.forEach(fn => {
+              if (item.LambdaFunctionARN === fn.arn) {
+                associations.Items.splice(index, 1)
+                associations.Quantity = associations.Quantity - 1
+              }
+            })
+          })
+        }
+      }
+      return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config)
+    }).then(() => {
+      response.send(event, context, response.SUCCESS)
+    }).catch(err => {
+      logger.log(err)
+      response.send(event, context, response.SUCCESS)
+    })
+  }
 
-	if (event.RequestType === 'Create' || event.RequestType === 'Update') {
-		cloudFront.getDistributionConfig(cloudFrontDistribution).then(data => {
-			const eTag = data.ETag;
-			const config = data.DistributionConfig;
+  if (event.RequestType === 'Create' || event.RequestType === 'Update') {
+    cloudFront.getDistributionConfig(cloudFrontDistribution).then(data => {
+      const eTag = data.ETag
+      const config = data.DistributionConfig
 
-			if (!config.DefaultCacheBehavior) {
-				config.DefaultCacheBehavior = {};
-			}
+      if (!config.DefaultCacheBehavior) {
+        config.DefaultCacheBehavior = {}
+      }
 
-			let associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : {Quantity: 0};
-			functions.forEach(fn => {
-				if (associations.Items && associations.Quantity) {
-					associations.Items.forEach((item, index) => {
-						if (item.LambdaFunctionARN === fn.arn || item.EventType === 'origin-request' || item.EventType === 'origin-response') {
-							associations.Items.splice(index, 1);
-							associations.Quantity = associations.Quantity - 1;
-						}
-					});
-				}
-				associations.Quantity = associations.Quantity + 1;
-				associations.Items.push({
-					EventType: fn.type,
-					LambdaFunctionARN: fn.arn
-				});
-			});
+      const associations = config.DefaultCacheBehavior.LambdaFunctionAssociations ? config.DefaultCacheBehavior.LambdaFunctionAssociations : { Quantity: 0 }
+      functions.forEach(fn => {
+        if (associations.Items && associations.Quantity) {
+          associations.Items.forEach((item, index) => {
+            if (item.LambdaFunctionARN === fn.arn || item.EventType === 'origin-request' || item.EventType === 'origin-response') {
+              associations.Items.splice(index, 1)
+              associations.Quantity = associations.Quantity - 1
+            }
+          })
+        }
+        associations.Quantity = associations.Quantity + 1
+        associations.Items.push({
+          EventType: fn.type,
+          LambdaFunctionARN: fn.arn
+        })
+      })
 
-			config.DefaultCacheBehavior.LambdaFunctionAssociations = associations;
-			return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config);
-		}).then(() => {
-			response.send(event, context, response.SUCCESS);
-		}).catch(err => {
-			logger.log(err);
-			response.send(event, context, response.FAILED);
-		});
-	}
-};
+      config.DefaultCacheBehavior.LambdaFunctionAssociations = associations
+      return cloudFront.updateDistribution(cloudFrontDistribution, eTag, config)
+    }).then(() => {
+      response.send(event, context, response.SUCCESS)
+    }).catch(err => {
+      logger.log(err)
+      response.send(event, context, response.FAILED)
+    })
+  }
+}

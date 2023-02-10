@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const GetSettings = require('./../../../src/api/getSettings/index');
-const SettingsRepository = require('./../../../src/repositories/settings');
-const sinon = require('sinon');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const GetSettings = require('./../../../src/api/getSettings/index')
+const SettingsRepository = require('./../../../src/repositories/settings')
+const sinon = require('sinon')
+const TestHelper = require('./../../helpers/test')
 
 describe('GetSettings', function () {
+  afterEach(function () {
+    SettingsRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		SettingsRepository.prototype.getAll.restore();
-	});
+  it('should return a list of settings', function () {
+    const models = TestHelper.generate.modelCollection('setting', 3)
+    sinon.stub(SettingsRepository.prototype, 'getAll').resolves(models)
+    return GetSettings.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of settings', function () {
-		const models = TestHelper.generate.modelCollection('setting', 3);
-		sinon.stub(SettingsRepository.prototype, 'getAll').resolves(models);
-		return GetSettings.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(SettingsRepository.prototype, 'getAll').rejects('Error');
-		return GetSettings.handle({}, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(SettingsRepository.prototype, 'getAll').rejects('Error')
+    return GetSettings.handle({}, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

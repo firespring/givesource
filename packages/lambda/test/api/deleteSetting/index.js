@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const DeleteSetting = require('./../../../src/api/deleteSetting/index');
-const SettingsRepository = require('./../../../src/repositories/settings');
-const sinon = require('sinon');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const DeleteSetting = require('./../../../src/api/deleteSetting/index')
+const SettingsRepository = require('./../../../src/repositories/settings')
+const sinon = require('sinon')
+const TestHelper = require('./../../helpers/test')
 
 describe('DeleteSetting', function () {
+  afterEach(function () {
+    SettingsRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		SettingsRepository.prototype.delete.restore();
-	});
+  it('should delete a setting', function () {
+    const model = TestHelper.generate.model('setting')
+    sinon.stub(SettingsRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        key: model.key
+      }
+    }
+    return DeleteSetting.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a setting', function () {
-		const model = TestHelper.generate.model('setting');
-		sinon.stub(SettingsRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				key: model.key
-			}
-		};
-		return DeleteSetting.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(SettingsRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				key: '1234'
-			}
-		};
-		return DeleteSetting.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(SettingsRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        key: '1234'
+      }
+    }
+    return DeleteSetting.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

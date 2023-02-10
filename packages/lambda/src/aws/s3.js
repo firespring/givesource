@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
-const mime = require('mime');
-const fs = require('fs');
-const path = require('path');
+const AWS = require('aws-sdk')
+const mime = require('mime')
+const fs = require('fs')
+const path = require('path')
 
 /**
  * S3 constructor
  *
  * @constructor
  */
-function S3() {
+function S3 () {
 }
 
 /**
@@ -36,20 +36,20 @@ function S3() {
  * @return {Promise}
  */
 S3.prototype.getObject = function (region, bucketName, objectName) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Key: objectName
-		};
-		awsS3.getObject(params, function (err, result) {
-			if (err) {
-				reject(err);
-			}
-			resolve(result);
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Key: objectName
+    }
+    awsS3.getObject(params, function (err, result) {
+      if (err) {
+        reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
 
 /**
  * Download an object from AWS S3
@@ -61,26 +61,26 @@ S3.prototype.getObject = function (region, bucketName, objectName) {
  * @return {Promise}
  */
 S3.prototype.downloadObject = function (region, bucketName, objectName, destPath) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Key: objectName
-		};
-		awsS3.getObject(params, function (err, result) {
-			if (err) {
-				reject(err);
-			}
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Key: objectName
+    }
+    awsS3.getObject(params, function (err, result) {
+      if (err) {
+        reject(err)
+      }
 
-			var filepath = path.join(destPath, objectName);
-			fs.mkdirSync(path.dirname(filepath), {recursive: true});
-			if (result['ContentType'] != 'application/x-directory') {
-				fs.writeFileSync(filepath, result.Body.toString());
-			}
-			resolve(result);
-		});
-	});
-};
+      var filepath = path.join(destPath, objectName)
+      fs.mkdirSync(path.dirname(filepath), { recursive: true })
+      if (result.ContentType != 'application/x-directory') {
+        fs.writeFileSync(filepath, result.Body.toString())
+      }
+      resolve(result)
+    })
+  })
+}
 
 /**
  * Put an object on AWS S3
@@ -94,32 +94,32 @@ S3.prototype.downloadObject = function (region, bucketName, objectName, destPath
  * @return {Promise}
  */
 S3.prototype.putObject = function (region, bucketName, objectName, body, acl, contentType, contentDisposition) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		contentType = contentType ? contentType : mime.getType(objectName);
-		const params = {
-			Bucket: bucketName,
-			Body: body,
-			Key: objectName,
-			ContentType: contentType
-		};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    contentType = contentType || mime.getType(objectName)
+    const params = {
+      Bucket: bucketName,
+      Body: body,
+      Key: objectName,
+      ContentType: contentType
+    }
 
-		if (acl) {
-			params['ACL'] = acl;
-		}
+    if (acl) {
+      params.ACL = acl
+    }
 
-		if (contentDisposition) {
-			params['ContentDisposition'] = contentDisposition;
-		}
+    if (contentDisposition) {
+      params.ContentDisposition = contentDisposition
+    }
 
-		awsS3.putObject(params, function (err) {
-			if (err) {
-				reject(err);
-			}
-			resolve();
-		});
-	});
-};
+    awsS3.putObject(params, function (err) {
+      if (err) {
+        reject(err)
+      }
+      resolve()
+    })
+  })
+}
 
 /**
  * Delete an object on AWS S3
@@ -131,20 +131,20 @@ S3.prototype.putObject = function (region, bucketName, objectName, body, acl, co
  */
 
 S3.prototype.deleteObject = function (region, bucketName, objectName) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Key: objectName
-		};
-		awsS3.deleteObject(params, function (err) {
-			if (err) {
-				reject(err);
-			}
-			resolve();
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Key: objectName
+    }
+    awsS3.deleteObject(params, function (err) {
+      if (err) {
+        reject(err)
+      }
+      resolve()
+    })
+  })
+}
 
 /**
  * List AWS S3 objects
@@ -155,20 +155,20 @@ S3.prototype.deleteObject = function (region, bucketName, objectName) {
  * @return {Promise}
  */
 S3.prototype.listObjects = function (region, bucketName, prefix) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Prefix: prefix
-		};
-		awsS3.listObjectsV2(params, function (err, results) {
-			if (err) {
-				reject(err);
-			}
-			resolve(results.Contents);
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Prefix: prefix
+    }
+    awsS3.listObjectsV2(params, function (err, results) {
+      if (err) {
+        reject(err)
+      }
+      resolve(results.Contents)
+    })
+  })
+}
 
 /**
  * Copy object from one AWS S3 bucket to another
@@ -181,24 +181,24 @@ S3.prototype.listObjects = function (region, bucketName, prefix) {
  * @return {Promise}
  */
 S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBucketName, destObjectName) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const contentType = mime.getType(destObjectName);
-		const params = {
-			Bucket: destBucketName,
-			Key: destObjectName,
-			ContentType: contentType,
-			CopySource: srcBucketName + '/' + srcObjectName
-		};
-		awsS3.copyObject(params, function (err, result) {
-			if (err) {
-				reject(err);
-			}
-			console.log('copied: ' + destObjectName);
-			resolve();
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const contentType = mime.getType(destObjectName)
+    const params = {
+      Bucket: destBucketName,
+      Key: destObjectName,
+      ContentType: contentType,
+      CopySource: srcBucketName + '/' + srcObjectName
+    }
+    awsS3.copyObject(params, function (err, result) {
+      if (err) {
+        reject(err)
+      }
+      console.log('copied: ' + destObjectName)
+      resolve()
+    })
+  })
+}
 
 /**
  * Get a signed AWS S3 url for file uploads
@@ -211,25 +211,25 @@ S3.prototype.copyObject = function (region, srcBucketName, srcObjectName, destBu
  * @return {Promise}
  */
 S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType, acl) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Key: filePath,
-			Expires: 3600,
-			ContentType: contentType
-		};
-		if (acl) {
-			params['ACL'] = acl;
-		}
-		awsS3.getSignedUrl('putObject', params, function (err, url) {
-			if (err) {
-				reject(err);
-			}
-			resolve(url);
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Key: filePath,
+      Expires: 3600,
+      ContentType: contentType
+    }
+    if (acl) {
+      params.ACL = acl
+    }
+    awsS3.getSignedUrl('putObject', params, function (err, url) {
+      if (err) {
+        reject(err)
+      }
+      resolve(url)
+    })
+  })
+}
 
 /**
  * Get a signed url to download
@@ -241,23 +241,23 @@ S3.prototype.getSignedUrl = function (region, bucketName, filePath, contentType,
  * @return {Promise<any>}
  */
 S3.prototype.downloadSignedUrl = function (region, bucketName, filePath, acl) {
-	const awsS3 = new AWS.S3({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Bucket: bucketName,
-			Key: filePath,
-			Expires: 3600,
-		};
-		if (acl) {
-			params['ACL'] = acl;
-		}
-		awsS3.getSignedUrl('getObject', params, function (err, url) {
-			if (err) {
-				reject(err);
-			}
-			resolve(url);
-		});
-	});
-};
+  const awsS3 = new AWS.S3({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Bucket: bucketName,
+      Key: filePath,
+      Expires: 3600
+    }
+    if (acl) {
+      params.ACL = acl
+    }
+    awsS3.getSignedUrl('getObject', params, function (err, url) {
+      if (err) {
+        reject(err)
+      }
+      resolve(url)
+    })
+  })
+}
 
-module.exports = S3;
+module.exports = S3

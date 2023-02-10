@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const PaymentTransactionsRepository = require('./../../repositories/paymentTransactions')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const repository = new PaymentTransactionsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const repository = new PaymentTransactionsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('payment_transaction_id'));
-	}).then(function (paymentTransaction) {
-		callback(null, paymentTransaction.all());
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('payment_transaction_id'))
+  }).then(function (paymentTransaction) {
+    callback(null, paymentTransaction.all())
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

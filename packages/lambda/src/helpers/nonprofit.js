@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-const slug = require('slug');
+const slug = require('slug')
 
-exports.STATUS_ACTIVE = 'ACTIVE';
-exports.STATUS_DENIED = 'DENIED';
-exports.STATUS_PENDING = 'PENDING';
-exports.STATUS_REVOKED = 'REVOKED';
+exports.STATUS_ACTIVE = 'ACTIVE'
+exports.STATUS_DENIED = 'DENIED'
+exports.STATUS_PENDING = 'PENDING'
+exports.STATUS_REVOKED = 'REVOKED'
 
 /**
  * Generate a slug from a string
@@ -27,8 +27,8 @@ exports.STATUS_REVOKED = 'REVOKED';
  * @param {String} string
  */
 exports.generateSlug = function (string) {
-	return slug(string, {lower: true});
-};
+  return slug(string, { lower: true })
+}
 
 /**
  * Get fields for Report
@@ -68,4 +68,4 @@ exports.reportFields = [
     label: 'EIN',
     value: 'taxId'
   }
-];
+]

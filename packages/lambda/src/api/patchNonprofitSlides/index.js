@@ -14,42 +14,42 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitSlidesRepository();
-	const request = new Request(event, context).parameters(['slides']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
+  const repository = new NonprofitSlidesRepository()
+  const request = new Request(event, context).parameters(['slides'])
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
 
-	let slides = [];
-	request.validate().then(function () {
-		let promise = Promise.resolve();
-		request.get('slides', []).forEach(function (data) {
-			promise = promise.then(function () {
-				return repository.populate(data).then(function (slide) {
-					slides.push(slide);
-				});
-			});
-		});
-		return promise;
-	}).then(function () {
-		let promise = Promise.resolve();
-		slides.forEach(function (slide) {
-			promise = promise.then(function () {
-				return slide.validate().then(function () {
-					return repository.upsert(slide, {});
-				}).catch(function (err) {
-					(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-				});
-			});
-		});
-		return promise;
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const slides = []
+  request.validate().then(function () {
+    let promise = Promise.resolve()
+    request.get('slides', []).forEach(function (data) {
+      promise = promise.then(function () {
+        return repository.populate(data).then(function (slide) {
+          slides.push(slide)
+        })
+      })
+    })
+    return promise
+  }).then(function () {
+    let promise = Promise.resolve()
+    slides.forEach(function (slide) {
+      promise = promise.then(function () {
+        return slide.validate().then(function () {
+          return repository.upsert(slide, {})
+        }).catch(function (err) {
+          (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+        })
+      })
+    })
+    return promise
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

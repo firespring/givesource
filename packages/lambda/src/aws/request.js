@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-const logger = require('./../helpers/log');
-const Middleware = require('./../middleware/middleware');
-const MissingRequiredHeaderException = require('./../exceptions/missingRequiredHeader');
-const MissingRequiredParameter = require('./../exceptions/missingRequiredParameter');
-const MissingRequiredQueryParameterException = require('./../exceptions/missingRequiredQueryParameter');
+const logger = require('./../helpers/log')
+const Middleware = require('./../middleware/middleware')
+const MissingRequiredHeaderException = require('./../exceptions/missingRequiredHeader')
+const MissingRequiredParameter = require('./../exceptions/missingRequiredParameter')
+const MissingRequiredQueryParameterException = require('./../exceptions/missingRequiredQueryParameter')
 
 /**
  * Request constructor
@@ -28,29 +28,29 @@ const MissingRequiredQueryParameterException = require('./../exceptions/missingR
  *
  * @constructor
  */
-function Request(event, context) {
-	this.context = context;
-	this._requiredParameters = [];
-	this._requiredQueryParameters = [];
-	this._requiredHeaders = [];
+function Request (event, context) {
+  this.context = context
+  this._requiredParameters = []
+  this._requiredQueryParameters = []
+  this._requiredHeaders = []
 
-	if (this.context && this.context.hasOwnProperty('functionName')) {
-		logger.log(`${this.context.functionName} event: %j`, event);
-	}
+  if (this.context && this.context.hasOwnProperty('functionName')) {
+    logger.log(`${this.context.functionName} event: %j`, event)
+  }
 
-	this._middleware = [];
-	this._populateRequest(event);
+  this._middleware = []
+  this._populateRequest(event)
 }
 
 /**
  * Add Request middleware
  */
 Request.prototype.middleware = function (middleware) {
-	if (middleware instanceof Middleware) {
-		this._middleware.push(middleware);
-	}
-	return this;
-};
+  if (middleware instanceof Middleware) {
+    this._middleware.push(middleware)
+  }
+  return this
+}
 
 /**
  * Process Request middleware
@@ -58,18 +58,18 @@ Request.prototype.middleware = function (middleware) {
  * @return {Promise}
  */
 Request.prototype._processMiddleware = function () {
-	const request = this;
+  const request = this
 
-	let promise = Promise.resolve();
-	request._middleware.forEach(function (middleware) {
-		promise = promise.then(function () {
-			middleware.prepare(request.user());
-			return middleware.handle();
-		});
-	});
+  let promise = Promise.resolve()
+  request._middleware.forEach(function (middleware) {
+    promise = promise.then(function () {
+      middleware.prepare(request.user())
+      return middleware.handle()
+    })
+  })
 
-	return promise;
-};
+  return promise
+}
 
 /**
  * Build this Request
@@ -78,16 +78,16 @@ Request.prototype._processMiddleware = function () {
  * @private
  */
 Request.prototype._populateRequest = function (event) {
-	this.method = (event.hasOwnProperty('method')) ? event.method : null;
+  this.method = (event.hasOwnProperty('method')) ? event.method : null
 
-	this._body = (event.hasOwnProperty('body')) ? event.body : {};
-	this._headers = (event.hasOwnProperty('headers')) ? event.headers : {};
-	this._queryParameters = (event.hasOwnProperty('query')) ? event.query : {};
-	this._urlParameters = (event.hasOwnProperty('params')) ? event.params : {};
-	this._user = (event.hasOwnProperty('user')) ? event.user : null;
+  this._body = (event.hasOwnProperty('body')) ? event.body : {}
+  this._headers = (event.hasOwnProperty('headers')) ? event.headers : {}
+  this._queryParameters = (event.hasOwnProperty('query')) ? event.query : {}
+  this._urlParameters = (event.hasOwnProperty('params')) ? event.params : {}
+  this._user = (event.hasOwnProperty('user')) ? event.user : null
 
-	return this;
-};
+  return this
+}
 
 /**
  * Set this Request's required body parameters
@@ -96,9 +96,9 @@ Request.prototype._populateRequest = function (event) {
  * @return {Request}
  */
 Request.prototype.parameters = function (keys) {
-	this._requiredParameters = keys;
-	return this;
-};
+  this._requiredParameters = keys
+  return this
+}
 
 /**
  * Set this Request's required query parameters
@@ -107,9 +107,9 @@ Request.prototype.parameters = function (keys) {
  * @return {Request}
  */
 Request.prototype.queryParameters = function (keys) {
-	this._requiredQueryParameters = keys;
-	return this;
-};
+  this._requiredQueryParameters = keys
+  return this
+}
 
 /**
  * Set this Request's required headers
@@ -118,9 +118,9 @@ Request.prototype.queryParameters = function (keys) {
  * @return {Request}
  */
 Request.prototype.headers = function (keys) {
-	this._requiredHeaders = keys;
-	return this;
-};
+  this._requiredHeaders = keys
+  return this
+}
 
 /**
  * Validate the Request
@@ -128,33 +128,33 @@ Request.prototype.headers = function (keys) {
  * @return {Promise}
  */
 Request.prototype.validate = function () {
-	const request = this;
-	return new Promise(function (resolve, reject) {
-		for (let i in request._requiredParameters) {
-			const key = request._requiredParameters[i];
-			if (!request._body.hasOwnProperty(key)) {
-				return reject(new MissingRequiredParameter('Missing required parameter: ' + key));
-			}
-		}
-		for (let i in request._requiredQueryParameters) {
-			const key = request._requiredQueryParameters[i];
-			if (!request._queryParameters.hasOwnProperty(key)) {
-				return reject(new MissingRequiredQueryParameterException('Missing required query parameter: ' + key));
-			}
-		}
-		for (let i in request._requiredHeaders) {
-			const key = request._requiredHeaders[i];
-			if (!request._headers.hasOwnProperty(key)) {
-				return reject(new MissingRequiredHeaderException('Missing required header: ' + key));
-			}
-		}
-		request._processMiddleware().then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const request = this
+  return new Promise(function (resolve, reject) {
+    for (const i in request._requiredParameters) {
+      const key = request._requiredParameters[i]
+      if (!request._body.hasOwnProperty(key)) {
+        return reject(new MissingRequiredParameter('Missing required parameter: ' + key))
+      }
+    }
+    for (const i in request._requiredQueryParameters) {
+      const key = request._requiredQueryParameters[i]
+      if (!request._queryParameters.hasOwnProperty(key)) {
+        return reject(new MissingRequiredQueryParameterException('Missing required query parameter: ' + key))
+      }
+    }
+    for (const i in request._requiredHeaders) {
+      const key = request._requiredHeaders[i]
+      if (!request._headers.hasOwnProperty(key)) {
+        return reject(new MissingRequiredHeaderException('Missing required header: ' + key))
+      }
+    }
+    request._processMiddleware().then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Find a value from this Request
@@ -164,20 +164,20 @@ Request.prototype.validate = function () {
  * @return {*}
  */
 Request.prototype.find = function (key, defaultValue) {
-	if (this.get(key) !== null) {
-		return this.get(key);
-	} else if (this.urlParam(key) !== null) {
-		return this.urlParam(key);
-	} else if (this.queryParam(key) !== null) {
-		return this.queryParam(key);
-	} else if (this.header(key) !== null) {
-		return this.header(key);
-	} else if (defaultValue !== undefined) {
-		return defaultValue;
-	} else {
-		return null;
-	}
-};
+  if (this.get(key) !== null) {
+    return this.get(key)
+  } else if (this.urlParam(key) !== null) {
+    return this.urlParam(key)
+  } else if (this.queryParam(key) !== null) {
+    return this.queryParam(key)
+  } else if (this.header(key) !== null) {
+    return this.header(key)
+  } else if (defaultValue !== undefined) {
+    return defaultValue
+  } else {
+    return null
+  }
+}
 
 /**
  * Get a value from this Request's body
@@ -187,11 +187,11 @@ Request.prototype.find = function (key, defaultValue) {
  * @return {*|null}
  */
 Request.prototype.get = function (key, defaultValue) {
-	if (this._body.hasOwnProperty(key)) {
-		return this._body[key];
-	}
-	return (defaultValue !== undefined) ? defaultValue : null;
-};
+  if (this._body.hasOwnProperty(key)) {
+    return this._body[key]
+  }
+  return (defaultValue !== undefined) ? defaultValue : null
+}
 
 /**
  * Get a value from this Request's url parameters
@@ -201,11 +201,11 @@ Request.prototype.get = function (key, defaultValue) {
  * @return {*|null}
  */
 Request.prototype.urlParam = function (key, defaultValue) {
-	if (this._urlParameters.hasOwnProperty(key)) {
-		return this._urlParameters[key];
-	}
-	return (defaultValue !== undefined) ? defaultValue : null;
-};
+  if (this._urlParameters.hasOwnProperty(key)) {
+    return this._urlParameters[key]
+  }
+  return (defaultValue !== undefined) ? defaultValue : null
+}
 
 /**
  * Get a value from this Request's query parameters
@@ -215,11 +215,11 @@ Request.prototype.urlParam = function (key, defaultValue) {
  * @return {*|null}
  */
 Request.prototype.queryParam = function (key, defaultValue) {
-	if (this._queryParameters.hasOwnProperty(key)) {
-		return this._queryParameters[key];
-	}
-	return (defaultValue !== undefined) ? defaultValue : null;
-};
+  if (this._queryParameters.hasOwnProperty(key)) {
+    return this._queryParameters[key]
+  }
+  return (defaultValue !== undefined) ? defaultValue : null
+}
 
 /**
  * Get request query parameters
@@ -228,18 +228,18 @@ Request.prototype.queryParam = function (key, defaultValue) {
  * @return {*}
  */
 Request.prototype.queryParams = function (keys) {
-	const request = this;
-	if (Array.isArray(keys) && keys.length) {
-		const results = {};
-		Object.keys(request._queryParameters).forEach(function (key) {
-			if (keys.indexOf(key) > -1) {
-				results[key] = request._queryParameters[key];
-			}
-		});
-		return results;
-	}
-	return request._queryParameters;
-};
+  const request = this
+  if (Array.isArray(keys) && keys.length) {
+    const results = {}
+    Object.keys(request._queryParameters).forEach(function (key) {
+      if (keys.indexOf(key) > -1) {
+        results[key] = request._queryParameters[key]
+      }
+    })
+    return results
+  }
+  return request._queryParameters
+}
 
 /**
  * Get all request query parameters except
@@ -248,16 +248,16 @@ Request.prototype.queryParams = function (keys) {
  * @return {{}}
  */
 Request.prototype.queryParamsExcept = function (keys) {
-	const request = this;
+  const request = this
 
-	const except = {};
-	Object.keys(request._queryParameters).forEach(function (key) {
-		if (keys.indexOf(key) < 0) {
-			except[key] = request._queryParameters[key];
-		}
-	});
-	return except;
-};
+  const except = {}
+  Object.keys(request._queryParameters).forEach(function (key) {
+    if (keys.indexOf(key) < 0) {
+      except[key] = request._queryParameters[key]
+    }
+  })
+  return except
+}
 
 /**
  * Get a value from this Request's headers
@@ -267,11 +267,11 @@ Request.prototype.queryParamsExcept = function (keys) {
  * @return {*|null}
  */
 Request.prototype.header = function (key, defaultValue) {
-	if (this._headers.hasOwnProperty(key)) {
-		return this._headers[key];
-	}
-	return (defaultValue !== undefined) ? defaultValue : null;
-};
+  if (this._headers.hasOwnProperty(key)) {
+    return this._headers[key]
+  }
+  return (defaultValue !== undefined) ? defaultValue : null
+}
 
 /**
  * Get the user from the request
@@ -279,7 +279,7 @@ Request.prototype.header = function (key, defaultValue) {
  * @return {{}|null}
  */
 Request.prototype.user = function () {
-	return this._user;
-};
+  return this._user
+}
 
-module.exports = Request;
+module.exports = Request

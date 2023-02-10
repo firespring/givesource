@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetMessage = require('../../../src/api/getMessage/index');
-const MessagesRepository = require('../../../src/repositories/messages');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetMessage = require('../../../src/api/getMessage/index')
+const MessagesRepository = require('../../../src/repositories/messages')
+const TestHelper = require('../../helpers/test')
 
 describe('GetMessage', function () {
+  afterEach(function () {
+    MessagesRepository.prototype.get.restore()
+  })
 
-	afterEach(function () {
-		MessagesRepository.prototype.get.restore();
-	});
+  it('should return a message', function () {
+    const model = TestHelper.generate.model('message')
+    sinon.stub(MessagesRepository.prototype, 'get').resolves(model)
+    const params = {
+      params: {
+        messageUuid: model.uuid
+      }
+    }
+    return GetMessage.handle(params, null, function (error, result) {
+      assert(error === null)
+      assert.deepEqual(result, model.all())
+    })
+  })
 
-	it('should return a message', function () {
-		const model = TestHelper.generate.model('message');
-		sinon.stub(MessagesRepository.prototype, 'get').resolves(model);
-		const params = {
-			params: {
-				messageUuid: model.uuid
-			}
-		};
-		return GetMessage.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert.deepEqual(result, model.all());
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(MessagesRepository.prototype, 'get').rejects('Error');
-		const params = {
-			params: {
-				messageUuid: '1234'
-			}
-		};
-		return GetMessage.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(MessagesRepository.prototype, 'get').rejects('Error')
+    const params = {
+      params: {
+        messageUuid: '1234'
+      }
+    }
+    return GetMessage.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
+})
