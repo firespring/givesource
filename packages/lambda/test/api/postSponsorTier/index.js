@@ -14,39 +14,37 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostSponsorTier = require('../../../src/api/postSponsorTier/index');
-const sinon = require('sinon');
-const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostSponsorTier = require('../../../src/api/postSponsorTier/index')
+const sinon = require('sinon')
+const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
+const TestHelper = require('../../helpers/test')
 
 describe('PostSponsorTier', function () {
+  afterEach(function () {
+    SponsorTiersRepository.prototype.getCount.restore()
+    SponsorTiersRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		SponsorTiersRepository.prototype.getCount.restore();
-		SponsorTiersRepository.prototype.save.restore();
-	});
+  it('should return a sponsor tier', function () {
+    const model = TestHelper.generate.model('sponsorTier')
+    sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
+    sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model)
+    const params = {
+      body: model.except(['uuid', 'createdOn'])
+    }
+    return PostSponsorTier.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should return a sponsor tier', function () {
-		const model = TestHelper.generate.model('sponsorTier');
-		sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1);
-		sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model);
-		const params = {
-			body: model.except(['uuid', 'createdOn'])
-		};
-		return PostSponsorTier.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1);
-		sinon.stub(SponsorTiersRepository.prototype, 'save').rejects('Error');
-		return PostSponsorTier.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
+    sinon.stub(SponsorTiersRepository.prototype, 'save').rejects('Error')
+    return PostSponsorTier.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

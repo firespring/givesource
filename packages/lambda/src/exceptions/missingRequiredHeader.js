@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * MissingRequiredHeaderException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function MissingRequiredHeaderException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 400;
-	this._type = 'missing_required_header';
-	this.defaultMessage = 'A required HTTP header was not specified.';
+  this._status = 400
+  this._type = 'missing_required_header'
+  this.defaultMessage = 'A required HTTP header was not specified.'
 }
 
 /**
@@ -35,6 +35,6 @@ function MissingRequiredHeaderException (message) {
  *
  * @type {HttpException}
  */
-MissingRequiredHeaderException.prototype = new HttpException();
+MissingRequiredHeaderException.prototype = new HttpException()
 
-module.exports = MissingRequiredHeaderException;
+module.exports = MissingRequiredHeaderException

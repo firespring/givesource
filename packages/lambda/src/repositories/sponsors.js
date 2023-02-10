@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const SponsorTiersRepository = require('./sponsorTiers');
-const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const SponsorTiersRepository = require('./sponsorTiers')
+const loadModels = require('../models/index')
+const Sequelize = require('sequelize')
 
 /**
  * SponsorsRepository constructor
  *
  * @constructor
  */
-function SponsorsRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.SponsorsTable;
-	}
-	Repository.call(this, options);
+function SponsorsRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.SponsorsTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -39,7 +39,7 @@ function SponsorsRepository(options) {
  *
  * @type {Repository}
  */
-SponsorsRepository.prototype = new Repository();
+SponsorsRepository.prototype = new Repository()
 
 /**
  * Look to abstract this
@@ -48,15 +48,15 @@ SponsorsRepository.prototype = new Repository();
  * @return {Promise}
  */
 SponsorsRepository.prototype.populate = function (data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		const sponsor = new models.Sponsor();
-		return new sponsor.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
-	}).finally(function () {
-		return allModels.sequelize.close();
-	})
-};
+  let allModels
+  return loadModels().then(function (models) {
+    allModels = models
+    const sponsor = new models.Sponsor()
+    return new sponsor.constructor(data, { isNewRecord: typeof data.id === 'undefined' })
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+}
 
 /**
  * Get a Sponsor
@@ -66,29 +66,29 @@ SponsorsRepository.prototype.populate = function (data) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.get = function (sponsorTierId, id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.findOne({
-				where: {
-					id: id,
-					sponsorTierId: sponsorTierId
-				}
-			});
-		}).then(function (sponsor) {
-			if (sponsor instanceof allModels.Sponsor) {
-				resolve(sponsor);
-			}
-			reject(new ResourceNotFoundException('The specified sponsor does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.findOne({
+        where: {
+          id: id,
+          sponsorTierId: sponsorTierId
+        }
+      })
+    }).then(function (sponsor) {
+      if (sponsor instanceof allModels.Sponsor) {
+        resolve(sponsor)
+      }
+      reject(new ResourceNotFoundException('The specified sponsor does not exist.'))
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get all Sponsors for this Sponsor Tier
@@ -97,25 +97,25 @@ SponsorsRepository.prototype.get = function (sponsorTierId, id) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.getAll = function (sponsorTierId) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.findAll({
-				where: {
-					sponsorTierId: sponsorTierId
-				}
-			});
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.findAll({
+        where: {
+          sponsorTierId: sponsorTierId
+        }
+      })
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get a count of all Sponsors for a SponsorTier
@@ -124,25 +124,25 @@ SponsorsRepository.prototype.getAll = function (sponsorTierId) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.getCount = function (sponsorTierId) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.count({
-				where: {
-					sponsorTierId: sponsorTierId
-				}
-			});
-		}).then(function (result) {
-			resolve(result);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.count({
+        where: {
+          sponsorTierId: sponsorTierId
+        }
+      })
+    }).then(function (result) {
+      resolve(result)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Delete a Sponsor
@@ -152,27 +152,27 @@ SponsorsRepository.prototype.getCount = function (sponsorTierId) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.delete = function (sponsorTierId, id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.destroy({
-				where:
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.destroy({
+        where:
 					{
-						sponsorTierId: sponsorTierId,
-						id: id
+					  sponsorTierId: sponsorTierId,
+					  id: id
 					}
-			});
-		}).then(function () {
-			resolve()
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Create or update a Donation Tier
@@ -181,24 +181,24 @@ SponsorsRepository.prototype.delete = function (sponsorTierId, id) {
  * @param {Sponsor} model
  */
 SponsorsRepository.prototype.save = function (sponsorTierId, model) {
-	let allModels;
-	const repository = this;
-	const sponsorTierRepository = new SponsorTiersRepository();
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return sponsorTierRepository.get(sponsorTierId);
-		}).then(function () {
-			return repository.upsert(model, {}, sponsorTierId);
-		}).then(function (sponsor) {
-			resolve(sponsor);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const repository = this
+  const sponsorTierRepository = new SponsorTiersRepository()
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return sponsorTierRepository.get(sponsorTierId)
+    }).then(function () {
+      return repository.upsert(model, {}, sponsorTierId)
+    }).then(function (sponsor) {
+      resolve(sponsor)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Batch create or update Sponsors
@@ -208,24 +208,24 @@ SponsorsRepository.prototype.save = function (sponsorTierId, model) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.batchSave = function (sponsorTierId, models) {
-	const sponsorTiersRepository = new SponsorTiersRepository();
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		sponsorTiersRepository.get(sponsorTierId).then(function () {
-			let promise = Promise.resolve();
-			promise = promise.then(function () {
-				models.forEach(function (model) {
-					return repository.upsert(model, {})
-				})
-			});
-			return promise;
-		}).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const sponsorTiersRepository = new SponsorTiersRepository()
+  const repository = this
+  return new Promise(function (resolve, reject) {
+    sponsorTiersRepository.get(sponsorTierId).then(function () {
+      let promise = Promise.resolve()
+      promise = promise.then(function () {
+        models.forEach(function (model) {
+          return repository.upsert(model, {})
+        })
+      })
+      return promise
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * {[]} models
@@ -234,30 +234,30 @@ SponsorsRepository.prototype.batchSave = function (sponsorTierId, models) {
  * @return {Promise<any>}
  */
 SponsorsRepository.prototype.bulkDelete = function (models) {
-	let allModels;
-	const ids = models.map(function (model) {
-		return model.id;
-	});
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.destroy({
-				where: {
-					id: {
-						[Sequelize.Op.in]: ids
-					}
-				}
-			});
-		}).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const ids = models.map(function (model) {
+    return model.id
+  })
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.destroy({
+        where: {
+          id: {
+            [Sequelize.Op.in]: ids
+          }
+        }
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Batch delete Sponsors
@@ -267,27 +267,27 @@ SponsorsRepository.prototype.bulkDelete = function (models) {
  * @return {Promise}
  */
 SponsorsRepository.prototype.batchRemove = function (sponsorTierId, models) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			let promise = Promise.resolve();
-			promise = promise.then(function () {
-				models.forEach(function (model) {
-					return model.destroy();
-				})
-			});
-			return promise;
-		}).then(function (stuff) {
-			resolve(stuff);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      let promise = Promise.resolve()
+      promise = promise.then(function () {
+        models.forEach(function (model) {
+          return model.destroy()
+        })
+      })
+      return promise
+    }).then(function (stuff) {
+      resolve(stuff)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Insert or update the model
@@ -298,28 +298,28 @@ SponsorsRepository.prototype.batchRemove = function (sponsorTierId, models) {
  * @return {Promise<any>}
  */
 SponsorsRepository.prototype.upsert = function (model, data, sponsorTierId) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.Sponsor.upsert({
-				'id': model.get('id'),
-				'name': typeof data.name !== "undefined" ? data.name : model.get('name'),
-				'url': typeof data.url !== "undefined" ? data.url : model.get('url'),
-				'sortOrder': typeof data.sortOrder !== "undefined" ? data.sortOrder : model.get('sortOrder'),
-				'fileId': typeof data.fileId !== "undefined" ? data.fileId : model.get('fileId'),
-				'logoUrl': typeof data.logoUrl !== "undefined" ? data.logoUrl : model.get('logoUrl'),
-				'sponsorTierId': sponsorTierId
-			});
-		}).then(function (sponsor) {
-			resolve(sponsor);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.Sponsor.upsert({
+        id: model.get('id'),
+        name: typeof data.name !== 'undefined' ? data.name : model.get('name'),
+        url: typeof data.url !== 'undefined' ? data.url : model.get('url'),
+        sortOrder: typeof data.sortOrder !== 'undefined' ? data.sortOrder : model.get('sortOrder'),
+        fileId: typeof data.fileId !== 'undefined' ? data.fileId : model.get('fileId'),
+        logoUrl: typeof data.logoUrl !== 'undefined' ? data.logoUrl : model.get('logoUrl'),
+        sponsorTierId: sponsorTierId
+      })
+    }).then(function (sponsor) {
+      resolve(sponsor)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-module.exports = SponsorsRepository;
+module.exports = SponsorsRepository

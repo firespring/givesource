@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Cognito = require('./../../aws/cognito')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
-	const cognito = new Cognito();
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
+  const cognito = new Cognito()
 
-	request.validate().then(function () {
-		return cognito.describeUserPool(process.env.AWS_REGION, process.env.USER_POOL_ID);
-	}).then(function (response) {
-		let email = 'no-reply@verificationemail.com';
-		if (response.hasOwnProperty('EmailConfiguration') && response.EmailConfiguration.hasOwnProperty('SourceArn')) {
-			const fromEmailAddressArn = response.EmailConfiguration.SourceArn;
-			const parts = fromEmailAddressArn.split('identity/');
-			if (parts.length > 1) {
-				email = parts[parts.length - 1];
-			}
-		}
-		return Promise.resolve(email);
-	}).then(function (response) {
-		callback(null, {email: response});
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return cognito.describeUserPool(process.env.AWS_REGION, process.env.USER_POOL_ID)
+  }).then(function (response) {
+    let email = 'no-reply@verificationemail.com'
+    if (response.hasOwnProperty('EmailConfiguration') && response.EmailConfiguration.hasOwnProperty('SourceArn')) {
+      const fromEmailAddressArn = response.EmailConfiguration.SourceArn
+      const parts = fromEmailAddressArn.split('identity/')
+      if (parts.length > 1) {
+        email = parts[parts.length - 1]
+      }
+    }
+    return Promise.resolve(email)
+  }).then(function (response) {
+    callback(null, { email: response })
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

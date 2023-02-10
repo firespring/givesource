@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetDonation = require('../../../src/api/getDonation/index');
-const DonationsRepository = require('../../../src/repositories/donations');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetDonation = require('../../../src/api/getDonation/index')
+const DonationsRepository = require('../../../src/repositories/donations')
+const TestHelper = require('../../helpers/test')
 
 describe('GetDonation', function () {
+  afterEach(function () {
+    DonationsRepository.prototype.get.restore()
+  })
 
-	afterEach(function () {
-		DonationsRepository.prototype.get.restore();
-	});
+  it('should return a donation', function () {
+    const model = TestHelper.generate.model('donation')
+    sinon.stub(DonationsRepository.prototype, 'get').resolves(model)
+    const params = {
+      params: {
+        donationUuid: model.uuid
+      }
+    }
+    return GetDonation.handle(params, null, function (error, result) {
+      assert(error === null)
+      assert.deepEqual(result, model.all())
+    })
+  })
 
-	it('should return a donation', function () {
-		const model = TestHelper.generate.model('donation');
-		sinon.stub(DonationsRepository.prototype, 'get').resolves(model);
-		const params = {
-			params: {
-				donationUuid: model.uuid
-			}
-		};
-		return GetDonation.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert.deepEqual(result, model.all());
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(DonationsRepository.prototype, 'get').rejects('Error');
-		const params = {
-			params: {
-				donationUuid: '1234'
-			}
-		};
-		return GetDonation.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(DonationsRepository.prototype, 'get').rejects('Error')
+    const params = {
+      params: {
+        donationUuid: '1234'
+      }
+    }
+    return GetDonation.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
+})

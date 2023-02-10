@@ -20,20 +20,20 @@
  * @param {String} [type]
  * @constructor
  */
-function QueryBuilder(type) {
-	this._type = type || 'query';
-	this._table = null;
-	this._index = null;
-	this._scanIndexForward = null;
-	this._select = null;
-	this._start = null;
-	this._limit = 1000;
-	this._max = 0;
-	this._keyConditions = [];
-	this._filters = [];
-	this._filterExpression = '';
-	this._expressionAttributeNames = {};
-	this._expressionAttributeValues = {};
+function QueryBuilder (type) {
+  this._type = type || 'query'
+  this._table = null
+  this._index = null
+  this._scanIndexForward = null
+  this._select = null
+  this._start = null
+  this._limit = 1000
+  this._max = 0
+  this._keyConditions = []
+  this._filters = []
+  this._filterExpression = ''
+  this._expressionAttributeNames = {}
+  this._expressionAttributeValues = {}
 }
 
 /**
@@ -43,9 +43,9 @@ function QueryBuilder(type) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.type = function (type) {
-	this._type = type;
-	return this;
-};
+  this._type = type
+  return this
+}
 
 /**
  * Database table name
@@ -54,9 +54,9 @@ QueryBuilder.prototype.type = function (type) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.table = function (table) {
-	this._table = table;
-	return this;
-};
+  this._table = table
+  return this
+}
 
 /**
  * Index name
@@ -65,9 +65,9 @@ QueryBuilder.prototype.table = function (table) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.index = function (index) {
-	this._index = index;
-	return this;
-};
+  this._index = index
+  return this
+}
 
 /**
  * Scan index forward option
@@ -76,9 +76,9 @@ QueryBuilder.prototype.index = function (index) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.scanIndexForward = function (scanIndexForward) {
-	this._scanIndexForward = scanIndexForward;
-	return this;
-};
+  this._scanIndexForward = scanIndexForward
+  return this
+}
 
 /**
  * Select option
@@ -87,9 +87,9 @@ QueryBuilder.prototype.scanIndexForward = function (scanIndexForward) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.select = function (select) {
-	this._select = select;
-	return this;
-};
+  this._select = select
+  return this
+}
 
 /**
  * Exclusive start key
@@ -98,9 +98,9 @@ QueryBuilder.prototype.select = function (select) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.start = function (exclusiveStartKey) {
-	this._start = exclusiveStartKey;
-	return this;
-};
+  this._start = exclusiveStartKey
+  return this
+}
 
 /**
  * Query limit
@@ -109,9 +109,9 @@ QueryBuilder.prototype.start = function (exclusiveStartKey) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.limit = function (limit) {
-	this._limit = limit;
-	return this;
-};
+  this._limit = limit
+  return this
+}
 
 /**
  * Query max
@@ -120,9 +120,9 @@ QueryBuilder.prototype.limit = function (limit) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.max = function (max) {
-	this._max = max;
-	return this;
-};
+  this._max = max
+  return this
+}
 
 /**
  * Key condition
@@ -133,15 +133,15 @@ QueryBuilder.prototype.max = function (max) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.condition = function (key, conditional, value) {
-	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
-		this._keyConditions.push(`NOT #${key} = :${key}`);
-	} else {
-		this._keyConditions.push(`#${key} ${conditional} :${key}`);
-	}
-	this._expressionAttributeNames[`#${key}`] = key;
-	this._expressionAttributeValues[`:${key}`] = value;
-	return this;
-};
+  if (conditional === '!=' || conditional.toLowerCase() === 'not') {
+    this._keyConditions.push(`NOT #${key} = :${key}`)
+  } else {
+    this._keyConditions.push(`#${key} ${conditional} :${key}`)
+  }
+  this._expressionAttributeNames[`#${key}`] = key
+  this._expressionAttributeValues[`:${key}`] = value
+  return this
+}
 
 /**
  * Filter
@@ -152,26 +152,26 @@ QueryBuilder.prototype.condition = function (key, conditional, value) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.filter = function (key, conditional, value) {
-	if (conditional === '!=' || conditional.toLowerCase() === 'not') {
-		this._filters.push(`NOT #${key} = :${key}`);
-	} else {
-		this._filters.push(`#${key} ${conditional} :${key}`);
-	}
-	this._expressionAttributeNames[`#${key}`] = key;
-	this._expressionAttributeValues[`:${key}`] = value;
-	return this;
-};
+  if (conditional === '!=' || conditional.toLowerCase() === 'not') {
+    this._filters.push(`NOT #${key} = :${key}`)
+  } else {
+    this._filters.push(`#${key} ${conditional} :${key}`)
+  }
+  this._expressionAttributeNames[`#${key}`] = key
+  this._expressionAttributeValues[`:${key}`] = value
+  return this
+}
 
 QueryBuilder.prototype.filterExpression = function (expression) {
-	this._filterExpression = expression;
-	return this;
-};
+  this._filterExpression = expression
+  return this
+}
 
 QueryBuilder.prototype.expressionAttribute = function (key, value) {
-	this._expressionAttributeNames[`#${key}`] = key;
-	this._expressionAttributeValues[`:${key}`] = value;
-	return this;
-};
+  this._expressionAttributeNames[`#${key}`] = key
+  this._expressionAttributeValues[`:${key}`] = value
+  return this
+}
 
 /**
  * Filter contains
@@ -181,11 +181,11 @@ QueryBuilder.prototype.expressionAttribute = function (key, value) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.contains = function (key, value) {
-	this._filters.push(`contains(#${key}, :${key})`);
-	this._expressionAttributeNames[`#${key}`] = key;
-	this._expressionAttributeValues[`:${key}`] = value;
-	return this;
-};
+  this._filters.push(`contains(#${key}, :${key})`)
+  this._expressionAttributeNames[`#${key}`] = key
+  this._expressionAttributeValues[`:${key}`] = value
+  return this
+}
 
 /**
  * Key condition - between
@@ -196,12 +196,12 @@ QueryBuilder.prototype.contains = function (key, value) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.between = function (key, minValue, maxValue) {
-	this._keyConditions.push(`#${key}-between BETWEEN :${key}-min AND :${key}-max`);
-	this._expressionAttributeNames[`#${key}-between`] = key;
-	this._expressionAttributeValues[`:${key}-min`] = minValue;
-	this._expressionAttributeValues[`:${key}-max`] = maxValue;
-	return this;
-};
+  this._keyConditions.push(`#${key}-between BETWEEN :${key}-min AND :${key}-max`)
+  this._expressionAttributeNames[`#${key}-between`] = key
+  this._expressionAttributeValues[`:${key}-min`] = minValue
+  this._expressionAttributeValues[`:${key}-max`] = maxValue
+  return this
+}
 
 /**
  * Key condition - begins with
@@ -211,11 +211,11 @@ QueryBuilder.prototype.between = function (key, minValue, maxValue) {
  * @return {QueryBuilder}
  */
 QueryBuilder.prototype.beginsWith = function (key, value) {
-	this._keyConditions.push(`begins_with ( #${key}-begins, :${key}-begins )`);
-	this._expressionAttributeNames[`#${key}-begins`] = key;
-	this._expressionAttributeValues[`:${key}-begins`] = value;
-	return this;
-};
+  this._keyConditions.push(`begins_with ( #${key}-begins, :${key}-begins )`)
+  this._expressionAttributeNames[`#${key}-begins`] = key
+  this._expressionAttributeValues[`:${key}-begins`] = value
+  return this
+}
 
 /**
  * Build the query parameters
@@ -223,52 +223,52 @@ QueryBuilder.prototype.beginsWith = function (key, value) {
  * @return {{}}
  */
 QueryBuilder.prototype.build = function () {
-	const join = (this._type === 'query') ? ' AND ' : ', ';
+  const join = (this._type === 'query') ? ' AND ' : ', '
 
-	if (!this._table) {
-		throw new Error('table is undefined');
-	}
+  if (!this._table) {
+    throw new Error('table is undefined')
+  }
 
-	const params = {
-		TableName: this._table
-	};
+  const params = {
+    TableName: this._table
+  }
 
-	if (this._index) {
-		params['IndexName'] = this._index;
-	}
+  if (this._index) {
+    params.IndexName = this._index
+  }
 
-	if (this._keyConditions.length) {
-		params['KeyConditionExpression'] = this._keyConditions.join(join);
-	}
+  if (this._keyConditions.length) {
+    params.KeyConditionExpression = this._keyConditions.join(join)
+  }
 
-	if (this._filterExpression) {
-		params['FilterExpression'] = this._filterExpression;
-	} else if (this._filters.length) {
-		params['FilterExpression'] = this._filters.join(join);
-	}
+  if (this._filterExpression) {
+    params.FilterExpression = this._filterExpression
+  } else if (this._filters.length) {
+    params.FilterExpression = this._filters.join(join)
+  }
 
-	if (Object.keys(this._expressionAttributeNames).length && Object.keys(this._expressionAttributeValues).length) {
-		params['ExpressionAttributeNames'] = this._expressionAttributeNames;
-		params['ExpressionAttributeValues'] = this._expressionAttributeValues;
-	}
+  if (Object.keys(this._expressionAttributeNames).length && Object.keys(this._expressionAttributeValues).length) {
+    params.ExpressionAttributeNames = this._expressionAttributeNames
+    params.ExpressionAttributeValues = this._expressionAttributeValues
+  }
 
-	if (this._limit) {
-		params['Limit'] = (this._max && this._max < this._limit) ? this._max : this._limit;
-	}
+  if (this._limit) {
+    params.Limit = (this._max && this._max < this._limit) ? this._max : this._limit
+  }
 
-	if (this._select) {
-		params['Select'] = this._select;
-	}
+  if (this._select) {
+    params.Select = this._select
+  }
 
-	if (this._start) {
-		params['ExclusiveStartKey'] = this._start;
-	}
+  if (this._start) {
+    params.ExclusiveStartKey = this._start
+  }
 
-	if (this._scanIndexForward !== null && this._type === 'query') {
-		params['ScanIndexForward'] = this._scanIndexForward;
-	}
+  if (this._scanIndexForward !== null && this._type === 'query') {
+    params.ScanIndexForward = this._scanIndexForward
+  }
 
-	return params;
-};
+  return params
+}
 
-module.exports = QueryBuilder;
+module.exports = QueryBuilder

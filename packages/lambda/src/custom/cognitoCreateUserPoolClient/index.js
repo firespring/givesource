@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
+const Cognito = require('./../../aws/cognito')
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
 
 exports.handle = function (event, context, callback) {
-	logger.log('cognitoCreateUserPoolClient event: %j', event);
+  logger.log('cognitoCreateUserPoolClient event: %j', event)
 
-	if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-		const userPoolClientId = event.PhysicalResourceId;
-		response.send(event, context, response.SUCCESS, {UserPoolClientId: userPoolClientId}, userPoolClientId);
-		return;
-	}
+  if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
+    const userPoolClientId = event.PhysicalResourceId
+    response.send(event, context, response.SUCCESS, { UserPoolClientId: userPoolClientId }, userPoolClientId)
+    return
+  }
 
-	const cognito = new Cognito();
-	const userPoolId = event.ResourceProperties.UserPoolId;
-	const clientName = event.ResourceProperties.ClientName;
-	cognito.createUserPoolClient(process.env.AWS_REGION, userPoolId, clientName).then(function (userPoolClient) {
-		const userPoolClientId = userPoolClient.UserPoolClient.ClientId;
-		response.send(event, context, response.SUCCESS, {UserPoolClientId: userPoolClientId}, userPoolClientId);
-	}).catch(function (err) {
-		logger.log(err);
-		response.send(event, context, response.FAILED);
-	});
-};
+  const cognito = new Cognito()
+  const userPoolId = event.ResourceProperties.UserPoolId
+  const clientName = event.ResourceProperties.ClientName
+  cognito.createUserPoolClient(process.env.AWS_REGION, userPoolId, clientName).then(function (userPoolClient) {
+    const userPoolClientId = userPoolClient.UserPoolClient.ClientId
+    response.send(event, context, response.SUCCESS, { UserPoolClientId: userPoolClientId }, userPoolClientId)
+  }).catch(function (err) {
+    logger.log(err)
+    response.send(event, context, response.FAILED)
+  })
+}

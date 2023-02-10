@@ -20,8 +20,8 @@
  * @param {String} [message]
  * @constructor
  */
-function Exception(message) {
-	this._message = message;
+function Exception (message) {
+  this._message = message
 }
 
 /**
@@ -29,14 +29,14 @@ function Exception(message) {
  *
  * @type {string}
  */
-Exception.prototype.defaultMessage = '';
+Exception.prototype.defaultMessage = ''
 
 /**
  * Set the Exception's default message.
  *
  * @return {string}
  */
-Exception.prototype._defaultMessage = 'An unexpected exception occurred.';
+Exception.prototype._defaultMessage = 'An unexpected exception occurred.'
 
 /**
  * Get the Exception's default message.
@@ -44,8 +44,8 @@ Exception.prototype._defaultMessage = 'An unexpected exception occurred.';
  * @return {string}
  */
 Exception.prototype.getDefaultMessage = function () {
-	return this.defaultMessage ? this.defaultMessage : this._defaultMessage;
-};
+  return this.defaultMessage ? this.defaultMessage : this._defaultMessage
+}
 
 /**
  * Set the Exception's message
@@ -54,9 +54,9 @@ Exception.prototype.getDefaultMessage = function () {
  * @return {Exception}
  */
 Exception.prototype.message = function (message) {
-	this._message = message;
-	return this;
-};
+  this._message = message
+  return this
+}
 
 /**
  * String representation of the Exception
@@ -64,9 +64,9 @@ Exception.prototype.message = function (message) {
  * @return {String}
  */
 Exception.prototype.toString = function () {
-	return JSON.stringify({
-		message: this._message || this.getDefaultMessage()
-	});
-};
+  return JSON.stringify({
+    message: this._message || this.getDefaultMessage()
+  })
+}
 
-module.exports = Exception;
+module.exports = Exception

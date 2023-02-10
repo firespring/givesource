@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
-const S3 = require('./../../aws/s3');
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
+const S3 = require('./../../aws/s3')
 
 exports.handle = function (event, context, callback) {
-	logger.log('s3PutObject event: %j', event);
+  logger.log('s3PutObject event: %j', event)
 
-	if (event.RequestType === 'Delete') {
-		response.send(event, context, response.SUCCESS);
-		return;
-	}
+  if (event.RequestType === 'Delete') {
+    response.send(event, context, response.SUCCESS)
+    return
+  }
 
-	const s3 = new S3();
-	const region = event.ResourceProperties.Region;
-	const bucket = event.ResourceProperties.Bucket;
-	const key = event.ResourceProperties.Key;
-	const body = event.ResourceProperties.Body;
+  const s3 = new S3()
+  const region = event.ResourceProperties.Region
+  const bucket = event.ResourceProperties.Bucket
+  const key = event.ResourceProperties.Key
+  const body = event.ResourceProperties.Body
 
-	s3.putObject(region, bucket, key, body).then(function () {
-		response.send(event, context, response.SUCCESS);
-	}).catch(function (err) {
-		logger.log(err);
-		response.send(event, context, response.FAILED);
-	});
-};
+  s3.putObject(region, bucket, key, body).then(function () {
+    response.send(event, context, response.SUCCESS)
+  }).catch(function (err) {
+    logger.log(err)
+    response.send(event, context, response.FAILED)
+  })
+}

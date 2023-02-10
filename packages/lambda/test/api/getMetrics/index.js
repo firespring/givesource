@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const GetMetrics = require('./../../../src/api/getMetrics/index');
-const MetricsRepository = require('./../../../src/repositories/metrics');
-const sinon = require('sinon');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const GetMetrics = require('./../../../src/api/getMetrics/index')
+const MetricsRepository = require('./../../../src/repositories/metrics')
+const sinon = require('sinon')
+const TestHelper = require('./../../helpers/test')
 
 describe('GetMetrics', function () {
+  afterEach(function () {
+    MetricsRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		MetricsRepository.prototype.getAll.restore();
-	});
+  it('should return a list of settings', function () {
+    const models = TestHelper.generate.modelCollection('metric', 3)
+    sinon.stub(MetricsRepository.prototype, 'getAll').resolves(models)
+    return GetMetrics.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of settings', function () {
-		const models = TestHelper.generate.modelCollection('metric', 3);
-		sinon.stub(MetricsRepository.prototype, 'getAll').resolves(models);
-		return GetMetrics.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(MetricsRepository.prototype, 'getAll').rejects('Error');
-		return GetMetrics.handle({}, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(MetricsRepository.prototype, 'getAll').rejects('Error')
+    return GetMetrics.handle({}, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

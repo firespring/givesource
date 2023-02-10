@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-exports.TYPE_IMAGE = 'IMAGE';
-exports.TYPE_VIMEO = 'VIMEO';
-exports.TYPE_YOUTUBE = 'YOUTUBE';
+exports.TYPE_IMAGE = 'IMAGE'
+exports.TYPE_VIMEO = 'VIMEO'
+exports.TYPE_YOUTUBE = 'YOUTUBE'

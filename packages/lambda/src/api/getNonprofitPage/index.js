@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitHelper = require('./../../helpers/nonprofit');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const Request = require('./../../aws/request');
-const ResourceNotFoundException = require('./../../exceptions/resourceNotFound');
+const HttpException = require('./../../exceptions/http')
+const NonprofitHelper = require('./../../helpers/nonprofit')
+const NonprofitsRepository = require('./../../repositories/nonprofits')
+const Request = require('./../../aws/request')
+const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context);
-	const repository = new NonprofitsRepository();
+  const request = new Request(event, context)
+  const repository = new NonprofitsRepository()
 
-	request.validate().then(function () {
-		return repository.getBySlug(request.urlParam('slug'));
-	}).then(function (nonprofit) {
-		if (nonprofit.status !== NonprofitHelper.STATUS_ACTIVE) {
-			return Promise.reject(new ResourceNotFoundException('The specified nonprofit does not exist.'));
-		}
-		callback(null, nonprofit);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.getBySlug(request.urlParam('slug'))
+  }).then(function (nonprofit) {
+    if (nonprofit.status !== NonprofitHelper.STATUS_ACTIVE) {
+      return Promise.reject(new ResourceNotFoundException('The specified nonprofit does not exist.'))
+    }
+    callback(null, nonprofit)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const SettingsRepository = require('./../../repositories/settings')
 
 exports.handle = function (event, context, callback) {
-	const repository = new SettingsRepository();
-	const request = new Request(event, context);
-	const keys = request.queryParam('keys', '').split(',');
+  const repository = new SettingsRepository()
+  const request = new Request(event, context)
+  const keys = request.queryParam('keys', '').split(',')
 
-	request.validate().then(function () {
-		if (keys.length) {
-			return repository.batchGet(keys);
-		} else {
-			return repository.getAll();
-		}
-	}).then(function (settings) {
-		callback(null, settings);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    if (keys.length) {
+      return repository.batchGet(keys)
+    } else {
+      return repository.getAll()
+    }
+  }).then(function (settings) {
+    callback(null, settings)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

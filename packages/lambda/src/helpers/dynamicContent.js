@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const SettingHelper = require('./setting');
-const Lambda = require('./../aws/lambda');
+const _ = require('lodash')
+const SettingHelper = require('./setting')
+const Lambda = require('./../aws/lambda')
 
 /**
  * Regenerate custom css if the appropriate settings have changed
@@ -28,18 +28,18 @@ const Lambda = require('./../aws/lambda');
  * @returns {Promise}
  */
 exports.regenerateCustomCss = function (updatedSettings, awsRegion, awsStackName, force) {
-	const settings = [
-		SettingHelper.SETTING_ACCENT_COLOR
-	];
-	const changedSettings = _.intersection(settings, updatedSettings);
-	let promise = Promise.resolve();
-	if (changedSettings.length > 0 || force) {
-		const lambda = new Lambda();
-		promise = lambda.invoke(awsRegion, awsStackName + '-GenerateCustomFrontendCss', {});
-	}
+  const settings = [
+    SettingHelper.SETTING_ACCENT_COLOR
+  ]
+  const changedSettings = _.intersection(settings, updatedSettings)
+  let promise = Promise.resolve()
+  if (changedSettings.length > 0 || force) {
+    const lambda = new Lambda()
+    promise = lambda.invoke(awsRegion, awsStackName + '-GenerateCustomFrontendCss', {})
+  }
 
-	return promise;
-};
+  return promise
+}
 
 /**
  * Regenerate dynamic content
@@ -51,7 +51,7 @@ exports.regenerateCustomCss = function (updatedSettings, awsRegion, awsStackName
  * @returns {Promise}
  */
 exports.regenerateDynamicContent = function (updatedSettings, awsRegion, awsStackName, force) {
-	const helper = this;
+  const helper = this
 
-	return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force);
-};
+  return helper.regenerateCustomCss(updatedSettings, awsRegion, awsStackName, force)
+}

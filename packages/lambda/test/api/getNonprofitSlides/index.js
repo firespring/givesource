@@ -14,47 +14,45 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const GetNonprofitSlides = require('./../../../src/api/getNonprofitSlides/index');
-const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides');
-const sinon = require('sinon');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const GetNonprofitSlides = require('./../../../src/api/getNonprofitSlides/index')
+const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides')
+const sinon = require('sinon')
+const TestHelper = require('./../../helpers/test')
 
 describe('GetNonprofitSlides', function () {
+  afterEach(function () {
+    NonprofitSlidesRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		NonprofitSlidesRepository.prototype.getAll.restore();
-	});
+  it('should return a list of nonprofit slides', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const models = TestHelper.generate.modelCollection('nonprofitSlide', 3, { nonprofitUuid: nonprofit.uuid })
+    sinon.stub(NonprofitSlidesRepository.prototype, 'getAll').resolves(models)
+    const params = {
+      params: {
+        nonprofitUuid: nonprofit.uuid
+      }
+    }
+    return GetNonprofitSlides.handle(params, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of nonprofit slides', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const models = TestHelper.generate.modelCollection('nonprofitSlide', 3, {nonprofitUuid: nonprofit.uuid});
-		sinon.stub(NonprofitSlidesRepository.prototype, 'getAll').resolves(models);
-		const params = {
-			params: {
-				nonprofitUuid: nonprofit.uuid
-			}
-		};
-		return GetNonprofitSlides.handle(params, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		sinon.stub(NonprofitSlidesRepository.prototype, 'getAll').rejects('Error');
-		const params = {
-			params: {
-				nonprofitUuid: nonprofit.uuid
-			}
-		};
-		return GetNonprofitSlides.handle(params, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    sinon.stub(NonprofitSlidesRepository.prototype, 'getAll').rejects('Error')
+    const params = {
+      params: {
+        nonprofitUuid: nonprofit.uuid
+      }
+    }
+    return GetNonprofitSlides.handle(params, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

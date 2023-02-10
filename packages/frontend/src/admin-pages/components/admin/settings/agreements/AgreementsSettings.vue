@@ -59,6 +59,7 @@
                     Title
                   </th>
                   <th />
+                  <th />
                 </tr>
               </thead>
 
@@ -66,6 +67,12 @@
                 <tr v-for="agreement in agreements">
                   <td>
                     <strong>{{ agreement.agreementTitle }}</strong>
+                  </td>
+                  <td>
+                    <span
+                      v-if="agreement.isRequired"
+                      class="c-label c-label--bad"
+                    >Required</span>
                   </td>
                   <td class="icon">
                     <a

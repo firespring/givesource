@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-exports.SOCIAL_SHARING_DEFAULT_TITLE = 'Givesource Event';
-exports.SOCIAL_SHARING_DEFAULT_DESCRIPTION = 'Help us with our giving day event!';
-exports.SOCIAL_SHARING_DEFAULT_IMG = 'assets/img/logo-event.png';
+exports.SOCIAL_SHARING_DEFAULT_TITLE = 'Givesource Event'
+exports.SOCIAL_SHARING_DEFAULT_DESCRIPTION = 'Help us with our giving day event!'
+exports.SOCIAL_SHARING_DEFAULT_IMG = 'assets/img/logo-event.png'

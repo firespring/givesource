@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const ReportsRepository = require('./../../repositories/reports');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const ReportsRepository = require('./../../repositories/reports')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new ReportsRepository();
-	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new ReportsRepository()
+  const request = new Request(event, context)
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
 
-	let report;
-	request.validate().then(function () {
-		return repository.populate(request._body);
-	}).then(function (popReport) {
-		report = popReport;
-		return repository.upsert(report, {});
-	}).then(function (model) {
-		const body = model;
-		if (request.get('name', false)) {
-			body.setDataValue('name', request.get('name'));
-		}
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateReport', {body: body});
-		callback(null, model);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let report
+  request.validate().then(function () {
+    return repository.populate(request._body)
+  }).then(function (popReport) {
+    report = popReport
+    return repository.upsert(report, {})
+  }).then(function (model) {
+    const body = model
+    if (request.get('name', false)) {
+      body.setDataValue('name', request.get('name'))
+    }
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateReport', { body: body })
+    callback(null, model)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UsersRepository = require('./../../repositories/users');
+const _ = require('lodash')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UsersRepository = require('./../../repositories/users')
 
 exports.handle = function (event, context, callback) {
-	const repository = new UsersRepository();
-	const request = new Request(event, context);
+  const repository = new UsersRepository()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		if (request.user().cognitoUsername) {
-			return repository.getByCognitoUsername(request.user().cognitoUsername);
-		} else {
-			return Promise.reject(new HttpException('Unable to retrieve user'));
-		}
-	}).then(function (user) {
-		const groups = request.user().groups || [];
-		callback(null, _.merge({}, user.get(), {groups: groups}));
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    if (request.user().cognitoUsername) {
+      return repository.getByCognitoUsername(request.user().cognitoUsername)
+    } else {
+      return Promise.reject(new HttpException('Unable to retrieve user'))
+    }
+  }).then(function (user) {
+    const groups = request.user().groups || []
+    callback(null, _.merge({}, user.get(), { groups: groups }))
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

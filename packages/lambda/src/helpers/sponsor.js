@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-exports.SIZE_LARGE = 'LARGE';
-exports.SIZE_DEFAULT = 'DEFAULT';
-exports.SIZE_SMALL = 'SMALL';
+exports.SIZE_LARGE = 'LARGE'
+exports.SIZE_DEFAULT = 'DEFAULT'
+exports.SIZE_SMALL = 'SMALL'

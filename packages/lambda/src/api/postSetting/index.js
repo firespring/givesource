@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists');
-const SettingsRepository = require('./../../repositories/settings');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
-const DynamicContentHelper = require('./../../helpers/dynamicContent');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const ResourceAlreadyExistsException = require('./../../exceptions/resourceAlreadyExists')
+const SettingsRepository = require('./../../repositories/settings')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
+const DynamicContentHelper = require('./../../helpers/dynamicContent')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new SettingsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new SettingsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	let setting;
-	request.validate().then(function () {
-		return new Promise(function (resolve, reject) {
-			repository.get(request.get('key')).then(function () {
-				reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'));
-			}).catch(function () {
-				resolve();
-			});
-		});
-	}).then(function () {
-		return repository.populate(request._body);
-	}).then(function (setting) {
-		return repository.upsert(setting, {});
-	}).then(function (response) {
-		setting = response;
-    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
-	}).then(function () {
-		callback(null, setting);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let setting
+  request.validate().then(function () {
+    return new Promise(function (resolve, reject) {
+      repository.get(request.get('key')).then(function () {
+        reject(new ResourceAlreadyExistsException('The setting: ' + request.get('key') + ' already exists'))
+      }).catch(function () {
+        resolve()
+      })
+    })
+  }).then(function () {
+    return repository.populate(request._body)
+  }).then(function (setting) {
+    return repository.upsert(setting, {})
+  }).then(function (response) {
+    setting = response
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/settings*'] }, 'RequestResponse')
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false)
+  }).then(function () {
+    callback(null, setting)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

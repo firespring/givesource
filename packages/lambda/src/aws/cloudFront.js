@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * CloudFront constructor
  *
  * @constructor
  */
-function CloudFront() {
+function CloudFront () {
 }
 
 /**
@@ -32,29 +32,29 @@ function CloudFront() {
  * @return {Promise}
  */
 CloudFront.prototype.createInvalidation = function (id, paths) {
-	const awsCloudFront = new AWS.CloudFront();
-	return new Promise(function (resolve, reject) {
-		const timestamp = new Date().getTime();
-		const params = {
-			DistributionId: id,
-			InvalidationBatch: {
-				CallerReference: timestamp.toString(),
-				Paths: {
-					Quantity: paths.length,
-					Items: [
-						paths.join(',')
-					]
-				}
-			}
-		};
-		awsCloudFront.createInvalidation(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudFront = new AWS.CloudFront()
+  return new Promise(function (resolve, reject) {
+    const timestamp = new Date().getTime()
+    const params = {
+      DistributionId: id,
+      InvalidationBatch: {
+        CallerReference: timestamp.toString(),
+        Paths: {
+          Quantity: paths.length,
+          Items: [
+            paths.join(',')
+          ]
+        }
+      }
+    }
+    awsCloudFront.createInvalidation(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Create an AWS CloudFront invalidation
@@ -64,9 +64,9 @@ CloudFront.prototype.createInvalidation = function (id, paths) {
  * @return {Promise}
  */
 CloudFront.prototype.createMultipleInvalidations = function (id, paths) {
-  const awsCloudFront = new AWS.CloudFront();
+  const awsCloudFront = new AWS.CloudFront()
   return new Promise(function (resolve, reject) {
-    const timestamp = new Date().getTime();
+    const timestamp = new Date().getTime()
     const params = {
       DistributionId: id,
       InvalidationBatch: {
@@ -76,15 +76,15 @@ CloudFront.prototype.createMultipleInvalidations = function (id, paths) {
           Items: paths
         }
       }
-    };
+    }
     awsCloudFront.createInvalidation(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       }
-      resolve(data);
-    });
-  });
-};
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Get an AWS CloudFront distribution config
@@ -93,19 +93,19 @@ CloudFront.prototype.createMultipleInvalidations = function (id, paths) {
  * @return {Promise}
  */
 CloudFront.prototype.getDistributionConfig = function (id) {
-	const awsCloudFront = new AWS.CloudFront();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Id: id
-		};
-		awsCloudFront.getDistributionConfig(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudFront = new AWS.CloudFront()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Id: id
+    }
+    awsCloudFront.getDistributionConfig(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Update an AWS CloudFront distribution
@@ -116,20 +116,20 @@ CloudFront.prototype.getDistributionConfig = function (id) {
  * @return {Promise}
  */
 CloudFront.prototype.updateDistribution = function (id, eTag, config) {
-	const awsCloudFront = new AWS.CloudFront();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Id: id,
-			IfMatch: eTag,
-			DistributionConfig: config
-		};
-		awsCloudFront.updateDistribution(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudFront = new AWS.CloudFront()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Id: id,
+      IfMatch: eTag,
+      DistributionConfig: config
+    }
+    awsCloudFront.updateDistribution(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = CloudFront;
+module.exports = CloudFront

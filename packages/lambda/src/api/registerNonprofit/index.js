@@ -14,46 +14,46 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const NonprofitHelper = require('./../../helpers/nonprofit');
-const NonprofitsRepository = require('./../../repositories/nonprofits');
-const Request = require('./../../aws/request');
-const UsersRepository = require('./../../repositories/users');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const NonprofitHelper = require('./../../helpers/nonprofit')
+const NonprofitsRepository = require('./../../repositories/nonprofits')
+const Request = require('./../../aws/request')
+const UsersRepository = require('./../../repositories/users')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const nonprofitsRepository = new NonprofitsRepository();
-	const usersRepository = new UsersRepository();
+  const lambda = new Lambda()
+  const nonprofitsRepository = new NonprofitsRepository()
+  const usersRepository = new UsersRepository()
 
-	const request = new Request(event, context).parameters(['nonprofit', 'user']);
+  const request = new Request(event, context).parameters(['nonprofit', 'user'])
 
-	let user;
-	let nonprofit;
-	request.validate().then(function () {
-		return nonprofitsRepository.populate(request.get('nonprofit'));
-	}).then(function (populatedNp) {
-		nonprofit = populatedNp;
-		nonprofit.status = NonprofitHelper.STATUS_PENDING;
-		return usersRepository.populate(request.get('user'));
-	}).then(function (populatedUser) {
-		user = populatedUser;
-		const data = {};
-		const dataNonprofitAgreements = request.get('nonprofit').NonprofitAgreements
-		if (dataNonprofitAgreements) {
-			data.NonprofitAgreements = dataNonprofitAgreements;
-		}
-		return nonprofitsRepository.upsert(nonprofit, data);
-	}).then(function (nonprofit) {
-		return usersRepository.upsert(user, {nonprofitId: nonprofit.id});
-	}).then(function () {
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendRegistrationPendingEmail', {body: {email: user.email}});
-	}).then(function () {
-		callback(null, {
-			nonprofit: nonprofit,
-			user: user
-		});
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let user
+  let nonprofit
+  request.validate().then(function () {
+    return nonprofitsRepository.populate(request.get('nonprofit'))
+  }).then(function (populatedNp) {
+    nonprofit = populatedNp
+    nonprofit.status = NonprofitHelper.STATUS_PENDING
+    return usersRepository.populate(request.get('user'))
+  }).then(function (populatedUser) {
+    user = populatedUser
+    const data = {}
+    const dataNonprofitAgreements = request.get('nonprofit').NonprofitAgreements
+    if (dataNonprofitAgreements) {
+      data.NonprofitAgreements = dataNonprofitAgreements
+    }
+    return nonprofitsRepository.upsert(nonprofit, data)
+  }).then(function (nonprofit) {
+    return usersRepository.upsert(user, { nonprofitId: nonprofit.id })
+  }).then(function () {
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendRegistrationPendingEmail', { body: { email: user.email } })
+  }).then(function () {
+    callback(null, {
+      nonprofit: nonprofit,
+      user: user
+    })
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

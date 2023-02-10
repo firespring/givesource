@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const MetricsRepository = require('./../../repositories/metrics');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const MetricsRepository = require('./../../repositories/metrics')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const repository = new MetricsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['metrics']);
+  const repository = new MetricsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['metrics'])
 
-	let metrics = [];
-	request.validate().then(function () {
-		request.get('metrics', []).forEach(function (data) {
-			metrics.push(new Metric(data));
-		});
-	}).then(function () {
-		let promise = Promise.resolve();
-		metrics.forEach(function (metric) {
-			promise = promise.then(function () {
-				return metric.validate();
-			});
-		});
-		return promise;
-	}).then(function () {
-		return repository.batchDeleteByKey(metrics);
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const metrics = []
+  request.validate().then(function () {
+    request.get('metrics', []).forEach(function (data) {
+      metrics.push(new Metric(data))
+    })
+  }).then(function () {
+    let promise = Promise.resolve()
+    metrics.forEach(function (metric) {
+      promise = promise.then(function () {
+        return metric.validate()
+      })
+    })
+    return promise
+  }).then(function () {
+    return repository.batchDeleteByKey(metrics)
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

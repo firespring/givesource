@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-const FilesRepository = require('./../../repositories/files');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const FilesRepository = require('./../../repositories/files')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new FilesRepository();
-	const request = new Request(event, context);
+  const repository = new FilesRepository()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('file_id'));
-	}).then(function (file) {
-		callback(null, file);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('file_id'))
+  }).then(function (file) {
+    callback(null, file)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

@@ -14,46 +14,46 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const HttpException = require('./../../exceptions/http');
-const MetricsRepository = require('./../../repositories/metrics');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const _ = require('lodash')
+const HttpException = require('./../../exceptions/http')
+const MetricsRepository = require('./../../repositories/metrics')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const repository = new MetricsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['metrics']);
+  const repository = new MetricsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['metrics'])
 
-	let metrics = [];
-	request.validate().then(function () {
-		const keys = request.get('metrics', []).map(function (metric) {
-			return metric.key;
-		});
-		return repository.batchGet(keys).then(function (models) {
-			request.get('metrics', []).forEach(function (data) {
-				let model = _.find(models, {key: data.key});
-				if (model) {
-					model.populate(data);
-				} else {
-					model = new Metric(data);
-				}
+  const metrics = []
+  request.validate().then(function () {
+    const keys = request.get('metrics', []).map(function (metric) {
+      return metric.key
+    })
+    return repository.batchGet(keys).then(function (models) {
+      request.get('metrics', []).forEach(function (data) {
+        let model = _.find(models, { key: data.key })
+        if (model) {
+          model.populate(data)
+        } else {
+          model = new Metric(data)
+        }
 
-				metrics.push(model);
-			});
-		});
-	}).then(function () {
-		let promise = Promise.resolve();
-		metrics.forEach(function (metric) {
-			promise = promise.then(function () {
-				return metric.validate();
-			});
-		});
-		return promise;
-	}).then(function () {
-		return repository.batchUpdate(metrics);
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+        metrics.push(model)
+      })
+    })
+  }).then(function () {
+    let promise = Promise.resolve()
+    metrics.forEach(function (metric) {
+      promise = promise.then(function () {
+        return metric.validate()
+      })
+    })
+    return promise
+  }).then(function () {
+    return repository.batchUpdate(metrics)
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

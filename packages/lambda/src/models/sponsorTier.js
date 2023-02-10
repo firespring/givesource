@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-	const SponsorTier = sequelize.define('SponsorTier', {
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		size: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			validate: {
-				isIn: [['LARGE', 'DEFAULT', 'SMALL']]
-			}
-		},
-		sortOrder: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-	});
+  const SponsorTier = sequelize.define('SponsorTier', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    size: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [['LARGE', 'DEFAULT', 'SMALL']]
+      }
+    },
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
+  })
 
-	SponsorTier.associate = function (models) {
-		SponsorTier.hasMany(models.Sponsor, {
-			foreignKey: 'sponsorTierId'
-		});
-	};
+  SponsorTier.associate = function (models) {
+    SponsorTier.hasMany(models.Sponsor, {
+      foreignKey: 'sponsorTierId'
+    })
+  }
 
-	return SponsorTier;
-};
+  return SponsorTier
+}
