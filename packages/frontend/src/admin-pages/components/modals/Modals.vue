@@ -19,7 +19,7 @@
     <div
       v-for="(modal, index) in modals"
       class="c-modal-overlay"
-      :class="data[modal]?.overlayClass"
+      :class="overlayClass(modal)"
       :style="{'z-index': calculateOverlayZIndex(index), display: 'block' }"
     />
     <component
@@ -134,6 +134,10 @@ export default {
     },
     calculateModalZIndex: function (index) {
       return this.calculateOverlayZIndex(index) + 1
+    },
+    overlayClass: function (modal) {
+      const vue = this
+      return vue.data[modal] ? vue.data[modal].overlayClass : null
     }
   }
 }
