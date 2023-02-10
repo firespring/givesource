@@ -14,56 +14,56 @@
  * limitations under the License.
  */
 
-const numeral = require('numeral');
+const numeral = require('numeral')
 
 const mixin = {
-	methods: {
-		addBodyClasses: function (...classes) {
-			classes.forEach(function (bodyClass) {
-				document.body.classList.add(bodyClass);
-			});
-		},
-		removeBodyClasses: function (...classes) {
-			classes.forEach(function (bodyClass) {
-				document.body.classList.remove(bodyClass);
-			});
-		},
-		setBodyClasses: function (...classes) {
-			document.body.className = '';
-			classes.forEach(function (bodyClass) {
-				document.body.classList.add(bodyClass);
-			});
-		},
-		setPageDescription(description) {
-			if (description) {
-				document.querySelector('meta[name="description"]').setAttribute('content', description);
-			}
-		},
-		setPageTitle: function (title) {
-			document.title = title;
-		},
-		formatMoney: function (amount) {
-			return numeral(amount / 100).format('$0,0.00');
-		},
-		displayCount: function (count) {
-			return (count) ? count : 0;
-		},
-		calculateFees: function (cartItems) {
-			const vm = this;
+  methods: {
+    addBodyClasses: function (...classes) {
+      classes.forEach(function (bodyClass) {
+        document.body.classList.add(bodyClass)
+      })
+    },
+    removeBodyClasses: function (...classes) {
+      classes.forEach(function (bodyClass) {
+        document.body.classList.remove(bodyClass)
+      })
+    },
+    setBodyClasses: function (...classes) {
+      document.body.className = ''
+      classes.forEach(function (bodyClass) {
+        document.body.classList.add(bodyClass)
+      })
+    },
+    setPageDescription (description) {
+      if (description) {
+        document.querySelector('meta[name="description"]').setAttribute('content', description)
+      }
+    },
+    setPageTitle: function (title) {
+      document.title = title
+    },
+    formatMoney: function (amount) {
+      return numeral(amount / 100).format('$0,0.00')
+    },
+    displayCount: function (count) {
+      return (count) || 0
+    },
+    calculateFees: function (cartItems) {
+      const vm = this
 
-			let transactionFlatFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE');
-			transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0;
+      let transactionFlatFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE')
+      transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0
 
-			let transactionPercentFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE');
-			transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0;
+      let transactionPercentFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE')
+      transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0
 
-			let fees = 0;
-			cartItems.forEach(function (cartItem) {
-				fees += Math.floor(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount));
-			});
-			return fees;
-		}
-	}
-};
+      let fees = 0
+      cartItems.forEach(function (cartItem) {
+        fees += Math.floor(Math.round((cartItem.amount + transactionFlatFee) / (1 - transactionPercentFee) - cartItem.amount))
+      })
+      return fees
+    }
+  }
+}
 
-export default mixin;
+export default mixin

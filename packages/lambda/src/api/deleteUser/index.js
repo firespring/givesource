@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UsersRepository = require('./../../repositories/users');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const Cognito = require('./../../aws/cognito')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UsersRepository = require('./../../repositories/users')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const cognito = new Cognito();
-	const repository = new UsersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const cognito = new Cognito()
+  const repository = new UsersRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('user_id'))
-	}).then(function (user) {
-		return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername);
-	}).then(function () {
-		return repository.delete(request.urlParam('user_id'));
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('user_id'))
+  }).then(function (user) {
+    return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername)
+  }).then(function () {
+    return repository.delete(request.urlParam('user_id'))
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

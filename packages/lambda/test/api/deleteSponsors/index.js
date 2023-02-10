@@ -14,54 +14,52 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const DeleteSponsors = require('./../../../src/api/deleteSponsors/index');
-const sinon = require('sinon');
-const SponsorsRepository = require('./../../../src/repositories/sponsors');
-const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const DeleteSponsors = require('./../../../src/api/deleteSponsors/index')
+const sinon = require('sinon')
+const SponsorsRepository = require('./../../../src/repositories/sponsors')
+const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers')
+const TestHelper = require('./../../helpers/test')
 
 describe('DeleteSponsors', function () {
+  afterEach(function () {
+    SponsorTiersRepository.prototype.get.restore()
+    SponsorsRepository.prototype.batchRemove.restore()
+  })
 
-	afterEach(function () {
-		SponsorTiersRepository.prototype.get.restore();
-		SponsorsRepository.prototype.batchRemove.restore();
-	});
+  it('should delete a sponsor', function () {
+    const sponsorTier = TestHelper.generate.model('sponsorTier')
+    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
+    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
+    sinon.stub(SponsorsRepository.prototype, 'batchRemove').resolves()
+    const event = {
+      params: {
+        sponsor_tier_uuid: sponsorTier.uuid
+      },
+      body: {
+        sponsors: models
+      }
+    }
+    return DeleteSponsors.handle(event, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a sponsor', function () {
-		const sponsorTier = TestHelper.generate.model('sponsorTier');
-		const models = TestHelper.generate.modelCollection('sponsor', 3, {sponsorTierUuid: sponsorTier.uuid});
-		sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier);
-		sinon.stub(SponsorsRepository.prototype, 'batchRemove').resolves();
-		const event = {
-			params: {
-				sponsor_tier_uuid: sponsorTier.uuid,
-			},
-			body: {
-				sponsors: models,
-			}
-		};
-		return DeleteSponsors.handle(event, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		const sponsorTier = TestHelper.generate.model('sponsorTier');
-		sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier);
-		sinon.stub(SponsorsRepository.prototype, 'batchRemove').rejects('Error');
-		const event = {
-			params: {
-				sponsor_tier_uuid: sponsorTier.uuid,
-			},
-			body: {
-				sponsors: [],
-			}
-		};
-		return DeleteSponsors.handle(event, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    const sponsorTier = TestHelper.generate.model('sponsorTier')
+    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
+    sinon.stub(SponsorsRepository.prototype, 'batchRemove').rejects('Error')
+    const event = {
+      params: {
+        sponsor_tier_uuid: sponsorTier.uuid
+      },
+      body: {
+        sponsors: []
+      }
+    }
+    return DeleteSponsors.handle(event, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

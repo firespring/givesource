@@ -15,55 +15,76 @@
   -->
 
 <template>
-    <div>
-        <footer class="page-footer">
-            <slot></slot>
+  <div>
+    <footer class="page-footer">
+      <slot />
 
-            <div class="contact-info">
-                <div class="contact-info__item contact-info__copyright">
-                    &copy; {{ year }} <router-link :to="{ name: 'homepage' }">{{ eventTitle }}</router-link>
-                </div>
+      <div class="contact-info">
+        <div class="contact-info__item contact-info__copyright">
+          &copy; {{ year }} <router-link :to="{ name: 'homepage' }">
+            {{ eventTitle }}
+          </router-link>
+        </div>
 
-                <div class="contact-info__item contact-info__contact">
-                    <router-link :to="{ name: 'contact' }"><i class="fas fa-envelope" aria-hidden="true"></i><span>Contact Us</span></router-link>
-                </div>
+        <div class="contact-info__item contact-info__contact">
+          <router-link :to="{ name: 'contact' }">
+            <i
+              class="fas fa-envelope"
+              aria-hidden="true"
+            /><span>Contact Us</span>
+          </router-link>
+        </div>
 
-                <div class="contact-info__item contact-info__contact" v-if="contactPhone">
-                    <i class="fas fa-phone" aria-hidden="true"></i><span>{{ contactPhone }}</span>
-                </div>
+        <div
+          v-if="contactPhone"
+          class="contact-info__item contact-info__contact"
+        >
+          <i
+            class="fas fa-phone"
+            aria-hidden="true"
+          /><span>{{ contactPhone }}</span>
+        </div>
 
-                <div class="contact-info__item contact-info__terms" v-if="displayTerms">
-                    <router-link :to="{ name: 'terms' }">Terms of Service</router-link>
-                </div>
+        <div
+          v-if="displayTerms"
+          class="contact-info__item contact-info__terms"
+        >
+          <router-link :to="{ name: 'terms' }">
+            Terms of Service
+          </router-link>
+        </div>
 
-                <div class="contact-info__item contact-info__login">
-                    <a :href="adminPagesUrl"><i class="fas fa-sign-in-alt" aria-hidden="true"></i><span>Admin Log In</span></a>
-                </div>
-            </div>
-        </footer>
-    </div>
+        <div class="contact-info__item contact-info__login">
+          <a :href="adminPagesUrl"><i
+            class="fas fa-sign-in-alt"
+            aria-hidden="true"
+          /><span>Admin Log In</span></a>
+        </div>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script>
-	import * as Settings from './../../helpers/settings';
+import * as Settings from './../../helpers/settings'
 
-	export default {
-        computed: {
-			adminPagesUrl: function () {
-				return this.$store.getters.setting('ADMIN_URL') + '/login';
-            },
-            contactPhone: function () {
-	            return this.$store.getters.setting('CONTACT_PHONE') || null;
-            },
+export default {
+  computed: {
+    adminPagesUrl: function () {
+      return this.$store.getters.setting('ADMIN_URL') + '/login'
+    },
+    contactPhone: function () {
+	            return this.$store.getters.setting('CONTACT_PHONE') || null
+    },
 	        displayTerms: function () {
-		        return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED');
+		        return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED')
 	        },
-            year: function () {
-				return new Date().getFullYear();
-            },
-			eventTitle: function () {
-				return Settings.eventTitle();
-			}
-        }
-    };
+    year: function () {
+      return new Date().getFullYear()
+    },
+    eventTitle: function () {
+      return Settings.eventTitle()
+    }
+  }
+}
 </script>

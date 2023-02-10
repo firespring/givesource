@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-const ContentsRepository = require('./../../repositories/contents');
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const ContentsRepository = require('./../../repositories/contents')
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new ContentsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new ContentsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	let content = null;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('content_id'));
-	}).then(function (result) {
-		return repository.upsert(result, request._body);
-	}).then(function (response) {
-		content = response;
-    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/contents*']}, 'RequestResponse');
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback(null, content);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let content = null
+  request.validate().then(function () {
+    return repository.get(request.urlParam('content_id'))
+  }).then(function (result) {
+    return repository.upsert(result, request._body)
+  }).then(function (response) {
+    content = response
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/contents*'] }, 'RequestResponse')
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback(null, content)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

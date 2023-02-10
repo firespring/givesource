@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import * as _ from 'lodash';
-import * as User from './user';
-import axios from 'axios';
-import store from './../store';
+import * as _ from 'lodash'
+import * as User from './user'
+import axios from 'axios'
+import store from './../store'
 
 /**
  * Request constructor
  *
  * @constructor
  */
-function Request() {
+function Request () {
 }
 
 /**
@@ -35,14 +35,14 @@ function Request() {
  * @param {{}} [headers]
  */
 Request.prototype.delete = function (uri, data, headers) {
-	const request = this;
-	const apiUrl = store.getters.setting('API_URL');
-	return request.buildHeaders(headers).then(function (response) {
-		const config = data ? {data: data, headers: response} : {headers: response};
-		store.commit('generateCacheKey');
-		return axios.delete(apiUrl + uri, config);
-	});
-};
+  const request = this
+  const apiUrl = store.getters.setting('API_URL')
+  return request.buildHeaders(headers).then(function (response) {
+    const config = data ? { data: data, headers: response } : { headers: response }
+    store.commit('generateCacheKey')
+    return axios.delete(apiUrl + uri, config)
+  })
+}
 
 /**
  * Send a GET request
@@ -52,12 +52,12 @@ Request.prototype.delete = function (uri, data, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.get = function (uri, query, headers) {
-	const request = this;
-	const apiUrl = store.getters.setting('API_URL');
-	return request.buildHeaders(headers).then(function (response) {
-		return axios.get(apiUrl + uri + request.buildQuery(query), {headers: response});
-	});
-};
+  const request = this
+  const apiUrl = store.getters.setting('API_URL')
+  return request.buildHeaders(headers).then(function (response) {
+    return axios.get(apiUrl + uri + request.buildQuery(query), { headers: response })
+  })
+}
 
 /**
  * Send a PATCH request
@@ -67,14 +67,14 @@ Request.prototype.get = function (uri, query, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.patch = function (uri, body, headers) {
-	const request = this;
-	const apiUrl = store.getters.setting('API_URL');
-	return request.buildHeaders(headers).then(function (response) {
-		body = body || {};
-		store.commit('generateCacheKey');
-		return axios.patch(apiUrl + uri, body, {headers: response});
-	});
-};
+  const request = this
+  const apiUrl = store.getters.setting('API_URL')
+  return request.buildHeaders(headers).then(function (response) {
+    body = body || {}
+    store.commit('generateCacheKey')
+    return axios.patch(apiUrl + uri, body, { headers: response })
+  })
+}
 
 /**
  * Send a POST request
@@ -84,14 +84,14 @@ Request.prototype.patch = function (uri, body, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.post = function (uri, body, headers) {
-	const request = this;
-	const apiUrl = store.getters.setting('API_URL');
-	return request.buildHeaders(headers).then(function (response) {
-		body = body || {};
-		store.commit('generateCacheKey');
-		return axios.post(apiUrl + uri, body, {headers: response});
-	});
-};
+  const request = this
+  const apiUrl = store.getters.setting('API_URL')
+  return request.buildHeaders(headers).then(function (response) {
+    body = body || {}
+    store.commit('generateCacheKey')
+    return axios.post(apiUrl + uri, body, { headers: response })
+  })
+}
 
 /**
  * Build a query string
@@ -100,22 +100,22 @@ Request.prototype.post = function (uri, body, headers) {
  * @return {string}
  */
 Request.prototype.buildQuery = function (query) {
-	const params = [];
-	query = query || {};
+  const params = []
+  query = query || {}
 
-	if (!query.hasOwnProperty('c')) {
-		query['c'] = store.getters.cacheKey;
-	}
+  if (!query.hasOwnProperty('c')) {
+    query.c = store.getters.cacheKey
+  }
 
-	if (query) {
-		Object.keys(query).forEach(function (key) {
-			const value = encodeURIComponent(query[key]);
-			params.push(key + '=' + value);
-		});
-		return params.length ? '?' + params.join('&') : '';
-	}
-	return '';
-};
+  if (query) {
+    Object.keys(query).forEach(function (key) {
+      const value = encodeURIComponent(query[key])
+      params.push(key + '=' + value)
+    })
+    return params.length ? '?' + params.join('&') : ''
+  }
+  return ''
+}
 
 /**
  * Build headers
@@ -124,20 +124,20 @@ Request.prototype.buildQuery = function (query) {
  * @return {Promise}
  */
 Request.prototype.buildHeaders = function (headers) {
-	return new Promise(function (resolve, reject) {
-		const cognitoUser = User.getCognitoUser();
-		if (cognitoUser) {
-			cognitoUser.getSession(function (err, session) {
-				if (err) {
-					return reject(new Error('failed to get session: ', err.message));
-				}
-				const token = session.getIdToken().getJwtToken();
-				resolve(_.extend({}, {Authorization: token, 'Content-Type': 'application/json'}, headers));
-			});
-		} else {
-			resolve(_.extend({}, {Authorization: '', 'Content-Type': 'application/json'}, headers));
-		}
-	});
-};
+  return new Promise(function (resolve, reject) {
+    const cognitoUser = User.getCognitoUser()
+    if (cognitoUser) {
+      cognitoUser.getSession(function (err, session) {
+        if (err) {
+          return reject(new Error('failed to get session: ', err.message))
+        }
+        const token = session.getIdToken().getJwtToken()
+        resolve(_.extend({}, { Authorization: token, 'Content-Type': 'application/json' }, headers))
+      })
+    } else {
+      resolve(_.extend({}, { Authorization: '', 'Content-Type': 'application/json' }, headers))
+    }
+  })
+}
 
-export default Request;
+export default Request

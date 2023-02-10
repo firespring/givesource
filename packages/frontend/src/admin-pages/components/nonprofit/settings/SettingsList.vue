@@ -15,121 +15,147 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation :nonprofitId="nonprofitId"></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content--md">
+  <div class="o-app">
+    <navigation :nonprofit-id="nonprofitId" />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content--md">
+        <div
+          v-if="isAdmin"
+          class="o-page-header"
+        >
+          <div class="o-page-header__text">
+            <nav class="o-page-header-nav c-breadcrumb">
+              <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+            </nav>
+            <h1
+              v-if="nonprofit.legalName"
+              class="o-page-header-title"
+            >
+              Manage {{ nonprofit.legalName }}'s Settings
+            </h1>
+          </div>
+        </div>
 
-                <div class="o-page-header" v-if="isAdmin">
-                    <div class="o-page-header__text">
-                        <nav class="o-page-header-nav c-breadcrumb">
-                            <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
-                        </nav>
-                        <h1 class="o-page-header-title" v-if="nonprofit.legalName">Manage {{ nonprofit.legalName }}'s Settings</h1>
-                    </div>
+        <div class="o-app-main-content">
+          <section class="c-page-section c-page-section--headless c-page-section--border c-page-section--shadow c-page-section--segmented">
+            <div class="c-page-section__main">
+              <div class="c-page-section-segment">
+                <h3 class="c-page-section-segment__title">
+                  <router-link :to="{ name: 'nonprofit-settings-manage-organization' }">
+                    Manage Organization Info
+                  </router-link>
+                </h3>
+                <div class="c-notes c-notes--below">
+                  Manage your organization's info, including contact info and categories.
                 </div>
+              </div>
 
-                <div class="o-app-main-content">
-                    <section class="c-page-section c-page-section--headless c-page-section--border c-page-section--shadow c-page-section--segmented">
-                        <div class="c-page-section__main">
+              <hr class="expand">
 
-                            <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-manage-organization' }">Manage Organization Info</router-link>
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Manage your organization's info, including contact info and categories.
-                                </div>
-                            </div>
-
-                            <hr class="expand">
-
-                            <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-donation-notifications' }">Donation Notifications</router-link>
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Control how often you receive donation notifications.
-                                </div>
-                            </div>
-
-                            <hr class="expand">
-
-                            <div class="c-page-section-segment">
-                                <h3 class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-admins-list' }">Manage Admins</router-link>
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Invite additional individuals to help you manage your donation page.
-                                </div>
-                            </div>
-
-                            <hr class="expand">
-
-                            <div class="c-page-section-segment">
-                                <h3 v-if="nonprofit.status === 'ACTIVE'" class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-social-sharing' }">Social Sharing</router-link>
-
-                                </h3>
-                                <h3 v-else class="c-page-section-segment__title">
-                                    Social Sharing
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Manage the text and image that is displayed when someone shares your page on social media.
-                                </div>
-                            </div>
-
-                            <hr class="expand" v-if="!isAdmin">
-
-                            <div class="c-page-section-segment" v-if="!isAdmin">
-                                <h3 class="c-page-section-segment__title">
-                                    <router-link :to="{ name: 'nonprofit-settings-request-name-change' }">Request Name Change</router-link>
-                                </h3>
-                                <div class="c-notes c-notes--below">
-                                    Fill out this form to request that your organization name be changed by the Giving Day event admin.
-                                </div>
-                            </div>
-
-                        </div>
-                    </section>
+              <div class="c-page-section-segment">
+                <h3 class="c-page-section-segment__title">
+                  <router-link :to="{ name: 'nonprofit-settings-donation-notifications' }">
+                    Donation Notifications
+                  </router-link>
+                </h3>
+                <div class="c-notes c-notes--below">
+                  Control how often you receive donation notifications.
                 </div>
+              </div>
+
+              <hr class="expand">
+
+              <div class="c-page-section-segment">
+                <h3 class="c-page-section-segment__title">
+                  <router-link :to="{ name: 'nonprofit-settings-admins-list' }">
+                    Manage Admins
+                  </router-link>
+                </h3>
+                <div class="c-notes c-notes--below">
+                  Invite additional individuals to help you manage your donation page.
+                </div>
+              </div>
+
+              <hr class="expand">
+
+              <div class="c-page-section-segment">
+                <h3
+                  v-if="nonprofit.status === 'ACTIVE'"
+                  class="c-page-section-segment__title"
+                >
+                  <router-link :to="{ name: 'nonprofit-settings-social-sharing' }">
+                    Social Sharing
+                  </router-link>
+                </h3>
+                <h3
+                  v-else
+                  class="c-page-section-segment__title"
+                >
+                  Social Sharing
+                </h3>
+                <div class="c-notes c-notes--below">
+                  Manage the text and image that is displayed when someone shares your page on social media.
+                </div>
+              </div>
+
+              <hr
+                v-if="!isAdmin"
+                class="expand"
+              >
+
+              <div
+                v-if="!isAdmin"
+                class="c-page-section-segment"
+              >
+                <h3 class="c-page-section-segment__title">
+                  <router-link :to="{ name: 'nonprofit-settings-request-name-change' }">
+                    Request Name Change
+                  </router-link>
+                </h3>
+                <div class="c-notes c-notes--below">
+                  Fill out this form to request that your organization name be changed by the Giving Day event admin.
+                </div>
+              </div>
             </div>
-        </main>
-    </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				nonprofit: {}
-			}
-		},
-		computed: {
-			isAdmin: function () {
-				return this.isSuperAdminUser() || this.isAdminUser();
-			},
-		},
-		props: [
-			'nonprofitId'
-		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-					vue.nonprofit = response.data;
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+        vue.nonprofit = response.data
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-				vue.nonprofit = response.data;
-			}).then(function () {
-				next();
-			}).catch(function () {
-				next();
-			});
-		}
-	};
+    vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+      vue.nonprofit = response.data
+    }).then(function () {
+      next()
+    }).catch(function () {
+      next()
+    })
+  },
+  props: [
+    'nonprofitId'
+  ],
+  data: function () {
+    return {
+      nonprofit: {}
+    }
+  },
+  computed: {
+    isAdmin: function () {
+      return this.isSuperAdminUser() || this.isAdminUser()
+    }
+  }
+}
 </script>

@@ -14,36 +14,34 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostNonprofit = require('../../../src/api/postNonprofit/index');
-const NonprofitRepository = require('../../../src/repositories/nonprofits');
-const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostNonprofit = require('../../../src/api/postNonprofit/index')
+const NonprofitRepository = require('../../../src/repositories/nonprofits')
+const sinon = require('sinon')
+const TestHelper = require('../../helpers/test')
 
 describe('PostNonprofit', function () {
+  afterEach(function () {
+    NonprofitRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		NonprofitRepository.prototype.save.restore();
-	});
+  it('should return a nonprofit', function () {
+    const model = TestHelper.generate.model('nonprofit')
+    sinon.stub(NonprofitRepository.prototype, 'save').resolves(model)
+    const params = {
+      body: model.except(['uuid', 'createdOn'])
+    }
+    return PostNonprofit.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should return a nonprofit', function () {
-		const model = TestHelper.generate.model('nonprofit');
-		sinon.stub(NonprofitRepository.prototype, 'save').resolves(model);
-		const params = {
-			body: model.except(['uuid', 'createdOn'])
-		};
-		return PostNonprofit.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(NonprofitRepository.prototype, 'save').rejects('Error');
-		return PostNonprofit.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(NonprofitRepository.prototype, 'save').rejects('Error')
+    return PostNonprofit.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

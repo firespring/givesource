@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * CloudFront constructor
  *
  * @constructor
  */
-function CloudFront() {
+function CloudFront () {
 }
 
 /**
@@ -32,28 +32,28 @@ function CloudFront() {
  * @return {Promise}
  */
 CloudFront.prototype.createInvalidation = function (id, paths) {
-	const awsCloudFront = new AWS.CloudFront();
-	return new Promise(function (resolve, reject) {
-		const timestamp = new Date().getTime();
-		const params = {
-			DistributionId: id,
-			InvalidationBatch: {
-				CallerReference: timestamp.toString(),
-				Paths: {
-					Quantity: paths.length,
-					Items: [
-						paths.join(',')
-					]
-				}
-			}
-		};
-		awsCloudFront.createInvalidation(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudFront = new AWS.CloudFront()
+  return new Promise(function (resolve, reject) {
+    const timestamp = new Date().getTime()
+    const params = {
+      DistributionId: id,
+      InvalidationBatch: {
+        CallerReference: timestamp.toString(),
+        Paths: {
+          Quantity: paths.length,
+          Items: [
+            paths.join(',')
+          ]
+        }
+      }
+    }
+    awsCloudFront.createInvalidation(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = CloudFront;
+module.exports = CloudFront

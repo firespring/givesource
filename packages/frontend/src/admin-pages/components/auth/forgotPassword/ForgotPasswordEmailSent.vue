@@ -15,20 +15,24 @@
   -->
 
 <template>
-    <div class="c-page-section__main">
-        <h4>We need you to confirm your identity</h4>
+  <div class="c-page-section__main">
+    <h4>We need you to confirm your identity</h4>
 
-        <p>
-            If the email you entered matches our records, we have sent you an email with a link to reset your password.
-        </p>
+    <p>
+      If the email you entered matches our records, we have sent you an email with a link to reset your password.
+    </p>
 
-        <footer class="c-form-actions c-form-actions--compact">
-            <router-link :to="{ name: 'login' }" class="c-btn c-btn--text c-btn--neutral">Return to login</router-link>
-        </footer>
-
-    </div>
+    <footer class="c-form-actions c-form-actions--compact">
+      <router-link
+        :to="{ name: 'login' }"
+        class="c-btn c-btn--text c-btn--neutral"
+      >
+        Return to login
+      </router-link>
+    </footer>
+  </div>
 </template>
 
 <script>
-	export default {}
+export default {}
 </script>

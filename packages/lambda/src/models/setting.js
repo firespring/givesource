@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-	return sequelize.define('Setting', {
-		key: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			validate: {
-				notEmpty: true
-			}
-		},
-		value: {
-			type: DataTypes.STRING,
-		}
-	});
-};
+  return sequelize.define('Setting', {
+    key: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    },
+    value: {
+      type: DataTypes.STRING
+    }
+  })
+}

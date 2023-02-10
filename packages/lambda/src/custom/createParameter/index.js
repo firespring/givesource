@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
-const SSM = require('./../../aws/ssm');
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
+const SSM = require('./../../aws/ssm')
 
 exports.handle = (event, context, callback) => {
-	logger.log('createParameter event: %j', event);
+  logger.log('createParameter event: %j', event)
 
-	const ssm = new SSM();
+  const ssm = new SSM()
 
-	const name = event.ResourceProperties.Name ? event.ResourceProperties.Name : null;
-	const region = event.ResourceProperties.Region ? event.ResourceProperties.Region : process.env.AWS_REGION;
-	const type = event.ResourceProperties.Type ? event.ResourceProperties.Type : 'String';
-	const value = event.ResourceProperties.Value ? event.ResourceProperties.Value : null;
+  const name = event.ResourceProperties.Name ? event.ResourceProperties.Name : null
+  const region = event.ResourceProperties.Region ? event.ResourceProperties.Region : process.env.AWS_REGION
+  const type = event.ResourceProperties.Type ? event.ResourceProperties.Type : 'String'
+  const value = event.ResourceProperties.Value ? event.ResourceProperties.Value : null
 
-	if (event.RequestType === 'Delete') {
-		ssm.deleteParameter(region, name).then(() => {
-			response.send(event, context, response.SUCCESS);
-		}).catch(err => {
-			logger.log(err);
-			response.send(event, context, response.SUCCESS);
-		});
-	}
+  if (event.RequestType === 'Delete') {
+    ssm.deleteParameter(region, name).then(() => {
+      response.send(event, context, response.SUCCESS)
+    }).catch(err => {
+      logger.log(err)
+      response.send(event, context, response.SUCCESS)
+    })
+  }
 
-	if (event.RequestType === 'Create' || event.RequestType === 'Update') {
-		ssm.putParameter(region, name, value, type).then(() => {
-			response.send(event, context, response.SUCCESS);
-		}).catch(err => {
-			logger.log(err);
-			response.send(event, context, response.FAILED);
-		});
-	}
-};
+  if (event.RequestType === 'Create' || event.RequestType === 'Update') {
+    ssm.putParameter(region, name, value, type).then(() => {
+      response.send(event, context, response.SUCCESS)
+    }).catch(err => {
+      logger.log(err)
+      response.send(event, context, response.FAILED)
+    })
+  }
+}

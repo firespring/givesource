@@ -18,58 +18,55 @@
  Floating labels for text inputs
  ============================================================================ */
 const directive = {
-	inserted: function (el) {
-		const $el = $(el);
+  inserted: function (el) {
+    const $el = $(el)
 
-		$el.find('input, textarea').each(function () {
+    $el.find('input, textarea').each(function () {
+      if ($(this).val() !== '' || $(this).is(':focus')) {
+        $(this).siblings('label').hide()
+        $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
+      }
 
-			if ($(this).val() !== '' || $(this).is(':focus')) {
-				$(this).siblings('label').hide();
-				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
-			}
+      $(this).on('change', function () {
+        if ($(this).val() === '') {
+          $(this).parents('.js-floating-label').removeClass('has-floating-label--float')
+        } else {
+          $(this).siblings('label').hide()
+          $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
+        }
+      })
+    })
 
-			$(this).on('change', function () {
-				if ($(this).val() === '') {
-					$(this).parents('.js-floating-label').removeClass('has-floating-label--float');
-				} else {
-					$(this).siblings('label').hide();
-					$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
-				}
-			});
+    $el.find('input, textarea').on('focus', function () {
+      $(this).parents('.js-floating-label').addClass('has-floating-label--float')
+    })
 
-		});
+    $el.find('input, textarea').on('blur', function () {
+      if ($(this).val() === '') {
+        $(this).parents('.js-floating-label').removeClass('has-floating-label--float')
+      }
+    })
+  },
+  update: function (el) {
+    const $el = $(el)
 
-		$el.find('input, textarea').on('focus', function () {
-			$(this).parents('.js-floating-label').addClass('has-floating-label--float');
-		});
+    $el.find('input, textarea').each(function () {
+      if ($(this).val() !== '' || $(this).is(':focus')) {
+        $(this).siblings('label').hide()
+        $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
+      }
+    })
+  },
+  componentUpdated: function (el) {
+    const $el = $(el)
 
-		$el.find('input, textarea').on('blur', function () {
-			if ($(this).val() === '') {
-				$(this).parents('.js-floating-label').removeClass('has-floating-label--float');
-			}
-		});
+    $el.find('input, textarea').each(function () {
+      if ($(this).val() !== '' || $(this).is(':focus')) {
+        $(this).siblings('label').hide()
+        $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
+      }
+    })
+  }
+}
 
-	},
-	update: function (el) {
-		const $el = $(el);
-
-		$el.find('input, textarea').each(function () {
-			if ($(this).val() !== '' || $(this).is(':focus')) {
-				$(this).siblings('label').hide();
-				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
-			}
-		});
-	},
-	componentUpdated: function (el) {
-		const $el = $(el);
-
-		$el.find('input, textarea').each(function () {
-			if ($(this).val() !== '' || $(this).is(':focus')) {
-				$(this).siblings('label').hide();
-				$(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show();
-			}
-		});
-	}
-};
-
-export default directive;
+export default directive

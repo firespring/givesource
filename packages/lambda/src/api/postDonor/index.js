@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-const DonorsRepository = require('./../../repositories/donors');
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const DonorsRepository = require('./../../repositories/donors')
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
-export function handle(event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new DonorsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+export function handle (event, context, callback) {
+  const lambda = new Lambda()
+  const repository = new DonorsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	let donor;
-	request.validate().then(() => {
-		if (request.get('email')) {
-			return repository.queryEmail(request.get('email'));
-		}
-		return Promise.resolve();
-	}).then((model) => {
-		if (model) {
-			donor = model;
-		}
-	}).then(() => {
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(() => {
-		return repository.upsert(donor, request._body);
-	}).then((response) => {
-		callback(null, response);
-	}).catch((err) => {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
+  let donor
+  request.validate().then(() => {
+    if (request.get('email')) {
+      return repository.queryEmail(request.get('email'))
+    }
+    return Promise.resolve()
+  }).then((model) => {
+    if (model) {
+      donor = model
+    }
+  }).then(() => {
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(() => {
+    return repository.upsert(donor, request._body)
+  }).then((response) => {
+    callback(null, response)
+  }).catch((err) => {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
 };

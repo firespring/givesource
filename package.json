@@ -1,6 +1,6 @@
 {
 	"name": "givesource",
-	"version": "2.2.5",
+	"version": "2.3.0",
 	"description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
 	"license": "Apache-2.0",
 	"repository": {
@@ -26,6 +26,8 @@
 		"frontend:install": "cd packages/frontend && npm install",
 		"frontend:release": "cd packages/frontend && npm run release",
 		"frontend:release:force": "cd packages/frontend && npm run release:force",
+		"frontend:lint": "eslint --cache --ext .js,.vue packages/frontend/",
+		"frontend:lint-fix": "eslint --cache --ext .js,.vue --fix packages/frontend/",
 		"lambda:audit": "cd packages/lambda && npm audit",
 		"lambda:build": "cd packages/lambda && npm run build",
 		"lambda:clean": "cd packages/lambda && npm run clean",
@@ -37,6 +39,8 @@
 		"lambda:seed": "cd packages/lambda && npm run seed",
 		"lambda:setting": "cd packages/lambda && npm run setting",
 		"lambda:release:force": "cd packages/lambda && npm run release:force",
+		"lambda:lint": "eslint --cache --ext .js,.vue packages/lambda/",
+		"lambda:lint-fix": "eslint --cache --ext .js,.vue --fix packages/lambda/",
 		"audit": "npm run cloudformation:audit && npm run frontend:audit && npm run lambda:audit",
 		"clean": "npm run cloudformation:clean && npm run frontend:clean && npm run lambda:clean",
 		"build": "npm run cloudformation:build && npm run frontend:build && npm run lambda:build",
@@ -45,8 +49,15 @@
 		"postinstall": "[ -f \".env\" ] || cp .env.example .env",
 		"release": "npm run cloudformation:release && npm run frontend:release && npm run lambda:release",
 		"release:force": "npm run cloudformation:release:force && npm run frontend:release:force && npm run lambda:release:force",
-		"test": "cd packages/lambda && npm run test"
+		"test": "cd packages/lambda && npm run test",
+		"lint": "eslint --cache --ext .js,.vue .",
+		"lint-fix": "eslint --cache --ext .js,.vue --fix ."
 	},
 	"author": "Firespring",
-	"devDependencies": {}
+	"devDependencies": {
+		"eslint": "^8.18.0",
+		"eslint-config-firespring": "git+ssh://github.com/firespring/firespring-code-standards.git#master",
+		"eslint-plugin-cypress": "^2.12.1",
+		"eslint-plugin-vue": "^9.1.1"
+	}
 }

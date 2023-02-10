@@ -15,63 +15,80 @@
   -->
 
 <template>
-    <div class="c-form-item__control">
-        <input v-on:change="onChange" type="file" :name="name" :id="id" class="u-none" ref="input">
-        <button v-on:click="onTrigger" type="button" class="c-btn c-btn--good" id="uploadTrigger">
-            Select File
-        </button>
-        <div class="filenames" id="fileNames">{{ filename }}</div>
+  <div class="c-form-item__control">
+    <input
+      :id="id"
+      ref="input"
+      type="file"
+      :name="name"
+      class="u-none"
+      @change="onChange"
+    >
+    <button
+      id="uploadTrigger"
+      type="button"
+      class="c-btn c-btn--good"
+      @click="onTrigger"
+    >
+      Select File
+    </button>
+    <div
+      id="fileNames"
+      class="filenames"
+    >
+      {{ filename }}
     </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : {}
-			};
-		},
-		computed: {
-			filename: function () {
-				if (this.localValue && this.localValue instanceof File) {
-					return this.localValue.name;
-				} else if (this.localValue && this.localValue.hasOwnProperty('filename')) {
-					return this.localValue.filename;
-				} else if (this.placeholder) {
-					return this.placeholder;
-                }
-				return '';
-			}
-		},
-		props: {
-			id: '',
-			name: '',
-            placeholder: '',
-			value: {},
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		},
-		methods: {
-			onTrigger: function (event) {
-				event.preventDefault();
-				const vue = this;
+export default {
+  props: {
+    id: '',
+    name: '',
+    placeholder: '',
+    value: {}
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : {}
+    }
+  },
+  computed: {
+    filename: function () {
+      if (this.localValue && this.localValue instanceof File) {
+        return this.localValue.name
+      } else if (this.localValue && this.localValue.hasOwnProperty('filename')) {
+        return this.localValue.filename
+      } else if (this.placeholder) {
+        return this.placeholder
+      }
+      return ''
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  },
+  methods: {
+    onTrigger: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.$refs.input.click();
-			},
-			onChange: function (event) {
-				const vue = this;
+      vue.$refs.input.click()
+    },
+    onChange: function (event) {
+      const vue = this
 
-				const files = event.target.files || event.dataTransfer.files;
-				if (files.length) {
-					vue.localValue = files[0];
-				}
-			},
-		}
-	};
+      const files = event.target.files || event.dataTransfer.files
+      if (files.length) {
+        vue.localValue = files[0]
+      }
+    }
+  }
+}
 </script>

@@ -15,17 +15,17 @@
  */
 
 const mixin = {
-	methods: {
-		isSuperAdminUser: function () {
-			return this.user.groups.indexOf('SuperAdmin') > -1;
-		},
-		isAdminUser: function () {
-			return this.user.groups.indexOf('Admin') > -1;
-		},
-		isNonprofitUser: function () {
-			return this.user.groups.indexOf('Nonprofit') > -1;
-		},
-	}
-};
+  methods: {
+    isSuperAdminUser: function () {
+      return this.user.groups.indexOf('SuperAdmin') > -1
+    },
+    isAdminUser: function () {
+      return this.user.groups.indexOf('Admin') > -1
+    },
+    isNonprofitUser: function () {
+      return this.user.groups.indexOf('Nonprofit') > -1
+    }
+  }
+}
 
-export default mixin;
+export default mixin

@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const SponsorTiersRepository = require('./../../repositories/sponsorTiers')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new SponsorTiersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new SponsorTiersRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	let sponsorTier = null;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('sponsor_tier_id'));
-	}).then(function (sponsorTier) {
-		return repository.upsert(sponsorTier, request._body);
-	}).then(function (response) {
-		sponsorTier = response;
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback(null, sponsorTier);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let sponsorTier = null
+  request.validate().then(function () {
+    return repository.get(request.urlParam('sponsor_tier_id'))
+  }).then(function (sponsorTier) {
+    return repository.upsert(sponsorTier, request._body)
+  }).then(function (response) {
+    sponsorTier = response
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback(null, sponsorTier)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

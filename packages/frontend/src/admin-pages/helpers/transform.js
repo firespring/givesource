@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import Vue from "vue";
+import Vue from 'vue'
 
 /**
  * Transform a map of data using the provided transformers
@@ -25,16 +25,16 @@ import Vue from "vue";
  * @returns {Object}
  */
 const transformData = function (data, transformers, options) {
-	options = _.extend({}, {method: 'transform'}, options);
+  options = _.extend({}, { method: 'transform' }, options)
 
-	let result = _.cloneDeep(data);
-	_.forEach(transformers, function (transformer, key) {
-		if (result.hasOwnProperty(key)) {
-			result[key] = transform(result[key], transformer, options);
-		}
-	});
-	return result;
-};
+  const result = _.cloneDeep(data)
+  _.forEach(transformers, function (transformer, key) {
+    if (result.hasOwnProperty(key)) {
+      result[key] = transform(result[key], transformer, options)
+    }
+  })
+  return result
+}
 
 /**
  * Transform the provided value
@@ -45,16 +45,16 @@ const transformData = function (data, transformers, options) {
  * @returns {*}
  */
 const transform = function (value, transformers, options) {
-	transformers = getTransformers(transformers, options);
-	_.forEach(transformers, function (transformer) {
-		const transformerFunction = getTransformer(transformer);
-		if (_.isFunction(transformerFunction)) {
-			value = transformerFunction(value);
-		}
-	});
+  transformers = getTransformers(transformers, options)
+  _.forEach(transformers, function (transformer) {
+    const transformerFunction = getTransformer(transformer)
+    if (_.isFunction(transformerFunction)) {
+      value = transformerFunction(value)
+    }
+  })
 
-	return value;
-};
+  return value
+}
 
 /**
  * Get a transformer
@@ -63,11 +63,11 @@ const transform = function (value, transformers, options) {
  * @returns {*}
  */
 const getTransformer = function (transformer) {
-	if (_.isString(transformer)) {
-		transformer = Vue.filter(transformer);
-	}
-	return transformer;
-};
+  if (_.isString(transformer)) {
+    transformer = Vue.filter(transformer)
+  }
+  return transformer
+}
 
 /**
  * Get the transformers
@@ -77,17 +77,17 @@ const getTransformer = function (transformer) {
  * @returns {Array}
  */
 const getTransformers = function (transformers, options) {
-	if (_.isPlainObject(transformers) && transformers.hasOwnProperty(options.method)) {
-		transformers = transformers[options.method];
-	}
+  if (_.isPlainObject(transformers) && transformers.hasOwnProperty(options.method)) {
+    transformers = transformers[options.method]
+  }
 
-	if (!_.isArray(transformers)) {
-		transformers = [transformers];
-	}
-	return transformers;
-};
+  if (!_.isArray(transformers)) {
+    transformers = [transformers]
+  }
+  return transformers
+}
 
 export {
-	transformData,
-	transform
+  transformData,
+  transform
 }

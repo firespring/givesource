@@ -14,46 +14,44 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const MetricsRepository = require('./../../../src/repositories/metrics');
-const PatchMetrics = require('./../../../src/api/patchMetrics/index');
-const sinon = require('sinon');
-const TestHelper = require('./../../helpers/test');
+const assert = require('assert')
+const MetricsRepository = require('./../../../src/repositories/metrics')
+const PatchMetrics = require('./../../../src/api/patchMetrics/index')
+const sinon = require('sinon')
+const TestHelper = require('./../../helpers/test')
 
 describe('PatchMetrics', function () {
+  afterEach(function () {
+    MetricsRepository.prototype.batchUpdate.restore()
+  })
 
-	afterEach(function () {
-		MetricsRepository.prototype.batchUpdate.restore();
-	});
+  it('should return update metrics', function () {
+    const models = TestHelper.generate.modelCollection('metric', 3)
+    sinon.stub(MetricsRepository.prototype, 'batchUpdate').resolves()
+    const params = {
+      body: {
+        metrics: models.map(function (model) {
+          return model.all()
+        })
+      }
+    }
+    return PatchMetrics.handle(params, null, function (error) {
+      assert(error === undefined)
+    })
+  })
 
-	it('should return update metrics', function () {
-		const models = TestHelper.generate.modelCollection('metric', 3);
-		sinon.stub(MetricsRepository.prototype, 'batchUpdate').resolves();
-		const params = {
-			body: {
-				metrics: models.map(function (model) {
-					return model.all()
-				}),
-			}
-		};
-		return PatchMetrics.handle(params, null, function (error) {
-			assert(error === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		const models = TestHelper.generate.modelCollection('metric', 3);
-		const params = {
-			body: {
-				metrics: models.map(function (model) {
-					return model.all()
-				}),
-			}
-		};
-		sinon.stub(MetricsRepository.prototype, 'batchUpdate').rejects('Error');
-		return PatchMetrics.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    const models = TestHelper.generate.modelCollection('metric', 3)
+    const params = {
+      body: {
+        metrics: models.map(function (model) {
+          return model.all()
+        })
+      }
+    }
+    sinon.stub(MetricsRepository.prototype, 'batchUpdate').rejects('Error')
+    return PatchMetrics.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

@@ -1,0 +1,43 @@
+{
+  "extends": ["firespring/javascript/vue", "plugin:vue/recommended"],
+  "globals": {
+    "jQuery": true,
+    "API_URL": true
+
+  },
+  "rules": {
+    "vue/multi-word-component-names": ["error", {
+      "ignores": ["Modal", "Modals"]
+    }],
+    "vue/v-on-event-hyphenation": ["error", "always", {
+      "autofix": true,
+      "ignore": ["update:modelValue"]
+    }],
+    "vue/no-multiple-template-root": "off",
+    "vue/no-v-for-template-key": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.vue"
+      ],
+      "rules": {
+        "vue/require-v-for-key": "off",
+        "vue/valid-v-for": "off",
+        "vue/component-definition-name-casing": ["error", "PascalCase"],
+        "vue/component-name-in-template-casing": ["error", "PascalCase", {
+          "registeredComponentsOnly": true,
+          "ignores": []
+        }]
+      }
+    },
+    {
+      "files": [
+        "Foo.vue"
+      ],
+      "rules": {
+        "vue/no-v-html": "off"
+      }
+    }
+  ]
+}

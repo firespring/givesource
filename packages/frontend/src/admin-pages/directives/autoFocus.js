@@ -18,10 +18,10 @@
  Autofocus on form inputs
  ============================================================================ */
 const directive = {
-	inserted: function (el) {
-		const $el = $(el);
-		$el.focus();
-	}
-};
+  inserted: function (el) {
+    const $el = $(el)
+    $el.focus()
+  }
+}
 
-export default directive;
+export default directive

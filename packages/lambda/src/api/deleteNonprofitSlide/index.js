@@ -14,49 +14,49 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const FileRepository = require('./../../repositories/files');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides');
-const Request = require('./../../aws/request');
-const S3 = require('./../../aws/s3');
+const HttpException = require('./../../exceptions/http')
+const FileRepository = require('./../../repositories/files')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const NonprofitSlidesRepository = require('./../../repositories/nonprofitSlides')
+const Request = require('./../../aws/request')
+const S3 = require('./../../aws/s3')
 
 exports.handle = (event, context, callback) => {
-	const fileRepository = new FileRepository();
-	const repository = new NonprofitSlidesRepository();
-	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
-	const s3 = new S3();
+  const fileRepository = new FileRepository()
+  const repository = new NonprofitSlidesRepository()
+  const request = new Request(event, context)
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
+  const s3 = new S3()
 
-	let file = null;
-	let slide = null;
-	request.validate().then(() => {
-		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('slide_id'));
-	}).then(response => {
-		slide = response;
-		if (slide && slide.fileUuid) {
-			return fileRepository.get(slide.fileUuid).catch(() => {
-				// file has already been deleted
-				return Promise.resolve()
-			}).then(response => {
-				file = response;
-				if (file && file.uuid) {
-					return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`).then(() => {
-						return fileRepository.delete(file.uuid);
-					}).catch(err => {
-						console.log(err);
-						return Promise.resolve();
-					});
-				}
-			});
-		} else {
-			return Promise.resolve();
-		}
-	}).then(() => {
-		return repository.delete(request.urlParam('nonprofit_id'), request.urlParam('slide_id'));
-	}).then(() => {
-		callback();
-	}).catch(err => {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let file = null
+  let slide = null
+  request.validate().then(() => {
+    return repository.get(request.urlParam('nonprofit_id'), request.urlParam('slide_id'))
+  }).then(response => {
+    slide = response
+    if (slide && slide.fileUuid) {
+      return fileRepository.get(slide.fileUuid).catch(() => {
+        // file has already been deleted
+        return Promise.resolve()
+      }).then(response => {
+        file = response
+        if (file && file.uuid) {
+          return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, `uploads/${file.uuid}`).then(() => {
+            return fileRepository.delete(file.uuid)
+          }).catch(err => {
+            console.log(err)
+            return Promise.resolve()
+          })
+        }
+      })
+    } else {
+      return Promise.resolve()
+    }
+  }).then(() => {
+    return repository.delete(request.urlParam('nonprofit_id'), request.urlParam('slide_id'))
+  }).then(() => {
+    callback()
+  }).catch(err => {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

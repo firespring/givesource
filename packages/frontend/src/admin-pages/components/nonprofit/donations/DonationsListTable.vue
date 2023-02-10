@@ -15,54 +15,67 @@
   -->
 
 <template>
-    <table :class="{ 'table=-empty': !displayRows }">
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>$</th>
-            <th class="u-width-33p">Donor</th>
-            <th class="u-width-33p">Contact Info</th>
-            <th class="u-width-33p">Billing Address</th>
-        </tr>
-        </thead>
+  <table :class="{ 'table=-empty': !displayRows }">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>$</th>
+        <th class="u-width-33p">
+          Donor
+        </th>
+        <th class="u-width-33p">
+          Contact Info
+        </th>
+        <th class="u-width-33p">
+          Billing Address
+        </th>
+      </tr>
+    </thead>
 
-        <tbody v-if="displayRows">
-        <donations-list-table-row v-for="donation in donations" :donation="donation" :key="donation.id"></donations-list-table-row>
-        </tbody>
+    <tbody v-if="displayRows">
+      <donations-list-table-row
+        v-for="donation in donations"
+        :key="donation.id"
+        :donation="donation"
+      />
+    </tbody>
 
-        <tbody v-else>
-        <layout-empty-table-row :loaded="loaded" :colspan="6" message="There are no donations."></layout-empty-table-row>
-        </tbody>
-
-    </table>
+    <tbody v-else>
+      <layout-empty-table-row
+        :loaded="loaded"
+        :colspan="6"
+        message="There are no donations."
+      />
+    </tbody>
+  </table>
 </template>
 
 <script>
-	import ComponentDonationsListTableRow from './DonationsListTableRow.vue';
-	import ComponentEmptyTableRow from './../../layout/EmptyTableRow.vue';
+import ComponentDonationsListTableRow from './DonationsListTableRow.vue'
+import ComponentEmptyTableRow from './../../layout/EmptyTableRow.vue'
 
-	export default {
-		computed: {
-			displayRows: function () {
-				return this.loaded && this.donations.length;
-			}
-		},
-		props: {
-			donations: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-			loaded: {
-				type: Boolean,
-				default: false,
-			}
-		},
-		components: {
-			'donations-list-table-row': ComponentDonationsListTableRow,
-			'layout-empty-table-row': ComponentEmptyTableRow,
-		}
-	};
+export default {
+  components: {
+    'donations-list-table-row': ComponentDonationsListTableRow,
+    'layout-empty-table-row': ComponentEmptyTableRow
+  },
+  props: {
+    donations: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    loaded: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    displayRows: function () {
+      return this.loaded && this.donations.length
+    }
+  }
+}
 </script>

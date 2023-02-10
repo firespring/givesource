@@ -14,40 +14,38 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostNonprofitDonation = require('../../../src/api/postNonprofitDonation/index');
-const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations');
-const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostNonprofitDonation = require('../../../src/api/postNonprofitDonation/index')
+const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
+const sinon = require('sinon')
+const TestHelper = require('../../helpers/test')
 
 describe('PostNonprofitDonation', function () {
+  afterEach(function () {
+    NonprofitDonationsRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		NonprofitDonationsRepository.prototype.save.restore();
-	});
+  it('should return a donation', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const model = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+    sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(model)
+    const params = {
+      body: model.except(['uuid', 'createdOn']),
+      params: {
+        nonprofit_uuid: nonprofit.uuid
+      }
+    }
+    return PostNonprofitDonation.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should return a donation', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const model = TestHelper.generate.model('donation', {nonprofitUuid: nonprofit.uuid});
-		sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(model);
-		const params = {
-			body: model.except(['uuid', 'createdOn']),
-			params: {
-				nonprofit_uuid: nonprofit.uuid
-			}
-		};
-		return PostNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error');
-		return PostNonprofitDonation.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error')
+    return PostNonprofitDonation.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

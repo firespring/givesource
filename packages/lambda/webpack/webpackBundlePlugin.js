@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const archiver = require('archiver');
-const fs = require('fs');
-const path = require('path');
+const archiver = require('archiver')
+const fs = require('fs')
+const path = require('path')
 
 /**
  * Custom Webpack plugin to create a lambda-ready archive
@@ -24,9 +24,9 @@ const path = require('path');
  * @param {{}} [options]
  * @constructor
  */
-function WebpackLambdaArchivePlugin(options) {
-	options = options || {};
-	this.options = options;
+function WebpackLambdaArchivePlugin (options) {
+  options = options || {}
+  this.options = options
 }
 
 /**
@@ -35,32 +35,32 @@ function WebpackLambdaArchivePlugin(options) {
  * @param compiler
  */
 WebpackLambdaArchivePlugin.prototype.apply = function (compiler) {
-	const options = this.options;
+  const options = this.options
 
   compiler.hooks.done.tapAsync('after-emit', function (compilation, callback) {
-		const outputPath = compilation.compilation.options.output.path
+    const outputPath = compilation.compilation.options.output.path
 
-		compilation.compilation.chunks.forEach(function (chunk) {
-			const stream = archiver('zip', {zlib: {level: 9}});
-			const output = options.output ? options.output : outputPath;
+    compilation.compilation.chunks.forEach(function (chunk) {
+      const stream = archiver('zip', { zlib: { level: 9 } })
+      const output = options.output ? options.output : outputPath
 
-			const archive = fs.createWriteStream(path.resolve(output, `${chunk.name}.zip`));
-			stream.pipe(archive);
+      const archive = fs.createWriteStream(path.resolve(output, `${chunk.name}.zip`))
+      stream.pipe(archive)
 
-			chunk.files.forEach(function (file) {
-				const filepath = path.resolve(outputPath, file);
-				let filename = file;
-				if (options.assetName && typeof options.assetName === 'function') {
-					filename = options.assetName(file);
-				}
-				stream.append(fs.createReadStream(filepath), {name: filename});
-			});
+      chunk.files.forEach(function (file) {
+        const filepath = path.resolve(outputPath, file)
+        let filename = file
+        if (options.assetName && typeof options.assetName === 'function') {
+          filename = options.assetName(file)
+        }
+        stream.append(fs.createReadStream(filepath), { name: filename })
+      })
 
-			stream.finalize();
-		});
+      stream.finalize()
+    })
 
-		callback();
-	});
-};
+    callback()
+  })
+}
 
-module.exports = WebpackLambdaArchivePlugin;
+module.exports = WebpackLambdaArchivePlugin

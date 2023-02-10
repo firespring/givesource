@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const NonprofitDonationTiersRepository = require('./../../repositories/nonprofitDonationTiers')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitDonationTiersRepository();
-	const request = new Request(event, context).parameters(['donation_tiers']);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
-	const ids = request.get('donation_tiers', []).map(function (tier) {
-		return tier.id;
-	});
+  const repository = new NonprofitDonationTiersRepository()
+  const request = new Request(event, context).parameters(['donation_tiers'])
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
+  const ids = request.get('donation_tiers', []).map(function (tier) {
+    return tier.id
+  })
 
-	request.validate().then(function () {
-		return repository.batchGet(ids);
-	}).then(function (donationTiers) {
-		return repository.batchRemove(request.urlParam('nonprofit_id'), donationTiers);
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.batchGet(ids)
+  }).then(function (donationTiers) {
+    return repository.batchRemove(request.urlParam('nonprofit_id'), donationTiers)
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

@@ -21,5 +21,5 @@
  * @return {string}
  */
 exports.precise = function (number) {
-	return (parseFloat(number).toPrecision(12));
-};
+  return (parseFloat(number).toPrecision(12))
+}

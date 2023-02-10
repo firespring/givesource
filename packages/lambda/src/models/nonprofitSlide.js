@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-	return sequelize.define('NonprofitSlide', {
-		sortOrder: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		caption: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		embedUrl: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		externalId: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		thumbnail: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		type: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		url: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		fileId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		nonprofitId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-	});
-};
+  return sequelize.define('NonprofitSlide', {
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    caption: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    embedUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    externalId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    thumbnail: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    fileId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    nonprofitId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
+  })
+}

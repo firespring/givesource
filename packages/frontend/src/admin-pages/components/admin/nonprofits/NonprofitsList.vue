@@ -15,128 +15,137 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content">
-                <api-error v-model="apiError"></api-error>
-                <div class="o-app-main-content">
-                    <paymentspring-keys-banner/>
+  <div class="o-app">
+    <navigation />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content">
+        <api-error v-model="apiError" />
+        <div class="o-app-main-content">
+          <paymentspring-keys-banner />
 
-                    <nonprofits-list-table-header :pagination="pagination" v-on:searchNonprofits="searchNonprofits" v-on:resetPagination="resetPagination">
-                    </nonprofits-list-table-header>
-                    <nonprofits-list-table :nonprofits="pagination.items" :loaded="pagination.loaded" v-on:updateNonprofit="updateNonprofit"
-                                           v-on:hasError="hasError"></nonprofits-list-table>
-                    <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
-                </div>
-            </div>
-        </main>
-    </div>
+          <nonprofits-list-table-header
+            :pagination="pagination"
+            @search-nonprofits="searchNonprofits"
+            @reset-pagination="resetPagination"
+          />
+          <nonprofits-list-table
+            :nonprofits="pagination.items"
+            :loaded="pagination.loaded"
+            @update-nonprofit="updateNonprofit"
+            @has-error="hasError"
+          />
+          <paginated-table-footer
+            v-if="pagination.loaded"
+            :pagination="pagination"
+          />
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
-	import ComponentNonprofitListTable from './NonprofitsListTable.vue';
-	import ComponentNonprofitListTableHeader from './NonprofitsListTableHeader.vue';
-	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
-	import PaginationMixin from './../../../mixins/pagination';
+import * as Utils from './../../../helpers/utils'
+import ComponentNonprofitListTable from './NonprofitsListTable.vue'
+import ComponentNonprofitListTableHeader from './NonprofitsListTableHeader.vue'
+import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue'
+import PaginationMixin from './../../../mixins/pagination'
 
-	export default {
-		data: function () {
-			return {
-				apiError: {}
-			};
-		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('nonprofits', to.query).then(function (response) {
-					vue.setPaginationData(response.data);
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  components: {
+    'nonprofits-list-table': ComponentNonprofitListTable,
+    'nonprofits-list-table-header': ComponentNonprofitListTableHeader,
+    'paginated-table-footer': ComponentPaginatedTableFooter
+  },
+  mixins: [
+    PaginationMixin
+  ],
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('nonprofits', to.query).then(function (response) {
+        vue.setPaginationData(response.data)
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.resetPaginationData();
-			vue.$request.get('nonprofits', to.query).then(function (response) {
-				vue.setPaginationData(response.data);
-				next();
-			});
-		},
-		created: function () {
-			const vue = this;
+    vue.resetPaginationData()
+    vue.$request.get('nonprofits', to.query).then(function (response) {
+      vue.setPaginationData(response.data)
+      next()
+    })
+  },
+  data: function () {
+    return {
+      apiError: {}
+    }
+  },
+  created: function () {
+    const vue = this
 
-			vue.bus.$on('revokeNonprofit', function (nonprofitId) {
-				vue.updateNonprofit(nonprofitId);
-			});
+    vue.bus.$on('revokeNonprofit', function (nonprofitId) {
+      vue.updateNonprofit(nonprofitId)
+    })
+  },
+  beforeDestroy: function () {
+    const vue = this
 
-		},
-		beforeDestroy: function () {
-			const vue = this;
+    vue.bus.$off('revokeNonprofit')
+  },
+  methods: {
+    updateNonprofit: function (nonprofitId) {
+      const vue = this
 
-			vue.bus.$off('revokeNonprofit');
-		},
-		mixins: [
-			PaginationMixin
-		],
-		methods: {
-			updateNonprofit: function (nonprofitId) {
-				const vue = this;
+      vue.$request.get('nonprofits/' + nonprofitId).then(function (response) {
+        vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
+          return nonprofit.id === response.data.id ? response.data : nonprofit
+        })
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+      })
+    },
+    searchNonprofits: function (params) {
+      const vue = this
 
-				vue.$request.get('nonprofits/' + nonprofitId).then(function (response) {
-					vue.pagination.items = _.map(vue.pagination.items, function (nonprofit) {
-						return nonprofit.id === response.data.id ? response.data : nonprofit;
-					});
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-				});
-			},
-			searchNonprofits: function (params) {
-				const vue = this;
+      let sort = 'all_created_on_descending'
+      if (params.sort) {
+        sort = params.sort
+        delete params.sort
+      }
 
-				let sort = 'all_created_on_descending';
-				if (params.sort) {
-					sort = params.sort;
-					delete params.sort;
-				}
+      vue.pagination.loaded = false
+      vue.$request.get('nonprofits/search', params).then(function (response) {
+        if (!params.hasOwnProperty('legalName')) {
+          response.data.sort(function (a, b) {
+            return Utils.sortAlphabetically(a, b, 'legalName')
+          })
+        }
+        vue.setPaginationData({
+          size: 0,
+          sort: sort,
+          start: 0,
+          total: 0,
+          items: response.data
+        })
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+      })
+    },
+    resetPagination: function () {
+      const vue = this
 
-				vue.pagination.loaded = false;
-				vue.$request.get('nonprofits/search', params).then(function (response) {
-					if (!params.hasOwnProperty('legalName')) {
-						response.data.sort(function (a, b) {
-							return Utils.sortAlphabetically(a, b, 'legalName');
-						});
-                    }
-					vue.setPaginationData({
-						size: 0,
-						sort: sort,
-						start: 0,
-						total: 0,
-						items: response.data
-					});
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-				});
-			},
-			resetPagination: function () {
-				const vue = this;
-
-				vue.resetPaginationData();
-				vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
-					vue.setPaginationData(response.data);
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-				});
-			},
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
-			}
-		},
-		components: {
-			'nonprofits-list-table': ComponentNonprofitListTable,
-			'nonprofits-list-table-header': ComponentNonprofitListTableHeader,
-			'paginated-table-footer': ComponentPaginatedTableFooter,
-		}
-	};
+      vue.resetPaginationData()
+      vue.$request.get('nonprofits', vue.$route.query).then(function (response) {
+        vue.setPaginationData(response.data)
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+      })
+    },
+    hasError: function (err) {
+      const vue = this
+      vue.apiError = err.response.data.errors
+    }
+  }
+}
 </script>

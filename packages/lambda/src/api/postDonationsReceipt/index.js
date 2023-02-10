@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-const Lambda = require('./../../aws/lambda');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const Lambda = require('./../../aws/lambda')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = (event, context, callback) => {
-	const lambda = new Lambda();
-	const request = new Request(event, context).parameters(['email']);
+  const lambda = new Lambda()
+  const request = new Request(event, context).parameters(['email'])
 
-	request.validate().then(() => {
-		const body = {
-			email: request.get('email')
-		};
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', {body: body});
-		callback();
-	}).catch(err => {
-		console.log('Error: %j', err);
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(() => {
+    const body = {
+      email: request.get('email')
+    }
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendDonationsReceiptEmail', { body: body })
+    callback()
+  }).catch(err => {
+    console.log('Error: %j', err);
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

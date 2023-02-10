@@ -25,7 +25,7 @@
         <i
           class="fa fa-plus-circle"
           aria-hidden="true"
-        ></i>
+        />
         Add Single Donation
       </router-link>
       <router-link
@@ -36,37 +36,56 @@
         <i
           class="fa fa-plus-circle"
           aria-hidden="true"
-        ></i>
+        />
         Add Bulk Donation
       </router-link>
       <a
-        v-on:click.prevent="exportReport('DONATIONS')"
         href="#"
         role="button"
         class="c-btn c-btn--sm c-btn--icon"
+        @click.prevent="exportReport('DONATIONS')"
       ><i
         class="fa fa-cloud-download"
         aria-hidden="true"
-      ></i>Export Donations</a>
+      />Export Donations</a>
       <a
-        v-on:click.prevent="donorReceipt"
         href="#"
         role="button"
         class="c-btn c-btn--sm c-btn--icon"
+        @click.prevent="donorReceipt"
       ><i
         class="fa fa-file-text"
         aria-hidden="true"
-      ></i>Donor Receipt</a>
+      />Donor Receipt</a>
     </div>
-    <div v-if="isSuperAdmin" class="c-btn-dropdown" ref="cBtnDropdown" v-on:mouseout="closeMenu" v-on:mouseover="cancelCloseMenu">
-      <a href="#" role="button" v-on:click.prevent="toggleMenu" class="c-btn c-btn--sm c-btn--neutral c-btn-dropdown-trigger c-btn-dropdown-trigger--only"><span>Internal</span></a>
-      <div class="c-btn-dropdown-menu" ref="cBtnDropdownMenu">
+    <div
+      v-if="isSuperAdmin"
+      ref="cBtnDropdown"
+      class="c-btn-dropdown"
+      @mouseout="closeMenu"
+      @mouseover="cancelCloseMenu"
+    >
+      <a
+        href="#"
+        role="button"
+        class="c-btn c-btn--sm c-btn--neutral c-btn-dropdown-trigger c-btn-dropdown-trigger--only"
+        @click.prevent="toggleMenu"
+      ><span>Internal</span></a>
+      <div
+        ref="cBtnDropdownMenu"
+        class="c-btn-dropdown-menu"
+      >
         <div class="c-btn-dropdown-menu__options">
-          <a v-on:click.prevent="exportReport('PAYOUT_REPORT')" href="#">Export Payout Report</a>
-          <a v-on:click.prevent="exportReport('LAST_4_REPORT')" href="#">Export Last 4 CC Report</a>
+          <a
+            href="#"
+            @click.prevent="exportReport('PAYOUT_REPORT')"
+          >Export Payout Report</a>
+          <a
+            href="#"
+            @click.prevent="exportReport('LAST_4_REPORT')"
+          >Export Last 4 CC Report</a>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -87,33 +106,33 @@ export default {
 
   computed: {
     isSuperAdmin: function () {
-      return this.isSuperAdminUser();
+      return this.isSuperAdminUser()
     }
   },
 
   methods: {
     toggleMenu: function (event) {
-      const vm = this;
+      const vm = this
       if (vm.displayingMenu) {
-        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-        $(vm.$refs.cBtnDropdownMenu).fadeOut();
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active')
+        $(vm.$refs.cBtnDropdownMenu).fadeOut()
       } else {
-        $(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active');
-        $(vm.$refs.cBtnDropdownMenu).fadeIn();
+        $(vm.$refs.cBtnDropdown).addClass('c-btn-dropdown--active')
+        $(vm.$refs.cBtnDropdownMenu).fadeIn()
       }
-      vm.displayingMenu = !vm.displayingMenu;
+      vm.displayingMenu = !vm.displayingMenu
     },
     closeMenu: function () {
-      const vm = this;
+      const vm = this
       vm.timer = setTimeout(function () {
-        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active');
-        $(vm.$refs.cBtnDropdownMenu).fadeOut();
-        vm.displayingMenu = false;
-      }, 250);
+        $(vm.$refs.cBtnDropdown).removeClass('c-btn-dropdown--active')
+        $(vm.$refs.cBtnDropdownMenu).fadeOut()
+        vm.displayingMenu = false
+      }, 250)
     },
     cancelCloseMenu: function () {
-      const vm = this;
-      clearTimeout(vm.timer);
+      const vm = this
+      clearTimeout(vm.timer)
     },
     exportReport (exportType) {
       const vm = this
@@ -138,7 +157,6 @@ export default {
       if (vm.downloaded) {
         vm.clearModals()
         vm.downloadFile()
-
       } else {
         vm.countdown = setInterval(() => {
           vm.$store.commit('generateCacheKey')

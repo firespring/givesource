@@ -15,66 +15,76 @@
   -->
 
 <template>
-    <table class="table-reorder table-headless">
-        <draggable v-model="localContents" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder" class="ui-sortable">
-            <faq-list-table-row v-for="content in localContents" :content="content" :key="content.id"></faq-list-table-row>
-        </draggable>
-    </table>
+  <table class="table-reorder table-headless">
+    <draggable
+      v-model="localContents"
+      :options="draggableOptions"
+      :element="'tbody'"
+      class="ui-sortable"
+      @end="updateSortOrder"
+    >
+      <faq-list-table-row
+        v-for="content in localContents"
+        :key="content.id"
+        :content="content"
+      />
+    </draggable>
+  </table>
 </template>
 
 <script>
-	import ComponentDraggable from 'vuedraggable';
-	import ComponentToolkitListTableRow from './ToolkitListTableRow.vue';
+import ComponentDraggable from 'vuedraggable'
+import ComponentToolkitListTableRow from './ToolkitListTableRow.vue'
 
-	export default {
-		data: function () {
-			return {
-				localContents: [],
+export default {
+  components: {
+    draggable: ComponentDraggable,
+    'faq-list-table-row': ComponentToolkitListTableRow
+  },
+  props: {
+    contents: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+  data: function () {
+    return {
+      localContents: [],
 
-				// Sort Options
-				draggableOptions: {
-					handle: '.c-drag-handle',
-					ghostClass: 'reorder-placeholder',
-					draggable: 'tr',
-				}
-			};
-		},
-		props: {
-			contents: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-		},
-		watch: {
-			contents: function (value) {
-				this.localContents = value;
-			},
-			localContents: function () {
-				this.$emit('contents', this.localContents);
-			},
-		},
-		methods: {
-			updateSortOrder: function () {
-				const vue = this;
+      // Sort Options
+      draggableOptions: {
+        handle: '.c-drag-handle',
+        ghostClass: 'reorder-placeholder',
+        draggable: 'tr'
+      }
+    }
+  },
+  watch: {
+    contents: function (value) {
+      this.localContents = value
+    },
+    localContents: function () {
+      this.$emit('contents', this.localContents)
+    }
+  },
+  methods: {
+    updateSortOrder: function () {
+      const vue = this
 
-				const original = JSON.parse(JSON.stringify(vue.localContents));
-				vue.localContents.forEach(function (content, i) {
-					content.sortOrder = i;
-				});
+      const original = JSON.parse(JSON.stringify(vue.localContents))
+      vue.localContents.forEach(function (content, i) {
+        content.sortOrder = i
+      })
 
-				const toUpdate = _.differenceWith(vue.localContents, original, _.isEqual);
-				vue.$request.patch('contents', {
-					contents: toUpdate
-				}).catch(function (err) {
-					vue.$emit('hasError', err);
-				});
-			}
-		},
-		components: {
-			'draggable': ComponentDraggable,
-			'faq-list-table-row': ComponentToolkitListTableRow,
-		}
-	};
+      const toUpdate = _.differenceWith(vue.localContents, original, _.isEqual)
+      vue.$request.patch('contents', {
+        contents: toUpdate
+      }).catch(function (err) {
+        vue.$emit('hasError', err)
+      })
+    }
+  }
+}
 </script>

@@ -14,73 +14,71 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const PatchNonprofitDonation = require('../../../src/api/patchNonprofitDonation/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const PatchNonprofitDonation = require('../../../src/api/patchNonprofitDonation/index')
+const NonprofitsRepository = require('../../../src/repositories/nonprofits')
+const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
+const TestHelper = require('../../helpers/test')
 
 describe('PatchNonprofitDonation', function () {
+  afterEach(function () {
+    NonprofitsRepository.prototype.get.restore()
+    NonprofitDonationsRepository.prototype.get.restore()
+    NonprofitDonationsRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		NonprofitsRepository.prototype.get.restore();
-		NonprofitDonationsRepository.prototype.get.restore();
-		NonprofitDonationsRepository.prototype.save.restore();
-	});
+  it('should return an updated nonprofit donation', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const original = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+    const updated = TestHelper.generate.model('donation', { uuid: original.uuid, nonprofitUuid: nonprofit.uuid })
+    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(original)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(updated)
+    const params = {
+      body: updated.except('uuid'),
+      params: {
+        nonprofitUuid: nonprofit.uuid,
+        donationUuid: original.uuid
+      }
+    }
+    return PatchNonprofitDonation.handle(params, null, function (error, result) {
+      assert(error === null)
+      assert.deepEqual(result, updated.all())
+    })
+  })
 
-	it('should return an updated nonprofit donation', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('donation', {nonprofitUuid: nonprofit.uuid});
-		const updated = TestHelper.generate.model('donation', {uuid: original.uuid, nonprofitUuid: nonprofit.uuid});
-		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(original);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(updated);
-		const params = {
-			body: updated.except('uuid'),
-			params: {
-				nonprofitUuid: nonprofit.uuid,
-				donationUuid: original.uuid
-			}
-		};
-		return PatchNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert.deepEqual(result, updated.all());
-		});
-	});
+  it('should return error on exception thrown - get', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const original = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+    const params = {
+      params: {
+        nonprofitUuid: nonprofit.uuid,
+        donationUuid: original.uuid
+      }
+    }
+    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects('Error')
+    sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(original)
+    return PatchNonprofitDonation.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
 
-	it('should return error on exception thrown - get', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('donation', {nonprofitUuid: nonprofit.uuid});
-		const params = {
-			params: {
-				nonprofitUuid: nonprofit.uuid,
-				donationUuid: original.uuid
-			}
-		};
-		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects('Error');
-		sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(original);
-		return PatchNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-	it('should return error on exception thrown - save', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const original = TestHelper.generate.model('donation', {nonprofitUuid: nonprofit.uuid});
-		const params = {
-			params: {
-				nonprofitUuid: nonprofit.uuid,
-				donationUuid: original.uuid
-			}
-		};
-		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(original);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error');
-		return PatchNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown - save', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const original = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+    const params = {
+      params: {
+        nonprofitUuid: nonprofit.uuid,
+        donationUuid: original.uuid
+      }
+    }
+    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(original)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error')
+    return PatchNonprofitDonation.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
+})

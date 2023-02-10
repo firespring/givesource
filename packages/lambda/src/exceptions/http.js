@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const Exception = require('./exception');
+const Exception = require('./exception')
 
 /**
  * HttpException constructor
@@ -23,12 +23,12 @@ const Exception = require('./exception');
  * @constructor
  */
 function HttpException (message) {
-	Exception.call(this, message);
+  Exception.call(this, message)
 
-	this._status = 500;
-	this._type = 'internal_error';
-	this.defaultMessage = 'The server encountered an internal error. Please retry the request.';
-	this._context = null;
+  this._status = 500
+  this._type = 'internal_error'
+  this.defaultMessage = 'The server encountered an internal error. Please retry the request.'
+  this._context = null
 }
 
 /**
@@ -36,7 +36,7 @@ function HttpException (message) {
  *
  * @type {Exception}
  */
-HttpException.prototype = new Exception();
+HttpException.prototype = new Exception()
 
 /**
  * Set the Exception's type
@@ -45,9 +45,9 @@ HttpException.prototype = new Exception();
  * @return {HttpException}
  */
 HttpException.prototype.type = function (type) {
-	this._type = type;
-	return this;
-};
+  this._type = type
+  return this
+}
 
 /**
  * Set the Exception's status
@@ -56,9 +56,9 @@ HttpException.prototype.type = function (type) {
  * @return {HttpException}
  */
 HttpException.prototype.status = function (status) {
-	this._status = status;
-	return this;
-};
+  this._status = status
+  return this
+}
 
 /**
  * Set the Exception's context
@@ -67,9 +67,9 @@ HttpException.prototype.status = function (status) {
  * @return {HttpException}
  */
 HttpException.prototype.context = function (context) {
-	this._context = context;
-	return this;
-};
+  this._context = context
+  return this
+}
 
 /**
  * String representation of the Exception
@@ -77,12 +77,12 @@ HttpException.prototype.context = function (context) {
  * @return {String}
  */
 HttpException.prototype.toString = function () {
-	return JSON.stringify({
-		httpStatus: this._status,
-		type: this._type,
-		message: this._message || this.getDefaultMessage(),
-		requestId: this._context && this._context.awsRequestId ? this._context.awsRequestId : ''
-	});
-};
+  return JSON.stringify({
+    httpStatus: this._status,
+    type: this._type,
+    message: this._message || this.getDefaultMessage(),
+    requestId: this._context && this._context.awsRequestId ? this._context.awsRequestId : ''
+  })
+}
 
-module.exports = HttpException;
+module.exports = HttpException

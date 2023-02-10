@@ -15,68 +15,79 @@
   -->
 
 <template>
-    <component v-if="loaded" :is="editor" v-model="localValue" :type="type" :id="id" :height="height" :hasErrors="hasErrors"></component>
-    <layout-spinner v-else :height="height"></layout-spinner>
+  <component
+    :is="editor"
+    v-if="loaded"
+    :id="id"
+    v-model="localValue"
+    :type="type"
+    :height="height"
+    :has-errors="hasErrors"
+  />
+  <layout-spinner
+    v-else
+    :height="height"
+  />
 </template>
 
 <script>
-	import ComponentCkeditor4 from './Ckeditor4.vue';
-	import ComponentCkeditor5 from './Ckeditor5.vue';
-	import ComponentSpinner from './../layout/Spinner.vue';
+import ComponentCkeditor4 from './Ckeditor4.vue'
+import ComponentCkeditor5 from './Ckeditor5.vue'
+import ComponentSpinner from './../layout/Spinner.vue'
 
-	export default {
-		data() {
-			return {
-				localValue: this.value ? this.value : '',
-			};
-		},
-		computed: {
-			editor() {
-				const vm = this;
-				return vm.isInternetExplorer() || vm.isMicrosoftEdge() ? 'forms-ckeditor4' : 'forms-ckeditor5';
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: ''
-			},
-			hasErrors: {
-				type: Boolean,
-				default: false
-			},
-			height: {
-				type: String,
-				default: '200'
-			},
-			loaded: {
-				type: Boolean,
-				default: true
-			},
-			type: {
-				type: String,
-				default: 'basic',
-			}
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				if (value === oldValue) {
-					return;
-				}
-				this.$emit('input', value);
-			},
-			value: function (value, oldValue) {
-				if (value === oldValue) {
-					return;
-				}
-				this.localValue = value;
-			}
-		},
-		components: {
-			'forms-ckeditor4': ComponentCkeditor4,
-			'forms-ckeditor5': ComponentCkeditor5,
-			'layout-spinner': ComponentSpinner,
-		}
-	};
+export default {
+  components: {
+    'forms-ckeditor4': ComponentCkeditor4,
+    'forms-ckeditor5': ComponentCkeditor5,
+    'layout-spinner': ComponentSpinner
+  },
+  props: {
+    value: {},
+    id: {
+      type: String,
+      default: ''
+    },
+    hasErrors: {
+      type: Boolean,
+      default: false
+    },
+    height: {
+      type: String,
+      default: '200'
+    },
+    loaded: {
+      type: Boolean,
+      default: true
+    },
+    type: {
+      type: String,
+      default: 'basic'
+    }
+  },
+  data () {
+    return {
+      localValue: this.value ? this.value : ''
+    }
+  },
+  computed: {
+    editor () {
+      const vm = this
+      return vm.isInternetExplorer() || vm.isMicrosoftEdge() ? 'forms-ckeditor4' : 'forms-ckeditor5'
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      if (value === oldValue) {
+        return
+      }
+      this.$emit('input', value)
+    },
+    value: function (value, oldValue) {
+      if (value === oldValue) {
+        return
+      }
+      this.localValue = value
+    }
+  }
+}
 </script>

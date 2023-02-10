@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-const DonationsRepository = require('./../../repositories/donations');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const DonationsRepository = require('./../../repositories/donations')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = (event, context, callback) => {
-	const repository = new DonationsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const repository = new DonationsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	request.validate().then(() => {
-		return repository.populate(request._body);
-	}).then((donation) => {
-		return repository.upsert(donation, {});
-	}).then(model => {
-		callback(null, model);
-	}).catch(err => {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(() => {
+    return repository.populate(request._body)
+  }).then((donation) => {
+    return repository.upsert(donation, {})
+  }).then(model => {
+    callback(null, model)
+  }).catch(err => {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

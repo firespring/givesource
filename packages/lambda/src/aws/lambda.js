@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * Lambda constructor
  *
  * @constructor
  */
-function Lambda() {
+function Lambda () {
 }
 
 /**
@@ -37,30 +37,30 @@ function Lambda() {
  * @return {Promise}
  */
 Lambda.prototype.createFunction = function (region, functionName, handler, role, runtime, code, env) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Code: code,
-			FunctionName: functionName,
-			Handler: handler,
-			Role: role,
-			Runtime: runtime,
-		};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Code: code,
+      FunctionName: functionName,
+      Handler: handler,
+      Role: role,
+      Runtime: runtime
+    }
 
-		env = env || {};
-		if (Object.keys(env).length) {
-			params.Environment = {};
-			params.Environment.Variables = env;
-		}
+    env = env || {}
+    if (Object.keys(env).length) {
+      params.Environment = {}
+      params.Environment.Variables = env
+    }
 
-		awsLambda.createFunction(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+    awsLambda.createFunction(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Delete an AWS Lambda function
@@ -70,19 +70,19 @@ Lambda.prototype.createFunction = function (region, functionName, handler, role,
  * @return {Promise}
  */
 Lambda.prototype.deleteFunction = function (region, functionName) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName
-		};
-		awsLambda.deleteFunction(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName
+    }
+    awsLambda.deleteFunction(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Get an AWS Lambda function
@@ -92,19 +92,19 @@ Lambda.prototype.deleteFunction = function (region, functionName) {
  * @return {Promise}
  */
 Lambda.prototype.getFunction = function (region, functionName) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName
-		};
-		awsLambda.getFunction(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName
+    }
+    awsLambda.getFunction(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Invoke an AWS Lambda function
@@ -116,21 +116,21 @@ Lambda.prototype.getFunction = function (region, functionName) {
  * @return {Promise}
  */
 Lambda.prototype.invoke = function (region, functionName, payload, invocationType) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName,
-			Payload: JSON.stringify(payload),
-			InvocationType: invocationType || 'Event'
-		};
-		awsLambda.invoke(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName,
+      Payload: JSON.stringify(payload),
+      InvocationType: invocationType || 'Event'
+    }
+    awsLambda.invoke(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Publish a new AWS Lambda function version
@@ -140,19 +140,19 @@ Lambda.prototype.invoke = function (region, functionName, payload, invocationTyp
  * @return {Promise}
  */
 Lambda.prototype.publishVersion = function (region, functionName) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName
-		};
-		awsLambda.publishVersion(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName
+    }
+    awsLambda.publishVersion(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Update an AWS Lambda function's code
@@ -163,19 +163,19 @@ Lambda.prototype.publishVersion = function (region, functionName) {
  * @return {Promise}
  */
 Lambda.prototype.updateFunctionCode = function (region, functionName, zipFile) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName,
-			ZipFile: zipFile
-		};
-		awsLambda.updateFunctionCode(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName,
+      ZipFile: zipFile
+    }
+    awsLambda.updateFunctionCode(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = Lambda;
+module.exports = Lambda

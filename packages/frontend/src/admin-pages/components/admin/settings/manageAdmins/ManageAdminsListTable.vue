@@ -15,95 +15,113 @@
   -->
 
 <template>
-    <table class="table-middle" :class="{ 'table-empty': !displayRows }">
-        <thead>
-        <tr>
-            <th class="icon"><i class="fa fa-picture-o" aria-hidden="true"></i></th>
-            <th class="u-width-100p">Name</th>
-            <th>Added</th>
-            <th></th>
-        </tr>
-        </thead>
+  <table
+    class="table-middle"
+    :class="{ 'table-empty': !displayRows }"
+  >
+    <thead>
+      <tr>
+        <th class="icon">
+          <i
+            class="fa fa-picture-o"
+            aria-hidden="true"
+          />
+        </th>
+        <th class="u-width-100p">
+          Name
+        </th>
+        <th>Added</th>
+        <th />
+      </tr>
+    </thead>
 
-        <tbody v-if="displayRows">
-        <manage-admins-list-table-row v-for="adminUser in adminUsers" :adminUser="adminUser" :key="adminUser.id"></manage-admins-list-table-row>
-        </tbody>
+    <tbody v-if="displayRows">
+      <manage-admins-list-table-row
+        v-for="adminUser in adminUsers"
+        :key="adminUser.id"
+        :admin-user="adminUser"
+      />
+    </tbody>
 
-        <tbody v-else>
-        <layout-empty-table-row :loaded="loaded" :colspan="5" message="There are no users."></layout-empty-table-row>
-        </tbody>
-
-    </table>
+    <tbody v-else>
+      <layout-empty-table-row
+        :loaded="loaded"
+        :colspan="5"
+        message="There are no users."
+      />
+    </tbody>
+  </table>
 </template>
 
 <script>
-	import ComponentEmptyTableRow from './../../../layout/EmptyTableRow.vue';
-	import ComponentManageAdminsListTableRow from './ManageAdminsListTableRow.vue';
+import ComponentEmptyTableRow from './../../../layout/EmptyTableRow.vue'
+import ComponentManageAdminsListTableRow from './ManageAdminsListTableRow.vue'
 
-	export default {
-		data: function () {
-			return {
-				adminUsers: [],
-				loaded: false
-			};
-		},
-		computed: {
-			displayRows: function () {
-				return this.loaded && this.adminUsers.length;
-			},
-		},
-		props: [
-			'nonprofitId'
-		],
-		created: function () {
-			const vue = this;
+export default {
+  components: {
+    'layout-empty-table-row': ComponentEmptyTableRow,
+    'manage-admins-list-table-row': ComponentManageAdminsListTableRow
+  },
+  props: [
+    'nonprofitId'
+  ],
+  data: function () {
+    return {
+      adminUsers: [],
+      loaded: false
+    }
+  },
+  computed: {
+    displayRows: function () {
+      return this.loaded && this.adminUsers.length
+    }
+  },
+  created: function () {
+    const vue = this
 
-			vue.$request.get('users').then(function (response) {
-				vue.adminUsers = response.data;
-				vue.loaded = true;
-			});
+    vue.$request.get('users').then(function (response) {
+      vue.adminUsers = response.data
+      vue.loaded = true
+    })
 
-			vue.bus.$on('deleteUserAdmin', function () {
-				vue.removeUser();
-			});
+    vue.bus.$on('deleteUserAdmin', function () {
+      vue.removeUser()
+    })
 
-			vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
-				vue.selectedAdminUser = selectedAdminUser;
-				vue.deleteModal(selectedAdminUser);
-			});
-		},
-		beforeDestroy: function () {
-			const vue = this;
-			vue.bus.$off('deleteUserAdmin');
-			vue.bus.$off('deleteUserAdminModal');
-		},
-		methods: {
-			deleteModal: function (selectedAdminUser) {
-				const vue = this;
-				vue.addModal('confirm-delete', {
-					modalTitle: 'Remove Admin User',
-					modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
-					callback: 'deleteUserAdmin',
-				});
-			},
-			removeUser: function () {
-				const vue = this;
+    vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
+      vue.selectedAdminUser = selectedAdminUser
+      vue.deleteModal(selectedAdminUser)
+    })
+  },
+  beforeDestroy: function () {
+    const vue = this
+    vue.bus.$off('deleteUserAdmin')
+    vue.bus.$off('deleteUserAdminModal')
+  },
+  methods: {
+    deleteModal: function (selectedAdminUser) {
+      const vue = this
+      vue.addModal('confirm-delete', {
+        modalTitle: 'Remove Admin User',
+        modalText: 'Are you sure you want to remove ' + selectedAdminUser.email + ' ?',
+        callback: 'deleteUserAdmin',
+        overlayClass: 'c-modal-overlay-warning'
+      })
+    },
+    removeUser: function () {
+      const vue = this
 
-				vue.addModal('spinner');
-				vue.$request.delete('users/' + vue.selectedAdminUser.id).then(function () {
-					vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
-						return adminUser.id !== vue.selectedAdminUser.id;
-					});
-					vue.clearModals();
-				}).catch(function (err) {
-					vue.removeModal('spinner');
-					vue.$emit('hasError', err);
-				});
-			}
-		},
-		components: {
-			'layout-empty-table-row': ComponentEmptyTableRow,
-			'manage-admins-list-table-row': ComponentManageAdminsListTableRow,
-		}
-	};
+      vue.addModal('spinner')
+      vue.$request.delete('users/' + vue.selectedAdminUser.id).then(function () {
+        vue.adminUsers = _.filter(vue.adminUsers, function (adminUser) {
+          return adminUser.id !== vue.selectedAdminUser.id
+        })
+        vue.clearModals()
+      }).catch(function (err) {
+        vue.removeModal('spinner')
+        vue.$emit('hasError', err)
+      })
+    }
+  }
+}
 </script>

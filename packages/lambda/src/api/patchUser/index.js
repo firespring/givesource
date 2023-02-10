@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserResourceMiddleware = require('./../../middleware/userResource');
-const UsersRepository = require('./../../repositories/users');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserResourceMiddleware = require('./../../middleware/userResource')
+const UsersRepository = require('./../../repositories/users')
 
 exports.handle = function (event, context, callback) {
-	const repository = new UsersRepository();
-	const request = new Request(event, context);
-	request.middleware(new UserResourceMiddleware(request.urlParam('user_id')));
+  const repository = new UsersRepository()
+  const request = new Request(event, context)
+  request.middleware(new UserResourceMiddleware(request.urlParam('user_id')))
 
-	request.validate().then(function () {
-		return repository.getByCognitoUsername(request.urlParam('user_id'));
-	}).then(function (populatedUser) {
-		return repository.upsert(populatedUser, request._body);
-	}).then(function (user) {
-		callback(null, user);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.getByCognitoUsername(request.urlParam('user_id'))
+  }).then(function (populatedUser) {
+    return repository.upsert(populatedUser, request._body)
+  }).then(function (user) {
+    callback(null, user)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

@@ -111,7 +111,7 @@ Resources:
         LambdaRole: !Ref LambdaRole
         SecureLambdaRole: !Ref SecureLambdaRole
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
-      TimeoutInMinutes: 40
+      TimeoutInMinutes: 60
 
   AuroraDbSnapshotCopyStack:
     Condition: IsReplicaRegion
@@ -130,7 +130,7 @@ Resources:
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
-      TimeoutInMinutes: 40
+      TimeoutInMinutes: 60
 
   RestApi:
     Type: AWS::ApiGateway::RestApi
@@ -388,7 +388,7 @@ Resources:
         CachingCloudFrontUrl: !GetAtt S3Stack.Outputs.CachingCloudFrontUrl
         ReportsS3: !GetAtt S3Stack.Outputs.Reports
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -444,7 +444,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -465,7 +465,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
       - CustomStack
@@ -486,7 +486,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -508,7 +508,7 @@ Resources:
         ReportsBucket: !GetAtt S3Stack.Outputs.Reports
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -528,7 +528,27 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
+    DependsOn:
+      - AuroraDbStack
+
+  ApiAgreementsStack:
+    Condition: NotReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+        LambdaRoleArn: !GetAtt LambdaRole.Arn
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
+        IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
+        IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
+        SuccessResponseTemplate: !FindInMap [ApiGateway, SuccessResponseTemplate, Default]
+        RestApi: !Ref RestApi
+        RestApiRootResourceId: !GetAtt RestApi.RootResourceId
+        AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-agreements.yml
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -548,7 +568,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -570,7 +590,7 @@ Resources:
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -590,7 +610,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -611,7 +631,7 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -636,7 +656,7 @@ Resources:
         SecureSettingsKeyAlias: !GetAtt CustomStack.Outputs.SecureSettingsKeyAlias
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
       - CustomStack
@@ -657,7 +677,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -678,7 +698,7 @@ Resources:
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -698,7 +718,7 @@ Resources:
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-recaptcha.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
 
@@ -709,13 +729,14 @@ Resources:
       Parameters:
         RestApi: !Ref RestApi
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-deploy.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - ApiContentsStack
       - ApiDonationsStack
       - ApiDonorsStack
       - ApiFilesStack
       - ApiMessagesStack
+      - ApiAgreementsStack
       - ApiMetricsStack
       - ApiNonprofitsStack
       - ApiPaymentTransactionsStack
@@ -754,7 +775,7 @@ Resources:
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
-      TimeoutInMinutes: 20
+      TimeoutInMinutes: 30
     DependsOn:
       - CognitoInitialUser
 
@@ -769,7 +790,7 @@ Resources:
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
-      TimeoutInMinutes: 40
+      TimeoutInMinutes: 60
     DependsOn:
       - AuroraDbStack
 

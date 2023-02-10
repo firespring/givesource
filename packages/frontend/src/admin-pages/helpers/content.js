@@ -15,53 +15,53 @@
  */
 
 const getContentKeys = (setting) => {
-	const keys = [];
-	const uuids = _getUuids(setting);
-	const list = [
-		'CUSTOM_PAGE_SLUG',
-		'CUSTOM_PAGE_TEXT',
-		'CUSTOM_PAGE_TITLE',
-	];
+  const keys = []
+  const uuids = _getUuids(setting)
+  const list = [
+    'CUSTOM_PAGE_SLUG',
+    'CUSTOM_PAGE_TEXT',
+    'CUSTOM_PAGE_TITLE'
+  ]
 
-	uuids.forEach((uuid) => {
-		list.forEach((prefix) => {
-			keys.push(prefix + '_' + uuid.toUpperCase().replace(/-/g, '_'));
-		});
-	});
+  uuids.forEach((uuid) => {
+    list.forEach((prefix) => {
+      keys.push(prefix + '_' + uuid.toUpperCase().replace(/-/g, '_'))
+    })
+  })
 
-	return keys;
-};
+  return keys
+}
 
 const getSettingKeys = (setting) => {
-	const keys = [];
-	const uuids = _getUuids(setting);
-	const list = [
-		'CUSTOM_PAGE_ENABLED'
-	];
+  const keys = []
+  const uuids = _getUuids(setting)
+  const list = [
+    'CUSTOM_PAGE_ENABLED'
+  ]
 
-	uuids.forEach((uuid) => {
-		list.forEach((prefix) => {
-			keys.push(prefix + '_' + uuid.toUpperCase().replace(/-/g, '_'));
-		});
-	});
+  uuids.forEach((uuid) => {
+    list.forEach((prefix) => {
+      keys.push(prefix + '_' + uuid.toUpperCase().replace(/-/g, '_'))
+    })
+  })
 
-	return keys;
-};
+  return keys
+}
 
 const _getUuids = (setting) => {
-	if (Array.isArray(setting)) {
-		setting = _.find(setting, {key: 'CUSTOM_PAGES'});
-	}
-	if (typeof setting === 'object' && setting.hasOwnProperty('value')) {
-		setting = setting.value;
-	}
-	if (typeof setting === 'string' && setting.length) {
-		return setting.split('|');
-	}
-	return [];
-};
+  if (Array.isArray(setting)) {
+    setting = _.find(setting, { key: 'CUSTOM_PAGES' })
+  }
+  if (typeof setting === 'object' && setting.hasOwnProperty('value')) {
+    setting = setting.value
+  }
+  if (typeof setting === 'string' && setting.length) {
+    return setting.split('|')
+  }
+  return []
+}
 
 export {
-	getContentKeys,
-	getSettingKeys
+  getContentKeys,
+  getSettingKeys
 }

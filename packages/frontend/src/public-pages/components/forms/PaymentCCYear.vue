@@ -15,54 +15,64 @@
   -->
 
 <template>
-    <select v-model="localValue" :name="name" :id="id" ref="input">
-        <option v-for="year in range" :value="year">{{ year }}</option>
-    </select>
+  <select
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    :name="name"
+  >
+    <option
+      v-for="year in range"
+      :value="year"
+    >
+      {{ year }}
+    </option>
+  </select>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : new Date().getFullYear(),
-			}
-		},
-		computed: {
-			range: function () {
-				const range = [];
-				let year = new Date().getFullYear();
-				for (let i = 0; i < this.years; i++) {
-					range.push(year);
-					year += 1;
-				}
-				return range;
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			years: {
-				type: Number,
-				default: 10
-			}
-		},
-		mounted: function () {
-			this.$emit('input', this.localValue);
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		}
-	};
+export default {
+  props: {
+    value: {},
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    years: {
+      type: Number,
+      default: 10
+    }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : new Date().getFullYear()
+    }
+  },
+  computed: {
+    range: function () {
+      const range = []
+      let year = new Date().getFullYear()
+      for (let i = 0; i < this.years; i++) {
+        range.push(year)
+        year += 1
+      }
+      return range
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  },
+  mounted: function () {
+    this.$emit('input', this.localValue)
+  }
+}
 </script>

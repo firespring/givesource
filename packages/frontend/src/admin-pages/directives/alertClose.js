@@ -18,15 +18,15 @@
  Alerts
  ============================================================================ */
 const directive = {
-	inserted: function (el) {
-		const $el = $(el);
+  inserted: function (el) {
+    const $el = $(el)
 
-		$el.find('button').click(function () {
-			$(this).parents('.c-alert').fadeOut('slow', function () {
-				$(this).remove();
-			});
-		});
-	}
-};
+    $el.find('button').click(function () {
+      $(this).parents('.c-alert').fadeOut('slow', function () {
+        $(this).remove()
+      })
+    })
+  }
+}
 
-export default directive;
+export default directive

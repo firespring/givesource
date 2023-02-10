@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const NonprofitRepository = require('./nonprofits');
-const QueryBuilder = require('./../aws/queryBuilder');
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const loadModels = require('../models/index');
+const NonprofitRepository = require('./nonprofits')
+const QueryBuilder = require('./../aws/queryBuilder')
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const loadModels = require('../models/index')
 
 /**
  * NonprofitDonationsRepository constructor
  *
  * @constructor
  */
-function NonprofitDonationsRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.DonationsTable;
-	}
-	Repository.call(this, options);
+function NonprofitDonationsRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.DonationsTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -39,7 +39,7 @@ function NonprofitDonationsRepository(options) {
  *
  * @type {Repository}
  */
-NonprofitDonationsRepository.prototype = new Repository();
+NonprofitDonationsRepository.prototype = new Repository()
 
 /**
  * Get a Donation
@@ -49,25 +49,25 @@ NonprofitDonationsRepository.prototype = new Repository();
  * @return {Promise}
  */
 NonprofitDonationsRepository.prototype.get = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('query');
-			builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				if (data.Items.length === 1) {
-					resolve(new Donation(data.Items[0]));
-				}
-				reject(new ResourceNotFoundException('The specified donation does not exist.'));
-			}).catch(function (err) {
-				reject(err);
-			});
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    nonprofitRepository.get(nonprofitUuid).then(function () {
+      const builder = new QueryBuilder('query')
+      builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid)
+      repository.batchQuery(builder).then(function (data) {
+        if (data.Items.length === 1) {
+          resolve(new Donation(data.Items[0]))
+        }
+        reject(new ResourceNotFoundException('The specified donation does not exist.'))
+      }).catch(function (err) {
+        reject(err)
+      })
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Get all Donations for a Nonprofit
@@ -76,28 +76,28 @@ NonprofitDonationsRepository.prototype.get = function (nonprofitUuid, uuid) {
  * @return {Promise}
  */
 NonprofitDonationsRepository.prototype.getAll = function (nonprofitUuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			const builder = new QueryBuilder('scan');
-			builder.filter('nonprofitUuid', '=', nonprofitUuid);
-			repository.batchQuery(builder).then(function (data) {
-				const results = [];
-				if (data.Items) {
-					data.Items.forEach(function (item) {
-						results.push(new Donation(item));
-					});
-				}
-				resolve(results);
-			}).catch(function (err) {
-				reject(err);
-			});
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    nonprofitRepository.get(nonprofitUuid).then(function () {
+      const builder = new QueryBuilder('scan')
+      builder.filter('nonprofitUuid', '=', nonprofitUuid)
+      repository.batchQuery(builder).then(function (data) {
+        const results = []
+        if (data.Items) {
+          data.Items.forEach(function (item) {
+            results.push(new Donation(item))
+          })
+        }
+        resolve(results)
+      }).catch(function (err) {
+        reject(err)
+      })
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Delete a Donation
@@ -107,20 +107,20 @@ NonprofitDonationsRepository.prototype.getAll = function (nonprofitUuid) {
  * @return {Promise}
  */
 NonprofitDonationsRepository.prototype.delete = function (nonprofitUuid, uuid) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			repository.deleteByKey('uuid', uuid).then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
-			});
-		}).catch(function (err) {
-			reject(err);
-		})
-	});
-};
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    nonprofitRepository.get(nonprofitUuid).then(function () {
+      repository.deleteByKey('uuid', uuid).then(function () {
+        resolve()
+      }).catch(function (err) {
+        reject(err)
+      })
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Create or update a Donation
@@ -129,30 +129,30 @@ NonprofitDonationsRepository.prototype.delete = function (nonprofitUuid, uuid) {
  * @param {Donation} model
  */
 NonprofitDonationsRepository.prototype.save = function (nonprofitUuid, model) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitUuid).then(function () {
-			if (!(model instanceof Donation)) {
-				reject(new Error('invalid Donation model'));
-			}
-			model.validate().then(function () {
-				const key = {
-					uuid: model.uuid
-				};
-				repository.put(key, model.except(['uuid'])).then(function (data) {
-					resolve(new Donation(data.Attributes));
-				}).catch(function (err) {
-					reject(err);
-				});
-			}).catch(function (err) {
-				reject(err);
-			});
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    nonprofitRepository.get(nonprofitUuid).then(function () {
+      if (!(model instanceof Donation)) {
+        reject(new Error('invalid Donation model'))
+      }
+      model.validate().then(function () {
+        const key = {
+          uuid: model.uuid
+        }
+        repository.put(key, model.except(['uuid'])).then(function (data) {
+          resolve(new Donation(data.Attributes))
+        }).catch(function (err) {
+          reject(err)
+        })
+      }).catch(function (err) {
+        reject(err)
+      })
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Bulk create Donations (seeder)
@@ -161,20 +161,19 @@ NonprofitDonationsRepository.prototype.save = function (nonprofitUuid, model) {
  * @return {Promise<any>}
  */
 NonprofitDonationsRepository.prototype.batchUpdate = function (donations) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return allModels.Donation.bulkCreate(donations);
-		}).then(function (savedDonations) {
-			resolve(savedDonations);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return allModels.Donation.bulkCreate(donations)
+    }).then(function (savedDonations) {
+      resolve(savedDonations)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-
-module.exports = NonprofitDonationsRepository;
+module.exports = NonprofitDonationsRepository

@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SES = require('./../../aws/ses');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const SES = require('./../../aws/ses')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
-	const ses = new SES();
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
+  const ses = new SES()
 
-	request.validate().then(function () {
-		return ses.listIdentities();
-	}).then(function (response) {
-		const identities = response.hasOwnProperty('Identities') ? response.Identities : [];
-		if (identities.length) {
-			return ses.getIdentityVerificationAttributes(identities);
-		} else {
-			return Promise.resolve([]);
-		}
-	}).then(function (response) {
-		const results = [];
-		if (response.hasOwnProperty('VerificationAttributes')) {
-			Object.keys(response.VerificationAttributes).forEach(function (key) {
-				results.push({
-					email: key,
-					verified: response.VerificationAttributes[key].VerificationStatus === 'Success',
-				});
-			});
-		}
-		callback(null, results);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return ses.listIdentities()
+  }).then(function (response) {
+    const identities = response.hasOwnProperty('Identities') ? response.Identities : []
+    if (identities.length) {
+      return ses.getIdentityVerificationAttributes(identities)
+    } else {
+      return Promise.resolve([])
+    }
+  }).then(function (response) {
+    const results = []
+    if (response.hasOwnProperty('VerificationAttributes')) {
+      Object.keys(response.VerificationAttributes).forEach(function (key) {
+        results.push({
+          email: key,
+          verified: response.VerificationAttributes[key].VerificationStatus === 'Success'
+        })
+      })
+    }
+    callback(null, results)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

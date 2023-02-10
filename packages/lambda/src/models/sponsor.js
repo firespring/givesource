@@ -14,47 +14,47 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-	const Sponsor = sequelize.define('Sponsor', {
-		logoUrl: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ""
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		sortOrder: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		url: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		fileId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		sponsorTierId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-	});
+  const Sponsor = sequelize.define('Sponsor', {
+    logoUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: ''
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    fileId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    sponsorTierId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
+  })
 
-	Sponsor.associate = function (models) {
-		Sponsor.hasOne(models.SponsorTier, {
-			foreignKey: 'sponsorTierId'
-		});
-	};
+  Sponsor.associate = function (models) {
+    Sponsor.hasOne(models.SponsorTier, {
+      foreignKey: 'sponsorTierId'
+    })
+  }
 
-	return Sponsor;
-};
+  return Sponsor
+}

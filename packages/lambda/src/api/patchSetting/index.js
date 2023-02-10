@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const SettingsRepository = require('./../../repositories/settings');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
-const DynamicContentHelper = require('./../../helpers/dynamicContent');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const SettingsRepository = require('./../../repositories/settings')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
+const DynamicContentHelper = require('./../../helpers/dynamicContent')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new SettingsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new SettingsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	let setting;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('key'));
-	}).then(function (setting) {
-		setting.value = request._body.value;
-		return setting.validate();
-	}).then(function (validSetting) {
-		return repository.save(validSetting);
-	}).then(function (response) {
-		setting = response;
-    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*', '/contents*']}, 'RequestResponse');
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false);
-	}).then(function () {
-		callback(null, setting);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let setting
+  request.validate().then(function () {
+    return repository.get(request.urlParam('key'))
+  }).then(function (setting) {
+    setting.value = request._body.value
+    return setting.validate()
+  }).then(function (validSetting) {
+    return repository.save(validSetting)
+  }).then(function (response) {
+    setting = response
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/settings*', '/contents*'] }, 'RequestResponse')
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    return DynamicContentHelper.regenerateDynamicContent([setting.key], process.env.AWS_REGION, process.env.AWS_STACK_NAME, false)
+  }).then(function () {
+    callback(null, setting)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

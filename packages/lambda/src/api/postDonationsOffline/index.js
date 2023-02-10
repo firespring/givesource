@@ -26,7 +26,7 @@ export function handle (event, context, callback) {
   const lambda = new Lambda()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-  let donations = []
+  const donations = []
   let donorId
   request.validate().then(() => {
     donorId = request.get('donorId', 0)
@@ -40,7 +40,7 @@ export function handle (event, context, callback) {
     })
     return promise
   }).then(() => {
-    let donationValues = []
+    const donationValues = []
     donations.forEach(function (donation) {
       donationValues.push(DonationHelper.formatForBulkCreate(donation, {
         donorId: donorId,

@@ -16,7 +16,7 @@
 
 <template>
   <div class="o-app">
-    <navigation></navigation>
+    <navigation />
     <main class="o-app__main o-app__main--compact">
       <div class="o-app_main-content o-app_main-content o-app_main-content--md">
         <div class="o-app-main-content">
@@ -25,19 +25,21 @@
               <nav class="o-page-header-nav c-breadcrumb">
                 <span><router-link :to="{ name: 'donations-list' }">Donations</router-link></span>
               </nav>
-              <h1 class="o-page-header-title">Add Offline Bulk Donation</h1>
+              <h1 class="o-page-header-title">
+                Add Offline Bulk Donation
+              </h1>
             </div>
           </div>
-          <api-error v-model="apiError"></api-error>
-          <form v-on:submit="submit">
+          <api-error v-model="apiError" />
+          <form @submit="submit">
             <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
               <layout-spinner
                 v-if="!loaded"
                 height="496px"
-              ></layout-spinner>
+              />
               <div
-                class="c-page-section__main"
                 v-else
+                class="c-page-section__main"
               >
                 <div
                   class="c-form-item c-form-item--select c-form-item--combobox c-form-item--required"
@@ -51,12 +53,12 @@
                   </div>
                   <div class="c-form-item__control">
                     <forms-select-nonprofit
-                      v-model="formData.nonprofitId"
                       id="nonprofitId"
+                      v-model="formData.nonprofitId"
                       name="nonprofitId"
                       :nonprofits="nonprofits"
-                      :hasError="formErrors.hasOwnProperty('nonprofitId')"
-                    ></forms-select-nonprofit>
+                      :has-error="formErrors.hasOwnProperty('nonprofitId')"
+                    />
                     <div
                       v-if="formErrors.nonprofitId"
                       class="c-notes c-notes--below c-notes--bad c-form-control-error"
@@ -79,13 +81,13 @@
                   <div class="c-form-item__control">
                     <div class="u-control-icon u-control-icon--dollar">
                       <input
+                        id="donationAmount"
                         v-model="formData.subtotal"
+                        v-money="currencyOptions"
                         type="text"
                         name="donationAmount"
-                        id="donationAmount"
                         style="width: 10rem;"
                         :class="{ 'has-error': formErrors.subtotal }"
-                        v-money="currencyOptions"
                       >
                     </div>
                     <div
@@ -111,10 +113,10 @@
                       </div>
                       <div class="c-form-item__control">
                         <input
+                          id="donationNum"
                           v-model="formData.count"
                           type="number"
                           name="donationNum"
-                          id="donationNum"
                           :class="{ 'has-error': formErrors.count }"
                         >
                       </div>
@@ -139,10 +141,10 @@
                   </div>
                   <div class="c-form-item__control">
                     <input
+                      id="donationNote"
                       v-model="formData.note"
                       type="text"
                       name="donationNote"
-                      id="donationNote"
                       :class="{ 'has-error': formErrors.note }"
                     >
                   </div>
@@ -158,21 +160,24 @@
 
             <footer class="c-form-actions">
               <button
-                v-on:click="save('close')"
                 type="submit"
                 class="c-btn"
-              >Save & Finish
+                @click="save('close')"
+              >
+                Save & Finish
               </button>
               <button
-                v-on:click="save('add')"
                 type="submit"
                 class="c-btn"
-              >Save & Add Another
+                @click="save('add')"
+              >
+                Save & Add Another
               </button>
               <router-link
                 :to="{ name: 'donations-list' }"
                 class="c-btn c-btn--text c-btn--neutral"
-              >Cancel
+              >
+                Cancel
               </router-link>
             </footer>
           </form>
@@ -189,29 +194,10 @@ import ComponentSelectState from './../../forms/SelectState.vue'
 
 export default {
 
-  data () {
-    return {
-      nonprofits: [],
-      loaded: false,
-
-      currencyOptions: {
-        precision: 2,
-        masked: true,
-        thousands: ''
-      },
-
-      // Form Data
-      formData: {
-        count: '',
-        nonprofitId: '',
-        subtotal: 0,
-        type: 'BULK'
-      },
-
-      // Errors
-      formErrors: {},
-      apiError: {}
-    }
+  components: {
+    'forms-select-nonprofit': ComponentSelectNonprofit,
+    'layout-spinner': ComponentSpinner,
+    'state-select': ComponentSelectState
   },
 
   beforeRouteEnter (to, from, next) {
@@ -236,6 +222,31 @@ export default {
     }).catch(() => {
       next()
     })
+  },
+
+  data () {
+    return {
+      nonprofits: [],
+      loaded: false,
+
+      currencyOptions: {
+        precision: 2,
+        masked: true,
+        thousands: ''
+      },
+
+      // Form Data
+      formData: {
+        count: '',
+        nonprofitId: '',
+        subtotal: 0,
+        type: 'BULK'
+      },
+
+      // Errors
+      formErrors: {},
+      apiError: {}
+    }
   },
 
   watch: {
@@ -324,7 +335,7 @@ export default {
         total: vm.getSubtotal(),
         type: vm.formData.type,
         count: vm.formData.count,
-        note: vm.formData.note,
+        note: vm.formData.note
       }
       let promise = Promise.resolve()
       promise = promise.then(() => {
@@ -365,12 +376,6 @@ export default {
         vm.formData[key] = typeof vm.formData[key] === 'string' ? '' : 0
       })
     }
-  },
-
-  components: {
-    'forms-select-nonprofit': ComponentSelectNonprofit,
-    'layout-spinner': ComponentSpinner,
-    'state-select': ComponentSelectState
   }
 }
 </script>
