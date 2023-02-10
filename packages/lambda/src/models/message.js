@@ -14,43 +14,43 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
-const moment = require('moment-timezone');
+const { DataTypes } = require('sequelize')
+const moment = require('moment-timezone')
 
 module.exports = (sequelize) => {
-	return sequelize.define('Message', {
-		email: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		message: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		phone: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		type: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-	}, {
-		setterMethods: {
-			timezone(timezone) {
-				if (timezone) {
-					this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'));
-				} else {
-					const date = new Date(this.createdAt);
-					this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
-				}
-			}
-		}
-	});
-};
+  return sequelize.define('Message', {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    message: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }, {
+    setterMethods: {
+      timezone (timezone) {
+        if (timezone) {
+          this.setDataValue('createdAt', moment.tz(this.createdAt, timezone).format('M/D/YYYY h:mm:ss A'))
+        } else {
+          const date = new Date(this.createdAt)
+          this.setDataValue('createdAt', date.toLocaleDateString() + ' ' + date.toLocaleTimeString())
+        }
+      }
+    }
+  })
+}

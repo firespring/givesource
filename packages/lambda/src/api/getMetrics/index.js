@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const MetricsRepository = require('./../../repositories/metrics');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const MetricsRepository = require('./../../repositories/metrics')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new MetricsRepository();
-	const request = new Request(event, context);
+  const repository = new MetricsRepository()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		return repository.getAll();
-	}).then(function (metrics) {
-		callback(null, metrics);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.getAll()
+  }).then(function (metrics) {
+    callback(null, metrics)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

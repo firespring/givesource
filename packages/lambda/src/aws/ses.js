@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * SES constructor
  *
  * @constructor
  */
-function SES() {
+function SES () {
 }
 
 /**
@@ -36,48 +36,48 @@ function SES() {
  * @return {Promise}
  */
 SES.prototype.sendEmail = function (subject, bodyHtml, bodyText, fromAddress, toAddresses, replyToAddresses) {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		if (!bodyHtml && !bodyText) {
-			reject(new Error('email must contain a body'));
-		}
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    if (!bodyHtml && !bodyText) {
+      reject(new Error('email must contain a body'))
+    }
 
-		const params = {
-			Destination: {
-				ToAddresses: toAddresses,
-			},
-			Message: {
-				Body: {},
-				Subject: {
-					Data: subject,
-				}
-			},
-			Source: fromAddress,
-			ReplyToAddresses: replyToAddresses,
-		};
+    const params = {
+      Destination: {
+        ToAddresses: toAddresses
+      },
+      Message: {
+        Body: {},
+        Subject: {
+          Data: subject
+        }
+      },
+      Source: fromAddress,
+      ReplyToAddresses: replyToAddresses
+    }
 
-		if (bodyHtml) {
-			params.Message.Body.Html = {
-				Charset: 'UTF-8',
-				Data: bodyHtml
-			}
-		}
+    if (bodyHtml) {
+      params.Message.Body.Html = {
+        Charset: 'UTF-8',
+        Data: bodyHtml
+      }
+    }
 
-		if (bodyText) {
-			params.Message.Body.Text = {
-				Charset: 'UTF-8',
-				Data: bodyText
-			};
-		}
+    if (bodyText) {
+      params.Message.Body.Text = {
+        Charset: 'UTF-8',
+        Data: bodyText
+      }
+    }
 
-		awsSES.sendEmail(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+    awsSES.sendEmail(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Verify an AWS SES sender email address
@@ -86,19 +86,19 @@ SES.prototype.sendEmail = function (subject, bodyHtml, bodyText, fromAddress, to
  * @return {Promise}
  */
 SES.prototype.verifyEmailIdentity = function (email) {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			EmailAddress: email,
-		};
-		awsSES.verifyEmailIdentity(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      EmailAddress: email
+    }
+    awsSES.verifyEmailIdentity(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * List AWS SES email address identities
@@ -106,19 +106,19 @@ SES.prototype.verifyEmailIdentity = function (email) {
  * @return {Promise}
  */
 SES.prototype.listIdentities = function () {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			IdentityType: 'EmailAddress'
-		};
-		awsSES.listIdentities(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      IdentityType: 'EmailAddress'
+    }
+    awsSES.listIdentities(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Get AWS SES identity verification statuses
@@ -127,19 +127,19 @@ SES.prototype.listIdentities = function () {
  * @return {Promise}
  */
 SES.prototype.getIdentityVerificationAttributes = function (identities) {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Identities: identities
-		};
-		awsSES.getIdentityVerificationAttributes(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Identities: identities
+    }
+    awsSES.getIdentityVerificationAttributes(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Delete an AWS SES email address
@@ -148,19 +148,19 @@ SES.prototype.getIdentityVerificationAttributes = function (identities) {
  * @return {Promise}
  */
 SES.prototype.deleteIdentity = function (identity) {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Identity: identity
-		};
-		awsSES.deleteIdentity(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Identity: identity
+    }
+    awsSES.deleteIdentity(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Update an identity policy
@@ -171,20 +171,20 @@ SES.prototype.deleteIdentity = function (identity) {
  * @return {Promise}
  */
 SES.prototype.updatePolicy = function (identity, policy, policyName) {
-	const awsSES = new AWS.SES();
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Identity: identity,
-			Policy: policy,
-			PolicyName: policyName,
-		};
-		awsSES.putIdentityPolicy(params, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsSES = new AWS.SES()
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Identity: identity,
+      Policy: policy,
+      PolicyName: policyName
+    }
+    awsSES.putIdentityPolicy(params, function (err, data) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = SES;
+module.exports = SES

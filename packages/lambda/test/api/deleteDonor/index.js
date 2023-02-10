@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const DeleteDonor = require('../../../src/api/deleteDonor/index');
-const DonorsRepository = require('../../../src/repositories/donors');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const DeleteDonor = require('../../../src/api/deleteDonor/index')
+const DonorsRepository = require('../../../src/repositories/donors')
+const TestHelper = require('../../helpers/test')
 
 describe('DeleteDonor', function () {
+  afterEach(function () {
+    DonorsRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		DonorsRepository.prototype.delete.restore();
-	});
+  it('should delete a donor', function () {
+    const model = TestHelper.generate.model('donor')
+    sinon.stub(DonorsRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        donor_uuid: model.uuid
+      }
+    }
+    return DeleteDonor.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a donor', function () {
-		const model = TestHelper.generate.model('donor');
-		sinon.stub(DonorsRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				donor_uuid: model.uuid
-			}
-		};
-		return DeleteDonor.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(DonorsRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				donor_uuid: '1234'
-			}
-		};
-		return DeleteDonor.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(DonorsRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        donor_uuid: '1234'
+      }
+    }
+    return DeleteDonor.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

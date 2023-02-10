@@ -14,57 +14,57 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
-const UsersRepository = require('./../../repositories/users');
-const UUID = require('node-uuid');
+const Cognito = require('./../../aws/cognito')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
+const UsersRepository = require('./../../repositories/users')
+const UUID = require('node-uuid')
 
 exports.handle = function (event, context, callback) {
-	const cognito = new Cognito();
-	const usersRepository = new UsersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email_addresses']);
+  const cognito = new Cognito()
+  const usersRepository = new UsersRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email_addresses'])
 
-	const userPoolId = process.env.USER_POOL_ID;
-	const emailAddresses = request.get('email_addresses');
-	request.validate().then(function () {
-		return new Promise(function (resolve, reject) {
-			const users = [];
-			let promise = Promise.resolve();
-			emailAddresses.split(',').forEach(function (email) {
-				email = email.trim();
-				let user;
-				promise = promise.then(function () {
-					return usersRepository.populate({email: email, cognitoUsername: UUID.v4()})
-				}).then(function (populatedUser) {
-					user = populatedUser;
-					return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email);
-				}).then(function (cognitoUser) {
-					cognitoUser.User.Attributes.forEach(function (attribute) {
-						if (attribute.Name === 'sub') {
-							user.cognitoUuid = attribute.Value;
-						}
-					});
-				}).then(function () {
-					return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Admin');
-				}).then(function () {
-					return usersRepository.upsert(user, {});
-				}).then(function () {
-					users.push(user);
-				}).catch(function (err) {
-					reject(err);
-				});
-			});
-			promise = promise.then(function () {
-				resolve(users);
-			});
-		});
-	}).then(function (users) {
-		callback(null, {
-			users: users
-		});
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const userPoolId = process.env.USER_POOL_ID
+  const emailAddresses = request.get('email_addresses')
+  request.validate().then(function () {
+    return new Promise(function (resolve, reject) {
+      const users = []
+      let promise = Promise.resolve()
+      emailAddresses.split(',').forEach(function (email) {
+        email = email.trim()
+        let user
+        promise = promise.then(function () {
+          return usersRepository.populate({ email: email, cognitoUsername: UUID.v4() })
+        }).then(function (populatedUser) {
+          user = populatedUser
+          return cognito.createUser(process.env.AWS_REGION, userPoolId, user.cognitoUsername, user.email)
+        }).then(function (cognitoUser) {
+          cognitoUser.User.Attributes.forEach(function (attribute) {
+            if (attribute.Name === 'sub') {
+              user.cognitoUuid = attribute.Value
+            }
+          })
+        }).then(function () {
+          return cognito.assignUserToGroup(process.env.AWS_REGION, userPoolId, user.cognitoUsername, 'Admin')
+        }).then(function () {
+          return usersRepository.upsert(user, {})
+        }).then(function () {
+          users.push(user)
+        }).catch(function (err) {
+          reject(err)
+        })
+      })
+      promise = promise.then(function () {
+        resolve(users)
+      })
+    })
+  }).then(function (users) {
+    callback(null, {
+      users: users
+    })
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

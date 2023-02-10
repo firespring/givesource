@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource');
-const NonprofitReportsRepository = require('./../../repositories/nonprofitReports');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const NonprofitResourceMiddleware = require('./../../middleware/nonprofitResource')
+const NonprofitReportsRepository = require('./../../repositories/nonprofitReports')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new NonprofitReportsRepository();
-	const request = new Request(event, context);
-	request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']));
+  const repository = new NonprofitReportsRepository()
+  const request = new Request(event, context)
+  request.middleware(new NonprofitResourceMiddleware(request.urlParam('nonprofit_id'), ['SuperAdmin', 'Admin']))
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('nonprofit_id'), request.urlParam('report_id'));
-	}).then(function (report) {
-		callback(null, report);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('nonprofit_id'), request.urlParam('report_id'))
+  }).then(function (report) {
+    callback(null, report)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

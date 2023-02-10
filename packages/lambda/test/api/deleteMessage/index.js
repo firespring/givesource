@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const DeleteMessage = require('../../../src/api/deleteMessage/index');
-const MessagesRepository = require('../../../src/repositories/messages');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const DeleteMessage = require('../../../src/api/deleteMessage/index')
+const MessagesRepository = require('../../../src/repositories/messages')
+const TestHelper = require('../../helpers/test')
 
 describe('DeleteMessage', function () {
+  afterEach(function () {
+    MessagesRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		MessagesRepository.prototype.delete.restore();
-	});
+  it('should delete a message', function () {
+    const model = TestHelper.generate.model('message')
+    sinon.stub(MessagesRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        message_uuid: model.uuid
+      }
+    }
+    return DeleteMessage.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a message', function () {
-		const model = TestHelper.generate.model('message');
-		sinon.stub(MessagesRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				message_uuid: model.uuid
-			}
-		};
-		return DeleteMessage.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(MessagesRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				message_uuid: '1234'
-			}
-		};
-		return DeleteMessage.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(MessagesRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        message_uuid: '1234'
+      }
+    }
+    return DeleteMessage.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

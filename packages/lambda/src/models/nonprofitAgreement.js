@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-    return sequelize.define('NonprofitAgreement', {
-        agreementId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        nonprofitId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        isChecked: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-    }, {
-        paranoid: true,
-        timestamps: true
-    });
-};
+  return sequelize.define('NonprofitAgreement', {
+    agreementId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    nonprofitId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    isChecked: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    }
+  }, {
+    paranoid: true,
+    timestamps: true
+  })
+}

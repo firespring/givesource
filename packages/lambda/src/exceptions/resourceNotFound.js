@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * ResourceNotFoundException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function ResourceNotFoundException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 404;
-	this._type = 'resource_not_found';
-	this.defaultMessage = 'The specified resource does not exist.';
+  this._status = 404
+  this._type = 'resource_not_found'
+  this.defaultMessage = 'The specified resource does not exist.'
 }
 
 /**
@@ -35,6 +35,6 @@ function ResourceNotFoundException (message) {
  *
  * @type {HttpException}
  */
-ResourceNotFoundException.prototype = new HttpException();
+ResourceNotFoundException.prototype = new HttpException()
 
-module.exports = ResourceNotFoundException;
+module.exports = ResourceNotFoundException

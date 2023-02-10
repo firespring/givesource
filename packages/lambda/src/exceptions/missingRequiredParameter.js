@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * MissingRequiredParameter constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function MissingRequiredParameter (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 400;
-	this._type = 'missing_required_parameter';
-	this.defaultMessage = 'A required parameter was not specified for this request.';
+  this._status = 400
+  this._type = 'missing_required_parameter'
+  this.defaultMessage = 'A required parameter was not specified for this request.'
 }
 
 /**
@@ -35,6 +35,6 @@ function MissingRequiredParameter (message) {
  *
  * @type {HttpException}
  */
-MissingRequiredParameter.prototype = new HttpException();
+MissingRequiredParameter.prototype = new HttpException()
 
-module.exports = MissingRequiredParameter;
+module.exports = MissingRequiredParameter

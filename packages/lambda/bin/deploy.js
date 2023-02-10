@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-require('./config/bootstrap').bootstrap();
+require('./config/bootstrap').bootstrap()
 
-const config = require('config');
-const fs = require('fs');
-const fuzzy = require('fuzzy');
-const inquirer = require('inquirer');
-const Lambda = require('./../src/aws/lambda');
-const path = require('path');
+const config = require('config')
+const fs = require('fs')
+const fuzzy = require('fuzzy')
+const inquirer = require('inquirer')
+const Lambda = require('./../src/aws/lambda')
+const path = require('path')
 
 /**
  * Deploy a lambda function
@@ -30,18 +30,18 @@ const path = require('path');
  * @return {Promise}
  */
 const deploy = function (functionName) {
-	const lambda = new Lambda();
+  const lambda = new Lambda()
 
-	const buildDir = path.resolve(__dirname, './../build');
-	const name = config.get('stack.AWS_STACK_NAME') + '-' + functionName;
+  const buildDir = path.resolve(__dirname, './../build')
+  const name = config.get('stack.AWS_STACK_NAME') + '-' + functionName
 
-	return lambda.getFunction(config.get('stack.AWS_REGION'), name).then(function () {
-		const filepath = buildDir + '/' + functionName + '.zip';
-		const body = fs.readFileSync(filepath);
-		const zip = Buffer.from(body, 'binary');
-		return lambda.updateFunctionCode(config.get('stack.AWS_REGION'), name, zip);
-	});
-};
+  return lambda.getFunction(config.get('stack.AWS_REGION'), name).then(function () {
+    const filepath = buildDir + '/' + functionName + '.zip'
+    const body = fs.readFileSync(filepath)
+    const zip = Buffer.from(body, 'binary')
+    return lambda.updateFunctionCode(config.get('stack.AWS_REGION'), name, zip)
+  })
+}
 
 /**
  * Batch deploy all lambda functions
@@ -51,66 +51,66 @@ const deploy = function (functionName) {
  * @return {Promise}
  */
 const batchDeploy = function (functions, retries) {
-	retries = (retries > -1) ? retries : 3;
-	return new Promise(function (resolve, reject) {
-		const failed = [];
-		let promise = Promise.resolve();
-		functions.forEach(function (func) {
-			promise = promise.then(function () {
-				return deploy(func).then(function () {
-					console.log('deployed ' + func);
-				}).catch(function (err) {
-					console.log(err);
-					failed.push(func);
-				});
-			});
-		});
-		promise = promise.then(function () {
-			if (failed.length > 0) {
-				if (retries > 0) {
-					retries = retries - 1;
-					return batchDeploy(failed, retries);
-				} else {
-					reject(new Error('Failed to deploy: ' + JSON.stringify(failed)));
-				}
-			} else {
-				resolve();
-			}
-		});
-	});
-};
+  retries = (retries > -1) ? retries : 3
+  return new Promise(function (resolve, reject) {
+    const failed = []
+    let promise = Promise.resolve()
+    functions.forEach(function (func) {
+      promise = promise.then(function () {
+        return deploy(func).then(function () {
+          console.log('deployed ' + func)
+        }).catch(function (err) {
+          console.log(err)
+          failed.push(func)
+        })
+      })
+    })
+    promise = promise.then(function () {
+      if (failed.length > 0) {
+        if (retries > 0) {
+          retries = retries - 1
+          return batchDeploy(failed, retries)
+        } else {
+          reject(new Error('Failed to deploy: ' + JSON.stringify(failed)))
+        }
+      } else {
+        resolve()
+      }
+    })
+  })
+}
 
-const functionsDir = path.resolve(__dirname, './../build/functions');
-const list = fs.readdirSync(functionsDir);
-const choices = ['All'].concat(list);
+const functionsDir = path.resolve(__dirname, './../build/functions')
+const list = fs.readdirSync(functionsDir)
+const choices = ['All'].concat(list)
 
 const searchFunctions = function (answers, input) {
-	input = input || '';
-	return new Promise(function (resolve) {
-		const results = fuzzy.filter(input, choices);
-		resolve(results.map(function (el) {
-			return el.original;
-		}));
-	});
-};
+  input = input || ''
+  return new Promise(function (resolve) {
+    const results = fuzzy.filter(input, choices)
+    resolve(results.map(function (el) {
+      return el.original
+    }))
+  })
+}
 
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
+inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 inquirer.prompt([
-	{
-		type: 'autocomplete',
-		message: 'Select a function to deploy:',
-		name: 'selected',
-		source: searchFunctions,
-		validate: function (answer) {
-			if (answer.length < 1) {
-				return 'C';
-			}
-			return true;
-		}
-	}
+  {
+    type: 'autocomplete',
+    message: 'Select a function to deploy:',
+    name: 'selected',
+    source: searchFunctions,
+    validate: function (answer) {
+      if (answer.length < 1) {
+        return 'C'
+      }
+      return true
+    }
+  }
 ]).then(function (answer) {
-	const functions = (answer.selected === 'All') ? list : [answer.selected];
-	return batchDeploy(functions);
+  const functions = (answer.selected === 'All') ? list : [answer.selected]
+  return batchDeploy(functions)
 }).catch(function (err) {
-	console.log(err);
-});
+  console.log(err)
+})

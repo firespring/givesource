@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetDonors = require('../../../src/api/getDonors/index');
-const DonorsRepository = require('../../../src/repositories/donors');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetDonors = require('../../../src/api/getDonors/index')
+const DonorsRepository = require('../../../src/repositories/donors')
+const TestHelper = require('../../helpers/test')
 
 describe('GetDonors', function () {
+  afterEach(function () {
+    DonorsRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		DonorsRepository.prototype.getAll.restore();
-	});
+  it('should return a list of donors', function () {
+    const models = TestHelper.generate.modelCollection('donor', 3)
+    sinon.stub(DonorsRepository.prototype, 'getAll').resolves(models)
+    return GetDonors.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of donors', function () {
-		const models = TestHelper.generate.modelCollection('donor', 3);
-		sinon.stub(DonorsRepository.prototype, 'getAll').resolves(models);
-		return GetDonors.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(DonorsRepository.prototype, 'getAll').rejects('Error');
-		return GetDonors.handle({}, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(DonorsRepository.prototype, 'getAll').rejects('Error')
+    return GetDonors.handle({}, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

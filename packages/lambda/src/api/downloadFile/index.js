@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-const FilesRepository = require('./../../repositories/files');
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const S3 = require('./../../aws/s3');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const FilesRepository = require('./../../repositories/files')
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const S3 = require('./../../aws/s3')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new FilesRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
-	const s3 = new S3();
+  const lambda = new Lambda()
+  const repository = new FilesRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']))
+  const s3 = new S3()
 
-	let file = null;
-	request.validate().then(function () {
-		return repository.get(request.urlParam('file_id'));
-	}).then(function (model) {
-		file = model;
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		return s3.downloadSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.path);
-	}).then(function (url) {
-		callback(null, {
-			download_url: url,
-			file: file
-		});
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let file = null
+  request.validate().then(function () {
+    return repository.get(request.urlParam('file_id'))
+  }).then(function (model) {
+    file = model
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    return s3.downloadSignedUrl(process.env.AWS_REGION, process.env.AWS_S3_BUCKET, file.path)
+  }).then(function (url) {
+    callback(null, {
+      download_url: url,
+      file: file
+    })
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

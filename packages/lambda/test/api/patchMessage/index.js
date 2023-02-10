@@ -14,62 +14,60 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const PatchMessage = require('../../../src/api/patchMessage/index');
-const MessagesRepository = require('../../../src/repositories/messages');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const PatchMessage = require('../../../src/api/patchMessage/index')
+const MessagesRepository = require('../../../src/repositories/messages')
+const TestHelper = require('../../helpers/test')
 
 describe('PatchMessage', function () {
+  afterEach(function () {
+    MessagesRepository.prototype.get.restore()
+    MessagesRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		MessagesRepository.prototype.get.restore();
-		MessagesRepository.prototype.save.restore();
-	});
+  it('should return an updated message', function () {
+    const original = TestHelper.generate.model('message')
+    const updated = TestHelper.generate.model('message', { uuid: original.uuid })
+    sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
+    sinon.stub(MessagesRepository.prototype, 'save').resolves(updated)
+    const params = {
+      body: updated.except('uuid'),
+      params: {
+        messageUuid: original.uuid
+      }
+    }
+    return PatchMessage.handle(params, null, function (error, result) {
+      assert(error === null)
+      assert.deepEqual(result, updated.all())
+    })
+  })
 
-	it('should return an updated message', function () {
-		const original = TestHelper.generate.model('message');
-		const updated = TestHelper.generate.model('message', {uuid: original.uuid});
-		sinon.stub(MessagesRepository.prototype, 'get').resolves(original);
-		sinon.stub(MessagesRepository.prototype, 'save').resolves(updated);
-		const params = {
-			body: updated.except('uuid'),
-			params: {
-				messageUuid: original.uuid
-			}
-		};
-		return PatchMessage.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert.deepEqual(result, updated.all());
-		});
-	});
+  it('should return error on exception thrown - get', function () {
+    const original = TestHelper.generate.model('message')
+    const params = {
+      params: {
+        messageUuid: original.uuid
+      }
+    }
+    sinon.stub(MessagesRepository.prototype, 'get').rejects('Error')
+    sinon.stub(MessagesRepository.prototype, 'save').resolves(original)
+    return PatchMessage.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
 
-	it('should return error on exception thrown - get', function () {
-		const original = TestHelper.generate.model('message');
-		const params = {
-			params: {
-				messageUuid: original.uuid
-			}
-		};
-		sinon.stub(MessagesRepository.prototype, 'get').rejects('Error');
-		sinon.stub(MessagesRepository.prototype, 'save').resolves(original);
-		return PatchMessage.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-	it('should return error on exception thrown - save', function () {
-		const original = TestHelper.generate.model('message');
-		const params = {
-			params: {
-				messageUuid: original.uuid
-			}
-		};
-		sinon.stub(MessagesRepository.prototype, 'get').resolves(original);
-		sinon.stub(MessagesRepository.prototype, 'save').rejects('Error');
-		return PatchMessage.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown - save', function () {
+    const original = TestHelper.generate.model('message')
+    const params = {
+      params: {
+        messageUuid: original.uuid
+      }
+    }
+    sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
+    sinon.stub(MessagesRepository.prototype, 'save').rejects('Error')
+    return PatchMessage.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
+})

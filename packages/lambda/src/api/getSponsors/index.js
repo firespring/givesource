@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SponsorsRepository = require('./../../repositories/sponsors');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const SponsorsRepository = require('./../../repositories/sponsors')
 
 exports.handle = function (event, context, callback) {
-	const repository = new SponsorsRepository();
-	const request = new Request(event, context);
+  const repository = new SponsorsRepository()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		return repository.getAll(request.urlParam('sponsor_tier_id'));
-	}).then(function (sponsors) {
-		callback(null, sponsors);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.getAll(request.urlParam('sponsor_tier_id'))
+  }).then(function (sponsors) {
+    callback(null, sponsors)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

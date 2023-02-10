@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-const logger = require('./../../helpers/log');
-const response = require('cfn-response');
-const DynamicContentHelper = require('./../../helpers/dynamicContent');
+const logger = require('./../../helpers/log')
+const response = require('cfn-response')
+const DynamicContentHelper = require('./../../helpers/dynamicContent')
 
 exports.handle = function (event, context, callback) {
-	logger.log('generateDynamicContent event: %j', event);
+  logger.log('generateDynamicContent event: %j', event)
 
-	if (event.RequestType === 'Delete') {
-		response.send(event, context, response.SUCCESS);
-		return;
-	}
+  if (event.RequestType === 'Delete') {
+    response.send(event, context, response.SUCCESS)
+    return
+  }
 
-	DynamicContentHelper.regenerateDynamicContent([], process.env.AWS_REGION, process.env.AWS_STACK_NAME, true).then(function () {
-		response.send(event, context, response.SUCCESS);
-	}).catch(function (err) {
-		logger.log(err);
-		response.send(event, context, response.FAILED);
-	})
-
-};
+  DynamicContentHelper.regenerateDynamicContent([], process.env.AWS_REGION, process.env.AWS_STACK_NAME, true).then(function () {
+    response.send(event, context, response.SUCCESS)
+  }).catch(function (err) {
+    logger.log(err)
+    response.send(event, context, response.FAILED)
+  })
+}

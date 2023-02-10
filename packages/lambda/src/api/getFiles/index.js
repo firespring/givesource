@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-const FilesRepository = require('./../../repositories/files');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const FilesRepository = require('./../../repositories/files')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new FilesRepository();
-	const request = new Request(event, context).queryParameters(['fileIds']);
-	const fileIds = request.queryParam('fileIds', '').split(',');
+  const repository = new FilesRepository()
+  const request = new Request(event, context).queryParameters(['fileIds'])
+  const fileIds = request.queryParam('fileIds', '').split(',')
 
-	request.validate().then(function () {
-		return repository.batchGet(fileIds);
-	}).then(function (files) {
-		callback(null, files);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.batchGet(fileIds)
+  }).then(function (files) {
+    callback(null, files)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

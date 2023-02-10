@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetMessages = require('../../../src/api/getMessages/index');
-const MessagesRepository = require('../../../src/repositories/messages');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetMessages = require('../../../src/api/getMessages/index')
+const MessagesRepository = require('../../../src/repositories/messages')
+const TestHelper = require('../../helpers/test')
 
 describe('GetMessages', function () {
+  afterEach(function () {
+    MessagesRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		MessagesRepository.prototype.getAll.restore();
-	});
+  it('should return a list of messages', function () {
+    const models = TestHelper.generate.modelCollection('message', 3)
+    sinon.stub(MessagesRepository.prototype, 'getAll').resolves(models)
+    return GetMessages.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of messages', function () {
-		const models = TestHelper.generate.modelCollection('message', 3);
-		sinon.stub(MessagesRepository.prototype, 'getAll').resolves(models);
-		return GetMessages.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(MessagesRepository.prototype, 'getAll').rejects('Error');
-		return GetMessages.handle({}, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(MessagesRepository.prototype, 'getAll').rejects('Error')
+    return GetMessages.handle({}, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

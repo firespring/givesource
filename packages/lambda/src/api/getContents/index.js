@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-const ContentHelper = require('./../../helpers/content');
-const ContentsRepository = require('./../../repositories/contents');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const ContentHelper = require('./../../helpers/content')
+const ContentsRepository = require('./../../repositories/contents')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const repository = new ContentsRepository();
-	const request = new Request(event, context).queryParameters(['keys']);
-	const keys = request.queryParam('keys', '').split(',');
+  const repository = new ContentsRepository()
+  const request = new Request(event, context).queryParameters(['keys'])
+  const keys = request.queryParam('keys', '').split(',')
 
-	let results = [];
-	request.validate().then(function () {
-		return repository.batchGet(keys);
-	}).then(function (contents) {
-		let promise = Promise.resolve();
-		results = [];
-		contents.forEach(function (content) {
-			if (content.type === ContentHelper.TYPE_COLLECTION) {
-				promise = promise.then(function () {
-					return repository.getByParentId(content.id);
-				}).then(function (models) {
-					let values = [];
-					models.forEach(function (result) {
-						values.push(result);
-					});
-					content.set('value', values);
-				});
-			}
-			results.push(content);
-		});
-		return promise;
-	}).then(function () {
-		callback(null, results);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  let results = []
+  request.validate().then(function () {
+    return repository.batchGet(keys)
+  }).then(function (contents) {
+    let promise = Promise.resolve()
+    results = []
+    contents.forEach(function (content) {
+      if (content.type === ContentHelper.TYPE_COLLECTION) {
+        promise = promise.then(function () {
+          return repository.getByParentId(content.id)
+        }).then(function (models) {
+          const values = []
+          models.forEach(function (result) {
+            values.push(result)
+          })
+          content.set('value', values)
+        })
+      }
+      results.push(content)
+    })
+    return promise
+  }).then(function () {
+    callback(null, results)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

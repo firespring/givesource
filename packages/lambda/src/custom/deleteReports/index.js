@@ -14,48 +14,48 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const FilesRepository = require('./../../repositories/files');
-const logger = require('./../../helpers/log');
-const ReportsRepository = require('./../../repositories/reports');
-const S3 = require("./../../aws/s3");
+const _ = require('lodash')
+const FilesRepository = require('./../../repositories/files')
+const logger = require('./../../helpers/log')
+const ReportsRepository = require('./../../repositories/reports')
+const S3 = require('./../../aws/s3')
 
 exports.handle = function (event, context, callback) {
-	logger.log(`${context.functionName} event: %j`, event);
-	const filesRepository = new FilesRepository();
-	const reportsRepository = new ReportsRepository();
-	const s3 = new S3();
+  logger.log(`${context.functionName} event: %j`, event)
+  const filesRepository = new FilesRepository()
+  const reportsRepository = new ReportsRepository()
+  const s3 = new S3()
 
-	const expire = new Date();
-	expire.setHours(expire.getHours() - 1);
+  const expire = new Date()
+  expire.setHours(expire.getHours() - 1)
 
-	let filesCount = 0, processedCount = 0, reportsCount = 0;
-	reportsRepository.getAll().then(function (reports) {
-		let promise = Promise.resolve();
-		reports.forEach(function (report) {
-			processedCount += 1;
-			if (report.createdOn <= expire.getTime()) {
-				reportsCount += 1;
-				if (report.fileUuid) {
-					promise = promise.then(function () {
-						return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${report.fileUuid}`).then(function () {
-							filesCount += 1;
-							return filesRepository.delete(report.fileUuid);
-						});
-					});
-				}
+  let filesCount = 0; let processedCount = 0; let reportsCount = 0
+  reportsRepository.getAll().then(function (reports) {
+    let promise = Promise.resolve()
+    reports.forEach(function (report) {
+      processedCount += 1
+      if (report.createdOn <= expire.getTime()) {
+        reportsCount += 1
+        if (report.fileUuid) {
+          promise = promise.then(function () {
+            return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${report.fileUuid}`).then(function () {
+              filesCount += 1
+              return filesRepository.delete(report.fileUuid)
+            })
+          })
+        }
 
-				promise = promise.then(function () {
-					return reportsRepository.delete(report.uuid);
-				});
-			}
-		});
-		return promise;
-	}).then(function () {
-		logger.log(`Reports processed: ${processedCount}. Reports deleted: ${reportsCount}. Files deleted: ${filesCount}.`);
-		callback();
-	}).catch(function (err) {
-		console.log(err);
-		callback();
-	});
-};
+        promise = promise.then(function () {
+          return reportsRepository.delete(report.uuid)
+        })
+      }
+    })
+    return promise
+  }).then(function () {
+    logger.log(`Reports processed: ${processedCount}. Reports deleted: ${reportsCount}. Files deleted: ${filesCount}.`)
+    callback()
+  }).catch(function (err) {
+    console.log(err)
+    callback()
+  })
+}

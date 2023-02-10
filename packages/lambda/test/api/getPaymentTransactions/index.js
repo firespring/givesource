@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetPaymentTransactions = require('../../../src/api/getPaymentTransactions/index');
-const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetPaymentTransactions = require('../../../src/api/getPaymentTransactions/index')
+const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
+const TestHelper = require('../../helpers/test')
 
 describe('GetPaymentTransactions', function () {
+  afterEach(function () {
+    PaymentTransactionsRepository.prototype.getAll.restore()
+  })
 
-	afterEach(function () {
-		PaymentTransactionsRepository.prototype.getAll.restore();
-	});
+  it('should return a list of paymentTransactions', function () {
+    const models = TestHelper.generate.modelCollection('paymentTransaction', 3)
+    sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').resolves(models)
+    return GetPaymentTransactions.handle({}, null, function (error, results) {
+      assert(error === null)
+      assert(results.length === 3)
+      results.forEach(function (result, i) {
+        assert(result.uuid === models[i].uuid)
+      })
+    })
+  })
 
-	it('should return a list of paymentTransactions', function () {
-		const models = TestHelper.generate.modelCollection('paymentTransaction', 3);
-		sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').resolves(models);
-		return GetPaymentTransactions.handle({}, null, function (error, results) {
-			assert(error === null);
-			assert(results.length === 3);
-			results.forEach(function (result, i) {
-				assert(result.uuid === models[i].uuid);
-			});
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').rejects('Error');
-		return GetPaymentTransactions.handle({}, null, function (error, results) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').rejects('Error')
+    return GetPaymentTransactions.handle({}, null, function (error, results) {
+      assert(error instanceof Error)
+    })
+  })
+})

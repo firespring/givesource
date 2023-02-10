@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
+const dotenv = require('dotenv')
 
-dotenv.config({path: `${__dirname}/../../../../.env`});
-const nodeEnv = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 'production';
+dotenv.config({ path: `${__dirname}/../../../../.env` })
+const nodeEnv = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 'production'
 
 /**
  * Log a message to the console.
@@ -27,14 +27,14 @@ const nodeEnv = process.env.hasOwnProperty('NODE_ENV') ? process.env.NODE_ENV : 
  * @param {*} [options]
  */
 exports.log = function (message, options) {
-	if (nodeEnv !== 'test') {
-		if (options) {
-			console.log(message, options);
-		} else {
-			console.log(message);
-		}
-	}
-};
+  if (nodeEnv !== 'test') {
+    if (options) {
+      console.log(message, options)
+    } else {
+      console.log(message)
+    }
+  }
+}
 
 /**
  * Log an error message to the console.
@@ -44,10 +44,10 @@ exports.log = function (message, options) {
  * @param {*} [options]
  */
 exports.error = function (message, options) {
-	if (nodeEnv !== 'test') {
-		console.error(message, options);
-	}
-};
+  if (nodeEnv !== 'test') {
+    console.error(message, options)
+  }
+}
 
 /**
  * Log an info message to the console.
@@ -57,10 +57,10 @@ exports.error = function (message, options) {
  * @param {*} [options]
  */
 exports.info = function (message, options) {
-	if (nodeEnv !== 'test') {
-		console.info(message, options);
-	}
-};
+  if (nodeEnv !== 'test') {
+    console.info(message, options)
+  }
+}
 
 /**
  * Log a warning message to the console.
@@ -70,10 +70,10 @@ exports.info = function (message, options) {
  * @param {*} [options]
  */
 exports.warn = function (message, options) {
-	if (nodeEnv !== 'test') {
-		console.warn(message, options);
-	}
-};
+  if (nodeEnv !== 'test') {
+    console.warn(message, options)
+  }
+}
 
 /**
  * Log a debug message to the console.
@@ -83,7 +83,7 @@ exports.warn = function (message, options) {
  * @param {*} [options]
  */
 exports.debug = function (message, options) {
-	if (nodeEnv !== 'test') {
-		console.debug(message, options);
-	}
-};
+  if (nodeEnv !== 'test') {
+    console.debug(message, options)
+  }
+}

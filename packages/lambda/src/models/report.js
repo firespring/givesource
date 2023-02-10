@@ -14,38 +14,38 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
-const ReportHelper = require('./../helpers/report');
+const { DataTypes } = require('sequelize')
+const ReportHelper = require('./../helpers/report')
 
 module.exports = (sequelize) => {
-	return sequelize.define('Report', {
-		fileId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		nonprofitId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			defaultValue: 0
-		},
-		status: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ReportHelper.STATUS_PENDING,
-			validate: {
-				isIn: [[ReportHelper.STATUS_FAILED, ReportHelper.STATUS_PENDING, ReportHelper.STATUS_SUCCESS]]
-			}
-		},
-		type: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			defaultValue: ReportHelper.TYPE_DONATIONS,
-			validate: {
-				isIn: [[ReportHelper.TYPE_DONATIONS, ReportHelper.TYPE_PAYOUT_REPORT, ReportHelper.TYPE_LAST_4]]
-			}
-		}
-	});
-};
+  return sequelize.define('Report', {
+    fileId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    nonprofitId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: ReportHelper.STATUS_PENDING,
+      validate: {
+        isIn: [[ReportHelper.STATUS_FAILED, ReportHelper.STATUS_PENDING, ReportHelper.STATUS_SUCCESS]]
+      }
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: ReportHelper.TYPE_DONATIONS,
+      validate: {
+        isIn: [[ReportHelper.TYPE_DONATIONS, ReportHelper.TYPE_PAYOUT_REPORT, ReportHelper.TYPE_LAST_4]]
+      }
+    }
+  })
+}

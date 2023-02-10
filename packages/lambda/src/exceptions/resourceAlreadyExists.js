@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const HttpException = require('./http');
+const HttpException = require('./http')
 
 /**
  * ResourceAlreadyExistsException constructor
@@ -23,11 +23,11 @@ const HttpException = require('./http');
  * @constructor
  */
 function ResourceAlreadyExistsException (message) {
-	HttpException.call(this, message);
+  HttpException.call(this, message)
 
-	this._status = 400;
-	this._type = 'resource_already_exists';
-	this.defaultMessage = 'The specified resource already exists.';
+  this._status = 400
+  this._type = 'resource_already_exists'
+  this.defaultMessage = 'The specified resource already exists.'
 }
 
 /**
@@ -35,6 +35,6 @@ function ResourceAlreadyExistsException (message) {
  *
  * @type {HttpException}
  */
-ResourceAlreadyExistsException.prototype = new HttpException();
+ResourceAlreadyExistsException.prototype = new HttpException()
 
-module.exports = ResourceAlreadyExistsException;
+module.exports = ResourceAlreadyExistsException

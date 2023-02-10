@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const AuthPolicy = require('./../aws/authPolicy');
+const AuthPolicy = require('./../aws/authPolicy')
 
 /**
  * Authorizer constructor
@@ -22,10 +22,10 @@ const AuthPolicy = require('./../aws/authPolicy');
  * @param {String} arn
  * @constructor
  */
-function Authorizer(arn) {
-	this.arn = arn;
-	this.payload = {};
-	this.principalId = null;
+function Authorizer (arn) {
+  this.arn = arn
+  this.payload = {}
+  this.principalId = null
 }
 
 /**
@@ -35,25 +35,25 @@ function Authorizer(arn) {
  * @return {Promise}
  */
 Authorizer.prototype.issueAuthPolicy = function (allow) {
-	const authorizer = this;
+  const authorizer = this
 
-	const apiOptions = {};
-	const tmp = authorizer.arn.split(':');
-	const apiGatewayArnTmp = tmp[5].split('/');
-	const awsAccountId = tmp[4];
-	apiOptions.region = tmp[3];
-	apiOptions.restApiId = apiGatewayArnTmp[0];
-	apiOptions.stage = apiGatewayArnTmp[1];
+  const apiOptions = {}
+  const tmp = authorizer.arn.split(':')
+  const apiGatewayArnTmp = tmp[5].split('/')
+  const awsAccountId = tmp[4]
+  apiOptions.region = tmp[3]
+  apiOptions.restApiId = apiGatewayArnTmp[0]
+  apiOptions.stage = apiGatewayArnTmp[1]
 
-	const policy = new AuthPolicy(authorizer.principalId, awsAccountId, apiOptions);
-	if (allow) {
-		policy.allowAllMethods();
-	} else {
-		policy.denyAllMethods();
-	}
+  const policy = new AuthPolicy(authorizer.principalId, awsAccountId, apiOptions)
+  if (allow) {
+    policy.allowAllMethods()
+  } else {
+    policy.denyAllMethods()
+  }
 
-	return Promise.resolve(policy.build());
-};
+  return Promise.resolve(policy.build())
+}
 
 /**
  * Authorize the request
@@ -61,10 +61,10 @@ Authorizer.prototype.issueAuthPolicy = function (allow) {
  * @return {Promise}
  */
 Authorizer.prototype.authorize = function () {
-	const authorizer = this;
+  const authorizer = this
 
-	authorizer.principalId = 'default';
-	return authorizer.issueAuthPolicy(true);
-};
+  authorizer.principalId = 'default'
+  return authorizer.issueAuthPolicy(true)
+}
 
-module.exports = Authorizer;
+module.exports = Authorizer

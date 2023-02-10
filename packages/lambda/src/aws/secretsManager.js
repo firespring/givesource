@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * Secrets Manager constructor
  *
  * @constructor
  */
-function SecretsManager() {
+function SecretsManager () {
 }
 
 /**
@@ -32,8 +32,8 @@ function SecretsManager() {
  * @returns {Promise}
  */
 SecretsManager.prototype.getSecretValue = (region, secretId) => {
-	const secretManger = new AWS.SecretsManager({region: region});
-	return secretManger.getSecretValue({SecretId: secretId}).promise();
-};
+  const secretManger = new AWS.SecretsManager({ region: region })
+  return secretManger.getSecretValue({ SecretId: secretId }).promise()
+}
 
-module.exports = SecretsManager;
+module.exports = SecretsManager

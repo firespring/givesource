@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * Lambda constructor
  *
  * @constructor
  */
-function Lambda() {
+function Lambda () {
 }
 
 /**
@@ -34,20 +34,20 @@ function Lambda() {
  * @return {Promise}
  */
 Lambda.prototype.invoke = function (region, functionName, payload, invocationType) {
-	const awsLambda = new AWS.Lambda({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			FunctionName: functionName,
-			Payload: JSON.stringify(payload),
-			InvocationType: invocationType || 'Event'
-		};
-		awsLambda.invoke(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName,
+      Payload: JSON.stringify(payload),
+      InvocationType: invocationType || 'Event'
+    }
+    awsLambda.invoke(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = Lambda;
+module.exports = Lambda

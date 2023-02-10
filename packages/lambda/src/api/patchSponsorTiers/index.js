@@ -14,45 +14,45 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const Request = require('./../../aws/request');
-const SponsorTiersRepository = require('./../../repositories/sponsorTiers');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const Request = require('./../../aws/request')
+const SponsorTiersRepository = require('./../../repositories/sponsorTiers')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new SponsorTiersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsorTiers']);
+  const lambda = new Lambda()
+  const repository = new SponsorTiersRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['sponsorTiers'])
 
-	let sponsorTiers = [];
-	request.validate().then(function () {
-		let promise = Promise.resolve();
-		request.get('sponsorTiers', []).forEach(function (data) {
-			promise = promise.then(function () {
-				return repository.populate(data).then(function (sponsorTier) {
-					sponsorTiers.push(sponsorTier);
-				});
-			});
-		});
-		return promise;
-	}).then(function () {
-		let promise = Promise.resolve();
-		sponsorTiers.forEach(function (sponsorTier) {
-			promise = promise.then(function () {
-				return sponsorTier.validate().then(function () {
-					return repository.upsert(sponsorTier, {});
-				}).catch(function (err) {
-					(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-				});
-			});
-		});
-		return promise;
-	}).then(function () {
-		return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse');
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  const sponsorTiers = []
+  request.validate().then(function () {
+    let promise = Promise.resolve()
+    request.get('sponsorTiers', []).forEach(function (data) {
+      promise = promise.then(function () {
+        return repository.populate(data).then(function (sponsorTier) {
+          sponsorTiers.push(sponsorTier)
+        })
+      })
+    })
+    return promise
+  }).then(function () {
+    let promise = Promise.resolve()
+    sponsorTiers.forEach(function (sponsorTier) {
+      promise = promise.then(function () {
+        return sponsorTier.validate().then(function () {
+          return repository.upsert(sponsorTier, {})
+        }).catch(function (err) {
+          (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+        })
+      })
+    })
+    return promise
+  }).then(function () {
+    return lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache', {}, 'RequestResponse')
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

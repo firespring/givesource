@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize')
 
 module.exports = (sequelize) => {
-	return sequelize.define('File', {
-		path: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		filename: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-	});
-};
+  return sequelize.define('File', {
+    path: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    filename: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  })
+}
