@@ -148,8 +148,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 export default {
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {

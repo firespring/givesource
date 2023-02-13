@@ -19,7 +19,6 @@ const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
-const _ = require('lodash')
 const config = require('config')
 const deployInfo = require('../config/deploy-info.json')
 const fs = require('fs')

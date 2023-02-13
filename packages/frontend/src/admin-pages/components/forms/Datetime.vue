@@ -40,8 +40,6 @@
 </template>
 
 <script>
-import DatePicker from 'jquery-datetimepicker'
-
 export default {
   props: {
     value: { type: String, default: '' },

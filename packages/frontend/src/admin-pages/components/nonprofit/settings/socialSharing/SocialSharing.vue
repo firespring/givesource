@@ -172,15 +172,11 @@
 
 <script>
 import ComponentImageEditor from './../../../forms/ImageEditor.vue'
-import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue'
-import ComponentSelectState from './../../../forms/SelectState.vue'
 import ComponentSocialCard from './../../../media/SocialCard.vue'
 
 export default {
   components: {
     'forms-image-editor': ComponentImageEditor,
-    'category-select': ComponentSelectNonprofitCategory,
-    'state-select': ComponentSelectState,
     'social-card': ComponentSocialCard
   },
   beforeRouteEnter (to, from, next) {
