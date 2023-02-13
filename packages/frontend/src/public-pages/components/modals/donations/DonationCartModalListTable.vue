@@ -102,11 +102,11 @@ export default {
     },
     findNonprofit: function () {
       const vue = this
-      vue.$emit('findNonprofit')
+      vue.$emit('find-nonprofit')
     },
     hasError: function (hasError) {
       const vue = this
-      vue.$emit('hasError', hasError)
+      vue.$emit('has-error', hasError)
     }
   }
 }

@@ -80,12 +80,12 @@ export default {
   methods: {
     updateNonprofit: function (nonprofitId) {
       const vue = this
-      vue.$emit('updateNonprofit', nonprofitId)
+      vue.$emit('update-nonprofit', nonprofitId)
     },
 
     hasError: function (err) {
       const vue = this
-      vue.$emit('hasError', err)
+      vue.$emit('has-error', err)
     }
   }
 }
