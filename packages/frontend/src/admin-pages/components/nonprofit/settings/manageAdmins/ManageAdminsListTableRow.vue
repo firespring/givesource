@@ -93,9 +93,9 @@
 
 <script>
 export default {
-  props: [
-    'nonprofitUser'
-  ],
+  props: {
+    nonprofitUser: { type: Object, default: () => ({}) }
+  },
   data: function () {
     return {
       displayingMenu: false,

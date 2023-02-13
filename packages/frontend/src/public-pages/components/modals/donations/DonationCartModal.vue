@@ -76,7 +76,7 @@ export default {
     'donation-cart-modal-list-table': ComponentDonationCartModalListTable
   },
   props: {
-    data: {},
+    data: { type: Object, default: () => ({}) },
     zIndex: {
       type: [Number, String],
       default: 1000

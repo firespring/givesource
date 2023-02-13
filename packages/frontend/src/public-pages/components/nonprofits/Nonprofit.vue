@@ -263,9 +263,9 @@ export default {
       })
     })
   },
-  props: [
-    'slug'
-  ],
+  props: {
+    slug: { type: String, default: '' }
+  },
   data () {
     return {
       files: [],

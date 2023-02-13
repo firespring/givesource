@@ -127,9 +127,7 @@ export default {
   props: {
     data: {
       type: Object,
-      default: {
-        nonprofit: null
-      }
+      default: () => ({ nonprofit: null })
     },
     zIndex: {
       type: [Number, String],

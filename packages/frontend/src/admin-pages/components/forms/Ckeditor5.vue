@@ -35,7 +35,7 @@ export default {
     'layout-spinner': ComponentSpinner
   },
   props: {
-    value: {},
+    value: { type: String, default: '' },
     id: {
       type: String,
       default: ''

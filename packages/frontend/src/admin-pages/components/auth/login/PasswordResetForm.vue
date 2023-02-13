@@ -124,10 +124,10 @@ export default {
   components: {
     authorizing: ComponentAuthorizingSpinner
   },
-  props: [
-    'cognitoUser',
-    'userAttributes'
-  ],
+  props: {
+    cognitoUser: { type: Object, default: () => null },
+    userAttributes: { type: Object, default: () => null }
+  },
   data: function () {
     return {
       displayAuthorizing: false,

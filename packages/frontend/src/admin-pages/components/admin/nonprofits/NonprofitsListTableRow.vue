@@ -161,9 +161,9 @@
 const numeral = require('numeral')
 
 export default {
-  props: [
-    'nonprofit'
-  ],
+  props: {
+    nonprofit: { type: Object, default: () => null }
+  },
   data: function () {
     return {
       displayingMenu: false,

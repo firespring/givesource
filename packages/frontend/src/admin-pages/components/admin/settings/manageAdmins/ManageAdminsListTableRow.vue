@@ -93,9 +93,9 @@
 <script>
 
 export default {
-  props: [
-    'adminUser'
-  ],
+  props: {
+    adminUser: { type: Object, default: () => null }
+  },
   data: function () {
     return {
       displayingMenu: false,

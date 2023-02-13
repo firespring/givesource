@@ -76,7 +76,7 @@
 <script>
 export default {
   props: {
-    data: {},
+    data: { type: Object, default: () => ({}) },
     zIndex: {
       type: [Number, String],
       default: 1000

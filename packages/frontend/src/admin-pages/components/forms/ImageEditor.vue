@@ -85,9 +85,9 @@
 <script>
 export default {
   props: {
-    id: '',
-    name: '',
-    value: {},
+    id: { type: String, default: '' },
+    name: { type: String, default: '' },
+    value: { type: Object, default: () => null },
     height: {
       type: Number,
       default: 400

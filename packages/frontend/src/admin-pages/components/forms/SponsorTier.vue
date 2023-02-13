@@ -47,16 +47,16 @@
 <script>
 export default {
   props: {
-    id: '',
-    name: '',
-    placeholder: '',
+    id: { type: [String, Number], default: null },
+    name: { type: String, default: null },
+    placeholder: { type: String, default: null },
     sponsorTiers: {
       type: Array,
       default: function () {
         return []
       }
     },
-    value: {}
+    value: { type: [String, Number], default: null }
   },
   data: function () {
     return {

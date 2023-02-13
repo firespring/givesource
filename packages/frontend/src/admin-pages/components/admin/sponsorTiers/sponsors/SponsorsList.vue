@@ -122,9 +122,9 @@ export default {
       next()
     })
   },
-  props: [
-    'sponsorTierId'
-  ],
+  props: {
+    sponsorTierId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       files: [],

@@ -96,7 +96,7 @@ export default {
     'cart-donations-list-table': ComponentCartDonationsListTable
   },
   props: {
-    value: {},
+    value: { type: Boolean, default: null },
     displayTotal: {
       type: Boolean,
       default: false

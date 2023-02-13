@@ -372,7 +372,7 @@
 <script>
 export default {
   props: {
-    value: {}
+    value: { type: Array, default: () => [] }
   },
   data: function () {
     return {

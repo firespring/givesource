@@ -98,9 +98,9 @@ export default {
     draggable: ComponentDraggable,
     'media-list-table-row': ComponentMediaListTableRow
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       file: null,

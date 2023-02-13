@@ -164,9 +164,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       slides: [],

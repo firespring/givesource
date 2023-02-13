@@ -44,7 +44,7 @@ import DatePicker from 'jquery-datetimepicker'
 
 export default {
   props: {
-    value: {},
+    value: { type: String, default: '' },
     id: {
       type: String,
       default: 'date'

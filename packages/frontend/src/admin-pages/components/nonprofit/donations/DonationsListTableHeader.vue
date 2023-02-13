@@ -36,7 +36,7 @@ const slug = require('slug')
 export default {
 
   props: {
-    nonprofit: {}
+    nonprofit: { type: Object, default: () => ({}) }
   },
   data () {
     return {

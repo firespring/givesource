@@ -219,8 +219,8 @@ export default {
     })
   },
   props: {
-    sponsorId: null,
-    sponsorTierId: null
+    sponsorId: { type: [String, Number], default: null },
+    sponsorTierId: { type: [String, Number], default: null }
   },
   data: function () {
     return {

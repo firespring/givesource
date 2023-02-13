@@ -111,9 +111,9 @@ export default {
     'navigation-admin': ComponentNavigationAdmin,
     'navigation-nonprofit': ComponentNavigationNonprofits
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       firstName: this.user.firstName,
