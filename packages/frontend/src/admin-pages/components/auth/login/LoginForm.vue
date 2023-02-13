@@ -206,15 +206,15 @@ export default {
         },
         mfaRequired: function (codeDeliveryDetails, cognitoUser) {
           vue.toggleAuthorizing(false)
-          vue.$emit('setCognitoUser', cognitoUser)
+          vue.$emit('set-cognito-user', cognitoUser)
           // TODO: handle mfa
           // vue.cognitoUser.sendMFACode(mfaCode, this);
         },
         newPasswordRequired: function (userAttributes, requiredAttributes, cognitoUser) {
           vue.toggleAuthorizing(false)
-          vue.$emit('setCognitoUser', cognitoUser)
-          vue.$emit('setUserAttributes', userAttributes)
-          vue.$emit('setMainComponent', 'password-reset-form')
+          vue.$emit('set-cognito-user', cognitoUser)
+          vue.$emit('set-user-attributes', userAttributes)
+          vue.$emit('set-main-component', 'password-reset-form')
         }
       })
     },
@@ -223,12 +223,12 @@ export default {
 
       if (toggle) {
         vue.displayAuthorizing = true
-        vue.$emit('setDisplayHeader', false)
-        vue.$emit('setDisplayLinks', false)
+        vue.$emit('set-display-header', false)
+        vue.$emit('set-display-links', false)
       } else {
         vue.displayAuthorizing = false
-        vue.$emit('setDisplayHeader', true)
-        vue.$emit('setDisplayLinks', true)
+        vue.$emit('set-display-header', true)
+        vue.$emit('set-display-links', true)
       }
     }
   }
