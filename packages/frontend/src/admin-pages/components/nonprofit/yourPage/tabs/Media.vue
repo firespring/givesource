@@ -74,8 +74,7 @@
         @end="updateSortOrder"
       >
         <media-list-table-row
-          v-for="slide in slides"
-          v-if="loadedSlides"
+          v-for="slide in slidesAfterLoaded"
           :key="slide.id"
           :slide="slide"
           :file="getFile(slide.fileId)"
@@ -122,6 +121,14 @@ export default {
     disableAddButton: function () {
       const vue = this
       return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides)
+    },
+    /**
+     * Returns an empty array until the slides are loaded, then returns the slides
+     * @returns Array
+     */
+    slidesAfterLoaded: function () {
+      const vue = this
+      return vue.loadedSlides ? vue.slides : []
     }
   },
   beforeMount: function () {

@@ -47,8 +47,7 @@
       </router-link>
 
       <router-link
-        v-for="page in pages"
-        v-if="isPageEnabled(page)"
+        v-for="page in enabledPages"
         :key="page.id"
         :to="{ path: page.slug }"
       >
@@ -148,6 +147,9 @@ export default {
       const eventLogo = this.$store.getters.setting('EVENT_LOGO')
       return eventLogo || '/assets/img/logo-event.png'
     },
+    enabledPages: function () {
+      return (this.pages || []).filter(page => page.enabled)
+    },
     pages () {
       return this.$store.getters.pages
     }
@@ -219,9 +221,6 @@ export default {
         name: 'search-results',
         query: query
       }
-    },
-    isPageEnabled (page) {
-      return page.enabled === '1'
     }
   }
 }

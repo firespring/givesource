@@ -52,8 +52,7 @@
       </router-link>
 
       <router-link
-        v-for="page in pages"
-        v-if="page.enabled"
+        v-for="page in enabledPages"
         :key="page.uuid"
         :to="{ path: page.slug }"
       >
@@ -94,6 +93,9 @@ export default {
     },
     displayCart: function () {
       return this.$store.getters.cartItems.length > 0
+    },
+    enabledPages: function () {
+      return (this.pages || []).filter(page => page.enabled)
     },
     pages: function () {
       return this.$store.getters.pages
