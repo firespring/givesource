@@ -96,8 +96,8 @@ const deploy = function (dir, bucket, region, exclude) {
 
 // Run the deploy
 Promise.all([
-  deploy(path.normalize(__dirname + '/../build/admin-pages'), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
-  deploy(path.normalize(__dirname + '/../build/public-pages'), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
+  deploy(path.normalize(path.join(__dirname, '/../build/admin-pages')), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
+  deploy(path.normalize(path.join(__dirname, '/../build/public-pages')), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
 ]).then(() => {
   console.log('deployed frontend')
 }).catch(err => {

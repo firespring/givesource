@@ -70,9 +70,8 @@ export default {
       keys: ['PAYMENT_SPRING_PUBLIC_API_KEY', 'EVENT_TIMEZONE', 'DATE_DONATIONS_START']
     }).then(function (response) {
       vue.settings = response.data
-      next()
-    }).catch(function () {
-      next()
+    }).catch(function (err) {
+      console.log(err)
     })
   },
 

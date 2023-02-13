@@ -188,7 +188,7 @@ export default {
       blob.lastModifiedDate = date
       blob.lastModified = date.getTime()
       blob.name = filename
-      blob.__proto__ = File.prototype
+      Object.setPrototypeOf(blob, File.prototype)
 
       return blob
     }

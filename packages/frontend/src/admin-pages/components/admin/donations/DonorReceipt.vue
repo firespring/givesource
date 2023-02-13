@@ -120,7 +120,7 @@ export default {
         email: vm.donorEmail
       })
     }
-  },
+  }
 }
 </script>
 

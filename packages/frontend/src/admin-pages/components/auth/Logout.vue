@@ -14,7 +14,9 @@
   ~ limitations under the License.
   -->
 
-<template />
+<template>
+  <div>Logging out...</div>
+</template>
 
 <script>
 const User = require('../../helpers/user')

@@ -184,9 +184,10 @@ export default {
       const vue = this
 
       if (vue.cognitoUser) {
-        delete vue.userAttributes.email_verified
-        delete vue.userAttributes.email
-        vue.cognitoUser.completeNewPasswordChallenge(vue.formData.password, vue.userAttributes, {
+        const userAttributes = { ...vue.userAttributes }
+        delete userAttributes.email_verified
+        delete userAttributes.email
+        vue.cognitoUser.completeNewPasswordChallenge(vue.formData.password, userAttributes, {
           onSuccess: function () {
             vue.$request.patch('users/' + vue.cognitoUser.username, { isVerified: true }).then(function () {
               vue.redirectToIntendedUri()
