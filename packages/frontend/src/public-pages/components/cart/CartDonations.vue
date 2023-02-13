@@ -58,6 +58,16 @@ import { mapState } from 'vuex'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
 
 export default {
+  components: {
+    'cart-donations-list-table': ComponentCartDonationsListTable
+  },
+  props: {
+    value: { type: Boolean, default: null },
+    displayTotal: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       localValue: this.value,
@@ -90,16 +100,6 @@ export default {
     total () {
       const total = JSON.parse(JSON.stringify(this.donationTotal))
       return this.formatMoney(total)
-    }
-  },
-  components: {
-    'cart-donations-list-table': ComponentCartDonationsListTable
-  },
-  props: {
-    value: { type: Boolean, default: null },
-    displayTotal: {
-      type: Boolean,
-      default: false
     }
   },
   watch: {

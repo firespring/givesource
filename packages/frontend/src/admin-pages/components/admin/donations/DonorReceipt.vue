@@ -59,35 +59,17 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  computed: {
-    ...mapState({
-      receipt: state => state.receipt,
-      donorEmail: state => state.donorEmail
-    })
-  },
-
   data () {
     return {
       apiError: {}
     }
   },
 
-  methods: {
-    ...mapActions([
-      'clearReceipt'
-    ]),
-
-    printReceipt () {
-      window.print()
-    },
-
-    emailReceipt () {
-      const vm = this
-
-      vm.addModal('donor-receipt-email-modal', {
-        email: vm.donorEmail
-      })
-    }
+  computed: {
+    ...mapState({
+      receipt: state => state.receipt,
+      donorEmail: state => state.donorEmail
+    })
   },
 
   mounted () {
@@ -120,7 +102,25 @@ export default {
 
   destroyed () {
     this.clearReceipt()
-  }
+  },
+
+  methods: {
+    ...mapActions([
+      'clearReceipt'
+    ]),
+
+    printReceipt () {
+      window.print()
+    },
+
+    emailReceipt () {
+      const vm = this
+
+      vm.addModal('donor-receipt-email-modal', {
+        email: vm.donorEmail
+      })
+    }
+  },
 }
 </script>
 
