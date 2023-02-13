@@ -18,7 +18,7 @@ exports.TYPE_IMAGE = 'IMAGE'
 exports.TYPE_VIMEO = 'VIMEO'
 exports.TYPE_YOUTUBE = 'YOUTUBE'
 
-exports.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/
+exports.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
 
 /**
  * Get data from this video's url

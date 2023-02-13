@@ -137,7 +137,7 @@ export default {
     vue.$request.get('nonprofits/' + vue.nonprofitId + '/slides').then(function (response) {
       if (response.data.errorMessage) {
         console.log(response.data)
-        return Promise.reject()
+        return Promise.reject(new Error(response.data.errorMessage))
       } else {
         response.data.sort(function (a, b) {
           return a.sortOrder - b.sortOrder

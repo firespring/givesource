@@ -189,7 +189,7 @@ const refreshSession = function (callback) {
       }
     })
   } else {
-    callback(true)
+    callback(new Error('Could not retrieve user'))
   }
 }
 

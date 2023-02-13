@@ -156,6 +156,7 @@ export default {
         return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId)
       }).then(function (response) {
         vue.slide = response.data
+      }).catch(function (err) {
         vue.apiError = err.response.data.errors
       })
     })
