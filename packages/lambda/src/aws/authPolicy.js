@@ -69,7 +69,7 @@ function AuthPolicy (principal, awsAccountId, apiOptions) {
    * @type {RegExp}
    * @default '^\/[/.a-zA-Z0-9-\*]+$'
    */
-  this.pathRegex = new RegExp('^[/.a-zA-Z0-9-\*]+$')
+  this.pathRegex = new RegExp('^[/.a-zA-Z0-9-*]+$')
 
   // these are the internal lists of allowed and denied methods. These are lists
   // of objects and each object has 2 properties: A resource ARN and a nullable
@@ -129,7 +129,7 @@ AuthPolicy.prototype = (function () {
    * @return {void}
    */
   var addMethod = function (effect, verb, resource, conditions) {
-    if (verb != '*' && !AuthPolicy.HttpVerb.hasOwnProperty(verb)) {
+    if (verb !== '*' && !AuthPolicy.HttpVerb.hasOwnProperty(verb)) {
       throw new Error('Invalid HTTP verb ' + verb + '. Allowed verbs in AuthPolicy.HttpVerb')
     }
 
@@ -138,7 +138,7 @@ AuthPolicy.prototype = (function () {
     }
 
     var cleanedResource = resource
-    if (resource.substring(0, 1) == '/') {
+    if (resource.substring(0, 1) === '/') {
       cleanedResource = resource.substring(1, resource.length)
     }
     var resourceArn = 'arn:aws:execute-api:' +
@@ -149,12 +149,12 @@ AuthPolicy.prototype = (function () {
       verb + '/' +
       cleanedResource
 
-    if (effect.toLowerCase() == 'allow') {
+    if (effect.toLowerCase() === 'allow') {
       this.allowMethods.push({
         resourceArn: resourceArn,
         conditions: conditions
       })
-    } else if (effect.toLowerCase() == 'deny') {
+    } else if (effect.toLowerCase() === 'deny') {
       this.denyMethods.push({
         resourceArn: resourceArn,
         conditions: conditions

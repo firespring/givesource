@@ -37,7 +37,6 @@ export function handle (event, context, callback) {
 
   let apiKey = null
   let donations = []
-  const savedDonations = []
   let donor = null
   let fees = 0
   const nonprofitIds = []

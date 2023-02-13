@@ -173,6 +173,10 @@ exports.handle = (event, context, callback) => {
     })
   }).catch(err => {
     console.log('Error: %j', err)
-    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+    if (err instanceof HttpException) {
+      callback(err.context(context))
+    } else {
+      callback(err)
+    }
   })
 }

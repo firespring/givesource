@@ -98,7 +98,7 @@ exports.handle = function (event, context, callback) {
  */
 const getFilenameTimestamp = function () {
   const date = new Date()
-  return date.toLocaleDateString().replace(/[\/ ]+/g, '-') + '-' + date.toLocaleTimeString().replace(/[: ]+/g, '-')
+  return date.toLocaleDateString().replace(/[/ ]+/g, '-') + '-' + date.toLocaleTimeString().replace(/[: ]+/g, '-')
 }
 
 /**

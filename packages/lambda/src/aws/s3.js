@@ -74,7 +74,7 @@ S3.prototype.downloadObject = function (region, bucketName, objectName, destPath
 
       var filepath = path.join(destPath, objectName)
       fs.mkdirSync(path.dirname(filepath), { recursive: true })
-      if (result.ContentType != 'application/x-directory') {
+      if (result.ContentType !== 'application/x-directory') {
         fs.writeFileSync(filepath, result.Body.toString())
       }
       resolve(result)
