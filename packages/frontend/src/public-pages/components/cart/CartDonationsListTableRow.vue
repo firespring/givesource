@@ -101,7 +101,7 @@ export default {
       const vm = this
 
       if (value !== oldValue) {
-        vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote)
+        vm.$emit('update-cart-item', vm.index, vm.localAmount, vm.localNote)
       }
     },
     amount (value, oldValue) {
