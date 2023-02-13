@@ -135,7 +135,7 @@ export default {
   data: function () {
     return {
       src: null,
-      zoom: 0,
+      zoom: 1,
       image: '',
       ready: false
     }
@@ -143,7 +143,6 @@ export default {
   watch: {
     zoom: function (value) {
       const vue = this
-
       vue.$refs.cropper.zoomTo(value / 100)
     }
   },

@@ -87,7 +87,7 @@ export default {
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
-    value: { type: Object, default: () => null },
+    value: { type: [Object, File], default: () => null },
     height: {
       type: Number,
       default: 400
@@ -163,8 +163,6 @@ export default {
 
       const files = event.target.files || event.dataTransfer.files
       if (files.length && files[0] instanceof File && vm.extensions.indexOf(files[0].name.toLowerCase().split('.').pop()) > -1) {
-        console.log(vm.height)
-        console.log(vm.width)
         vm.addModal('photo-editor', {
           file: files[0],
           listener: 'imageEditorSave',

@@ -139,8 +139,8 @@
                 <div class="c-form-item__control">
                   <social-card
                     :description="previewDescription"
-                    :event_title="settings.EVENT_TITLE"
-                    :fallback_image="settings.SOCIAL_SHARING_IMAGE"
+                    :event-title="settings.EVENT_TITLE"
+                    :fallback-image="settings.SOCIAL_SHARING_IMAGE"
                     :image="formData.socialSharingImage"
                     :title="previewTitle"
                     :url="previewUrl"
