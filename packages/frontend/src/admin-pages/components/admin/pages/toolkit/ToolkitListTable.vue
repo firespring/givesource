@@ -82,7 +82,7 @@ export default {
       vue.$request.patch('contents', {
         contents: toUpdate
       }).catch(function (err) {
-        vue.$emit('hasError', err)
+        vue.$emit('has-error', err)
       })
     }
   }

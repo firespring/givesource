@@ -108,7 +108,7 @@ export default {
       vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors', {
         sponsors: toUpdate
       }).catch(function (err) {
-        vue.$emit('hasError', err)
+        vue.$emit('has-error', err)
       })
     },
     deleteSponsor: function (sponsorId) {
@@ -120,7 +120,7 @@ export default {
     },
     hasError: function (err) {
       const vue = this
-      vue.$emit('hasError', err)
+      vue.$emit('has-error', err)
     }
   }
 }

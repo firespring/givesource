@@ -101,7 +101,7 @@ export default {
       const vm = this
 
       if (value !== oldValue) {
-        vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote)
+        vm.$emit('update-cart-item', vm.index, vm.localAmount, vm.localNote)
       }
     },
     amount (value, oldValue) {
@@ -112,7 +112,7 @@ export default {
       }
       vm.formErrors = vm.validate({ amount: value }, vm.getConstraints())
       vm.error = !!Object.keys(vm.formErrors).length
-      vm.$emit('hasError', vm.error)
+      vm.$emit('has-error', vm.error)
 
       vm.localAmount = value
     },
@@ -120,7 +120,7 @@ export default {
       const vm = this
 
       if (value !== oldValue) {
-        vm.$emit('updateCartItem', vm.index, vm.localAmount, vm.localNote)
+        vm.$emit('update-cart-item', vm.index, vm.localAmount, vm.localNote)
       }
     },
     note: function (value, oldValue) {
@@ -149,7 +149,7 @@ export default {
       const vm = this
 
       vm.$store.commit('removeCartItem', vm.timestamp)
-      vm.$emit('removeCartItem', vm.index)
+      vm.$emit('remove-cart-item', vm.index)
     }
   }
 }
