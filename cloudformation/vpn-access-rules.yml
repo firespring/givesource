@@ -1,0 +1,29 @@
+---
+
+  #====================================================================================================
+  # AWS CloudFormation template for creating client VPN access rules for Givesource
+  #====================================================================================================
+
+  AWSTemplateFormatVersion: 2010-09-09
+  Description: Creates client VPN access rules for Givesource
+
+  #==================================================
+  # Resources
+  #==================================================
+  Resources:
+
+    PrimaryPrivateSubnetAuthorizationRule:
+      Type: 'AWS::EC2::ClientVpnAuthorizationRule'
+      Properties:
+        AuthorizeAllGroups: true
+        ClientVpnEndpointId: !ImportValue vpn-endpoint # imported from engineering-devops/aws/cloudformation/internal-applications/vpn.yml
+        Description: VPN access to the Givesource primary private subnet
+        TargetNetworkCidr: !ImportValue givesource-primary-private-subnet-cidr-block # imported from vpc.yml
+
+    SecondaryPrivateSubnetAuthorizationRule:
+      Type: 'AWS::EC2::ClientVpnAuthorizationRule'
+      Properties:
+        AuthorizeAllGroups: true
+        ClientVpnEndpointId: !ImportValue vpn-endpoint # imported from engineering-devops/aws/cloudformation/internal-applications/vpn.yml
+        Description: VPN access to the Givesource secondary private subnet
+        TargetNetworkCidr: !ImportValue givesource-secondary-private-subnet-cidr-block # imported from vpc.yml

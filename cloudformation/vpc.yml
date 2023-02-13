@@ -14,8 +14,20 @@ Mappings:
     us-west-2:
       '016226103026': '172.35'
       '948629139753': '172.135'
+  HostedZone:
+    '016226103026':
+        Name: 'prd.aws.srv.givesource.com'
+    '948629139753':
+        Name: 'dev.aws.srv.givesource.com'
 
 Resources:
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      HostedZoneConfig:
+        Comment: Zone for CNAME references used by Givesource
+      Name: !FindInMap [HostedZone, !Ref 'AWS::AccountId', Name]
+
   ApiCachePolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties:
@@ -496,3 +508,30 @@ Outputs:
     Export:
       Name: global-no-cache-policy
 
+  primaryPrivateRouteTable:
+    Description: Primary private route table for Givesource
+    Value: !Ref primaryPrivateRouteTable
+    Export:
+      Name: givesource-primary-private-route-table
+
+  hostedZone:
+    Description: Public hosted zone for Givesource
+    Value: !Ref HostedZone
+    Export:
+      Name: givesource-hosted-zone-id
+
+  primaryPrivateSubnetCidrBlock:
+    Description: The ip range for the Primary Private Subnet
+    Value: !Sub
+      - ${IpRange}.10.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+    Export:
+      Name: givesource-primary-private-subnet-cidr-block
+
+  secondaryPrivateSubnetCidrBlock:
+    Description: The ip range for the Secondary Private Subnet
+    Value: !Sub
+      - ${IpRange}.12.0/23
+      - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
+    Export:
+      Name: givesource-secondary-private-subnet-cidr-block
