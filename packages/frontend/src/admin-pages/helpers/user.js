@@ -181,6 +181,9 @@ const refreshSession = function (callback) {
   const cognitoUser = this.getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, session) {
+      if (err) {
+        console.log(err)
+      }
       if (session) {
         cognitoUser.refreshSession(session.getRefreshToken(), callback)
       }
