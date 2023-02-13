@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const DonationHelper = require('./../../helpers/donation')
 const NonprofitHelper = require('./../../helpers/nonprofit')
 const DonationsRepository = require('./../../repositories/donations')

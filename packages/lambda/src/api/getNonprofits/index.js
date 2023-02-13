@@ -82,34 +82,34 @@ exports.handle = function (event, context, callback) {
   })
 }
 
-const getIndex = function (sort) {
-  switch (sort) {
-    case 'active_subtotal_ascending':
-    case 'active_subtotal_descending':
-    case 'denied_subtotal_ascending':
-    case 'denied_subtotal_descending':
-    case 'pending_subtotal_ascending':
-    case 'pending_subtotal_descending':
-      return 'statusSubtotalIndex'
-
-    case 'active_legal_name_ascending':
-    case 'active_legal_name_descending':
-    case 'denied_legal_name_ascending':
-    case 'denied_legal_name_descending':
-    case 'pending_legal_name_ascending':
-    case 'pending_legal_name_descending':
-      return 'statusLegalNameIndex'
-
-    case 'all_legal_name_ascending':
-    case 'all_legal_name_descending':
-      return 'isDeletedLegalNameIndex'
-
-    case 'all_created_on_ascending':
-    case 'all_created_on_descending':
-    default:
-      return 'isDeletedCreatedOnIndex'
-  }
-}
+// const getIndex = function (sort) {
+//   switch (sort) {
+//     case 'active_subtotal_ascending':
+//     case 'active_subtotal_descending':
+//     case 'denied_subtotal_ascending':
+//     case 'denied_subtotal_descending':
+//     case 'pending_subtotal_ascending':
+//     case 'pending_subtotal_descending':
+//       return 'statusSubtotalIndex'
+//
+//     case 'active_legal_name_ascending':
+//     case 'active_legal_name_descending':
+//     case 'denied_legal_name_ascending':
+//     case 'denied_legal_name_descending':
+//     case 'pending_legal_name_ascending':
+//     case 'pending_legal_name_descending':
+//       return 'statusLegalNameIndex'
+//
+//     case 'all_legal_name_ascending':
+//     case 'all_legal_name_descending':
+//       return 'isDeletedLegalNameIndex'
+//
+//     case 'all_created_on_ascending':
+//     case 'all_created_on_descending':
+//     default:
+//       return 'isDeletedCreatedOnIndex'
+//   }
+// }
 
 const getHashCondition = function (sort) {
   switch (sort) {

@@ -16,7 +16,6 @@
 
 const DonationsRepository = require('./../../repositories/donations')
 const HttpException = require('./../../exceptions/http')
-const QueryBuilder = require('./../../aws/queryBuilder')
 const Request = require('./../../aws/request')
 const SettingHelper = require('./../../helpers/setting')
 const SettingsRepository = require('./../../repositories/settings')

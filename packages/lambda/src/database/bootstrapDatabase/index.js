@@ -62,7 +62,6 @@ exports.handle = function (event, context, callback) {
       secretsManager.getSecretValue(process.env.AWS_REGION, process.env.READONLY_DATABASE_SECRET_ID)
     ])
   }).then(function (secrets) {
-    const dbHost = process.env.DATABASE_HOST
     const dbName = process.env.DATABASE_NAME
     const adminSecret = JSON.parse(secrets.find(it => it.Name === process.env.ADMIN_DATABASE_SECRET_ID).SecretString)
     const maintenanceSecret = JSON.parse(secrets.find(it => it.Name === process.env.MAINTENANCE_DATABASE_SECRET_ID).SecretString)
