@@ -28,8 +28,6 @@
 </template>
 
 <script>
-import * as Utils from './../../helpers/utils'
-
 export default {
   props: {
     current: { type: Number, default: 0 },

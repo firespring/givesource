@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentDonationsListTable from './DonationsListTable.vue'
 import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue'
 import ComponentDonationsMetrics from './DonationsMetrics.vue'

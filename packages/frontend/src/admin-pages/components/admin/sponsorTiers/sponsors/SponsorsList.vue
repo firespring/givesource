@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
 import ComponentSponsorsListTable from './SponsorsListTable.vue'
 
 export default {

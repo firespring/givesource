@@ -113,7 +113,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentDonationTiersModalOptionRow from './DonationTiersModalOptionRow.vue'
 import ComponentMoney from './../../forms/Money.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'

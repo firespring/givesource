@@ -116,7 +116,7 @@ export default {
         })
       }
 
-      promise = promise.then(() => {
+      promise.then(() => {
         if (downloadPath) {
           window.location.href = downloadPath
         }

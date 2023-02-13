@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import * as Utils from './../../helpers/utils'
 import ComponentMoney from './../forms/Money.vue'
 
 export default {

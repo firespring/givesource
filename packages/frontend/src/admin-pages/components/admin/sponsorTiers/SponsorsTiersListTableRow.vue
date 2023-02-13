@@ -75,8 +75,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
-
 export default {
   props: {
     sponsorTier: {

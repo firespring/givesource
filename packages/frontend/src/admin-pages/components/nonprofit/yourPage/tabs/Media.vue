@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
 import ComponentDraggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
 
