@@ -74,11 +74,11 @@ export default {
       return this.$store.getters.setting('ADMIN_URL') + '/login'
     },
     contactPhone: function () {
-	            return this.$store.getters.setting('CONTACT_PHONE') || null
+      return this.$store.getters.setting('CONTACT_PHONE') || null
     },
-	        displayTerms: function () {
-		        return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED')
-	        },
+    displayTerms: function () {
+      return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED')
+    },
     year: function () {
       return new Date().getFullYear()
     },

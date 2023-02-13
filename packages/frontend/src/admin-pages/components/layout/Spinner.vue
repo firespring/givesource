@@ -38,35 +38,35 @@
 
 <script>
 export default {
-    	props: {
-    		size: {
-    			type: String,
+  props: {
+    size: {
+      type: String,
       default: ''
     },
     height: {
-    			type: String,
+      type: String,
       default: ''
     }
   },
   computed: {
-        	spinnerClass: function () {
-        		switch (this.size) {
-			        case 'lg':
-        			case 'large':
-        				return 'c-spinner-lg'
+    spinnerClass: function () {
+      switch (this.size) {
+        case 'lg':
+        case 'large':
+          return 'c-spinner-lg'
 
         case 'sm':
         case 'small':
-                    	return 'c-spinner-sm'
+          return 'c-spinner-sm'
 
         case 'xm':
         case 'extrasmall':
-                    	return 'c-spinner-xs'
+          return 'c-spinner-xs'
 
         case 'md':
         case 'medium':
         default:
-                    	return ''
+          return ''
       }
     }
   }

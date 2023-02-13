@@ -645,7 +645,7 @@ export default {
        * @return {Promise<AxiosResponse<any>>}
        */
     validateRecaptcha (response) {
-			  const vm = this
+      const vm = this
       return axios.post(API_URL + 'recaptcha/validate', {
         recaptchaToken: response
       }).then(response => {

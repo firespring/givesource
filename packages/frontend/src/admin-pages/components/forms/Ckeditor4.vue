@@ -55,10 +55,10 @@ export default {
           { name: 'links', items: ['Link', 'Unlink'] }
         ],
         moderate: [
-	                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat'] },
-	                    { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
-	                    { name: 'links', items: ['Link', 'Unlink'] },
-	                    { name: 'tools', items: ['Maximize'] }
+          { name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat'] },
+          { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+          { name: 'links', items: ['Link', 'Unlink'] },
+          { name: 'tools', items: ['Maximize'] }
         ],
         advanced: [
           { name: 'styles', items: ['Format'] },

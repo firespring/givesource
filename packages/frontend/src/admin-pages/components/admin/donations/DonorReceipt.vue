@@ -74,7 +74,7 @@ export default {
 
   methods: {
     ...mapActions([
-	            'clearReceipt'
+      'clearReceipt'
     ]),
 
     printReceipt () {
@@ -82,11 +82,11 @@ export default {
     },
 
     emailReceipt () {
-	            const vm = this
+      const vm = this
 
-	            vm.addModal('donor-receipt-email-modal', {
-		            email: vm.donorEmail
-	            })
+      vm.addModal('donor-receipt-email-modal', {
+        email: vm.donorEmail
+      })
     }
   },
 

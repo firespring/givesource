@@ -26,23 +26,23 @@ export default {
   data () {
     return {
       /**
-				 * Settings that will be returned in api call
-				 */
+         * Settings that will be returned in api call
+         */
       settings: [],
 
       /**
-				 * Should banner show
-				 */
+         * Should banner show
+         */
       displayBanner: false
     }
   },
 
   computed: {
     /**
-			 * Check to see what user level the user is
-			 *
-			 * @return {boolean}
-			 */
+       * Check to see what user level the user is
+       *
+       * @return {boolean}
+       */
     isAdmin: function () {
       return this.isSuperAdminUser() || this.isAdminUser()
     }
@@ -50,8 +50,8 @@ export default {
 
   watch: {
     /**
-			 * Watch the setting data variable for change.
-			 */
+       * Watch the setting data variable for change.
+       */
     settings: {
       handler: function () {
         const vue = this
@@ -78,10 +78,10 @@ export default {
 
   methods: {
     /**
-			 * Determines is the date is within 72 hours of the first donation
-			 *
-			 * @returns {boolean}
-			 */
+       * Determines is the date is within 72 hours of the first donation
+       *
+       * @returns {boolean}
+       */
     showDonationsWarningBanner: function () {
       const vue = this
       if (vue.settings.length > 0) {
