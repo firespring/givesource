@@ -50,15 +50,15 @@ export default {
       default: ''
     },
     fallback_image: {
-      type: Object | File,
+      type: [Object, File],
       default: null
     },
     fallback_image_url: {
-      type: Object | File,
+      type: [Object, File],
       default: ''
     },
     image: {
-      type: Object | File,
+      type: [Object, File],
       default: null
     },
     image_url: {

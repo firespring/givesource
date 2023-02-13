@@ -228,7 +228,7 @@ export default {
   },
   props: {
     matchFundEnabled: {
-      type: Boolean | String,
+      type: [Boolean, String],
       default: false
     },
     matchFundButtonText: {

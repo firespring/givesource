@@ -68,7 +68,7 @@ export default {
       }
     },
     sponsorTierId: {
-      type: String | Number,
+      type: [String, Number],
       default: null
     }
   },
