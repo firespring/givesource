@@ -57,7 +57,9 @@ NonprofitDonationsRepository.prototype.get = function (nonprofitUuid, uuid) {
       builder.condition('uuid', '=', uuid).filter('nonprofitUuid', '=', nonprofitUuid)
       repository.batchQuery(builder).then(function (data) {
         if (data.Items.length === 1) {
-          resolve(new Donation(data.Items[0]))
+          // this was wrong before and appears to be dead code - this 'fix' is untested
+          // resolve(new Donation(data.Items[0]))
+          resolve(data.Items[0])
         }
         reject(new ResourceNotFoundException('The specified donation does not exist.'))
       }).catch(function (err) {
@@ -86,7 +88,9 @@ NonprofitDonationsRepository.prototype.getAll = function (nonprofitUuid) {
         const results = []
         if (data.Items) {
           data.Items.forEach(function (item) {
-            results.push(new Donation(item))
+            // this was wrong before and appears to be dead code - this 'fix' is untested
+            // results.push(new Donation(item))
+            results.push(item)
           })
         }
         resolve(results)
@@ -133,15 +137,18 @@ NonprofitDonationsRepository.prototype.save = function (nonprofitUuid, model) {
   const nonprofitRepository = new NonprofitRepository()
   return new Promise(function (resolve, reject) {
     nonprofitRepository.get(nonprofitUuid).then(function () {
-      if (!(model instanceof Donation)) {
-        reject(new Error('invalid Donation model'))
-      }
+      // this was wrong before and appears to be dead code - this 'fix' is untested
+      // if (!(model instanceof Donation)) {
+      //   reject(new Error('invalid Donation model'))
+      // }
       model.validate().then(function () {
         const key = {
           uuid: model.uuid
         }
         repository.put(key, model.except(['uuid'])).then(function (data) {
-          resolve(new Donation(data.Attributes))
+          // this was wrong before and appears to be dead code - this 'fix' is untested
+          resolve(data)
+          // resolve(new Donation(data.Attributes))
         }).catch(function (err) {
           reject(err)
         })
