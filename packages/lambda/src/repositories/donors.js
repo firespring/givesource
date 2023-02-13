@@ -123,9 +123,9 @@ DonorsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Donor.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

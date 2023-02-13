@@ -36,10 +36,10 @@ function Generator () {
 Generator.prototype._generators = {
 
   /**
-	 * Generate random Donation data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Donation data
+   *
+   * @return {Object}
+   */
   Donation: function () {
     const donation = {
       donorId: faker.random.number(),
@@ -62,10 +62,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Donor data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Donor data
+   *
+   * @return {Object}
+   */
   Donor: function () {
     return {
       address1: faker.address.streetAddress(false),
@@ -81,10 +81,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random File data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random File data
+   *
+   * @return {Object}
+   */
   File: function () {
     return {
       path: faker.system.fileName(),
@@ -93,10 +93,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Message data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Message data
+   *
+   * @return {Object}
+   */
   Message: function () {
     return {
       email: faker.internet.email(),
@@ -108,10 +108,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Metric data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Metric data
+   *
+   * @return {Object}
+   */
   Metric: function () {
     return {
       key: faker.random.word(),
@@ -120,19 +120,19 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random base Model data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random base Model data
+   *
+   * @return {Object}
+   */
   model: function () {
     return {}
   },
 
   /**
-	 * Generate random Nonprofit data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Nonprofit data
+   *
+   * @return {Object}
+   */
   Nonprofit: function () {
     const legalName = faker.company.companyName()
     return {
@@ -159,10 +159,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random NonprofitDonationTier data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random NonprofitDonationTier data
+   *
+   * @return {Object}
+   */
   NonprofitDonationTier: function () {
     return {
       amount: faker.random.arrayElement([1000, 2000, 2500, 4000, 5000, 6000, 7500, 10000, 20000, 50000]),
@@ -172,10 +172,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random NonprofitSlide data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random NonprofitSlide data
+   *
+   * @return {Object}
+   */
   NonprofitSlide: function () {
     return {
       caption: faker.random.word(),
@@ -191,10 +191,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random PaymentTransaction data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random PaymentTransaction data
+   *
+   * @return {Object}
+   */
   PaymentTransaction: function () {
     return {
       billingZip: faker.address.zipCode(),
@@ -211,10 +211,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Report data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Report data
+   *
+   * @return {Object}
+   */
   Report: function () {
     return {
       status: faker.random.arrayElement(['FAILED', 'PENDING', 'SUCCESS']),
@@ -224,10 +224,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Setting data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Setting data
+   *
+   * @return {Object}
+   */
   Setting: function () {
     return {
       key: faker.random.word(),
@@ -236,10 +236,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Sponsor data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Sponsor data
+   *
+   * @return {Object}
+   */
   Sponsor: function () {
     return {
       fileId: faker.random.number(),
@@ -251,10 +251,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random Sponsor Tier data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random Sponsor Tier data
+   *
+   * @return {Object}
+   */
   SponsorTier: function () {
     return {
       name: faker.random.word(),
@@ -264,10 +264,10 @@ Generator.prototype._generators = {
   },
 
   /**
-	 * Generate random User data
-	 *
-	 * @return {Object}
-	 */
+   * Generate random User data
+   *
+   * @return {Object}
+   */
   User: function () {
     return {
       cognitoUuid: faker.random.uuid(),

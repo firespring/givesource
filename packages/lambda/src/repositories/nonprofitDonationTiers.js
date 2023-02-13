@@ -165,10 +165,10 @@ NonprofitDonationTiersRepository.prototype.delete = function (nonprofitId, id) {
     }).then(function () {
       return allModels.NonprofitDonationTier.destroy({
         where:
-					{
-					  nonprofitId: nonprofitId,
-					  id: id
-					}
+          {
+            nonprofitId: nonprofitId,
+            id: id
+          }
       })
     }).then(function () {
       resolve()

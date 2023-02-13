@@ -334,9 +334,9 @@ NonprofitsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Nonprofit.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

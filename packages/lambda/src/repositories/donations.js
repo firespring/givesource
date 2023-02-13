@@ -152,9 +152,9 @@ DonationsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Donation.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

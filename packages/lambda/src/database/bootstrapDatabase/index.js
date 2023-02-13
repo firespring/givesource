@@ -85,12 +85,12 @@ exports.handle = function (event, context, callback) {
 
     return sequelize.query(
       'CREATE DATABASE IF NOT EXISTS `' + dbName + '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ' +
-			'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
-			'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
-			'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
-			'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + dbName + '`.* TO "' + readwriteSecret.username + '"@"%";' +
-			'CREATE USER IF NOT EXISTS "' + readonlySecret.username + '"@"%" IDENTIFIED BY "' + readonlySecret.password + '"; ' +
-			'GRANT SELECT ON `' + dbName + '`.* TO "' + readonlySecret.username + '"@"%";'
+      'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
+      'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
+      'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
+      'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + dbName + '`.* TO "' + readwriteSecret.username + '"@"%";' +
+      'CREATE USER IF NOT EXISTS "' + readonlySecret.username + '"@"%" IDENTIFIED BY "' + readonlySecret.password + '"; ' +
+      'GRANT SELECT ON `' + dbName + '`.* TO "' + readonlySecret.username + '"@"%";'
     )
   }).then(function () {
     response.send(event, context, response.SUCCESS)

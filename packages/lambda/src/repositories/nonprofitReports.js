@@ -122,10 +122,10 @@ NonprofitReportsRepository.prototype.delete = function (nonprofitId, id) {
     }).then(function () {
       return allModels.Report.destroy({
         where:
-					{
-					  id: id,
-					  nonprofitId: nonprofitId
-					}
+          {
+            id: id,
+            nonprofitId: nonprofitId
+          }
       })
     }).then(function () {
       resolve()

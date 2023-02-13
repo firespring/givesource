@@ -132,9 +132,9 @@ PaymentTransactionsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.PaymentTransaction.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

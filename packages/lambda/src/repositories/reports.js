@@ -127,9 +127,9 @@ ReportsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Report.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

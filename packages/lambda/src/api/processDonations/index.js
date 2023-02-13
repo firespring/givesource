@@ -137,7 +137,7 @@ export function handle (event, context, callback) {
 
         if (err.response.data.errors && err.response.data.errors[0]) {
           return Promise.reject(new Error('There was an error processing your payment: ' + err.response.data.errors[0].message +
-						'. Please double check your credit card information, or call the number on the back of your credit card.'))
+            '. Please double check your credit card information, or call the number on the back of your credit card.'))
         }
       }
 
@@ -178,7 +178,7 @@ export function handle (event, context, callback) {
     let promise = Promise.resolve()
     const donationValues = []
     donations.forEach(function (donation) {
-		  donationValues.push(DonationHelper.formatForBulkCreate(donation, { donorId: donor.id }))
+      donationValues.push(DonationHelper.formatForBulkCreate(donation, { donorId: donor.id }))
     })
     promise = promise.then(function () {
       return donationsRepository.bulkCreateDonations(donationValues)
