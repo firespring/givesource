@@ -98,9 +98,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         CONTACT_PHONE: null
-      }
+      })
     }
   },
   data: function () {

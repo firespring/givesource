@@ -121,9 +121,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         content: {}
-      }
+      })
     }
   },
   data: function () {

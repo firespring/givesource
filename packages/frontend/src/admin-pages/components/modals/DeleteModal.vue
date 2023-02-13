@@ -78,11 +78,11 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         modalTitle: 'Delete Confirmation',
         modalText: 'Are you sure you want to delete item(s)?',
-        callback: String
-      }
+        callback: ''
+      })
     }
   },
   data: function () {
@@ -102,7 +102,9 @@ export default {
     remove: function () {
       const vue = this
       vue.clearModals()
-      vue.bus.$emit(vue.callback)
+      if (vue.callback) {
+        vue.bus.$emit(vue.callback)
+      }
     }
   }
 }

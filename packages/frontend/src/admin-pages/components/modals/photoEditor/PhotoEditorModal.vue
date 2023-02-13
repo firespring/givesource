@@ -124,12 +124,12 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         file: {},
         listener: 'photoEditorSave',
         width: 770,
         height: 443
-      }
+      })
     }
   },
   data: function () {
