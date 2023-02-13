@@ -201,6 +201,7 @@ export default {
           }
         },
         onFailure: function (err) {
+          console.log(err)
           vue.toggleAuthorizing(false)
           vue.errors.push('Incorrect username or password.')
         },
