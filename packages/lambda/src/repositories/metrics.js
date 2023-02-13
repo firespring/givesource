@@ -17,7 +17,6 @@
 const Repository = require('./repository')
 const RepositoryHelper = require('./../helpers/repository')
 const loadModels = require('../models/index')
-const Sequelize = require('sequelize')
 
 /**
  * MetricsRepository constructor

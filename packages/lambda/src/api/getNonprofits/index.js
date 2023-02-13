@@ -16,7 +16,6 @@
 
 const HttpException = require('./../../exceptions/http')
 const NonprofitsRepository = require('./../../repositories/nonprofits')
-const QueryBuilder = require('./../../aws/queryBuilder')
 const ResourceNotFoundException = require('./../../exceptions/resourceNotFound')
 const Request = require('./../../aws/request')
 const SettingsRepository = require('./../../repositories/settings')

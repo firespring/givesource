@@ -29,7 +29,7 @@ describe('PostDonor', function () {
 
   it('should update a donor by email', function () {
     const data = TestHelper.generate.model('donor')
-    const donor = TestHelper.generate.model('donor', { email: data.email })
+    // const donor = TestHelper.generate.model('donor', { email: data.email })
     sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
     sinon.stub(DonorsRepository.prototype, 'save').resolves(data)
     const params = {

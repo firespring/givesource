@@ -31,6 +31,14 @@
         }]
       }
     },
+    { "files": ["packages/lambda/test/**"],
+      "rules": { "standard/no-callback-literal": "off" }
+    },
+    { "files": ["**"],
+      "rules": {
+        "_COMMENT_ disabling this rule for now. todo remove usages of hasOwnProperty an re-enable": "off",
+        "no-prototype-builtins": "off" }
+    },
     {
       "files": [
         "Foo.vue"
