@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-require('./config/bootstrap').bootstrap();
+require('./config/bootstrap').bootstrap()
 
-const config = require('config');
-const inquirer = require('inquirer');
-const Lambda = require('./../src/aws/lambda');
+const config = require('config')
+const inquirer = require('inquirer')
+const Lambda = require('./../src/aws/lambda')
 
 inquirer.prompt([
   {
@@ -30,37 +30,35 @@ inquirer.prompt([
   {
     type: 'input',
     message: function (answers) {
-      return 'What should the new value of ' + answers.key + ' be?';
+      return 'What should the new value of ' + answers.key + ' be?'
     },
-    name: 'value',
+    name: 'value'
   },
   {
     type: 'confirm',
     message: function (answers) {
-      return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?';
+      return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?'
     },
-    name: 'confirm',
+    name: 'confirm'
   }
 ]).then(function (answers) {
   if (answers.confirm) {
+    const settings = {}
+    settings[answers.key] = answers.value
 
-    const settings = {};
-    settings[answers.key] = answers.value;
-
-    const lambda = new Lambda();
-    let lambdaRequestBody = {
+    const lambda = new Lambda()
+    const lambdaRequestBody = {
       ResourceProperties: {
         Settings: JSON.stringify(settings)
       }
-    };
+    }
     lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
-      console.log('Setting updated');
-      lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
+      console.log('Setting updated')
+      lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/settings*'] }, 'RequestResponse')
     }).catch(function (err) {
-      console.log(err);
-    });
-
+      console.log(err)
+    })
   } else {
-    console.log('No settings were updated, the changes were not confirmed.');
+    console.log('No settings were updated, the changes were not confirmed.')
   }
-});
+})

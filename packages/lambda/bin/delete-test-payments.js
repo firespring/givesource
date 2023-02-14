@@ -14,44 +14,44 @@
  * limitations under the License.
  */
 
-require('./config/bootstrap').bootstrap();
+require('./config/bootstrap').bootstrap()
 
-const config = require('config');
-const Donation = require('./../src/dynamo-models/donation');
-const DonationsRepository = require('./../src/repositories/donations');
-const inquirer = require('inquirer');
-const QueryBuilder = require('./../src/aws/queryBuilder');
+const config = require('config')
+const Donation = require('./../src/dynamo-models/donation')
+const DonationsRepository = require('./../src/repositories/donations')
+const inquirer = require('inquirer')
+const QueryBuilder = require('./../src/aws/queryBuilder')
 
 inquirer.prompt([
   {
     type: 'confirm',
     message: function () {
-      return 'Are you sure you want to delete test payments for stack: ' + config.get('stack.AWS_STACK_NAME') + '?';
+      return 'Are you sure you want to delete test payments for stack: ' + config.get('stack.AWS_STACK_NAME') + '?'
     },
-    name: 'confirm',
+    name: 'confirm'
   }
 ]).then(function (answers) {
   if (answers.confirm) {
-    const donationsRepository = new DonationsRepository();
+    const donationsRepository = new DonationsRepository()
 
-    const builder = new QueryBuilder('query');
-    builder.limit(1000).index('paymentTransactionIsTestModeCreatedOnIndex').condition('paymentTransactionIsTestMode', '=', 1).condition('createdOn', '>', 0).scanIndexForward(false);
+    const builder = new QueryBuilder('query')
+    builder.limit(1000).index('paymentTransactionIsTestModeCreatedOnIndex').condition('paymentTransactionIsTestMode', '=', 1).condition('createdOn', '>', 0).scanIndexForward(false)
     return donationsRepository.batchQuery(builder).then(function (response) {
       if (response.Count) {
         return Promise.resolve(response.Items.map(function (item) {
-          return new Donation(item);
-        }));
+          return new Donation(item)
+        }))
       } else {
-        return Promise.resolve([]);
+        return Promise.resolve([])
       }
     }).then(function (donations) {
       if (donations.length) {
-        return donationsRepository.batchDelete(donations);
+        return donationsRepository.batchDelete(donations)
       } else {
-        return Promise.resolve();
+        return Promise.resolve()
       }
     }).then(function () {
-      console.log('deleted test donations');
-    });
+      console.log('deleted test donations')
+    })
   }
-});
+})

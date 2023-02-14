@@ -15,7 +15,7 @@
  */
 
 const UserAuthorizer = require('./../../auth/user')
-const logger = require("../../helpers/log");
+const logger = require('../../helpers/log')
 
 exports.handle = function (event, context, callback) {
   if (context && context.functionName) {
