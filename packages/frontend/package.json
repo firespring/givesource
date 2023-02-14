@@ -56,7 +56,7 @@
 		"es6-promise-promise": "^1.0.0",
 		"file-loader": "^2.0.0",
 		"fireSlider.js": "github:mmonkey/fireSlider",
-		"html-webpack-plugin": "^4.5.2",
+		"html-webpack-plugin": "^5.5.0",
 		"inquirer": "^7.3.3",
 		"jquery": "^3.6.3",
 		"jquery-datetimepicker": "^2.5.21",
