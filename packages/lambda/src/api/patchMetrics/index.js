@@ -31,11 +31,13 @@ exports.handle = function (event, context, callback) {
     })
     return repository.batchGet(keys).then(function (models) {
       request.get('metrics', []).forEach(function (data) {
-        let model = _.find(models, { key: data.key })
+        const model = _.find(models, { key: data.key })
         if (model) {
           model.populate(data)
         } else {
-          model = new Metric(data)
+          // this was wrong before and appears to be dead code
+          throw new Error('not implemented')
+          // model = new Metric(data)
         }
 
         metrics.push(model)

@@ -36,10 +36,11 @@ export function handle (event, context, callback) {
         metric = null
       }
     } else {
-      // this was wrong before and appears to be dead code - this 'fix' is untested
+      // this was wrong before and appears to be dead code
+      throw new Error('not implemented')
       // metric = new Metric({ key: key, value: amount })
       // return metric.validate()
-      return metrics
+      // return metrics
     }
   }).then(() => {
     return metric ? repository.batchUpdate([metric]) : Promise.resolve()

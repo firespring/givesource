@@ -22,7 +22,7 @@ const DonationsRepository = require('./../src/repositories/donations');
 const inquirer = require('inquirer');
 const QueryBuilder = require('./../src/aws/queryBuilder');
 
-return inquirer.prompt([
+inquirer.prompt([
   {
     type: 'confirm',
     message: function () {

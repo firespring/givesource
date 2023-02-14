@@ -20,7 +20,7 @@ const config = require('config');
 const inquirer = require('inquirer');
 const Lambda = require('./../src/aws/lambda');
 
-return inquirer.prompt([
+inquirer.prompt([
   {
     type: 'list',
     message: 'What setting would you like to update?',

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-const Request = require('./../../aws/request')
 const UserAuthorizer = require('./../../auth/user')
+const logger = require("../../helpers/log");
 
 exports.handle = function (event, context, callback) {
-  new Request(event, context)
+  if (context && context.functionName) {
+    logger.log(`${context.functionName} event: %j`, event)
+  }
 
   const arn = event.methodArn
   const region = process.env.REGION
