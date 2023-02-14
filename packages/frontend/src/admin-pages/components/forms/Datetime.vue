@@ -40,6 +40,8 @@
 </template>
 
 <script>
+// DatePicker needs imported to init the jquery functionality
+import DatePicker from 'jquery-datetimepicker' // eslint-disable-line no-unused-vars
 export default {
   props: {
     value: { type: String, default: '' },
