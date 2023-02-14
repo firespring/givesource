@@ -79,7 +79,7 @@ NonprofitDonationTiersRepository.prototype.batchGet = function (ids) {
           }
         })
       } else {
-        reject('IDs must be provided to update.')
+        reject(new Error('IDs must be provided to update.'))
       }
     }).then(function (results) {
       resolve(results)

@@ -36,8 +36,10 @@ export function handle (event, context, callback) {
         metric = null
       }
     } else {
-      metric = new Metric({ key: key, value: amount })
-      return metric.validate()
+      // this was wrong before and appears to be dead code - this 'fix' is untested
+      // metric = new Metric({ key: key, value: amount })
+      // return metric.validate()
+      return metrics
     }
   }).then(() => {
     return metric ? repository.batchUpdate([metric]) : Promise.resolve()

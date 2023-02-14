@@ -60,7 +60,7 @@ UserAuthorizer.prototype.getPems = function () {
           })
           resolve()
         } else {
-          reject()
+          reject(new Error('An unexpected error occurred'))
         }
       }).catch(function (err) {
         reject(err)

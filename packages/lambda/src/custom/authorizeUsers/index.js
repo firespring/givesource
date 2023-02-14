@@ -29,6 +29,6 @@ exports.handle = function (event, context, callback) {
   authorizer.authorize().then(function (policy) {
     callback(null, policy)
   }).catch(function () {
-    callback('Unauthorized')
+    callback(new Error('Unauthorized'))
   })
 }

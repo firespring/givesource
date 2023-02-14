@@ -95,7 +95,9 @@ MetricsRepository.prototype.batchGet = function (keys) {
     repository.batchGetKeys(map).then(function (data) {
       const results = []
       data.forEach(function (item) {
-        results.push(new Metric(item))
+        // this was wrong before and appears to be dead code - this 'fix' is untested
+        // results.push(new Metric(item))
+        results.push(item)
       })
       resolve(results)
     }).catch(function (err) {
