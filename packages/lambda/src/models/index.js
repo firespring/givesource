@@ -18,7 +18,7 @@
 
 const connect = require('./connect.js')
 
-module.exports = function () {
+const doConnect = function () {
   return connect().then(function (sequelize) {
     const models = { sequelize: sequelize }
     let model = require('./setting')(sequelize)
@@ -101,7 +101,14 @@ module.exports = function () {
     models.Report.belongsTo(sequelize.models.File, {})
 
     models.Report.belongsTo(sequelize.models.Nonprofit, {})
-
     return models
   })
+}
+
+// We need to memoize the call
+// otherwise instanceof etc will as we could have multiple (different object) copies of the same model class
+let connectPromise
+module.exports = function () {
+  if (!connectPromise) connectPromise = doConnect()
+  return connectPromise
 }

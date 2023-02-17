@@ -35,8 +35,9 @@ describe('PatchSponsor', function () {
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
     sinon.stub(SponsorsRepository.prototype, 'get').resolves(original)
     sinon.stub(SponsorsRepository.prototype, 'save').resolves(updated)
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         sponsor_tier_uuid: sponsorTier.uuid,
         sponsor_uuid: original.uuid

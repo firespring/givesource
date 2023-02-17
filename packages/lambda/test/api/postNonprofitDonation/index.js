@@ -30,8 +30,9 @@ describe('PostNonprofitDonation', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
     sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn']),
+      body,
       params: {
         nonprofit_uuid: nonprofit.uuid
       }

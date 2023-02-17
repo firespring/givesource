@@ -31,8 +31,9 @@ describe('PostSetting', function () {
     const model = TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
     sinon.stub(SettingsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostSetting.handle(params, null, function (error, result) {
       assert(error === null)

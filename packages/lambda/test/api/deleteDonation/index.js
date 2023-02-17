@@ -19,9 +19,14 @@ const sinon = require('sinon')
 const DeleteDonation = require('../../../src/api/deleteDonation/index')
 const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
+const SecretsManager = require('../../../src/aws/secretsManager')
 
 describe('DeleteDonation', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+  })
   afterEach(function () {
+    SecretsManager.prototype.getSecretValue.restore()
     DonationsRepository.prototype.delete.restore()
   })
 

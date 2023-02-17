@@ -15,15 +15,32 @@
  */
 
 const assert = require('assert')
-const AWS = require('aws-sdk-mock')
-const Donor = require('../../src/dynamo-models/donor')
 const DonorsRepository = require('../../src/repositories/donors')
 const Repository = require('../../src/repositories/repository')
 const TestHelper = require('../helpers/test')
 
+const loadModels = require('../../src/models')
+const sinon = require('sinon')
+const Sequelize = require('sequelize')
+let Donor
+
 const promiseMe = require('mocha-promise-me')
+const SecretsManager = require('../../src/aws/secretsManager')
 
 describe('DonorsRepository', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    Donor = (await loadModels()).Donor
+  })
+  afterEach(function () {
+    const stubbedFunctions = [
+      SecretsManager.prototype.getSecretValue,
+      Sequelize.Model.destroy,
+      Sequelize.Model.findAll,
+      Sequelize.Model.upsert
+    ]
+    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
+  })
   describe('#construct()', function () {
     it('should be an instance of Repository', function () {
       const repository = new DonorsRepository()
@@ -42,15 +59,9 @@ describe('DonorsRepository', function () {
   })
 
   describe('#get()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return a Donor model', function () {
-      const data = TestHelper.generate.data('donor')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: data })
-      })
+    it('should return a Donor model', async function () {
+      const data = await TestHelper.generate.model('donor')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new DonorsRepository()
       return promiseMe.thatYouResolve(repository.get(data.email), function (model) {
         assert.ok(model instanceof Donor)
@@ -59,28 +70,20 @@ describe('DonorsRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.get('woody@firespring.com'))
+      return promiseMe.thatYouReject(
+        repository.get('woody@firespring.com'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#getAll()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return all Donor models', function () {
+    it('should return all Donor models', async function () {
       const count = 3
-      const data = TestHelper.generate.dataCollection('donor', count)
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback(null, {
-          Count: count,
-          Items: data
-        })
-      })
+      const data = await TestHelper.generate.modelCollection('donor', count)
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new DonorsRepository()
       return promiseMe.thatYouResolve(repository.getAll(), function (models) {
         for (let i = 0; i < count; i++) {
@@ -92,46 +95,37 @@ describe('DonorsRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.getAll())
+      return promiseMe.thatYouReject(
+        repository.getAll(),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#delete()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
     it('should delete the Donor model', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback(null, {})
-      })
+      sinon.stub(Sequelize.Model, 'destroy').resolves()
       const repository = new DonorsRepository()
       return promiseMe.thatYouResolve(repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'))
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'destroy').rejects(new Error('stubbedError'))
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'))
+      return promiseMe.thatYouReject(
+        repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#save()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should update the Donor model', function () {
-      const model = TestHelper.generate.model('donor')
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
+    it('should update the Donor model', async function () {
+      const model = await TestHelper.generate.model('donor')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(model)
+      sinon.stub(Sequelize.Model, 'upsert').resolves([model])
       const repository = new DonorsRepository()
       return promiseMe.thatYouResolve(repository.save(model), function (donor) {
         assert.ok(donor instanceof Donor)
@@ -141,37 +135,29 @@ describe('DonorsRepository', function () {
 
     it('should call reject for an invalid Donor model', function () {
       const model = TestHelper.generate.model('donor')
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.save(new Donor()))
+      return promiseMe.thatYouReject(
+        repository.save(model),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback('Error')
-      })
-      const model = TestHelper.generate.model('donor')
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
+      const model = TestHelper.generate.model('donor', { id: 123 })
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.save(model))
+      return promiseMe.thatYouReject(
+        repository.save(model),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#queryEmail()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return a Donor model', function () {
-      const donor = TestHelper.generate.model('donor')
-      const items = TestHelper.generate.dataCollection('donor', 1, { email: donor.email })
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback(null, {
-          Items: items,
-          Count: 1
-        })
-      })
+    it('should return a Donor model', async function () {
+      const donor = await TestHelper.generate.model('donor')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(donor)
       const repository = new DonorsRepository()
       return promiseMe.thatYouResolve(repository.queryEmail(donor.email), function (model) {
         assert(model instanceof Donor)
@@ -180,12 +166,12 @@ describe('DonorsRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      const donor = TestHelper.generate.model('donor')
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new DonorsRepository()
-      return promiseMe.thatYouReject(repository.queryEmail(donor.email))
+      return promiseMe.thatYouReject(
+        repository.queryEmail('test@example.com'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 })

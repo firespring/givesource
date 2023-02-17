@@ -29,8 +29,9 @@ describe('PostNonprofit', function () {
   it('should return a nonprofit', function () {
     const model = TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostNonprofit.handle(params, null, function (error, result) {
       assert(error === null)

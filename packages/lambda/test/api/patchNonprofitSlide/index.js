@@ -35,8 +35,9 @@ describe('PatchNonprofitSlide', function () {
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
     sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(original)
     sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(updated)
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         nonprofitUuid: nonprofit.uuid,
         slideUuid: original.uuid

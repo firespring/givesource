@@ -29,8 +29,9 @@ describe('PostReport', function () {
   it('should return a report', function () {
     const model = TestHelper.generate.model('report')
     sinon.stub(ReportsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostReport.handle(params, null, function (error, result) {
       assert(error === null)

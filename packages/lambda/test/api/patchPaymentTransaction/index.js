@@ -31,8 +31,9 @@ describe('PatchPaymentTransaction', function () {
     const updated = TestHelper.generate.model('paymentTransaction', { uuid: original.uuid })
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(original)
     sinon.stub(PaymentTransactionsRepository.prototype, 'save').resolves(updated)
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         paymentTransactionUuid: original.uuid
       }

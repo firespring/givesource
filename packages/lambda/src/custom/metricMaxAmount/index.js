@@ -18,7 +18,7 @@ const HttpException = require('./../../exceptions/http')
 const MetricsRepository = require('./../../repositories/metrics')
 const Request = require('./../../aws/request')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const request = new Request(event, context).parameters(['amount', 'key'])
   const repository = new MetricsRepository()
 
