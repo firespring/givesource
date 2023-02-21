@@ -105,10 +105,25 @@ const doConnect = function () {
   })
 }
 
-// We need to memoize the call
-// otherwise instanceof etc will not work properly as we could have multiple (different object) copies of the same model class
+// We need to memoize the call otherwise instanceof etc will not work properly
+// as we could have multiple (different object) copies of the same model class
+// with memoize'ing we also then need to re-init the connection
+// @see https://sequelize.org/docs/v6/other-topics/aws-lambda/#tldr
 let connectPromise
 module.exports = function () {
-  if (!connectPromise) connectPromise = doConnect()
+  if (connectPromise) {
+    return connectPromise.then(conn => {
+      // restart connection pool to ensure connections are not re-used across invocations
+      conn.sequelize.connectionManager.initPools()
+
+      // restore `getConnection()` if it has been overwritten by `close()`
+      if (conn.sequelize.connectionManager.hasOwnProperty('getConnection')) {
+        delete conn.sequelize.connectionManager.getConnection
+      }
+      return conn
+    })
+  } else {
+    connectPromise = doConnect()
+  }
   return connectPromise
 }
