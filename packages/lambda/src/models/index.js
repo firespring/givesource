@@ -106,7 +106,7 @@ const doConnect = function () {
 }
 
 // We need to memoize the call
-// otherwise instanceof etc will as we could have multiple (different object) copies of the same model class
+// otherwise instanceof etc will not work properly as we could have multiple (different object) copies of the same model class
 let connectPromise
 module.exports = function () {
   if (!connectPromise) connectPromise = doConnect()

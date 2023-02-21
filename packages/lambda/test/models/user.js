@@ -80,6 +80,7 @@ describe('User', function () {
       { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: null, error: false },
       // { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: '1234567890', error: true },
       { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false }
+      // cognitoUsername
     ]
 
     TestHelper.validate(tests)

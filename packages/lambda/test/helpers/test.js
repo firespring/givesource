@@ -42,6 +42,7 @@ module.exports.validate = function (testCases) {
       testCase.model = testCase.model()
       testCase.model = await testCase.model
 
+      // TODO validate that data keys are actually model properties
       testCase.model.set(data)
       if (testCase.error) {
         return promiseMe.thatYouReject(testCase.model.validate())
