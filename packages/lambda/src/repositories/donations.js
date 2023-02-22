@@ -262,6 +262,7 @@ DonationsRepository.prototype.generateLastFourReport = function (whereParams) {
  * @return {Promise<any>}
  */
 DonationsRepository.prototype.upsert = function (model, data) {
+  data = sanitizeData(data)
   let allModels
   return new Promise(function (resolve, reject) {
     return loadModels().then(function (models) {
@@ -308,6 +309,7 @@ DonationsRepository.prototype.upsert = function (model, data) {
  */
 DonationsRepository.prototype.bulkCreateDonations = function (values) {
   let allModels
+  values = values.map(sanitizeData)
   return new Promise(function (resolve, reject) {
     return loadModels().then(function (models) {
       allModels = models
@@ -320,6 +322,16 @@ DonationsRepository.prototype.bulkCreateDonations = function (values) {
       return allModels.sequelize.close()
     })
   })
+}
+
+/**
+ * Performs basic sanitization of the input data
+ * @param data
+ */
+function sanitizeData (data) {
+  const sanitized = Object.assign({}, data)
+  sanitized.note = sanitized.note || ''
+  return sanitized
 }
 
 module.exports = DonationsRepository
