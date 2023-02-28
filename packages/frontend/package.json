@@ -46,7 +46,7 @@
 		"aws-sdk": "^2.1303.0",
 		"axios": "^0.19.2",
 		"babel-loader": "^8.3.0",
-		"browser-sync": "^2.27.11",
+		"browser-sync": "^2.27.12",
 		"browser-sync-middleware-spa": "^1.0.0",
 		"browser-sync-webpack-plugin": "^2.3.0",
 		"chosen-js": "^1.8.7",
