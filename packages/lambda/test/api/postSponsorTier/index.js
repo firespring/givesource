@@ -31,8 +31,9 @@ describe('PostSponsorTier', function () {
     const model = TestHelper.generate.model('sponsorTier')
     sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
     sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostSponsorTier.handle(params, null, function (error, result) {
       assert(error === null)

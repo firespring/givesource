@@ -33,8 +33,9 @@ describe('PatchNonprofit', function () {
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
     sinon.stub(NonprofitsRepository.prototype, 'save').resolves(updated)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         nonprofitUuid: original.uuid
       }

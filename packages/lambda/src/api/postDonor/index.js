@@ -20,7 +20,7 @@ const Lambda = require('./../../aws/lambda')
 const Request = require('./../../aws/request')
 const UserGroupMiddleware = require('./../../middleware/userGroup')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const lambda = new Lambda()
   const repository = new DonorsRepository()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
@@ -44,4 +44,4 @@ export function handle (event, context, callback) {
   }).catch((err) => {
     (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
   })
-};
+}

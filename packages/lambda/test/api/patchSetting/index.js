@@ -31,8 +31,9 @@ describe('PatchSetting', function () {
     const updated = TestHelper.generate.model('setting', { uuid: original.uuid, key: original.key })
     sinon.stub(SettingsRepository.prototype, 'get').resolves(original)
     sinon.stub(SettingsRepository.prototype, 'save').resolves(updated)
+    const { uuid, createdOn, ...body } = updated
     const params = {
-      body: updated.except(['uuid', 'createdOn']),
+      body,
       params: {
         key: original.key
       }

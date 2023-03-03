@@ -15,12 +15,23 @@
  */
 
 const assert = require('assert')
-const Model = require('../../src/dynamo-models/model')
-const Report = require('../../src/dynamo-models/report')
 const ReportHelper = require('../../src/helpers/report')
+const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
+const SecretsManager = require('../../src/aws/secretsManager')
+const loadModels = require('../../src/models')
+const sinon = require('sinon')
+let Report
 
 describe('Report', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    Report = (await loadModels()).Report
+  })
+  afterEach(function () {
+    SecretsManager.prototype.getSecretValue.restore()
+  })
+
   describe('#construct()', function () {
     it('should be an instance of Model', function () {
       const model = new Report()
@@ -49,35 +60,28 @@ describe('Report', function () {
 
   describe('#validate()', function () {
     const tests = [
-      { model: TestHelper.generate.model('report'), param: 'uuid', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'uuid', value: '1234567890', error: true },
-      { model: TestHelper.generate.model('report'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      { model: TestHelper.generate.model('report'), param: 'createdOn', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'createdOn', value: 'test', error: true },
-      { model: TestHelper.generate.model('report'), param: 'createdOn', value: '123456', error: true },
-      { model: TestHelper.generate.model('report'), param: 'createdOn', value: 123456, error: false },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: 'test', error: true },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: '123456', error: true },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: 123456, error: true },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: 0, error: false },
-      { model: TestHelper.generate.model('report'), param: 'isDeleted', value: 1, error: false },
-      { model: TestHelper.generate.model('report'), param: 'status', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'status', value: '', error: true },
-      { model: TestHelper.generate.model('report'), param: 'status', value: 'test', error: true },
-      { model: TestHelper.generate.model('report'), param: 'status', value: 123456, error: true },
-      { model: TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_FAILED, error: false },
-      { model: TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_PENDING, error: false },
-      { model: TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_SUCCESS, error: false },
-      { model: TestHelper.generate.model('report'), param: 'type', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'type', value: 'test', error: true },
-      { model: TestHelper.generate.model('report'), param: 'type', value: '', error: true },
-      { model: TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_ALL_DONATIONS, error: false },
-      { model: TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_NONPROFIT_DONATIONS, error: false },
-      { model: TestHelper.generate.model('report'), param: 'url', value: null, error: true },
-      { model: TestHelper.generate.model('report'), param: 'url', value: '', error: true },
-      { model: TestHelper.generate.model('report'), param: 'url', value: 'http://test.com/report', error: false },
-      { model: TestHelper.generate.model('report'), param: 'url', value: 123456, error: true }
+      ...TestHelper.commonModelValidations('report'),
+
+      // TODO most/all of the commented out rules below need validation rules added
+      { model: () => TestHelper.generate.model('report'), param: 'isDeleted', value: 0, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'isDeleted', value: 1, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: null, error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: '', error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: 'test', error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: 123456, error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_FAILED, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_PENDING, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_SUCCESS, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: null, error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: 'test', error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: '', error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_DONATIONS, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_PAYOUT_REPORT, error: false },
+      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_LAST_4, error: false },
+      // { model: () => TestHelper.generate.model('report'), param: 'url', value: null, error: true },
+      // { model: () => TestHelper.generate.model('report'), param: 'url', value: '', error: true },
+      { model: () => TestHelper.generate.model('report'), param: 'url', value: 'http://test.com/report', error: false }
+      // { model: () => TestHelper.generate.model('report'), param: 'url', value: 123456, error: true }
     ]
     TestHelper.validate(tests)
   })

@@ -15,15 +15,33 @@
  */
 
 const assert = require('assert')
-const AWS = require('aws-sdk-mock')
 const Repository = require('../../src/repositories/repository')
-const SponsorTier = require('../../src/dynamo-models/sponsorTier')
 const SponsorTiersRepository = require('../../src/repositories/sponsorTiers')
 const TestHelper = require('../helpers/test')
+
+const SecretsManager = require('../../src/aws/secretsManager')
+const loadModels = require('../../src/models')
+const sinon = require('sinon')
+const Sequelize = require('sequelize')
+let SponsorTier
 
 const promiseMe = require('mocha-promise-me')
 
 describe('SponsorTiersRepository', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    SponsorTier = (await loadModels()).SponsorTier
+  })
+  afterEach(function () {
+    const stubbedFunctions = [
+      SecretsManager.prototype.getSecretValue,
+      Sequelize.Model.destroy,
+      Sequelize.Model.findAll,
+      Sequelize.Model.upsert
+    ]
+    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
+  })
+
   describe('#construct()', function () {
     it('should be an instance of Repository', function () {
       const repository = new SponsorTiersRepository()
@@ -42,15 +60,10 @@ describe('SponsorTiersRepository', function () {
   })
 
   describe('#get()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
+    it('should return a SponsorTier model', async function () {
+      const data = await TestHelper.generate.model('sponsorTier')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
 
-    it('should return a SponsorTier model', function () {
-      const data = TestHelper.generate.data('sponsorTier')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: data })
-      })
       const repository = new SponsorTiersRepository()
       return promiseMe.thatYouResolve(repository.get(data.uuid), function (model) {
         assert.ok(model instanceof SponsorTier)
@@ -59,28 +72,22 @@ describe('SponsorTiersRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
+
       const repository = new SponsorTiersRepository()
-      return promiseMe.thatYouReject(repository.get('9ba33b63-41f9-4efc-8869-2b50a35b53df'))
+      return promiseMe.thatYouReject(
+        repository.get('9ba33b63-41f9-4efc-8869-2b50a35b53df'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#getAll()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return all SponsorTier models', function () {
+    it('should return all SponsorTier models', async function () {
       const count = 3
-      const data = TestHelper.generate.dataCollection('sponsorTier', count)
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback(null, {
-          Count: count,
-          Items: data
-        })
-      })
+      const data = await TestHelper.generate.modelCollection('sponsorTier', count)
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
+
       const repository = new SponsorTiersRepository()
       return promiseMe.thatYouResolve(repository.getAll(), function (models) {
         for (let i = 0; i < count; i++) {
@@ -92,46 +99,41 @@ describe('SponsorTiersRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
+
       const repository = new SponsorTiersRepository()
-      return promiseMe.thatYouReject(repository.getAll())
+      return promiseMe.thatYouReject(
+        repository.getAll(),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#delete()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
     it('should delete the SponsorTier model', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback(null, {})
-      })
+      sinon.stub(Sequelize.Model, 'destroy').resolves()
+
       const repository = new SponsorTiersRepository()
       return promiseMe.thatYouResolve(repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'))
     })
 
     it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'destroy').rejects(new Error('stubbedError'))
+
       const repository = new SponsorTiersRepository()
-      return promiseMe.thatYouReject(repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'))
+      return promiseMe.thatYouReject(
+        repository.delete('9ba33b63-41f9-4efc-8869-2b50a35b53df'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#save()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
+    it('should update the SponsorTier model', async function () {
+      const model = await TestHelper.generate.model('sponsorTier')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(model)
+      sinon.stub(Sequelize.Model, 'upsert').resolves(model)
 
-    it('should update the SponsorTier model', function () {
-      const model = TestHelper.generate.model('sponsorTier')
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
       const repository = new SponsorTiersRepository()
       return promiseMe.thatYouResolve(repository.save(model), function (sponsorTier) {
         assert.ok(sponsorTier instanceof SponsorTier)
@@ -139,22 +141,16 @@ describe('SponsorTiersRepository', function () {
       })
     })
 
-    it('should call reject for an invalid Report model', function () {
-      const model = TestHelper.generate.model('sponsorTier')
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
-      const repository = new SponsorTiersRepository()
-      return promiseMe.thatYouReject(repository.save(new SponsorTier()))
-    })
+    it('should call reject on an error', async function () {
+      const model = await TestHelper.generate.model('sponsorTier')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(model)
+      sinon.stub(Sequelize.Model, 'upsert').rejects(new Error('stubbedError'))
 
-    it('should call reject on an error', function () {
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback('Error')
-      })
-      const model = TestHelper.generate.model('sponsorTier')
       const repository = new SponsorTiersRepository()
-      return promiseMe.thatYouReject(repository.save(model))
+      return promiseMe.thatYouReject(
+        repository.save(model),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 })

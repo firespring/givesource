@@ -15,15 +15,33 @@
  */
 
 const assert = require('assert')
-const AWS = require('aws-sdk-mock')
-const Slide = require('../../src/dynamo-models/nonprofitSlide')
 const NonprofitSlidesRepository = require('../../src/repositories/nonprofitSlides')
 const Repository = require('../../src/repositories/repository')
 const TestHelper = require('../helpers/test')
 
+const loadModels = require('../../src/models')
+const sinon = require('sinon')
+const Sequelize = require('sequelize')
+let Slide
+
 const promiseMe = require('mocha-promise-me')
+const SecretsManager = require('../../src/aws/secretsManager')
 
 describe('NonprofitSlidesRepository', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    Slide = (await loadModels()).NonprofitSlide
+  })
+  afterEach(function () {
+    const stubbedFunctions = [
+      SecretsManager.prototype.getSecretValue,
+      Sequelize.Model.destroy,
+      Sequelize.Model.findAll,
+      Sequelize.Model.upsert
+    ]
+    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
+  })
+
   describe('#construct()', function () {
     it('should be an instance of Repository', function () {
       const repository = new NonprofitSlidesRepository()
@@ -42,19 +60,10 @@ describe('NonprofitSlidesRepository', function () {
   })
 
   describe('#get()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return a NonprofitSlide model', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      const data = TestHelper.generate.data('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'query', function (params, callback) {
-        callback(null, { Items: [data] })
-      })
+    it('should return a NonprofitSlide model', async function () {
+      const nonprofit = await TestHelper.generate.model('nonprofit')
+      const data = await TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new NonprofitSlidesRepository()
       return promiseMe.thatYouResolve(repository.get(nonprofit.uuid, data.uuid), function (model) {
         assert.ok(model instanceof Slide)
@@ -63,36 +72,21 @@ describe('NonprofitSlidesRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new NonprofitSlidesRepository()
-      return promiseMe.thatYouReject(repository.get('1234', '1234'))
+      return promiseMe.thatYouReject(
+        repository.get('1234', '1234'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#getAll()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should return all NonprofitSlide models', function () {
+    it('should return all NonprofitSlide models', async function () {
       const count = 3
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      const data = TestHelper.generate.dataCollection('nonprofitSlide', count, { nonprofitUuid: nonprofit.uuid })
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback(null, {
-          Count: count,
-          Items: data
-        })
-      })
+      const nonprofit = await TestHelper.generate.model('nonprofit')
+      const data = await TestHelper.generate.modelCollection('nonprofitSlide', count, { nonprofitUuid: nonprofit.uuid })
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new NonprofitSlidesRepository()
       return promiseMe.thatYouResolve(repository.getAll(nonprofit.uuid), function (models) {
         for (let i = 0; i < count; i++) {
@@ -104,62 +98,38 @@ describe('NonprofitSlidesRepository', function () {
     })
 
     it('should call reject on an error', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'scan', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'findAll').rejects(new Error('stubbedError'))
       const repository = new NonprofitSlidesRepository()
-      return promiseMe.thatYouReject(repository.getAll('1234'))
+      return promiseMe.thatYouReject(
+        repository.getAll('1234'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#delete()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
     it('should delete the NonprofitSlide model', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback(null, {})
-      })
+      sinon.stub(Sequelize.Model, 'destroy').resolves()
       const repository = new NonprofitSlidesRepository()
       return promiseMe.thatYouResolve(repository.delete('1234', '9ba33b63-41f9-4efc-8869-2b50a35b53df'))
     })
 
     it('should call reject on an error', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'delete', function (params, callback) {
-        callback('Error')
-      })
+      sinon.stub(Sequelize.Model, 'destroy').rejects(new Error('stubbedError'))
       const repository = new NonprofitSlidesRepository()
-      return promiseMe.thatYouReject(repository.delete('1234', '9ba33b63-41f9-4efc-8869-2b50a35b53df'))
+      return promiseMe.thatYouReject(
+        repository.delete('1234', '9ba33b63-41f9-4efc-8869-2b50a35b53df'),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 
   describe('#save()', function () {
-    afterEach(function () {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
-    it('should update the NonprofitSlide model', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      const model = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
+    it('should update the NonprofitSlide model', async function () {
+      const nonprofit = await TestHelper.generate.model('nonprofit')
+      const model = await TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
+      sinon.stub(Sequelize.Model, 'findAll').resolves(model)
+      sinon.stub(Sequelize.Model, 'upsert').resolves(model)
       const repository = new NonprofitSlidesRepository()
       return promiseMe.thatYouResolve(repository.save(model.nonprofitUuid, model), function (slide) {
         assert.ok(slide instanceof Slide)
@@ -167,30 +137,15 @@ describe('NonprofitSlidesRepository', function () {
       })
     })
 
-    it('should call reject for an invalid NonprofitSlide model', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      const model = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback(null, { Attributes: model.all() })
-      })
+    it('should call reject on an error', async function () {
+      const model = await TestHelper.generate.model('nonprofitSlide')
+      sinon.stub(Sequelize.Model, 'findAll').resolves(model)
+      sinon.stub(Sequelize.Model, 'upsert').rejects(new Error('stubbedError'))
       const repository = new NonprofitSlidesRepository()
-      return promiseMe.thatYouReject(repository.save(model.nonprofitUuid, new Slide()))
-    })
-
-    it('should call reject on an error', function () {
-      const nonprofit = TestHelper.generate.model('nonprofit')
-      AWS.mock('DynamoDB.DocumentClient', 'get', function (params, callback) {
-        callback(null, { Item: nonprofit.all() })
-      })
-      AWS.mock('DynamoDB.DocumentClient', 'update', function (params, callback) {
-        callback('Error')
-      })
-      const model = TestHelper.generate.model('nonprofitSlide')
-      const repository = new NonprofitSlidesRepository()
-      return promiseMe.thatYouReject(repository.save(model.nonprofitUuid, model))
+      return promiseMe.thatYouReject(
+        repository.save(model.nonprofitUuid, model),
+        (error) => assert.equal('stubbedError', error.message)
+      )
     })
   })
 })

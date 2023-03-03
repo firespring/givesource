@@ -26,7 +26,7 @@ const SettingHelper = require('./../../helpers/setting')
 const SettingsRepository = require('./../../repositories/settings')
 const SSM = require('./../../aws/ssm')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const donationsRepository = new DonationsRepository()
   const donorsRepository = new DonorsRepository()
   const lambda = new Lambda()

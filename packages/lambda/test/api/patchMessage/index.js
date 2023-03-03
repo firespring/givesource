@@ -31,8 +31,9 @@ describe('PatchMessage', function () {
     const updated = TestHelper.generate.model('message', { uuid: original.uuid })
     sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
     sinon.stub(MessagesRepository.prototype, 'save').resolves(updated)
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         messageUuid: original.uuid
       }

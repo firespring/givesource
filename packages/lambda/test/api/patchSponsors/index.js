@@ -34,9 +34,7 @@ describe('PatchSponsors', function () {
     sinon.stub(SponsorsRepository.prototype, 'batchSave').resolves()
     const params = {
       body: {
-        sponsors: models.map(function (model) {
-          return model.all()
-        })
+        sponsors: models
       },
       params: {
         sponsor_tier_uuid: sponsorTier.uuid
@@ -52,9 +50,7 @@ describe('PatchSponsors', function () {
     const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
     const params = {
       body: {
-        sponsors: models.map(function (model) {
-          return model.all()
-        })
+        sponsors: models
       },
       params: {
         sponsor_tier_uuid: sponsorTier.uuid
