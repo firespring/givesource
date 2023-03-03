@@ -36,7 +36,7 @@ const slug = require('slug')
 export default {
 
   props: {
-    nonprofit: {}
+    nonprofit: { type: Object, default: () => ({}) }
   },
   data () {
     return {
@@ -116,7 +116,7 @@ export default {
         })
       }
 
-      promise = promise.then(() => {
+      promise.then(() => {
         if (downloadPath) {
           window.location.href = downloadPath
         }

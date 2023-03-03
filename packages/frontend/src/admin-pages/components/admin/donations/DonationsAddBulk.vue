@@ -190,14 +190,12 @@
 <script>
 import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'
-import ComponentSelectState from './../../forms/SelectState.vue'
 
 export default {
 
   components: {
     'forms-select-nonprofit': ComponentSelectNonprofit,
-    'layout-spinner': ComponentSpinner,
-    'state-select': ComponentSelectState
+    'layout-spinner': ComponentSpinner
   },
 
   beforeRouteEnter (to, from, next) {

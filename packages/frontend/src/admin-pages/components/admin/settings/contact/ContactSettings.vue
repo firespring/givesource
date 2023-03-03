@@ -181,8 +181,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
-
 export default {
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {

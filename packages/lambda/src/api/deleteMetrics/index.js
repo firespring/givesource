@@ -26,7 +26,9 @@ exports.handle = function (event, context, callback) {
   const metrics = []
   request.validate().then(function () {
     request.get('metrics', []).forEach(function (data) {
-      metrics.push(new Metric(data))
+      // this was wrong before and appears to be dead code
+      throw new Error('not implemented')
+      // metrics.push(new Metric(data))
     })
   }).then(function () {
     let promise = Promise.resolve()

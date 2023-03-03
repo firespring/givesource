@@ -64,10 +64,10 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         title: 'There was an error',
         message: 'There was an error with that request. Please try again.'
-      }
+      })
     }
   },
   data: function () {

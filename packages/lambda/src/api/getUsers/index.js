@@ -18,7 +18,6 @@ const HttpException = require('./../../exceptions/http')
 const Request = require('./../../aws/request')
 const UsersRepository = require('./../../repositories/users')
 const UserGroupMiddleware = require('./../../middleware/userGroup')
-const _ = require('lodash')
 
 exports.handle = function (event, context, callback) {
   const cognito = new Cognito()

@@ -39,9 +39,10 @@ export async function handle (event, context, callback) {
     })
     callback(null, { statusCode: verifyResult.status, message: 'Success.' })
   } catch (e) {
-    callback({
+    const errorResult = {
       statusCode: 500,
       errorMessage: 'Oops, something went wrong on our side.'
-    })
+    }
+    callback(errorResult)
   }
 }

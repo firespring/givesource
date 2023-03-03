@@ -243,9 +243,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         content: {}
-      }
+      })
     }
   },
   data: function () {
@@ -386,7 +386,8 @@ export default {
       return constraints
     },
     cancel: function () {
-      this.data.content.value = this.original
+      // this doesn't appear needed, but if it is we need to do it without mutating the prop
+      // this.data.content.value = this.original
       this.clearModals()
     },
     save: function () {

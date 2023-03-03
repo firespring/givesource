@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentDonationCartModalListTableRow from './DonationCartModalListTableRow.vue'
 
 export default {

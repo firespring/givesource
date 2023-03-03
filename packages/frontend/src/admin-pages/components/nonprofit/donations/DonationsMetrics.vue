@@ -41,13 +41,11 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
-
 const numeral = require('numeral')
 
 export default {
   props: {
-    nonprofit: {}
+    nonprofit: { type: Object, default: () => ({}) }
   },
   data: function () {
     return {

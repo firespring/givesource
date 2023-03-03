@@ -33,7 +33,7 @@
 <script>
 export default {
   props: {
-    value: {},
+    value: { type: String, default: '' },
     id: {
       type: String,
       default: null
@@ -47,18 +47,18 @@ export default {
     return {
       localValue: this.value ? this.value : '01',
       options: [
-                	'01',
+        '01',
         '02',
         '03',
-	                '04',
-	                '05',
-	                '06',
-	                '07',
-	                '08',
-	                '09',
-	                '10',
-	                '11',
-	                '12'
+        '04',
+        '05',
+        '06',
+        '07',
+        '08',
+        '09',
+        '10',
+        '11',
+        '12'
       ]
     }
   },

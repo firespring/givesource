@@ -103,10 +103,10 @@ const deleteNonprofitUsers = function (nonprofit) {
     let promise = Promise.resolve()
     users.forEach(function (user) {
       promise = promise.then(function () {
-			  if (user.cognitoUsername) {
+        if (user.cognitoUsername) {
           return cognito.deleteUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername)
         }
-			  return true
+        return true
       }).then(function () {
         return nonprofitUsersRepository.delete(nonprofit.id, user.id)
       })

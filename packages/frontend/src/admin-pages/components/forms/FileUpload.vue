@@ -44,10 +44,10 @@
 <script>
 export default {
   props: {
-    id: '',
-    name: '',
-    placeholder: '',
-    value: {}
+    id: { type: String, default: '' },
+    name: { type: String, default: '' },
+    placeholder: { type: String, default: '' },
+    value: { type: Object, default: () => null }
   },
   data: function () {
     return {

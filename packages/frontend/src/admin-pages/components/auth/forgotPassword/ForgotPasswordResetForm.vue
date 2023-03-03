@@ -167,9 +167,9 @@
 const User = require('../../../helpers/user')
 
 export default {
-  props: [
-    'cognitoUser'
-  ],
+  props: {
+    cognitoUser: { type: Object, default: () => null }
+  },
   data: function () {
     return {
 

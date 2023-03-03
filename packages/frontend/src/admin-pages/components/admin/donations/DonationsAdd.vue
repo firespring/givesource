@@ -327,16 +327,13 @@
 </template>
 
 <script>
-import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'
 import ComponentSelectState from './../../forms/SelectState.vue'
 import ComponentDonationsOfflineNonprofitListRow from './DonationsOfflineNonprofitListRow.vue'
 
 export default {
-
   components: {
     'donations-options': ComponentDonationsOfflineNonprofitListRow,
-    'forms-select-nonprofit': ComponentSelectNonprofit,
     'layout-spinner': ComponentSpinner,
     'state-select': ComponentSelectState
   },

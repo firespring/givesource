@@ -129,14 +129,7 @@
 </template>
 
 <script>
-import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue'
-import ComponentSelectState from './../../../forms/SelectState.vue'
-
 export default {
-  components: {
-    'category-select': ComponentSelectNonprofitCategory,
-    'state-select': ComponentSelectState
-  },
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {
       vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
@@ -164,9 +157,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       nonprofit: {},

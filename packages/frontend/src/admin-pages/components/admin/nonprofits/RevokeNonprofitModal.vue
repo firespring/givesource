@@ -71,9 +71,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         nonprofit: {}
-      }
+      })
     }
   },
   data: function () {

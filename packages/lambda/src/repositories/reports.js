@@ -18,7 +18,6 @@ const Repository = require('./repository')
 const RepositoryHelper = require('./../helpers/repository')
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
 const loadModels = require('../models/index')
-const Sequelize = require('sequelize')
 
 /**
  * ReportsRepository constructor
@@ -127,9 +126,9 @@ ReportsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Report.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

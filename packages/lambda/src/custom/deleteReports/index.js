@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const FilesRepository = require('./../../repositories/files')
 const logger = require('./../../helpers/log')
 const ReportsRepository = require('./../../repositories/reports')

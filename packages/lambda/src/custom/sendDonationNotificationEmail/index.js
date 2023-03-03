@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const EmailHelper = require('./../../helpers/email')
 const FilesRepository = require('./../../repositories/files')
 const HttpException = require('./../../exceptions/http')

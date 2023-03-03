@@ -62,7 +62,6 @@ exports.handle = function (event, context, callback) {
       secretsManager.getSecretValue(process.env.AWS_REGION, process.env.READONLY_DATABASE_SECRET_ID)
     ])
   }).then(function (secrets) {
-    const dbHost = process.env.DATABASE_HOST
     const dbName = process.env.DATABASE_NAME
     const adminSecret = JSON.parse(secrets.find(it => it.Name === process.env.ADMIN_DATABASE_SECRET_ID).SecretString)
     const maintenanceSecret = JSON.parse(secrets.find(it => it.Name === process.env.MAINTENANCE_DATABASE_SECRET_ID).SecretString)
@@ -85,12 +84,12 @@ exports.handle = function (event, context, callback) {
 
     return sequelize.query(
       'CREATE DATABASE IF NOT EXISTS `' + dbName + '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ' +
-			'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
-			'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
-			'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
-			'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + dbName + '`.* TO "' + readwriteSecret.username + '"@"%";' +
-			'CREATE USER IF NOT EXISTS "' + readonlySecret.username + '"@"%" IDENTIFIED BY "' + readonlySecret.password + '"; ' +
-			'GRANT SELECT ON `' + dbName + '`.* TO "' + readonlySecret.username + '"@"%";'
+      'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
+      'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
+      'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
+      'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + dbName + '`.* TO "' + readwriteSecret.username + '"@"%";' +
+      'CREATE USER IF NOT EXISTS "' + readonlySecret.username + '"@"%" IDENTIFIED BY "' + readonlySecret.password + '"; ' +
+      'GRANT SELECT ON `' + dbName + '`.* TO "' + readonlySecret.username + '"@"%";'
     )
   }).then(function () {
     response.send(event, context, response.SUCCESS)

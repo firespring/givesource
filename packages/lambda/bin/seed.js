@@ -107,14 +107,15 @@ const seedDonations = function () {
   }).then(function (pts) {
     paymentTransactions = pts
     let nonprofitDonations = []
-    let donationsFees = 0; let donationsFeesCovered = 0; let donationsSubtotal = 0; let donationsTotal = 0; let topDonation = 0
+    let donationsFeesCovered = 0
+    let topDonation = 0
     donations.forEach(function (chunk, i) {
       let paymentTotal = 0
       const donor = _.filter(savedDonors, function (object, key) {
-        return key == i
+        return key === i
       })[0]
       const pt = _.filter(savedPts, function (object, key) {
-        return key == i
+        return key === i
       })[0]
       chunk.forEach(function (donation) {
         donation.donorId = donor.id
@@ -126,10 +127,7 @@ const seedDonations = function () {
           donation.paymentTransactionIsTestMode = pt.isTestMode ? 1 : 0
         }
 
-        donationsFees += donation.fees
         donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered
-        donationsSubtotal += donation.subtotal
-        donationsTotal += donation.total
         paymentTotal += donation.total
         topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation
       })

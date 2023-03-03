@@ -88,7 +88,7 @@ const adminSource = path.resolve(__dirname, './../build/admin-pages') + '/'
 const adminDestination = 'admin-pages/' + packageJson.version + '/'
 const publicSource = path.resolve(__dirname, './../build/public-pages') + '/'
 const publicDestination = 'public-pages/' + packageJson.version + '/'
-promise = promise.then(function () {
+promise.then(function () {
   return release(adminSource, adminDestination, ['settings.json'])
 }).then(function () {
   return release(adminSource + 'assets/css/', adminDestination + 'assets/css/')

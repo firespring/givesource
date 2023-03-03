@@ -17,7 +17,6 @@
 'use strict'
 
 const { DataTypes } = require('sequelize')
-const moment = require('moment-timezone')
 
 module.exports = (sequelize) => {
   return sequelize.define('Agreement', {

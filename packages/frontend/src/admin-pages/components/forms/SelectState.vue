@@ -47,7 +47,7 @@
 <script>
 export default {
   props: {
-    value: {},
+    value: { type: String, default: null },
     id: {
       type: String,
       default: null

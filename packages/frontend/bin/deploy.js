@@ -19,7 +19,6 @@ const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
-const _ = require('lodash')
 const config = require('config')
 const deployInfo = require('../config/deploy-info.json')
 const fs = require('fs')
@@ -97,8 +96,8 @@ const deploy = function (dir, bucket, region, exclude) {
 
 // Run the deploy
 Promise.all([
-  deploy(path.normalize(__dirname + '/../build/admin-pages'), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
-  deploy(path.normalize(__dirname + '/../build/public-pages'), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
+  deploy(path.normalize(path.join(__dirname, '/../build/admin-pages')), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
+  deploy(path.normalize(path.join(__dirname, '/../build/public-pages')), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
 ]).then(() => {
   console.log('deployed frontend')
 }).catch(err => {

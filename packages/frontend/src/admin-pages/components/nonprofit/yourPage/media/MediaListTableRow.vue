@@ -65,7 +65,7 @@ export default {
         return {}
       }
     },
-    slide: {}
+    slide: { type: Object, default: () => ({}) }
   },
   computed: {
     icon: function () {

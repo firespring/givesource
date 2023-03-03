@@ -70,11 +70,11 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         contents: [],
         settings: [],
         pageId: null
-      }
+      })
     }
   },
   methods: {

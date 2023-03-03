@@ -189,11 +189,11 @@ import Request from './../../../../helpers/request'
 const slug = require('slug')
 
 /**
-	 * Pre-loaded data
-	 *
-	 * @param {String} id
-	 * @returns {Promise}
-	 */
+   * Pre-loaded data
+   *
+   * @param {String} id
+   * @returns {Promise}
+   */
 const fetchData = (id) => {
   const request = new Request()
   const contentKeys = getContentKeys(id)

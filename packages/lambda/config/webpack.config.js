@@ -185,7 +185,7 @@ module.exports = {
   },
   target: 'node',
   externals: {
-	  'aws-sdk': 'commonjs aws-sdk'
+    'aws-sdk': 'commonjs aws-sdk'
   },
   module: {
     rules: [

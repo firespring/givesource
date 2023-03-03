@@ -60,9 +60,9 @@
 import * as Settings from './../../helpers/settings'
 
 export default {
-  props: [
-    'nonprofit'
-  ],
+  props: {
+    nonprofit: { type: Object, default: () => ({}) }
+  },
   computed: {
     amount: function () {
       return this.formatMoney(this.nonprofit.donationsSubtotal)

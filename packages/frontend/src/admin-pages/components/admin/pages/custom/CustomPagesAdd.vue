@@ -176,10 +176,10 @@ const slug = require('slug')
 const uuid = require('node-uuid')
 
 /**
-	 * Pre-loaded data
-	 *
-	 * @returns {Promise}
-	 */
+   * Pre-loaded data
+   *
+   * @returns {Promise}
+   */
 const fetchData = () => {
   const request = new Request()
 

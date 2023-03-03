@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
 import ComponentSponsorsListTable from './SponsorsListTable.vue'
 
 export default {
@@ -122,9 +121,9 @@ export default {
       next()
     })
   },
-  props: [
-    'sponsorTierId'
-  ],
+  props: {
+    sponsorTierId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       files: [],

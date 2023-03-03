@@ -39,7 +39,7 @@ require('chosen-js')
 
 export default {
   props: {
-    value: {},
+    value: { type: String, default: null },
     id: {
       type: String,
       default: null

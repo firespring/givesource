@@ -117,7 +117,7 @@
             >
               <template v-if="slides.length">
                 <div
-                  v-for="(slide, index) in slides"
+                  v-for="slide in slides"
                   :key="slide.id"
                   class="slide"
                   style="display: flex; align-items: center;"
@@ -263,9 +263,9 @@ export default {
       })
     })
   },
-  props: [
-    'slug'
-  ],
+  props: {
+    slug: { type: String, default: '' }
+  },
   data () {
     return {
       files: [],

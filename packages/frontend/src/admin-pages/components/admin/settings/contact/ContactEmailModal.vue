@@ -95,9 +95,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         CONTACT_EMAIL: null
-      }
+      })
     }
   },
   data: function () {

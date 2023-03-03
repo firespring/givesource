@@ -74,8 +74,7 @@
         @end="updateSortOrder"
       >
         <media-list-table-row
-          v-for="slide in slides"
-          v-if="loadedSlides"
+          v-for="slide in slidesAfterLoaded"
           :key="slide.id"
           :slide="slide"
           :file="getFile(slide.fileId)"
@@ -87,7 +86,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
 import ComponentDraggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
 
@@ -98,9 +96,9 @@ export default {
     draggable: ComponentDraggable,
     'media-list-table-row': ComponentMediaListTableRow
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       file: null,
@@ -123,6 +121,14 @@ export default {
     disableAddButton: function () {
       const vue = this
       return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides)
+    },
+    /**
+     * Returns an empty array until the slides are loaded, then returns the slides
+     * @returns Array
+     */
+    slidesAfterLoaded: function () {
+      const vue = this
+      return vue.loadedSlides ? vue.slides : []
     }
   },
   beforeMount: function () {
@@ -131,7 +137,7 @@ export default {
     vue.$request.get('nonprofits/' + vue.nonprofitId + '/slides').then(function (response) {
       if (response.data.errorMessage) {
         console.log(response.data)
-        return Promise.reject()
+        return Promise.reject(new Error(response.data.errorMessage))
       } else {
         response.data.sort(function (a, b) {
           return a.sortOrder - b.sortOrder

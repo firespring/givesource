@@ -115,7 +115,7 @@ const numeral = require('numeral')
 export default {
 
   props: {
-    donation: {}
+    donation: { type: Object, default: () => null }
   },
   computed: {
     isAnonymous () {

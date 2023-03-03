@@ -93,7 +93,7 @@ require('jquery.payment')
 
 export default {
   props: {
-    value: {},
+    value: { type: String, default: '' },
     id: {
       type: String,
       default: null

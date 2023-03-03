@@ -38,7 +38,7 @@
         :key="sponsor.id"
         :sponsor="sponsor"
         :file="getFile(sponsor.fileId)"
-        :v-on:hasError="hasError"
+        @has-error="hasError"
         @delete-sponsor="deleteSponsor"
       />
     </draggable>
@@ -68,7 +68,7 @@ export default {
       }
     },
     sponsorTierId: {
-      type: String | Number,
+      type: [String, Number],
       default: null
     }
   },

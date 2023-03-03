@@ -156,6 +156,7 @@ export default {
         return vue.$request.get('nonprofits/' + to.params.nonprofitId + '/slides/' + to.params.slideId)
       }).then(function (response) {
         vue.slide = response.data
+      }).catch(function (err) {
         vue.apiError = err.response.data.errors
       })
     })
@@ -174,9 +175,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       slide: {},

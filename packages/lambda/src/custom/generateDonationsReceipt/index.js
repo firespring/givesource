@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const DonationsRepository = require('./../../repositories/donations')
 const DonorsRepository = require('./../../repositories/donors')
 const FilesRepository = require('./../../repositories/files')
@@ -174,6 +173,10 @@ exports.handle = (event, context, callback) => {
     })
   }).catch(err => {
     console.log('Error: %j', err)
-    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+    if (err instanceof HttpException) {
+      callback(err.context(context))
+    } else {
+      callback(err)
+    }
   })
 }

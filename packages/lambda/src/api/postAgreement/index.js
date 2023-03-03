@@ -15,12 +15,10 @@
  */
 
 const HttpException = require('./../../exceptions/http')
-const Lambda = require('./../../aws/lambda')
 const AgreementsRepository = require('./../../repositories/agreements')
 const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-  const lambda = new Lambda()
   const repository = new AgreementsRepository()
   const request = new Request(event, context)
 

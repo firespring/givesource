@@ -86,8 +86,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
 
   props: {
@@ -97,9 +95,9 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         email: ''
-      }
+      })
     }
   },
   data () {

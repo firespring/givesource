@@ -164,9 +164,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       slides: [],
@@ -194,7 +194,7 @@ export default {
     },
     disableSaveAndNextButton: function () {
       const vue = this
-	            return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides - 1)
+      return !vue.loadedSlides || (vue.slides.length >= vue.maxSlides - 1)
     }
   },
   watch: {
@@ -273,7 +273,7 @@ export default {
         if (response.data.errorMessage) {
           console.log(response.data)
         } else {
-					    vue.slides.push(response.data)
+          vue.slides.push(response.data)
         }
 
         if (action === 'add') {

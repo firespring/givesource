@@ -235,7 +235,7 @@ SettingsRepository.prototype.save = function (model) {
       }
       return repository.upsert(model, {})
     }).then(function (setting) {
-		  resolve(setting)
+      resolve(setting)
     }).catch(function (err) {
       reject(err)
     }).finally(function () {

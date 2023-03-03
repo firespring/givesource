@@ -195,7 +195,7 @@ export default {
           vm.downloaded = true
         })
       }
-      promise = promise.then(() => {
+      promise.then(() => {
         if (downloadPath) {
           window.location.href = downloadPath
         }

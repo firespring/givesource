@@ -79,7 +79,7 @@ NonprofitDonationTiersRepository.prototype.batchGet = function (ids) {
           }
         })
       } else {
-        reject('IDs must be provided to update.')
+        reject(new Error('IDs must be provided to update.'))
       }
     }).then(function (results) {
       resolve(results)
@@ -165,10 +165,10 @@ NonprofitDonationTiersRepository.prototype.delete = function (nonprofitId, id) {
     }).then(function () {
       return allModels.NonprofitDonationTier.destroy({
         where:
-					{
-					  nonprofitId: nonprofitId,
-					  id: id
-					}
+          {
+            nonprofitId: nonprofitId,
+            id: id
+          }
       })
     }).then(function () {
       resolve()
