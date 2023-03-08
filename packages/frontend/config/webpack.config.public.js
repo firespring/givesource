@@ -25,8 +25,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const FetchDynamicContent = require('./../bin/fetch-dynamic-content')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const WebpackOnBuildPlugin = require('on-build-webpack')
+const { VueLoaderPlugin } = require('vue-loader')
+
+function RunOnBuild(callback) {
+  this.callback = callback;
+}
+
+RunOnBuild.prototype.apply = function (compiler) {
+  compiler.hooks.done.tap("GDPublic", this.callback);
+}
 
 module.exports = function () {
   const env = process.env.NODE_ENV || 'development'
@@ -46,11 +53,16 @@ module.exports = function () {
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
-          loader: 'file-loader?name=assets/img/[name].[ext]'
+          use: [{
+            loader: 'file-loader',
+            options: {
+              name: 'assets/img/[name].[ext]'
+            }
+          }]
         },
         {
           test: /\.css$/,
-          loader: 'style-loader!css-loader'
+          use: ['style-loader', 'css-loader']
         },
         {
           test: /\.js$/,
@@ -81,12 +93,14 @@ module.exports = function () {
         Promise: 'es6-promise-promise',
         'window.jQuery': 'jquery'
       }),
-      new CopyWebpackPlugin([
-        { from: './config/settings.json', to: 'settings.json' },
-        { from: './config/robots-allow.txt', to: 'robots.txt' },
-        { from: './src/public-pages/assets/css', to: 'assets/css' },
-        { from: './src/public-pages/assets/img', to: 'assets/img' }
-      ]),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: './config/settings.json', to: 'settings.json' },
+          { from: './config/robots-allow.txt', to: 'robots.txt' },
+          { from: './src/public-pages/assets/css', to: 'assets/css' },
+          { from: './src/public-pages/assets/img', to: 'assets/img' }
+        ]
+      }),
       new VueLoaderPlugin(),
       new HtmlWebpackPlugin({
         template: 'src/public-pages/index.html'
@@ -104,7 +118,7 @@ module.exports = function () {
         files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
         open: false
       }),
-      new WebpackOnBuildPlugin(FetchDynamicContent.fetch)
+      new RunOnBuild(FetchDynamicContent.fetch)
     ]
   }
   if (env === 'production') {
