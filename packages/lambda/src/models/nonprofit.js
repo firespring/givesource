@@ -112,7 +112,8 @@ module.exports = (sequelize) => {
     },
     status: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 'PENDING'
     },
     taxId: {
       type: DataTypes.STRING,

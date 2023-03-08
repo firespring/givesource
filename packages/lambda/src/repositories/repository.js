@@ -18,7 +18,6 @@ const _ = require('lodash')
 const AWS = require('aws-sdk')
 const QueryBuilder = require('./../aws/queryBuilder')
 const loadModels = require('../models/index')
-const Sequelize = require('sequelize')
 
 /**
  * Repository constructor

@@ -23,7 +23,8 @@ const promiseMe = require('mocha-promise-me')
  *
  * @type {Generator}
  */
-module.exports.generate = new Generator()
+const generatorInstance = new Generator()
+module.exports.generate = generatorInstance
 
 /**
  * Assert multiple validation test cases
@@ -33,10 +34,16 @@ module.exports.generate = new Generator()
 module.exports.validate = function (testCases) {
   testCases.forEach((testCase) => {
     const throws = testCase.error ? 'throw' : 'not throw'
-    it(`should ${throws} error on ${format(testCase.value)} ${testCase.param}`, () => {
+    it(`should ${throws} error on ${format(testCase.value)} ${testCase.param}`, async () => {
       const data = {}
       data[testCase.param] = testCase.value
-      testCase.model.populate(data)
+
+      // retrieve the model now that we are inside of `it()`
+      testCase.model = testCase.model()
+      testCase.model = await testCase.model
+
+      // TODO validate that data keys are actually model properties
+      testCase.model.set(data)
       if (testCase.error) {
         return promiseMe.thatYouReject(testCase.model.validate())
       } else {
@@ -66,6 +73,25 @@ module.exports.assertModelEquals = function (data, model, except) {
   })
 
   assert(equality === true)
+}
+
+module.exports.commonModelValidations = function (modelType) {
+  return [
+    // TODO most/all of the commented out rules below need validation rules added
+    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: null, error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '1234567890', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
+    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: null, error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 'test', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: '123456', error: true },
+    { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 123456, error: false },
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: null, error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 'test', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: '123456', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 123456, error: true },
+    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 0, error: false },
+    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 1, error: false }
+  ]
 }
 
 /**

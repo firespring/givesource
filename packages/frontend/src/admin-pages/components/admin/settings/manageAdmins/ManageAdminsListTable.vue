@@ -62,9 +62,9 @@ export default {
     'layout-empty-table-row': ComponentEmptyTableRow,
     'manage-admins-list-table-row': ComponentManageAdminsListTableRow
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       adminUsers: [],

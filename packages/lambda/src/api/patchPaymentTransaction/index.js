@@ -23,13 +23,15 @@ exports.handle = function (event, context, callback) {
   const repository = new PaymentTransactionsRepository()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-  let paymentTransaction = null
+  const paymentTransaction = null
   request.validate().then(function () {
     return repository.get(request.urlParam('payment_transaction_id'))
   }).then(function (result) {
-    paymentTransaction = new PaymentTransaction(result)
-    paymentTransaction.populate(request._body)
-    return paymentTransaction.validate()
+    // this was wrong before and appears to be dead code
+    throw new Error('not implemented')
+    // paymentTransaction = new PaymentTransaction(result)
+    // paymentTransaction.populate(request._body)
+    // return paymentTransaction.validate()
   }).then(function () {
     return repository.save(paymentTransaction)
   }).then(function (model) {

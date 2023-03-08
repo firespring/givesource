@@ -45,23 +45,23 @@ export default {
       type: String,
       default: ''
     },
-    event_title: {
+    eventTitle: {
       type: String,
       default: ''
     },
-    fallback_image: {
-      type: Object | File,
+    fallbackImage: {
+      type: [Object, File],
       default: null
     },
-    fallback_image_url: {
-      type: Object | File,
-      default: ''
+    fallbackImageUrl: {
+      type: [Object, File],
+      default: null
     },
     image: {
-      type: Object | File,
+      type: [Object, File],
       default: null
     },
-    image_url: {
+    imageUrl: {
       type: String,
       default: ''
     },
@@ -105,33 +105,33 @@ export default {
         vm.src = null
       }
     },
-    image_url () {
+    imageUrl () {
       const vm = this
 
       if (!vm.image) {
-        vm.src = vm.image_url
+        vm.src = vm.imageUrl
       }
     },
-    fallback_image () {
+    fallbackImage () {
       const vm = this
 
-      if (_.isPlainObject(vm.fallback_image) && vm.fallback_image.hasOwnProperty('path')) {
-        vm.fallback_src = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.fallback_image.path
-      } else if (vm.fallback_image instanceof File) {
+      if (_.isPlainObject(vm.fallbackImage) && vm.fallbackImage.hasOwnProperty('path')) {
+        vm.fallback_src = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.fallbackImage.path
+      } else if (vm.fallbackImage instanceof File) {
         const reader = new FileReader()
         reader.onload = (e) => {
           vm.fallback_src = e.target.result
         }
-        reader.readAsDataURL(vm.fallback_image)
+        reader.readAsDataURL(vm.fallbackImage)
       } else {
         vm.fallback_src = null
       }
     },
-    fallback_image_url () {
+    fallbackImageUrl () {
       const vm = this
 
-      if (!vm.fallback_image) {
-        vm.fallback_src = vm.fallback_image_url
+      if (!vm.fallbackImage) {
+        vm.fallback_src = vm.fallbackImageUrl
       }
     }
   }

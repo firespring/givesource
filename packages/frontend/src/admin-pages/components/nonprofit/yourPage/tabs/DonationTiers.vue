@@ -71,9 +71,9 @@ export default {
   components: {
     'donation-tiers-list-table-row': ComponentDonationTiersListTableRow
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       donationTiers: [],

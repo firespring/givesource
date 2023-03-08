@@ -79,7 +79,7 @@ const fixDonations = function () {
             paymentTransaction.timezone = eventTimezone
 
             // Gross. I dunno. We couldn't find a better work-around to get it to show the formatted total in the email
-            paymentTransactionHash = paymentTransaction.dataValues
+            const paymentTransactionHash = paymentTransaction.dataValues
             paymentTransactionHash.formattedAmount = paymentTransaction.formattedAmount
 
             // donationsToSendReceiptsFor[0].Donor.email = 'ebmeierj@gmail.com';

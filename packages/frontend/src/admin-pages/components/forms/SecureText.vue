@@ -62,11 +62,11 @@
 <script>
 export default {
   props: {
-    id: '',
-    name: '',
-    placeholder: '',
-    secureKey: '',
-    value: {}
+    id: { type: String, default: '' },
+    name: { type: String, default: '' },
+    placeholder: { type: String, default: '' },
+    secureKey: { type: String, default: '' },
+    value: { type: String, default: '' }
   },
   data: function () {
     return {

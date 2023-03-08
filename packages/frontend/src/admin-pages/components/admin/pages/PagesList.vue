@@ -373,10 +373,10 @@ import { getContentKeys, getSettingKeys } from './../../../helpers/content'
 import Request from './../../../helpers/request'
 
 /**
-	 * Pre-loaded data
-	 *
-	 * @returns {Promise}
-	 */
+   * Pre-loaded data
+   *
+   * @returns {Promise}
+   */
 const fetchData = () => {
   const request = new Request()
   let settings = []
@@ -394,10 +394,10 @@ const fetchData = () => {
     settings = response.hasOwnProperty('data') ? response.data : []
     settings.forEach(function (setting) {
       if (setting.value === '0') {
-                	setting.value = false
+        setting.value = false
       }
       if (setting.value === '1') {
-                	setting.value = true
+        setting.value = true
       }
     })
 

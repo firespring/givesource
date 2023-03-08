@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const DonationHelper = require('./../../helpers/donation')
 const NonprofitHelper = require('./../../helpers/nonprofit')
 const DonationsRepository = require('./../../repositories/donations')
@@ -99,7 +98,7 @@ exports.handle = function (event, context, callback) {
  */
 const getFilenameTimestamp = function () {
   const date = new Date()
-  return date.toLocaleDateString().replace(/[\/ ]+/g, '-') + '-' + date.toLocaleTimeString().replace(/[: ]+/g, '-')
+  return date.toLocaleDateString().replace(/[/ ]+/g, '-') + '-' + date.toLocaleTimeString().replace(/[: ]+/g, '-')
 }
 
 /**

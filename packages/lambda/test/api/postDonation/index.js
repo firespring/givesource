@@ -29,8 +29,9 @@ describe('PostDonation', function () {
   it('should return a donation', function () {
     const model = TestHelper.generate.model('donation')
     sinon.stub(DonationsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostDonation.handle(params, null, function (error, result) {
       assert(error === null)

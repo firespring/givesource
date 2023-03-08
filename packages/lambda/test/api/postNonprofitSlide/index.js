@@ -35,8 +35,9 @@ describe('PostNonprofitSlide', function () {
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
     sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1)
     sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn']),
+      body,
       params: {
         nonprofit_uuid: nonprofit.uuid
       }

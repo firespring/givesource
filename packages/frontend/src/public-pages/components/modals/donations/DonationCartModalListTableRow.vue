@@ -53,19 +53,18 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentMoney from './../../forms/Money.vue'
 
 export default {
   components: {
     'forms-money': ComponentMoney
   },
-  props: [
-    'amount',
-    'nonprofit',
-    'timestamp',
-    'index'
-  ],
+  props: {
+    amount: { type: Number, default: 0 },
+    nonprofit: { type: Object, default: () => ({}) },
+    timestamp: { type: Number, default: 0 },
+    index: { type: Number, default: 0 }
+  },
   data: function () {
     return {
       localAmount: this.amount,

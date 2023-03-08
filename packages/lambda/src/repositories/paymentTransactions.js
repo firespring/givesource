@@ -18,7 +18,6 @@ const Repository = require('./repository')
 const RepositoryHelper = require('./../helpers/repository')
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
 const loadModels = require('../models/index')
-const Sequelize = require('sequelize')
 
 /**
  * PaymentTransactionsRepository constructor
@@ -132,9 +131,9 @@ PaymentTransactionsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.PaymentTransaction.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

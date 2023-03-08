@@ -53,11 +53,11 @@ exports.handle = function (event, context, callback) {
   })
 
   /**
-	 * Generate custom css body
-	 *
-	 * @param {String} color
-	 * @returns {String}
-	 */
+   * Generate custom css body
+   *
+   * @param {String} color
+   * @returns {String}
+   */
   const generateCssBody = function (color) {
     return RenderHelper.renderTemplate('css/custom', {
       color: color
@@ -65,11 +65,11 @@ exports.handle = function (event, context, callback) {
   }
 
   /**
-	 * Write custom css file to s3
-	 *
-	 * @param {String} body
-	 * @returns {Promise}
-	 */
+   * Write custom css file to s3
+   *
+   * @param {String} body
+   * @returns {Promise}
+   */
   const writeCssFile = function (body) {
     const s3 = new S3()
     const region = process.env.AWS_REGION

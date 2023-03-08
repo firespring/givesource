@@ -44,7 +44,7 @@ exports.loadCustom = function () {
         case 'symbol':
         case 'undefined':
         default:
-          if (typeof value === type) {
+          if (typeof value === type) { // eslint-disable-line valid-typeof
             isValid = true
           }
           break

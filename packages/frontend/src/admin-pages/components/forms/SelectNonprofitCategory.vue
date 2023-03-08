@@ -42,7 +42,7 @@
 <script>
 export default {
   props: {
-    value: {},
+    value: { type: [String, Number], default: null },
     id: {
       type: String,
       default: null

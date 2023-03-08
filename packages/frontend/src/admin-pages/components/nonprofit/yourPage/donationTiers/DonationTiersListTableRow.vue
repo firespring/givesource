@@ -48,11 +48,11 @@
 
 <script>
 export default {
-  props: [
-    'amount',
-    'description',
-    'index'
-  ],
+  props: {
+    amount: { type: [String, Number], default: null },
+    description: { type: String, default: '' },
+    index: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       localAmount: this.amount || '',

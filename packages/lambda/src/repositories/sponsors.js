@@ -159,10 +159,10 @@ SponsorsRepository.prototype.delete = function (sponsorTierId, id) {
     }).then(function () {
       return allModels.Sponsor.destroy({
         where:
-					{
-					  sponsorTierId: sponsorTierId,
-					  id: id
-					}
+          {
+            sponsorTierId: sponsorTierId,
+            id: id
+          }
       })
     }).then(function () {
       resolve()

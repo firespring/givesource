@@ -139,8 +139,8 @@
                 <div class="c-form-item__control">
                   <social-card
                     :description="previewDescription"
-                    :event_title="settings.EVENT_TITLE"
-                    :fallback_image="settings.SOCIAL_SHARING_IMAGE"
+                    :event-title="settings.EVENT_TITLE"
+                    :fallback-image="settings.SOCIAL_SHARING_IMAGE"
                     :image="formData.socialSharingImage"
                     :title="previewTitle"
                     :url="previewUrl"
@@ -172,15 +172,11 @@
 
 <script>
 import ComponentImageEditor from './../../../forms/ImageEditor.vue'
-import ComponentSelectNonprofitCategory from './../../../forms/SelectNonprofitCategory.vue'
-import ComponentSelectState from './../../../forms/SelectState.vue'
 import ComponentSocialCard from './../../../media/SocialCard.vue'
 
 export default {
   components: {
     'forms-image-editor': ComponentImageEditor,
-    'category-select': ComponentSelectNonprofitCategory,
-    'state-select': ComponentSelectState,
     'social-card': ComponentSocialCard
   },
   beforeRouteEnter (to, from, next) {
@@ -201,9 +197,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data () {
     return {
       nonprofit: {},
@@ -342,7 +338,7 @@ export default {
               if (response.data.errorMessage) {
                 console.log(response.data)
               }
-              vm.$emit('update-nonprofit', response.data[0])
+              vm.$emit('update-nonprofit', response.data)
             })
           })
         }

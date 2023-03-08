@@ -16,11 +16,9 @@
 
 'use strict'
 
-const fs = require('fs')
-const path = require('path')
 const connect = require('./connect.js')
 
-module.exports = function () {
+const doConnect = function () {
   return connect().then(function (sequelize) {
     const models = { sequelize: sequelize }
     let model = require('./setting')(sequelize)
@@ -103,7 +101,29 @@ module.exports = function () {
     models.Report.belongsTo(sequelize.models.File, {})
 
     models.Report.belongsTo(sequelize.models.Nonprofit, {})
-
     return models
   })
+}
+
+// We need to memoize the call otherwise instanceof etc will not work properly
+// as we could have multiple (different object) copies of the same model class
+// with memoize'ing we also then need to re-init the connection
+// @see https://sequelize.org/docs/v6/other-topics/aws-lambda/#tldr
+let connectPromise
+module.exports = function () {
+  if (connectPromise) {
+    return connectPromise.then(conn => {
+      // restart connection pool to ensure connections are not re-used across invocations
+      conn.sequelize.connectionManager.initPools()
+
+      // restore `getConnection()` if it has been overwritten by `close()`
+      if (conn.sequelize.connectionManager.hasOwnProperty('getConnection')) {
+        delete conn.sequelize.connectionManager.getConnection
+      }
+      return conn
+    })
+  } else {
+    connectPromise = doConnect()
+  }
+  return connectPromise
 }

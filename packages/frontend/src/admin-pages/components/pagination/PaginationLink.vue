@@ -28,14 +28,12 @@
 </template>
 
 <script>
-import * as Utils from './../../helpers/utils'
-
 export default {
-  props: [
-    'current',
-    'page',
-    'size'
-  ],
+  props: {
+    current: { type: Number, default: 0 },
+    page: { type: Number, default: 0 },
+    size: { type: Number, default: 0 }
+  },
   computed: {
     start: function () {
       return this.page * this.size

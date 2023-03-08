@@ -141,6 +141,7 @@ export default {
           vue.$router.push({ name: 'forgot-password-request-sent' })
         },
         onFailure: function (err) {
+          console.log(err)
           vue.clearModals()
           vue.$router.push({ name: 'forgot-password-request-sent' })
         }

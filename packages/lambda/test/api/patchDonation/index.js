@@ -31,8 +31,9 @@ describe('PatchDonation', function () {
     const updated = TestHelper.generate.model('donation', { uuid: original.uuid })
     sinon.stub(DonationsRepository.prototype, 'get').resolves(original)
     sinon.stub(DonationsRepository.prototype, 'save').resolves(updated)
+    const { uuid, ...body } = updated
     const params = {
-      body: updated.except('uuid'),
+      body,
       params: {
         donationUuid: original.uuid
       }

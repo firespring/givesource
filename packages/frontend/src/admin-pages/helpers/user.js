@@ -161,6 +161,9 @@ const isAuthenticated = function () {
   const cognitoUser = this.getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, session) {
+      if (err) {
+        console.log(err)
+      }
       if (session && session.isValid()) {
         authenticated = true
       }
@@ -178,12 +181,15 @@ const refreshSession = function (callback) {
   const cognitoUser = this.getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, session) {
+      if (err) {
+        console.log(err)
+      }
       if (session) {
         cognitoUser.refreshSession(session.getRefreshToken(), callback)
       }
     })
   } else {
-    callback(true)
+    callback(new Error('Could not retrieve user'))
   }
 }
 

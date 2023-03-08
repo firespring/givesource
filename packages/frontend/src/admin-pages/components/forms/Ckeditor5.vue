@@ -27,15 +27,11 @@
 <script>
 import AdvancedEditor from './../../ckeditor/editors/advanced'
 import BasicEditor from './../../ckeditor/editors/basic'
-import ComponentSpinner from './../layout/Spinner.vue'
 import ModerateEditor from './../../ckeditor/editors/moderate'
 
 export default {
-  components: {
-    'layout-spinner': ComponentSpinner
-  },
   props: {
-    value: {},
+    value: { type: String, default: '' },
     id: {
       type: String,
       default: ''

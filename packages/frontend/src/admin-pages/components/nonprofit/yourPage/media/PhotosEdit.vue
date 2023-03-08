@@ -148,8 +148,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 export default {
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {
@@ -196,10 +194,10 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId',
-    'slideId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null },
+    slideId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       file: {},

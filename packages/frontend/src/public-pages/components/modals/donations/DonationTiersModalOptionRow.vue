@@ -31,7 +31,7 @@
 <script>
 export default {
   props: {
-    donationTier: {}
+    donationTier: { type: Object, default: () => ({}) }
   },
   computed: {
     amount: function () {

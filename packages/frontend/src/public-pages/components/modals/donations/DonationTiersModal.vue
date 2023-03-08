@@ -113,7 +113,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentDonationTiersModalOptionRow from './DonationTiersModalOptionRow.vue'
 import ComponentMoney from './../../forms/Money.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'
@@ -127,9 +126,7 @@ export default {
   props: {
     data: {
       type: Object,
-      default: {
-        nonprofit: null
-      }
+      default: () => ({ nonprofit: null })
     },
     zIndex: {
       type: [Number, String],

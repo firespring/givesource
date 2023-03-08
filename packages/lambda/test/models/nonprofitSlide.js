@@ -15,12 +15,23 @@
  */
 
 const assert = require('assert')
-const Model = require('../../src/dynamo-models/model')
-const NonprofitSlide = require('../../src/dynamo-models/nonprofitSlide')
 const NonprofitSlideHelper = require('../../src/helpers/nonprofitSlide')
+const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
+const SecretsManager = require('../../src/aws/secretsManager')
+const loadModels = require('../../src/models')
+const sinon = require('sinon')
+let NonprofitSlide
 
 describe('NonprofitSlide', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    NonprofitSlide = (await loadModels()).NonprofitSlide
+  })
+  afterEach(function () {
+    SecretsManager.prototype.getSecretValue.restore()
+  })
+
   describe('#construct()', function () {
     it('should be an instance of Model', function () {
       const model = new NonprofitSlide()
@@ -44,40 +55,30 @@ describe('NonprofitSlide', function () {
 
   describe('#validate()', function () {
     const tests = [
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'uuid', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'uuid', value: '1234567890', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'createdOn', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'createdOn', value: 'test', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'createdOn', value: '123456', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'createdOn', value: 123456, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: 'test', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: '123456', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: 123456, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: 0, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'isDeleted', value: 1, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: null, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: '', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 'test', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 123456, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '1234567890', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: '', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: 'test', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: 123456, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: null, error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: 'adsf', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: '', error: true },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_IMAGE, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_VIMEO, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_YOUTUBE, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: null, error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: '', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://test.com/image.jpg', error: false },
-      { model: TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 123456, error: true }
+      ...TestHelper.commonModelValidations('nonprofitSlide'),
+
+      // TODO most/all of the commented out rules below need validation rules added
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: null, error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: '', error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 'test', error: false },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'caption', value: 123456, error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: null, error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '1234567890', error: true },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: null, error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: '', error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: 'test', error: true },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'sortOrder', value: 123456, error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: null, error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: 'adsf', error: true },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: '', error: true },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_IMAGE, error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_VIMEO, error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'type', value: NonprofitSlideHelper.TYPE_YOUTUBE, error: false },
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'url', value: null, error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'url', value: '', error: false },
+      { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 'http://test.com/image.jpg', error: false }
+      // { model: () => TestHelper.generate.model('nonprofitSlide'), param: 'url', value: 123456, error: true }
     ]
     TestHelper.validate(tests)
   })

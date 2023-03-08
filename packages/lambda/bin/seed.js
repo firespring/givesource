@@ -72,14 +72,14 @@ const seedDonations = function () {
   }).then(function (answers) {
     promptAnswers = answers
     const count = parseInt(promptAnswers.count)
-    return generator.modelCollection('Donation', count, { paymentTransactionIsTestMode: 1 })
+    return generator.modelCollection('donation', count, { paymentTransactionIsTestMode: 1 })
   }).then(function (generatedDonations) {
     const chunkSize = Math.floor(Math.random() * 3) + 1
     donations = _.chunk(generatedDonations, chunkSize)
-    return generator.modelCollection('Donor', donations.length)
+    return generator.modelCollection('donor', donations.length)
   }).then(function (generatedDonors) {
     donors = generatedDonors
-    return generator.modelCollection('PaymentTransaction', donations.length, { isTestMode: true })
+    return generator.modelCollection('paymentTransaction', donations.length, { isTestMode: true })
   }).then(function (generatedPTs) {
     paymentTransactions = generatedPTs
     let promise = Promise.resolve()
@@ -107,14 +107,15 @@ const seedDonations = function () {
   }).then(function (pts) {
     paymentTransactions = pts
     let nonprofitDonations = []
-    let donationsFees = 0; let donationsFeesCovered = 0; let donationsSubtotal = 0; let donationsTotal = 0; let topDonation = 0
+    let donationsFeesCovered = 0
+    let topDonation = 0
     donations.forEach(function (chunk, i) {
       let paymentTotal = 0
       const donor = _.filter(savedDonors, function (object, key) {
-        return key == i
+        return key === i
       })[0]
       const pt = _.filter(savedPts, function (object, key) {
-        return key == i
+        return key === i
       })[0]
       chunk.forEach(function (donation) {
         donation.donorId = donor.id
@@ -126,10 +127,7 @@ const seedDonations = function () {
           donation.paymentTransactionIsTestMode = pt.isTestMode ? 1 : 0
         }
 
-        donationsFees += donation.fees
         donationsFeesCovered = donation.isFeeCovered ? donationsFeesCovered + donation.fees : donationsFeesCovered
-        donationsSubtotal += donation.subtotal
-        donationsTotal += donation.total
         paymentTotal += donation.total
         topDonation = donation.subtotal > topDonation ? donation.subtotal : topDonation
       })
@@ -168,7 +166,7 @@ const seedMessages = function () {
     }
   ]).then(function (answers) {
     const count = parseInt(answers.count)
-    return generator.modelCollection('Message', count)
+    return generator.modelCollection('message', count)
   }).then(function (messages) {
     let promise = Promise.resolve()
     messages.forEach(function (message) {
@@ -206,7 +204,7 @@ const seedNonprofits = function () {
     }
   ]).then(function (answers) {
     const count = parseInt(answers.count)
-    return generator.modelCollection('Nonprofit', count, { status: 'ACTIVE' })
+    return generator.modelCollection('nonprofit', count, { status: 'ACTIVE' })
   }).then(function (nonprofits) {
     let promise = Promise.resolve()
     const insertedNonprofits = []
@@ -224,7 +222,7 @@ const seedNonprofits = function () {
     nonprofits.forEach(function (nonprofit) {
       promise = promise.then(function () {
         const slideCount = Math.floor(Math.random() * 8) + 1
-        return generator.modelCollection('NonprofitSlide', slideCount, {
+        return generator.modelCollection('nonprofitSlide', slideCount, {
           nonprofitId: nonprofit.id,
           type: 'IMAGE',
           fileId: 0
@@ -235,7 +233,7 @@ const seedNonprofits = function () {
           slide.url = slide.url + '?random=' + i
           nonprofitSlides.push(slide)
         })
-        return generator.modelCollection('NonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
+        return generator.modelCollection('nonprofitDonationTier', 4, { nonprofitId: nonprofit.id })
       }).then(function (tiers) {
         tiers.forEach(function (tier) {
           nonprofitDonationTiers.push(tier)

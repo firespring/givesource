@@ -17,7 +17,6 @@
 const HttpException = require('./../../exceptions/http')
 const AgreementsRepository = require('./../../repositories/agreements')
 const Request = require('./../../aws/request')
-const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
   const repository = new AgreementsRepository()

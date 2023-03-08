@@ -21,7 +21,7 @@ const DonationsRepository = require('./../../repositories/donations')
 const Request = require('./../../aws/request')
 const UserGroupMiddleware = require('./../../middleware/userGroup')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const donationsRepository = new DonationsRepository()
   const lambda = new Lambda()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))

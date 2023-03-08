@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2019 Firespring, Inc.
  *
@@ -22,7 +23,9 @@ const TestHelper = require('./../../helpers/test')
 
 describe('PatchMetrics', function () {
   afterEach(function () {
-    MetricsRepository.prototype.batchUpdate.restore()
+    if (MetricsRepository.prototype.batchUpdate.restore) {
+      MetricsRepository.prototype.batchUpdate.restore()
+    }
   })
 
   it('should return update metrics', function () {
@@ -30,9 +33,7 @@ describe('PatchMetrics', function () {
     sinon.stub(MetricsRepository.prototype, 'batchUpdate').resolves()
     const params = {
       body: {
-        metrics: models.map(function (model) {
-          return model.all()
-        })
+        metrics: models
       }
     }
     return PatchMetrics.handle(params, null, function (error) {
@@ -44,9 +45,7 @@ describe('PatchMetrics', function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     const params = {
       body: {
-        metrics: models.map(function (model) {
-          return model.all()
-        })
+        metrics: models
       }
     }
     sinon.stub(MetricsRepository.prototype, 'batchUpdate').rejects('Error')

@@ -18,7 +18,6 @@ const Repository = require('./repository')
 const RepositoryHelper = require('./../helpers/repository')
 const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
 const loadModels = require('../models/index')
-const Sequelize = require('sequelize')
 
 /**
  * DonationsRepository constructor
@@ -152,9 +151,9 @@ DonationsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Donation.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()
@@ -262,6 +261,7 @@ DonationsRepository.prototype.generateLastFourReport = function (whereParams) {
  * @return {Promise<any>}
  */
 DonationsRepository.prototype.upsert = function (model, data) {
+  data = sanitizeData(data)
   let allModels
   return new Promise(function (resolve, reject) {
     return loadModels().then(function (models) {
@@ -308,6 +308,7 @@ DonationsRepository.prototype.upsert = function (model, data) {
  */
 DonationsRepository.prototype.bulkCreateDonations = function (values) {
   let allModels
+  values = values.map(sanitizeData)
   return new Promise(function (resolve, reject) {
     return loadModels().then(function (models) {
       allModels = models
@@ -320,6 +321,16 @@ DonationsRepository.prototype.bulkCreateDonations = function (values) {
       return allModels.sequelize.close()
     })
   })
+}
+
+/**
+ * Performs basic sanitization of the input data
+ * @param data
+ */
+function sanitizeData (data) {
+  const sanitized = Object.assign({}, data)
+  sanitized.note = sanitized.note || ''
+  return sanitized
 }
 
 module.exports = DonationsRepository

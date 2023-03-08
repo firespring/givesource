@@ -63,20 +63,19 @@
 </template>
 
 <script>
-import * as Utils from './../../helpers/utils'
 import ComponentMoney from './../forms/Money.vue'
 
 export default {
   components: {
     'forms-money': ComponentMoney
   },
-  props: [
-    'amount',
-    'nonprofit',
-    'timestamp',
-    'note',
-    'index'
-  ],
+  props: {
+    amount: { type: Number, default: null },
+    nonprofit: { type: Object, default: null },
+    timestamp: { type: Number, default: null },
+    note: { type: String, default: null },
+    index: { type: Number, default: null }
+  },
   data () {
     const vm = this
 

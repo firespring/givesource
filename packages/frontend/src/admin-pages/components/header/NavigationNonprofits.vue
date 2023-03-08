@@ -74,9 +74,9 @@
 
 <script>
 export default {
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       selected: ''

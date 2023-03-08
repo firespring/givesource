@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const NonprofitHelper = require('./../helpers/nonprofit')
 const Repository = require('./../repositories/repository')
 const RepositoryHelper = require('./../helpers/repository')
@@ -334,9 +333,9 @@ NonprofitsRepository.prototype.delete = function (id) {
     }).then(function () {
       return allModels.Nonprofit.destroy({
         where:
-					{
-					  id: id
-					}
+          {
+            id: id
+          }
       })
     }).then(function () {
       resolve()

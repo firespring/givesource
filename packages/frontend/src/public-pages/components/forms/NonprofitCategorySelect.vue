@@ -46,7 +46,7 @@
 <script>
 export default {
   props: {
-    value: {},
+    value: { type: [String, Number], default: null },
     name: {
       type: String,
       default: 'nonprofitCategory'

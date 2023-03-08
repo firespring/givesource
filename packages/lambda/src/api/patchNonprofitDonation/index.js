@@ -23,13 +23,15 @@ exports.handle = function (event, context, callback) {
   const repository = new NonprofitDonationsRepository()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-  let donation = null
+  const donation = null
   request.validate().then(function () {
     return repository.get(request.urlParam('nonprofit_id'), request.urlParam('donation_id'))
   }).then(function (result) {
-    donation = new Donation(result)
-    donation.populate(request._body)
-    return donation.validate()
+    // this was wrong before and appears to be dead code
+    throw new Error('not implemented')
+    // donation = new Donation(result)
+    // donation.populate(request._body)
+    // return donation.validate()
   }).then(function () {
     return repository.save(request.urlParam('nonprofit_id'), donation)
   }).then(function (model) {

@@ -228,7 +228,7 @@ export default {
   },
   props: {
     matchFundEnabled: {
-      type: Boolean | String,
+      type: [Boolean, String],
       default: false
     },
     matchFundButtonText: {
@@ -252,7 +252,7 @@ export default {
       default: null
     },
     postEventText: {
-			  type: String,
+      type: String,
       default: null
     }
   },
@@ -369,7 +369,7 @@ export default {
       vue.initializeCountdown()
     }
     if (Settings.isAfterEvent()) {
-			  vue.eventEnded = true
+      vue.eventEnded = true
     }
   },
   methods: {

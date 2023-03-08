@@ -18,7 +18,7 @@ const HttpException = require('./../../exceptions/http')
 const MetricsRepository = require('./../../repositories/metrics')
 const Request = require('./../../aws/request')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const request = new Request(event, context).parameters(['amount', 'key'])
   const repository = new MetricsRepository()
 
@@ -31,7 +31,9 @@ export function handle (event, context, callback) {
       metric = metrics.pop()
       metric.populate({ value: metric.value += amount })
     } else {
-      metric = new Metric({ key: key, value: amount })
+      // this was wrong before and appears to be dead code
+      throw new Error('not implemented')
+      // metric = new Metric({ key: key, value: amount })
     }
     return metric.validate()
   }).then(() => {

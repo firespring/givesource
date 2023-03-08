@@ -124,18 +124,18 @@ export default {
     },
     data: {
       type: Object,
-      default: {
+      default: () => ({
         file: {},
         listener: 'photoEditorSave',
         width: 770,
         height: 443
-      }
+      })
     }
   },
   data: function () {
     return {
       src: null,
-      zoom: 0,
+      zoom: 1,
       image: '',
       ready: false
     }
@@ -143,7 +143,6 @@ export default {
   watch: {
     zoom: function (value) {
       const vue = this
-
       vue.$refs.cropper.zoomTo(value / 100)
     }
   },

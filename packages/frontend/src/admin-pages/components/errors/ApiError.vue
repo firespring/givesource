@@ -54,7 +54,7 @@
 <script>
 export default {
   props: {
-    value: {}
+    value: { type: Object, default: () => ({}) }
   },
   data: function () {
     return {

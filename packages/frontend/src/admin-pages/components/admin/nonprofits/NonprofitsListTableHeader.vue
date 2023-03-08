@@ -145,33 +145,33 @@ export default {
     searchNonprofits: function () {
       const vue = this
 
-	            const filter = vue.getFilter()
-	            const params = {
-		            legalName: vue.formData.search.toLowerCase()
-	            }
-
-	            if (filter) {
-		            params.status = filter
-	            }
-
-	            if (vue.sort) {
-	            	params.sort = vue.sort
+      const filter = vue.getFilter()
+      const params = {
+        legalName: vue.formData.search.toLowerCase()
       }
 
-	            vue.$emit('search-nonprofits', params)
+      if (filter) {
+        params.status = filter
+      }
+
+      if (vue.sort) {
+        params.sort = vue.sort
+      }
+
+      vue.$emit('search-nonprofits', params)
     },
     getFilter: function () {
       const vue = this
 
       switch (vue.sort) {
         case 'active_legal_name_descending':
-                    	return 'ACTIVE'
+          return 'ACTIVE'
 
         case 'pending_legal_name_descending':
-                    	return 'PENDING'
+          return 'PENDING'
 
         case 'denied_legal_name_descending':
-                    	return 'DENIED'
+          return 'DENIED'
 
         default:
         case 'all_created_on_descending':

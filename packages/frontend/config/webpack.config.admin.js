@@ -164,7 +164,7 @@ module.exports = function () {
           baseDir: './../frontend/build/admin-pages',
           index: 'index.html',
           middleware: [
-            BrowserSyncSpa(/^[^\.]+$/, __dirname + '/../build/admin-pages/index.html')
+            BrowserSyncSpa(/^[^.]+$/, path.join(__dirname, '/../build/admin-pages/index.html'))
           ]
         },
         files: ['bundle.js', 'assets/**/*.css', 'settings.json'],

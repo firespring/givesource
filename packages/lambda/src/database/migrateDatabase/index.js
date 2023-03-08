@@ -92,7 +92,7 @@ exports.handle = function (event, context, callback) {
           Sequelize
         ],
         customResolver: function (filePath) {
-          return __non_webpack_require__(filePath)
+          return __non_webpack_require__(filePath) // eslint-disable-line no-undef
         }
       },
       storage: 'sequelize',

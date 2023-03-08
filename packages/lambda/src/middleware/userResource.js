@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const InvalidPermissionsException = require('./../exceptions/invalidPermissions')
 const Middleware = require('./middleware')
 

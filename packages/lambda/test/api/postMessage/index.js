@@ -29,8 +29,9 @@ describe('PostMessage', function () {
   it('should return a message', function () {
     const model = TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn'])
+      body
     }
     return PostMessage.handle(params, null, function (error, result) {
       assert(error === null)

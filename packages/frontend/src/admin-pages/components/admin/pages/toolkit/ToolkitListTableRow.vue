@@ -51,7 +51,7 @@ export default {
   props: {
     content: {
       type: Object,
-      default: {}
+      default: () => ({})
     }
   },
   computed: {
@@ -65,13 +65,13 @@ export default {
       return null
     },
     iconClass: function () {
-	            if (this.content.hasOwnProperty('value')) {
-		            const type = _.find(this.content.value, { key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE' })
-		            if (type) {
-			            return type.value === 'FILE' ? 'fa-file' : 'fa-link'
-		            }
-	            }
-	            return 'fa-file'
+      if (this.content.hasOwnProperty('value')) {
+        const type = _.find(this.content.value, { key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE' })
+        if (type) {
+          return type.value === 'FILE' ? 'fa-file' : 'fa-link'
+        }
+      }
+      return 'fa-file'
     }
   },
   methods: {

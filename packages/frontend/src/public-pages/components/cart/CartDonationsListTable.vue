@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import * as Utils from './../../helpers/utils'
 import ComponentCartDonationsListTableRow from './CartDonationsListTableRow.vue'
 
 export default {

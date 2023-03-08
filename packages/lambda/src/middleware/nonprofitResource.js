@@ -56,7 +56,7 @@ NonprofitResourceMiddleware.prototype.handle = function () {
         if (parseInt(middleware.nonprofitId) === parseInt(user.nonprofitId)) {
           return Promise.resolve()
         } else {
-          return Promise.reject()
+          return Promise.reject(new Error('An unexpected error occurred'))
         }
       }).then(function () {
         return resolve()

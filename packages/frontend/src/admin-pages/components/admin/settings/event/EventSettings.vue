@@ -257,7 +257,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../../helpers/utils'
 import ComponentDatetime from './../../../forms/Datetime.vue'
 import ComponentSelectTimeZone from './../../../forms/SelectTimeZone.vue'
 

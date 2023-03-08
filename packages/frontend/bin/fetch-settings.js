@@ -65,6 +65,7 @@ const getSettings = () => {
     }
   }).catch(err => {
     // This can happen when the app hasn't been created yet - so continue instead of erroring
+    console.log(err)
     return {}
   })
 }

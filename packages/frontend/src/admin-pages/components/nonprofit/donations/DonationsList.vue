@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import * as Utils from './../../../helpers/utils'
 import ComponentDonationsListTable from './DonationsListTable.vue'
 import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue'
 import ComponentDonationsMetrics from './DonationsMetrics.vue'
@@ -100,9 +99,9 @@ export default {
       next()
     })
   },
-  props: [
-    'nonprofitId'
-  ],
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
   data: function () {
     return {
       nonprofit: {},

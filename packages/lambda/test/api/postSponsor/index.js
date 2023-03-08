@@ -35,8 +35,9 @@ describe('PostSponsor', function () {
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
     sinon.stub(SponsorsRepository.prototype, 'getCount').resolves(1)
     sinon.stub(SponsorsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
     const params = {
-      body: model.except(['uuid', 'createdOn']),
+      body,
       params: {
         sponsor_tier_uuid: sponsorTier.uuid
       }
