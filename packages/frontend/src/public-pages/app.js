@@ -25,7 +25,7 @@ import store from './store'
 import SocialSharing from 'vue-social-sharing'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
-import VueAnalytics from 'vue-analytics'
+import VueGtag from 'vue-gtag'
 import Vue from 'vue'
 import VueFilters from './filters'
 
@@ -59,10 +59,8 @@ main.router = router
 main.store = store
 
 // Setup Analytics
-Vue.use(VueAnalytics, {
-  id () {
-    return store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID')
-  },
+Vue.use(VueGtag, {
+  config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') },
   router,
   autoTracking: {
     pageviewOnLoad: false
