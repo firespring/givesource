@@ -27,12 +27,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 
-function RunOnBuild(callback) {
-  this.callback = callback;
+function RunOnBuild (callback) {
+  this.callback = callback
 }
 
 RunOnBuild.prototype.apply = function (compiler) {
-  compiler.hooks.done.tap("GDPublic", this.callback);
+  compiler.hooks.done.tap('GDPublic', this.callback)
 }
 
 module.exports = function () {
