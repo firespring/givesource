@@ -60,9 +60,8 @@ main.store = store
 
 // Setup Analytics
 Vue.use(VueGtag, {
-  config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') },
-  router
-})
+  config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
+}, router)
 
 // Start the app
 const app = new Vue(main)

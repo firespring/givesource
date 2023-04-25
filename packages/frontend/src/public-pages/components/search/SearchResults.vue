@@ -129,7 +129,7 @@ export default {
         options.legalName = vue.search.toLowerCase()
       }
       if (to.query.hasOwnProperty('category')) {
-        vue.category = to.query.category
+        vue.category = parseInt(to.query.category)
         options.category = vue.category
       }
       if (Object.keys(options).length) {
