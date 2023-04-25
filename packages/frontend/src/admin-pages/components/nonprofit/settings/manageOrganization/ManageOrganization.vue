@@ -173,30 +173,6 @@
                   </div>
 
                   <div class="c-form-control-grid">
-                    <div class="c-form-control-grid__item">
-                      <div
-                        v-floating-label
-                        class="has-floating-label js-floating-label"
-                      >
-                        <input
-                          id="address3"
-                          v-model="formData.address3"
-                          type="text"
-                          name="address3"
-                          :class="{ 'has-error': formErrors.address3 }"
-                        >
-                        <label for="address3">Address Line 3</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    v-if="formErrors.address3"
-                    class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
-                  >
-                    {{ formErrors.address3 }}
-                  </div>
-
-                  <div class="c-form-control-grid">
                     <div class="c-form-control-grid__item c-form-item--required">
                       <div
                         v-floating-label
@@ -474,7 +450,6 @@ export default {
         taxId: '',
         address1: '',
         address2: '',
-        address3: '',
         city: '',
         state: '',
         zip: '',
@@ -595,10 +570,6 @@ export default {
         },
         address2: {
           label: 'Address line 2',
-          presence: false
-        },
-        address3: {
-          label: 'Address line 3',
           presence: false
         },
         city: {
