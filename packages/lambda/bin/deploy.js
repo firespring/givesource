@@ -20,7 +20,7 @@ const config = require('config');
 const fs = require('fs');
 const fuzzy = require('fuzzy');
 const inquirer = require('inquirer');
-const Lambda = require('./../src/aws/lambda');
+const Lambda = require('../src/aws/lambda');
 const path = require('path');
 
 /**
@@ -32,7 +32,7 @@ const path = require('path');
 const deploy = function (functionName) {
 	const lambda = new Lambda();
 
-	const buildDir = path.resolve(__dirname, './../build');
+	const buildDir = path.resolve(__dirname, '../build');
 	const name = config.get('stack.AWS_STACK_NAME') + '-' + functionName;
 
 	return lambda.getFunction(config.get('stack.AWS_REGION'), name).then(function () {
@@ -80,7 +80,7 @@ const batchDeploy = function (functions, retries) {
 	});
 };
 
-const functionsDir = path.resolve(__dirname, './../build/functions');
+const functionsDir = path.resolve(__dirname, '../build/functions');
 const list = fs.readdirSync(functionsDir);
 const choices = ['All'].concat(list);
 

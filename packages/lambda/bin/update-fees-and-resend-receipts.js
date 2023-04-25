@@ -17,13 +17,13 @@
 require('./config/bootstrap').bootstrap();
 
 const config = require('config');
-const DonationHelper = require('./../src/helpers/donation');
-const DonationsRepository = require('./../src/repositories/donations');
-const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
-const SettingHelper = require('./../src/helpers/setting');
-const SettingsRepository = require('./../src/repositories/settings');
-const loadModels = require('./../src/models/index');
-const Lambda = require('./../src/aws/lambda');
+const DonationHelper = require('../src/helpers/donation');
+const DonationsRepository = require('../src/repositories/donations');
+const PaymentTransactionRepository = require('../src/repositories/paymentTransactions');
+const SettingHelper = require('../src/helpers/setting');
+const SettingsRepository = require('../src/repositories/settings');
+const loadModels = require('../src/models/index');
+const Lambda = require('../src/aws/lambda');
 const Sequelize = require('sequelize');
 
 const fixDonations = function() {

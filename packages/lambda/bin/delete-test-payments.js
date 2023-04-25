@@ -17,10 +17,10 @@
 require('./config/bootstrap').bootstrap();
 
 const config = require('config');
-const Donation = require('./../src/dynamo-models/donation');
-const DonationsRepository = require('./../src/repositories/donations');
+const Donation = require('../src/dynamo-models/donation');
+const DonationsRepository = require('../src/repositories/donations');
 const inquirer = require('inquirer');
-const QueryBuilder = require('./../src/aws/queryBuilder');
+const QueryBuilder = require('../src/aws/queryBuilder');
 
 return inquirer.prompt([
 	{

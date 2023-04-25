@@ -18,7 +18,7 @@ require('./config/bootstrap').bootstrap();
 
 const config = require('config');
 const fs = require('fs');
-const packageJson = require('../../../package.json');
+const packageJson = require('../package.json');
 const path = require('path');
 const S3 = require('../src/aws/s3');
 
@@ -48,8 +48,8 @@ const versionExists = function (region) {
  */
 const release = function (region) {
 	const s3 = new S3();
-	const buildDir = path.resolve(__dirname, './../build');
-	const functionsDir = path.resolve(__dirname, './../build/functions');
+	const buildDir = path.resolve(__dirname, '../build');
+	const functionsDir = path.resolve(__dirname, '../build/functions');
 	const functions = fs.readdirSync(functionsDir);
 	const bucketName = config.get('release.AWS_LAMBDA_RELEASE_BUCKET_PREFIX') + '-' + region;
 	functions.forEach(function (functionName) {
@@ -61,7 +61,7 @@ const release = function (region) {
 
 const releaseMigrations = function () {
 	const s3 = new S3();
-	const migrationsDir = path.resolve(__dirname, './../migrations');
+	const migrationsDir = path.resolve(__dirname, '../migrations');
 	const migrations = fs.readdirSync(migrationsDir);
 	const bucketName = config.get('release.AWS_RELEASE_BUCKET');
 	const bucketRegion = config.get('release.AWS_RELEASE_BUCKET_REGION');

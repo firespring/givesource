@@ -18,7 +18,7 @@ require('./config/bootstrap').bootstrap();
 
 const config = require('config');
 const inquirer = require('inquirer');
-const Lambda = require('./../src/aws/lambda');
+const Lambda = require('../src/aws/lambda');
 
 return inquirer.prompt([
 	{

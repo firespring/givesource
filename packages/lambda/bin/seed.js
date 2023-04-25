@@ -19,16 +19,16 @@ require('./config/bootstrap').bootstrap();
 const _ = require('lodash');
 const config = require('config');
 const fuzzy = require('fuzzy');
-const Generator = require('./../src/helpers/generator');
+const Generator = require('../src/helpers/generator');
 const inquirer = require('inquirer');
 const inquirerAutocomplete = require('inquirer-autocomplete-prompt');
-const MessagesRepository = require('./../src/repositories/messages');
-const NonprofitsRepository = require('./../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('./../src/repositories/donations');
-const NonprofitDonationTiersRepository = require('./../src/repositories/nonprofitDonationTiers');
-const NonprofitSlidesRepository = require('./../src/repositories/nonprofitSlides');
-const DonorsRepository = require('./../src/repositories/donors');
-const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
+const MessagesRepository = require('../src/repositories/messages');
+const NonprofitsRepository = require('../src/repositories/nonprofits');
+const NonprofitDonationsRepository = require('../src/repositories/donations');
+const NonprofitDonationTiersRepository = require('../src/repositories/nonprofitDonationTiers');
+const NonprofitSlidesRepository = require('../src/repositories/nonprofitSlides');
+const DonorsRepository = require('../src/repositories/donors');
+const PaymentTransactionRepository = require('../src/repositories/paymentTransactions');
 
 /**
  * Seed Donations

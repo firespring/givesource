@@ -17,9 +17,9 @@
 require('./config/bootstrap').bootstrap();
 
 const inquirer = require('inquirer');
-const DonationsRepository = require('./../src/repositories/donations');
-const PaymentTransactionRepository = require('./../src/repositories/paymentTransactions');
-const loadModels = require('./../src/models/index');
+const DonationsRepository = require('../src/repositories/donations');
+const PaymentTransactionRepository = require('../src/repositories/paymentTransactions');
+const loadModels = require('../src/models/index');
 const Sequelize = require('sequelize');
 
 const deletePaymentsByTransactionIds = function () {
