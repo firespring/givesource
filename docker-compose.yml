@@ -12,9 +12,12 @@ services:
       HISTFILE: /root/.history/bash
     volumes:
       - ${HOME}/dotfiles/.history:/root/.history:delegated
-#      - ./packages/cloudformation:/var/task:delegated
-#    ports:
-#      - 1111:8080
+      - ./packages/cloudformation:/var/task:delegated
+      - ./.env:/var/task/.env:delegated
+      - ./config:/var/task/config:delegated
+      - cloudformation-node_modules:/var/task/node_modules
     entrypoint: bash
     command: -c "while [ true ]; do sleep 60; done"
 
+volumes:
+  cloudformation-node_modules:
