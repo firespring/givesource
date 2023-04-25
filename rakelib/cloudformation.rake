@@ -9,7 +9,7 @@ cf_node_application = Dev::Template::Docker::Node::Application.new(
 # TODO: Add cloudformation template linting? Does it work when we have s/r templates? Do we need to compile them first and then lint?
 
 namespace :cloudformation do
-  namespace :node do
+  namespace :template do
     # TODO: Should we call the 'npm run' versions or just move the commands here?
 
     npm_commands = %w(build clean create delete release release:force update)

@@ -16,8 +16,42 @@ services:
       - ./.env:/var/task/.env:delegated
       - ./config:/var/task/config:delegated
       - cloudformation-node_modules:/var/task/node_modules
-    entrypoint: bash
-    command: -c "while [ true ]; do sleep 60; done"
+
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_SESSION_TOKEN:
+      HISTFILE: /root/.history/bash
+    volumes:
+      - ${HOME}/dotfiles/.history:/root/.history:delegated
+      - ./packages/frontend:/var/task:delegated
+      - ./.env:/var/task/.env:delegated
+      - ./config:/var/task/config:delegated
+      - frontend-node_modules:/var/task/node_modules
+
+#  lambda:
+#    build:
+#      context: ./packages/lambda
+#      dockerfile: Dockerfile
+#    environment:
+#      AWS_REGION: us-east-1
+#      AWS_ACCESS_KEY_ID:
+#      AWS_SECRET_ACCESS_KEY:
+#      AWS_SESSION_TOKEN:
+#      HISTFILE: /root/.history/bash
+#    volumes:
+#      - ${HOME}/dotfiles/.history:/root/.history:delegated
+#      - ./packages/lambda:/var/task:delegated
+#      - ./.env:/var/task/.env:delegated
+#      - ./config:/var/task/config:delegated
+#      - lambda-node_modules:/var/task/node_modules
 
 volumes:
   cloudformation-node_modules:
+  frontend-node_modules:
+#  lambda-node_modules:
