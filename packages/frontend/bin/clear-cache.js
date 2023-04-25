@@ -15,7 +15,7 @@
  */
 
 const CloudFront = require('./aws/cloudFront');
-const deployInfo = require('./../config/deploy-info.json');
+const deployInfo = require('../config/deploy-info.json');
 
 const cloudFront = new CloudFront();
 cloudFront.createInvalidation(deployInfo.AdminPagesCloudFrontDistribution, ['/index.html']).then(function () {

@@ -16,12 +16,12 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({path: path.resolve(__dirname, './../../../.env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/');
+dotenv.config({path: path.resolve(__dirname, '../.env')});
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../config/');
 
 const config = require('config');
 const fs = require('fs');
-const packageJson = require('./../../../package.json');
+const packageJson = require('../package.json');
 const S3 = require('./aws/s3');
 
 /**

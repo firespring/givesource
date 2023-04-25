@@ -18,6 +18,6 @@ RUN npm install --include=dev
 # copy function code
 COPY . .
 
-# set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-ENTRYPOINT "bash"
-CMD [ "-c", "while [ true ]; do sleep 60; done;"]
+# Override the entrypoint and command since we won't be running this as a lambda
+ENTRYPOINT ["bash"]
+CMD ["-c", "while [ true ]; do sleep 60; done;"]
