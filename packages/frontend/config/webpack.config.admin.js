@@ -55,7 +55,7 @@ module.exports = function () {
           use: [{
             loader: 'file-loader',
             options: {
-              name:'assets/img/[name].[ext]'
+              name: 'assets/img/[name].[ext]'
             }
           }]
         },
@@ -113,8 +113,8 @@ module.exports = function () {
         vue$: 'vue/dist/vue.esm.js'
       },
       fallback: {
-        "crypto": require.resolve("crypto-browserify"),
-        "stream": require.resolve("stream-browserify"),
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify')
       }
     },
     target: 'web',
@@ -150,7 +150,7 @@ module.exports = function () {
           },
           { from: './config/robots-deny.txt', to: 'robots.txt' },
           { from: './src/admin-pages/assets/css', to: 'assets/css' },
-          { from: './src/admin-pages/assets/img', to: 'assets/img' },
+          { from: './src/admin-pages/assets/img', to: 'assets/img' }
         ]
       }),
       new VueLoaderPlugin(),
