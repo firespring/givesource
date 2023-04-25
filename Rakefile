@@ -14,26 +14,15 @@ Dev::Aws::Account::configure do |c|
 end
 Dev::Template::Aws.new
 
-#Dev::Docker.configure do |c|
-#  c.min_version = '20.10.3'
-#end
-#
-#Dev::Docker::Compose.configure do |c|
-#  c.min_version = '1.28.5'
-#  c.max_version = '3.0.0'
-#end
-#
-#Dev::Template::Docker::Default.new
+Dev::Docker.configure do |c|
+  c.min_version = '20.10.3'
+end
 
-Dev::Template::Docker::Application.new('cloudformation', exclude: [:pull, :push])
-Dev::Template::Docker::Node::Application.new(
-  'cloudformation',
-  local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/cloudformation",
-  container_path: '/var/task',
-  exclude: [:lint, :test]
-)
-# TODO: Is Node correct here? (I think it is)
-# TODO: Add cloudformation template linting? Does it work when we have s/r templates? Do we need to compile them first and then lint?
+Dev::Docker::Compose.configure do |c|
+  c.min_version = '1.28.5'
+  c.max_version = '3.0.0'
+end
+
 
 Dev::Git.configure do |c|
   c.min_version = '2.27.0'
@@ -49,3 +38,5 @@ Dev::Template::Git.new
 #  ]
 #end
 #Dev::Template::Eol.new
+
+Dev::Template::Docker::Default.new(exclude: [:push, :pull])

@@ -8,12 +8,11 @@
 		"url": "git+https://github.com/firespring/givesource.git"
 	},
 	"scripts": {
-		"cloudformation:audit": "cd packages/cloudformation && npm audit",
+		"cloudformation:audit": "rake cloudformation:audit",
 		"cloudformation:build": "cd packages/cloudformation && npm run build",
 		"cloudformation:clean": "cd packages/cloudformation && npm run clean",
 		"cloudformation:create": "cd packages/cloudformation && npm run create",
 		"cloudformation:delete": "cd packages/cloudformation && npm run delete",
-		"cloudformation:install": "cd packages/cloudformation && npm install",
 		"cloudformation:release": "cd packages/cloudformation && npm run release",
 		"cloudformation:release:force": "cd packages/cloudformation && npm run release:force",
 		"cloudformation:update": "cd packages/cloudformation && npm run update",

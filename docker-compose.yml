@@ -15,5 +15,6 @@ services:
 #      - ./packages/cloudformation:/var/task:delegated
 #    ports:
 #      - 1111:8080
-#    command: app.trigger
+    entrypoint: bash
+    command: -c "while [ true ]; do sleep 60; done"
 
