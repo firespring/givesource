@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  cloudformation:
+    build:
+      context: ./packages/cloudformation
+      dockerfile: Dockerfile
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_SESSION_TOKEN:
+      HISTFILE: /root/.history/bash
+    volumes:
+      - ${HOME}/dotfiles/.history:/root/.history:delegated
+#      - ./packages/cloudformation:/var/task:delegated
+#    ports:
+#      - 1111:8080
+#    command: app.trigger
+
