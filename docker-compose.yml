@@ -27,6 +27,11 @@ services:
       AWS_SECRET_ACCESS_KEY:
       AWS_SESSION_TOKEN:
       HISTFILE: /root/.history/bash
+    ports:
+      - 3000:3000
+      - 3001:3001
+      - 3002:3002
+      - 3003:3003
     volumes:
       - ${HOME}/dotfiles/.history:/root/.history:delegated
       - ./packages/frontend:/var/task:delegated

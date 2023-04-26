@@ -6,13 +6,12 @@ l_node_application = Dev::Template::Docker::Node::Application.new(
 )
 
 namespace :lambda do
-  namespace :joe do
-    # TODO: Should we call the 'npm run' versions or just move the commands here?
-
+  namespace :npm do
     npm_commands = %w(build clean delete-test-payments delete-payments-by-transaction-ids deploy release release:force seed setting test test:coverage test:dev webpack)
     npm_commands.each do |name|
       desc "Run the #{name} npm command inside of the lambda container"
-      task name => [:init_docker, :up_no_deps] do
+      task name => %w(init_docker up_no_deps ensure_aws_credentials) do
+        Dev::Aws::Credentials.new.export!
         command = l_node_application.instance_variable_get(:@node).base_command
         command << 'run' << name
         Dev::Docker::Compose.new(services: l_node_application.instance_variable_get(:@name)).exec(*command)
