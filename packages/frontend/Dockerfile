@@ -11,6 +11,9 @@ RUN yum install -y git vim \
   && yum clean all \
   && rm -rf /var/cache/yum
 
+# Create some dummy directories/files which should be overwritten by docker-compose
+RUN mkdir -p base_config && touch .env
+
 # install dependencies
 COPY package.json package-lock.json .
 RUN npm install --include=dev
