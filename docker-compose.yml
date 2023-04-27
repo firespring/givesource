@@ -54,6 +54,9 @@ services:
     volumes:
       - ${HOME}/dotfiles/.history:/root/.history:delegated
       - ./packages/lambda:/var/task:delegated
+      - ./.env:/var/task/.base_env:delegated
+      - ./config:/var/task/base_config:delegated
+      - ./package.json:/var/task/base_package.json:delegated
       - lambda-node_modules:/var/task/node_modules
 
 volumes:

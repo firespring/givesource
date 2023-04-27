@@ -15,7 +15,7 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+dotenv.config({path: `../.base_env`});
 
 const path = require('path');
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin');

@@ -18,7 +18,7 @@ require('./config/bootstrap').bootstrap();
 
 const config = require('config');
 const fs = require('fs');
-const packageJson = require('../package.json');
+const packageJson = require('../base_package.json');
 const path = require('path');
 const S3 = require('../src/aws/s3');
 

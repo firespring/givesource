@@ -15,7 +15,7 @@
  */
 
 const dotenv = require('dotenv');
-dotenv.config({path: `${__dirname}/../../../.env`});
+dotenv.config({path: `../.base_env`});
 
 const {styles} = require('@ckeditor/ckeditor5-dev-utils');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
