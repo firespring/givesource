@@ -203,13 +203,10 @@ const getPayoutReportData = function () {
 }
 
 const getNonprofitsReports = async function () {
-  const NonprofitRepository = require('../../repositories/nonprofits')
-  const nonprofitRepository = new NonprofitRepository()
-  const nonprofits = await nonprofitRepository.getAllWithUsers()
+  const nonprofitsRepository = new NonprofitsRepository()
+  const nonprofits = await nonprofitsRepository.getAllWithUsers()
   const nonprofitUsers = nonprofits.flatMap(
     nonprofit => nonprofit.Users.map(user => ({
-      id: nonprofit.id,
-      userId: user.id,
       legalName: nonprofit.legalName || '',
       taxId: nonprofit.taxId || '',
       status: nonprofit.status || '',
@@ -221,7 +218,7 @@ const getNonprofitsReports = async function () {
 
   return {
     data: nonprofitUsers,
-    fields: ['id', 'userId', 'legalName', 'taxId', 'status', 'firstName', 'lastName', 'email'].map(k => ({ label: k, value: k }))
+    fields: ['legalName', 'taxId', 'status', 'firstName', 'lastName', 'email'].map(k => ({ label: k, value: k }))
   }
 }
 
