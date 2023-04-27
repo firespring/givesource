@@ -84,6 +84,10 @@
             href="#"
             @click.prevent="exportReport('LAST_4_REPORT')"
           >Export Last 4 CC Report</a>
+          <a
+            href="#"
+            @click.prevent="exportReport('NONPROFIT_USERS')"
+          >Export Nonprofits Report</a>
         </div>
       </div>
     </div>
@@ -164,14 +168,14 @@ export default {
             vm.report = response.data
             if (vm.report.status === 'SUCCESS') {
               vm.clearModals()
-              clearTimeout(vm.countdown)
+              clearInterval(vm.countdown)
 
               if (!vm.downloaded) {
                 vm.downloadFile()
               }
             } else if (vm.report.status === 'FAILED') {
               vm.clearModals()
-              clearTimeout(vm.countdown)
+              clearInterval(vm.countdown)
               console.log('Report failed to generate')
             }
           }).catch(err => {
@@ -184,22 +188,15 @@ export default {
 
     downloadFile () {
       const vm = this
-      let downloadPath
-      let promise = Promise.resolve()
       if (!vm.downloaded) {
-        promise = promise.then(() => {
-          return vm.$request.get('files/download/' + vm.report.fileId)
-        }).then(response => {
-          downloadPath = response.data.download_url
+        vm.downloaded = true
+        vm.$request.get('files/download/' + vm.report.fileId).then(response => {
           vm.file = response.data.file
-          vm.downloaded = true
+          if (response.data.download_url) {
+            window.location.href = response.data.download_url
+          }
         })
       }
-      promise.then(() => {
-        if (downloadPath) {
-          window.location.href = downloadPath
-        }
-      })
     },
 
     donorReceipt () {

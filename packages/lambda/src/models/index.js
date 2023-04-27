@@ -66,6 +66,13 @@ const doConnect = function () {
       foreignKey: 'nonprofitId'
     })
 
+    models.Nonprofit.hasMany(sequelize.models.User, {
+      foreignKey: 'nonprofitId'
+    })
+    models.User.belongsTo(sequelize.models.Nonprofit, {
+      foreignKey: 'nonprofitId'
+    })
+
     models.NonprofitDonationTier.belongsTo(sequelize.models.Nonprofit, {
       foreignKey: 'nonprofitId'
     })
