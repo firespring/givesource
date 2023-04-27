@@ -15,7 +15,7 @@ namespace :cloudformation do
       task name => %w(init_docker up_no_deps) do
         command = cf_node_application.node.base_command
         command << 'run' << name
-        Dev::Docker::Compose.new(services: cf_node_applicationname).exec(*command)
+        Dev::Docker::Compose.new(services: cf_node_application.name).exec(*command)
       end
     end
   end
