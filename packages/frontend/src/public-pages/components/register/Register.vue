@@ -174,16 +174,6 @@
                   >
                 </div>
 
-                <div class="address3">
-                  <input
-                    id="address3"
-                    v-model="formData.address3"
-                    type="text"
-                    name="address3"
-                    placeholder="Address Line 3"
-                  >
-                </div>
-
                 <div class="city-state-zip">
                   <div class="city-state-zip__city">
                     <input
@@ -393,7 +383,6 @@ export default {
         taxId: '',
         address1: '',
         address2: '',
-        address3: '',
         city: '',
         state: '',
         zip: '',
@@ -456,10 +445,6 @@ export default {
         },
         address2: {
           label: 'Address line 2',
-          presence: false
-        },
-        address3: {
-          label: 'Address line 3',
           presence: false
         },
         categories: {
@@ -568,7 +553,6 @@ export default {
           taxId: vue.formData.taxId,
           address1: vue.formData.address1,
           address2: vue.formData.address2,
-          address3: vue.formData.address3,
           city: vue.formData.city,
           state: vue.formData.state,
           zip: vue.formData.zip,
