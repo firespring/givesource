@@ -13,8 +13,9 @@ services:
     volumes:
       - ${HOME}/dotfiles/.history:/root/.history:delegated
       - ./packages/cloudformation:/var/task:delegated
-      - ./.env:/var/task/.env:delegated
+      - ./.env:/var/task/.base_env:delegated
       - ./config:/var/task/base_config:delegated
+      - ./package.json:/var/task/base_package.json:delegated
       - cloudformation-node_modules:/var/task/node_modules
 
   frontend:
@@ -35,8 +36,9 @@ services:
     volumes:
       - ${HOME}/dotfiles/.history:/root/.history:delegated
       - ./packages/frontend:/var/task:delegated
-      - ./.env:/var/task/.env:delegated
+      - ./.env:/var/task/.base_env:delegated
       - ./config:/var/task/base_config:delegated
+      - ./package.json:/var/task/base_package.json:delegated
       - frontend-node_modules:/var/task/node_modules
 
   lambda:

@@ -16,7 +16,7 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../.env')});
+dotenv.config({path: path.resolve(__dirname, '../.base_env')});
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
 
 const _ = require('lodash');

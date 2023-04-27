@@ -16,12 +16,12 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../.env')});
+dotenv.config({path: path.resolve(__dirname, '../.base_env')});
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
 
 const CloudFormation = require('./aws/cloudFormation');
 const config = require('config');
-const packageJson = require('../package.json');
+const packageJson = require('../base_package.json');
 
 /**
  * Create an AWS CloudFormation stack

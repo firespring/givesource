@@ -16,14 +16,14 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({path: path.resolve(__dirname,  '../.env')});
+dotenv.config({path: path.resolve(__dirname,  '../.base_env')});
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
 
 const config = require('config');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const mustache = require('mustache');
-const packageJson = require('../package.json');
+const packageJson = require('../base_package.json');
 
 /**
  * Create CloudFormation yaml file from templates
