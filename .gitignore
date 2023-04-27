@@ -1,8 +1,10 @@
 # App Configuration
 .env
+**/.base_env
 
 # App Dependencies
 node_modules/
+**/base_package.json
 
 # PHP Storm
 .idea/
