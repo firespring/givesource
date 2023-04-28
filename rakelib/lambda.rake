@@ -1,4 +1,6 @@
-l_application =      Dev::Template::Docker::Application.new('lambda', exclude: [:pull, :push])
+# frozen_string_literal: true
+
+Dev::Template::Docker::Application.new('lambda', exclude: %i[pull push])
 l_node_application = Dev::Template::Docker::Node::Application.new(
   'lambda',
   local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/lambda",
@@ -7,10 +9,11 @@ l_node_application = Dev::Template::Docker::Node::Application.new(
 
 namespace :lambda do
   namespace :npm do
-    npm_commands = %w(build clean delete-test-payments delete-payments-by-transaction-ids deploy release release:force seed setting test test:coverage test:dev webpack)
+    npm_commands = %w[build clean delete-test-payments delete-payments-by-transaction-ids deploy release release:force
+                      seed setting test test:coverage test:dev webpack]
     npm_commands.each do |name|
       desc "Run the #{name} npm command inside of the lambda container"
-      task name => %w(init_docker up_no_deps) do
+      task name => %w[init_docker up_no_deps] do
         command = l_node_application.node.base_command
         command << 'run' << name
         Dev::Docker::Compose.new(services: l_node_application.name).exec(*command)
