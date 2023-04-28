@@ -15,63 +15,78 @@
   -->
 
 <template>
-    <tr>
-        <td class="icon">
-            <div class="c-drag-handle"></div>
-        </td>
-        <td class="icon">
-            <i class="fa" :class="iconClass" aria-hidden="true"></i>
-        </td>
-        <td class="u-width-100p">
-            <strong><a v-on:click="editResource" href="#">{{ title }}</a></strong>
-        </td>
-        <td class="icon">
-            <a v-on:click="deleteResource" href="#" role="button" class="icon icon--bad"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
-        </td>
-    </tr>
+  <tr>
+    <td class="icon">
+      <div class="c-drag-handle" />
+    </td>
+    <td class="icon">
+      <i
+        class="fa"
+        :class="iconClass"
+        aria-hidden="true"
+      />
+    </td>
+    <td class="u-width-100p">
+      <strong><a
+        href="#"
+        @click="editResource"
+      >{{ title }}</a></strong>
+    </td>
+    <td class="icon">
+      <a
+        href="#"
+        role="button"
+        class="icon icon--bad"
+        @click="deleteResource"
+      ><i
+        class="fa fa-minus-circle"
+        aria-hidden="true"
+      /></a>
+    </td>
+  </tr>
 </template>
 
 <script>
-	export default {
-		props: {
-			content: {
-				type: Object,
-				default: {}
-			},
-		},
-		computed: {
-			title: function () {
-				if (this.content.hasOwnProperty('value')) {
-					const title = _.find(this.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE'});
-					if (title) {
-						return title.value;
-					}
-				}
-				return null;
-			},
-            iconClass: function () {
-	            if (this.content.hasOwnProperty('value')) {
-		            const type = _.find(this.content.value, {key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE'});
-		            if (type) {
-			            return type.value === 'FILE' ? 'fa-file' : 'fa-link';
-		            }
-	            }
-	            return 'fa-file';
-            }
-		},
-		methods: {
-			editResource: function (event) {
-				event.preventDefault();
-				const vue = this;
+export default {
+  props: {
+    content: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  computed: {
+    title: function () {
+      if (this.content.hasOwnProperty('value')) {
+        const title = _.find(this.content.value, { key: 'TOOLKIT_RESOURCE_LIST_ITEM_TITLE' })
+        if (title) {
+          return title.value
+        }
+      }
+      return null
+    },
+    iconClass: function () {
+      if (this.content.hasOwnProperty('value')) {
+        const type = _.find(this.content.value, { key: 'TOOLKIT_RESOURCE_LIST_ITEM_TYPE' })
+        if (type) {
+          return type.value === 'FILE' ? 'fa-file' : 'fa-link'
+        }
+      }
+      return 'fa-file'
+    }
+  },
+  methods: {
+    editResource: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.addModal('pages-toolkit-edit-resource-modal', {content: vue.content});
-			},
-			deleteResource: function (event) {
-				event.preventDefault();
-				const vue = this;
+      vue.addModal('pages-toolkit-edit-resource-modal', { content: vue.content })
+    },
+    deleteResource: function (event) {
+      event.preventDefault()
+      const vue = this
 
-				vue.addModal('pages-toolkit-delete-resource-modal', {content: vue.content});
-			}
-		}
-	};
+      vue.addModal('pages-toolkit-delete-resource-modal', { content: vue.content })
+    }
+  }
+}
 </script>

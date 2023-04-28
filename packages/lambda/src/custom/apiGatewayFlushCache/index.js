@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-const ApiGateway = require('./../../aws/apiGateway');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
+const ApiGateway = require('./../../aws/apiGateway')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
 
 exports.handle = function (event, context, callback) {
-	const apiGateway = new ApiGateway();
-	const request = new Request(event, context);
+  const apiGateway = new ApiGateway()
+  const request = new Request(event, context)
 
-	request.validate().then(function () {
-		return apiGateway.flushStageCache(process.env.AWS_REGION, process.env.REST_API_ID, 'prod');
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		console.log('Error: %j', err);
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return apiGateway.flushStageCache(process.env.AWS_REGION, process.env.REST_API_ID, 'prod')
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    console.log('Error: %j', err);
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

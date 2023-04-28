@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-const stackName = process.env.AWS_STACK_NAME;
+const stackName = process.env.AWS_STACK_NAME
 
-exports.ContentsTable = `${stackName}-Contents`;
-exports.DonationsTable = `${stackName}-Donations`;
-exports.DonorsTable = `${stackName}-Donors`;
-exports.FilesTable = `${stackName}-Files`;
-exports.MessagesTable = `${stackName}-Messages`;
-exports.MetricsTable = `${stackName}-Metrics`;
-exports.NonprofitsTable = `${stackName}-Nonprofits`;
-exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`;
-exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`;
-exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`;
-exports.ReportsTable = `${stackName}-Reports`;
-exports.SettingsTable = `${stackName}-Settings`;
-exports.SponsorsTable = `${stackName}-Sponsors`;
-exports.SponsorTiersTable = `${stackName}-SponsorTiers`;
-exports.UsersTable = `${stackName}-Users`;
+exports.AgreementsTable = `${stackName}-Agreements`
+exports.ContentsTable = `${stackName}-Contents`
+exports.DonationsTable = `${stackName}-Donations`
+exports.DonorsTable = `${stackName}-Donors`
+exports.FilesTable = `${stackName}-Files`
+exports.MessagesTable = `${stackName}-Messages`
+exports.MetricsTable = `${stackName}-Metrics`
+exports.NonprofitsTable = `${stackName}-Nonprofits`
+exports.NonprofitDonationTiersTable = `${stackName}-NonprofitDonationTiers`
+exports.NonprofitSlidesTable = `${stackName}-NonprofitSlides`
+exports.PaymentTransactionsTable = `${stackName}-PaymentTransactions`
+exports.ReportsTable = `${stackName}-Reports`
+exports.SettingsTable = `${stackName}-Settings`
+exports.SponsorsTable = `${stackName}-Sponsors`
+exports.SponsorTiersTable = `${stackName}-SponsorTiers`
+exports.UsersTable = `${stackName}-Users`

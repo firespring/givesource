@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const SES = require('./../../aws/ses');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const SES = require('./../../aws/ses')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email']);
-	const ses = new SES();
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin'])).parameters(['email'])
+  const ses = new SES()
 
-	request.validate().then(function () {
-		return ses.verifyEmailIdentity(request.get('email'));
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return ses.verifyEmailIdentity(request.get('email'))
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

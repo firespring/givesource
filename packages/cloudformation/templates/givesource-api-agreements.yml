@@ -1,0 +1,653 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Agreements API resources for Givesource(R)
+Parameters:
+
+  StackName:
+    Type: String
+
+  LambdaRoleArn:
+    Type: String
+
+  LambdaSecurityGroupId:
+    Type: String
+
+  DefaultLambdaFunctionTimeout:
+    Type: Number
+
+  IntegrationRequestTemplate:
+    Type: String
+
+  IntegrationResponsesTemplate:
+    Type: String
+
+  SuccessResponseTemplate:
+    Type: String
+
+  RestApi:
+    Type: String
+
+  RestApiRootResourceId:
+    Type: String
+
+  AuthorizeUsers:
+    Type: String
+
+Resources:
+
+  # Agreements Lambda Resources
+
+  GetAgreementLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetAgreement.zip
+      Description: "Get a agreement by uuid"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetAgreement
+      Handler: "index.handle"
+      MemorySize: 256
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs14.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  GetAgreementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetAgreementLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/agreements/{agreement_id}
+    DependsOn: GetAgreementLambdaFunction
+
+  GetAgreementsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GetAgreements.zip
+      Description: "Get a list of agreements"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-GetAgreements
+      Handler: "index.handle"
+      MemorySize: 256
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs14.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  GetAgreementsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetAgreementsLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/agreements
+    DependsOn: GetAgreementsLambdaFunction
+
+  PostAgreementLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PostAgreement.zip
+      Description: "Create a new agreement"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PostAgreement
+      Handler: "index.handle"
+      MemorySize: 256
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs14.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  PostAgreementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostAgreementLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/agreements
+    DependsOn: PostAgreementLambdaFunction
+
+  PatchAgreementLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/PatchAgreement.zip
+      Description: "Update an existing agreement"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-PatchAgreement
+      Handler: "index.handle"
+      MemorySize: 256
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs14.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  PatchAgreementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PatchAgreementLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/agreements/{agreement_id}
+    DependsOn: PatchAgreementLambdaFunction
+
+  DeleteAgreementLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/DeleteAgreement.zip
+      Description: "Delete an existing agreement"
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+      FunctionName: !Sub |-
+        ${StackName}-DeleteAgreement
+      Handler: "index.handle"
+      MemorySize: 256
+      Role: !Ref LambdaRoleArn
+      Runtime: "nodejs14.x"
+      Timeout: !Ref DefaultLambdaFunctionTimeout
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+  DeleteAgreementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DeleteAgreementLambdaFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/agreements/{agreement_id}
+    DependsOn: DeleteAgreementLambdaFunction
+
+  # Agreements Api Gateway Resources
+
+  AgreementsApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref RestApiRootResourceId
+      PathPart: "agreements"
+
+  AgreementApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref AgreementsApiResource
+      PathPart: "{agreement_id}"
+
+  GetAgreementApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.c: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.c
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetAgreementLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetAgreementLambdaFunction
+
+  GetAgreementsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementsApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.c: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        CacheKeyParameters:
+          - method.request.querystring.c
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt GetAgreementsLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: GetAgreementsLambdaFunction
+
+  PostAgreementApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementsApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PostAgreementLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 201
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 201
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PostAgreementLambdaFunction
+
+  PatchAgreementApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementApiResource
+      HttpMethod: PATCH
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt PatchAgreementLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: PatchAgreementLambdaFunction
+
+  DeleteAgreementApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementApiResource
+      HttpMethod: DELETE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizeUsers
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.header.Authorization: true
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: !Ref IntegrationRequestTemplate
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function: !GetAtt DeleteAgreementLambdaFunction.Arn
+        IntegrationResponses:
+          - StatusCode: 204
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: 400
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":400.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 401
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":401.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 403
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":403.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 404
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":404.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+          - StatusCode: 500
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: .*"httpStatus":500.*
+            ResponseTemplates:
+              application/json: !Ref IntegrationResponsesTemplate
+      MethodResponses:
+        - StatusCode: 204
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 400
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 401
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 403
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 404
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: 500
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+    DependsOn: DeleteAgreementLambdaFunction
+
+  OptionsAgreementsApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementsApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  OptionsAgreementApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AgreementApiResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: !Ref SuccessResponseTemplate
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true

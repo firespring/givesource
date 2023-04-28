@@ -14,52 +14,52 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../.base_env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
+const dotenv = require('dotenv')
+const path = require('path')
+dotenv.config({path: path.resolve(__dirname, '../.base_env')})
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/')
 
-const CloudFormation = require('./aws/cloudFormation');
-const config = require('config');
-const packageJson = require('../base_package.json');
+const CloudFormation = require('./aws/cloudFormation')
+const config = require('config')
+const packageJson = require('../base_package.json')
 
 /**
  * Create an AWS CloudFormation stack
  */
 const createStack = function () {
-	const cloudFormation = new CloudFormation();
-	const url = 'https://s3.' + config.get('release.AWS_RELEASE_BUCKET_REGION') + '.amazonaws.com/' + config.get('release.AWS_RELEASE_BUCKET') + '/cf-templates/' + packageJson.version + '/givesource.yml';
-	const parameters = [
-		{
-			ParameterKey: 'AdminEmail',
-			ParameterValue: config.get('app.ADMIN_EMAIL'),
-			UsePreviousValue: false
-		}
-	];
-	const optionalParams = {
-		ADMIN_PAGES_CNAMES: 'AdminPagesCNAMEs',
-		ADMIN_PAGES_SSL_CERTIFICATE_ARN: 'AdminPagesSSLCertificateArn',
-		PUBLIC_PAGES_CNAMES: 'PublicPagesCNAMEs',
-		PUBLIC_PAGES_SSL_CERTIFICATE_ARN: 'PublicPagesSSLCertificateArn',
-		ENABLE_MONITORING: 'EnableMonitoring',
-		REPLICA_REGION: 'ReplicaRegion'
-	};
-	Object.keys(optionalParams).forEach(function (key) {
-		if (config.app.hasOwnProperty(key) && config.app[key]) {
-			let value = Array.isArray(config.app[key]) ? config.app[key].join(',') : config.app[key];
-			parameters.push({
-				ParameterKey: optionalParams[key],
-				ParameterValue: value,
-				UsePreviousValue: false
-			});
-		}
-	});
+  const cloudFormation = new CloudFormation()
+  const url = 'https://s3.' + config.get('release.AWS_RELEASE_BUCKET_REGION') + '.amazonaws.com/' + config.get('release.AWS_RELEASE_BUCKET') + '/cf-templates/' + packageJson.version + '/givesource.yml'
+  const parameters = [
+    {
+      ParameterKey: 'AdminEmail',
+      ParameterValue: config.get('app.ADMIN_EMAIL'),
+      UsePreviousValue: false
+    }
+  ]
+  const optionalParams = {
+    ADMIN_PAGES_CNAMES: 'AdminPagesCNAMEs',
+    ADMIN_PAGES_SSL_CERTIFICATE_ARN: 'AdminPagesSSLCertificateArn',
+    PUBLIC_PAGES_CNAMES: 'PublicPagesCNAMEs',
+    PUBLIC_PAGES_SSL_CERTIFICATE_ARN: 'PublicPagesSSLCertificateArn',
+    ENABLE_MONITORING: 'EnableMonitoring',
+    REPLICA_REGION: 'ReplicaRegion'
+  }
+  Object.keys(optionalParams).forEach(function (key) {
+    if (config.app.hasOwnProperty(key) && config.app[key]) {
+      const value = Array.isArray(config.app[key]) ? config.app[key].join(',') : config.app[key]
+      parameters.push({
+        ParameterKey: optionalParams[key],
+        ParameterValue: value,
+        UsePreviousValue: false
+      })
+    }
+  })
 
-	return cloudFormation.createStack(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME'), url, parameters);
-};
+  return cloudFormation.createStack(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME'), url, parameters)
+}
 
 createStack().then(function (response) {
-	console.log('Stack create in progress: ' + response.StackId);
+  console.log('Stack create in progress: ' + response.StackId)
 }).catch(function (err) {
-	console.log(err);
-});
+  console.log(err)
+})

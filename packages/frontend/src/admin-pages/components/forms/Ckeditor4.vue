@@ -15,96 +15,101 @@
   -->
 
 <template>
-    <textarea :id="id" :value="value" :class="{'has-error': hasErrors}" :height="height"></textarea>
+  <textarea
+    :id="id"
+    :value="value"
+    :class="{'has-error': hasErrors}"
+    :height="height"
+  />
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				toolbars: {
-					basic: [
-						{name: 'basicstyles', items: ['Bold', 'Italic', '-', 'RemoveFormat']},
-						{name: 'links', items: ['Link', 'Unlink']},
-					],
-                    moderate: [
-	                    {name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat']},
-	                    {name: 'paragraph', items: ['NumberedList', 'BulletedList']},
-	                    {name: 'links', items: ['Link', 'Unlink']},
-	                    {name: 'tools', items: ['Maximize']},
-                    ],
-					advanced: [
-						{name: 'styles', items: ['Format']},
-						{name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat']},
-						{name: 'paragraph', items: ['NumberedList', 'BulletedList']},
-						{name: 'links', items: ['Link', 'Unlink']},
-						{name: 'tools', items: ['Maximize']},
-					]
-				}
-			};
-		},
-		props: {
-			value: {
-				type: String,
-				default: '',
-			},
-			id: {
-				type: String,
-				default: '',
-			},
-			hasErrors: {
-				type: Boolean,
-				default: false
-			},
-			height: {
-				type: String,
-				default: '200',
-			},
-			type: {
-				type: String,
-				default: 'basic'
-			},
-		},
-		computed: {
-			toolbar() {
-				const vm = this;
-				return (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.basic;
-			},
-		},
-		mounted() {
-			const vm = this;
+export default {
+  props: {
+    value: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: String,
+      default: ''
+    },
+    hasErrors: {
+      type: Boolean,
+      default: false
+    },
+    height: {
+      type: String,
+      default: '200'
+    },
+    type: {
+      type: String,
+      default: 'basic'
+    }
+  },
+  data () {
+    return {
+      toolbars: {
+        basic: [
+          { name: 'basicstyles', items: ['Bold', 'Italic', '-', 'RemoveFormat'] },
+          { name: 'links', items: ['Link', 'Unlink'] }
+        ],
+        moderate: [
+          { name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat'] },
+          { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+          { name: 'links', items: ['Link', 'Unlink'] },
+          { name: 'tools', items: ['Maximize'] }
+        ],
+        advanced: [
+          { name: 'styles', items: ['Format'] },
+          { name: 'basicstyles', items: ['Bold', 'Italic', 'Blockquote', '-', 'RemoveFormat'] },
+          { name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+          { name: 'links', items: ['Link', 'Unlink'] },
+          { name: 'tools', items: ['Maximize'] }
+        ]
+      }
+    }
+  },
+  computed: {
+    toolbar () {
+      const vm = this
+      return (vm.type && vm.toolbars.hasOwnProperty(vm.type)) ? vm.toolbars[vm.type] : vm.toolbars.basic
+    }
+  },
+  mounted () {
+    const vm = this
 
-			const config = {
-				allowedContent: (vm.type === 'advanced'),
-				disallowedContent: 'script',
-				height: vm.height,
-				language: 'en-us',
-				toolbar: vm.toolbar,
-			};
+    const config = {
+      allowedContent: (vm.type === 'advanced'),
+      disallowedContent: 'script',
+      height: vm.height,
+      language: 'en-us',
+      toolbar: vm.toolbar
+    }
 
-			window.CKEDITOR.replace(vm.id, config);
-			window.CKEDITOR.instances[vm.id].setData(vm.value);
-			window.CKEDITOR.instances[vm.id].on('change', () => {
-				const value = window.CKEDITOR.instances[vm.id].getData();
+    window.CKEDITOR.replace(vm.id, config)
+    window.CKEDITOR.instances[vm.id].setData(vm.value)
+    window.CKEDITOR.instances[vm.id].on('change', () => {
+      const value = window.CKEDITOR.instances[vm.id].getData()
 
-				if (value !== vm.value) {
-					vm.$emit('input', value);
-				}
-			});
-		},
-		destroyed() {
-			const vm = this;
+      if (value !== vm.value) {
+        vm.$emit('input', value)
+      }
+    })
+  },
+  destroyed () {
+    const vm = this
 
-			if (window.CKEDITOR.instances[vm.id]) {
-				window.CKEDITOR.instances[vm.id].destroy();
-			}
-		},
-		beforeUpdate() {
-			const vm = this;
+    if (window.CKEDITOR.instances[vm.id]) {
+      window.CKEDITOR.instances[vm.id].destroy()
+    }
+  },
+  beforeUpdate () {
+    const vm = this
 
-			if (vm.value !== window.CKEDITOR.instances[vm.id].getData()) {
-				window.CKEDITOR.instances[vm.id].setData(vm.value);
-			}
-		}
-	}
+    if (vm.value !== window.CKEDITOR.instances[vm.id].getData()) {
+      window.CKEDITOR.instances[vm.id].setData(vm.value)
+    }
+  }
+}
 </script>

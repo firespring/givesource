@@ -15,39 +15,45 @@
   -->
 
 <template>
-    <strong class="c-pagination__here" v-if="page == current">{{ page + 1 }}</strong>
-    <router-link :to="generatePageLink({start: start})" v-else>{{ page + 1 }}</router-link>
+  <strong
+    v-if="page == current"
+    class="c-pagination__here"
+  >{{ page + 1 }}</strong>
+  <router-link
+    v-else
+    :to="generatePageLink({start: start})"
+  >
+    {{ page + 1 }}
+  </router-link>
 </template>
 
 <script>
-    import * as Utils from './../../helpers/utils';
-
-	export default {
-		computed: {
-			start: function () {
-				return this.page * this.size;
-			}
-		},
-		props: [
-			'current',
-			'page',
-			'size'
-		],
-		methods: {
-			generatePageLink: function (query) {
-				const vue = this;
-				query = query || {};
-				query = _.extend({}, vue.$route.query, query);
-				Object.keys(query).forEach(function (key) {
-					if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
-						delete query[key];
-					}
-				});
-				return {
-					name: vue.$route.name,
-					query: query
-				};
-			}
-		}
-	};
+export default {
+  props: {
+    current: { type: Number, default: 0 },
+    page: { type: Number, default: 0 },
+    size: { type: Number, default: 0 }
+  },
+  computed: {
+    start: function () {
+      return this.page * this.size
+    }
+  },
+  methods: {
+    generatePageLink: function (query) {
+      const vue = this
+      query = query || {}
+      query = _.extend({}, vue.$route.query, query)
+      Object.keys(query).forEach(function (key) {
+        if (query[key] === null || query[key] === 0 || query[key] === '' || query[key] === '0') {
+          delete query[key]
+        }
+      })
+      return {
+        name: vue.$route.name,
+        query: query
+      }
+    }
+  }
+}
 </script>

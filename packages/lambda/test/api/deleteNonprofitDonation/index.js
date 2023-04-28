@@ -14,50 +14,48 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const DeleteNonprofitDonation = require('../../../src/api/deleteNonprofitDonation/index');
-const NonprofitsRepository = require('../../../src/repositories/nonprofits');
-const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const DeleteNonprofitDonation = require('../../../src/api/deleteNonprofitDonation/index')
+const NonprofitsRepository = require('../../../src/repositories/nonprofits')
+const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
+const TestHelper = require('../../helpers/test')
 
 describe('DeleteNonprofitDonation', function () {
+  afterEach(function () {
+    NonprofitsRepository.prototype.get.restore()
+    NonprofitDonationsRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		NonprofitsRepository.prototype.get.restore();
-		NonprofitDonationsRepository.prototype.delete.restore();
-	});
+  it('should delete a nonprofit', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    const model = TestHelper.generate.model('donation')
+    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        nonprofit_uuid: nonprofit.uuid,
+        donation_uuid: model.uuid
+      }
+    }
+    return DeleteNonprofitDonation.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a nonprofit', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		const model = TestHelper.generate.model('donation');
-		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				nonprofit_uuid: nonprofit.uuid,
-				donation_uuid: model.uuid,
-			}
-		};
-		return DeleteNonprofitDonation.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		const nonprofit = TestHelper.generate.model('nonprofit');
-		sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit);
-		sinon.stub(NonprofitDonationsRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				nonprofit_uuid: nonprofit.uuid,
-				donation_uuid: '1234'
-			}
-		};
-		return DeleteNonprofitDonation.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    const nonprofit = TestHelper.generate.model('nonprofit')
+    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        nonprofit_uuid: nonprofit.uuid,
+        donation_uuid: '1234'
+      }
+    }
+    return DeleteNonprofitDonation.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

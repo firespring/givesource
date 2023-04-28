@@ -15,50 +15,70 @@
   -->
 
 <template>
-    <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••" :class="{'has-error': hasError}">
-    <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="off" placeholder="••••" :class="{'has-error': hasError}">
+  <input
+    v-if="isMobile"
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    type="tel"
+    :name="name"
+    autocomplete="off"
+    placeholder="••••"
+    :class="{'has-error': hasError}"
+  >
+  <input
+    v-else
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    type="text"
+    :name="name"
+    autocomplete="off"
+    placeholder="••••"
+    :class="{'has-error': hasError}"
+  >
 </template>
 
 <script>
-	require('jquery.payment');
+require('jquery.payment')
 
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : null,
-			}
-		},
-		computed: {
-			isMobile: function () {
-				return /Mobi/.test(navigator.userAgent);
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			hasError: {
-				type: Boolean,
-				default: false
-			}
-		},
-		mounted: function () {
-			const vue = this;
-			$(vue.$refs.input).payment('formatCardCVC');
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		}
-	};
+export default {
+  props: {
+    value: { type: String, default: '' },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    hasError: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : null
+    }
+  },
+  computed: {
+    isMobile: function () {
+      return /Mobi/.test(navigator.userAgent)
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  },
+  mounted: function () {
+    const vue = this
+    $(vue.$refs.input).payment('formatCardCVC')
+  }
+}
 </script>

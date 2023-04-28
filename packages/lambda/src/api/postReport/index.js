@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const Lambda = require('./../../aws/lambda');
-const ReportsRepository = require('./../../repositories/reports');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
+const HttpException = require('./../../exceptions/http')
+const Lambda = require('./../../aws/lambda')
+const ReportsRepository = require('./../../repositories/reports')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
 
 exports.handle = function (event, context, callback) {
-	const lambda = new Lambda();
-	const repository = new ReportsRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']));
+  const lambda = new Lambda()
+  const repository = new ReportsRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-	request.validate().then(function () {
-		return repository.populate(request._body);
-	}).then(function (report) {
-		return repository.upsert(report, {});
-	}).then(function (model) {
-		const body = model;
-		if (request.get('name', false)) {
-			body.setDataValue('name', request.get('name'));
-		}
-		lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateReport', {body: body});
-		callback(null, model);
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.populate(request._body)
+  }).then(function (report) {
+    return repository.upsert(report, {})
+  }).then(function (model) {
+    const body = model
+    if (request.get('name', false)) {
+      body.setDataValue('name', request.get('name'))
+    }
+    lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-GenerateReport', { body: body })
+    callback(null, model)
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

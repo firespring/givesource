@@ -15,94 +15,109 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation :nonprofitId="nonprofitId"></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content">
-                <div class="o-app-main-content">
-                    <api-error v-model="apiError"></api-error>
-                    <donations-metrics :nonprofit="nonprofit"></donations-metrics>
+  <div class="o-app">
+    <navigation :nonprofit-id="nonprofitId" />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content">
+        <div class="o-app-main-content">
+          <api-error v-model="apiError" />
+          <donations-metrics :nonprofit="nonprofit" />
 
-                    <div class="o-page-header" v-if="isAdmin">
-                        <div class="o-page-header__text">
-                            <nav class="o-page-header-nav c-breadcrumb">
-                                <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
-                            </nav>
-                            <h1 class="o-page-header-title" v-if="nonprofit.legalName">Donations for {{ nonprofit.legalName }}</h1>
-                        </div>
-                    </div>
-
-                    <donations-list-table-header :nonprofit="nonprofit" v-on:hasError="hasError"></donations-list-table-header>
-                    <donations-list-table :donations="pagination.items" :loaded="pagination.loaded"></donations-list-table>
-                    <paginated-table-footer :pagination="pagination" v-if="pagination.loaded"></paginated-table-footer>
-                </div>
-
+          <div
+            v-if="isAdmin"
+            class="o-page-header"
+          >
+            <div class="o-page-header__text">
+              <nav class="o-page-header-nav c-breadcrumb">
+                <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+              </nav>
+              <h1
+                v-if="nonprofit.legalName"
+                class="o-page-header-title"
+              >
+                Donations for {{ nonprofit.legalName }}
+              </h1>
             </div>
-        </main>
-    </div>
+          </div>
+
+          <donations-list-table-header
+            :nonprofit="nonprofit"
+            @has-error="hasError"
+          />
+          <donations-list-table
+            :donations="pagination.items"
+            :loaded="pagination.loaded"
+          />
+          <paginated-table-footer
+            v-if="pagination.loaded"
+            :pagination="pagination"
+          />
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import * as Utils from './../../../helpers/utils';
-	import ComponentDonationsListTable from './DonationsListTable.vue';
-	import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue';
-	import ComponentDonationsMetrics from './DonationsMetrics.vue';
-	import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue';
-	import PaginationMixin from './../../../mixins/pagination';
+import ComponentDonationsListTable from './DonationsListTable.vue'
+import ComponentDonationsListTableHeader from './DonationsListTableHeader.vue'
+import ComponentDonationsMetrics from './DonationsMetrics.vue'
+import ComponentPaginatedTableFooter from './../../pagination/PaginatedTableFooter.vue'
+import PaginationMixin from './../../../mixins/pagination'
 
-	export default {
-		data: function () {
-			return {
-				nonprofit: {},
-				apiError: {},
-			};
-		},
-		computed: {
-			isAdmin: function () {
-				return this.isSuperAdminUser() || this.isAdminUser();
-			},
-		},
-		props: [
-			'nonprofitId'
-		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-					vue.nonprofit = response.data;
-					return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query);
-				}).then(function (response) {
-					vue.setPaginationData(response.data);
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  components: {
+    'donations-list-table': ComponentDonationsListTable,
+    'donations-list-table-header': ComponentDonationsListTableHeader,
+    'donations-metrics': ComponentDonationsMetrics,
+    'paginated-table-footer': ComponentPaginatedTableFooter
+  },
+  mixins: [
+    PaginationMixin
+  ],
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+        vue.nonprofit = response.data
+        return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query)
+      }).then(function (response) {
+        vue.setPaginationData(response.data)
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.resetPaginationData();
-			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-				vue.nonprofit = response.data;
-				return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query);
-			}).then(function (response) {
-				vue.setPaginationData(response.data);
-				next();
-			}).catch(function () {
-				next();
-			});
-		},
-		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
-			}
-		},
-		mixins: [
-			PaginationMixin
-		],
-		components: {
-			'donations-list-table': ComponentDonationsListTable,
-			'donations-list-table-header': ComponentDonationsListTableHeader,
-			'donations-metrics': ComponentDonationsMetrics,
-			'paginated-table-footer': ComponentPaginatedTableFooter,
-		}
-	};
+    vue.resetPaginationData()
+    vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+      vue.nonprofit = response.data
+      return vue.$request.get('/nonprofits/' + to.params.nonprofitId + '/donations', to.query)
+    }).then(function (response) {
+      vue.setPaginationData(response.data)
+      next()
+    }).catch(function () {
+      next()
+    })
+  },
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
+  data: function () {
+    return {
+      nonprofit: {},
+      apiError: {}
+    }
+  },
+  computed: {
+    isAdmin: function () {
+      return this.isSuperAdminUser() || this.isAdminUser()
+    }
+  },
+  methods: {
+    hasError: function (err) {
+      const vue = this
+      vue.apiError = err.response.data.errors
+    }
+  }
+}
 </script>

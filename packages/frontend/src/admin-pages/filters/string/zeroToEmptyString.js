@@ -20,12 +20,12 @@
  * @param {*} value
  * @returns {*}
  */
-function zeroToEmptyString(value) {
-	let float = parseFloat(value);
-	if (!isNaN(float) && float === 0) {
-		return '';
-	}
-	return value;
+function zeroToEmptyString (value) {
+  const float = parseFloat(value)
+  if (!isNaN(float) && float === 0) {
+    return ''
+  }
+  return value
 }
 
-export default zeroToEmptyString;
+export default zeroToEmptyString

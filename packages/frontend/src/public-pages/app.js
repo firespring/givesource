@@ -14,61 +14,55 @@
  * limitations under the License.
  */
 
-import * as VueMoney from 'v-money';
-import ApiErrorComponent from './components/errors/ApiError.vue';
-import App from './components/App.vue';
-import axios from "axios";
-import EventBusMixin from './mixins/eventBus';
-import ModalsMixin from './mixins/modals';
-import router from './router';
-import store from './store';
-import SocialSharing from 'vue-social-sharing';
-import UtilsMixin from './mixins/utils';
-import ValidateMixin from './mixins/validate';
-import VueAnalytics from 'vue-analytics';
-import Vue from "vue";
-import VueFilters from './filters';
+import * as VueMoney from 'v-money'
+import ApiErrorComponent from './components/errors/ApiError.vue'
+import App from './components/App.vue'
+import axios from 'axios'
+import EventBusMixin from './mixins/eventBus'
+import ModalsMixin from './mixins/modals'
+import router from './router'
+import store from './store'
+import SocialSharing from 'vue-social-sharing'
+import UtilsMixin from './mixins/utils'
+import ValidateMixin from './mixins/validate'
+import VueGtag from 'vue-gtag'
+import Vue from 'vue'
+import VueFilters from './filters'
 
 // Register filters
-Vue.use(VueFilters);
+Vue.use(VueFilters)
 
 // Register plugins
-Vue.use(SocialSharing);
+Vue.use(SocialSharing)
 
 // Register mixins
-Vue.mixin(EventBusMixin);
-Vue.mixin(ModalsMixin);
-Vue.mixin(UtilsMixin);
-Vue.mixin(ValidateMixin);
+Vue.mixin(EventBusMixin)
+Vue.mixin(ModalsMixin)
+Vue.mixin(UtilsMixin)
+Vue.mixin(ValidateMixin)
 
 // Register directives
-Vue.directive('money', VueMoney.VMoney);
+Vue.directive('money', VueMoney.VMoney)
 
 // Register global components
-Vue.component('api-error', ApiErrorComponent);
+Vue.component('ApiError', ApiErrorComponent)
 
 // Register window globals
-window._ = require('lodash');
-window.$ = window.jQuery = require('jquery');
-window.axios = axios;
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+window._ = require('lodash')
+window.$ = window.jQuery = require('jquery')
+window.axios = axios
+axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // Bootstrap the app
-const main = App;
-main.router = router;
-main.store = store;
+const main = App
+main.router = router
+main.store = store
 
 // Setup Analytics
-Vue.use(VueAnalytics, {
-	id() {
-		return store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID');
-	},
-	router,
-	autoTracking: {
-		pageviewOnLoad: false
-	}
-});
+Vue.use(VueGtag, {
+  config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
+}, router)
 
 // Start the app
-const app = new Vue(main);
-app.$mount('#app');
+const app = new Vue(main)
+app.$mount('#app')

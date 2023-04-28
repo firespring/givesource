@@ -14,57 +14,56 @@
  * limitations under the License.
  */
 
-const logger = require('./../../helpers/log');
-const S3 = require('./../../aws/s3');
-const SettingsRepository = require('./../../repositories/settings');
-const RenderHelper = require('./../../helpers/render');
+const logger = require('./../../helpers/log')
+const S3 = require('./../../aws/s3')
+const SettingsRepository = require('./../../repositories/settings')
+const RenderHelper = require('./../../helpers/render')
 
 exports.handle = function (event, context, callback) {
-	logger.log('put social sharing cache event: %j', event);
-	const settingsRepository = new SettingsRepository();
-	const s3 = new S3();
-	const nonprofit = event.nonprofit;
+  logger.log('put social sharing cache event: %j', event)
+  const settingsRepository = new SettingsRepository()
+  const s3 = new S3()
+  const nonprofit = event.nonprofit
 
-	const socialSharingDefaults = {
-		EVENT_TITLE: null,
-		SOCIAL_SHARING_IMAGE: null,
-		SOCIAL_SHARING_DESCRIPTION: null,
-		SEO_DESCRIPTION: null,
-		EVENT_LOGO: null,
-		EVENT_URL: null,
-		UPLOADS_CLOUD_FRONT_URL: null
-	};
+  const socialSharingDefaults = {
+    EVENT_TITLE: null,
+    SOCIAL_SHARING_IMAGE: null,
+    SOCIAL_SHARING_DESCRIPTION: null,
+    SEO_DESCRIPTION: null,
+    EVENT_LOGO: null,
+    EVENT_URL: null,
+    UPLOADS_CLOUD_FRONT_URL: null
+  }
 
-	const data = {
-		description: null,
-		event_title: null,
-		image_url: null,
-		title: null,
-		url: null
-	};
+  const data = {
+    description: null,
+    event_title: null,
+    image_url: null,
+    title: null,
+    url: null
+  }
 
-	Promise.resolve().then(() => {
-		return settingsRepository.batchGet(Object.keys(socialSharingDefaults));
-	}).then(response => {
-		response.forEach(setting => {
-			if (socialSharingDefaults.hasOwnProperty(setting.key)) {
-				socialSharingDefaults[setting.key] = setting.value;
-			}
-		});
+  Promise.resolve().then(() => {
+    return settingsRepository.batchGet(Object.keys(socialSharingDefaults))
+  }).then(response => {
+    response.forEach(setting => {
+      if (socialSharingDefaults.hasOwnProperty(setting.key)) {
+        socialSharingDefaults[setting.key] = setting.value
+      }
+    })
 
-		data.description = nonprofit.socialSharingDescription;
-		data.event_title = nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE;
-		data.title = nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE;
+    data.description = nonprofit.socialSharingDescription
+    data.event_title = nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE
+    data.title = nonprofit.legalName + ' at ' + socialSharingDefaults.EVENT_TITLE
 
-		console.log('template-data: %j', data);
-		return RenderHelper.renderTemplate('public.seo', data);
-	}).then(html => {
-		return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, 'seo/' + nonprofit.slug + '.html', html, null, 'text/html');
-	}).catch(err => {
-		logger.log('Error!', err);
-		callback();
-	}).finally(function () {
-		callback();
-	});
-};
-
+    console.log('template-data: %j', data)
+    return RenderHelper.renderTemplate('public.seo', data)
+  }).then(html => {
+    return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, 'seo/' + nonprofit.slug + '.html', html, null, 'text/html')
+  }).catch(err => {
+    logger.log('Error!', err)
+    callback()
+  }).finally(function () {
+    callback()
+  })
+}

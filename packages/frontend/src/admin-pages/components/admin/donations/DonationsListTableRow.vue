@@ -15,107 +15,140 @@
   -->
 
 <template>
-    <tr>
-        <td class="u-nowrap u-text-r">
-            <div class="date">{{ formattedDate }}</div>
-            <div class="time">{{ formattedTime }}</div>
-        </td>
+  <tr>
+    <td class="u-nowrap u-text-r">
+      <div class="date">
+        {{ formattedDate }}
+      </div>
+      <div class="time">
+        {{ formattedTime }}
+      </div>
+    </td>
 
-        <td class="u-nowrap" v-if="isOfflineBulk">
-            Offline ({{ donation.count }})
-        </td>
-        <td class="u-nowrap" v-else-if="isOffline">
-            Offline
-        </td>
-        <td class="u-nowrap" v-else>
-            Online
-        </td>
+    <td
+      v-if="isOfflineBulk"
+      class="u-nowrap"
+    >
+      Offline ({{ donation.count }})
+    </td>
+    <td
+      v-else-if="isOffline"
+      class="u-nowrap"
+    >
+      Offline
+    </td>
+    <td
+      v-else
+      class="u-nowrap"
+    >
+      Online
+    </td>
 
-        <td class="u-text-r">
-            {{ formattedAmount }}
-        </td>
+    <td class="u-text-r">
+      {{ formattedAmount }}
+    </td>
 
-        <td>
-            <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: donation.nonprofitId } }">{{ donation.Nonprofit.legalName}}</router-link>
-        </td>
+    <td>
+      <router-link :to="{ name: 'nonprofit-donations-list', params: { nonprofitId: donation.nonprofitId } }">
+        {{ donation.Nonprofit.legalName }}
+      </router-link>
+    </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk || noDonor"></td>
-        <td v-else-if="isAnonymous">
-            Anonymous
-        </td>
-        <td v-else>
-            {{ donation.Donor.firstName }} {{ donation.Donor.lastName }}
-        </td>
+    <td
+      v-if="isOfflineBulk || noDonor"
+      class="u-nowrap empty"
+    />
+    <td v-else-if="isAnonymous">
+      Anonymous
+    </td>
+    <td v-else>
+      {{ donation.Donor.firstName }} {{ donation.Donor.lastName }}
+    </td>
 
-        <td class="u-nowrap empty" v-if="isOfflineBulk || isAnonymous || noDonor || !donation.Donor.email"></td>
-        <td class="u-nowrap" v-else>
-            <div class="c-user-strip u-flex u-items-center">
-                <div class="c-user-strip__content">
-                    <div class="c-user-strip__email u-icon u-flex u-items-center">
-                        <a :href="'mailto:' + donation.Donor.email">{{ donation.Donor.email }}</a>
-                    </div>
-                    <div class="c-user-strip__phone u-icon u-flex u-items-center" v-if="donation.Donor.phone">
-                        {{ donation.Donor.phone }}
-                    </div>
-                </div>
-            </div>
-        </td>
+    <td
+      v-if="isOfflineBulk || isAnonymous || noDonor || !donation.Donor.email"
+      class="u-nowrap empty"
+    />
+    <td
+      v-else
+      class="u-nowrap"
+    >
+      <div class="c-user-strip u-flex u-items-center">
+        <div class="c-user-strip__content">
+          <div class="c-user-strip__email u-icon u-flex u-items-center">
+            <a :href="'mailto:' + donation.Donor.email">{{ donation.Donor.email }}</a>
+          </div>
+          <div
+            v-if="donation.Donor.phone"
+            class="c-user-strip__phone u-icon u-flex u-items-center"
+          >
+            {{ donation.Donor.phone }}
+          </div>
+        </div>
+      </div>
+    </td>
 
-        <td class="u-nowrap empty" v-if="!hasAddress || isAnonymous || noDonor"></td>
-        <td class="u-nowrap" v-else>
-            <div class="c-user-strip u-flex u-items-center">
-                <div class="c-user-strip__content">
-                    <div class="c-user-strip__address u-icon u-flex">
-                        {{ donation.Donor.address1 }}<br v-if="donation.Donor.address2">
-                        {{ donation.Donor.address2 }}<br v-if="donation.Donor.city || donation.Donor.state || donation.Donor.zip">
-                        {{ donation.Donor.city }}, {{ donation.Donor.state }} {{ donation.Donor.zip }}
-                    </div>
-                </div>
-            </div>
-        </td>
-    </tr>
+    <td
+      v-if="!hasAddress || isAnonymous || noDonor"
+      class="u-nowrap empty"
+    />
+    <td
+      v-else
+      class="u-nowrap"
+    >
+      <div class="c-user-strip u-flex u-items-center">
+        <div class="c-user-strip__content">
+          <div class="c-user-strip__address u-icon u-flex">
+            {{ donation.Donor.address1 }}<br v-if="donation.Donor.address2">
+            {{ donation.Donor.address2 }}<br v-if="donation.Donor.city || donation.Donor.state || donation.Donor.zip">
+            {{ donation.Donor.city }}, {{ donation.Donor.state }} {{ donation.Donor.zip }}
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
 </template>
 
 <script>
-	const numeral = require('numeral');
+const numeral = require('numeral')
 
-	export default {
-		computed: {
-			isAnonymous() {
-				return this.donation.isAnonymous;
-			},
+export default {
 
-			isOffline() {
-				return this.donation.isOfflineDonation;
-			},
+  props: {
+    donation: { type: Object, default: () => null }
+  },
+  computed: {
+    isAnonymous () {
+      return this.donation.isAnonymous
+    },
 
-			isOfflineBulk() {
-				return this.isOffline && this.donation.type === 'BULK';
-			},
+    isOffline () {
+      return this.donation.isOfflineDonation
+    },
 
-			hasAddress() {
-				return this.donation.Donor !== null && (this.donation.Donor.address1 || this.donation.Donor.address2 || this.donation.Donor.city || this.donation.Donor.state || this.donation.Donor.zip);
-			},
+    isOfflineBulk () {
+      return this.isOffline && this.donation.type === 'BULK'
+    },
 
-			formattedAmount() {
-				return numeral(this.donation.subtotal / 100).format('$0,00.00');
-			},
+    hasAddress () {
+      return this.donation.Donor !== null && (this.donation.Donor.address1 || this.donation.Donor.address2 || this.donation.Donor.city || this.donation.Donor.state || this.donation.Donor.zip)
+    },
 
-			formattedDate() {
-				return new Date(this.donation.createdAt).toLocaleDateString();
-			},
+    formattedAmount () {
+      return numeral(this.donation.subtotal / 100).format('$0,00.00')
+    },
 
-			formattedTime() {
-				return new Date(this.donation.createdAt).toLocaleTimeString();
-			},
+    formattedDate () {
+      return new Date(this.donation.createdAt).toLocaleDateString()
+    },
 
-			noDonor() {
-				return this.donation.Donor === null;
-			}
-		},
+    formattedTime () {
+      return new Date(this.donation.createdAt).toLocaleTimeString()
+    },
 
-		props: {
-			donation: {},
-		}
-	};
+    noDonor () {
+      return this.donation.Donor === null
+    }
+  }
+}
 </script>

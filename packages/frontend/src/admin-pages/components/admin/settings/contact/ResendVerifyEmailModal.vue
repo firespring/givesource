@@ -15,73 +15,80 @@
   -->
 
 <template>
-    <div id="modal-settings-edit-contact-email-address" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
+  <div
+    id="modal-settings-edit-contact-email-address"
+    class="c-modal c-modal--sm"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div class="c-modal-header">
+            <h1>Email Verification</h1>
+          </div>
 
-                    <div class="c-modal-header">
-                        <h1>Email Verification</h1>
-                    </div>
-
-                    <div class="c-modal-content">
-                        <div class="c-page-section">
-                            <div class="c-page-section__main">
-                                <p>
-                                    A new verification link has been sent to <strong class="u-break-word">{{ data.email }}</strong>.
-                                    Click on this link to verify your email address.
-                                </p>
-                                <p>
-                                    The verification link will expire after 24 hours.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="c-modal-footer">
-                            <div class="c-modal-footer__actions">
-                                <button v-on:click="close" class="c-btn c-btn--neutral c-btn--text">Close</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+          <div class="c-modal-content">
+            <div class="c-page-section">
+              <div class="c-page-section__main">
+                <p>
+                  A new verification link has been sent to <strong class="u-break-word">{{ data.email }}</strong>.
+                  Click on this link to verify your email address.
+                </p>
+                <p>
+                  The verification link will expire after 24 hours.
+                </p>
+              </div>
             </div>
+
+            <div class="c-modal-footer">
+              <div class="c-modal-footer__actions">
+                <button
+                  class="c-btn c-btn--neutral c-btn--text"
+                  @click="close"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			},
-			data: {
-				type: Object,
-				default: function () {
-					return {
-						email: ''
-					};
-				}
-			},
-		},
-		created: function () {
-			const vue = this;
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    },
+    data: {
+      type: Object,
+      default: function () {
+        return {
+          email: ''
+        }
+      }
+    }
+  },
+  created: function () {
+    const vue = this
 
-			vue.$request.get('settings/email').then(function (response) {
-				const setting = _.find(response.data, {email: vue.data.email});
-				if (!setting || (setting && !setting.verified)) {
-					return vue.$request.post('settings/email/verify', {
-						email: vue.data.email
-					});
-				}
-			});
-		},
-		methods: {
-			close: function () {
-				this.clearModals();
-			}
-		}
-	};
+    vue.$request.get('settings/email').then(function (response) {
+      const setting = _.find(response.data, { email: vue.data.email })
+      if (!setting || (setting && !setting.verified)) {
+        return vue.$request.post('settings/email/verify', {
+          email: vue.data.email
+        })
+      }
+    })
+  },
+  methods: {
+    close: function () {
+      this.clearModals()
+    }
+  }
+}
 </script>

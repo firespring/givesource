@@ -15,84 +15,97 @@
   -->
 
 <template>
-    <select v-model="localValue" :id="id" :name="name" class="combobox" :data-placeholder="placeholder" ref="select" :class="{'has-error': hasError}">
-        <option value=""></option>
-        <option v-for="nonprofit in nonprofits" :value="nonprofit.id">{{ nonprofit.legalName }}</option>
-    </select>
+  <select
+    :id="id"
+    ref="select"
+    v-model="localValue"
+    :name="name"
+    class="combobox"
+    :data-placeholder="placeholder"
+    :class="{'has-error': hasError}"
+  >
+    <option value="" />
+    <option
+      v-for="nonprofit in nonprofits"
+      :value="nonprofit.id"
+    >
+      {{ nonprofit.legalName }}
+    </option>
+  </select>
 </template>
 
 <script>
-	require('chosen-js');
+require('chosen-js')
 
-	export default {
-		data: function () {
-			return {
-				localValue: '',
-			};
-		},
-		computed: {
-			selectedValue: function () {
-				return this.localValue;
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null,
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			placeholder: {
-				type: String,
-				default: 'Select a nonprofit'
-			},
-			nonprofits: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-			hasError: {
-				type: Boolean,
-				default: false
-			}
-		},
-		mounted: function () {
-			const vue = this;
+export default {
+  props: {
+    value: { type: [String, Number], default: null },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    placeholder: {
+      type: String,
+      default: 'Select a nonprofit'
+    },
+    nonprofits: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    hasError: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function () {
+    return {
+      localValue: ''
+    }
+  },
+  computed: {
+    selectedValue: function () {
+      return this.localValue
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.$emit('input', vue.selectedValue)
+    },
+    value: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.localValue = value
+      $(vue.$refs.select).val(value)
+      $(vue.$refs.select).trigger('chosen:updated')
+    },
+    nonprofits: function () {
+      const vue = this
+      vue.$nextTick(function () {
+        $(vue.$refs.select).trigger('chosen:updated')
+      })
+    }
+  },
+  mounted: function () {
+    const vue = this
 
-			$(vue.$refs.select).chosen({
-				allow_single_deselect: true,
-				width: '100%'
-			}).change(function () {
-				vue.localValue = $(this).val();
-			});
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.$emit('input', vue.selectedValue);
-			},
-			value: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.localValue = value;
-				$(vue.$refs.select).val(value);
-				$(vue.$refs.select).trigger("chosen:updated");
-			},
-			nonprofits: function () {
-				const vue = this;
-				vue.$nextTick(function () {
-					$(vue.$refs.select).trigger("chosen:updated");
-				});
-			}
-		}
-	};
+    $(vue.$refs.select).chosen({
+      allow_single_deselect: true,
+      width: '100%'
+    }).change(function () {
+      vue.localValue = $(this).val()
+    })
+  }
+}
 </script>

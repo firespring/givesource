@@ -15,69 +15,86 @@
   -->
 
 <template>
-    <input v-model.lazy="localValue" v-on:input="format" type="text" :name="name" :id="id" :class="{'has-error': hasError}" v-if="isInternetExplorer" ref="input">
-    <input v-model.lazy="localValue" type="text" :name="name" :id="id" v-money="options" :class="{'has-error': hasError}" v-else>
+  <input
+    v-if="isInternetExplorer"
+    :id="id"
+    ref="input"
+    v-model.lazy="localValue"
+    type="text"
+    :name="name"
+    :class="{'has-error': hasError}"
+    @input="format"
+  >
+  <input
+    v-else
+    :id="id"
+    v-model.lazy="localValue"
+    v-money="options"
+    type="text"
+    :name="name"
+    :class="{'has-error': hasError}"
+  >
 </template>
 
 <script>
-	import * as Utils from './../../helpers/utils';
-	const numeral = require('numeral');
+import * as Utils from './../../helpers/utils'
+const numeral = require('numeral')
 
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : '0.00',
+export default {
+  props: {
+    value: { type: [String, Number], default: null },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    hasError: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : '0.00',
 
-				options: {
-					precision: 2,
-					masked: true,
-					thousands: '',
-				}
-			}
-		},
-		computed: {
-			isInternetExplorer: function () {
-				return Utils.isInternetExplorer();
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			hasError: {
-				type: Boolean,
-				default: false
-			}
-		},
-		mounted: function () {
-			this.format();
-		},
-		watch: {
-			value: function (val) {
-				this.localValue = val;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-				this.$refs.input.dispatchEvent(new Event('input'));
-			}
-		},
-		methods: {
-			format: function () {
-				const vue = this;
+      options: {
+        precision: 2,
+        masked: true,
+        thousands: ''
+      }
+    }
+  },
+  computed: {
+    isInternetExplorer: function () {
+      return Utils.isInternetExplorer()
+    }
+  },
+  watch: {
+    value: function (val) {
+      this.localValue = val
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+      this.$refs.input.dispatchEvent(new Event('input'))
+    }
+  },
+  mounted: function () {
+    this.format()
+  },
+  methods: {
+    format: function () {
+      const vue = this
 
-				let value = vue.$refs.input.value;
-				value = value.replace(/\D/g, '');
-				value = numeral(value / 100).format('0.00');
+      let value = vue.$refs.input.value
+      value = value.replace(/\D/g, '')
+      value = numeral(value / 100).format('0.00')
 
-				vue.localValue = value;
-				vue.$refs.input.value = value;
-			},
-		}
-	};
+      vue.localValue = value
+      vue.$refs.input.value = value
+    }
+  }
+}
 </script>

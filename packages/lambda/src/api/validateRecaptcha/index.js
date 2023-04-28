@@ -25,7 +25,7 @@ export async function handle (event, context, callback) {
   // frontend recaptcha token as payload
   try {
     const reCaptchaSecret = await ssm.getParameter('us-east-1', '/recaptcha/secure/recaptcha-key', true)
-    let verifyResult = await axios({
+    const verifyResult = await axios({
       method: 'post',
       url: reCapUrl,
       params: {
@@ -34,14 +34,15 @@ export async function handle (event, context, callback) {
       },
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': '*/*'
+        Accept: '*/*'
       }
     })
     callback(null, { statusCode: verifyResult.status, message: 'Success.' })
   } catch (e) {
-    callback({
+    const errorResult = {
       statusCode: 500,
       errorMessage: 'Oops, something went wrong on our side.'
-    })
+    }
+    callback(errorResult)
   }
 }

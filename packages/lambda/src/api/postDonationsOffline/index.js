@@ -21,12 +21,12 @@ const DonationsRepository = require('./../../repositories/donations')
 const Request = require('./../../aws/request')
 const UserGroupMiddleware = require('./../../middleware/userGroup')
 
-export function handle (event, context, callback) {
+exports.handle = function handle (event, context, callback) {
   const donationsRepository = new DonationsRepository()
   const lambda = new Lambda()
   const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin']))
 
-  let donations = []
+  const donations = []
   let donorId
   request.validate().then(() => {
     donorId = request.get('donorId', 0)
@@ -40,7 +40,7 @@ export function handle (event, context, callback) {
     })
     return promise
   }).then(() => {
-    let donationValues = []
+    const donationValues = []
     donations.forEach(function (donation) {
       donationValues.push(DonationHelper.formatForBulkCreate(donation, {
         donorId: donorId,

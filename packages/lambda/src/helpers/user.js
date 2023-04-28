@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-exports.STATUS_ACTIVE = 'ACTIVE';
-exports.STATUS_DENIED = 'DENIED';
-exports.STATUS_PENDING = 'PENDING';
-exports.STATUS_REVOKED = 'REVOKED';
+exports.STATUS_ACTIVE = 'ACTIVE'
+exports.STATUS_DENIED = 'DENIED'
+exports.STATUS_PENDING = 'PENDING'
+exports.STATUS_REVOKED = 'REVOKED'

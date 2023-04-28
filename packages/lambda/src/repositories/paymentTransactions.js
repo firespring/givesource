@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const loadModels = require('../models/index')
 
 /**
  * PaymentTransactionsRepository constructor
  *
  * @constructor
  */
-function PaymentTransactionsRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.PaymentTransactionsTable;
-	}
-	Repository.call(this, options);
+function PaymentTransactionsRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.PaymentTransactionsTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -38,7 +37,7 @@ function PaymentTransactionsRepository(options) {
  *
  * @type {Repository}
  */
-PaymentTransactionsRepository.prototype = new Repository();
+PaymentTransactionsRepository.prototype = new Repository()
 
 /**
  * Look to abstract this
@@ -47,15 +46,15 @@ PaymentTransactionsRepository.prototype = new Repository();
  * @return {Promise}
  */
 PaymentTransactionsRepository.prototype.populate = function (data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		const paymentTransaction = new models.PaymentTransaction();
-		return new paymentTransaction.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
-	}).finally(function () {
-		return allModels.sequelize.close();
-	});
-};
+  let allModels
+  return loadModels().then(function (models) {
+    allModels = models
+    const paymentTransaction = new models.PaymentTransaction()
+    return new paymentTransaction.constructor(data, { isNewRecord: typeof data.id === 'undefined' })
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+}
 
 /**
  * Get a PaymentTransaction
@@ -64,37 +63,37 @@ PaymentTransactionsRepository.prototype.populate = function (data) {
  * @return {Promise}
  */
 PaymentTransactionsRepository.prototype.get = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.PaymentTransaction.findOne({
-				where: {
-					id: id
-				},
-				include: [
-					{
-						model: allModels.Donation,
-						include: [
-							{model: allModels.Nonprofit}
-						]
-					}
-				]
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.PaymentTransaction.findOne({
+        where: {
+          id: id
+        },
+        include: [
+          {
+            model: allModels.Donation,
+            include: [
+              { model: allModels.Nonprofit }
+            ]
+          }
+        ]
 
-			});
-		}).then(function (paymentTransaction) {
-			if (paymentTransaction instanceof allModels.PaymentTransaction) {
-				resolve(paymentTransaction);
-			}
-			reject(new ResourceNotFoundException('The specified paymentTransaction does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+      })
+    }).then(function (paymentTransaction) {
+      if (paymentTransaction instanceof allModels.PaymentTransaction) {
+        resolve(paymentTransaction)
+      }
+      reject(new ResourceNotFoundException('The specified paymentTransaction does not exist.'))
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get all PaymentTransactions
@@ -102,21 +101,21 @@ PaymentTransactionsRepository.prototype.get = function (id) {
  * @return {Promise}
  */
 PaymentTransactionsRepository.prototype.getAll = function (params = {}) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.PaymentTransaction.findAll(params);
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.PaymentTransaction.findAll(params)
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Delete a PaymentTransaction
@@ -125,26 +124,26 @@ PaymentTransactionsRepository.prototype.getAll = function (params = {}) {
  * @return {Promise}
  */
 PaymentTransactionsRepository.prototype.delete = function (id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.PaymentTransaction.destroy({
-				where:
-					{
-						id: id
-					}
-			});
-		}).then(function () {
-			resolve()
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.PaymentTransaction.destroy({
+        where:
+          {
+            id: id
+          }
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Create or update a PaymentTransaction
@@ -152,23 +151,23 @@ PaymentTransactionsRepository.prototype.delete = function (id) {
  * @param {PaymentTransaction} model
  */
 PaymentTransactionsRepository.prototype.save = function (model) {
-	let allModels;
-	const repository = this;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return repository.get(model.id);
-		}).then(function () {
-			return repository.upsert(model, {});
-		}).then(function (paymentTransaction) {
-			resolve(paymentTransaction);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const repository = this
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return repository.get(model.id)
+    }).then(function () {
+      return repository.upsert(model, {})
+    }).then(function (paymentTransaction) {
+      resolve(paymentTransaction)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Insert or update the model
@@ -178,37 +177,37 @@ PaymentTransactionsRepository.prototype.save = function (model) {
  * @return {Promise<any>}
  */
 PaymentTransactionsRepository.prototype.upsert = function (model, data) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (typeof model === 'undefined') {
-				const paymentTransaction = new allModels.PaymentTransaction();
-				model = new paymentTransaction.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
-			}
-			return allModels.PaymentTransaction.upsert({
-				'id': model.id,
-				'billingZip': typeof data.billingZip !== "undefined" ? data.billingZip : model.billingZip,
-				'creditCardExpirationMonth': typeof data.creditCardExpirationMonth !== "undefined" ? data.creditCardExpirationMonth : model.creditCardExpirationMonth,
-				'creditCardExpirationYear': typeof data.creditCardExpirationYear !== "undefined" ? data.creditCardExpirationYear : model.creditCardExpirationYear,
-				'creditCardLast4': typeof data.creditCardLast4 !== "undefined" ? data.creditCardLast4 : model.creditCardLast4,
-				'creditCardName': typeof data.creditCardName !== "undefined" ? data.creditCardName : model.creditCardName,
-				'creditCardType': typeof data.creditCardType !== "undefined" ? data.creditCardType : model.creditCardType,
-				'isTestMode': typeof data.isTestMode !== "undefined" ? data.isTestMode : model.isTestMode,
-				'transactionAmount': typeof data.transactionAmount !== "undefined" ? data.transactionAmount : model.transactionAmount,
-				'transactionId': typeof data.transactionId !== "undefined" ? data.transactionId : model.transactionId,
-				'transactionStatus': typeof data.transactionStatus !== "undefined" ? data.transactionStatus : model.transactionStatus,
-			});
-		}).then(function (paymentTransaction) {
-			resolve(paymentTransaction[0]);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      if (typeof model === 'undefined') {
+        const paymentTransaction = new allModels.PaymentTransaction()
+        model = new paymentTransaction.constructor({}, { isNewRecord: typeof data.id === 'undefined' })
+      }
+      return allModels.PaymentTransaction.upsert({
+        id: model.id,
+        billingZip: typeof data.billingZip !== 'undefined' ? data.billingZip : model.billingZip,
+        creditCardExpirationMonth: typeof data.creditCardExpirationMonth !== 'undefined' ? data.creditCardExpirationMonth : model.creditCardExpirationMonth,
+        creditCardExpirationYear: typeof data.creditCardExpirationYear !== 'undefined' ? data.creditCardExpirationYear : model.creditCardExpirationYear,
+        creditCardLast4: typeof data.creditCardLast4 !== 'undefined' ? data.creditCardLast4 : model.creditCardLast4,
+        creditCardName: typeof data.creditCardName !== 'undefined' ? data.creditCardName : model.creditCardName,
+        creditCardType: typeof data.creditCardType !== 'undefined' ? data.creditCardType : model.creditCardType,
+        isTestMode: typeof data.isTestMode !== 'undefined' ? data.isTestMode : model.isTestMode,
+        transactionAmount: typeof data.transactionAmount !== 'undefined' ? data.transactionAmount : model.transactionAmount,
+        transactionId: typeof data.transactionId !== 'undefined' ? data.transactionId : model.transactionId,
+        transactionStatus: typeof data.transactionStatus !== 'undefined' ? data.transactionStatus : model.transactionStatus
+      })
+    }).then(function (paymentTransaction) {
+      resolve(paymentTransaction[0])
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Bulk create PaymentTransactions (seeder)
@@ -217,19 +216,19 @@ PaymentTransactionsRepository.prototype.upsert = function (model, data) {
  * @return {Promise<any>}
  */
 PaymentTransactionsRepository.prototype.batchUpdate = function (pts) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return allModels.PaymentTransaction.bulkCreate(pts);
-		}).then(function (savedPaymentTransactions) {
-			resolve(savedPaymentTransactions);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return allModels.PaymentTransaction.bulkCreate(pts)
+    }).then(function (savedPaymentTransactions) {
+      resolve(savedPaymentTransactions)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-module.exports = PaymentTransactionsRepository;
+module.exports = PaymentTransactionsRepository

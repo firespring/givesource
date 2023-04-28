@@ -14,42 +14,45 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const DeleteDonation = require('../../../src/api/deleteDonation/index');
-const DonationsRepository = require('../../../src/repositories/donations');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const DeleteDonation = require('../../../src/api/deleteDonation/index')
+const DonationsRepository = require('../../../src/repositories/donations')
+const TestHelper = require('../../helpers/test')
+const SecretsManager = require('../../../src/aws/secretsManager')
 
 describe('DeleteDonation', function () {
+  beforeEach(async () => {
+    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+  })
+  afterEach(function () {
+    SecretsManager.prototype.getSecretValue.restore()
+    DonationsRepository.prototype.delete.restore()
+  })
 
-	afterEach(function () {
-		DonationsRepository.prototype.delete.restore();
-	});
+  it('should delete a donation', function () {
+    const model = TestHelper.generate.model('donation')
+    sinon.stub(DonationsRepository.prototype, 'delete').resolves(model)
+    const params = {
+      params: {
+        donation_uuid: model.uuid
+      }
+    }
+    return DeleteDonation.handle(params, null, function (error, result) {
+      assert(error === undefined)
+      assert(result === undefined)
+    })
+  })
 
-	it('should delete a donation', function () {
-		const model = TestHelper.generate.model('donation');
-		sinon.stub(DonationsRepository.prototype, 'delete').resolves(model);
-		const params = {
-			params: {
-				donation_uuid: model.uuid
-			}
-		};
-		return DeleteDonation.handle(params, null, function (error, result) {
-			assert(error === undefined);
-			assert(result === undefined);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(DonationsRepository.prototype, 'delete').rejects('Error');
-		const params = {
-			params: {
-				donation_uuid: '1234'
-			}
-		};
-		return DeleteDonation.handle(params, null, function (error) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(DonationsRepository.prototype, 'delete').rejects('Error')
+    const params = {
+      params: {
+        donation_uuid: '1234'
+      }
+    }
+    return DeleteDonation.handle(params, null, function (error) {
+      assert(error instanceof Error)
+    })
+  })
+})

@@ -15,70 +15,83 @@
   -->
 
 <template>
-    <input v-if="isDesktop" v-model="localValue" type="text" :name="name" :id="id" ref="input">
-    <input v-else v-model="localValue" type="color" :name="name" :id="id">
+  <input
+    v-if="isDesktop"
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    type="text"
+    :name="name"
+  >
+  <input
+    v-else
+    :id="id"
+    v-model="localValue"
+    type="color"
+    :name="name"
+  >
 </template>
 
 <script>
-	require('@claviska/jquery-minicolors');
+require('@claviska/jquery-minicolors')
 
-	export default {
-		data: function () {
-			return {
-				localValue: ''
-			};
-		},
-		computed: {
-			isDesktop: function () {
-				return !/Mobi/.test(navigator.userAgent);
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null,
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			defaultColor: {
-				type: String,
-				default: null
-			}
-		},
-		mounted: function () {
-			const vue = this;
+export default {
+  props: {
+    value: { type: String, default: null },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    defaultColor: {
+      type: String,
+      default: null
+    }
+  },
+  data: function () {
+    return {
+      localValue: ''
+    }
+  },
+  computed: {
+    isDesktop: function () {
+      return !/Mobi/.test(navigator.userAgent)
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.$emit('input', value)
+    },
+    value: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.localValue = value
+      $(vue.$refs.input).minicolors('value', vue.value)
+    }
+  },
+  mounted: function () {
+    const vue = this
 
-			if (vue.isDesktop) {
-				const options = {
-					change: function (value) {
-						vue.localValue = value;
-					},
-				};
-				if(vue.defaultColor) {
-					options.defaultValue = vue.defaultColor;
-                }
-				$(vue.$refs.input).minicolors(options);
-			}
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.$emit('input', value);
-			},
-			value: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.localValue = value;
-				$(vue.$refs.input).minicolors('value', vue.value);
-			}
-		}
-	};
+    if (vue.isDesktop) {
+      const options = {
+        change: function (value) {
+          vue.localValue = value
+        }
+      }
+      if (vue.defaultColor) {
+        options.defaultValue = vue.defaultColor
+      }
+      $(vue.$refs.input).minicolors(options)
+    }
+  }
+}
 </script>

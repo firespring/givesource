@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../../.base_env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../../base_config/');
+const dotenv = require('dotenv')
+const path = require('path')
+dotenv.config({path: path.resolve(__dirname, '../../.base_env')})
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../../base_config/')
 
-const config = require('config');
+const config = require('config')
 
 exports.bootstrap = function () {
-	const stackSettings = config.get('stack');
+  const stackSettings = config.get('stack')
 
-	Object.keys(stackSettings).forEach(function (key) {
-		if (!process.env.hasOwnProperty(key)) {
-			process.env[key] = stackSettings[key];
-		}
-	});
-};
+  Object.keys(stackSettings).forEach(function (key) {
+    if (!process.env.hasOwnProperty(key)) {
+      process.env[key] = stackSettings[key]
+    }
+  })
+}

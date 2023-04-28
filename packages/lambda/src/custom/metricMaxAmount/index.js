@@ -14,37 +14,40 @@
  * limitations under the License.
  */
 
-const HttpException = require('./../../exceptions/http');
-const MetricsRepository = require('./../../repositories/metrics');
-const Request = require('./../../aws/request');
+const HttpException = require('./../../exceptions/http')
+const MetricsRepository = require('./../../repositories/metrics')
+const Request = require('./../../aws/request')
 
-export function handle(event, context, callback) {
-	const request = new Request(event, context).parameters(['amount', 'key']);
-	const repository = new MetricsRepository();
+exports.handle = function handle (event, context, callback) {
+  const request = new Request(event, context).parameters(['amount', 'key'])
+  const repository = new MetricsRepository()
 
-	let metric = null;
-	const key = request.get('key');
-	const amount = request.get('amount', 0);
+  let metric = null
+  const key = request.get('key')
+  const amount = request.get('amount', 0)
 
-	repository.batchGet([key]).then((metrics) => {
-		if (metrics.length) {
-			metric = metrics.pop();
-			if (metric.value < amount) {
-				metric.populate({value: amount});
-				return metric.validate();
-			} else {
-				metric = null;
-			}
-		} else {
-			metric = new Metric({key: key, value: amount});
-			return metric.validate();
-		}
-	}).then(() => {
-		return metric ? repository.batchUpdate([metric]) : Promise.resolve();
-	}).then(() => {
-		callback();
-	}).catch((err) => {
-		console.log('Error: %j', err);
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
+  repository.batchGet([key]).then((metrics) => {
+    if (metrics.length) {
+      metric = metrics.pop()
+      if (metric.value < amount) {
+        metric.populate({ value: amount })
+        return metric.validate()
+      } else {
+        metric = null
+      }
+    } else {
+      // this was wrong before and appears to be dead code
+      throw new Error('not implemented')
+      // metric = new Metric({ key: key, value: amount })
+      // return metric.validate()
+      // return metrics
+    }
+  }).then(() => {
+    return metric ? repository.batchUpdate([metric]) : Promise.resolve()
+  }).then(() => {
+    callback()
+  }).catch((err) => {
+    console.log('Error: %j', err);
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
 }

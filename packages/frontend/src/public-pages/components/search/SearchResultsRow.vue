@@ -15,80 +15,95 @@
   -->
 
 <template>
-    <div class="leaderboard-item leaderboard-item--detailed">
+  <div class="leaderboard-item leaderboard-item--detailed">
+    <router-link
+      :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"
+      class="leaderboard-item__image leaderboard-item__image--full"
+      :style="'background-image: url(' + logoUrl + ')'"
+    />
 
-        <router-link :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }" class="leaderboard-item__image leaderboard-item__image--full" :style="'background-image: url(' + logoUrl + ')'">
-        </router-link>
-
-        <div class="leaderboard-item__info">
-            <h3>
-                <a
-                  :href="'/nonprofits/' + nonprofit.slug"
-                  @click="goToNonprofitLandingPage($event, nonprofit)">
-                    {{ nonprofit.legalName}}
-                </a>
-            </h3>
-            <p v-if="nonprofit.shortDescription">
-                {{ nonprofit.shortDescription }}
-            </p>
-        </div>
-
-        <div v-if="displayDonationAmount" class="leaderboard-item__amount">{{ amount }}</div>
-
-        <div v-if="canDonate" class="leaderboard-item__action">
-            <a v-on:click.prevent="donate" href="#" class="btn btn--accent btn--sm">Donate</a>
-        </div>
+    <div class="leaderboard-item__info">
+      <h3>
+        <a
+          :href="'/nonprofits/' + nonprofit.slug"
+          @click="goToNonprofitLandingPage($event, nonprofit)"
+        >
+          {{ nonprofit.legalName }}
+        </a>
+      </h3>
+      <p v-if="nonprofit.shortDescription">
+        {{ nonprofit.shortDescription }}
+      </p>
     </div>
+
+    <div
+      v-if="displayDonationAmount"
+      class="leaderboard-item__amount"
+    >
+      {{ amount }}
+    </div>
+
+    <div
+      v-if="canDonate"
+      class="leaderboard-item__action"
+    >
+      <a
+        href="#"
+        class="btn btn--accent btn--sm"
+        @click.prevent="donate"
+      >Donate</a>
+    </div>
+  </div>
 </template>
 
 <script>
-	import * as Settings from './../../helpers/settings';
+import * as Settings from './../../helpers/settings'
 
-	export default {
-		computed: {
-			amount: function () {
-				return this.formatMoney(this.nonprofit.donationsSubtotal);
-			},
-			displayDonationAmount: function () {
-				return Settings.isDuringEvent() || Settings.isAfterEvent();
-			},
-			canDonate: function () {
-				return Settings.isDuringDonations() || Settings.isDuringEvent();
-			},
-			logoUrl: function () {
-				const vue = this;
-				let logo = false;
-				if (vue.nonprofit.logo) {
-					logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path;
-				} else if (vue.$store.getters.setting('EVENT_LOGO')) {
-					logo = vue.$store.getters.setting('EVENT_LOGO');
-				} else {
-					logo = '/assets/img/logo-event.png';
-				}
-				return logo;
-			}
-		},
-		props: [
-			'nonprofit'
-		],
-		methods: {
-      donate: function () {
-        const vue = this;
-
-        vue.addModal('donation-tiers', {
-          nonprofit: vue.nonprofit
-        });
-      },
-      goToNonprofitLandingPage: function (event, nonprofit) {
-        const vue = this;
-        event.preventDefault();
-        $('body').addClass('has-loader');
-        vue.addModal('spinner');
-        vue.$router.push({
-          name: 'nonprofit-landing-page',
-          params: { slug: nonprofit.slug }
-        });
+export default {
+  props: {
+    nonprofit: { type: Object, default: () => ({}) }
+  },
+  computed: {
+    amount: function () {
+      return this.formatMoney(this.nonprofit.donationsSubtotal)
+    },
+    displayDonationAmount: function () {
+      return Settings.isDuringEvent() || Settings.isAfterEvent()
+    },
+    canDonate: function () {
+      return Settings.isDuringDonations() || Settings.isDuringEvent()
+    },
+    logoUrl: function () {
+      const vue = this
+      let logo = false
+      if (vue.nonprofit.logo) {
+        logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path
+      } else if (vue.$store.getters.setting('EVENT_LOGO')) {
+        logo = vue.$store.getters.setting('EVENT_LOGO')
+      } else {
+        logo = '/assets/img/logo-event.png'
       }
-		}
-	};
+      return logo
+    }
+  },
+  methods: {
+    donate: function () {
+      const vue = this
+
+      vue.addModal('donation-tiers', {
+        nonprofit: vue.nonprofit
+      })
+    },
+    goToNonprofitLandingPage: function (event, nonprofit) {
+      const vue = this
+      event.preventDefault()
+      $('body').addClass('has-loader')
+      vue.addModal('spinner')
+      vue.$router.push({
+        name: 'nonprofit-landing-page',
+        params: { slug: nonprofit.slug }
+      })
+    }
+  }
+}
 </script>

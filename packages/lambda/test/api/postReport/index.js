@@ -14,36 +14,35 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostReport = require('../../../src/api/postReport/index');
-const ReportsRepository = require('../../../src/repositories/reports');
-const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostReport = require('../../../src/api/postReport/index')
+const ReportsRepository = require('../../../src/repositories/reports')
+const sinon = require('sinon')
+const TestHelper = require('../../helpers/test')
 
 describe('PostReport', function () {
+  afterEach(function () {
+    ReportsRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		ReportsRepository.prototype.save.restore();
-	});
+  it('should return a report', function () {
+    const model = TestHelper.generate.model('report')
+    sinon.stub(ReportsRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
+    const params = {
+      body
+    }
+    return PostReport.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should return a report', function () {
-		const model = TestHelper.generate.model('report');
-		sinon.stub(ReportsRepository.prototype, 'save').resolves(model);
-		const params = {
-			body: model.except(['uuid', 'createdOn'])
-		};
-		return PostReport.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(ReportsRepository.prototype, 'save').rejects('Error');
-		return PostReport.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(ReportsRepository.prototype, 'save').rejects('Error')
+    return PostReport.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

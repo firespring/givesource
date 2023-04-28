@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import store from './../store';
+import store from './../store'
 
-const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
+const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
 /**
  * Login CognitoUser
@@ -26,44 +26,44 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
  * @param {{}} callbacks
  */
 const login = function (username, password, callbacks) {
-	const data = {
-		UserPoolId: store.getters.setting('USER_POOL_ID'),
-		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
-	};
-	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-	const userData = {
-		Username: username,
-		Pool: userPool
-	};
-	const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-	const authenticationData = {
-		Username: username,
-		Password: password,
-	};
-	const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-	cognitoUser.authenticateUser(authenticationDetails, {
-		onSuccess: function (result) {
-			if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
-				callbacks.onSuccess(result);
-			}
-		},
-		onFailure: function (err) {
-			if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
-				callbacks.onFailure(err);
-			}
-		},
-		mfaRequired: function (codeDeliveryDetails) {
-			if (callbacks.hasOwnProperty('mfaRequired') && typeof callbacks.mfaRequired === 'function') {
-				callbacks.mfaRequired(codeDeliveryDetails, cognitoUser);
-			}
-		},
-		newPasswordRequired: function (userAttributes, requiredAttributes) {
-			if (callbacks.hasOwnProperty('newPasswordRequired') && typeof callbacks.newPasswordRequired === 'function') {
-				callbacks.newPasswordRequired(userAttributes, requiredAttributes, cognitoUser);
-			}
-		}
-	});
-};
+  const data = {
+    UserPoolId: store.getters.setting('USER_POOL_ID'),
+    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+  }
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userData = {
+    Username: username,
+    Pool: userPool
+  }
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  const authenticationData = {
+    Username: username,
+    Password: password
+  }
+  const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData)
+  cognitoUser.authenticateUser(authenticationDetails, {
+    onSuccess: function (result) {
+      if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
+        callbacks.onSuccess(result)
+      }
+    },
+    onFailure: function (err) {
+      if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
+        callbacks.onFailure(err)
+      }
+    },
+    mfaRequired: function (codeDeliveryDetails) {
+      if (callbacks.hasOwnProperty('mfaRequired') && typeof callbacks.mfaRequired === 'function') {
+        callbacks.mfaRequired(codeDeliveryDetails, cognitoUser)
+      }
+    },
+    newPasswordRequired: function (userAttributes, requiredAttributes) {
+      if (callbacks.hasOwnProperty('newPasswordRequired') && typeof callbacks.newPasswordRequired === 'function') {
+        callbacks.newPasswordRequired(userAttributes, requiredAttributes, cognitoUser)
+      }
+    }
+  })
+}
 
 /**
  * Change user password
@@ -73,19 +73,19 @@ const login = function (username, password, callbacks) {
  * @param {function} callback
  */
 const changePassword = function (oldPassword, newPassword, callback) {
-	const cognitoUser = this.getCognitoUser();
-	if (cognitoUser) {
-		cognitoUser.getSession(function (err, response) {
-			if (err) {
-				callback(err);
-			} else {
-				cognitoUser.changePassword(oldPassword, newPassword, callback);
-			}
-		});
-	} else {
-		callback(new Error('User not authenticated'));
-	}
-};
+  const cognitoUser = this.getCognitoUser()
+  if (cognitoUser) {
+    cognitoUser.getSession(function (err, response) {
+      if (err) {
+        callback(err)
+      } else {
+        cognitoUser.changePassword(oldPassword, newPassword, callback)
+      }
+    })
+  } else {
+    callback(new Error('User not authenticated'))
+  }
+}
 
 /**
  * Forgot Password workflow
@@ -94,29 +94,29 @@ const changePassword = function (oldPassword, newPassword, callback) {
  * @param {{}} callbacks
  */
 const forgotPassword = function (username, callbacks) {
-	const data = {
-		UserPoolId: store.getters.setting('USER_POOL_ID'),
-		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
-	};
-	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-	const userData = {
-		Username: username,
-		Pool: userPool
-	};
-	const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-	cognitoUser.forgotPassword({
-		onSuccess: function (result) {
-			if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
-				callbacks.onSuccess(result, cognitoUser);
-			}
-		},
-		onFailure: function (err) {
-			if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
-				callbacks.onFailure(err);
-			}
-		}
-	});
-};
+  const data = {
+    UserPoolId: store.getters.setting('USER_POOL_ID'),
+    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+  }
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userData = {
+    Username: username,
+    Pool: userPool
+  }
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  cognitoUser.forgotPassword({
+    onSuccess: function (result) {
+      if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
+        callbacks.onSuccess(result, cognitoUser)
+      }
+    },
+    onFailure: function (err) {
+      if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
+        callbacks.onFailure(err)
+      }
+    }
+  })
+}
 
 /**
  * Forgot password reset workflow
@@ -127,29 +127,29 @@ const forgotPassword = function (username, callbacks) {
  * @param {{}} callbacks
  */
 const resetPassword = function (username, code, password, callbacks) {
-	const data = {
-		UserPoolId: store.getters.setting('USER_POOL_ID'),
-		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
-	};
-	const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-	const userData = {
-		Username: username,
-		Pool: userPool
-	};
-	const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-	cognitoUser.confirmPassword(code, password, {
-		onSuccess: function (result) {
-			if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
-				callbacks.onSuccess(result, cognitoUser);
-			}
-		},
-		onFailure: function (err) {
-			if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
-				callbacks.onFailure(err);
-			}
-		}
-	});
-};
+  const data = {
+    UserPoolId: store.getters.setting('USER_POOL_ID'),
+    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+  }
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userData = {
+    Username: username,
+    Pool: userPool
+  }
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  cognitoUser.confirmPassword(code, password, {
+    onSuccess: function (result) {
+      if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
+        callbacks.onSuccess(result, cognitoUser)
+      }
+    },
+    onFailure: function (err) {
+      if (callbacks.hasOwnProperty('onFailure') && typeof callbacks.onFailure === 'function') {
+        callbacks.onFailure(err)
+      }
+    }
+  })
+}
 
 /**
  * Is CognitoUser authenticated?
@@ -157,17 +157,20 @@ const resetPassword = function (username, code, password, callbacks) {
  * @return {boolean}
  */
 const isAuthenticated = function () {
-	let authenticated = false;
-	const cognitoUser = this.getCognitoUser();
-	if (cognitoUser) {
-		cognitoUser.getSession(function (err, session) {
-			if (session && session.isValid()) {
-				authenticated = true;
-			}
-		});
-	}
-	return authenticated;
-};
+  let authenticated = false
+  const cognitoUser = this.getCognitoUser()
+  if (cognitoUser) {
+    cognitoUser.getSession(function (err, session) {
+      if (err) {
+        console.log(err)
+      }
+      if (session && session.isValid()) {
+        authenticated = true
+      }
+    })
+  }
+  return authenticated
+}
 
 /**
  * Refresh CognitoUser session
@@ -175,27 +178,30 @@ const isAuthenticated = function () {
  * @param {function} callback
  */
 const refreshSession = function (callback) {
-	const cognitoUser = this.getCognitoUser();
-	if (cognitoUser) {
-		cognitoUser.getSession(function (err, session) {
-			if (session) {
-				cognitoUser.refreshSession(session.getRefreshToken(), callback);
-			}
-		});
-	} else {
-		callback(true);
-	}
-};
+  const cognitoUser = this.getCognitoUser()
+  if (cognitoUser) {
+    cognitoUser.getSession(function (err, session) {
+      if (err) {
+        console.log(err)
+      }
+      if (session) {
+        cognitoUser.refreshSession(session.getRefreshToken(), callback)
+      }
+    })
+  } else {
+    callback(new Error('Could not retrieve user'))
+  }
+}
 
 /**
  * Log out CognitoUser
  */
 const logout = function () {
-	const cognitoUser = this.getCognitoUser();
-	if (cognitoUser) {
-		cognitoUser.signOut();
-	}
-};
+  const cognitoUser = this.getCognitoUser()
+  if (cognitoUser) {
+    cognitoUser.signOut()
+  }
+}
 
 /**
  * Get the CognitoUser
@@ -203,13 +209,13 @@ const logout = function () {
  * @return {CognitoUser|null}
  */
 const getCognitoUser = function () {
-	const userPoolData = {
-		UserPoolId: store.getters.setting('USER_POOL_ID'),
-		ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
-	};
-	const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData);
-	return userPool.getCurrentUser();
-};
+  const userPoolData = {
+    UserPoolId: store.getters.setting('USER_POOL_ID'),
+    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+  }
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+  return userPool.getCurrentUser()
+}
 
 /**
  * Format Cognito error message
@@ -218,21 +224,21 @@ const getCognitoUser = function () {
  * @returns {String}
  */
 const formatCognitoErrorMessage = function (err) {
-	// Make Cognito error message consistent with the Cognito errors that are returned in other areas.
-	if (err.name === 'InvalidParameterException' && err.message.includes('Member must have length')) {
-		return 'Password does not conform to policy: Password not long enough';
-	}
-	return err.message;
-};
+  // Make Cognito error message consistent with the Cognito errors that are returned in other areas.
+  if (err.name === 'InvalidParameterException' && err.message.includes('Member must have length')) {
+    return 'Password does not conform to policy: Password not long enough'
+  }
+  return err.message
+}
 
 export {
-	login,
-	logout,
-	isAuthenticated,
-	changePassword,
-	forgotPassword,
-	resetPassword,
-	refreshSession,
-	getCognitoUser,
-	formatCognitoErrorMessage
+  login,
+  logout,
+  isAuthenticated,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+  refreshSession,
+  getCognitoUser,
+  formatCognitoErrorMessage
 }

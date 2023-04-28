@@ -15,78 +15,96 @@
   -->
 
 <template>
-    <table class="table-donations">
-        <thead>
-        <tr>
-            <th class="width-100">Nonprofit Name</th>
-            <th>Amount</th>
-            <th></th>
-        </tr>
-        </thead>
+  <table class="table-donations">
+    <thead>
+      <tr>
+        <th class="width-100">
+          Nonprofit Name
+        </th>
+        <th>Amount</th>
+        <th />
+      </tr>
+    </thead>
 
-        <tbody v-if="cartItems.length">
-        <cart-donations-list-table-row v-for="(cartItem, index) in cartItems" :amount="cartItem.amount" :timestamp="cartItem.timestamp" :nonprofit="cartItem.nonprofit"
-                                       :key="cartItem.timestamp" :note="cartItem.note" :index="index" v-on:removeCartItem="removeCartItem" v-on:updateCartItem="updateCartItem"
-                                       v-on:hasError="hasError"></cart-donations-list-table-row>
-        </tbody>
+    <tbody v-if="cartItems.length">
+      <cart-donations-list-table-row
+        v-for="(cartItem, index) in cartItems"
+        :key="cartItem.timestamp"
+        :amount="cartItem.amount"
+        :timestamp="cartItem.timestamp"
+        :nonprofit="cartItem.nonprofit"
+        :note="cartItem.note"
+        :index="index"
+        @remove-cart-item="removeCartItem"
+        @update-cart-item="updateCartItem"
+        @has-error="hasError"
+      />
+    </tbody>
 
-        <tbody v-else>
-        <tr>
-            <td colspan="3" class="text-c">
-                <p>
-                    <strong>You haven't added any donations yet.</strong>
-                </p>
-                <p>
-                    <router-link :to="{ name: 'search-results' }" class="btn btn--accent">Find a Nonprofit to Help</router-link>
-                </p>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <tbody v-else>
+      <tr>
+        <td
+          colspan="3"
+          class="text-c"
+        >
+          <p>
+            <strong>You haven't added any donations yet.</strong>
+          </p>
+          <p>
+            <router-link
+              :to="{ name: 'search-results' }"
+              class="btn btn--accent"
+            >
+              Find a Nonprofit to Help
+            </router-link>
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>
-	import * as Utils from './../../helpers/utils';
-	import ComponentCartDonationsListTableRow from './CartDonationsListTableRow.vue';
+import ComponentCartDonationsListTableRow from './CartDonationsListTableRow.vue'
 
-	export default {
-		data() {
-			return {
-				cartItems: [],
-			};
-		},
-		created() {
-			const vm = this;
+export default {
+  components: {
+    'cart-donations-list-table-row': ComponentCartDonationsListTableRow
+  },
+  data () {
+    return {
+      cartItems: []
+    }
+  },
+  created () {
+    const vm = this
 
-			vm.cartItems = vm.$store.state.cartItems;
-			vm.cartItems.sort((a, b) => {
-				return a.timestamp - b.timestamp;
-			});
-		},
-		methods: {
-			removeCartItem(index) {
-				this.cartItems.splice(index, 1);
-			},
-			updateCartItem(index, amount, note) {
-				const vm = this;
+    vm.cartItems = vm.$store.state.cartItems
+    vm.cartItems.sort((a, b) => {
+      return a.timestamp - b.timestamp
+    })
+  },
+  methods: {
+    removeCartItem (index) {
+      this.cartItems.splice(index, 1)
+    },
+    updateCartItem (index, amount, note) {
+      const vm = this
 
-				const item = vm.cartItems[index];
-				item.amount = amount;
-				item.note = note;
+      const item = vm.cartItems[index]
+      item.amount = amount
+      item.note = note
 
-				vm.$set(vm.cartItems, index, item);
-				vm.$store.commit('updateCartItem', {
-					timestamp: item.timestamp,
-					amount: item.amount,
-					note: item.note
-				});
-			},
-			hasError(hasError) {
-				this.$emit('hasError', hasError);
-			}
-		},
-		components: {
-			'cart-donations-list-table-row': ComponentCartDonationsListTableRow,
-		}
-	};
+      vm.$set(vm.cartItems, index, item)
+      vm.$store.commit('updateCartItem', {
+        timestamp: item.timestamp,
+        amount: item.amount,
+        note: item.note
+      })
+    },
+    hasError (hasError) {
+      this.$emit('has-error', hasError)
+    }
+  }
+}
 </script>

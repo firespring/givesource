@@ -15,43 +15,43 @@
   -->
 
 <template>
-    <div>
-        <router-view></router-view>
-        <modals></modals>
-    </div>
+  <div>
+    <router-view />
+    <modals />
+  </div>
 </template>
 
 <script>
-	import ComponentModals from './modals/Modals.vue';
+import ComponentModals from './modals/Modals.vue'
 
-	export default {
-		beforeCreate() {
-			const vm = this;
+export default {
+  components: {
+    modals: ComponentModals
+  },
+  beforeCreate () {
+    const vm = this
 
-			const eventTitle = vm.$store.getters.setting('EVENT_TITLE');
-			if (eventTitle) {
-				document.title = eventTitle;
-			}
+    const eventTitle = vm.$store.getters.setting('EVENT_TITLE')
+    if (eventTitle) {
+      document.title = eventTitle
+    }
 
-			const seoDescription = vm.$store.getters.setting('SEO_DESCRIPTION');
-			const socialDescription = vm.$store.getters.setting('SOCIAL_SHARING_DESCRIPTION');
-			if (seoDescription || socialDescription) {
-				const description = seoDescription ? seoDescription : socialDescription;
-				document.querySelector('meta[name="description"]').setAttribute('content', description);
-			}
+    const seoDescription = vm.$store.getters.setting('SEO_DESCRIPTION')
+    const socialDescription = vm.$store.getters.setting('SOCIAL_SHARING_DESCRIPTION')
+    if (seoDescription || socialDescription) {
+      const description = seoDescription || socialDescription
+      document.querySelector('meta[name="description"]').setAttribute('content', description)
+    }
 
-			const favicon = vm.$store.getters.setting('FAVICON');
-			if (favicon) {
-				const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-				link.type = 'image/png';
-				link.rel = 'shortcut icon';
-				link.href = favicon;
+    const favicon = vm.$store.getters.setting('FAVICON')
+    if (favicon) {
+      const link = document.querySelector("link[rel*='icon']") || document.createElement('link')
+      link.type = 'image/png'
+      link.rel = 'shortcut icon'
+      link.href = favicon
 
-				document.getElementsByTagName('head')[0].appendChild(link);
-			}
-		},
-		components: {
-			'modals': ComponentModals
-		}
-	};
+      document.getElementsByTagName('head')[0].appendChild(link)
+    }
+  }
+}
 </script>

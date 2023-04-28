@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-require('./config/bootstrap').bootstrap();
+require('./config/bootstrap').bootstrap()
 
-const inquirer = require('inquirer');
-const DonationsRepository = require('../src/repositories/donations');
-const PaymentTransactionRepository = require('../src/repositories/paymentTransactions');
-const loadModels = require('../src/models/index');
-const Sequelize = require('sequelize');
+const inquirer = require('inquirer')
+const DonationsRepository = require('../src/repositories/donations')
+const PaymentTransactionRepository = require('../src/repositories/paymentTransactions')
+const loadModels = require('../src/models/index')
+const Sequelize = require('sequelize')
 
 const deletePaymentsByTransactionIds = function () {
-  const paymentTransactionRepository = new PaymentTransactionRepository();
-  const donationsRepository = new DonationsRepository();
+  const paymentTransactionRepository = new PaymentTransactionRepository()
+  const donationsRepository = new DonationsRepository()
 
   inquirer.prompt([
     {
@@ -34,28 +34,26 @@ const deletePaymentsByTransactionIds = function () {
       default: ''
     }
   ]).then(answers => {
-    let answerString = answers.paymentTransactionIds;
-    let answerStringNoWhiteSpace = answerString.replace(/\s+/g, '')
-    return queryPaymentTransactions(answerStringNoWhiteSpace.split(','));
+    const answerString = answers.paymentTransactionIds
+    const answerStringNoWhiteSpace = answerString.replace(/\s+/g, '')
+    return queryPaymentTransactions(answerStringNoWhiteSpace.split(','))
   }).then(paymentTransactions => {
     return Promise.all(paymentTransactions.map(function (paymentTransaction) {
-
       // Delete the pt and go through and delete each donation
       return paymentTransactionRepository.delete(paymentTransaction.id).then(function () {
-        console.log(`Payment Transaction: ${paymentTransaction.transactionId} was DELETED.`);
+        console.log(`Payment Transaction: ${paymentTransaction.transactionId} was DELETED.`)
         return Promise.all(paymentTransaction.Donations.map(function (donation) {
-          console.log(`${paymentTransaction.transactionId} --- DELETED: Donation ID: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`);
-          return donationsRepository.delete(donation.id);
-        }));
-      });
-    }));
+          console.log(`${paymentTransaction.transactionId} --- DELETED: Donation ID: (${donation.id}) for Nonprofit: ${donation.Nonprofit.legalName}`)
+          return donationsRepository.delete(donation.id)
+        }))
+      })
+    }))
   }).then(function () {
-    console.log(`done.`);
+    console.log('done.')
   }).catch(function (err) {
-    console.log(`error: ${err}`);
-  });
+    console.log(`error: ${err}`)
+  })
 }
-
 
 /**
  * Get paymentTransactions data
@@ -63,18 +61,18 @@ const deletePaymentsByTransactionIds = function () {
  * @return {Promise}
  */
 const queryPaymentTransactions = function (paymentTransactionIds) {
-  const paymentTransactionRepository = new PaymentTransactionRepository();
+  const paymentTransactionRepository = new PaymentTransactionRepository()
 
-  let allModels;
+  let allModels
   return loadModels().then(function (models) {
-    allModels = models;
+    allModels = models
 
     const params = {
       include: [
         {
           model: allModels.Donation,
           include: [
-            {model: allModels.Nonprofit},
+            { model: allModels.Nonprofit }
           ],
           required: true
         }
@@ -84,11 +82,11 @@ const queryPaymentTransactions = function (paymentTransactionIds) {
           [Sequelize.Op.or]: paymentTransactionIds
         }
       }
-    };
-    return paymentTransactionRepository.getAll(params);
+    }
+    return paymentTransactionRepository.getAll(params)
   }).catch(function (err) {
-    console.log(err);
-  });
-};
+    console.log(err)
+  })
+}
 
-deletePaymentsByTransactionIds();
+deletePaymentsByTransactionIds()

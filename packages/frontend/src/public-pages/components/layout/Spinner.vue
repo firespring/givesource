@@ -15,34 +15,37 @@
   -->
 
 <template>
-    <div>
-        <i class="fa fa-spinner fa-pulse fa-fw" :class="sizeClass"></i>
-        <span class="sr-only">Loading...</span>
-    </div>
+  <div>
+    <i
+      class="fa fa-spinner fa-pulse fa-fw"
+      :class="sizeClass"
+    />
+    <span class="sr-only">Loading...</span>
+  </div>
 </template>
 
 <script>
-	export default {
-		computed: {
-			sizeClass: function () {
-				switch (this.size) {
-					case 'small':
-						return 'fa-lg';
+export default {
+  props: {
+    size: {
+      type: String,
+      default: 'large'
+    }
+  },
+  computed: {
+    sizeClass: function () {
+      switch (this.size) {
+        case 'small':
+          return 'fa-lg'
 
-					case 'medium':
-						return 'fa-2x';
+        case 'medium':
+          return 'fa-2x'
 
-					default:
-					case 'large':
-						return 'fa-4x';
-				}
-			},
-		},
-		props: {
-			size: {
-				type: String,
-				default: 'large'
-			}
-		}
-	};
+        default:
+        case 'large':
+          return 'fa-4x'
+      }
+    }
+  }
+}
 </script>

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-const CloudFront = require('./aws/cloudFront');
-const deployInfo = require('../config/deploy-info.json');
+const CloudFront = require('./aws/cloudFront')
+const deployInfo = require('../config/deploy-info.json')
 
-const cloudFront = new CloudFront();
+const cloudFront = new CloudFront()
 cloudFront.createInvalidation(deployInfo.AdminPagesCloudFrontDistribution, ['/index.html']).then(function () {
-	console.log('Admin pages cache cleared');
-	return cloudFront.createInvalidation(deployInfo.PublicPagesCloudFrontDistribution, ['/index.html']);
+  console.log('Admin pages cache cleared')
+  return cloudFront.createInvalidation(deployInfo.PublicPagesCloudFrontDistribution, ['/index.html'])
 }).then(function () {
-	console.log('Public pages cache cleared');
+  console.log('Public pages cache cleared')
 }).catch(function (err) {
-	console.log(err);
-});
+  console.log(err)
+})

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-exports.TYPE_CONTACT = 'CONTACT';
-exports.TYPE_FEEDBACK = 'FEEDBACK';
-exports.TYPE_NAME_CHANGE = 'NAME_CHANGE';
+exports.TYPE_CONTACT = 'CONTACT'
+exports.TYPE_FEEDBACK = 'FEEDBACK'
+exports.TYPE_NAME_CHANGE = 'NAME_CHANGE'

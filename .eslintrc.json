@@ -1,0 +1,73 @@
+{
+  "extends": ["firespring/javascript/vue", "plugin:vue/recommended"],
+  "globals": {
+    "jQuery": true,
+    "API_URL": true
+  },
+  "rules": {
+    "_COMMENT_ we have a lot of multi-word-component-names excludes now, but we should not add more": "off",
+    "vue/multi-word-component-names": ["error", {
+      "ignores": [
+        "Modal", "Modals", "Toolkits", "Register", "Pagination", "Nonprofit",
+        "Leaderboard", "Sponsors", "Spinner", "Hero", "Header", "Footer", "Metrics",
+        "Homepage", "Submit", "Money", "404", "Contact", "Cart", "About", "Media",
+        "Content", "Video", "Navigation", "Datetime", "Color", "Ckeditor5", "Ckeditor4",
+        "Login", "Logout", "Appearance", "Analytics", "Terms", "Checkout", "Ckeditor"
+      ]
+    }],
+    "vue/v-on-event-hyphenation": ["error", "always", {
+      "autofix": true,
+      "ignore": ["update:modelValue"]
+    }],
+    "vue/no-multiple-template-root": "off",
+    "vue/no-v-for-template-key": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.vue"
+      ],
+      "rules": {
+        "vue/require-v-for-key": "off",
+        "vue/valid-v-for": "off",
+        "vue/component-definition-name-casing": ["error", "PascalCase"],
+        "vue/component-name-in-template-casing": ["error", "PascalCase", {
+          "registeredComponentsOnly": true,
+          "ignores": []
+        }]
+      }
+    },
+    { "files": ["packages/lambda/test/**"],
+      "rules": { "standard/no-callback-literal": "off" }
+    },
+    { "files": ["**"],
+      "rules": {
+        "_COMMENT_ disabling this rule for now. todo remove usages of hasOwnProperty an re-enable": "off",
+        "no-prototype-builtins": "off" }
+    },
+    {
+      "files": [
+        "packages/frontend/src/public-pages/components/contact/response/ContactResponse.vue",
+        "packages/frontend/src/public-pages/components/contact/Contact.vue",
+        "packages/frontend/src/public-pages/components/homepage/Metrics.vue",
+        "packages/frontend/src/public-pages/components/homepage/Homepage.vue",
+        "packages/frontend/src/public-pages/components/faq/FAQ.vue",
+        "packages/frontend/src/public-pages/components/terms/TermsOfService.vue",
+        "packages/frontend/src/public-pages/components/toolkits/Toolkits.vue",
+        "packages/frontend/src/public-pages/components/nonprofits/Nonprofit.vue",
+        "packages/frontend/src/public-pages/components/about/About.vue",
+        "packages/frontend/src/public-pages/components/register/response/RegisterResponse.vue",
+        "packages/frontend/src/public-pages/components/register/Register.vue",
+        "packages/frontend/src/public-pages/components/cart/Cart.vue",
+        "packages/frontend/src/public-pages/components/cart/response/CartResponse.vue",
+        "packages/frontend/src/public-pages/components/pages/CustomPage.vue",
+        "packages/frontend/src/admin-pages/components/forms/SelectNonprofitCategory.vue",
+        "packages/frontend/src/admin-pages/components/admin/pages/faq/FAQListTableRow.vue"
+      ],
+      "rules": {
+        "_COMMENT_ todo audit usages of v-html": "off",
+        "vue/no-v-html": "off"
+      }
+    }
+  ]
+}

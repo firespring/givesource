@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const numeral = require('numeral');
+const numeral = require('numeral')
 
 /**
  * Format the provided value into the standard format used for money.
@@ -22,8 +22,8 @@ const numeral = require('numeral');
  * @param {*} value
  * @returns {*}
  */
-function money(value) {
-	return numeral(value).format('0.00');
+function money (value) {
+  return numeral(value).format('0.00')
 }
 
-export default money;
+export default money

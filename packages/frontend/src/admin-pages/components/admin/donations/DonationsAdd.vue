@@ -16,33 +16,33 @@
 
 <template>
   <div class="o-app">
-    <navigation></navigation>
+    <navigation />
     <main class="o-app__main o-app__main--compact">
       <div class="o-app_main-content o-app_main-content o-app_main-content--lg">
         <div class="o-app-main-content">
-
           <div class="o-page-header">
             <div class="o-page-header__text">
               <nav class="o-page-header-nav c-breadcrumb">
                 <span><router-link :to="{ name: 'donations-list' }">Donations</router-link></span>
               </nav>
-              <h1 class="o-page-header-title">Add Offline Single Donation</h1>
+              <h1 class="o-page-header-title">
+                Add Offline Single Donation
+              </h1>
             </div>
           </div>
 
-          <api-error v-model="apiError"></api-error>
+          <api-error v-model="apiError" />
 
-          <form v-on:submit="submit">
+          <form @submit="submit">
             <section class="c-page-section c-page-section--border c-page-section--shadow c-page-section--headless">
               <layout-spinner
                 v-if="!loaded"
                 height="496px"
-              ></layout-spinner>
+              />
               <div
-                class="c-page-section__main"
                 v-else
+                class="c-page-section__main"
               >
-
                 <div
                   class="c-form-item c-form-item--text c-form-item--required"
                   :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }"
@@ -57,14 +57,14 @@
                     <div class="c-form-control-grid">
                       <div class="c-form-control-grid__item">
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="donorNameFirst"
                             v-model="formData.firstName"
                             type="text"
                             name="donorNameFirst"
-                            id="donorNameFirst"
                             :class="{ 'has-error': formErrors.firstName }"
                           >
                           <label for="donorNameFirst">First Name</label>
@@ -78,14 +78,14 @@
                       </div>
                       <div class="c-form-control-grid__item">
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="donorNameLast"
                             v-model="formData.lastName"
                             type="text"
                             name="donorNameLast"
-                            id="donorNameLast"
                             :class="{ 'has-error': formErrors.lastName }"
                           >
                           <label for="donorNameLast">Last Name</label>
@@ -103,21 +103,23 @@
 
                 <div class="c-form-item c-form-item--control-group c-form-item--control-group--address">
                   <div class="c-form-item__label">
-                    <div class="c-form-item-label-text">Address</div>
+                    <div class="c-form-item-label-text">
+                      Address
+                    </div>
                   </div>
 
                   <div class="c-form-item__control u-margin-top-thick">
                     <div class="c-form-control-grid">
                       <div class="c-form-control-grid__item">
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="address1"
                             v-model="formData.address1"
                             type="text"
                             name="address1"
-                            id="address1"
                             :class="{ 'has-error': formErrors.address1 }"
                           >
                           <label for="address1">Address Line 1</label>
@@ -134,14 +136,14 @@
                     <div class="c-form-control-grid">
                       <div class="c-form-control-grid__item">
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="address2"
                             v-model="formData.address2"
                             type="text"
                             name="address2"
-                            id="address2"
                             :class="{ 'has-error': formErrors.address2 }"
                           >
                           <label for="address2">Address Line 2</label>
@@ -158,44 +160,44 @@
                     <div class="c-form-control-grid">
                       <div class="c-form-control-grid__item">
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="city"
                             v-model="formData.city"
                             type="text"
                             name="city"
-                            id="city"
                             :class="{ 'has-error': formErrors.city }"
                           >
                           <label for="city">City</label>
                         </div>
                       </div>
                       <div
-                        class="c-form-control-grid__item u-flex-collapse"
                         id="addressGroupDefaultCountryOptions-US"
+                        class="c-form-control-grid__item u-flex-collapse"
                       >
                         <state-select
+                          id="state"
                           v-model="formData.state"
                           name="state"
-                          id="state"
                           placeholder="State"
                           :class="{ 'has-error': formErrors.state }"
-                        ></state-select>
+                        />
                       </div>
                       <div
                         class="c-form-control-grid__item"
                         style="flex: 1 0 11rem; max-width: 11rem;"
                       >
                         <div
-                          class="has-floating-label js-floating-label"
                           v-floating-label
+                          class="has-floating-label js-floating-label"
                         >
                           <input
+                            id="zip"
                             v-model="formData.zip"
                             type="text"
                             name="zip"
-                            id="zip"
                             :class="{ 'has-error': formErrors.zip }"
                           >
                           <label for="zip">ZIP Code</label>
@@ -208,10 +210,10 @@
                       class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                     >
                       <span v-if="formErrors.city">{{
-                          formErrors.city
-                        }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
-                      v-if="formErrors.zip"
-                    >{{ formErrors.zip }}.</span>
+                        formErrors.city
+                      }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                        v-if="formErrors.zip"
+                      >{{ formErrors.zip }}.</span>
                     </div>
                   </div>
                 </div>
@@ -229,10 +231,10 @@
                   <div class="c-form-item__control">
                     <div class="u-control-icon u-control-icon--email">
                       <input
+                        id="donorEmail"
                         v-model="formData.email"
                         type="email"
                         name="donorEmail"
-                        id="donorEmail"
                         :class="{ 'has-error': formErrors.email }"
                       >
                     </div>
@@ -246,30 +248,35 @@
                 </div>
 
                 <div class="c-form-item">
-
                   <!-- BEGIN table -->
                   <table>
                     <thead>
-                    <tr>
-                      <th class="u-width-33p">Related Nonprofit (Required)</th>
-                      <th class="u-width-33p">Donation Amount (Required)</th>
-                      <th class="u-width-33p">Note (Optional)</th>
-                      <th></th>
-                    </tr>
+                      <tr>
+                        <th class="u-width-33p">
+                          Related Nonprofit (Required)
+                        </th>
+                        <th class="u-width-33p">
+                          Donation Amount (Required)
+                        </th>
+                        <th class="u-width-33p">
+                          Note (Optional)
+                        </th>
+                        <th />
+                      </tr>
                     </thead>
                     <tbody>
-                    <template v-for="data in donationRows">
-                      <donations-options
-                        :errors="formErrors"
-                        :nonprofits="nonprofits"
-                        :donation-data="data"
-                        :nonprofit-field-name="constructNonprofitId(data.row)"
-                        :dollar-amount-field-name="constructDonationAmount(data.row)"
-                        :note-field-name="constructNote(data.row)"
-                        @change="updateDonationDataRow"
-                        @remove="removeDonationDataRow"
-                      />
-                    </template>
+                      <template v-for="data in donationRows">
+                        <donations-options
+                          :errors="formErrors"
+                          :nonprofits="nonprofits"
+                          :donation-data="data"
+                          :nonprofit-field-name="constructNonprofitId(data.row)"
+                          :dollar-amount-field-name="constructDonationAmount(data.row)"
+                          :note-field-name="constructNote(data.row)"
+                          @change="updateDonationDataRow"
+                          @remove="removeDonationDataRow"
+                        />
+                      </template>
                     </tbody>
                   </table>
                   <div class="c-table-footer">
@@ -292,24 +299,26 @@
 
             <footer class="c-form-actions">
               <button
-                v-on:click="save('close')"
                 type="submit"
                 class="c-btn"
-              >Save & Finish
+                @click="save('close')"
+              >
+                Save & Finish
               </button>
               <button
-                v-on:click="save('add')"
                 type="submit"
                 class="c-btn"
-              >Save & Add Another
+                @click="save('add')"
+              >
+                Save & Add Another
               </button>
               <router-link
                 :to="{ name: 'donations-list' }"
                 class="c-btn c-btn--text c-btn--neutral"
-              >Cancel
+              >
+                Cancel
               </router-link>
             </footer>
-
           </form>
         </div>
       </div>
@@ -318,12 +327,41 @@
 </template>
 
 <script>
-import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'
 import ComponentSelectState from './../../forms/SelectState.vue'
 import ComponentDonationsOfflineNonprofitListRow from './DonationsOfflineNonprofitListRow.vue'
 
 export default {
+  components: {
+    'donations-options': ComponentDonationsOfflineNonprofitListRow,
+    'layout-spinner': ComponentSpinner,
+    'state-select': ComponentSelectState
+  },
+
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$request.get('nonprofits/search', {
+        status: 'ACTIVE'
+      }).then(response => {
+        vm.nonprofits = response.data
+        vm.loaded = true
+      })
+    })
+  },
+
+  beforeRouteUpdate (to, from, next) {
+    const vm = this
+
+    vm.$request.get('nonprofits/search', {
+      status: 'ACTIVE'
+    }).then(response => {
+      vm.nonprofits = response.data
+      vm.loaded = true
+      next()
+    }).catch(() => {
+      next()
+    })
+  },
 
   data () {
     return {
@@ -356,36 +394,6 @@ export default {
     }
   },
 
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.$request.get('nonprofits/search', {
-        status: 'ACTIVE'
-      }).then(response => {
-        vm.nonprofits = response.data
-        vm.loaded = true
-      })
-    })
-  },
-
-  beforeRouteUpdate (to, from, next) {
-    const vm = this
-
-    vm.$request.get('nonprofits/search', {
-      status: 'ACTIVE'
-    }).then(response => {
-      vm.nonprofits = response.data
-      vm.loaded = true
-      next()
-    }).catch(() => {
-      next()
-    })
-  },
-
-  created () {
-    const vm = this
-    vm.addDonationRowData()
-  },
-
   watch: {
     formData: {
       handler () {
@@ -396,6 +404,11 @@ export default {
       },
       deep: true
     }
+  },
+
+  created () {
+    const vm = this
+    vm.addDonationRowData()
   },
 
   methods: {
@@ -636,13 +649,6 @@ export default {
     constructNote (row) {
       return 'donationOption.' + row + '.note'
     }
-  },
-
-  components: {
-    'donations-options': ComponentDonationsOfflineNonprofitListRow,
-    'forms-select-nonprofit': ComponentSelectNonprofit,
-    'layout-spinner': ComponentSpinner,
-    'state-select': ComponentSelectState
   }
 }
 </script>

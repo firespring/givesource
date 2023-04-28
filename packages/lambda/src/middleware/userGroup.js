@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const InvalidPermissionsException = require('./../exceptions/invalidPermissions');
-const Middleware = require('./middleware');
+const _ = require('lodash')
+const InvalidPermissionsException = require('./../exceptions/invalidPermissions')
+const Middleware = require('./middleware')
 
 /**
  * UserGroupMiddleware constructor
@@ -24,8 +24,8 @@ const Middleware = require('./middleware');
  * @param {[]} userGroups
  * @constructor
  */
-function UserGroupMiddleware(userGroups) {
-	this.userGroups = userGroups;
+function UserGroupMiddleware (userGroups) {
+  this.userGroups = userGroups
 }
 
 /**
@@ -33,7 +33,7 @@ function UserGroupMiddleware(userGroups) {
  *
  * @type {Middleware}
  */
-UserGroupMiddleware.prototype = new Middleware();
+UserGroupMiddleware.prototype = new Middleware()
 
 /**
  * Handle the middleware
@@ -41,13 +41,13 @@ UserGroupMiddleware.prototype = new Middleware();
  * @return {Promise}
  */
 UserGroupMiddleware.prototype.handle = function () {
-	const middleware = this;
-	return new Promise(function (resolve, reject) {
-		if (!middleware.user.groups || _.intersection(middleware.user.groups, middleware.userGroups).length === 0) {
-			reject(new InvalidPermissionsException());
-		}
-		resolve();
-	});
-};
+  const middleware = this
+  return new Promise(function (resolve, reject) {
+    if (!middleware.user.groups || _.intersection(middleware.user.groups, middleware.userGroups).length === 0) {
+      reject(new InvalidPermissionsException())
+    }
+    resolve()
+  })
+}
 
-module.exports = UserGroupMiddleware;
+module.exports = UserGroupMiddleware

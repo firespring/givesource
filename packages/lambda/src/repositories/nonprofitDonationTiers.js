@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-const NonprofitRepository = require('./nonprofits');
-const Repository = require('./repository');
-const RepositoryHelper = require('./../helpers/repository');
-const ResourceNotFoundException = require('./../exceptions/resourceNotFound');
-const loadModels = require('../models/index');
-const Sequelize = require('sequelize');
+const NonprofitRepository = require('./nonprofits')
+const Repository = require('./repository')
+const RepositoryHelper = require('./../helpers/repository')
+const ResourceNotFoundException = require('./../exceptions/resourceNotFound')
+const loadModels = require('../models/index')
+const Sequelize = require('sequelize')
 
 /**
  * NonprofitDonationTiersRepository constructor
  *
  * @constructor
  */
-function NonprofitDonationTiersRepository(options) {
-	options = options || {};
-	if (!options.table) {
-		options.table = RepositoryHelper.NonprofitDonationTiersTable;
-	}
-	Repository.call(this, options);
+function NonprofitDonationTiersRepository (options) {
+  options = options || {}
+  if (!options.table) {
+    options.table = RepositoryHelper.NonprofitDonationTiersTable
+  }
+  Repository.call(this, options)
 }
 
 /**
@@ -39,7 +39,7 @@ function NonprofitDonationTiersRepository(options) {
  *
  * @type {Repository}
  */
-NonprofitDonationTiersRepository.prototype = new Repository();
+NonprofitDonationTiersRepository.prototype = new Repository()
 
 /**
  * Look to abstract this
@@ -48,15 +48,15 @@ NonprofitDonationTiersRepository.prototype = new Repository();
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.populate = function (data) {
-	let allModels;
-	return loadModels().then(function (models) {
-		allModels = models;
-		const nonprofitDonationTier = new models.NonprofitDonationTier();
-		return new nonprofitDonationTier.constructor(data, {isNewRecord: typeof data.id === 'undefined'});
-	}).finally(function () {
-		return allModels.sequelize.close();
-	});
-};
+  let allModels
+  return loadModels().then(function (models) {
+    allModels = models
+    const nonprofitDonationTier = new models.NonprofitDonationTier()
+    return new nonprofitDonationTier.constructor(data, { isNewRecord: typeof data.id === 'undefined' })
+  }).finally(function () {
+    return allModels.sequelize.close()
+  })
+}
 
 /**
  * Batch Get nonprofit donation tiers by ID
@@ -65,31 +65,31 @@ NonprofitDonationTiersRepository.prototype.populate = function (data) {
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.batchGet = function (ids) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (ids.length) {
-				return allModels.NonprofitDonationTier.findAll({
-					where: {
-						id: {
-							[Sequelize.Op.or]: ids
-						}
-					}
-				});
-			} else {
-				reject('IDs must be provided to update.')
-			}
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      if (ids.length) {
+        return allModels.NonprofitDonationTier.findAll({
+          where: {
+            id: {
+              [Sequelize.Op.or]: ids
+            }
+          }
+        })
+      } else {
+        reject(new Error('IDs must be provided to update.'))
+      }
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get a Donation Tier
@@ -99,29 +99,29 @@ NonprofitDonationTiersRepository.prototype.batchGet = function (ids) {
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.get = function (nonprofitId, id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.NonprofitDonationTier.findOne({
-				where: {
-					id: id,
-					nonprofitId: nonprofitId
-				}
-			});
-		}).then(function (nonprofitDonationTier) {
-			if (nonprofitDonationTier instanceof allModels.NonprofitDonationTier) {
-				resolve(nonprofitDonationTier);
-			}
-			reject(new ResourceNotFoundException('The specified nonprofitDonationTier does not exist.'));
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.NonprofitDonationTier.findOne({
+        where: {
+          id: id,
+          nonprofitId: nonprofitId
+        }
+      })
+    }).then(function (nonprofitDonationTier) {
+      if (nonprofitDonationTier instanceof allModels.NonprofitDonationTier) {
+        resolve(nonprofitDonationTier)
+      }
+      reject(new ResourceNotFoundException('The specified nonprofitDonationTier does not exist.'))
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Get all Donation Tiers for a Nonprofit
@@ -130,25 +130,25 @@ NonprofitDonationTiersRepository.prototype.get = function (nonprofitId, id) {
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.getAll = function (nonprofitId) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.NonprofitDonationTier.findAll({
-				where: {
-					nonprofitId: nonprofitId
-				}
-			});
-		}).then(function (results) {
-			resolve(results);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.NonprofitDonationTier.findAll({
+        where: {
+          nonprofitId: nonprofitId
+        }
+      })
+    }).then(function (results) {
+      resolve(results)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Delete a Donation Tier
@@ -158,27 +158,27 @@ NonprofitDonationTiersRepository.prototype.getAll = function (nonprofitId) {
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.delete = function (nonprofitId, id) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.NonprofitDonationTier.destroy({
-				where:
-					{
-						nonprofitId: nonprofitId,
-						id: id
-					}
-			});
-		}).then(function () {
-			resolve()
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.NonprofitDonationTier.destroy({
+        where:
+          {
+            nonprofitId: nonprofitId,
+            id: id
+          }
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Create or update a Donation Tier
@@ -187,24 +187,24 @@ NonprofitDonationTiersRepository.prototype.delete = function (nonprofitId, id) {
  * @param {NonprofitDonationTier} model
  */
 NonprofitDonationTiersRepository.prototype.save = function (nonprofitId, model) {
-	let allModels;
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return nonprofitRepository.get(nonprofitId);
-		}).then(function () {
-			return repository.upsert(model, {});
-		}).then(function (nonprofitDonationTier) {
-			resolve(nonprofitDonationTier);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return nonprofitRepository.get(nonprofitId)
+    }).then(function () {
+      return repository.upsert(model, {})
+    }).then(function (nonprofitDonationTier) {
+      resolve(nonprofitDonationTier)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Batch create or update Donation Tiers
@@ -214,24 +214,24 @@ NonprofitDonationTiersRepository.prototype.save = function (nonprofitId, model) 
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.batchSave = function (nonprofitId, models) {
-	const repository = this;
-	const nonprofitRepository = new NonprofitRepository();
-	return new Promise(function (resolve, reject) {
-		nonprofitRepository.get(nonprofitId).then(function () {
-			let promise = Promise.resolve();
-			promise = promise.then(function () {
-				models.forEach(function (model) {
-					return repository.upsert(model, {})
-				})
-			});
-			return promise;
-		}).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		});
-	});
-};
+  const repository = this
+  const nonprofitRepository = new NonprofitRepository()
+  return new Promise(function (resolve, reject) {
+    nonprofitRepository.get(nonprofitId).then(function () {
+      let promise = Promise.resolve()
+      promise = promise.then(function () {
+        models.forEach(function (model) {
+          return repository.upsert(model, {})
+        })
+      })
+      return promise
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    })
+  })
+}
 
 /**
  * Batch delete Donation Tiers
@@ -241,31 +241,31 @@ NonprofitDonationTiersRepository.prototype.batchSave = function (nonprofitId, mo
  * @return {Promise}
  */
 NonprofitDonationTiersRepository.prototype.batchRemove = function (nonprofitId, models) {
-	let allModels;
-	const ids = models.map(function (model) {
-		return model.id;
-	});
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			return allModels.NonprofitDonationTier.destroy({
-				where: {
-					id: {
-						[Sequelize.Op.in]: ids
-					},
-					nonprofitId: nonprofitId
-				}
-			});
-		}).then(function () {
-			resolve();
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  const ids = models.map(function (model) {
+    return model.id
+  })
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      return allModels.NonprofitDonationTier.destroy({
+        where: {
+          id: {
+            [Sequelize.Op.in]: ids
+          },
+          nonprofitId: nonprofitId
+        }
+      })
+    }).then(function () {
+      resolve()
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Bulk create NonprofitDonationTiers (seeder)
@@ -274,20 +274,20 @@ NonprofitDonationTiersRepository.prototype.batchRemove = function (nonprofitId, 
  * @return {Promise<any>}
  */
 NonprofitDonationTiersRepository.prototype.batchUpdate = function (nonprofitDonationTiers) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-			return allModels.NonprofitDonationTier.bulkCreate(nonprofitDonationTiers);
-		}).then(function (savedNonprofitDonationTiers) {
-			resolve(savedNonprofitDonationTiers);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+      return allModels.NonprofitDonationTier.bulkCreate(nonprofitDonationTiers)
+    }).then(function (savedNonprofitDonationTiers) {
+      resolve(savedNonprofitDonationTiers)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
 /**
  * Insert or update the model
@@ -297,30 +297,30 @@ NonprofitDonationTiersRepository.prototype.batchUpdate = function (nonprofitDona
  * @return {Promise<any>}
  */
 NonprofitDonationTiersRepository.prototype.upsert = function (model, data) {
-	let allModels;
-	return new Promise(function (resolve, reject) {
-		return loadModels().then(function (models) {
-			allModels = models;
-		}).then(function () {
-			if (typeof model === 'undefined') {
-				const content = new allModels.NonprofitDonationTier();
-				model = new content.constructor({}, {isNewRecord: typeof data.id === 'undefined'});
-			}
-			return allModels.NonprofitDonationTier.upsert({
-				'id': model.get('id'),
-				'amount': typeof data.amount !== "undefined" ? data.amount : model.amount,
-				'value': typeof data.value !== "undefined" ? data.value : model.value,
-				'description': typeof data.description !== "undefined" ? data.description : model.description,
-				'nonprofitId': typeof data.nonprofitId !== "undefined" ? data.nonprofitId : model.nonprofitId,
-			});
-		}).then(function (nonprofit) {
-			resolve(nonprofit);
-		}).catch(function (err) {
-			reject(err);
-		}).finally(function () {
-			return allModels.sequelize.close();
-		});
-	});
-};
+  let allModels
+  return new Promise(function (resolve, reject) {
+    return loadModels().then(function (models) {
+      allModels = models
+    }).then(function () {
+      if (typeof model === 'undefined') {
+        const content = new allModels.NonprofitDonationTier()
+        model = new content.constructor({}, { isNewRecord: typeof data.id === 'undefined' })
+      }
+      return allModels.NonprofitDonationTier.upsert({
+        id: model.get('id'),
+        amount: typeof data.amount !== 'undefined' ? data.amount : model.amount,
+        value: typeof data.value !== 'undefined' ? data.value : model.value,
+        description: typeof data.description !== 'undefined' ? data.description : model.description,
+        nonprofitId: typeof data.nonprofitId !== 'undefined' ? data.nonprofitId : model.nonprofitId
+      })
+    }).then(function (nonprofit) {
+      resolve(nonprofit)
+    }).catch(function (err) {
+      reject(err)
+    }).finally(function () {
+      return allModels.sequelize.close()
+    })
+  })
+}
 
-module.exports = NonprofitDonationTiersRepository;
+module.exports = NonprofitDonationTiersRepository

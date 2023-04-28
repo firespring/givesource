@@ -15,76 +15,124 @@
   -->
 
 <template>
-    <div>
-        <input v-if="isMobile" v-model="localValue" type="tel" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••"
-               :class="{'has-error': hasError}">
-        <input v-else v-model="localValue" type="text" :id="id" :name="name" ref="input" autocomplete="cc-number" placeholder="•••• •••• •••• ••••"
-               :class="{'has-error': hasError}">
-        <div class="notes notes--below accepted-cc">
-            <div class="cc visa" :class="{na: !displayCardType('visa')}">
-                <i class="fab fa-cc-visa" aria-hidden="true"></i>
-            </div>
-            <div class="cc mastercard" :class="{na: !displayCardType('mastercard')}">
-                <i class="fab fa-cc-mastercard" aria-hidden="true"></i>
-            </div>
-            <div class="cc amex" :class="{na: !displayCardType('amex')}">
-                <i class="fab fa-cc-amex" aria-hidden="true"></i>
-            </div>
-            <div class="cc discover" :class="{na: !displayCardType('discover')}">
-                <i class="fab fa-cc-discover" aria-hidden="true"></i>
-            </div>
-            <div class="cc dinersclub" :class="{na: !displayCardType('dinersclub')}">
-                <i class="fab fa-cc-diners-club" aria-hidden="true"></i>
-            </div>
-        </div>
+  <div>
+    <input
+      v-if="isMobile"
+      :id="id"
+      ref="input"
+      v-model="localValue"
+      type="tel"
+      :name="name"
+      autocomplete="cc-number"
+      placeholder="•••• •••• •••• ••••"
+      :class="{'has-error': hasError}"
+    >
+    <input
+      v-else
+      :id="id"
+      ref="input"
+      v-model="localValue"
+      type="text"
+      :name="name"
+      autocomplete="cc-number"
+      placeholder="•••• •••• •••• ••••"
+      :class="{'has-error': hasError}"
+    >
+    <div class="notes notes--below accepted-cc">
+      <div
+        class="cc visa"
+        :class="{na: !displayCardType('visa')}"
+      >
+        <i
+          class="fab fa-cc-visa"
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        class="cc mastercard"
+        :class="{na: !displayCardType('mastercard')}"
+      >
+        <i
+          class="fab fa-cc-mastercard"
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        class="cc amex"
+        :class="{na: !displayCardType('amex')}"
+      >
+        <i
+          class="fab fa-cc-amex"
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        class="cc discover"
+        :class="{na: !displayCardType('discover')}"
+      >
+        <i
+          class="fab fa-cc-discover"
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        class="cc dinersclub"
+        :class="{na: !displayCardType('dinersclub')}"
+      >
+        <i
+          class="fab fa-cc-diners-club"
+          aria-hidden="true"
+        />
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	require('jquery.payment');
+require('jquery.payment')
 
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : null,
-			}
-		},
-		computed: {
-			isMobile: function () {
-				return /Mobi/.test(navigator.userAgent);
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
-			},
-			name: {
-				type: String,
-				default: null
-			},
-			hasError: {
-				type: Boolean,
-				default: false
-			}
-		},
-		mounted: function () {
-			const vue = this;
-			$(vue.$refs.input).payment('formatCardNumber');
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		},
-		methods: {
-			displayCardType: function (cardType) {
-				return !this.localValue || $.payment.cardType(this.localValue) === cardType;
-			}
-		}
-	};
+export default {
+  props: {
+    value: { type: String, default: '' },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    hasError: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : null
+    }
+  },
+  computed: {
+    isMobile: function () {
+      return /Mobi/.test(navigator.userAgent)
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  },
+  mounted: function () {
+    const vue = this
+    $(vue.$refs.input).payment('formatCardNumber')
+  },
+  methods: {
+    displayCardType: function (cardType) {
+      return !this.localValue || $.payment.cardType(this.localValue) === cardType
+    }
+  }
+}
 </script>

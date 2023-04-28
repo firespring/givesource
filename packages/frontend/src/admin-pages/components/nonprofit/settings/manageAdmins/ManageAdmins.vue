@@ -15,101 +15,122 @@
   -->
 
 <template>
+  <div class="o-app">
     <div class="o-app">
-        <div class="o-app">
-            <navigation :nonprofitId="nonprofitId"></navigation>
-            <main class="o-app__main o-app__main--compact">
-                <div class="o-app_main-content o-app_main-content--md">
-                    <div class="o-app-main-content">
-                        <api-error v-model="apiError"></api-error>
+      <navigation :nonprofit-id="nonprofitId" />
+      <main class="o-app__main o-app__main--compact">
+        <div class="o-app_main-content o-app_main-content--md">
+          <div class="o-app-main-content">
+            <api-error v-model="apiError" />
 
-                        <div class="o-page-header" v-if="isAdmin">
-                            <div class="o-page-header__text">
-                                <nav class="o-page-header-nav c-breadcrumb">
-                                    <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
-                                    <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                                </nav>
-                                <h1 class="o-page-header-title" v-if="nonprofit.legalName">Manage {{ nonprofit.legalName }}'s Admin Users</h1>
-                            </div>
-                        </div>
+            <div
+              v-if="isAdmin"
+              class="o-page-header"
+            >
+              <div class="o-page-header__text">
+                <nav class="o-page-header-nav c-breadcrumb">
+                  <span><router-link :to="{ name: 'nonprofits-list' }">Nonprofits</router-link></span>
+                  <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
+                </nav>
+                <h1
+                  v-if="nonprofit.legalName"
+                  class="o-page-header-title"
+                >
+                  Manage {{ nonprofit.legalName }}'s Admin Users
+                </h1>
+              </div>
+            </div>
 
-                        <div class="o-page-header" v-else>
-                            <div class="o-page-header__text">
-                                <nav class="o-page-header-nav c-breadcrumb">
-                                    <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
-                                </nav>
-                                <h1 class="o-page-header-title">Manage Admins</h1>
-                            </div>
-                        </div>
+            <div
+              v-else
+              class="o-page-header"
+            >
+              <div class="o-page-header__text">
+                <nav class="o-page-header-nav c-breadcrumb">
+                  <span><router-link :to="{ name: 'nonprofit-settings-list' }">Settings</router-link></span>
+                </nav>
+                <h1 class="o-page-header-title">
+                  Manage Admins
+                </h1>
+              </div>
+            </div>
 
-                        <div class="c-header-actions">
-                            <div v-if="canInviteUsers">
-                                <router-link :to="{ name: 'nonprofit-settings-admins-invite' }" role="button" class="c-btn c-btn--sm c-btn--icon">
-                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>Invite Admins
-                                </router-link>
-                            </div>
-                        </div>
+            <div class="c-header-actions">
+              <div v-if="canInviteUsers">
+                <router-link
+                  :to="{ name: 'nonprofit-settings-admins-invite' }"
+                  role="button"
+                  class="c-btn c-btn--sm c-btn--icon"
+                >
+                  <i
+                    class="fa fa-plus-circle"
+                    aria-hidden="true"
+                  />Invite Admins
+                </router-link>
+              </div>
+            </div>
 
-                        <manage-admins-list-table :nonprofitId="nonprofitId" v-on:hasError="hasError"></manage-admins-list-table>
-
-                    </div>
-
-                </div>
-            </main>
+            <manage-admins-list-table
+              :nonprofit-id="nonprofitId"
+              @has-error="hasError"
+            />
+          </div>
         </div>
+      </main>
     </div>
+  </div>
 </template>
 
 <script>
-	import ComponentManageAdminsListTable from './ManageAdminsListTable.vue';
+import ComponentManageAdminsListTable from './ManageAdminsListTable.vue'
 
-	export default {
-		data: function () {
-			return {
-				nonprofit: {},
-				apiError: {},
-			}
-		},
-		computed: {
-			isAdmin: function () {
-				return this.isSuperAdminUser() || this.isAdminUser();
-			},
-			canInviteUsers: function () {
-				return this.nonprofit.status === 'ACTIVE';
-			}
-		},
-		props: [
-			'nonprofitId'
-		],
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-					vue.nonprofit = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-					next();
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  components: {
+    'manage-admins-list-table': ComponentManageAdminsListTable
+  },
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+        vue.nonprofit = response.data
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+        next()
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
-				vue.nonprofit = response.data;
-				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
-				next();
-			});
-		},
-		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
-			}
-		},
-		components: {
-			'manage-admins-list-table': ComponentManageAdminsListTable,
-		}
-	};
+    vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
+      vue.nonprofit = response.data
+      next()
+    }).catch(function (err) {
+      vue.apiError = err.response.data.errors
+      next()
+    })
+  },
+  props: {
+    nonprofitId: { type: [String, Number], default: null }
+  },
+  data: function () {
+    return {
+      nonprofit: {},
+      apiError: {}
+    }
+  },
+  computed: {
+    isAdmin: function () {
+      return this.isSuperAdminUser() || this.isAdminUser()
+    },
+    canInviteUsers: function () {
+      return this.nonprofit.status === 'ACTIVE'
+    }
+  },
+  methods: {
+    hasError: function (err) {
+      const vue = this
+      vue.apiError = err.response.data.errors
+    }
+  }
+}
 </script>

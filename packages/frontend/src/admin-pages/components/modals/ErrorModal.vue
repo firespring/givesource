@@ -15,57 +15,69 @@
   -->
 
 <template>
-    <div id="modal-error" class="c-modal c-modal--sm" :style="{ 'z-index': zIndex, display: 'block' }">
-        <div class="c-modal__contents">
-            <div class="c-modal-dialog">
-                <div class="c-modal-dialog__contents">
+  <div
+    id="modal-error"
+    class="c-modal c-modal--sm"
+    :style="{ 'z-index': zIndex, display: 'block' }"
+  >
+    <div class="c-modal__contents">
+      <div class="c-modal-dialog">
+        <div class="c-modal-dialog__contents">
+          <div
+            v-if="data.title"
+            class="c-modal-header"
+          >
+            <h1>{{ data.title }}</h1>
+          </div>
 
-                    <div class="c-modal-header" v-if="data.title">
-                        <h1>{{ data.title }}</h1>
-                    </div>
-
-                    <div class="c-modal-content">
-                        <div class="c-page-section">
-                            <div class="c-page-section__main">
-                                <p>{{ data.message }}</p>
-                            </div>
-                        </div>
-
-                        <div class="c-modal-footer">
-                            <div class="c-modal-footer__actions">
-                                <button v-on:click.prevent="close" type="button" class="c-btn c-btn--neutral c-btn--text js-modal-close">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <div class="c-modal-content">
+            <div class="c-page-section">
+              <div class="c-page-section__main">
+                <p>{{ data.message }}</p>
+              </div>
             </div>
+
+            <div class="c-modal-footer">
+              <div class="c-modal-footer__actions">
+                <button
+                  type="button"
+                  class="c-btn c-btn--neutral c-btn--text js-modal-close"
+                  @click.prevent="close"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {};
-		},
-		props: {
-			zIndex: {
-				type: [Number, String],
-				default: 1000
-			},
-			data: {
-				type: Object,
-				default: {
-					title: 'There was an error',
-					message: 'There was an error with that request. Please try again.',
-				}
-			}
-		},
-		methods: {
-			close: function () {
-				const vue = this;
-				vue.removeModal('error');
-			}
-		}
-	}
+export default {
+  props: {
+    zIndex: {
+      type: [Number, String],
+      default: 1000
+    },
+    data: {
+      type: Object,
+      default: () => ({
+        title: 'There was an error',
+        message: 'There was an error with that request. Please try again.'
+      })
+    }
+  },
+  data: function () {
+    return {}
+  },
+  methods: {
+    close: function () {
+      const vue = this
+      vue.removeModal('error')
+    }
+  }
+}
 </script>

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const Authorizer = require('./authorizer');
-const axios = require('axios');
-const jwt = require('jsonwebtoken');
-const jwkToPem = require('jwk-to-pem');
+const Authorizer = require('./authorizer')
+const axios = require('axios')
+const jwt = require('jsonwebtoken')
+const jwkToPem = require('jwk-to-pem')
 
 /**
  * UserAuthorizer constructor
@@ -28,11 +28,11 @@ const jwkToPem = require('jwk-to-pem');
  * @param {String} userPoolId
  * @constructor
  */
-function UserAuthorizer(arn, region, token, userPoolId) {
-	Authorizer.call(this, arn);
-	this.issuer = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`;
-	this.pems = null;
-	this.token = token;
+function UserAuthorizer (arn, region, token, userPoolId) {
+  Authorizer.call(this, arn)
+  this.issuer = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`
+  this.pems = null
+  this.token = token
 }
 
 /**
@@ -40,7 +40,7 @@ function UserAuthorizer(arn, region, token, userPoolId) {
  *
  * @type {Authorizer}
  */
-UserAuthorizer.prototype = new Authorizer();
+UserAuthorizer.prototype = new Authorizer()
 
 /**
  * Get PEMs
@@ -48,28 +48,28 @@ UserAuthorizer.prototype = new Authorizer();
  * @return {Promise}
  */
 UserAuthorizer.prototype.getPems = function () {
-	const authorizer = this;
-	return new Promise(function (resolve, reject) {
-		if (!authorizer.pems) {
-			axios.get(authorizer.issuer + '/.well-known/jwks.json').then(function (response) {
-				if (response.data.hasOwnProperty('keys')) {
-					authorizer.pems = {};
-					response.data.keys.forEach(function (key) {
-						const jwk = {kty: key.kty, n: key.n, e: key.e};
-						authorizer.pems[key.kid] = jwkToPem(jwk);
-					});
-					resolve();
-				} else {
-					reject();
-				}
-			}).catch(function (err) {
-				reject(err);
-			});
-		} else {
-			resolve();
-		}
-	});
-};
+  const authorizer = this
+  return new Promise(function (resolve, reject) {
+    if (!authorizer.pems) {
+      axios.get(authorizer.issuer + '/.well-known/jwks.json').then(function (response) {
+        if (response.data.hasOwnProperty('keys')) {
+          authorizer.pems = {}
+          response.data.keys.forEach(function (key) {
+            const jwk = { kty: key.kty, n: key.n, e: key.e }
+            authorizer.pems[key.kid] = jwkToPem(jwk)
+          })
+          resolve()
+        } else {
+          reject(new Error('An unexpected error occurred'))
+        }
+      }).catch(function (err) {
+        reject(err)
+      })
+    } else {
+      resolve()
+    }
+  })
+}
 
 /**
  * Validate token
@@ -77,43 +77,43 @@ UserAuthorizer.prototype.getPems = function () {
  * @return {Promise}
  */
 UserAuthorizer.prototype.validateToken = function () {
-	const authorizer = this;
-	return new Promise(function (resolve, reject) {
-		const decodedJwt = jwt.decode(authorizer.token, {complete: true});
+  const authorizer = this
+  return new Promise(function (resolve, reject) {
+    const decodedJwt = jwt.decode(authorizer.token, { complete: true })
 
-		// Fail if token is not jwt
-		if (!decodedJwt) {
-			return reject(new Error('Not a valid JWT token'));
-		}
+    // Fail if token is not jwt
+    if (!decodedJwt) {
+      return reject(new Error('Not a valid JWT token'))
+    }
 
-		// Fail if token is not from expected User Pool
-		if (decodedJwt.payload.iss !== authorizer.issuer) {
-			return reject(new Error('Invalid issuer'));
-		}
+    // Fail if token is not from expected User Pool
+    if (decodedJwt.payload.iss !== authorizer.issuer) {
+      return reject(new Error('Invalid issuer'))
+    }
 
-		// Reject the jwt if it's not an ID token
-		if (decodedJwt.payload.token_use !== 'id') {
-			return reject(new Error('Not an id token'));
-		}
+    // Reject the jwt if it's not an ID token
+    if (decodedJwt.payload.token_use !== 'id') {
+      return reject(new Error('Not an id token'))
+    }
 
-		// Get the kid from the token and retrieve corresponding PEM
-		const kid = decodedJwt.header.kid;
-		const pem = authorizer.pems[kid];
-		if (!pem) {
-			return reject(new Error('Invalid id token'));
-		}
+    // Get the kid from the token and retrieve corresponding PEM
+    const kid = decodedJwt.header.kid
+    const pem = authorizer.pems[kid]
+    if (!pem) {
+      return reject(new Error('Invalid id token'))
+    }
 
-		// verify the signature of the JWT token to ensure it's really coming from expected User Pool
-		jwt.verify(authorizer.token, pem, {issuer: authorizer.issuer}, function (err, decoded) {
-			if (err) {
-				return reject(err);
-			}
-			authorizer.payload = decoded;
-			authorizer.principalId = decoded.sub;
-			resolve();
-		});
-	});
-};
+    // verify the signature of the JWT token to ensure it's really coming from expected User Pool
+    jwt.verify(authorizer.token, pem, { issuer: authorizer.issuer }, function (err, decoded) {
+      if (err) {
+        return reject(err)
+      }
+      authorizer.payload = decoded
+      authorizer.principalId = decoded.sub
+      resolve()
+    })
+  })
+}
 
 /**
  * Authorize request
@@ -121,23 +121,23 @@ UserAuthorizer.prototype.validateToken = function () {
  * @return {Promise}
  */
 UserAuthorizer.prototype.authorize = function () {
-	const authorizer = this;
-	return new Promise(function (resolve, reject) {
-		authorizer.getPems().then(function () {
-			return authorizer.validateToken();
-		}).then(function () {
-			return authorizer.issueAuthPolicy(true);
-		}).then(function (policy) {
-			const user = {
-				groups: authorizer.payload['cognito:groups'],
-				cognitoUsername: authorizer.payload['cognito:username'],
-			};
-			policy.context = {user: JSON.stringify(user, null, 2)};
-			resolve(policy);
-		}).catch(function () {
-			reject(authorizer.issueAuthPolicy(false));
-		});
-	});
-};
+  const authorizer = this
+  return new Promise(function (resolve, reject) {
+    authorizer.getPems().then(function () {
+      return authorizer.validateToken()
+    }).then(function () {
+      return authorizer.issueAuthPolicy(true)
+    }).then(function (policy) {
+      const user = {
+        groups: authorizer.payload['cognito:groups'],
+        cognitoUsername: authorizer.payload['cognito:username']
+      }
+      policy.context = { user: JSON.stringify(user, null, 2) }
+      resolve(policy)
+    }).catch(function () {
+      reject(authorizer.issueAuthPolicy(false))
+    })
+  })
+}
 
-module.exports = UserAuthorizer;
+module.exports = UserAuthorizer

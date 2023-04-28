@@ -15,24 +15,24 @@
  */
 
 /**
-* @desc			Breakpoint variables
-* @author		Firespring
+* @desc      Breakpoint variables
+* @author    Firespring
 */
 /**
-* @desc			Color palettes
-* @author		Firespring
+* @desc      Color palettes
+* @author    Firespring
 */
 /**
-* @desc			Design/layout variables
-* @author		Firespring
+* @desc      Design/layout variables
+* @author    Firespring
 */
 /**
-* @desc			Size variables
-* @author		Firespring
+* @desc      Size variables
+* @author    Firespring
 */
 /**
-* @desc			Typography variables
-* @author		Firespring
+* @desc      Typography variables
+* @author    Firespring
 */
 /* ==========================================================================
 Sizes
@@ -41,12 +41,12 @@ Sizes
 Font stacks
 ========================================================================== */
 /**
-* @desc			Media breakpoints
-* @author		Firespring
+* @desc      Media breakpoints
+* @author    Firespring
 */
 /**
-* @desc			Media breakpoints
-* @author		Firespring
+* @desc      Media breakpoints
+* @author    Firespring
 */
 /* ==========================================================================
 Apply a natural box layout model to all elements
@@ -427,8 +427,8 @@ textarea {
   /* 2 */ }
 
 /**
-* @desc			Typography
-* @author		Firespring
+* @desc      Typography
+* @author    Firespring
 */
 html {
   font-size: 18px;
@@ -541,8 +541,8 @@ h6 {
   word-wrap: break-word; }
 
 /**
-* @desc			Helper classes
-* @author		Firespring
+* @desc      Helper classes
+* @author    Firespring
 */
 /* ============================================================================
 Image replacement
@@ -601,8 +601,8 @@ Icon container
 Misc
 ============================================================================ */
 /**
-* @desc			Helpers for aligning text and centering block elements
-* @author		Firespring
+* @desc      Helpers for aligning text and centering block elements
+* @author    Firespring
 */
 /* ==========================================================================
 Text alignment
@@ -635,8 +635,8 @@ Center align elements
   transform: translateY(-50%); }
 
 /**
-* @desc			Helpers for floats
-* @author		Firespring
+* @desc      Helpers for floats
+* @author    Firespring
 */
 /* ==========================================================================
 General floats
@@ -661,8 +661,8 @@ General floats
 Mixins
 ========================================================================== */
 /**
-* @desc			Flexbox grid classes
-* @author		Firespring
+* @desc      Flexbox grid classes
+* @author    Firespring
 */
 /* ============================================================================
 Grid rows
@@ -1695,8 +1695,8 @@ Media queries
     border-top-width: 1px; } }
 
 /**
-* @desc			Margin helpers
-* @author		Firespring
+* @desc      Margin helpers
+* @author    Firespring
 */
 /* ============================================================================
 All sides
@@ -1804,8 +1804,8 @@ Left
   margin-left: 1.3333rem; }
 
 /**
-* @desc			Padding helpers
-* @author		Firespring
+* @desc      Padding helpers
+* @author    Firespring
 */
 /* ============================================================================
 All sides
@@ -1898,8 +1898,8 @@ Left
   padding-left: 1.3333rem; }
 
 /**
-* @desc			Width helpers
-* @author		Firespring
+* @desc      Width helpers
+* @author    Firespring
 */
 .u-width-auto {
   width: auto; }
@@ -1947,8 +1947,8 @@ Left
   width: 200px; }
 
 /**
-* @desc			Helpers for aligning text and centering block elements
-* @author		Firespring
+* @desc      Helpers for aligning text and centering block elements
+* @author    Firespring
 */
 /* ==========================================================================
 Defaults
@@ -2032,8 +2032,8 @@ Left
   border-right-width: 6px; }
 
 /**
-* @desc			Border helpers
-* @author		Firespring
+* @desc      Border helpers
+* @author    Firespring
 */
 .u-rounded {
   border-radius: 3px; }
@@ -2042,8 +2042,8 @@ Left
   border-radius: 100%; }
 
 /**
-* @desc			Shadow helpers
-* @author		Firespring
+* @desc      Shadow helpers
+* @author    Firespring
 */
 .u-shadow-none {
   box-shadow: none; }
@@ -2058,8 +2058,8 @@ Left
   box-shadow: 0 3px 0 0 #b5b5b5; }
 
 /**
-* @desc			Display helpers
-* @author		Firespring
+* @desc      Display helpers
+* @author    Firespring
 */
 .u-block {
   display: block; }
@@ -2155,8 +2155,8 @@ Left
   flex: 0 1 auto !important; }
 
 /**
-* @desc			Visibility Helper classes
-* @author		Firespring
+* @desc      Visibility Helper classes
+* @author    Firespring
 */
 /* ============================================================================
 Resolution
@@ -2364,8 +2364,8 @@ Resolution
     display: none !important; } }
 
 /**
-* @desc			Responsive media elements
-* @author		Firespring
+* @desc      Responsive media elements
+* @author    Firespring
 */
 img {
   display: inline-block;
@@ -2383,8 +2383,8 @@ svg {
   display: block; }
 
 /**
-* @desc			General styles
-* @author		Firespring
+* @desc      General styles
+* @author    Firespring
 */
 /* ==========================================================================
 Body styles
@@ -2444,8 +2444,8 @@ Error-specific styles
   color: #000; }
 
 /**
-* @desc			Link styles
-* @author		Firespring
+* @desc      Link styles
+* @author    Firespring
 */
 a:link {
   color: #107899;
@@ -2486,8 +2486,8 @@ a.icon--neutral:hover, a.icon--neutral:active {
   color: #474747; }
 
 /**
-* @desc			Menubar styles, settings
-* @author		Firespring
+* @desc      Menubar styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -2508,8 +2508,8 @@ General
   color: white; }
 
 /**
-* @desc			Account navigation
-* @author		Firespring
+* @desc      Account navigation
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -2847,8 +2847,8 @@ Misc links
     margin: 0 0 0 1.7778rem; } }
 
 /**
-* @desc			Secondary menubar styles, settings
-* @author		Firespring
+* @desc      Secondary menubar styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -2903,8 +2903,8 @@ General
     line-height: 47px; } }
 
 /**
-* @desc			Standalone app navigation (global settings)
-* @author		Firespring
+* @desc      Standalone app navigation (global settings)
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -2975,8 +2975,8 @@ General
     padding: 2.6667rem 0; } }
 
 /**
-* @desc			Pagination navigation (global settings)
-* @author		Firespring
+* @desc      Pagination navigation (global settings)
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -2999,8 +2999,8 @@ General
   color: #fff; }
 
 /**
-* @desc			Breadcrumb navigation (global settings)
-* @author		Firespring
+* @desc      Breadcrumb navigation (global settings)
+* @author    Firespring
 */
 /* ==========================================================================
 General
@@ -3019,8 +3019,8 @@ General
   color: #b5b5b5; }
 
 /**
-* @desc			Page Header
-* @author		Firespring
+* @desc      Page Header
+* @author    Firespring
 */
 .o-page-header {
   margin: 0 0 2rem; }
@@ -3077,8 +3077,8 @@ General
     margin: 0.2222rem 0 0 2.0556rem; } }
 
 /**
-* @desc			Basic button styles, settings
-* @author		Firespring
+* @desc      Basic button styles, settings
+* @author    Firespring
 */
 .c-btn,
 .c-btn:link,
@@ -3130,8 +3130,8 @@ General
     transform: scale(2.5); } }
 
 /**
-* @desc			Flat button styles, settings
-* @author		Firespring
+* @desc      Flat button styles, settings
+* @author    Firespring
 */
 .c-btn--flat,
 .c-btn--flat:link,
@@ -3140,8 +3140,8 @@ General
   box-shadow: none; }
 
 /**
-* @desc			Button sizes
-* @author		Firespring
+* @desc      Button sizes
+* @author    Firespring
 */
 /* Extra-Large */
 .c-btn--xl,
@@ -3185,8 +3185,8 @@ General
   margin-top: 0.3333rem; }
 
 /**
-* @desc			Buttons w/ Icons
-* @author		Firespring
+* @desc      Buttons w/ Icons
+* @author    Firespring
 */
 .c-btn--icon,
 .c-btn--icon:link,
@@ -3250,8 +3250,8 @@ General
   margin: 0; }
 
 /**
-* @desc			Text-only Buttons
-* @author		Firespring
+* @desc      Text-only Buttons
+* @author    Firespring
 */
 .c-btn--text,
 .c-btn--text:link,
@@ -3271,8 +3271,8 @@ General
   outline: none; }
 
 /**
-* @desc			Pill Buttons
-* @author		Firespring
+* @desc      Pill Buttons
+* @author    Firespring
 */
 .c-btn--pill,
 .c-btn--pill:link,
@@ -3280,8 +3280,8 @@ General
   border-radius: 100px; }
 
 /**
-* @desc			Disabled Buttons
-* @author		Firespring
+* @desc      Disabled Buttons
+* @author    Firespring
 */
 .c-btn[disabled],
 .c-btn--disabled,
@@ -3295,8 +3295,8 @@ General
   cursor: not-allowed; }
 
 /**
-* @desc			Additional button colors
-* @author		Firespring
+* @desc      Additional button colors
+* @author    Firespring
 */
 /* "Good" Buttons */
 .c-btn--good,
@@ -3309,7 +3309,7 @@ General
 
 /*
 .c-btn--good:active {
-	background-color: darken(palette(status,good), 8%);
+  background-color: darken(palette(status,good), 8%);
 }
 */
 .c-btn--text.c-btn--good, .c-btn--text.c-btn--good:link, .c-btn--text.c-btn--good:visited {
@@ -3446,8 +3446,8 @@ General
   color: #0077b5; }
 
 /**
-* @desc			Button Groups
-* @author		Firespring
+* @desc      Button Groups
+* @author    Firespring
 */
 .c-btn-group {
   display: inline-flex;
@@ -3469,8 +3469,8 @@ General
   justify-content: space-between; }
 
 /**
-* @desc			Button Dropdowns
-* @author		Firespring
+* @desc      Button Dropdowns
+* @author    Firespring
 */
 .c-btn-dropdown {
   position: relative; }
@@ -3557,8 +3557,8 @@ General
   font-size: .75rem; }
 
 /**
-* @desc			General card styles, settings
-* @author		Firespring
+* @desc      General card styles, settings
+* @author    Firespring
 */
 .c-card {
   display: flex;
@@ -3718,8 +3718,8 @@ a.c-card .c-card-title-text {
   margin-top: 0.5556rem; }
 
 /**
-* @desc			Basic form styles, settings
-* @author		Firespring
+* @desc      Basic form styles, settings
+* @author    Firespring
 */
 /* Defaults */
 .c-form-item + .c-form-item {
@@ -3802,8 +3802,8 @@ hr + .c-form-item {
     padding: 0.6667rem 0 0; } }
 
 /**
-* @desc			Form actions
-* @author		Firespring
+* @desc      Form actions
+* @author    Firespring
 */
 .c-form-actions {
   display: flex;
@@ -3819,8 +3819,8 @@ hr + .c-form-item {
   margin-top: 1.1667rem; }
 
 /**
-* @desc			Form control styles, settings
-* @author		Firespring
+* @desc      Form control styles, settings
+* @author    Firespring
 */
 /* Text-based inputs */
 [type='text'],
@@ -4029,15 +4029,15 @@ select.lg {
   opacity: 1; }
 
 /**
-* @desc			File input styles, settings
-* @author		Firespring
+* @desc      File input styles, settings
+* @author    Firespring
 */
 .c-form-item--file {
   /*
-	& > .c-form-item__label {
-		padding-top: 9px;
-	}
-	*/ }
+  & > .c-form-item__label {
+    padding-top: 9px;
+  }
+  */ }
 .c-form-item--file > .c-form-item__control {
   display: flex;
   align-items: stretch; }
@@ -4114,8 +4114,8 @@ select.lg {
   opacity: 1; }
 
 /**
-* @desc			File dropzones
-* @author		Firespring
+* @desc      File dropzones
+* @author    Firespring
 */
 .c-file-dropzone {
   display: flex; }
@@ -4132,8 +4132,8 @@ select.lg {
   text-align: center; }
 
 /**
-* @desc			Radio Button and Checkbox styles, settings
-* @author		Firespring
+* @desc      Radio Button and Checkbox styles, settings
+* @author    Firespring
 */
 /* Shared */
 [type='radio'],
@@ -4412,8 +4412,8 @@ select.lg {
   border-width: 3px; }
 
 /**
-* @desc			Combobox styles, settings
-* @author		Firespring
+* @desc      Combobox styles, settings
+* @author    Firespring
 */
 .chosen-container {
   position: relative;
@@ -4816,8 +4816,8 @@ select.lg {
 
 /* @end */
 /**
-* @desc			Switch styles, settings
-* @author		Firespring
+* @desc      Switch styles, settings
+* @author    Firespring
 */
 .c-form-item--switch > .c-form-item__label {
   padding-top: 0.1111rem; }
@@ -4909,8 +4909,8 @@ select.lg {
   transition: transform .15s; }
 
 /**
-* @desc			Multiselect styles, settings
-* @author		Firespring
+* @desc      Multiselect styles, settings
+* @author    Firespring
 */
 /* General */
 .multiselect-wrapper {
@@ -5068,8 +5068,8 @@ select.lg {
   text-align: left; }
 
 /**
-* @desc			Datepicker styles, settings
-* @author		Firespring
+* @desc      Datepicker styles, settings
+* @author    Firespring
 */
 .c-form-item--date .u-control-icon--date > [type='date'],
 .c-form-item--date .u-control-icon--date > [type='text'] {
@@ -5362,7 +5362,7 @@ select.lg {
 
 .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_disabled:hover,
 .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box > div > div.xdsoft_disabled:hover {
-  color: inherit	!important;
+  color: inherit  !important;
   background: inherit !important;
   box-shadow: inherit !important; }
 
@@ -5447,8 +5447,8 @@ select.lg {
   right: auto; }
 
 /**
-* @desc			Timepicker styles, settings
-* @author		Firespring
+* @desc      Timepicker styles, settings
+* @author    Firespring
 */
 .c-form-item--time .u-control-icon--time > [type='time'] {
   width: 9.5em;
@@ -5515,8 +5515,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   color: #ccc; }
 
 /**
-* @desc			Colorpicker styles, settings
-* @author		Firespring
+* @desc      Colorpicker styles, settings
+* @author    Firespring
 */
 .minicolors {
   position: relative; }
@@ -5732,12 +5732,12 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   padding-left: 51px; }
 
 /**
-* @desc			Rich text styles, settings
-* @author		Firespring
+* @desc      Rich text styles, settings
+* @author    Firespring
 */
 /**
-* @desc			Form control grid styles, settings
-* @author		Firespring
+* @desc      Form control grid styles, settings
+* @author    Firespring
 */
 .c-form-control-grid {
   line-height: 1; }
@@ -5761,8 +5761,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
     padding: 0 .5rem; } }
 
 /**
-* @desc			Control icon styles, settings
-* @author		Firespring
+* @desc      Control icon styles, settings
+* @author    Firespring
 */
 /* General */
 .u-control-icon {
@@ -5880,8 +5880,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   content: '\f02c'; }
 
 /**
-* @desc			Floating label styles
-* @author		Firespring
+* @desc      Floating label styles
+* @author    Firespring
 */
 .has-floating-label {
   position: relative; }
@@ -5955,8 +5955,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   background: #fff; }
 
 /**
-* @desc			Form item grid styles
-* @author		Firespring
+* @desc      Form item grid styles
+* @author    Firespring
 */
 /* Defaults */
 .c-form-item + .c-form-item-grid {
@@ -5992,8 +5992,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
     flex-wrap: nowrap; } }
 
 /**
-* @desc			Grid Selection styles, settings
-* @author		Firespring
+* @desc      Grid Selection styles, settings
+* @author    Firespring
 */
 .c-form-item--selection-grid .c-selection-grid-item {
   flex-wrap: wrap;
@@ -6022,8 +6022,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   border-radius: 5px; }
 
 /**
-* @desc			Credit card field styles, settings
-* @author		Firespring
+* @desc      Credit card field styles, settings
+* @author    Firespring
 */
 /* Accepted CC types */
 .list-cc-types {
@@ -6042,8 +6042,8 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   max-width: 20em; }
 
 /**
-* @desc			General table styles, settings
-* @author		Firespring
+* @desc      General table styles, settings
+* @author    Firespring
 */
 /******************************************************************************
 * General styles
@@ -6204,8 +6204,8 @@ td.item-actions--top {
   border-radius: 0 3px 0 0; }
 
 /**
-* @desc			Table footer styles, settings
-* @author		Firespring
+* @desc      Table footer styles, settings
+* @author    Firespring
 */
 .c-table-footer {
   display: flex;
@@ -6232,16 +6232,16 @@ td.item-actions--top {
   margin: 0 0.4444rem; }
 
 /**
-* @desc			Reorder-able table styles, settings
-* @author		Firespring
+* @desc      Reorder-able table styles, settings
+* @author    Firespring
 */
 tr.reorder-placeholder td {
   height: 78px;
   background: #b7d7df !important; }
 
 /**
-* @desc			Different size table styles, settings
-* @author		Firespring
+* @desc      Different size table styles, settings
+* @author    Firespring
 */
 .table-sm {
   font-size: .9em; }
@@ -6266,8 +6266,8 @@ tr.reorder-placeholder td {
   padding: 0 8px; }
 
 /**
-* @desc			Empty table styles, settings
-* @author		Firespring
+* @desc      Empty table styles, settings
+* @author    Firespring
 */
 /******************************************************************************
 * General styles
@@ -6277,8 +6277,8 @@ tr.reorder-placeholder td {
   border-radius: 0 0 3px 3px; }
 
 /**
-* @desc			General modal styles, settings
-* @author		Firespring
+* @desc      General modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Defaults
@@ -6397,8 +6397,8 @@ html.has-modal {
   margin: 0 .75rem 0 0; }
 
 /**
-* @desc			Different size modal styles, settings
-* @author		Firespring
+* @desc      Different size modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Small Modal
@@ -6419,8 +6419,8 @@ Full-Width Modal
   max-width: none; }
 
 /**
-* @desc			Warning modal styles, settings
-* @author		Firespring
+* @desc      Warning modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Background Overlays
@@ -6429,8 +6429,8 @@ Background Overlays
   background: #ec302e; }
 
 /**
-* @desc			Spinner modal styles, settings
-* @author		Firespring
+* @desc      Spinner modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Defaults
@@ -6451,8 +6451,8 @@ Defaults
   color: #222; }
 
 /**
-* @desc			Browser modal styles, settings
-* @author		Firespring
+* @desc      Browser modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Defaults
@@ -6473,8 +6473,8 @@ Defaults
     max-width: 83.3333rem; } }
 
 /**
-* @desc			Table-only modal styles, settings
-* @author		Firespring
+* @desc      Table-only modal styles, settings
+* @author    Firespring
 */
 /* ==========================================================================
 Defaults
@@ -6489,8 +6489,8 @@ Defaults
   padding: 1rem; }
 
 /**
-* @desc			Page section styles, settings
-* @author		Firespring
+* @desc      Page section styles, settings
+* @author    Firespring
 */
 .c-page-section {
   margin-top: 1rem;
@@ -6690,8 +6690,8 @@ Defaults
     flex: 1; } }
 
 /**
-* @desc			Page search styles, settings
-* @author		Firespring
+* @desc      Page search styles, settings
+* @author    Firespring
 */
 .c-header-actions {
   display: flex;
@@ -6720,8 +6720,8 @@ Defaults
   margin: 0 0 0 0.7778rem; }
 
 /**
-* @desc			Drag handle styles, settings
-* @author		Firespring
+* @desc      Drag handle styles, settings
+* @author    Firespring
 */
 .c-thumbnail {
   background: #fff;
@@ -6838,8 +6838,8 @@ Defaults
     text-overflow: ellipsis; } }
 
 /**
-* @desc			Drag handle styles, settings
-* @author		Firespring
+* @desc      Drag handle styles, settings
+* @author    Firespring
 */
 .c-drag-handle {
   width: 24px;
@@ -6860,8 +6860,8 @@ td .c-drag-handle {
   transform: translateY(1px); }
 
 /**
-* @desc			Info row styles, settings
-* @author		Firespring
+* @desc      Info row styles, settings
+* @author    Firespring
 */
 /* Basic */
 .c-info-row + .c-info-row {
@@ -6914,8 +6914,8 @@ td .c-drag-handle {
   padding-bottom: 0; }
 
 /**
-* @desc			Note styles, settings
-* @author		Firespring
+* @desc      Note styles, settings
+* @author    Firespring
 */
 .c-notes {
   color: #919191;
@@ -6945,8 +6945,8 @@ td .c-drag-handle {
   overflow: hidden; }
 
 /**
-* @desc			Chip styles, settings
-* @author		Firespring
+* @desc      Chip styles, settings
+* @author    Firespring
 */
 .c-chip {
   display: inline-block;
@@ -7025,8 +7025,8 @@ a.c-chip__value:hover, a.c-chip__value:active {
   background: #093f82; }
 
 /**
-* @desc			User strip styles, settings
-* @author		Firespring
+* @desc      User strip styles, settings
+* @author    Firespring
 */
 .c-user-strip__image {
   margin-right: 0.4444rem; }
@@ -7054,8 +7054,8 @@ a.c-chip__value:hover, a.c-chip__value:active {
   content: '\f041'; }
 
 /**
-* @desc			Wizard styles, settings
-* @author		Firespring
+* @desc      Wizard styles, settings
+* @author    Firespring
 */
 /* Steps navigation */
 .c-wizard__steps {
@@ -7157,8 +7157,8 @@ a.c-chip__value:hover, a.c-chip__value:active {
     left: 0.6667rem; } }
 
 /**
-* @desc			Progress indicator styles, settings
-* @author		Firespring
+* @desc      Progress indicator styles, settings
+* @author    Firespring
 */
 /* Linear */
 .c-progress-linear-wrap {
@@ -7449,8 +7449,8 @@ a.c-chip__value:hover, a.c-chip__value:active {
     opacity: 0; } }
 
 /**
-* @desc			Tooltip styles, settings
-* @author		Firespring
+* @desc      Tooltip styles, settings
+* @author    Firespring
 */
 /* Tooltip Triggers */
 .tooltip-trigger {
@@ -7468,8 +7468,8 @@ a.c-chip__value:hover, a.c-chip__value:active {
 /* GENERAL STRUCTURE RULES (do not edit this section) */
 .tooltipster-base {
   /* this ensures that a constrained height set by functionPosition,
-	if greater that the natural height of the tooltip, will be enforced
-	in browsers that support display:flex */
+  if greater that the natural height of the tooltip, will be enforced
+  in browsers that support display:flex */
   display: flex;
   pointer-events: none;
   /* this may be overriden in JS for fixed position origins */
@@ -7477,7 +7477,7 @@ a.c-chip__value:hover, a.c-chip__value:active {
 
 .tooltipster-box {
   /* see .tooltipster-base. flex-shrink 1 is only necessary for IE10-
-	and flex-basis auto for IE11- (at least) */
+  and flex-basis auto for IE11- (at least) */
   flex: 1 1 auto; }
 
 .tooltipster-content {
@@ -7571,7 +7571,7 @@ corresponds to the arrow we want to display */
   margin-top: -10px;
   right: -2px;
   /* top 0 to keep the arrow from overflowing .tooltipster-base when it has not
-	been positioned yet */
+  been positioned yet */
   top: 0;
   width: 10px; }
 
@@ -7630,8 +7630,8 @@ corresponds to the arrow we want to display */
   left: -10px; }
 
 /**
-* @desc			Label styles, settings
-* @author		Firespring
+* @desc      Label styles, settings
+* @author    Firespring
 */
 .c-label {
   display: inline-block;
@@ -7655,8 +7655,8 @@ corresponds to the arrow we want to display */
   background-color: #ec302e; }
 
 /**
-* @desc			Leaderboard styles, settings
-* @author		Firespring
+* @desc      Leaderboard styles, settings
+* @author    Firespring
 */
 .c-leaderboard {
   display: flex;
@@ -7687,8 +7687,8 @@ corresponds to the arrow we want to display */
     font-size: 1.3333rem; } }
 
 /**
-* @desc			Alert styles, settings
-* @author		Firespring
+* @desc      Alert styles, settings
+* @author    Firespring
 */
 .c-alert {
   justify-content: center; }
@@ -7753,8 +7753,8 @@ corresponds to the arrow we want to display */
   font-size: 0.7778rem; }
 
 /**
-* @desc			Message styles, settings
-* @author		Firespring
+* @desc      Message styles, settings
+* @author    Firespring
 */
 .c-message__text {
   flex: 1 0 100%;

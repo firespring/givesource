@@ -14,53 +14,51 @@
  * limitations under the License.
  */
 
-require('./config/bootstrap').bootstrap();
+require('./config/bootstrap').bootstrap()
 
-const config = require('config');
-const inquirer = require('inquirer');
-const Lambda = require('../src/aws/lambda');
+const config = require('config')
+const inquirer = require('inquirer')
+const Lambda = require('../src/aws/lambda')
 
-return inquirer.prompt([
-	{
-		type: 'list',
-		message: 'What setting would you like to update?',
-		name: 'key',
-		choices: ['ADMIN_URL', 'EVENT_URL', 'RECAPTCHA_KEY']
-	},
-	{
-		type: 'input',
-		message: function (answers) {
-			return 'What should the new value of ' + answers.key + ' be?';
-		},
-		name: 'value',
-	},
-	{
-		type: 'confirm',
-		message: function (answers) {
-			return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?';
-		},
-		name: 'confirm',
-	}
+inquirer.prompt([
+  {
+    type: 'list',
+    message: 'What setting would you like to update?',
+    name: 'key',
+    choices: ['ADMIN_URL', 'EVENT_URL', 'RECAPTCHA_KEY']
+  },
+  {
+    type: 'input',
+    message: function (answers) {
+      return 'What should the new value of ' + answers.key + ' be?'
+    },
+    name: 'value'
+  },
+  {
+    type: 'confirm',
+    message: function (answers) {
+      return 'Are you sure you want to update ' + answers.key + ' to "' + answers.value + '"?'
+    },
+    name: 'confirm'
+  }
 ]).then(function (answers) {
-	if (answers.confirm) {
+  if (answers.confirm) {
+    const settings = {}
+    settings[answers.key] = answers.value
 
-		const settings = {};
-		settings[answers.key] = answers.value;
-
-		const lambda = new Lambda();
-		let lambdaRequestBody = {
-			ResourceProperties: {
-				Settings: JSON.stringify(settings)
-			}
-		};
-		lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
-			console.log('Setting updated');
-      lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', {paths: ['/settings*']}, 'RequestResponse');
-		}).catch(function (err) {
-			console.log(err);
-		});
-
-	} else {
-		console.log('No settings were updated, the changes were not confirmed.');
-	}
-});
+    const lambda = new Lambda()
+    const lambdaRequestBody = {
+      ResourceProperties: {
+        Settings: JSON.stringify(settings)
+      }
+    }
+    lambda.invoke(config.get('stack.AWS_REGION'), config.get('stack.AWS_STACK_NAME') + '-SaveSettings', lambdaRequestBody, 'RequestResponse').then(function () {
+      console.log('Setting updated')
+      lambda.invoke(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiDistributionInvalidation', { paths: ['/settings*'] }, 'RequestResponse')
+    }).catch(function (err) {
+      console.log(err)
+    })
+  } else {
+    console.log('No settings were updated, the changes were not confirmed.')
+  }
+})

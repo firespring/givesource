@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const mustache = require('mustache');
+const mustache = require('mustache')
 
 /**
  * Load and render the provided template
@@ -24,18 +24,18 @@ const mustache = require('mustache');
  * @returns {Promise}
  */
 const renderTemplate = function (template, data) {
-	return new Promise(function (resolve, reject) {
-		let templatePath = template.replace(/\s/g, '').replace('.mustache', '').split('.').join('/');
+  return new Promise(function (resolve, reject) {
+    const templatePath = template.replace(/\s/g, '').replace('.mustache', '').split('.').join('/')
 
-		try {
-			const content = require('./../templates/' + templatePath + '.mustache');
-			const rendered = mustache.render(content, data);
-			resolve(rendered);
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
+    try {
+      const content = require('./../templates/' + templatePath + '.mustache')
+      const rendered = mustache.render(content, data)
+      resolve(rendered)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
 
 /**
  * Render the provided template
@@ -45,17 +45,17 @@ const renderTemplate = function (template, data) {
  * @returns {Promise}
  */
 const renderStringTemplate = function (template, data) {
-	return new Promise(function (resolve, reject) {
-		try {
-			const rendered = mustache.render(template, data);
-			resolve(rendered);
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
+  return new Promise(function (resolve, reject) {
+    try {
+      const rendered = mustache.render(template, data)
+      resolve(rendered)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
 
 export {
-	renderTemplate,
-	renderStringTemplate
+  renderTemplate,
+  renderStringTemplate
 }

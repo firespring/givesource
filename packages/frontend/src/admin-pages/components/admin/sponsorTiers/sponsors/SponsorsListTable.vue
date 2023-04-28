@@ -15,101 +15,113 @@
   -->
 
 <template>
-    <table class="table-middle table-reorder js-table-reorder">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Logo</th>
-            <th class="u-width-100p">Sponsor Name</th>
-            <th></th>
-        </tr>
-        </thead>
+  <table class="table-middle table-reorder js-table-reorder">
+    <thead>
+      <tr>
+        <th />
+        <th>Logo</th>
+        <th class="u-width-100p">
+          Sponsor Name
+        </th>
+        <th />
+      </tr>
+    </thead>
 
-        <draggable v-model="localSponsors" :options="draggableOptions" :element="'tbody'" v-on:end="updateSortOrder">
-            <sponsors-list-table-row v-for="sponsor in localSponsors" :sponsor="sponsor" :file="getFile(sponsor.fileId)" v-on:deleteSponsor="deleteSponsor" :key="sponsor.id"
-                                     :v-on:hasError="hasError">
-            </sponsors-list-table-row>
-        </draggable>
-    </table>
+    <draggable
+      v-model="localSponsors"
+      :options="draggableOptions"
+      :element="'tbody'"
+      @end="updateSortOrder"
+    >
+      <sponsors-list-table-row
+        v-for="sponsor in localSponsors"
+        :key="sponsor.id"
+        :sponsor="sponsor"
+        :file="getFile(sponsor.fileId)"
+        @has-error="hasError"
+        @delete-sponsor="deleteSponsor"
+      />
+    </draggable>
+  </table>
 </template>
 
 <script>
-	import ComponentDraggable from 'vuedraggable';
-	import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue';
+import ComponentDraggable from 'vuedraggable'
+import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue'
 
-	export default {
-		data: function () {
-			return {
-				localSponsors: [],
+export default {
+  components: {
+    draggable: ComponentDraggable,
+    'sponsors-list-table-row': ComponentSponsorsListTableRow
+  },
+  props: {
+    files: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    sponsors: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    sponsorTierId: {
+      type: [String, Number],
+      default: null
+    }
+  },
+  data: function () {
+    return {
+      localSponsors: [],
 
-				// Sort Options
-				draggableOptions: {
-					handle: '.c-drag-handle',
-					ghostClass: 'reorder-placeholder',
-					draggable: 'tr',
-				}
-			};
-		},
-		props: {
-			files: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-			sponsors: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-			sponsorTierId: {
-				type: String|Number,
-				default: null,
-			}
-		},
-		watch: {
-			sponsors: function (value) {
-				this.localSponsors = value;
-			},
-			localSponsors: function () {
-				this.$emit('sponsors', this.localSponsors);
-			},
-		},
-		methods: {
-			getFile: function (fileId) {
-				return _.find(this.files, {id: fileId});
-			},
-			updateSortOrder: function () {
-				const vue = this;
+      // Sort Options
+      draggableOptions: {
+        handle: '.c-drag-handle',
+        ghostClass: 'reorder-placeholder',
+        draggable: 'tr'
+      }
+    }
+  },
+  watch: {
+    sponsors: function (value) {
+      this.localSponsors = value
+    },
+    localSponsors: function () {
+      this.$emit('sponsors', this.localSponsors)
+    }
+  },
+  methods: {
+    getFile: function (fileId) {
+      return _.find(this.files, { id: fileId })
+    },
+    updateSortOrder: function () {
+      const vue = this
 
-				const original = JSON.parse(JSON.stringify(vue.localSponsors));
-				vue.localSponsors.forEach(function (sponsor, i) {
-					sponsor.sortOrder = i;
-				});
+      const original = JSON.parse(JSON.stringify(vue.localSponsors))
+      vue.localSponsors.forEach(function (sponsor, i) {
+        sponsor.sortOrder = i
+      })
 
-				const toUpdate = _.differenceWith(vue.localSponsors, original, _.isEqual);
-				vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors', {
-					sponsors: toUpdate
-				}).catch(function (err) {
-					vue.$emit('hasError', err);
-				});
-			},
-			deleteSponsor: function (sponsorId) {
-				const vue = this;
+      const toUpdate = _.differenceWith(vue.localSponsors, original, _.isEqual)
+      vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors', {
+        sponsors: toUpdate
+      }).catch(function (err) {
+        vue.$emit('has-error', err)
+      })
+    },
+    deleteSponsor: function (sponsorId) {
+      const vue = this
 
-				vue.localSponsors = _.filter(vue.localSponsors, function (sponsor) {
-					return sponsor.id !== sponsorId;
-				});
-			},
-			hasError: function (err) {
-				const vue = this;
-				vue.$emit('hasError', err);
-			}
-		},
-		components: {
-			'draggable': ComponentDraggable,
-			'sponsors-list-table-row': ComponentSponsorsListTableRow,
-		}
-	};
+      vue.localSponsors = _.filter(vue.localSponsors, function (sponsor) {
+        return sponsor.id !== sponsorId
+      })
+    },
+    hasError: function (err) {
+      const vue = this
+      vue.$emit('has-error', err)
+    }
+  }
+}
 </script>

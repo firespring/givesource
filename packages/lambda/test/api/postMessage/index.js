@@ -14,36 +14,35 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const HttpException = require('./../../../src/exceptions/http');
-const PostMessage = require('../../../src/api/postMessage/index');
-const MessagesRepository = require('../../../src/repositories/messages');
-const sinon = require('sinon');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const HttpException = require('./../../../src/exceptions/http')
+const PostMessage = require('../../../src/api/postMessage/index')
+const MessagesRepository = require('../../../src/repositories/messages')
+const sinon = require('sinon')
+const TestHelper = require('../../helpers/test')
 
 describe('PostMessage', function () {
+  afterEach(function () {
+    MessagesRepository.prototype.save.restore()
+  })
 
-	afterEach(function () {
-		MessagesRepository.prototype.save.restore();
-	});
+  it('should return a message', function () {
+    const model = TestHelper.generate.model('message')
+    sinon.stub(MessagesRepository.prototype, 'save').resolves(model)
+    const { uuid, createdOn, ...body } = model
+    const params = {
+      body
+    }
+    return PostMessage.handle(params, null, function (error, result) {
+      assert(error === null)
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+    })
+  })
 
-	it('should return a message', function () {
-		const model = TestHelper.generate.model('message');
-		sinon.stub(MessagesRepository.prototype, 'save').resolves(model);
-		const params = {
-			body: model.except(['uuid', 'createdOn'])
-		};
-		return PostMessage.handle(params, null, function (error, result) {
-			assert(error === null);
-			TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn']);
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(MessagesRepository.prototype, 'save').rejects('Error');
-		return PostMessage.handle({}, null, function (error) {
-			assert(error instanceof HttpException);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(MessagesRepository.prototype, 'save').rejects('Error')
+    return PostMessage.handle({}, null, function (error) {
+      assert(error instanceof HttpException)
+    })
+  })
+})

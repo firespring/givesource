@@ -97,8 +97,10 @@ GEM
     version_gem (1.1.2)
 
 PLATFORMS
+  arm64-darwin-21
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   firespring_dev_commands (= 1.4.0.pre.alpha.2)

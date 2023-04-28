@@ -15,74 +15,83 @@
   -->
 
 <template>
-    <div class="o-app">
-        <navigation></navigation>
-        <main class="o-app__main o-app__main--compact">
-            <div class="o-app_main-content o-app_main-content o-app_main-content--md">
-                <div class="o-app-main-content">
-                    <paymentspring-keys-banner/>
-                    <api-error v-model="apiError"></api-error>
+  <div class="o-app">
+    <navigation />
+    <main class="o-app__main o-app__main--compact">
+      <div class="o-app_main-content o-app_main-content o-app_main-content--md">
+        <div class="o-app-main-content">
+          <paymentspring-keys-banner />
+          <api-error v-model="apiError" />
 
-                    <div class="c-header-actions">
-                        <div>
-                            <router-link :to="{ name: 'sponsor-tiers-add' }" role="button" class="c-btn c-btn--sm c-btn--icon">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i>Add Sponsor Tier
-                            </router-link>
-                        </div>
-                    </div>
-
-                    <sponsors-list-table :sponsorTiers="sponsorTiers" v-on:hasError="hasError"></sponsors-list-table>
-
-                </div>
+          <div class="c-header-actions">
+            <div>
+              <router-link
+                :to="{ name: 'sponsor-tiers-add' }"
+                role="button"
+                class="c-btn c-btn--sm c-btn--icon"
+              >
+                <i
+                  class="fa fa-plus-circle"
+                  aria-hidden="true"
+                />Add Sponsor Tier
+              </router-link>
             </div>
-        </main>
-    </div>
+          </div>
+
+          <sponsors-list-table
+            :sponsor-tiers="sponsorTiers"
+            @has-error="hasError"
+          />
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
-	import ComponentSponsorsTiersListTable from './SponsorsTiersListTable.vue';
+import ComponentSponsorsTiersListTable from './SponsorsTiersListTable.vue'
 
-	export default {
-		data: function () {
-			return {
-				sponsorTiers: [],
-				apiError: {},
-			};
-		},
-		beforeRouteEnter: function (to, from, next) {
-			next(function (vue) {
-				vue.$request.get('sponsor-tiers').then(function (response) {
-					response.data.sort(function (a, b) {
-						return a.sortOrder - b.sortOrder;
-					});
-					vue.sponsorTiers = response.data;
-				}).catch(function (err) {
-					vue.apiError = err.response.data.errors;
-				});
-			});
-		},
-		beforeRouteUpdate: function (to, from, next) {
-			const vue = this;
+export default {
+  components: {
+    'sponsors-list-table': ComponentSponsorsTiersListTable
+  },
+  beforeRouteEnter: function (to, from, next) {
+    next(function (vue) {
+      vue.$request.get('sponsor-tiers').then(function (response) {
+        response.data.sort(function (a, b) {
+          return a.sortOrder - b.sortOrder
+        })
+        vue.sponsorTiers = response.data
+      }).catch(function (err) {
+        vue.apiError = err.response.data.errors
+      })
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    const vue = this
 
-			vue.$request.get('sponsor-tiers').then(function (response) {
-				response.data.sort(function (a, b) {
-					return a.sortOrder - b.sortOrder;
-				});
-				vue.sponsorTiers = response.data;
-				next();
-			}).catch(function (err) {
-				vue.apiError = err.response.data.errors;
-				next();
-			});
-		},
-		methods: {
-			hasError: function (err) {
-				const vue = this;
-				vue.apiError = err.response.data.errors;
-			}
-		},
-		components: {
-			'sponsors-list-table': ComponentSponsorsTiersListTable,
-		}
-	};
+    vue.$request.get('sponsor-tiers').then(function (response) {
+      response.data.sort(function (a, b) {
+        return a.sortOrder - b.sortOrder
+      })
+      vue.sponsorTiers = response.data
+      next()
+    }).catch(function (err) {
+      vue.apiError = err.response.data.errors
+      next()
+    })
+  },
+  data: function () {
+    return {
+      sponsorTiers: [],
+      apiError: {}
+    }
+  },
+  methods: {
+    hasError: function (err) {
+      const vue = this
+      vue.apiError = err.response.data.errors
+    }
+  }
+}
 </script>

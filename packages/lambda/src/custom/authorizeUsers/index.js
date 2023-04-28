@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-const Request = require('./../../aws/request');
-const UserAuthorizer = require('./../../auth/user');
+const UserAuthorizer = require('./../../auth/user')
+const logger = require('../../helpers/log')
 
 exports.handle = function (event, context, callback) {
-	new Request(event, context);
+  if (context && context.functionName) {
+    logger.log(`${context.functionName} event: %j`, event)
+  }
 
-	const arn = event.methodArn;
-	const region = process.env.REGION;
-	const token = event.authorizationToken;
-	const userPoolId = process.env.USER_POOL_ID;
+  const arn = event.methodArn
+  const region = process.env.REGION
+  const token = event.authorizationToken
+  const userPoolId = process.env.USER_POOL_ID
 
-	const authorizer = new UserAuthorizer(arn, region, token, userPoolId);
-	authorizer.authorize().then(function (policy) {
-		callback(null, policy);
-	}).catch(function () {
-		callback('Unauthorized');
-	});
-};
+  const authorizer = new UserAuthorizer(arn, region, token, userPoolId)
+  authorizer.authorize().then(function (policy) {
+    callback(null, policy)
+  }).catch(function () {
+    callback(new Error('Unauthorized'))
+  })
+}

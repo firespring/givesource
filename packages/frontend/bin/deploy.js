@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../.base_env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
+const dotenv = require('dotenv')
+const path = require('path')
+dotenv.config({path: path.resolve(__dirname, '../.base_env')})
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/')
 
-const _ = require('lodash');
-const config = require('config');
-const deployInfo = require('../config/deploy-info.json');
-const fs = require('fs');
-const S3 = require('./aws/s3');
+const config = require('config')
+const deployInfo = require('../config/deploy-info.json')
+const fs = require('fs')
+const S3 = require('./aws/s3')
 
 /**
  * Get a list of files recursively from a directory
@@ -34,18 +33,18 @@ const S3 = require('./aws/s3');
  * @return {Array}
  */
 const walkSync = function (dir, fileList) {
-	fileList = fileList || [];
-	const files = fs.readdirSync(dir, 'utf8');
-	files.forEach(function (file) {
-		if (fs.statSync(path.join(dir, file)).isDirectory()) {
-			fileList = walkSync(path.join(dir, file), fileList);
-		} else {
-			fileList.push(path.join(dir, file));
-		}
-	});
+  fileList = fileList || []
+  const files = fs.readdirSync(dir, 'utf8')
+  files.forEach(function (file) {
+    if (fs.statSync(path.join(dir, file)).isDirectory()) {
+      fileList = walkSync(path.join(dir, file), fileList)
+    } else {
+      fileList.push(path.join(dir, file))
+    }
+  })
 
-	return fileList;
-};
+  return fileList
+}
 
 /**
  * Get a list of files recursively from a directory
@@ -55,14 +54,14 @@ const walkSync = function (dir, fileList) {
  * @return {Array}
  */
 const walkSyncRelative = function (dir) {
-	return walkSync(dir).map(function (file) {
-		if (file.indexOf(dir) === 0) {
-			return file.slice(dir.length);
-		} else {
-			return file;
-		}
-	})
-};
+  return walkSync(dir).map(function (file) {
+    if (file.indexOf(dir) === 0) {
+      return file.slice(dir.length)
+    } else {
+      return file
+    }
+  })
+}
 
 /**
  * Upload a directory recursively to AWS S3
@@ -74,33 +73,33 @@ const walkSyncRelative = function (dir) {
  * @return {Promise}
  */
 const deploy = function (dir, bucket, region, exclude) {
-	const s3 = new S3();
-	const files = walkSyncRelative(dir);
-	exclude = Array.isArray(exclude) ? exclude : [];
+  const s3 = new S3()
+  const files = walkSyncRelative(dir)
+  exclude = Array.isArray(exclude) ? exclude : []
 
-	let promise = Promise.resolve();
-	files.forEach(function (file) {
-		const key = file.indexOf('/') === 0 ? file.slice(1) : file;
-		if (!(exclude.indexOf(key) > -1)) {
-			const object = fs.readFileSync(path.join(dir, file));
+  let promise = Promise.resolve()
+  files.forEach(function (file) {
+    const key = file.indexOf('/') === 0 ? file.slice(1) : file
+    if (!(exclude.indexOf(key) > -1)) {
+      const object = fs.readFileSync(path.join(dir, file))
 
-			promise = promise.then(() => {
-				return s3.putObject(region, bucket, key, object);
-			}).then(() => {
-				console.log('uploaded: ' + key);
-			});
-		}
-	});
+      promise = promise.then(() => {
+        return s3.putObject(region, bucket, key, object)
+      }).then(() => {
+        console.log('uploaded: ' + key)
+      })
+    }
+  })
 
-	return promise;
-};
+  return promise
+}
 
 // Run the deploy
 Promise.all([
-	deploy(path.normalize(__dirname + '/../build/admin-pages'), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
-	deploy(path.normalize(__dirname + '/../build/public-pages'), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
+  deploy(path.normalize(path.join(__dirname, '/../build/admin-pages')), deployInfo.AdminPagesS3BucketName, config.get('stack.AWS_REGION')),
+  deploy(path.normalize(path.join(__dirname, '/../build/public-pages')), deployInfo.PublicPagesS3BucketName, config.get('stack.AWS_REGION'))
 ]).then(() => {
-	console.log('deployed frontend');
+  console.log('deployed frontend')
 }).catch(err => {
-	console.log(err);
-});
+  console.log(err)
+})

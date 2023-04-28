@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
-const InvalidPermissionsException = require('./../exceptions/invalidPermissions');
-const Middleware = require('./middleware');
+const InvalidPermissionsException = require('./../exceptions/invalidPermissions')
+const Middleware = require('./middleware')
 
 /**
  * UserResourceMiddleware constructor
@@ -24,8 +23,8 @@ const Middleware = require('./middleware');
  * @param {String} cognitoUsername
  * @constructor
  */
-function UserResourceMiddleware(cognitoUsername) {
-	this.cognitoUsername = cognitoUsername;
+function UserResourceMiddleware (cognitoUsername) {
+  this.cognitoUsername = cognitoUsername
 }
 
 /**
@@ -33,7 +32,7 @@ function UserResourceMiddleware(cognitoUsername) {
  *
  * @type {Middleware}
  */
-UserResourceMiddleware.prototype = new Middleware();
+UserResourceMiddleware.prototype = new Middleware()
 
 /**
  * Handle the middleware
@@ -41,15 +40,14 @@ UserResourceMiddleware.prototype = new Middleware();
  * @return {Promise}
  */
 UserResourceMiddleware.prototype.handle = function () {
-	const middleware = this;
-	return new Promise(function (resolve, reject) {
+  const middleware = this
+  return new Promise(function (resolve, reject) {
+    if (middleware.user.cognitoUsername === middleware.cognitoUsername) {
+      return resolve()
+    }
 
-		if (middleware.user.cognitoUsername === middleware.cognitoUsername) {
-			return resolve();
-		}
+    reject(new InvalidPermissionsException())
+  })
+}
 
-		reject(new InvalidPermissionsException());
-	});
-};
-
-module.exports = UserResourceMiddleware;
+module.exports = UserResourceMiddleware

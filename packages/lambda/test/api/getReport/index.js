@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-const assert = require('assert');
-const sinon = require('sinon');
-const GetReport = require('../../../src/api/getReport/index');
-const ReportsRepository = require('../../../src/repositories/reports');
-const TestHelper = require('../../helpers/test');
+const assert = require('assert')
+const sinon = require('sinon')
+const GetReport = require('../../../src/api/getReport/index')
+const ReportsRepository = require('../../../src/repositories/reports')
+const TestHelper = require('../../helpers/test')
 
 describe('GetReport', function () {
+  afterEach(function () {
+    ReportsRepository.prototype.get.restore()
+  })
 
-	afterEach(function () {
-		ReportsRepository.prototype.get.restore();
-	});
+  it('should return a report', function () {
+    const model = TestHelper.generate.model('report')
+    sinon.stub(ReportsRepository.prototype, 'get').resolves(model)
+    const params = {
+      params: {
+        reportUuid: model.uuid
+      }
+    }
+    return GetReport.handle(params, null, function (error, result) {
+      assert(error === null)
+      assert.deepEqual(result, model.all())
+    })
+  })
 
-	it('should return a report', function () {
-		const model = TestHelper.generate.model('report');
-		sinon.stub(ReportsRepository.prototype, 'get').resolves(model);
-		const params = {
-			params: {
-				reportUuid: model.uuid
-			}
-		};
-		return GetReport.handle(params, null, function (error, result) {
-			assert(error === null);
-			assert.deepEqual(result, model.all());
-		});
-	});
-
-	it('should return error on exception thrown', function () {
-		sinon.stub(ReportsRepository.prototype, 'get').rejects('Error');
-		const params = {
-			params: {
-				reportUuid: '1234'
-			}
-		};
-		return GetReport.handle(params, null, function (error, result) {
-			assert(error instanceof Error);
-		});
-	});
-
-});
+  it('should return error on exception thrown', function () {
+    sinon.stub(ReportsRepository.prototype, 'get').rejects('Error')
+    const params = {
+      params: {
+        reportUuid: '1234'
+      }
+    }
+    return GetReport.handle(params, null, function (error, result) {
+      assert(error instanceof Error)
+    })
+  })
+})

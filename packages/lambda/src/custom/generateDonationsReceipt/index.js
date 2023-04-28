@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
 const DonationsRepository = require('./../../repositories/donations')
 const DonorsRepository = require('./../../repositories/donors')
 const FilesRepository = require('./../../repositories/files')
@@ -34,10 +33,10 @@ exports.handle = (event, context, callback) => {
 
   let donor = request.get('donor', null)
   let donations = request.get('donations', [])
-  let paymentTransaction = request.get('paymentTransaction', null)
-  let transactions = []
+  const paymentTransaction = request.get('paymentTransaction', null)
+  const transactions = []
 
-  let settings = {
+  const settings = {
     CONTACT_PHONE: null,
     EMAILS_DONATION_RECEIPT_AFTER_LIST: null,
     EMAILS_DONATION_RECEIPT_BEFORE_LIST: null,
@@ -142,7 +141,7 @@ exports.handle = (event, context, callback) => {
         donations.forEach(donation => {
           let transaction
           promise = promise.then(function () {
-            return paymentTransactionsRepository.populate({createdAt: donation.createdAt})
+            return paymentTransactionsRepository.populate({ createdAt: donation.createdAt })
           }).then(function (popTransaction) {
             transaction = popTransaction
             transaction.timezone = settings.EVENT_TIMEZONE
@@ -174,6 +173,10 @@ exports.handle = (event, context, callback) => {
     })
   }).catch(err => {
     console.log('Error: %j', err)
-    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+    if (err instanceof HttpException) {
+      callback(err.context(context))
+    } else {
+      callback(err)
+    }
   })
 }

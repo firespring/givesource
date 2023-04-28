@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * CloudFormation constructor
  *
  * @constructor
  */
-function CloudFormation() {
+function CloudFormation () {
 }
 
 /**
@@ -34,25 +34,25 @@ function CloudFormation() {
  * @return {Promise}
  */
 CloudFormation.prototype.createStack = function (region, stackName, templateUrl, parameters) {
-	const awsCloudformation = new AWS.CloudFormation({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Capabilities: ['CAPABILITY_IAM'],
-			StackName: stackName,
-			TemplateURL: templateUrl,
-			OnFailure: 'DO_NOTHING'
-		};
-		if (parameters.length) {
-			params.Parameters = parameters;
-		}
-		awsCloudformation.createStack(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudformation = new AWS.CloudFormation({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Capabilities: ['CAPABILITY_IAM'],
+      StackName: stackName,
+      TemplateURL: templateUrl,
+      OnFailure: 'DO_NOTHING'
+    }
+    if (parameters.length) {
+      params.Parameters = parameters
+    }
+    awsCloudformation.createStack(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Delete an AWS CloudFormation stack
@@ -62,19 +62,19 @@ CloudFormation.prototype.createStack = function (region, stackName, templateUrl,
  * @return {Promise}
  */
 CloudFormation.prototype.deleteStack = function (region, stackName) {
-	const awsCloudformation = new AWS.CloudFormation({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			StackName: stackName,
-		};
-		awsCloudformation.deleteStack(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudformation = new AWS.CloudFormation({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      StackName: stackName
+    }
+    awsCloudformation.deleteStack(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
 /**
  * Update an AWS CloudFormation stack
@@ -86,23 +86,23 @@ CloudFormation.prototype.deleteStack = function (region, stackName) {
  * @return {Promise}
  */
 CloudFormation.prototype.updateStack = function (region, stackName, templateUrl, parameters) {
-	const awsCloudformation = new AWS.CloudFormation({region: region});
-	return new Promise(function (resolve, reject) {
-		const params = {
-			Capabilities: ['CAPABILITY_IAM'],
-			StackName: stackName,
-			TemplateURL: templateUrl
-		};
-		if (parameters.length) {
-			params.Parameters = parameters;
-		}
-		awsCloudformation.updateStack(params, function (err, data) {
-			if (err) {
-				reject(err);
-			}
-			resolve(data);
-		});
-	});
-};
+  const awsCloudformation = new AWS.CloudFormation({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      Capabilities: ['CAPABILITY_IAM'],
+      StackName: stackName,
+      TemplateURL: templateUrl
+    }
+    if (parameters.length) {
+      params.Parameters = parameters
+    }
+    awsCloudformation.updateStack(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
 
-module.exports = CloudFormation;
+module.exports = CloudFormation

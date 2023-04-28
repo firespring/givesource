@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv');
-const path = require('path');
-dotenv.config({path: path.resolve(__dirname, '../.base_env')});
-process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/');
+const dotenv = require('dotenv')
+const path = require('path')
+dotenv.config({path: path.resolve(__dirname, '../.base_env')})
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname, '../base_config/')
 
-const config = require('config');
-const deployInfo = require('../config/deploy-info.json');
-const fs = require('fs');
-const S3 = require('./aws/s3');
+const config = require('config')
+const deployInfo = require('../config/deploy-info.json')
+const fs = require('fs')
+const S3 = require('./aws/s3')
 
 exports.fetch = () => {
-	const s3 = new S3();
-	s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(response => {
-		const configDir = path.resolve(__dirname, './../build/public-pages/assets/css');
-		fs.writeFileSync(configDir + '/custom.css', response.Body);
-		console.log('custom.css downloaded from S3');
-	}).catch(function (err) {
-		console.log(err);
-	});
-};
+  const s3 = new S3()
+  const configDir = path.resolve(__dirname, '../build/public-pages/assets/css')
+  s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(response => {
+    fs.writeFileSync(configDir + '/custom.css', response.Body)
+    console.log('custom.css downloaded from S3')
+  }).catch(function (err) { // eslint-disable-line handle-callback-err
+    console.log('No custom css found. Using empty file', {
+      region: config.get('stack.AWS_REGION'),
+      bucket: deployInfo.PublicPagesS3BucketName,
+      path: 'assets/css/custom.css'
+    })
+    // console.log(err); // if you are expecting a custom.css err may have more info on the issue
+    fs.writeFileSync(configDir + '/custom.css', '/* No custom styles */')
+  })
+}

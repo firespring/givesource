@@ -15,41 +15,61 @@
   -->
 
 <template>
-    <select v-model="localValue" :name="name" :id="id" ref="input">
-        <option disabled value="" v-if="placeholder">{{ placeholder }}</option>
-        <option disabled value="" v-if="placeholder">-----</option>
-        <option v-for="sponsorTier in sponsorTiers" :value="sponsorTier.id">
-            {{ sponsorTier.name }}
-        </option>
-    </select>
+  <select
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    :name="name"
+  >
+    <option
+      v-if="placeholder"
+      disabled
+      value=""
+    >
+      {{ placeholder }}
+    </option>
+    <option
+      v-if="placeholder"
+      disabled
+      value=""
+    >
+      -----
+    </option>
+    <option
+      v-for="sponsorTier in sponsorTiers"
+      :value="sponsorTier.id"
+    >
+      {{ sponsorTier.name }}
+    </option>
+  </select>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : ''
-			};
-		},
-		props: {
-			id: '',
-			name: '',
-			placeholder: '',
-			sponsorTiers: {
-				type: Array,
-				default: function () {
-					return [];
-				}
-			},
-			value: {},
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		}
-	};
+export default {
+  props: {
+    id: { type: [String, Number], default: null },
+    name: { type: String, default: null },
+    placeholder: { type: String, default: null },
+    sponsorTiers: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    value: { type: [String, Number], default: null }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : ''
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  }
+}
 </script>

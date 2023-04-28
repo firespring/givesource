@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 /**
  * Pluralize a string
@@ -22,11 +22,11 @@ const _ = require('lodash');
  * @param {*} value
  * @returns {*}
  */
-function pluralize(value) {
-	let args = _.slice(_.toArray(arguments), 1);
-	return args.length > 1
-		? (args[value % 10 - 1] || args[args.length - 1])
-		: (args[0] + (value === 1 ? '' : 's'));
+function pluralize (value) {
+  const args = _.slice(_.toArray(arguments), 1)
+  return args.length > 1
+    ? (args[value % 10 - 1] || args[args.length - 1])
+    : (args[0] + (value === 1 ? '' : 's'))
 }
 
-export default pluralize;
+export default pluralize

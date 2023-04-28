@@ -15,59 +15,79 @@
   -->
 
 <template>
-    <div v-if="hasError" id="api-error" class="c-alert c-alert--shadow c-alert--bad c-alert--expand u-flex u-justify-center">
-        <div class="c-alert__body u-flex u-justify-between">
-            <div class="c-alert__text">
-                <h3 class="c-alert-title">There was an error processing your request.</h3>
-                <ul>
-                    <li v-if="localValue.type">Type: {{localValue.type}}</li>
-                    <li v-if="localValue.message">Message: {{localValue.message}}</li>
-                    <li v-if="localValue.request_id">ID: {{localValue.request_id}}</li>
-                </ul>
-            </div>
-            <div class="c-alert__close">
-                <button v-on:click="close" class="c-btn c-btn--xs c-btn--icon c-btn--reverse c-btn--text"><i class="fa fa-close" aria-hidden="true"></i>Close</button>
-            </div>
-        </div>
+  <div
+    v-if="hasError"
+    id="api-error"
+    class="c-alert c-alert--shadow c-alert--bad c-alert--expand u-flex u-justify-center"
+  >
+    <div class="c-alert__body u-flex u-justify-between">
+      <div class="c-alert__text">
+        <h3 class="c-alert-title">
+          There was an error processing your request.
+        </h3>
+        <ul>
+          <li v-if="localValue.type">
+            Type: {{ localValue.type }}
+          </li>
+          <li v-if="localValue.message">
+            Message: {{ localValue.message }}
+          </li>
+          <li v-if="localValue.request_id">
+            ID: {{ localValue.request_id }}
+          </li>
+        </ul>
+      </div>
+      <div class="c-alert__close">
+        <button
+          class="c-btn c-btn--xs c-btn--icon c-btn--reverse c-btn--text"
+          @click="close"
+        >
+          <i
+            class="fa fa-close"
+            aria-hidden="true"
+          />Close
+        </button>
+      </div>
     </div>
+  </div>
 </template>
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: {}
-			};
-		},
-		props: {
-			value: {}
-		},
-		computed: {
-			hasError: function () {
-				return this.localValue && Object.keys(this.localValue).length;
-			}
-		},
-		watch: {
-			localValue: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.$emit('input', vue.localValue);
-			},
-			value: function (value, oldValue) {
-				const vue = this;
-				if (value === oldValue) {
-					return;
-				}
-				vue.localValue = value;
-			}
-		},
-		methods: {
-			close: function () {
-				const vue = this;
-				vue.localValue = {};
-			}
-		},
-	}
+export default {
+  props: {
+    value: { type: Object, default: () => ({}) }
+  },
+  data: function () {
+    return {
+      localValue: {}
+    }
+  },
+  computed: {
+    hasError: function () {
+      return this.localValue && Object.keys(this.localValue).length
+    }
+  },
+  watch: {
+    localValue: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.$emit('input', vue.localValue)
+    },
+    value: function (value, oldValue) {
+      const vue = this
+      if (value === oldValue) {
+        return
+      }
+      vue.localValue = value
+    }
+  },
+  methods: {
+    close: function () {
+      const vue = this
+      vue.localValue = {}
+    }
+  }
+}
 
 </script>

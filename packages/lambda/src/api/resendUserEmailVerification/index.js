@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-const Cognito = require('./../../aws/cognito');
-const HttpException = require('./../../exceptions/http');
-const Request = require('./../../aws/request');
-const UserGroupMiddleware = require('./../../middleware/userGroup');
-const UsersRepository = require('./../../repositories/users');
+const Cognito = require('./../../aws/cognito')
+const HttpException = require('./../../exceptions/http')
+const Request = require('./../../aws/request')
+const UserGroupMiddleware = require('./../../middleware/userGroup')
+const UsersRepository = require('./../../repositories/users')
 
 exports.handle = function (event, context, callback) {
-	const cognito = new Cognito();
-	const repository = new UsersRepository();
-	const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']));
+  const cognito = new Cognito()
+  const repository = new UsersRepository()
+  const request = new Request(event, context).middleware(new UserGroupMiddleware(['SuperAdmin', 'Admin', 'Nonprofit']))
 
-	request.validate().then(function () {
-		return repository.get(request.urlParam('user_id'));
-	}).then(function (user) {
-		return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email, true).catch(function (err) {
-			if (err.code === 'UserNotFoundException') {
-				return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email);
-			} else {
-				return Promise.reject(err);
-			}
-		});
-	}).then(function () {
-		callback();
-	}).catch(function (err) {
-		(err instanceof HttpException) ? callback(err.context(context)) : callback(err);
-	});
-};
+  request.validate().then(function () {
+    return repository.get(request.urlParam('user_id'))
+  }).then(function (user) {
+    return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email, true).catch(function (err) {
+      if (err.code === 'UserNotFoundException') {
+        return cognito.createUser(process.env.AWS_REGION, process.env.USER_POOL_ID, user.cognitoUsername, user.email)
+      } else {
+        return Promise.reject(err)
+      }
+    })
+  }).then(function () {
+    callback()
+  }).catch(function (err) {
+    (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
+  })
+}

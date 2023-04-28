@@ -15,53 +15,63 @@
   -->
 
 <template>
-    <select v-model="localValue" :name="name" :id="id" ref="input">
-        <option v-for="month in options" :value="month">{{ month }}</option>
-    </select>
+  <select
+    :id="id"
+    ref="input"
+    v-model="localValue"
+    :name="name"
+  >
+    <option
+      v-for="month in options"
+      :value="month"
+    >
+      {{ month }}
+    </option>
+  </select>
 </template>
 
 <script>
-	export default {
-		data: function () {
-			return {
-				localValue: this.value ? this.value : '01',
-                options: [
-                	'01',
-                    '02',
-                    '03',
-	                '04',
-	                '05',
-	                '06',
-	                '07',
-	                '08',
-	                '09',
-	                '10',
-	                '11',
-	                '12',
-                ]
-			}
-		},
-		props: {
-			value: {},
-			id: {
-				type: String,
-				default: null
-			},
-			name: {
-				type: String,
-				default: null
-			}
-		},
-		mounted: function () {
-			this.$emit('input', this.localValue);
-		},
-		watch: {
-			value: function (newVal) {
-				this.localValue = newVal;
-			},
-			localValue: function () {
-				this.$emit('input', this.localValue);
-			}
-		}
-	};
+export default {
+  props: {
+    value: { type: String, default: '' },
+    id: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    }
+  },
+  data: function () {
+    return {
+      localValue: this.value ? this.value : '01',
+      options: [
+        '01',
+        '02',
+        '03',
+        '04',
+        '05',
+        '06',
+        '07',
+        '08',
+        '09',
+        '10',
+        '11',
+        '12'
+      ]
+    }
+  },
+  watch: {
+    value: function (newVal) {
+      this.localValue = newVal
+    },
+    localValue: function () {
+      this.$emit('input', this.localValue)
+    }
+  },
+  mounted: function () {
+    this.$emit('input', this.localValue)
+  }
+}
 </script>

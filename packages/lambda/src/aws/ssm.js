@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
 /**
  * SSM Constructor
  *
  * @constructor
  */
-function SSM() {
+function SSM () {
 }
 
 /**
@@ -33,14 +33,14 @@ function SSM() {
  * @return {Promise}
  */
 SSM.prototype.getParameter = (region, name, decryption) => {
-	const awsSSM = new AWS.SSM({region: region});
-	decryption = decryption || false;
-	const params = {
-		Name: name,
-		WithDecryption: decryption
-	};
-	return awsSSM.getParameter(params).promise();
-};
+  const awsSSM = new AWS.SSM({ region: region })
+  decryption = decryption || false
+  const params = {
+    Name: name,
+    WithDecryption: decryption
+  }
+  return awsSSM.getParameter(params).promise()
+}
 
 /**
  * Update a parameter in AWS SSM parameter store
@@ -55,22 +55,22 @@ SSM.prototype.getParameter = (region, name, decryption) => {
  */
 
 SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
-	const awsSSM = new AWS.SSM({region: region});
-	if (!type) {
-		type = keyId ? 'SecureString' : 'String';
-	}
-	overwrite = overwrite || true;
-	const params = {
-		Name: name,
-		Type: type,
-		Value: value,
-		Overwrite: overwrite
-	};
-	if (keyId) {
-		params['KeyId'] = keyId;
-	}
-	return awsSSM.putParameter(params).promise();
-};
+  const awsSSM = new AWS.SSM({ region: region })
+  if (!type) {
+    type = keyId ? 'SecureString' : 'String'
+  }
+  overwrite = overwrite || true
+  const params = {
+    Name: name,
+    Type: type,
+    Value: value,
+    Overwrite: overwrite
+  }
+  if (keyId) {
+    params.KeyId = keyId
+  }
+  return awsSSM.putParameter(params).promise()
+}
 
 /**
  * Delete a parameter in AWS SSM parameter store
@@ -80,8 +80,8 @@ SSM.prototype.putParameter = (region, name, value, type, keyId, overwrite) => {
  * @return {Promise}
  */
 SSM.prototype.deleteParameter = (region, name) => {
-	const awsSSM = new AWS.SSM({region: region});
-	return awsSSM.deleteParameter({Name: name}).promise();
-};
+  const awsSSM = new AWS.SSM({ region: region })
+  return awsSSM.deleteParameter({ Name: name }).promise()
+}
 
-module.exports = SSM;
+module.exports = SSM

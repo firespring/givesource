@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
+'use strict'
 
-const SecretsManager = require('../aws/secretsManager');
-const mysql2 = require('mysql2');
-const Sequelize = require('sequelize');
+const SecretsManager = require('../aws/secretsManager')
+const mysql2 = require('mysql2')
+const Sequelize = require('sequelize')
 const cacert = `-----BEGIN CERTIFICATE-----
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
@@ -38,27 +38,25 @@ N+gDS63pYaACbvXy8MWy7Vu33PqUXHeeE6V/Uq2V8viTO96LXFvKWlJbYK8U90vv
 o/ufQJVtMVT8QtPHRh8jrdkPSHCa2XV4cdFyQzR1bldZwgJcJmApzyMZFo6IQ6XU
 5MsI+yMRQ+hDKXJioaldXgjUkK642M4UwtBV8ob2xJNDd2ZhwLnoQdeXeGADbkpy
 rqXRfboQnoZsG4q5WTP468SQvvG5
------END CERTIFICATE-----`;
+-----END CERTIFICATE-----`
 
-
-
-module.exports = function() {
-	const readwriteSecretId = process.env.AWS_STACK_NAME + "/ReadwriteUserSecret";
-	const secretsManager = new SecretsManager();
-	return secretsManager.getSecretValue(process.env.AWS_REGION, readwriteSecretId).then(function (secret) {
-		const readwriteSecret = JSON.parse(secret.SecretString);
-		return new Sequelize({
-			host: readwriteSecret.host,
-			username: readwriteSecret.username,
-			password: readwriteSecret.password,
-			database: readwriteSecret.database,
-			port: readwriteSecret.port,
-			dialect: 'mysql',
-			dialectModule: mysql2,
-			dialectOptions: {
-				ssl: {ca: cacert},
-				connectTimeout: 60000
-			}
-		});
-	});
-};
+module.exports = function () {
+  const readwriteSecretId = process.env.AWS_STACK_NAME + '/ReadwriteUserSecret'
+  const secretsManager = new SecretsManager()
+  return secretsManager.getSecretValue(process.env.AWS_REGION, readwriteSecretId).then(function (secret) {
+    const readwriteSecret = JSON.parse(secret.SecretString)
+    return new Sequelize({
+      host: readwriteSecret.host,
+      username: readwriteSecret.username,
+      password: readwriteSecret.password,
+      database: readwriteSecret.database,
+      port: readwriteSecret.port,
+      dialect: 'mysql',
+      dialectModule: mysql2,
+      dialectOptions: {
+        ssl: { ca: cacert },
+        connectTimeout: 60000
+      }
+    })
+  })
+}

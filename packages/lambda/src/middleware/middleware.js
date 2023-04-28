@@ -19,8 +19,8 @@
  *
  * @constructor
  */
-function Middleware() {
-	this.user = {};
+function Middleware () {
+  this.user = {}
 }
 
 /**
@@ -29,8 +29,8 @@ function Middleware() {
  * @param {{}} user
  */
 Middleware.prototype.prepare = function (user) {
-	this.user = user;
-};
+  this.user = user
+}
 
 /**
  * Handle the middleware
@@ -38,7 +38,7 @@ Middleware.prototype.prepare = function (user) {
  * @return {Promise}
  */
 Middleware.prototype.handle = function () {
-	return Promise.resolve();
-};
+  return Promise.resolve()
+}
 
-module.exports = Middleware;
+module.exports = Middleware
