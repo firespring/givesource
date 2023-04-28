@@ -109,10 +109,10 @@ module.exports = function () {
         host: 'localhost',
         port: 3002,
         server: {
-          baseDir: './../frontend/build/public-pages',
+          baseDir: path.join(__dirname, '../build/public-pages'),
           index: 'index.html',
           middleware: [
-            BrowserSyncSpa(/^[^.]+$/, path.join(__dirname, '/../build/public-pages/index.html'))
+            BrowserSyncSpa(/^[^.]+$/, path.join(__dirname, '../build/public-pages/index.html'))
           ]
         },
         files: ['bundle.js', 'assets/**/*.css', 'settings.json'],
