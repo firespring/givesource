@@ -3,9 +3,6 @@ FROM public.ecr.aws/lambda/nodejs:14
 # Set up lambda/work dir
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-# Upgrade to npm v9
-RUN npm install -g npm@9
-
 # Install git for loading the firespring code standards module from github
 RUN yum install -y git vim \
   && yum clean all \
