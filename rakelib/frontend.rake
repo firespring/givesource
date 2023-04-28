@@ -10,7 +10,7 @@ namespace :frontend do
   namespace :npm do
     npm_commands = %w(build cache clean deploy dev fetch release release:force webpack webpack:watch)
     npm_commands.each do |name|
-      desc "#{name.capitalize} all cloudformation files based off the templates"
+      desc "Run the #{name} npm command inside of the frontend container"
       task name => %w(init_docker up_no_deps) do
         command = f_node_application.node.base_command
         command << 'run' << name
