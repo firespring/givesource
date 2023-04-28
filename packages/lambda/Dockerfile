@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:14
+FROM public.ecr.aws/lambda/nodejs:18
 
 # Set up lambda/work dir
 WORKDIR ${LAMBDA_TASK_ROOT}
@@ -20,7 +20,3 @@ COPY package.json base_package.json
 
 # set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "app.handler" ]
-
-## Override the entrypoint and command since we won't be running this as a lambda
-#ENTRYPOINT ["bash"]
-#CMD ["-c", "while [ true ]; do sleep 60; done;"]

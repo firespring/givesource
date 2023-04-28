@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:14
+FROM public.ecr.aws/lambda/nodejs:18
 
 # Set up lambda/work dir
 WORKDIR ${LAMBDA_TASK_ROOT}
