@@ -30,6 +30,7 @@ const S3 = require('./aws/s3');
  * @return {Promise}
  */
 const versionExists = function (project) {
+	console.log(`Checking to see if ${project} exists in ${release.AWS_RELEASE_BUCKET}`);
 	return new Promise(function (resolve, reject) {
 		const s3 = new S3();
 		const bucketName = config.get('release.AWS_RELEASE_BUCKET');
@@ -52,6 +53,7 @@ const versionExists = function (project) {
  * @return {Promise}
  */
 const release = function (sourcePath, destinationPath, exclude) {
+	console.log(`Releasing ${sourcePath} to ${destinationPath}`);
 	exclude = Array.isArray(exclude) ? exclude : [];
 	destinationPath = destinationPath.endsWith('/') ? destinationPath : destinationPath + '/';
 	sourcePath = sourcePath.endsWith('/') ? sourcePath : sourcePath + '/';

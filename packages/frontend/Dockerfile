@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:16
+FROM public.ecr.aws/lambda/nodejs:14
 
 # Set up lambda/work dir
 WORKDIR ${LAMBDA_TASK_ROOT}
@@ -12,11 +12,14 @@ RUN yum install -y git vim \
   && rm -rf /var/cache/yum
 
 # install dependencies
-COPY package.json package-lock.json .
+COPY packages/frontend/package.json packages/frontend/package-lock.json .
 RUN npm install --include=dev
 
 # copy function code
-COPY . .
+COPY packages/frontend .
+COPY .env .base_env
+COPY config base_config
+COPY package.json base_package.json
 
 # Override the entrypoint and command since we won't be running this as a lambda
 ENTRYPOINT ["bash"]
