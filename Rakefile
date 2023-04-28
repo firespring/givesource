@@ -44,39 +44,41 @@ task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
   Dev::Aws::Credentials.new.export!
 end
 
-desc 'Run all audit commands'
-task audit: %w(cloudformation:npm:audit frontend:npm:audit lambda:npm:audit) do
-  # Run audit subcommands
-end
+namespace :npm do
+  desc 'Run all audit commands'
+  task audit: %w(cloudformation:npm:audit frontend:npm:audit lambda:npm:audit) do
+    # Run audit subcommands
+  end
 
-desc 'Run all clean commands'
-task clean: %w(cloudformation:npm:clean frontend:npm:clean lambda:npm:clean) do
-  # Run clean subcommands
-end
+  desc 'Run all clean commands'
+  task clean: %w(cloudformation:npm:clean frontend:npm:clean lambda:npm:clean) do
+    # Run clean subcommands
+  end
 
-desc 'Run all build commands'
-task build: %w(cloudformation:npm:build frontend:npm:build lambda:npm:build) do
-  # Run build subcommands
-end
+  desc 'Run all build commands'
+  task build: %w(cloudformation:npm:build frontend:npm:build lambda:npm:build) do
+    # Run build subcommands
+  end
 
-desc 'Run all deploy commands'
-task deploy: %w(cloudformation:npm:deploy frontend:npm:deploy lambda:npm:deploy) do
-  # Run deploy subcommands
-end
+  desc 'Run all deploy commands'
+  task deploy: %w(cloudformation:npm:deploy frontend:npm:deploy lambda:npm:deploy) do
+    # Run deploy subcommands
+  end
 
-desc 'Run all install commands'
-task install: %w(cloudformation:npm:install frontend:npm:install lambda:npm:install) do
-  # Run install subcommands
-end
+  desc 'Run all install commands'
+  task install: %w(cloudformation:node:install frontend:node:install lambda:node:install) do
+    # Run install subcommands
+  end
 
-desc 'Run all release commands'
-task release: %w(cloudformation:npm:release frontend:npm:release lambda:npm:release) do
-  # Run release subcommands
-end
+  desc 'Run all release commands'
+  task release: %w(cloudformation:npm:release frontend:npm:release lambda:npm:release) do
+    # Run release subcommands
+  end
 
-namespace :release do
-  desc 'Run all release:force commands'
-  task force: %w(cloudformation:npm:release:force frontend:npm:release:force lambda:npm:release:force) do
-    # Run release:force subcommands
+  namespace :release do
+    desc 'Run all release:force commands'
+    task force: %w(cloudformation:npm:release:force frontend:npm:release:force lambda:npm:release:force) do
+      # Run release:force subcommands
+    end
   end
 end

@@ -45,7 +45,7 @@
     "change-case": "^3.1.0",
     "commander": "^2.20.3",
     "eslint": "^8.18.0",
-    "eslint-config-firespring": "git+ssh://github.com/firespring/code-standards.git#master",
+    "eslint-config-firespring": "git+https://github.com/firespring/code-standards.git#master",
     "eslint-plugin-vue": "^9.1.1",
     "faker": "^4.1.0",
     "fuse.js": "^3.6.1",

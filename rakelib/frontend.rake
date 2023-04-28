@@ -5,7 +5,7 @@ f_node_application = Dev::Template::Docker::Node::Application.new(
   'frontend',
   local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/frontend",
   container_path: '/var/task',
-  exclude: %i[lint test]
+  exclude: %i[test]
 )
 
 namespace :frontend do

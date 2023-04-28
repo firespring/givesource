@@ -59,7 +59,7 @@
 		"dotenv": "^4.0.0",
 		"es6-promise-promise": "^1.0.0",
     "eslint": "^8.18.0",
-    "eslint-config-firespring": "git+ssh://github.com/firespring/code-standards.git#master",
+    "eslint-config-firespring": "git+https://github.com/firespring/code-standards.git#master",
     "eslint-plugin-vue": "^9.1.1",
 		"file-loader": "^6.2.0",
 		"fireSlider.js": "github:mmonkey/fireSlider",
