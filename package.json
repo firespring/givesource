@@ -8,42 +8,9 @@
 		"url": "git+https://github.com/firespring/givesource.git"
 	},
 	"scripts": {
-		"frontend:audit": "cd packages/frontend && npm audit",
-		"frontend:build": "cd packages/frontend && npm run build",
-		"frontend:cache": "cd packages/frontend && npm run cache",
-		"frontend:clean": "cd packages/frontend && npm run clean",
-		"frontend:deploy": "cd packages/frontend && npm run deploy",
-		"frontend:dev": "cd packages/frontend && npm run dev",
-		"frontend:install": "cd packages/frontend && npm install",
-		"frontend:release": "cd packages/frontend && npm run release",
-		"frontend:release:force": "cd packages/frontend && npm run release:force",
 		"frontend:lint": "eslint --cache --ext .js,.vue packages/frontend/",
 		"frontend:lint-fix": "eslint --cache --ext .js,.vue --fix packages/frontend/",
-		"lambda:audit": "cd packages/lambda && npm audit",
-		"lambda:build": "cd packages/lambda && npm run build",
-		"lambda:clean": "cd packages/lambda && npm run clean",
-		"lambda:delete-test-payments": "cd packages/lambda && npm run delete-test-payments",
-		"lambda:delete-payments-by-transaction-ids": "cd packages/lambda && npm run delete-payments-by-transaction-ids",
-		"lambda:deploy": "cd packages/lambda && npm run deploy",
-		"lambda:install": "cd packages/lambda && npm install",
-		"lambda:release": "cd packages/lambda && npm run release",
-		"lambda:seed": "cd packages/lambda && npm run seed",
-		"lambda:setting": "cd packages/lambda && npm run setting",
-		"lambda:release:force": "cd packages/lambda && npm run release:force",
-		"audit": "rake cloudformation:npm:audit && npm run frontend:audit && npm run lambda:audit",
-		"clean": "rake cloudformation:npm:clean && npm run frontend:clean && npm run lambda:clean",
-		"build": "rake cloudformation:npm:build && npm run frontend:build && npm run lambda:build",
-		"deploy": "rake frontend:deploy && npm run lambda:deploy",
-		"install": "npm run frontend:install && npm run lambda:install",
-		"postinstall": "[ -f \".env\" ] || cp .env.example .env",
-		"release": "rake cloudformation:npm:release && npm run frontend:release && npm run lambda:release",
-		"release:force": "rake cloudformation:npm:release:force && npm run frontend:release:force && npm run lambda:release:force"
+		"postinstall": "[ -f \".env\" ] || cp .env.example .env"
 	},
-	"author": "Firespring",
-	"devDependencies": {
-		"eslint": "^8.18.0",
-		"eslint-config-firespring": "git+ssh://github.com/firespring/firespring-code-standards.git#master",
-		"eslint-plugin-cypress": "^2.12.1",
-		"eslint-plugin-vue": "^9.1.1"
-	}
+	"author": "Firespring"
 }
