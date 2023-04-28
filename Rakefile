@@ -46,7 +46,7 @@ end
 
 namespace :npm do
   desc 'Run all audit commands'
-  task audit: %w(cloudformation:npm:audit frontend:npm:audit lambda:npm:audit) do
+  task audit: %w(cloudformation:audit frontend:audit lambda:audit) do
     # Run audit subcommands
   end
 
@@ -61,7 +61,7 @@ namespace :npm do
   end
 
   desc 'Run all deploy commands'
-  task deploy: %w(cloudformation:npm:deploy frontend:npm:deploy lambda:npm:deploy) do
+  task deploy: %w(frontend:npm:deploy lambda:npm:deploy) do
     # Run deploy subcommands
   end
 
