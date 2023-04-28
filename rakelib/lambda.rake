@@ -5,7 +5,7 @@ l_node_application = Dev::Template::Docker::Node::Application.new(
   'lambda',
   local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/lambda",
   container_path: '/var/task',
-  exclude: %w(test)
+  exclude: %w[test]
 )
 
 namespace :lambda do

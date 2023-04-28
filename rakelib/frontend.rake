@@ -20,4 +20,10 @@ namespace :frontend do
       end
     end
   end
+
+  #  desc "Open a browser to the port"
+  #  task gui: %w[init_docker up_no_deps] do
+  #    public_port = Docker::Compose.new.mapped_public_port('frontend', 3000)
+  #    Launchy.open("http://127.0.0.1:#{public_port}")
+  #  end
 end

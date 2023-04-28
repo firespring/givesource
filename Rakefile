@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 $stdout.sync = true
-
 require 'rubygems'
 require 'bundler/setup'
 require 'firespring_dev_commands'
+require 'launchy'
 
 # Configure AWS accounts and create tasks
 Dev::Aws::Account.configure do |c|
@@ -46,39 +46,44 @@ end
 
 namespace :npm do
   desc 'Run all audit commands'
-  task audit: %w(cloudformation:audit frontend:audit lambda:audit) do
+  task audit: %w[cloudformation:audit frontend:audit lambda:audit] do
     # Run audit subcommands
   end
 
   desc 'Run all clean commands'
-  task clean: %w(cloudformation:npm:clean frontend:npm:clean lambda:npm:clean) do
+  task clean: %w[cloudformation:npm:clean frontend:npm:clean lambda:npm:clean] do
     # Run clean subcommands
   end
 
   desc 'Run all build commands'
-  task build: %w(cloudformation:npm:build frontend:npm:build lambda:npm:build) do
+  task build: %w[cloudformation:npm:build frontend:npm:build lambda:npm:build] do
     # Run build subcommands
   end
 
   desc 'Run all deploy commands'
-  task deploy: %w(frontend:npm:deploy lambda:npm:deploy) do
+  task deploy: %w[frontend:npm:deploy lambda:npm:deploy] do
     # Run deploy subcommands
   end
 
   desc 'Run all install commands'
-  task install: %w(cloudformation:node:install frontend:node:install lambda:node:install) do
+  task install: %w[cloudformation:node:install frontend:node:install lambda:node:install] do
     # Run install subcommands
   end
 
   desc 'Run all release commands'
-  task release: %w(cloudformation:npm:release frontend:npm:release lambda:npm:release) do
+  task release: %w[cloudformation:npm:release frontend:npm:release lambda:npm:release] do
     # Run release subcommands
   end
 
   namespace :release do
     desc 'Run all release:force commands'
-    task force: %w(cloudformation:npm:release:force frontend:npm:release:force lambda:npm:release:force) do
+    task force: %w[cloudformation:npm:release:force frontend:npm:release:force lambda:npm:release:force] do
       # Run release:force subcommands
     end
   end
+end
+
+desc 'Open a browser showing the givesource documentation'
+task :docs do
+  Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
