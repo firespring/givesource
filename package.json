@@ -8,8 +8,6 @@
 		"url": "git+https://github.com/firespring/givesource.git"
 	},
 	"scripts": {
-		"frontend:lint": "eslint --cache --ext .js,.vue packages/frontend/",
-		"frontend:lint-fix": "eslint --cache --ext .js,.vue --fix packages/frontend/",
 		"postinstall": "[ -f \".env\" ] || cp .env.example .env"
 	},
 	"author": "Firespring"
