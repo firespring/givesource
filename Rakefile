@@ -32,7 +32,8 @@ Dev::Template::Git.new
 
 Dev::EndOfLife.config do |c|
   c.product_versions = [
-    Dev::EndOfLife::ProductVersion.new('nodejs', '14', 'the version of node running in the lambdas and containers')
+    Dev::EndOfLife::ProductVersion.new('nodejs', '14', 'the version of node running in the lambdas'),
+    Dev::EndOfLife::ProductVersion.new('nodejs', '18', 'the version of node running in the local dev environment')
   ]
 end
 Dev::Template::Eol.new
@@ -87,3 +88,11 @@ desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
+
+Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
+#cf_node_application = Dev::Template::Docker::Node::Application.new(
+#  'cloudformation',
+#  local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/cloudformation",
+#  container_path: '/var/task',
+#  exclude: %i[lint test]
+#)

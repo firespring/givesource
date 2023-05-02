@@ -1,8 +1,8 @@
-#FROM public.ecr.aws/lambda/nodejs:18
+# Use node 18 (bullseye) as our base
 FROM node:18-bullseye-slim
 
 # Set up lambda/work dir
-WORKDIR ${LAMBDA_TASK_ROOT}
+WORKDIR /usr/src/app
 
 # Install git for loading the firespring code standards module from github
 RUN apt-get update \
@@ -10,16 +10,24 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
-## install dependencies
-#COPY packages/cloudformation/package.json packages/cloudformation/package-lock.json .
-#RUN npm install --include=dev
-#
-## copy function code
-#COPY packages/cloudformation .
-#COPY .env .base_env
-#COPY config base_config
-#COPY package.json base_package.json
+# Install base dependencies
+COPY .env.example package.json package-lock.json .
+RUN  npm --include=dev install
 
-# Override the entrypoint and command since we won't be running this as a lambda
-#ENTRYPOINT ["bash"]
+# Install cloudformation dependencies
+COPY packages/cloudformation/package.json packages/cloudformation/package-lock.json packages/cloudformation/
+RUN  npm --prefix packages/cloudformation/ --include=dev install
+
+# Install lambda dependencies
+COPY packages/lambda/package.json packages/lambda/package-lock.json packages/lambda/
+RUN  npm --prefix packages/lambda/ --include=dev install
+
+# Install frontend dependencies
+COPY packages/frontend/package.json packages/frontend/package-lock.json packages/frontend/
+RUN  npm --prefix packages/frontend/ --include=dev install
+
+# Copy function code
+COPY . .
+
+# Just loop endlessly so this container is available to connect to
 CMD ["bash", "-c", "while [ true ]; do sleep 60; done;"]
