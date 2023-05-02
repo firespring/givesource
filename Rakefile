@@ -6,13 +6,15 @@ require 'bundler/setup'
 require 'firespring_dev_commands'
 require 'launchy'
 
+# Load .env file
+Dotenv.load
+
 # Configure AWS accounts and create tasks
 Dev::Aws::Account::configure do |c|
-  c.root = Dev::Aws::Account::Info.new('FDP Root', '020401666882')
-  c.children = [
-    Dev::Aws::Account::Info.new('Givesource Prod', '016226103026'),
-    Dev::Aws::Account::Info.new('Givesource Dev', '948629139753')
-  ]
+  c.root = Dev::Aws::Account::Info.new(ENV['ORG_ACCOUNT_NAME'], ENV['ORG_ACCOUNT_ID'])
+  c.children = []
+  c.children << Dev::Aws::Account::Info.new(ENV['PRD_ACCOUNT_NAME'], ENV['PRD_ACCOUNT_ID']) unless ENV['PRD_ACCOUNT_ID'].to_s.blank?
+  c.children << Dev::Aws::Account::Info.new(ENV['DEV_ACCOUNT_NAME'], ENV['DEV_ACCOUNT_ID']) unless ENV['DEV_ACCOUNT_ID'].to_s.blank?
 end
 Dev::Template::Aws.new
 
@@ -39,6 +41,7 @@ end
 Dev::Template::Eol.new
 
 Dev::Template::Docker::Default.new(exclude: %i[push pull])
+Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
 
 # Add some custom pre/post tasks
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
@@ -88,11 +91,3 @@ desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
-
-Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
-#cf_node_application = Dev::Template::Docker::Node::Application.new(
-#  'cloudformation',
-#  local_path: "#{DEV_COMMANDS_ROOT_DIR}/packages/cloudformation",
-#  container_path: '/var/task',
-#  exclude: %i[lint test]
-#)
