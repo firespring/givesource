@@ -177,6 +177,18 @@ NonprofitsRepository.prototype.getAll = function () {
 }
 
 /**
+ * Get all Nonprofits with users loaded
+ *
+ * @return {Promise}
+ */
+NonprofitsRepository.prototype.getAllWithUsers = async function () {
+  const allModels = await loadModels()
+  return allModels.Nonprofit.findAll({
+    include: allModels.User
+  }).finally(() => allModels.sequelize.close())
+}
+
+/**
  * Return active NPs to warm for SEO and Social Sharing
  *
  * @return {Promise<Array>}

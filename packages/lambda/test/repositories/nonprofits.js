@@ -105,6 +105,22 @@ describe('NonprofitsRepository', function () {
     })
   })
 
+  describe('#getAllWithUsers()', function () {
+    it('should return all Nonprofit models', async function () {
+      const count = 3
+      const data = await TestHelper.generate.modelCollection('nonprofit', count)
+      sinon.stub(Sequelize.Model, 'findAll').resolves(data)
+      const repository = new NonprofitsRepository()
+      return promiseMe.thatYouResolve(repository.getAllWithUsers(), function (models) {
+        for (let i = 0; i < count; i++) {
+          const model = models[i]
+          assert.ok(model instanceof Nonprofit)
+          assert.equal(model.uuid, data[i].uuid)
+        }
+      })
+    })
+  })
+
   describe('#delete()', function () {
     it('should delete the Nonprofit model', function () {
       sinon.stub(Sequelize.Model, 'destroy').resolves()

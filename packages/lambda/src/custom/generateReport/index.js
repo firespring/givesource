@@ -64,6 +64,8 @@ exports.handle = function (event, context, callback) {
           return getPayoutReportData()
         case ReportHelper.TYPE_LAST_4:
           return getLastFourPaymentTransactionReportData(timezone)
+        case ReportHelper.TYPE_NONPROFIT_USERS:
+          return getNonprofitsReports()
 
         default:
           return Promise.resolve()
@@ -71,7 +73,8 @@ exports.handle = function (event, context, callback) {
     }
   }).then(function (response) {
     if (response) {
-      const csv = json2csv({ data: response.data, fields: response.fields })
+      const parser = new json2csv.Parser({ fields: response.fields })
+      const csv = parser.parse(response.data)
       return s3.putObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `${file.path}`, csv, 'private', 'text/csv', `attachment; filename=${file.filename}`).then(function () {
         return filesRepository.upsert(file, {})
       }).then(function (file) {
@@ -197,6 +200,26 @@ const getPayoutReportData = function () {
   })
 
   return promise
+}
+
+const getNonprofitsReports = async function () {
+  const nonprofitsRepository = new NonprofitsRepository()
+  const nonprofits = await nonprofitsRepository.getAllWithUsers()
+  const nonprofitUsers = nonprofits.flatMap(
+    nonprofit => nonprofit.Users.map(user => ({
+      legalName: nonprofit.legalName || '',
+      taxId: nonprofit.taxId || '',
+      status: nonprofit.status || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || ''
+    }))
+  )
+
+  return {
+    data: nonprofitUsers,
+    fields: ['legalName', 'taxId', 'status', 'firstName', 'lastName', 'email'].map(k => ({ label: k, value: k }))
+  }
 }
 
 const getLastFourPaymentTransactionReportData = function (timezone) {

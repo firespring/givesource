@@ -84,6 +84,10 @@
             href="#"
             @click.prevent="exportReport('LAST_4_REPORT')"
           >Export Last 4 CC Report</a>
+          <a
+            href="#"
+            @click.prevent="exportReport('NONPROFIT_USERS')"
+          >Export Nonprofits Report</a>
         </div>
       </div>
     </div>
@@ -95,12 +99,7 @@ export default {
 
   data () {
     return {
-      displayingMenu: false,
-      report: {},
-      file: {},
-      downloaded: false,
-
-      countdown: null
+      displayingMenu: false
     }
   },
 
@@ -143,61 +142,34 @@ export default {
         type: exportType,
         name: exportType.toLowerCase()
       }).then(response => {
-        vm.report = response.data
-        vm.pollReport()
+        vm.pollReport(response.data)
       }).catch(err => {
         vm.clearModals()
         vm.$emit('has-error', err)
       })
     },
 
-    pollReport () {
+    async pollReport (report) {
       const vm = this
-
-      if (vm.downloaded) {
+      if (report.status === 'SUCCESS') {
         vm.clearModals()
-        vm.downloadFile()
+        vm.downloadFile(report)
+      } else if (report.status === 'FAILED') {
+        vm.clearModals()
+        console.log('Report failed to generate')
       } else {
-        vm.countdown = setInterval(() => {
-          vm.$store.commit('generateCacheKey')
-          vm.$request.get('reports/' + vm.report.id).then(response => {
-            vm.report = response.data
-            if (vm.report.status === 'SUCCESS') {
-              vm.clearModals()
-              clearTimeout(vm.countdown)
-
-              if (!vm.downloaded) {
-                vm.downloadFile()
-              }
-            } else if (vm.report.status === 'FAILED') {
-              vm.clearModals()
-              clearTimeout(vm.countdown)
-              console.log('Report failed to generate')
-            }
-          }).catch(err => {
-            vm.clearModals()
-            vm.$emit('has-error', err)
-          })
-        }, 1000)
+        vm.$store.commit('generateCacheKey')
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        const response = await vm.$request.get('reports/' + report.id)
+        return vm.pollReport(response.data)
       }
     },
 
-    downloadFile () {
+    downloadFile (report) {
       const vm = this
-      let downloadPath
-      let promise = Promise.resolve()
-      if (!vm.downloaded) {
-        promise = promise.then(() => {
-          return vm.$request.get('files/download/' + vm.report.fileId)
-        }).then(response => {
-          downloadPath = response.data.download_url
-          vm.file = response.data.file
-          vm.downloaded = true
-        })
-      }
-      promise.then(() => {
-        if (downloadPath) {
-          window.location.href = downloadPath
+      vm.$request.get('files/download/' + report.fileId).then(response => {
+        if (response.data.download_url) {
+          window.location.href = response.data.download_url
         }
       })
     },
