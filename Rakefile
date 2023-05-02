@@ -41,53 +41,36 @@ end
 Dev::Template::Eol.new
 
 Dev::Template::Docker::Default.new(exclude: %i[push pull])
-Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
 
 # Add some custom pre/post tasks
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
   Dev::Aws::Credentials.new.export!
 end
 
-namespace :npm do
-  desc 'Run all audit commands'
-  task audit: %w[cloudformation:audit frontend:audit lambda:audit] do
-    # Run audit subcommands
-  end
-
-  desc 'Run all clean commands'
-  task clean: %w[cloudformation:npm:clean frontend:npm:clean lambda:npm:clean] do
-    # Run clean subcommands
-  end
-
-  desc 'Run all build commands'
-  task build: %w[cloudformation:npm:build frontend:npm:build lambda:npm:build] do
-    # Run build subcommands
-  end
-
-  desc 'Run all deploy commands'
-  task deploy: %w[frontend:npm:deploy lambda:npm:deploy] do
-    # Run deploy subcommands
-  end
-
-  desc 'Run all install commands'
-  task install: %w[cloudformation:node:install frontend:node:install lambda:node:install] do
-    # Run install subcommands
-  end
-
-  desc 'Run all release commands'
-  task release: %w[cloudformation:npm:release frontend:npm:release lambda:npm:release] do
-    # Run release subcommands
-  end
-
-  namespace :release do
-    desc 'Run all release:force commands'
-    task force: %w[cloudformation:npm:release:force frontend:npm:release:force lambda:npm:release:force] do
-      # Run release:force subcommands
-    end
-  end
-end
-
 desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
+end
+
+Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
+namespace :app do
+  desc 'Start up a dev server for our frontend assets'
+  task dev: %i[init_docker up_no_deps] do
+    command = Dev::Node.new(container_path: '/usr/src/app/packages/frontend').base_command
+    command << 'run' << 'dev'
+    Dev::Docker::Compose.new(services: 'app').exec(*command)
+  end
+
+  namespace :dev do
+    desc 'Open browser windows to ports 3000-3003 (local dev)'
+    task gui: %w[init_docker up_no_deps] do
+      Launchy.open("http://localhost:3000")
+      sleep 0.5
+      Launchy.open("http://localhost:3001")
+      sleep 0.5
+      Launchy.open("http://localhost:3002")
+      sleep 0.5
+      Launchy.open("http://localhost:3003")
+    end
+  end
 end
