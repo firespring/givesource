@@ -25,16 +25,6 @@
           <strong v-else>{{ nonprofit.legalName }}</strong>
           <div class="c-notes">
             Tax ID: {{ nonprofit.taxId }}
-            <a
-              v-if="statusUrl501c3"
-              title="Check 501c3 Status"
-              target="_blank"
-              rel="noopener noreferrer"
-              :href="statusUrl501c3"
-            ><i
-              class="fa fa-fw fa-link"
-              aria-hidden="true"
-            /></a>
           </div>
         </div>
 
