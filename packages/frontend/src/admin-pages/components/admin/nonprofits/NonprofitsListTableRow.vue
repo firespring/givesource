@@ -25,6 +25,16 @@
           <strong v-else>{{ nonprofit.legalName }}</strong>
           <div class="c-notes">
             Tax ID: {{ nonprofit.taxId }}
+            <a
+              v-if="statusUrl501c3"
+              title="Check 501c3 Status"
+              target="_blank"
+              rel="noopener noreferrer"
+              :href="statusUrl501c3"
+            ><i
+              class="fa fa-fw fa-link"
+              aria-hidden="true"
+            /></a>
           </div>
         </div>
 
@@ -150,6 +160,17 @@
               class="fa fa-fw fa-ban"
               aria-hidden="true"
             />Revoke Nonprofit</a>
+
+            <hr v-if="statusUrl501c3">
+            <a
+              v-if="statusUrl501c3"
+              target="_blank"
+              rel="noopener noreferrer"
+              :href="statusUrl501c3"
+            ><i
+              class="fa fa-fw fa-check"
+              aria-hidden="true"
+            />Check 501c3 Status</a>
           </div>
         </div>
       </div>
@@ -234,6 +255,11 @@ export default {
           return 'Revoked'
       }
       return false
+    },
+
+    statusUrl501c3: function () {
+      const vm = this
+      return 'https://501c3lookup.org/search/?qs=search&qsEIN=' + vm.nonprofit.taxId
     }
   },
   methods: {
