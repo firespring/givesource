@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_SESSION_TOKEN:
+      HISTFILE: /root/.history/bash
+    ports:
+      - 3000:3000
+      - 3001:3001
+      - 3002:3002
+      - 3003:3003
+    volumes:
+      - ${HOME}/dotfiles/.history:/root/.history:delegated
+      - .:/usr/src/app:delegated
+      - base-node_modules:/usr/src/app/node_modules
+      - cloudformation-node_modules:/usr/src/app/packages/cloudformation/node_modules
+      - frontend-node_modules:/usr/src/app/packages/frontend/node_modules
+      - lambda-node_modules:/usr/src/app/packages/lambda/node_modules
+volumes:
+  base-node_modules:
+  cloudformation-node_modules:
+  frontend-node_modules:
+  lambda-node_modules:
