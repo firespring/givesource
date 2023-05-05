@@ -330,7 +330,7 @@
             class="form-actions flex justify-center items-center"
           >
             <VueRecaptcha
-              v-if="getSiteKey"
+              v-if="getSiteKey && !captchaVerified"
               :load-recaptcha-script="true"
               :sitekey="getSiteKey"
               @verify="validateRecaptcha"
@@ -419,6 +419,7 @@ export default {
   },
   data () {
     return {
+      captchaVerified: false,
       processing: false,
       donationError: false,
 
@@ -649,6 +650,7 @@ export default {
       return axios.post(API_URL + 'recaptcha/validate', {
         recaptchaToken: response
       }).then(response => {
+        vm.captchaVerified = true
         vm.submit()
       }).catch(err => {
         vm.apiError = err.errorMessage ? err.errorMessage : 'Oops, something went wrong on our side.'
