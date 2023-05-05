@@ -77,8 +77,11 @@ export default {
       this.localValue = val
     },
     localValue: function () {
-      this.$emit('input', this.localValue)
-      this.$refs.input.dispatchEvent(new Event('input'))
+      const vm = this
+      this.$emit('input', vm.localValue)
+      if (vm.$refs.input) {
+        vm.$refs.input.dispatchEvent(new Event('input'))
+      }
     }
   },
   mounted: function () {
@@ -87,6 +90,9 @@ export default {
   methods: {
     format: function () {
       const vue = this
+      if (!vue.$refs.input) {
+        return
+      }
 
       let value = vue.$refs.input.value
       value = value.replace(/\D/g, '')
