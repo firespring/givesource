@@ -226,6 +226,27 @@ Resources:
           Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
 
   # AWS CloudFront Resources
+  longLivedCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomLongLivedCachingHeaderPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: max-age=31536000
+              Override: false
+
+  shortLivedCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomShortLivedCachingHeaderPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: no-cache
+              Override: true
 
   AdminPagesDistribution:
     Type: AWS::CloudFront::Distribution
@@ -247,6 +268,9 @@ Resources:
             Cookies:
               Forward: none
           TargetOriginId: !Ref AdminPagesS3
+          MaxTTL: 86400
+          MinTTL: 0
+          Compress: true
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_200
         ViewerCertificate:
@@ -287,7 +311,20 @@ Resources:
             Headers:
               - User-Agent
           TargetOriginId: !Ref PublicPagesS3
+          MaxTTL: 86400
+          MinTTL: 0
+          Compress: true
           ViewerProtocolPolicy: redirect-to-https
+          ResponseHeadersPolicyId: !Ref shortLivedCachingHeaderPolicy
+        CacheBehaviors:
+          - PathPattern: assets/*
+            DefaultTTL: 31536000 # 365 days
+            Compress: true
+            ViewerProtocolPolicy: redirect-to-https
+            TargetOriginId: !Ref PublicPagesS3
+            ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
+            ForwardedValues:
+              QueryString: false
         PriceClass: PriceClass_200
         ViewerCertificate:
           AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
@@ -318,12 +355,16 @@ Resources:
         Comment: Distribution for Givesource(R) uploads S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
-          DefaultTTL: 0
           ForwardedValues:
             QueryString: false
             Cookies:
               Forward: none
           TargetOriginId: !Ref UploadsS3
+          DefaultTTL: 86400
+          MaxTTL: 86400
+          MinTTL: 0
+          Compress: true
+          ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:
@@ -364,6 +405,9 @@ Resources:
             Cookies:
               Forward: none
           TargetOriginId: !Ref GivesourceCache
+          MaxTTL: 86400
+          MinTTL: 0
+          Compress: true
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:

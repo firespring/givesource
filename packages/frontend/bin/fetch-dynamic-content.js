@@ -26,10 +26,15 @@ const S3 = require('./aws/s3')
 
 exports.fetch = () => {
   const s3 = new S3()
-  const configDir = path.resolve(__dirname, './../build/public-pages/assets/css')
+  const configDir = path.resolve(__dirname, '../src/public-pages/assets/css')
   s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'assets/css/custom.css').then(response => {
-    fs.writeFileSync(configDir + '/custom.css', response.Body)
-    console.log('custom.css downloaded from S3')
+    if (fs.readFileSync(configDir + '/custom.css').toString() === response.Body.toString()) {
+      console.log('no changes to custom.css found in s3')
+    } else {
+      fs.writeFileSync(configDir + '/custom.css', response.Body)
+      console.log('new custom.css downloaded from S3')
+    }
+
   }).catch(function (err) { // eslint-disable-line handle-callback-err
     console.log('No custom css found. Using empty file', {
       region: config.get('stack.AWS_REGION'),

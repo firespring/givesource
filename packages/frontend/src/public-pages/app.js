@@ -29,6 +29,11 @@ import VueGtag from 'vue-gtag'
 import Vue from 'vue'
 import VueFilters from './filters'
 
+import './assets/css/site.css'
+import './assets/css/donation.css'
+import './assets/css/default.css'
+import './assets/css/custom.css'
+
 // Register filters
 Vue.use(VueFilters)
 

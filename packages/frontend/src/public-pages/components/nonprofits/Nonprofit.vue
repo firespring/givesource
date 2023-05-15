@@ -148,7 +148,7 @@
               >
                 <img
                   alt=""
-                  src="/assets/img/community.jpg"
+                  :src="communityJpgUrl"
                 >
               </div>
             </div>
@@ -309,9 +309,13 @@ export default {
       } else if (vm.$store.getters.setting('EVENT_LOGO')) {
         logo = vm.$store.getters.setting('EVENT_LOGO')
       } else {
-        logo = '/assets/img/logo-event.png'
+        logo = require('/src/public-pages/assets/img/logo-event.png')
+        // logo = '/assets/img/logo-event.png'
       }
       return logo
+    },
+    communityJpgUrl () {
+      return require('/src/public-pages/assets/img/community.jpg')
     },
     pageUrl () {
       return this.settings.EVENT_URL + '/nonprofits/' + this.nonprofit.slug
