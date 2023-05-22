@@ -260,7 +260,7 @@ Resources:
           DATABASE_NAME: !Ref DatabaseName
       FunctionName: !Sub ${StackName}-BootstrapDatabase
       Handler: index.handle
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt BootstrapDatabaseLambdaRole.Arn
       Runtime: nodejs14.x
       Timeout: 60
@@ -330,7 +330,7 @@ Resources:
           MIGRATIONS_LOCATION: migrations/{{version}}
       FunctionName: !Sub ${StackName}-MigrateDatabase
       Handler: index.handle
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt MigrateDatabaseLambdaRole.Arn
       Runtime: nodejs14.x
       Timeout: 180

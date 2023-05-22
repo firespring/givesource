@@ -66,7 +66,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSetting
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -101,7 +101,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSettings
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -136,7 +136,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostSetting
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -171,7 +171,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSetting
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -206,7 +206,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSettings
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -241,7 +241,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSetting
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -276,7 +276,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteSettings
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -313,7 +313,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetEmail
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -343,7 +343,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSenderEmailAddress
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -376,7 +376,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchSenderEmailAddress
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -405,7 +405,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-VerifyEmail
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -434,7 +434,7 @@ Resources:
          AWS_STACK_NAME: !Ref StackName
      FunctionName: !Sub ${StackName}-GetSecureSetting
      Handler: "index.handle"
-     MemorySize: 256
+     MemorySize: 512
      Role: !Ref SecureSettingsLambdaFunctionRoleArn
      Runtime: "nodejs14.x"
      Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -467,7 +467,7 @@ Resources:
           KMS_KEY: !Ref SecureSettingsKeyAlias
       FunctionName: !Sub ${StackName}-PatchSecureSetting
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref SecureSettingsLambdaFunctionRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

@@ -48,7 +48,7 @@ Resources:
           AWS_STACK_NAME: !Ref StackName
       FunctionName: !Sub ${StackName}-ValidateRecaptcha
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref SecureSettingsLambdaFunctionRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
