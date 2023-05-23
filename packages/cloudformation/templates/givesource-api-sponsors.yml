@@ -51,7 +51,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsorTier
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -86,7 +86,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetSponsorTiers
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

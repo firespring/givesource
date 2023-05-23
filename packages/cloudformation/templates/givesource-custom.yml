@@ -89,7 +89,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AuthorizeUsers
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -131,7 +131,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-ApiDistributionInvalidation
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -151,7 +151,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-ApiGatewayFlushCache
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -204,7 +204,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPool
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -230,7 +230,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserPoolClient
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -255,7 +255,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUser
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -280,7 +280,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCreateUserGroup
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -308,7 +308,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CognitoCustomMessage
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -410,7 +410,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateCustomFrontendCss
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -432,7 +432,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateDynamicContent
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -539,7 +539,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CreateLambdaEdgeFunction
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -559,7 +559,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-AssociateLambdaEdgeFunctions
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -581,7 +581,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-CreateParameter
       Handler: "index.handle"
-      MemorySize: 128
+      MemorySize: 256
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -629,7 +629,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteReports
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -667,7 +667,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SaveSettings
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -752,7 +752,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-S3PutObject
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -771,7 +771,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-S3SyncObjects
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1104,7 +1104,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GenerateDonationsReceipt
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1154,7 +1154,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendDonationsReceiptEmail
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1179,7 +1179,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendContactMessageEmail
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1204,7 +1204,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-SendRegistrationPendingEmail
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1231,7 +1231,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-MetricAddAmount
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -1256,7 +1256,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-MetricMaxAmount
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

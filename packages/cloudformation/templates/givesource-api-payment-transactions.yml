@@ -51,7 +51,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -86,7 +86,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetPaymentTransactions
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -121,7 +121,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -156,7 +156,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchPaymentTransaction
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -191,7 +191,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeletePaymentTransaction
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
