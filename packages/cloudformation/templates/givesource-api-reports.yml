@@ -54,7 +54,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetReport
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -89,7 +89,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostReport
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

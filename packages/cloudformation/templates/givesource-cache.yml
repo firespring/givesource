@@ -37,7 +37,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PutSocialSharing
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -63,7 +63,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PutNonprofitSocialSharing
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -89,7 +89,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-WarmSocialSharing
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: 900 # In case there are a lot of Nonprofits to warm
@@ -125,7 +125,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PutSEO
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -151,7 +151,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PutNonprofitSEO
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: 300
@@ -177,7 +177,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-WarmSEO
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: 900 # In case there are a lot of Nonprofits to warm

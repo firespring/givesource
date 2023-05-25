@@ -46,7 +46,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteReports
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout

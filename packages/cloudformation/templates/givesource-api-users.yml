@@ -54,7 +54,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetUserProfile
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -92,7 +92,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-GetUsers
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -128,7 +128,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PostUser
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: 30
@@ -163,7 +163,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-PatchUser
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -199,7 +199,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-DeleteUser
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: !Ref DefaultLambdaFunctionTimeout
@@ -237,7 +237,7 @@ Resources:
       FunctionName: !Sub |-
         ${StackName}-ResendUserEmailVerification
       Handler: "index.handle"
-      MemorySize: 256
+      MemorySize: 512
       Role: !Ref LambdaRoleArn
       Runtime: "nodejs14.x"
       Timeout: 30
