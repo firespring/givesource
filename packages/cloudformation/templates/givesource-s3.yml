@@ -360,10 +360,11 @@ Resources:
             Cookies:
               Forward: none
           TargetOriginId: !Ref UploadsS3
-          DefaultTTL: 86400
+          DefaultTTL: 600
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
+          # todo shorter
           ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200

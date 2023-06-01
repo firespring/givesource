@@ -146,7 +146,7 @@ export default {
     },
     logoUrl () {
       const eventLogo = this.$store.getters.setting('EVENT_LOGO')
-      return eventLogo || require('/src/public-pages/assets/img/logo-event.png') //'/assets/img/logo-event.png'
+      return eventLogo || require('/src/public-pages/assets/img/logo-event.png')
     },
     enabledPages: function () {
       return (this.pages || []).filter(page => page.enabled)

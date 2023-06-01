@@ -310,7 +310,6 @@ export default {
         logo = vm.$store.getters.setting('EVENT_LOGO')
       } else {
         logo = require('/src/public-pages/assets/img/logo-event.png')
-        // logo = '/assets/img/logo-event.png'
       }
       return logo
     },

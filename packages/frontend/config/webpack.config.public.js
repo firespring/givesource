@@ -27,8 +27,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 
-const MomentTimezoneDataPlugin = require('moment-timezone-data-webpack-plugin');
-
 function RunOnBuild (callback) {
   this.callback = callback
 }
@@ -53,8 +51,6 @@ module.exports = function () {
             }
           }
         },
-
-
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader']
@@ -63,15 +59,6 @@ module.exports = function () {
           test: /\.(jpe?g|png|svg|gif)$/,
           type: 'asset',
         },
-        // {
-        //   test: /\.(jpe?g|png|gif|svg)$/i,
-        //   use: [{
-        //     loader: 'file-loader',
-        //     options: {
-        //       name: 'assets/img/[name].[contenthash].[ext]'
-        //     }
-        //   }]
-        // },
         {
           test: /\.js$/,
           exclude: /node_modules/,
@@ -97,22 +84,6 @@ module.exports = function () {
     },
     devtool: 'hidden-source-map',
     plugins: [
-      // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      // new webpack.IgnorePlugin(/^\.\/lang$/, /moment$/),
-      // new webpack.IgnorePlugin({
-      //   resourceRegExp: /^\.\/locale$/,
-      //   contextRegExp: /moment$/,
-      // }),
-      // new webpack.IgnorePlugin({
-      //   resourceRegExp: /^\.\/lang$/,
-      //   contextRegExp: /moment$/,
-      // }),
-      // new MomentTimezoneDataPlugin({
-      //   matchCountries: ['US'],
-      //   startYear: 2000,
-      //   endYear: 2030,
-      // }),
-      // new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
@@ -122,9 +93,7 @@ module.exports = function () {
       new CopyWebpackPlugin({
         patterns: [
           { from: './config/settings.json', to: 'settings.json' },
-          { from: './config/robots-allow.txt', to: 'robots.txt' },
-          // { from: './src/public-pages/assets/css', to: 'assets/css' },
-          // { from: './src/public-pages/assets/img', to: 'assets/img' }
+          { from: './config/robots-allow.txt', to: 'robots.txt' }
         ]
       }),
       new VueLoaderPlugin(),
