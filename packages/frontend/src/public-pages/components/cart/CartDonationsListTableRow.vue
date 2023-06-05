@@ -147,7 +147,7 @@ export default {
     deleteCartItem () {
       const vm = this
 
-      vm.$store.commit('removeCartItem', vm.timestamp)
+      // vm.$store.commit('removeCartItem', vm.timestamp)
       vm.$emit('remove-cart-item', vm.index)
     }
   }

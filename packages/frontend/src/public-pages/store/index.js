@@ -28,6 +28,13 @@ const store = new Vuex.Store({
     pages: []
   },
   mutations: {
+    updateCartItemNonprofit: function (state, payload) {
+      state.cartItems.forEach(function (item) {
+        if (item.nonprofit.id === payload.nonprofit.id) {
+          item.nonprofit = payload.nonprofit
+        }
+      })
+    },
     addCartItem: function (state, payload) {
       if (payload.amount && payload.nonprofit !== null) {
         let amount = payload.amount
@@ -40,6 +47,7 @@ const store = new Vuex.Store({
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
+            item.nonprofit = payload.nonprofit
             isNew = false
           }
         })

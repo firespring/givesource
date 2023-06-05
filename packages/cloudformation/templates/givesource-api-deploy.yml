@@ -42,31 +42,31 @@ Resources:
       MethodSettings:
         - ResourcePath: "/*"
           HttpMethod: "*"
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 0
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 0
+          CachingEnabled: false
           ThrottlingBurstLimit: 5000
           ThrottlingRateLimit: 10000
         - ResourcePath: "/agreements"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/contents"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 300
+          CachingEnabled: false
         - ResourcePath: "/donations"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/files"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 300
+          CachingEnabled: false
         - ResourcePath: "/files/download/{file_id}"
           HttpMethod: GET
           LoggingLevel: INFO
@@ -74,42 +74,42 @@ Resources:
           CachingEnabled: false
         - ResourcePath: "/metrics"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/nonprofits"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/nonprofits/pages/{slug}"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/nonprofits/search"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/nonprofits/{nonprofit_id}"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 60
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 60
+          CachingEnabled: false
         - ResourcePath: "/settings"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 300
+          CachingEnabled: false
         - ResourcePath: "/sponsor-tiers"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 300
+          CachingEnabled: false
         - ResourcePath: "/sponsor-tiers/{sponsor_tier_id}/sponsors"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+#          CacheDataEncrypted: true
+#          CacheTtlInSeconds: 300
+          CachingEnabled: false
     DependsOn: ApiGatewayAccount

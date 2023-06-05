@@ -3,7 +3,7 @@
   "description": "AWS Lambda functions for Givesource®",
   "scripts": {
     "build": "npm run clean && npm run webpack",
-    "clean": "rimraf build",
+    "clean": "rimraf build/*",
     "delete-test-payments": "node bin/delete-test-payments",
     "delete-payments-by-transaction-ids": "node bin/delete-payments-by-transaction-ids",
     "deploy": "npm run build && node bin/deploy",

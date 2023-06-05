@@ -3,7 +3,7 @@
   "description": "AWS CloudFormation setup for Givesource®",
   "scripts": {
     "build": "npm run clean && node bin/build.js",
-    "clean": "rimraf build",
+    "clean": "rimraf build/*",
     "create": "node bin/create.js",
     "delete": "node bin/delete.js",
     "release": "npm run build && node bin/release.js",

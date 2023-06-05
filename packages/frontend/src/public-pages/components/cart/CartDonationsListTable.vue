@@ -71,35 +71,43 @@ export default {
   components: {
     'cart-donations-list-table-row': ComponentCartDonationsListTableRow
   },
-  data () {
-    return {
-      cartItems: []
+  computed: {
+    cartItems() {
+      const vm = this
+
+      return [...vm.$store.state.cartItems].sort((a, b) => {
+        return a.timestamp - b.timestamp
+      })
     }
   },
-  created () {
-    const vm = this
-
-    vm.cartItems = vm.$store.state.cartItems
-    vm.cartItems.sort((a, b) => {
-      return a.timestamp - b.timestamp
-    })
-  },
+  // created () {
+  //   const vm = this
+  //
+  //   vm.cartItems = vm.$store.state.cartItems
+  //   vm.cartItems.sort((a, b) => {
+  //     return a.timestamp - b.timestamp
+  //   })
+  // },
   methods: {
     removeCartItem (index) {
-      this.cartItems.splice(index, 1)
+      const vm = this
+      const item = vm.cartItems[index]
+      console.log({index, item, vm})
+      vm.$store.commit('removeCartItem', item.timestamp)
+      // this.cartItems.splice(index, 1)
     },
     updateCartItem (index, amount, note) {
       const vm = this
 
       const item = vm.cartItems[index]
-      item.amount = amount
-      item.note = note
-
-      vm.$set(vm.cartItems, index, item)
+      // item.amount = amount
+      // item.note = note
+      //
+      // vm.$set(vm.cartItems, index, item)
       vm.$store.commit('updateCartItem', {
         timestamp: item.timestamp,
-        amount: item.amount,
-        note: item.note
+        amount: amount,
+        note: note
       })
     },
     hasError (hasError) {

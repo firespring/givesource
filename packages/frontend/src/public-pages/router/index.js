@@ -407,6 +407,8 @@ const updateSettings = () => {
   })
 }
 
+let initialSettingsLoaded = false
+
 /**
  * Load settings, fetch updated settings every minute.
  *
@@ -420,8 +422,24 @@ const loadSettings = (to, from, next) => {
   date.setMinutes(date.getMinutes() - 1)
 
   let promise = Promise.resolve()
-  if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
+  if (!initialSettingsLoaded || lastUpdated === 0 || lastUpdated <= date.getTime()) {
+    const initialApiUrl = store.getters.setting('API_URL')
+    console.log({initialApiUrl})
     promise = updateSettings()
+    if (!initialSettingsLoaded) {
+      promise.then(() => {
+        const currentApiUrl = store.getters.setting('API_URL')
+        if (initialApiUrl !== currentApiUrl) {
+          if (! initialApiUrl) {
+            // clearCartItems or just refresh nonprofits at cart page?
+            // store.commit('clearCartItems')
+          } else {
+            store.commit('clearCartItems')
+          }
+        }
+      })
+      initialSettingsLoaded = true
+    }
   } else {
     window.API_URL = store.getters.setting('API_URL')
   }

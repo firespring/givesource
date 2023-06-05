@@ -3,7 +3,7 @@
   "description": "",
   "scripts": {
     "cache": "node bin/clear-cache",
-    "clean": "rimraf build",
+    "clean": "rimraf build/*",
     "build": "npm run clean && npm run webpack",
     "deploy": "npm run build && node bin/deploy.js",
     "dev": "npm run clean && npm run webpack:watch",
