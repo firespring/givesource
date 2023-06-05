@@ -309,12 +309,12 @@ export default {
       } else if (vm.$store.getters.setting('EVENT_LOGO')) {
         logo = vm.$store.getters.setting('EVENT_LOGO')
       } else {
-        logo = require('/src/public-pages/assets/img/logo-event.png')
+        logo = require('../../assets/img/logo-event.png')
       }
       return logo
     },
     communityJpgUrl () {
-      return require('/src/public-pages/assets/img/community.jpg')
+      return require('../../assets/img/community.jpg')
     },
     pageUrl () {
       return this.settings.EVENT_URL + '/nonprofits/' + this.nonprofit.slug

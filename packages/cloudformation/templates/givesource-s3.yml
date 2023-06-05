@@ -364,7 +364,7 @@ Resources:
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
-          # todo shorter?
+          # todo shorter ?
           ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200

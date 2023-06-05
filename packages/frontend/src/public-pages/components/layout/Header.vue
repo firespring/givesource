@@ -23,7 +23,9 @@
       ><img
         :alt="logoTitle"
         :src="logoUrl"
-        width="100" height="60" style="width: auto; height: auto; aspect-ratio: auto 100 / 60"
+        width="100"
+        height="60"
+        style="width: auto; height: auto; aspect-ratio: auto 100 / 60"
       ></a>
     </div>
 
@@ -146,7 +148,7 @@ export default {
     },
     logoUrl () {
       const eventLogo = this.$store.getters.setting('EVENT_LOGO')
-      return eventLogo || require('/src/public-pages/assets/img/logo-event.png')
+      return eventLogo || require('../../assets/img/logo-event.png')
     },
     enabledPages: function () {
       return (this.pages || []).filter(page => page.enabled)

@@ -55,9 +55,9 @@ module.exports = function () {
           test: /\.css$/,
           use: [
             {
-              loader: "style-loader",
+              loader: 'style-loader',
               options: {
-                insert: function insertIntoTarget(element, options) {
+                insert: function insertIntoTarget (element, options) {
                   // style tags need to come before custom.css so that custom.css styles overrides
                   // custom.css is managed outside of webpack so can't be compiled into the rest of the css
                   document.head.insertBefore(element, document.getElementById('custom_css'))
@@ -69,7 +69,7 @@ module.exports = function () {
         },
         {
           test: /\.(jpe?g|png|svg|gif)$/,
-          type: 'asset',
+          type: 'asset'
         },
         {
           test: /\.js$/,

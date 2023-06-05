@@ -395,7 +395,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      // refresh items
+      //  refresh items
       vm.$store.getters.cartItems.map(async (item) => {
         const response = await axios.get(API_URL + 'nonprofits/' + item.nonprofit.id)
         if (response?.data?.status === 'ACTIVE') {

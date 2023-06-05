@@ -424,14 +424,13 @@ const loadSettings = (to, from, next) => {
   let promise = Promise.resolve()
   if (!initialSettingsLoaded || lastUpdated === 0 || lastUpdated <= date.getTime()) {
     const initialApiUrl = store.getters.setting('API_URL')
-    console.log({initialApiUrl})
     promise = updateSettings()
     if (!initialSettingsLoaded) {
       promise.then(() => {
         const currentApiUrl = store.getters.setting('API_URL')
         if (initialApiUrl !== currentApiUrl) {
-          if (! initialApiUrl) {
-            // clearCartItems or just refresh nonprofits at cart page?
+          if (!initialApiUrl) {
+            // clearCartItems or just refresh nonprofits at cart page ?
             // store.commit('clearCartItems')
           } else {
             store.commit('clearCartItems')
