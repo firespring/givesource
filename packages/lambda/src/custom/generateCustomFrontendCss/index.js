@@ -74,7 +74,6 @@ exports.handle = function (event, context, callback) {
     const s3 = new S3()
     const region = process.env.AWS_REGION
     const bucket = process.env.PUBLIC_PAGES_S3_BUCKET
-// todo
-    return s3.putObject(region, bucket, 'assets/css/custom.css', body)
+    return s3.putObject(region, bucket, 'custom.css', body)
   }
 }

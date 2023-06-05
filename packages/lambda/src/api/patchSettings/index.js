@@ -49,7 +49,7 @@ exports.handle = function (event, context, callback) {
         }
         return repository.upsert(model, data)
       }).then(function (savedModel) {
-        settings.push(savedModel)
+        settings.push(savedModel[0])
       }).catch(function (err) {
         (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
       })
