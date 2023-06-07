@@ -395,8 +395,8 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      //  refresh items
-      vm.$store.getters.cartItems.map(async (item) => {
+      // refresh items
+      vm.$store.getters.cartItems.forEach(async (item) => {
         const response = await axios.get(API_URL + 'nonprofits/' + item.nonprofit.id)
         if (response?.data?.status === 'ACTIVE') {
           // refresh nonprofit data in store
@@ -405,7 +405,6 @@ export default {
           })
         } else {
           // nonprofit missing or inactive, remove cart item
-          console.log('remove', item)
           vm.$store.commit('removeCartItem', item.timestamp)
         }
       })

@@ -237,6 +237,17 @@ Resources:
               Value: max-age=31536000
               Override: false
 
+  mediumCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomMediumLivedCachingHeaderPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: max-age=600
+              Override: false
+
   shortLivedCachingHeaderPolicy:
     Type: AWS::CloudFront::ResponseHeadersPolicy
     Properties:
@@ -364,8 +375,7 @@ Resources:
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
-          # todo shorter ?
-          ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
+          ResponseHeadersPolicyId: !Ref mediumCachingHeaderPolicy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:

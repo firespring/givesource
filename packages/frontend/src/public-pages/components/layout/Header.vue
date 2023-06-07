@@ -23,9 +23,6 @@
       ><img
         :alt="logoTitle"
         :src="logoUrl"
-        width="100"
-        height="60"
-        style="width: auto; height: auto; aspect-ratio: auto 100 / 60"
       ></a>
     </div>
 

@@ -47,7 +47,6 @@ const store = new Vuex.Store({
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
-            // ? item.nonprofit = payload.nonprofit
             isNew = false
           }
         })
