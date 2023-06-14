@@ -47,45 +47,33 @@ exports.handle = (event, context, callback) => {
     PAGE_TERMS_ENABLED: null,
     UPLOADS_CLOUD_FRONT_URL: null
   }
-  request.validate().then(() => {
-    return settingsRepository.batchGet(Object.keys(settings))
-  }).then(response => {
+  request.validate().then(async () => {
+    const response = await settingsRepository.batchGet(Object.keys(settings))
     response.forEach(setting => {
       settings[setting.key] = setting.value
     })
 
+    let file
     if (settings.EVENT_LOGO && settings.UPLOADS_CLOUD_FRONT_URL) {
-      return filesRepository.get(settings.EVENT_LOGO)
-    } else {
-      return Promise.resolve(null)
+      file = await filesRepository.get(settings.EVENT_LOGO)
     }
-  }).then(response => {
-    if (response) {
-      settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + response.path
+    if (file) {
+      settings.EVENT_LOGO = settings.UPLOADS_CLOUD_FRONT_URL + '/' + file.path
     }
-
-    if (donor) {
-      return Promise.resolve()
-    } else if (request.get('email', false)) {
-      return donorsRepository.queryEmail(request.get('email'))
-    } else {
-      return Promise.reject(new Error('donor or email address missing'))
-    }
-  }).then(response => {
-    if (response) {
-      donor = response
+    if (request.get('email', false)) {
+      donor = await donorsRepository.queryEmail(request.get('email'))
       donor.timezone = settings.EVENT_TIMEZONE
+    } else if (!donor) {
+      callback(new Error('donor or email address missing'))
     }
-
+    let donationsResponse = {}
     if (donor && donations.length === 0) {
       const params = {}
       params.where = { donorId: donor.id }
-      return donationsRepository.queryDonations(params)
+      donationsResponse = await donationsRepository.queryDonations(params)
     }
-    return Promise.resolve({})
-  }).then(response => {
-    if (response.hasOwnProperty('rows')) {
-      donations = response.rows.map(donation => {
+    if (donationsResponse.hasOwnProperty('rows')) {
+      donations = donationsResponse.rows.map(donation => {
         donation.timezone = settings.EVENT_TIMEZONE
         donation.total = donation.formattedAmount
         donation.isFeeCovered = (donation.isFeeCovered === 'Yes' || donation.isFeeCovered === true)
@@ -93,7 +81,6 @@ exports.handle = (event, context, callback) => {
         return donation
       })
     }
-    let promise = Promise.resolve()
     if (paymentTransaction && donations.length) {
       donations = donations.map(donation => {
         donation.timezone = settings.EVENT_TIMEZONE
@@ -115,53 +102,35 @@ exports.handle = (event, context, callback) => {
         return id !== null && index === ids.indexOf(id)
       })
 
-      paymentTransactionIds.forEach(id => {
-        promise = promise.then(() => {
-          return paymentTransactionsRepository.get(id)
-        }).then(paymentTransaction => {
-          const transaction = paymentTransaction
+      for (const id of paymentTransactionIds) {
+        const transaction = await paymentTransactionsRepository.get(id)
+        transaction.timezone = settings.EVENT_TIMEZONE
+        transaction.transactionAmount = transaction.formattedAmount
+        transaction.isAnonymous = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isAnonymous : false
+        transaction.isFeeCovered = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isFeeCovered : false
+        if (transaction.Donations) {
+          transaction.Donations.forEach(function (donation) {
+            donation.total = donation.formattedAmount
+          })
+        }
+        transactions.push(transaction)
+      }
+      if (!transactions.length && donations.length) {
+        for (const donation of donations) {
+          const transaction = await paymentTransactionsRepository.populate({ createdAt: donation.createdAt })
           transaction.timezone = settings.EVENT_TIMEZONE
           transaction.transactionAmount = transaction.formattedAmount
-          transaction.isAnonymous = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isAnonymous : false
-          transaction.isFeeCovered = (transaction.Donations && transaction.Donations.length) ? transaction.Donations[0].isFeeCovered : false
-          if (transaction.Donations) {
-            transaction.Donations.forEach(function (donation) {
-              donation.total = donation.formattedAmount
-            })
-          }
+          transaction.Donations = [donation]
+          transaction.isAnonymous = donation.isAnonymous
+          transaction.isFeeCovered = donation.isFeeCovered
           transactions.push(transaction)
-        }).catch(() => {
-          // Ignore missing transactions (no transactions are created in test mode)
-        })
-      })
-    }
-    return promise.then(() => {
-      if (!transactions.length && donations.length) {
-        let promise = Promise.resolve()
-        donations.forEach(donation => {
-          let transaction
-          promise = promise.then(function () {
-            return paymentTransactionsRepository.populate({ createdAt: donation.createdAt })
-          }).then(function (popTransaction) {
-            transaction = popTransaction
-            transaction.timezone = settings.EVENT_TIMEZONE
-            transaction.transactionAmount = transaction.formattedAmount
-            transaction.Donations = [donation]
-            transaction.isAnonymous = donation.isAnonymous
-            transaction.isFeeCovered = donation.isFeeCovered
-            transactions.push(transaction)
-          })
-        })
+        }
       }
 
-      return promise.then(() => {
-        if (!transactions.length) {
-          return Promise.reject(new Error('No donations were found'))
-        }
-        return promise
-      })
-    })
-  }).then(() => {
+      if (!transactions.length) {
+        return Promise.reject(new Error('No donations were found'))
+      }
+    }
     return RenderHelper.renderTemplate('emails.donation-receipt', {
       donor: donor,
       settings: settings,
