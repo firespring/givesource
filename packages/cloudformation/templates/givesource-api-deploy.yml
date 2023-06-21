@@ -71,7 +71,7 @@ Resources:
           HttpMethod: GET
           LoggingLevel: INFO
           DataTraceEnabled: true
-          CachingEnabled: true
+          CachingEnabled: false
         - ResourcePath: "/metrics"
           HttpMethod: GET
           CacheDataEncrypted: true
