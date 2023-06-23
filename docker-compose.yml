@@ -22,8 +22,14 @@ services:
       - cloudformation-node_modules:/usr/src/app/packages/cloudformation/node_modules
       - frontend-node_modules:/usr/src/app/packages/frontend/node_modules
       - lambda-node_modules:/usr/src/app/packages/lambda/node_modules
+      - cloudformation-build:/usr/src/app/packages/cloudformation/build
+      - frontend-build:/usr/src/app/packages/frontend/build
+      - lambda-build:/usr/src/app/packages/lambda/build
 volumes:
   base-node_modules:
   cloudformation-node_modules:
   frontend-node_modules:
   lambda-node_modules:
+  cloudformation-build:
+  frontend-build:
+  lambda-build:

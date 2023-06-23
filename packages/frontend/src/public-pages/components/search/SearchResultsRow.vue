@@ -81,7 +81,7 @@ export default {
       } else if (vue.$store.getters.setting('EVENT_LOGO')) {
         logo = vue.$store.getters.setting('EVENT_LOGO')
       } else {
-        logo = '/assets/img/logo-event.png'
+        logo = require('../../assets/img/logo-event.png')
       }
       return logo
     }

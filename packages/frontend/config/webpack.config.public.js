@@ -52,17 +52,24 @@ module.exports = function () {
           }
         },
         {
-          test: /\.(jpe?g|png|gif|svg)$/i,
-          use: [{
-            loader: 'file-loader',
-            options: {
-              name: 'assets/img/[name].[ext]'
-            }
-          }]
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'style-loader',
+              options: {
+                insert: function insertIntoTarget (element, options) {
+                  // style tags need to come before custom.css so that custom.css styles overrides
+                  // custom.css is managed outside of webpack so can't be compiled into the rest of the css
+                  document.head.insertBefore(element, document.getElementById('custom_css'))
+                }
+              }
+            },
+            'css-loader'
+          ]
         },
         {
-          test: /\.css$/,
-          use: ['style-loader', 'css-loader']
+          test: /\.(jpe?g|png|svg|gif)$/,
+          type: 'asset'
         },
         {
           test: /\.js$/,
@@ -82,7 +89,9 @@ module.exports = function () {
     ],
     output: {
       path: path.resolve(__dirname, './../build/public-pages'),
-      filename: 'bundle.js',
+      filename: 'assets/js/bundle.[contenthash].js',
+      chunkFilename: '[name].[contenthash][ext]',
+      assetModuleFilename: 'assets/[name].[contenthash][ext]',
       publicPath: '/'
     },
     devtool: 'hidden-source-map',
@@ -96,9 +105,7 @@ module.exports = function () {
       new CopyWebpackPlugin({
         patterns: [
           { from: './config/settings.json', to: 'settings.json' },
-          { from: './config/robots-allow.txt', to: 'robots.txt' },
-          { from: './src/public-pages/assets/css', to: 'assets/css' },
-          { from: './src/public-pages/assets/img', to: 'assets/img' }
+          { from: './config/robots-allow.txt', to: 'robots.txt' }
         ]
       }),
       new VueLoaderPlugin(),
@@ -123,6 +130,7 @@ module.exports = function () {
   }
   if (env === 'production') {
     config.optimization = {
+      minimize: true,
       minimizer: [
         new TerserPlugin()
       ]

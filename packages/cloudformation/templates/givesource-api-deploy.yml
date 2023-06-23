@@ -99,9 +99,7 @@ Resources:
           CachingEnabled: true
         - ResourcePath: "/settings"
           HttpMethod: GET
-          CacheDataEncrypted: true
-          CacheTtlInSeconds: 300
-          CachingEnabled: true
+          CachingEnabled: false
         - ResourcePath: "/sponsor-tiers"
           HttpMethod: GET
           CacheDataEncrypted: true
