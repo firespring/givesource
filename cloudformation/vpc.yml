@@ -70,7 +70,7 @@ Resources:
     Type: AWS::CloudFront::ResponseHeadersPolicy
     Properties:
       ResponseHeadersPolicyConfig:
-        Name: CustomLongLivedCachingHeaderPolicy
+        Name: CustomLongLivedCachingHeadersPolicy
         CustomHeadersConfig:
           Items:
             - Header: Cache-Control
@@ -81,7 +81,7 @@ Resources:
     Type: AWS::CloudFront::ResponseHeadersPolicy
     Properties:
       ResponseHeadersPolicyConfig:
-        Name: CustomMediumLivedCachingHeaderPolicy
+        Name: CustomMediumLivedCachingHeadersPolicy
         CustomHeadersConfig:
           Items:
             - Header: Cache-Control
@@ -92,7 +92,7 @@ Resources:
     Type: AWS::CloudFront::ResponseHeadersPolicy
     Properties:
       ResponseHeadersPolicyConfig:
-        Name: CustomShortLivedCachingHeaderPolicy
+        Name: CustomShortLivedCachingHeadersPolicy
         CustomHeadersConfig:
           Items:
             - Header: Cache-Control
