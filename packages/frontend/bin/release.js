@@ -44,6 +44,45 @@ const versionExists = function (project) {
 }
 
 /**
+ * Get a list of files recursively from a directory
+ * Returns absolute path of each file in an array
+ *
+ * @param {string} dir
+ * @param {Array} fileList
+ * @return {Array}
+ */
+const walkSync = function (dir, fileList) {
+  fileList = fileList || []
+  const files = fs.readdirSync(dir, 'utf8')
+  files.forEach(function (file) {
+    if (fs.statSync(path.join(dir, file)).isDirectory()) {
+      fileList = walkSync(path.join(dir, file), fileList)
+    } else {
+      fileList.push(path.join(dir, file))
+    }
+  })
+
+  return fileList
+}
+
+/**
+ * Get a list of files recursively from a directory
+ * Returns relative path of each file in an array
+ *
+ * @param {string} dir
+ * @return {Array}
+ */
+const walkSyncRelative = function (dir) {
+  return walkSync(dir).map(function (file) {
+    if (file.indexOf(dir) === 0) {
+      return file.slice(dir.length)
+    } else {
+      return file
+    }
+  })
+}
+
+/**
  * Upload frontend assets to the release S3 bucket
  *
  * @param {String} sourcePath
@@ -55,7 +94,7 @@ const release = function (sourcePath, destinationPath, exclude) {
   exclude = Array.isArray(exclude) ? exclude : []
   destinationPath = destinationPath.endsWith('/') ? destinationPath : destinationPath + '/'
   sourcePath = sourcePath.endsWith('/') ? sourcePath : sourcePath + '/'
-  const files = fs.readdirSync(sourcePath, 'utf8').filter(function (filename) {
+  const files = walkSyncRelative(sourcePath).filter(function (filename) {
     return (filename.indexOf('.') > -1 && exclude.indexOf(filename) < 0)
   })
 
@@ -91,15 +130,7 @@ const publicDestination = 'public-pages/' + packageJson.version + '/'
 promise.then(function () {
   return release(adminSource, adminDestination, ['settings.json'])
 }).then(function () {
-  return release(adminSource + 'assets/css/', adminDestination + 'assets/css/')
-}).then(function () {
-  return release(adminSource + 'assets/img/', adminDestination + 'assets/img/')
-}).then(function () {
   return release(publicSource, publicDestination, ['settings.json'])
-}).then(function () {
-  return release(publicSource + 'assets/css/', publicDestination + 'assets/css/')
-}).then(function () {
-  return release(publicSource + 'assets/img/', publicDestination + 'assets/img/')
 }).then(function () {
   console.log('Frontend release complete.')
 }).catch(function (err) {

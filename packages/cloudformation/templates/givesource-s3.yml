@@ -226,38 +226,6 @@ Resources:
           Resource: !Sub arn:aws:s3:::${GivesourceCache}/*
 
   # AWS CloudFront Resources
-  longLivedCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomLongLivedCachingHeaderPolicy
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: max-age=31536000
-              Override: false
-
-  mediumCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomMediumLivedCachingHeaderPolicy
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: max-age=600
-              Override: false
-
-  shortLivedCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomShortLivedCachingHeaderPolicy
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: no-cache
-              Override: true
 
   AdminPagesDistribution:
     Type: AWS::CloudFront::Distribution
@@ -326,14 +294,14 @@ Resources:
           MinTTL: 0
           Compress: true
           ViewerProtocolPolicy: redirect-to-https
-          ResponseHeadersPolicyId: !Ref shortLivedCachingHeaderPolicy
+          ResponseHeadersPolicyId: !ImportValue global-short-lived-caching-header-policy
         CacheBehaviors:
           - PathPattern: assets/*
             DefaultTTL: 31536000 # 365 days
             Compress: true
             ViewerProtocolPolicy: redirect-to-https
             TargetOriginId: !Ref PublicPagesS3
-            ResponseHeadersPolicyId: !Ref longLivedCachingHeaderPolicy
+            ResponseHeadersPolicyId: !ImportValue global-long-lived-caching-header-policy
             ForwardedValues:
               QueryString: false
         PriceClass: PriceClass_200
@@ -375,7 +343,7 @@ Resources:
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
-          ResponseHeadersPolicyId: !Ref mediumCachingHeaderPolicy
+          ResponseHeadersPolicyId: !ImportValue global-medium-caching-header-policy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:

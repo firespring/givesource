@@ -66,6 +66,39 @@ Resources:
           QueryStringsConfig:
             QueryStringBehavior: all
 
+  longLivedCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomLongLivedCachingHeadersPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: max-age=31536000
+              Override: false
+
+  mediumCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomMediumLivedCachingHeadersPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: max-age=600
+              Override: false
+
+  shortLivedCachingHeaderPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: CustomShortLivedCachingHeadersPolicy
+        CustomHeadersConfig:
+          Items:
+            - Header: Cache-Control
+              Value: no-cache
+              Override: true
+
   RecaptchaParameterStore:
     Type: AWS::SSM::Parameter
     Properties:
@@ -507,6 +540,24 @@ Outputs:
     Value: !GetAtt NoCachePolicy.Id
     Export:
       Name: global-no-cache-policy
+
+  globalLongLivedCachingHeaderPolicy:
+    Description: Long lived caching header policy for Givesource
+    Value: !GetAtt longLivedCachingHeaderPolicy.Id
+    Export:
+      Name: global-long-lived-caching-header-policy
+
+  globalMediumCachingHeaderPolicy:
+    Description: Medium caching header policy for Givesource
+    Value: !GetAtt mediumCachingHeaderPolicy.Id
+    Export:
+      Name: global-medium-caching-header-policy
+
+  globalShortLivedCachingHeaderPolicy:
+    Description: Short lived caching header policy for Givesource
+    Value: !GetAtt shortLivedCachingHeaderPolicy.Id
+    Export:
+      Name: global-short-lived-caching-header-policy
 
   primaryPrivateRouteTable:
     Description: Primary private route table for Givesource
