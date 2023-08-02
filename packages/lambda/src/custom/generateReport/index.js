@@ -114,7 +114,7 @@ const getFilenameTimestamp = function () {
 const getDonationsData = function (report, timezone) {
   const donationsRepository = new DonationsRepository()
   const settingsRepository = new SettingsRepository()
-  const whereParams = { isDeleted: 0 }
+  const whereParams = {}
 
   let displayTestPayments = false
   let promise = Promise.resolve()
@@ -226,7 +226,6 @@ const getLastFourPaymentTransactionReportData = function (timezone) {
   const donationsRepository = new DonationsRepository()
   const settingsRepository = new SettingsRepository()
   const whereParams = {
-    isDeleted: 0,
     paymentTransactionId: {
       [Sequelize.Op.ne]: 0
     }
