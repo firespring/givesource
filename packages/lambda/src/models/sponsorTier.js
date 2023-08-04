@@ -21,7 +21,6 @@ const { DataTypes, Model } = require('sequelize')
 class SponsorTier extends Model {}
 
 module.exports = (sequelize) => {
-  // const SponsorTier = sequelize.define('SponsorTier', {
   SponsorTier.init({
     name: {
       type: DataTypes.STRING,
