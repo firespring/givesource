@@ -67,7 +67,7 @@ exports.handle = function (event, context, callback) {
  */
 const getHashCondition = function (response) {
   if (parseInt(response.value) === 0) {
-    return { paymentTransactionIsTestMode: 0, isDeleted: 0 }
+    return { paymentTransactionIsTestMode: 0 }
   }
-  return { isDeleted: 0 }
+  return {}
 }

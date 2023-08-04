@@ -69,7 +69,7 @@ exports.handle = function (event, context, callback) {
  */
 const getHashCondition = function (nonprofitId, response) {
   if (parseInt(response.value) === 0) {
-    return { nonprofitId: nonprofitId, paymentTransactionIsTestMode: 0, isDeleted: 0 }
+    return { nonprofitId: nonprofitId, paymentTransactionIsTestMode: 0 }
   }
-  return { nonprofitId: nonprofitId, isDeleted: 0 }
+  return { nonprofitId: nonprofitId }
 }
