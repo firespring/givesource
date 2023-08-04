@@ -16,10 +16,12 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+
+class Sponsor extends Model {}
 
 module.exports = (sequelize) => {
-  const Sponsor = sequelize.define('Sponsor', {
+  Sponsor.init({
     logoUrl: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -48,7 +50,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       defaultValue: 0
     }
-  })
+  },
+  { sequelize, modelName: 'Sponsor' })
 
   Sponsor.associate = function (models) {
     Sponsor.hasOne(models.SponsorTier, {

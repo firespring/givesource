@@ -16,12 +16,13 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
 const numeral = require('numeral')
 const moment = require('moment-timezone')
+class Donation extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Donation', {
+  return Donation.init({
     amountForNonprofit: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -101,6 +102,8 @@ module.exports = (sequelize) => {
       allowNull: false
     }
   }, {
+    sequelize,
+    modelName: 'Donation',
     paranoid: true,
     timestamps: true,
     getterMethods: {

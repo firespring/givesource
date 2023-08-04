@@ -16,11 +16,12 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
 const ReportHelper = require('./../helpers/report')
+class Report extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Report', {
+  return Report.init({
     fileId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -47,5 +48,6 @@ module.exports = (sequelize) => {
         isIn: [[ReportHelper.TYPE_DONATIONS, ReportHelper.TYPE_PAYOUT_REPORT, ReportHelper.TYPE_LAST_4, ReportHelper.TYPE_NONPROFIT_USERS]]
       }
     }
-  })
+  },
+  { sequelize, modelName: 'Report' })
 }

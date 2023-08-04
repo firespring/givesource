@@ -1,9 +1,10 @@
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class Content extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Content', {
+  return Content.init({
     key: {
       type: DataTypes.STRING,
       allowNull: false
@@ -27,5 +28,5 @@ module.exports = (sequelize) => {
       allowNull: false,
       defaultValue: ''
     }
-  })
+  }, { sequelize, modelName: 'Content' })
 }
