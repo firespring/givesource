@@ -686,6 +686,18 @@ Resources:
 
   # Secure Settings KMS Resources
 
+
+
+
+
+
+
+
+
+
+
+
+
   SecureSettingsKey:
     Type: AWS::KMS::Key
     Properties:
@@ -741,6 +753,24 @@ Resources:
               - !ImportValue global-recaptcha-key
       Roles:
       - !Ref SecureLambdaRole
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # S3 Lambda Resources
 

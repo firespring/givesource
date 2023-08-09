@@ -110,6 +110,7 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
         SecureLambdaRole: !Ref SecureLambdaRole
+#        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 60
 
@@ -793,6 +794,15 @@ Resources:
       TimeoutInMinutes: 60
     DependsOn:
       - AuroraDbStack
+
+#  SqsStack:
+#    Condition: NotReplicaRegion
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      Parameters:
+#        StackName: !Ref AWS::StackName
+#      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-sqs.yml
+#      TimeoutInMinutes: 60
 
 Outputs:
 
