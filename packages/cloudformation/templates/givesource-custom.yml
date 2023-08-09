@@ -21,9 +21,6 @@ Parameters:
   SecureLambdaRole:
     Type: String
 
-  SecureSettingsLambdaFunctionRole:
-    Type: String
-
   LambdaSecurityGroupId:
     Type: String
 
@@ -684,94 +681,6 @@ Resources:
           - !ImportValue givsource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
-  # Secure Settings KMS Resources
-
-
-
-
-
-
-
-
-
-
-
-
-
-  SecureSettingsKey:
-    Type: AWS::KMS::Key
-    Properties:
-      Description: Key used to encrypt/decrypt secure settings
-      Enabled: true
-      EnableKeyRotation: false
-      KeyPolicy:
-        Id: !Sub |-
-          ${StackName}-SecureSettingsKey
-        Version: 2012-10-17
-        Statement:
-        - Sid: Api Key Policy
-          Effect: Allow
-          Principal:
-            AWS:
-            - !Sub arn:aws:iam::${AWS::AccountId}:root
-          Action: kms:*
-          Resource: '*'
-
-  SecureSettingsKeyAlias:
-    Type: AWS::KMS::Alias
-    Properties:
-      AliasName: !Sub |-
-        alias/${StackName}/settings/secure
-      TargetKeyId: !Ref SecureSettingsKey
-    DependsOn: SecureSettingsKey
-
-  SecureSettingsEncryptPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: secure_settings_encrypt
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Encrypt
-            Resource:
-              - !GetAtt SecureSettingsKey.Arn
-      Roles:
-      - !Ref SecureSettingsLambdaFunctionRole
-
-  SecureSettingsDecryptPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: secure_settings_decrypt
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: kms:Decrypt
-            Resource:
-              - !GetAtt SecureSettingsKey.Arn
-              - !ImportValue global-recaptcha-key
-      Roles:
-      - !Ref SecureLambdaRole
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # S3 Lambda Resources
 
   S3PutObjectFunction:
@@ -1319,9 +1228,3 @@ Outputs:
 
   CognitoUserPoolClientId:
     Value: !GetAtt CognitoUserPoolClient.UserPoolClientId
-
-  SecureSettingsKeyAlias:
-    Value: !Ref SecureSettingsKeyAlias
-
-  SecureSettingsKeyArn:
-    Value: !GetAtt SecureSettingsKey.Arn

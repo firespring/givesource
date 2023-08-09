@@ -325,7 +325,8 @@ Resources:
               - ssm:DeleteParameter
               - ssm:GetParameter
               - ssm:PutParameter
-            Resource: '*'
+            Resource:
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}*
 
   LambdaRole:
     Type: AWS::IAM::Role
@@ -403,6 +404,15 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
+      Policies:
+      - PolicyName: secure_settings_encrypt
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action: kms:Encrypt
+              Resource:
+                - !ImportValue global-encryption-key-arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
@@ -418,6 +428,16 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
+      Policies:
+      - PolicyName: secure_settings_decrypt
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action: kms:Decrypt
+              Resource:
+                - !ImportValue global-recaptcha-key
+                - !ImportValue global-encryption-key-arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
@@ -654,7 +674,6 @@ Resources:
         CognitoCustomMessageFunctionArn: !GetAtt CustomStack.Outputs.CognitoCustomMessageFunctionArn
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
-        SecureSettingsKeyAlias: !GetAtt CustomStack.Outputs.SecureSettingsKeyAlias
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 30

@@ -42,9 +42,6 @@ Parameters:
   UserPoolId:
     Type: String
 
-  SecureSettingsKeyAlias:
-    Type: String
-
   SecureSettingsLambdaFunctionRoleArn:
     Type: String
 
@@ -464,7 +461,7 @@ Resources:
       Environment:
         Variables:
           AWS_STACK_NAME: !Ref StackName
-          KMS_KEY: !Ref SecureSettingsKeyAlias
+          KMS_KEY: !ImportValue global-encryption-key-alias
       FunctionName: !Sub ${StackName}-PatchSecureSetting
       Handler: "index.handle"
       MemorySize: 512
