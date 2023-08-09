@@ -16,10 +16,11 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class Donor extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Donor', {
+  return Donor.init({
     amountForNonprofit: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -70,6 +71,8 @@ module.exports = (sequelize) => {
       defaultValue: ''
     }
   }, {
+    sequelize,
+    modelName: 'Donor',
     setterMethods: {
       donorIsAnonymous () {
         this.setDataValue('firstName', 'Anonymous')

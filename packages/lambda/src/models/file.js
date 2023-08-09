@@ -16,10 +16,11 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class File extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('File', {
+  return File.init({
     path: {
       type: DataTypes.STRING,
       allowNull: false
@@ -28,5 +29,5 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     }
-  })
+  }, { sequelize, modelName: 'File' })
 }

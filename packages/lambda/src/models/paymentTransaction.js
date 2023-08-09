@@ -16,12 +16,13 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
 const numeral = require('numeral')
 const moment = require('moment-timezone')
+class PaymentTransaction extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('PaymentTransaction', {
+  return PaymentTransaction.init({
     billingZip: {
       type: DataTypes.STRING,
       allowNull: false
@@ -67,6 +68,8 @@ module.exports = (sequelize) => {
       allowNull: false
     }
   }, {
+    sequelize,
+    modelName: 'PaymentTransaction',
     getterMethods: {
       formattedAmount () {
         return numeral(this.transactionAmount / 100).format('$0,0.00')

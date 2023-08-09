@@ -16,10 +16,11 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class Agreement extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Agreement', {
+  return Agreement.init({
     agreementTitle: {
       type: DataTypes.STRING,
       allowNull: false
@@ -39,6 +40,8 @@ module.exports = (sequelize) => {
       defaultValue: 0
     }
   }, {
+    sequelize,
+    modelName: 'Agreement',
     paranoid: true,
     timestamps: true
   })

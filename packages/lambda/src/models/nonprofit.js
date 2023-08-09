@@ -16,10 +16,11 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class Nonprofit extends Model {}
 
 module.exports = (sequelize) => {
-  const Nonprofit = sequelize.define('Nonprofit', {
+  Nonprofit.init({
     address1: {
       type: DataTypes.STRING,
       allowNull: false
@@ -124,7 +125,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       defaultValue: false
     }
-  })
+  },
+  { sequelize, modelName: 'Nonprofit' })
 
   return Nonprofit
 }

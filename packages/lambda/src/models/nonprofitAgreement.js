@@ -16,10 +16,11 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
+class NonprofitAgreement extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('NonprofitAgreement', {
+  return NonprofitAgreement.init({
     agreementId: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -35,6 +36,8 @@ module.exports = (sequelize) => {
     }
   }, {
     paranoid: true,
-    timestamps: true
+    timestamps: true,
+    sequelize,
+    modelName: 'NonprofitAgreement'
   })
 }

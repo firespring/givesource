@@ -16,11 +16,12 @@
 
 'use strict'
 
-const { DataTypes } = require('sequelize')
+const { DataTypes, Model } = require('sequelize')
 const moment = require('moment-timezone')
+class Message extends Model {}
 
 module.exports = (sequelize) => {
-  return sequelize.define('Message', {
+  return Message.init({
     email: {
       type: DataTypes.STRING,
       allowNull: false
@@ -42,6 +43,8 @@ module.exports = (sequelize) => {
       allowNull: false
     }
   }, {
+    sequelize,
+    modelName: 'Message',
     setterMethods: {
       timezone (timezone) {
         if (timezone) {
