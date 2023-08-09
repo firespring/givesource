@@ -326,7 +326,7 @@ Resources:
               - ssm:GetParameter
               - ssm:PutParameter
             Resource:
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}*
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}*
 
   LambdaRole:
     Type: AWS::IAM::Role
