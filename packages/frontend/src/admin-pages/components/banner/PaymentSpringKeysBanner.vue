@@ -20,7 +20,8 @@
 </template>
 
 <script>
-const moment = require('moment-timezone')
+// const moment = require('moment-timezone')
+import moment from './../../helpers/day'
 
 export default {
   data () {

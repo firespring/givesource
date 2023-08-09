@@ -52,6 +52,36 @@ describe('PaymentTransaction', function () {
     })
   })
 
+  describe('#populate createdAt based off timezone', function () {
+    const expects = [
+      ['America/Boise', '8/8/2023 7:21:54 AM'],
+      ['America/Chicago', '8/8/2023 8:21:54 AM'],
+      [null, '8/8/2023 1:21:54 PM']
+    ]
+    const dateInputs = ['8/8/2023 1:21:54 PM', '2023-08-08 13:21:54']
+    dateInputs.forEach(dateInput => {
+      expects.forEach(([timezone, expected]) => {
+        it(`Sets createdAt for "${dateInput}" in timezone: "${timezone}" to "${expected}"`, function () {
+          const model = new PaymentTransaction({ createdAt: dateInput })
+
+          model.timezone = timezone
+          // console.log(model.createdAt, '===', expected)
+          assert.equal(model.createdAt, expected)
+        })
+      })
+    })
+
+    it('does not error setting timezone without createdAt', function () {
+      const model = new PaymentTransaction()
+      model.timezone = 'America/Boise'
+    })
+
+    it('does not error setting null timezone without createdAt', function () {
+      const model = new PaymentTransaction()
+      model.timezone = null
+    })
+  })
+
   describe('#validate()', function () {
     const tests = [
       ...TestHelper.commonModelValidations('paymentTransaction'),

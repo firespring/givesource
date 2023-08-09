@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import store from './../store'
-
-const moment = require('moment-timezone')
+import moment from './../helpers/day'
 
 /**
  * Get event title

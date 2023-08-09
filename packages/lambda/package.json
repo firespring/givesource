@@ -42,6 +42,7 @@
     "cfn-response": "^1.0.1",
     "change-case": "^3.1.0",
     "commander": "^2.20.3",
+    "dayjs": "^1.11.9",
     "faker": "^4.1.0",
     "fuse.js": "^3.6.1",
     "fuzzy": "^0.1.3",
