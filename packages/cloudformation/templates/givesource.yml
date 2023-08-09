@@ -373,7 +373,6 @@ Resources:
         RestApi: !Ref RestApi
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         SecureLambdaRole: !Ref SecureLambdaRole
-        SecureSettingsLambdaFunctionRole: !Ref SecureSettingsLambdaFunctionRole
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
