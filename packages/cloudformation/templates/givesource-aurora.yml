@@ -57,6 +57,8 @@ Parameters:
     AllowedValues:
     - true
     - false
+  DeadLetterQueueTopic:
+    Type: String
 Conditions:
   ShouldLogDatabaseDebug: !Equals [!Ref LogDatabaseDebug, 'true']
 Resources:

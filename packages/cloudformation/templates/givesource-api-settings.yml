@@ -45,6 +45,9 @@ Parameters:
   SecureSettingsLambdaFunctionRoleArn:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Settings Lambda Resources

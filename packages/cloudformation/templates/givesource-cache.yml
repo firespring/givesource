@@ -18,6 +18,9 @@ Parameters:
   CacheS3:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Social Sharing Cache Resources

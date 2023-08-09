@@ -36,6 +36,9 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Donations Lambda Resources

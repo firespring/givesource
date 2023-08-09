@@ -33,6 +33,9 @@ Parameters:
   SecureSettingsLambdaFunctionRoleArn:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
   # Secure Recaptcha Api Lambda Resources
 

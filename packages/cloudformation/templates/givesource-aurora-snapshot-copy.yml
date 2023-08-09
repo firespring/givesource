@@ -10,6 +10,8 @@ Parameters:
   DestinationRegion:
     Type: String
     Default: us-west-2
+  DeadLetterQueueTopic:
+    Type: String
 Resources:
   SnapshotCopyFunctionRole:
     Type: AWS::IAM::Role

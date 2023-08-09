@@ -110,7 +110,7 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
         SecureLambdaRole: !Ref SecureLambdaRole
-#        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 60
 
@@ -120,6 +120,7 @@ Resources:
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora-snapshot-copy.yml
 
   S3Stack:
@@ -388,6 +389,7 @@ Resources:
         GivesourceCache: !GetAtt S3Stack.Outputs.GivesourceCache
         CachingCloudFrontUrl: !GetAtt S3Stack.Outputs.CachingCloudFrontUrl
         ReportsS3: !GetAtt S3Stack.Outputs.Reports
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -463,6 +465,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -484,6 +487,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -505,6 +509,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -527,6 +532,7 @@ Resources:
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
         ReportsBucket: !GetAtt S3Stack.Outputs.Reports
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -547,6 +553,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -567,6 +574,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-agreements.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -587,6 +595,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -609,6 +618,7 @@ Resources:
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -629,6 +639,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -650,6 +661,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
         UploadsBucket: !GetAtt S3Stack.Outputs.UploadsS3
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -674,6 +686,7 @@ Resources:
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -695,6 +708,7 @@ Resources:
         RestApi: !Ref RestApi
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -716,6 +730,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         UserPoolId: !GetAtt CustomStack.Outputs.CognitoUserPoolId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -736,6 +751,7 @@ Resources:
         RestApiRootResourceId: !GetAtt RestApi.RootResourceId
         AuthorizeUsers: !GetAtt CustomStack.Outputs.AuthorizeUsers
         SecureSettingsLambdaFunctionRoleArn: !GetAtt SecureSettingsLambdaFunctionRole.Arn
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-recaptcha.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -808,19 +824,20 @@ Resources:
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
+        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
       TimeoutInMinutes: 60
     DependsOn:
       - AuroraDbStack
 
-#  SqsStack:
-#    Condition: NotReplicaRegion
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      Parameters:
-#        StackName: !Ref AWS::StackName
-#      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-sqs.yml
-#      TimeoutInMinutes: 60
+  SqsStack:
+    Condition: NotReplicaRegion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        StackName: !Ref AWS::StackName
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-sqs.yml
+      TimeoutInMinutes: 60
 
 Outputs:
 

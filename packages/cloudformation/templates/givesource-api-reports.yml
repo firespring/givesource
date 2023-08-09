@@ -36,6 +36,9 @@ Parameters:
   UploadsBucket:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Reports Lambda Resources

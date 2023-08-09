@@ -66,6 +66,9 @@ Parameters:
   CachingCloudFrontUrl:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Api Gateway Lambda Resources

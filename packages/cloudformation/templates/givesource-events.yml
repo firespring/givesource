@@ -12,6 +12,9 @@ Parameters:
   DefaultLambdaFunctionTimeout:
     Type: Number
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # AWS CloudWatch Event Rules
