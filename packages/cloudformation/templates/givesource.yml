@@ -422,7 +422,7 @@ Resources:
               Action:
                 - sns:Publish
               Resource:
-                - !Ref DeadLetterQueueTopic
+                - !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
@@ -456,7 +456,7 @@ Resources:
               Action:
                 - sns:Publish
               Resource:
-                - !Ref DeadLetterQueueTopic
+                - !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
