@@ -484,6 +484,18 @@ Resources:
             AWS: !Ref AWS::AccountId
           Action: kms:*
           Resource: '*'
+        - Sid: Global Encryption Allow Use By AWS Services
+          Effect: Allow
+          Principal:
+            Service:
+              - sns.amazonaws.com
+              - events.amazonaws.com
+              - cloudwatch.amazonaws.com
+          Action:
+            - kms:Decrypt
+            - kms:GenerateDataKey*
+          Resource:
+            - '*'
 
   globalEncryptionKeyAlias:
     Type: AWS::KMS::Alias

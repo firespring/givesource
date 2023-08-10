@@ -414,6 +414,15 @@ Resources:
               Action: kms:Encrypt
               Resource:
                 - !ImportValue global-encryption-key-arn
+      - PolicyName: dead_letter_queue_publish
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource:
+                - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref CloudWatchLogsManagedPolicy
@@ -439,6 +448,15 @@ Resources:
               Resource:
                 - !ImportValue global-recaptcha-key
                 - !ImportValue global-encryption-key-arn
+      - PolicyName: dead_letter_queue_publish
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource:
+                - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !Ref ApiGatewayManagedPolicy
