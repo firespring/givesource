@@ -241,6 +241,15 @@ Resources:
               - !Ref MaintenanceUserSecret
               - !Ref ReadwriteUserSecret
               - !Ref ReadonlyUserSecret
+      - PolicyName: dead_letter_queue_publish
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource:
+                - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
   BootstrapDatabaseLambdaFunction:
@@ -250,6 +259,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/BootstrapDatabase.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: Database Init
       Environment:
         Variables:
@@ -312,6 +323,15 @@ Resources:
             - s3:GetObject*
             Resource:
             - arn:aws:s3:::{{awsReleaseBucket}}/*
+      - PolicyName: dead_letter_queue_publish
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource:
+                - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
   MigrateDatabaseLambdaFunction:
@@ -321,6 +341,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/MigrateDatabase.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: Database Init
       Environment:
         Variables:
