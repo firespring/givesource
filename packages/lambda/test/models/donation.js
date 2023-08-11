@@ -75,7 +75,6 @@ describe('Donation', function () {
           const model = new Donation({ createdAt: dateInput })
 
           model.timezone = timezone
-          // console.log(model.createdAt, '===', expected)
           assert.equal(model.createdAt, expected)
         })
       })

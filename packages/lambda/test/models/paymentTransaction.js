@@ -65,7 +65,6 @@ describe('PaymentTransaction', function () {
           const model = new PaymentTransaction({ createdAt: dateInput })
 
           model.timezone = timezone
-          // console.log(model.createdAt, '===', expected)
           assert.equal(model.createdAt, expected)
         })
       })

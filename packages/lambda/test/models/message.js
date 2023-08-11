@@ -65,7 +65,6 @@ describe('Message', function () {
           const model = new Message({ createdAt: dateInput })
 
           model.timezone = timezone
-          // console.log(model.createdAt, '===', expected)
           assert.equal(model.createdAt, expected)
         })
       })
