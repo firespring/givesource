@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import store from './../store'
-import moment from './../helpers/day'
+import dayjs from './../helpers/day'
 
 /**
  * Get event title
@@ -39,7 +39,7 @@ const eventStartDate = function () {
   const dateEventStart = store.getters.setting('DATE_EVENT_START')
 
   if (dateEventStart && eventTimezone) {
-    return moment(new Date(dateEventStart)).startOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateEventStart)).startOf('day').tz(eventTimezone, true)
   }
 
   return null
@@ -55,7 +55,7 @@ const eventEndDate = function () {
   const dateEventEnd = store.getters.setting('DATE_EVENT_END')
 
   if (dateEventEnd && eventTimezone) {
-    return moment(new Date(dateEventEnd)).endOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateEventEnd)).endOf('day').tz(eventTimezone, true)
   }
 
   return null
@@ -70,7 +70,7 @@ const isBeforeEvent = function () {
   const start = eventStartDate()
 
   if (start) {
-    const now = moment()
+    const now = dayjs()
     return now.isBefore(start, 'day')
   }
 
@@ -87,7 +87,7 @@ const isDuringEvent = function () {
   const end = eventEndDate()
 
   if (start && end) {
-    const now = moment()
+    const now = dayjs()
     return now.isBetween(start, end, 'day', '[]')
   }
 
@@ -103,7 +103,7 @@ const isAfterEvent = function () {
   const end = eventEndDate()
 
   if (end) {
-    const now = moment()
+    const now = dayjs()
     return now.isAfter(end, 'day')
   }
 
@@ -139,7 +139,7 @@ const registrationStartDate = function () {
   const dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START')
 
   if (dateRegistrationsStart) {
-    return moment(new Date(dateRegistrationsStart)).startOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateRegistrationsStart)).startOf('day').tz(eventTimezone, true)
   } else if (eventTimezone && dateEventStart) {
     return dateEventStart.subtract(30, 'days')
   }
@@ -158,7 +158,7 @@ const registrationEndDate = function () {
   const dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END')
 
   if (dateRegistrationsEnd) {
-    return moment(new Date(dateRegistrationsEnd)).endOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateRegistrationsEnd)).endOf('day').tz(eventTimezone, true)
   } else if (eventTimezone && dateEventStart) {
     return dateEventStart.subtract(1, 'days').endOf('day')
   }
@@ -175,7 +175,7 @@ const isBeforeRegistrations = function () {
   const start = registrationStartDate()
 
   if (start) {
-    const now = moment()
+    const now = dayjs()
     return now.isBefore(start, 'day')
   }
 
@@ -192,7 +192,7 @@ const isDuringRegistrations = function () {
   const end = registrationEndDate()
 
   if (start && end) {
-    const now = moment()
+    const now = dayjs()
     return now.isBetween(start, end, 'day', '[]')
   }
 
@@ -208,7 +208,7 @@ const isAfterRegistrations = function () {
   const end = registrationEndDate()
 
   if (end) {
-    const now = moment()
+    const now = dayjs()
     return now.isAfter(end, 'day')
   }
 
@@ -225,7 +225,7 @@ const donationsStartDate = function () {
   const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START')
 
   if (dateDonationsStart && eventTimezone) {
-    return moment(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone, true)
   }
 
   return null
@@ -241,7 +241,7 @@ const donationsEndDate = function () {
   const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END')
 
   if (dateDonationsEnd && eventTimezone) {
-    return moment(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone, true)
+    return dayjs(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone, true)
   }
 
   return null
@@ -257,7 +257,7 @@ const isDuringDonations = function () {
   const end = donationsEndDate()
 
   if (start && end) {
-    const now = moment()
+    const now = dayjs()
     return now.isBetween(start, end, 'day', '[]')
   }
 
@@ -275,7 +275,7 @@ const _getCountdown = function (date) {
   const countdown = { days: 0, hours: 0, minutes: 0, seconds: 0 }
 
   if (date) {
-    const now = moment()
+    const now = dayjs()
     const distance = date.diff(now)
 
     countdown.days = Math.floor(distance / (1000 * 60 * 60 * 24))

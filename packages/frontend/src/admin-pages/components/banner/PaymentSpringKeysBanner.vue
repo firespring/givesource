@@ -20,8 +20,7 @@
 </template>
 
 <script>
-// const moment = require('moment-timezone')
-import moment from './../../helpers/day'
+import dayjs from './../../helpers/day'
 
 export default {
   data () {
@@ -88,10 +87,10 @@ export default {
         const eventTimezone = _.find(vue.settings, { key: 'EVENT_TIMEZONE' })
         const dateDonationsStart = _.find(vue.settings, { key: 'DATE_DONATIONS_START' })
         if (eventTimezone && dateDonationsStart) {
-          const dateStart = moment(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true)
-          const threeDaysBefore = moment(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true).subtract(3, 'd')
+          const dateStart = dayjs(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true)
+          const threeDaysBefore = dayjs(new Date(dateDonationsStart.value)).startOf('day').tz(eventTimezone.value, true).subtract(3, 'd')
 
-          return moment().isBetween(threeDaysBefore, dateStart)
+          return dayjs().isBetween(threeDaysBefore, dateStart)
         }
       }
 
