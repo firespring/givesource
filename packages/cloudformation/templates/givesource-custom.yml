@@ -825,6 +825,7 @@ Resources:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
 
+# todo remove
   CreateSecurityHeadersPublicPages:
     Type: Custom::LambdaEdgeSecurityHeaders
     Properties:
@@ -837,7 +838,7 @@ Resources:
          	const headers = response.headers;
 
          	//Set new headers
-         	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+         	//headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
          	headers['content-security-policy'] = [{
                 key: 'Content-Security-Policy',
                 value: "default-src 'none'; " +
@@ -852,10 +853,10 @@ Resources:
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "object-src 'none'"
          	}];
-         	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
-         	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
-         	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
-         	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+         	//headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+         	//headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+         	//headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+         	//headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
 
          	//Return modified response
          	callback(null, response);
@@ -865,6 +866,7 @@ Resources:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
 
+# todo remove
   CreateSecurityHeadersUploads:
     Type: Custom::LambdaEdgeSecurityHeaders
     Properties:
@@ -957,6 +959,7 @@ Resources:
     DependsOn:
       - CreateSecurityHeadersAdminPages
 
+# ...
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
     Properties:
