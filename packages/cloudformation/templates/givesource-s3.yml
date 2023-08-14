@@ -15,9 +15,6 @@ Parameters:
   PublicPagesSSLCertificateArn:
     Type: String
 
-  RestApi:
-    Type: String
-
 Conditions:
 
   HasAdminPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref AdminPagesCNAMEs ] ] ]

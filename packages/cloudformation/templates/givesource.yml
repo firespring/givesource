@@ -129,7 +129,6 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
-        RestApi: !Ref RestApi
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 60
 
