@@ -36,6 +36,7 @@ Parameters:
   AdminPagesS3:
     Type: String
 
+# todo remove
   AdminPagesCloudFrontDistribution:
     Type: String
 
@@ -51,6 +52,7 @@ Parameters:
   PublicPagesCloudFrontUrl:
     Type: String
 
+# todo remove
   UploadsCloudFrontDistribution:
     Type: String
 
@@ -784,127 +786,127 @@ Resources:
 
   # Create Lambda@Edge Functions
 
-  CreateSecurityHeadersAdminPages:
-    Type: Custom::LambdaEdgeSecurityHeaders
-    Properties:
-      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      FunctionName: SecurityHeadersAdminPages
-      Code: !Sub |-
-         exports.handle = function (event, context, callback) {
-
-         	//Get contents of response
-         	const response = event.Records[0].cf.response;
-         	const headers = response.headers;
-
-         	//Set new headers
-         	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
-         	headers['content-security-policy'] = [{
-                key: 'Content-Security-Policy',
-                value: "default-src 'none'; " +
-                "base-uri 'none'; " +
-                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
-                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
-                "form-action 'self'; " +
-                "frame-ancestors 'self'; " +
-                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
-                "img-src 'self' data: www.google-analytics.com https://www.gravatar.com ${UploadsCloudFrontUrl} https://img.youtube.com https://i.vimeocdn.com https://cdnjs.cloudflare.com; " +
-                "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
-                "object-src 'none'"
-         	}];
-         	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
-         	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
-         	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
-         	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
-
-         	//Return modified response
-         	callback(null, response);
-         };
-      Role: !GetAtt LambdaEdgeRole.Arn
-    DependsOn:
-      - CreateLambdaEdgeFunction
-      - LambdaEdgeRole
-
-# todo remove
-  CreateSecurityHeadersPublicPages:
-    Type: Custom::LambdaEdgeSecurityHeaders
-    Properties:
-      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      FunctionName: SecurityHeadersPublicPages
-      Code: !Sub |-
-         exports.handle = function (event, context, callback) {
-         	//Get contents of response
-         	const response = event.Records[0].cf.response;
-         	const headers = response.headers;
-
-         	//Set new headers
-         	//headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
-         	headers['content-security-policy'] = [{
-                key: 'Content-Security-Policy',
-                value: "default-src 'none'; " +
-                "base-uri 'none'; " +
-                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
-                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
-                "form-action 'self'; " +
-                "frame-ancestors 'self'; " +
-                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
-                "img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
-                "script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-                "object-src 'none'"
-         	}];
-         	//headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
-         	//headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
-         	//headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
-         	//headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
-
-         	//Return modified response
-         	callback(null, response);
-         };
-      Role: !GetAtt LambdaEdgeRole.Arn
-    DependsOn:
-      - CreateLambdaEdgeFunction
-      - LambdaEdgeRole
+#  CreateSecurityHeadersAdminPages:
+#    Type: Custom::LambdaEdgeSecurityHeaders
+#    Properties:
+#      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+#      FunctionName: SecurityHeadersAdminPages
+#      Code: !Sub |-
+#         exports.handle = function (event, context, callback) {
+#
+#         	//Get contents of response
+#         	const response = event.Records[0].cf.response;
+#         	const headers = response.headers;
+#
+#         	//Set new headers
+#         	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+#         	headers['content-security-policy'] = [{
+#                key: 'Content-Security-Policy',
+#                value: "default-src 'none'; " +
+#                "base-uri 'none'; " +
+#                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com https://vimeo.com; " +
+#                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+#                "form-action 'self'; " +
+#                "frame-ancestors 'self'; " +
+#                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
+#                "img-src 'self' data: www.google-analytics.com https://www.gravatar.com ${UploadsCloudFrontUrl} https://img.youtube.com https://i.vimeocdn.com https://cdnjs.cloudflare.com; " +
+#                "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+#                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+#                "object-src 'none'"
+#         	}];
+#         	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+#         	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+#         	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+#         	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+#
+#         	//Return modified response
+#         	callback(null, response);
+#         };
+#      Role: !GetAtt LambdaEdgeRole.Arn
+#    DependsOn:
+#      - CreateLambdaEdgeFunction
+#      - LambdaEdgeRole
 
 # todo remove
-  CreateSecurityHeadersUploads:
-    Type: Custom::LambdaEdgeSecurityHeaders
-    Properties:
-      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
-      FunctionName: SecurityHeadersUploads
-      Code: !Sub |-
-        exports.handle = function (event, context, callback) {
+#  CreateSecurityHeadersPublicPages:
+#    Type: Custom::LambdaEdgeSecurityHeaders
+#    Properties:
+#      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+#      FunctionName: SecurityHeadersPublicPages
+#      Code: !Sub |-
+#         exports.handle = function (event, context, callback) {
+#         	//Get contents of response
+#         	const response = event.Records[0].cf.response;
+#         	const headers = response.headers;
+#
+#         	//Set new headers
+#         	//headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+#         	headers['content-security-policy'] = [{
+#                key: 'Content-Security-Policy',
+#                value: "default-src 'none'; " +
+#                "base-uri 'none'; " +
+#                "connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com; " +
+#                "font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com; " +
+#                "form-action 'self'; " +
+#                "frame-ancestors 'self'; " +
+#                "frame-src 'self' https://www.youtube.com https://player.vimeo.com; " +
+#                "img-src 'self' www.google-analytics.com ${UploadsCloudFrontUrl}; " +
+#                "script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com; " +
+#                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+#                "object-src 'none'"
+#         	}];
+#         	//headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+#         	//headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+#         	//headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+#         	//headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+#
+#         	//Return modified response
+#         	callback(null, response);
+#         };
+#      Role: !GetAtt LambdaEdgeRole.Arn
+#    DependsOn:
+#      - CreateLambdaEdgeFunction
+#      - LambdaEdgeRole
 
-        	//Get contents of response
-        	const response = event.Records[0].cf.response;
-        	const headers = response.headers;
-
-        	//Set new headers
-        	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
-        	headers['content-security-policy'] = [{
-        		key: 'Content-Security-Policy',
-        		value: "default-src 'none'; " +
-        		"base-uri 'none'; " +
-        		"img-src 'self'; " +
-        		"script-src 'none'; " +
-        		"font-src 'self'; " +
-        		"form-action 'none'; " +
-        		"frame-ancestors 'none'; " +
-        		"style-src 'self'; " +
-        		"object-src 'none';"
-        	}];
-        	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
-        	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
-        	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
-        	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
-
-        	//Return modified response
-        	callback(null, response);
-        };
-      Role: !GetAtt LambdaEdgeRole.Arn
-    DependsOn:
-      - CreateLambdaEdgeFunction
-      - LambdaEdgeRole
+# todo remove
+#  CreateSecurityHeadersUploads:
+#    Type: Custom::LambdaEdgeSecurityHeaders
+#    Properties:
+#      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+#      FunctionName: SecurityHeadersUploads
+#      Code: !Sub |-
+#        exports.handle = function (event, context, callback) {
+#
+#        	//Get contents of response
+#        	const response = event.Records[0].cf.response;
+#        	const headers = response.headers;
+#
+#        	//Set new headers
+#        	headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age=63072000;includeSubdomains;preload'}];
+#        	headers['content-security-policy'] = [{
+#        		key: 'Content-Security-Policy',
+#        		value: "default-src 'none'; " +
+#        		"base-uri 'none'; " +
+#        		"img-src 'self'; " +
+#        		"script-src 'none'; " +
+#        		"font-src 'self'; " +
+#        		"form-action 'none'; " +
+#        		"frame-ancestors 'none'; " +
+#        		"style-src 'self'; " +
+#        		"object-src 'none';"
+#        	}];
+#        	headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
+#        	headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
+#        	headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
+#        	headers['referrer-policy'] = [{key: 'Referrer-Policy', value: 'same-origin'}];
+#
+#        	//Return modified response
+#        	callback(null, response);
+#        };
+#      Role: !GetAtt LambdaEdgeRole.Arn
+#    DependsOn:
+#      - CreateLambdaEdgeFunction
+#      - LambdaEdgeRole
 
   GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
@@ -942,24 +944,28 @@ Resources:
 
   # Associate Lambda@Edge Functions
 
-  AssociateAdminPagesFunctions:
-    Type: Custom::AssociateLambdaEdgeFunctions
-    Properties:
-      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
-      CloudFrontDistribution: !Ref AdminPagesCloudFrontDistribution
-      Functions: !Sub |-
-        {
-          "functions": [
-            {
-              "arn": "${CreateSecurityHeadersAdminPages.LambdaFunctionARN}",
-              "type": "origin-response"
-            }
-          ]
-        }
-    DependsOn:
-      - CreateSecurityHeadersAdminPages
+#  AssociateAdminPagesFunctions:
+#    Type: Custom::AssociateLambdaEdgeFunctions
+#    Properties:
+#      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+#      CloudFrontDistribution: !Ref AdminPagesCloudFrontDistribution
+#      Functions: !Sub |-
+#        {
+#          "functions": [
+#            {
+#              "arn": "${CreateSecurityHeadersAdminPages.LambdaFunctionARN}",
+#              "type": "origin-response"
+#            }
+#          ]
+#        }
+#    DependsOn:
+#      - CreateSecurityHeadersAdminPages
 
 # ...
+  #            {
+  #              "arn": "${CreateSecurityHeadersPublicPages.LambdaFunctionARN}",
+  #              "type": "origin-response"
+  #            },
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
     Properties:
@@ -969,35 +975,31 @@ Resources:
         {
           "functions": [
             {
-              "arn": "${CreateSecurityHeadersPublicPages.LambdaFunctionARN}",
-              "type": "origin-response"
-            },
-            {
               "arn": "${GeneratePublicPagesHtml.LambdaFunctionARN}",
               "type": "origin-request"
             }
           ]
         }
     DependsOn:
-      - CreateSecurityHeadersPublicPages
+#      - CreateSecurityHeadersPublicPages
       - GeneratePublicPagesHtml
 
-  AssociateUploadsPagesFunctions:
-    Type: Custom::AssociateLambdaEdgeFunctions
-    Properties:
-      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
-      CloudFrontDistribution: !Ref UploadsCloudFrontDistribution
-      Functions: !Sub |-
-        {
-          "functions": [
-            {
-              "arn": "${CreateSecurityHeadersUploads.LambdaFunctionARN}",
-              "type": "origin-response"
-            }
-          ]
-        }
-    DependsOn:
-      - CreateSecurityHeadersUploads
+#  AssociateUploadsPagesFunctions:
+#    Type: Custom::AssociateLambdaEdgeFunctions
+#    Properties:
+#      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+#      CloudFrontDistribution: !Ref UploadsCloudFrontDistribution
+#      Functions: !Sub |-
+#        {
+#          "functions": [
+#            {
+#              "arn": "${CreateSecurityHeadersUploads.LambdaFunctionARN}",
+#              "type": "origin-response"
+#            }
+#          ]
+#        }
+#    DependsOn:
+#      - CreateSecurityHeadersUploads
 
   # S3 Admin Pages Deployment
 

@@ -323,8 +323,6 @@ Resources:
         Name: CustomShortLivedCachingHeadersPolicyMK
         SecurityHeadersConfig:
           ContentSecurityPolicy:
-            # todo script google.com/recaptcha, googletagmanager
-            # todo remove UploadsCloudFrontUrl export?
             # ApiDistributionUrl=https://d158eotjr9ldbh.cloudfront.net/
             # https://6isqknpo1j.execute-api.us-east-1.amazonaws.com
             # https://cognito-idp.us-east-1.amazonaws.com
