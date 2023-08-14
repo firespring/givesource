@@ -15,10 +15,6 @@ Parameters:
   PublicPagesSSLCertificateArn:
     Type: String
 
-# todo remove when headers are moved back to vpc.yml
-  ApiDistributionUrl:
-    Type: String
-
   RestApi:
     Type: String
 
@@ -323,17 +319,6 @@ Resources:
         Name: CustomShortLivedCachingHeadersPolicyMK
         SecurityHeadersConfig:
           ContentSecurityPolicy:
-            # ApiDistributionUrl=https://d158eotjr9ldbh.cloudfront.net/
-            # https://6isqknpo1j.execute-api.us-east-1.amazonaws.com
-            # https://cognito-idp.us-east-1.amazonaws.com
-            # UploadsS3...=https://mk-test-stack-s3stack-1qd65t2hgj2vn-uploadss3-1cr2gv3kmu7f7.s3.us-east-1.amazonaws.com
-            # UploadsS3...Region...=https://mk-test-stack-s3stack-1qd65t2hgj2vn-uploadss3-1cr2gv3kmu7f7.s3.amazonaws.com
-            # img-src https://d17qtxd9bgwc9f.cloudfront.net
-
-            # connect-src 'self' ${ApiDistributionUrl} https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com https://cognito-idp.${AWS::Region}.amazonaws.com https://api.paymentspring.com
-            #              https://${UploadsS3}.s3.${AWS::Region}.amazonaws.com https://${UploadsS3}.s3.amazonaws.com https://vimeo.com;
-            # img-src 'self' data: www.google-analytics.com https://${UploadsDistribution.DomainName}
-
             ContentSecurityPolicy: !Sub >-
               default-src 'none';
               base-uri 'none';
