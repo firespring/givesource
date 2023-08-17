@@ -80,18 +80,3 @@ desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
-
-# Using the .env setting, read and parse either the env specific or the default config.json
-def parse_config
-  env_config_filename = "config/#{ENV['NODE_APP_INSTANCE']}-#{ENV['NODE_APP_INSTANCE']}.json"
-  return JSON.parse(File.read(env_config_filename)) if File.exist?(env_config_filename)
-
-  default_config_filename = "config/default-#{ENV['NODE_APP_INSTANCE']}.json"
-  return JSON.parse(File.read(default_config_filename)) if File.exist?(default_config_filename)
-
-  raise "no config file found matching either '#{env_config_filename}' or '#{default_config_filename}'"
-end
-@config = parse_config
-
-# Create config get/set commands for the current config
-Dev::Template::Application::Config.new(APP_IDENTIFIER, "/#{@config['stack']['AWS_STACK_NAME']}", key_parameter_path: '/global/kms/id')
