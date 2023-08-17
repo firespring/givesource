@@ -6,6 +6,9 @@ require 'bundler/setup'
 require 'firespring_dev_commands'
 require 'launchy'
 
+# The identifier used for the app's rake commands
+APP_IDENTIFIER = 'app'
+
 # Load .env file
 Dotenv.load
 
@@ -18,20 +21,23 @@ Dev::Aws::Account::configure do |c|
 end
 Dev::Template::Aws.new
 
+# Configure docker required versions and create tasks
 Dev::Docker.configure do |c|
-  c.min_version = '20.10.3'
+  c.min_version = '23.0.0'
 end
 
 Dev::Docker::Compose.configure do |c|
-  c.min_version = '1.28.5'
   c.max_version = '3.0.0'
 end
+Dev::Template::Docker::Default.new(exclude: %i[push pull])
 
+# Configure git required version and create tasks
 Dev::Git.configure do |c|
   c.min_version = '2.27.0'
 end
 Dev::Template::Git.new
 
+# Configure software versions used and create tasks
 Dev::EndOfLife.config do |c|
   c.product_versions = [
     Dev::EndOfLife::ProductVersion.new('nodejs', '14', 'the version of node running in the lambdas'),
@@ -40,25 +46,14 @@ Dev::EndOfLife.config do |c|
 end
 Dev::Template::Eol.new
 
-Dev::Template::Docker::Default.new(exclude: %i[push pull])
-
-# Add some custom pre/post tasks
-task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
-  Dev::Aws::Credentials.new.export!
-end
-
-desc 'Open a browser showing the givesource documentation'
-task :docs do
-  Launchy.open('https://github.com/firespring/givesource-ops/wiki')
-end
-
-Dev::Template::Docker::Application.new('app', exclude: %i[pull push])
-namespace :app do
+# Create default tasks for the app
+Dev::Template::Docker::Application.new(APP_IDENTIFIER, exclude: %i[pull push])
+namespace APP_IDENTIFIER do
   desc 'Start up a dev server for our frontend assets'
   task dev: %i[init_docker up_no_deps] do
     command = Dev::Node.new(container_path: '/usr/src/app/packages/frontend').base_command
     command << 'run' << 'dev'
-    Dev::Docker::Compose.new(services: 'app').exec(*command)
+    Dev::Docker::Compose.new(services: APP_IDENTIFIER).exec(*command)
   end
 
   namespace :dev do
@@ -74,3 +69,29 @@ namespace :app do
     end
   end
 end
+
+# Add some custom pre/post tasks
+task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
+  Dev::Aws::Credentials.new.export!
+end
+
+# Add a task to open our docuemtnation in a browser
+desc 'Open a browser showing the givesource documentation'
+task :docs do
+  Launchy.open('https://github.com/firespring/givesource-ops/wiki')
+end
+
+# Using the .env setting, read and parse either the env specific or the default config.json
+def parse_config
+  env_config_filename = "config/#{ENV['NODE_APP_INSTANCE']}-#{ENV['NODE_APP_INSTANCE']}.json"
+  return JSON.parse(File.read(env_config_filename)) if File.exist?(env_config_filename)
+
+  default_config_filename = "config/default-#{ENV['NODE_APP_INSTANCE']}.json"
+  return JSON.parse(File.read(default_config_filename)) if File.exist?(default_config_filename)
+
+  raise "no config file found matching either '#{env_config_filename}' or '#{default_config_filename}'"
+end
+@config = parse_config
+
+# Create config get/set commands for the current config
+Dev::Template::Application::Config.new(APP_IDENTIFIER, "/#{@config['stack']['AWS_STACK_NAME']}", key_parameter_path: '/global/kms/id')

@@ -503,6 +503,14 @@ Resources:
       AliasName: alias/global/encryption
       TargetKeyId: !Ref globalEncryptionKey
 
+  globalEncryptionKeyIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: The global encryption key id
+      Name: !Sub /global/kms/id
+      Type: String
+      Value: !Ref globalEncryptionKey
+
 Outputs:
   internetGateway:
     Description: Internet Gateway for the Givesource VPC
