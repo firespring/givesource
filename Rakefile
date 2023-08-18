@@ -9,6 +9,9 @@ require 'launchy'
 # Load .env file
 Dotenv.load
 
+#Create some top level constants
+ROOT_DIR = File.realpath(File.dirname(__FILE__))
+
 # Configure AWS accounts and create tasks
 Dev::Aws::Account::configure do |c|
   c.root = Dev::Aws::Account::Info.new(ENV['ORG_ACCOUNT_NAME'], ENV['ORG_ACCOUNT_ID'])
@@ -17,6 +20,18 @@ Dev::Aws::Account::configure do |c|
   c.children << Dev::Aws::Account::Info.new(ENV['DEV_ACCOUNT_NAME'], ENV['DEV_ACCOUNT_ID']) unless ENV['DEV_ACCOUNT_ID'].to_s.blank?
 end
 Dev::Template::Aws.new
+
+ci_cloudformations = []
+branch = Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
+ci_cloudformations << Dev::Aws::Cloudformation.new(
+    "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
+    "#{ROOT_DIR}/givesource/ops/aws/cloudformation/ci/branch.yml",
+    parameters: Dev::Aws::Cloudformation::Parameters.new(
+      BranchName: branch
+    ),
+    capabilities: ['CAPABILITY_IAM']
+  )
+Dev::Template::Aws::Ci.new(ci_cloudformations)
 
 Dev::Docker.configure do |c|
   c.min_version = '20.10.3'
