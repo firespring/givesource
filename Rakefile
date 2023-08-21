@@ -25,11 +25,11 @@ ci_cloudformations = []
 branch = Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
 ci_cloudformations << Dev::Aws::Cloudformation.new(
     "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
-    "#{ROOT_DIR}/givesource/ops/aws/cloudformation/ci/branch.yml",
+    "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
     parameters: Dev::Aws::Cloudformation::Parameters.new(
       BranchName: branch
     ),
-    capabilities: ['CAPABILITY_IAM']
+    capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']
   )
 Dev::Template::Aws::Ci.new(ci_cloudformations)
 
@@ -74,6 +74,13 @@ namespace :app do
     command = Dev::Node.new(container_path: '/usr/src/app/packages/frontend').base_command
     command << 'run' << 'dev'
     Dev::Docker::Compose.new(services: 'app').exec(*command)
+  end
+
+  desc 'Run the tests for Givesource'
+  task test: %i[init_docker up_no_deps] do
+      command = Dev::Node.new(container_path: '/usr/src/app').base_command
+      command << 'run' << 'test'
+     Dev::Docker::Compose.new(services: 'app').exec(*command)
   end
 
   namespace :dev do
