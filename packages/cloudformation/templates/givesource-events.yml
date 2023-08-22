@@ -12,6 +12,9 @@ Parameters:
   DefaultLambdaFunctionTimeout:
     Type: Number
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # AWS CloudWatch Event Rules
@@ -39,6 +42,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteReports.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete expired reports"
       Environment:
         Variables:

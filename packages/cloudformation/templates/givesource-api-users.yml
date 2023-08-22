@@ -36,6 +36,9 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # User Profile Lambda Resources
@@ -47,6 +50,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetUserProfile.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get authenticated user's profile"
       Environment:
         Variables:
@@ -84,6 +89,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetUsers.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get all admin users"
       Environment:
         Variables:
@@ -120,6 +127,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostUser.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new user"
       Environment:
         Variables:
@@ -156,6 +165,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchUser.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update an existing user"
       Environment:
         Variables:
@@ -191,6 +202,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteUser.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing user"
       Environment:
         Variables:
@@ -229,6 +242,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/ResendUserEmailVerification.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new user"
       Environment:
         Variables:

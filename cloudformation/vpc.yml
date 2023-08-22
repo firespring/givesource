@@ -107,6 +107,7 @@ Resources:
       Type: String
       Value: "temp-must-change"
 
+  # TODO: Should we transition to the global key for this?
   RecaptchaKey:
     Type: AWS::KMS::Key
     Properties:
@@ -468,6 +469,48 @@ Resources:
         }
       - {}
 
+  globalEncryptionKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt/decrypt givesource resources
+      Enabled: true
+      KeyPolicy:
+        Id: !Sub global-encryption-key
+        Version: 2012-10-17
+        Statement:
+        - Sid: Global Encryption Key Policy
+          Effect: Allow
+          Principal:
+            AWS: !Ref AWS::AccountId
+          Action: kms:*
+          Resource: '*'
+        - Sid: Global Encryption Allow Use By AWS Services
+          Effect: Allow
+          Principal:
+            Service:
+              - sns.amazonaws.com
+              - events.amazonaws.com
+              - cloudwatch.amazonaws.com
+          Action:
+            - kms:Decrypt
+            - kms:GenerateDataKey*
+          Resource:
+            - '*'
+
+  globalEncryptionKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/global/encryption
+      TargetKeyId: !Ref globalEncryptionKey
+
+  globalEncryptionKeyIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: The global encryption key id
+      Name: !Sub /global/kms/id
+      Type: String
+      Value: !Ref globalEncryptionKey
+
 Outputs:
   internetGateway:
     Description: Internet Gateway for the Givesource VPC
@@ -523,6 +566,7 @@ Outputs:
     Export:
       Name: givesource-secondary-private-subnet
 
+  # TODO: Should we transition to the global key for this?
   globalRecaptchaKey:
     Description: Recaptcha key for Givesource
     Value: !GetAtt RecaptchaKey.Arn
@@ -586,3 +630,18 @@ Outputs:
       - {IpRange: !FindInMap [IpRange, !Ref 'AWS::Region', !Ref 'AWS::AccountId']}
     Export:
       Name: givesource-secondary-private-subnet-cidr-block
+
+  globalEncryptionKeyAlias:
+    Value: !Ref globalEncryptionKeyAlias
+    Export:
+      Name: global-encryption-key-alias
+
+  globalEncryptionKeyArn:
+    Value: !GetAtt globalEncryptionKey.Arn
+    Export:
+      Name: global-encryption-key-arn
+
+  globalEncryptionKeyId:
+    Value: !Ref globalEncryptionKey
+    Export:
+      Name: global-encryption-key-id

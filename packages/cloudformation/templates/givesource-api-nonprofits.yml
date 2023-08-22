@@ -39,6 +39,9 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Nonprofits Lambda Resources
@@ -50,6 +53,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a nonprofit by id"
       Environment:
         Variables:
@@ -85,6 +90,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofits.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of nonprofits"
       Environment:
         Variables:
@@ -120,6 +127,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new nonprofit"
       Environment:
         Variables:
@@ -155,6 +164,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update an existing nonprofit"
       Environment:
         Variables:
@@ -190,6 +201,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing nonprofit"
       Environment:
         Variables:
@@ -227,6 +240,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonation.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a nonprofit's donation by id"
       Environment:
         Variables:
@@ -262,6 +277,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonations.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of a nonprofit's donations"
       Environment:
         Variables:
@@ -297,6 +314,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitDonation.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new nonprofit's donation"
       Environment:
         Variables:
@@ -332,6 +351,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitDonation.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update an existing nonprofit donation"
       Environment:
         Variables:
@@ -367,6 +388,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitDonation.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing nonprofit donation"
       Environment:
         Variables:
@@ -404,6 +427,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonationTier.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a nonprofit's donation tier by uuid"
       Environment:
         Variables:
@@ -439,6 +464,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitDonationTiers.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of a nonprofit's donation tiers"
       Environment:
         Variables:
@@ -474,6 +501,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitDonationTier.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new nonprofit's donation tier"
       Environment:
         Variables:
@@ -509,6 +538,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitDonationTiers.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Batch update nonprofit donation tiers"
       Environment:
         Variables:
@@ -544,6 +575,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitDonationTiers.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Batch delete nonprofit donation tiers"
       Environment:
         Variables:
@@ -581,6 +614,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitPage.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a nonprofit by id"
       Environment:
         Variables:
@@ -618,6 +653,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitReport.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a report by uuid"
       Environment:
         Variables:
@@ -653,6 +690,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitReport.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new report"
       Environment:
         Variables:
@@ -690,6 +729,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitSlide.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a nonprofit's slide by uuid"
       Environment:
         Variables:
@@ -725,6 +766,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitSlides.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of a nonprofit's slides"
       Environment:
         Variables:
@@ -760,6 +803,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitSlide.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new nonprofit's slide"
       Environment:
         Variables:
@@ -795,6 +840,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitSlide.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update an existing nonprofit slide"
       Environment:
         Variables:
@@ -830,6 +877,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitSlides.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Batch update Nonprofit Slides"
       Environment:
         Variables:
@@ -865,6 +914,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitSlide.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing nonprofit slide"
       Environment:
         Variables:
@@ -903,6 +954,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetNonprofitUsers.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of a nonprofit's users"
       Environment:
         Variables:
@@ -938,6 +991,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostNonprofitUser.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new nonprofit user"
       Environment:
         Variables:
@@ -974,6 +1029,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteNonprofitUser.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing nonprofit user"
       Environment:
         Variables:
@@ -1012,6 +1069,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/AdminRegisterNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Register a new nonprofit and User"
       Environment:
         Variables:
@@ -1050,6 +1109,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/RegisterNonprofit.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Register a new nonprofit and User"
       Environment:
         Variables:
@@ -1087,6 +1148,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/SearchNonprofits.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update a nonprofit's status"
       Environment:
         Variables:
@@ -1124,6 +1187,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchNonprofitStatus.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update a nonprofit's status"
       Environment:
         Variables:

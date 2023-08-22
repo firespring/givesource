@@ -36,6 +36,9 @@ Parameters:
   UploadsBucket:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Reports Lambda Resources
@@ -47,6 +50,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetReport.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a report by uuid"
       Environment:
         Variables:
@@ -82,6 +87,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostReport.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new report"
       Environment:
         Variables:
