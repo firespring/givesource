@@ -21,6 +21,7 @@ Dev::Aws::Account::configure do |c|
   c.children = []
   c.children << Dev::Aws::Account::Info.new(ENV['PRD_ACCOUNT_NAME'], ENV['PRD_ACCOUNT_ID']) unless ENV['PRD_ACCOUNT_ID'].to_s.blank?
   c.children << Dev::Aws::Account::Info.new(ENV['DEV_ACCOUNT_NAME'], ENV['DEV_ACCOUNT_ID']) unless ENV['DEV_ACCOUNT_ID'].to_s.blank?
+  c.ecr_registry_ids = ['300448126090']
 end
 Dev::Template::Aws.new
 
