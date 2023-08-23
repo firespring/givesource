@@ -33,6 +33,9 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Contents Lambda Resources
@@ -44,6 +47,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetContents.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of contents"
       Environment:
         Variables:
@@ -79,6 +84,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostContent.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new content"
       Environment:
         Variables:
@@ -114,6 +121,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchContent.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Update an existing content"
       Environment:
         Variables:
@@ -149,6 +158,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PatchContents.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create or update contents"
       Environment:
         Variables:
@@ -184,6 +195,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteContent.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete a content"
       Environment:
         Variables:
@@ -219,6 +232,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteContents.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete contents"
       Environment:
         Variables:

@@ -1,0 +1,15 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS SQS resources for Givesource(R)
+Parameters:
+  StackName:
+    Type: String
+Resources:
+  DeadLetterQueueTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Notifications for failed Lambda function events
+      KmsMasterKeyId: !ImportValue global-encryption-key-id
+Outputs:
+  DeadLetterQueueTopic:
+    Value: !Ref DeadLetterQueueTopic

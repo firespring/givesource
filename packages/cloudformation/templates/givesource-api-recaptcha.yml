@@ -33,6 +33,9 @@ Parameters:
   SecureSettingsLambdaFunctionRoleArn:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
   # Secure Recaptcha Api Lambda Resources
 
@@ -42,6 +45,8 @@ Resources:
       Code:
         S3Bucket: !Sub {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/ValidateRecaptcha.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Post validation for recaptcha and get secret key."
       Environment:
         Variables:

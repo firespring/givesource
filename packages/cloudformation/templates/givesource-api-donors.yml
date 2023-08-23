@@ -33,6 +33,9 @@ Parameters:
   AuthorizeUsers:
     Type: String
 
+  DeadLetterQueueTopic:
+    Type: String
+
 Resources:
 
   # Donors Lambda Resources
@@ -44,6 +47,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonor.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a donor by uuid"
       Environment:
         Variables:
@@ -79,6 +84,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/GetDonors.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Get a list of donors"
       Environment:
         Variables:
@@ -114,6 +121,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/PostDonor.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Create a new donor"
       Environment:
         Variables:
@@ -149,6 +158,8 @@ Resources:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
         S3Key: fn/{{version}}/DeleteDonor.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
       Description: "Delete an existing donor"
       Environment:
         Variables:
