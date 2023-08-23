@@ -94,6 +94,7 @@ Resources:
                 Resource:
                   - !GetAtt BuildProject.Arn
                   - !GetAtt TestProject.Arn
+                  - !GetAtt LintProject.Arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -157,6 +158,7 @@ Resources:
                 - Name: unit-test-summary
               Configuration:
                 ProjectName: !Ref TestProject
+                PrimarySource: givesource
                 EnvironmentVariables: !Sub >
                   [
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
@@ -338,26 +340,24 @@ Resources:
                   - ecr:BatchGetImage
                   - ecr:BatchCheckLayerAvailability
                 Resource:
+                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/accounts
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/cdn
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/dashboard
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/fdp
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/sslproxy
-                  - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/opensearch
-                  - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/mysql
-                  - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/redis
-                  - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/sqs
                   - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/s3
               - Effect: Allow
                 Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                  - ecr:PutImage
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
                   - codebuild:BatchPutCodeCoverages
                 Resource:
+                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
                   - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${AWS::StackName}-*
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
@@ -385,6 +385,18 @@ Resources:
         ImagePullCredentialsType: SERVICE_ROLE
         EnvironmentVariables:
           - Type: PLAINTEXT
+            Name: BASE_REPO_REGISTRY_ID
+            Value: !GetAtt BaseRepoRegistryId.Value
+          - Type: PLAINTEXT
+            Name: BASE_REPO_REGION
+            Value: !GetAtt BaseRepoRegion.Value
+          - Type: PLAINTEXT
+            Name: BASE_REPO
+            Value: !Sub ${BaseRepoRegistryId.Value}.dkr.ecr.${BaseRepoRegion.Value}.amazonaws.com/firespring/base
+          - Type: PLAINTEXT
+            Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
+            Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
+          - Type: PLAINTEXT
             Name: ECR_REGION
             Value: !GetAtt EcrRegion.Value
           - Type: PLAINTEXT
@@ -411,7 +423,7 @@ Resources:
           GroupName: !Ref TestProjectLogGroup
           Status: ENABLED
       QueuedTimeoutInMinutes: 10
-      ServiceRole: !GetAtt TestServiceRole.Arn
+      ServiceRole: !GetAtt BuildServiceRole.Arn
       TimeoutInMinutes: 60
       Source:
         Type: CODEPIPELINE
@@ -421,9 +433,6 @@ Resources:
             shell: bash
             variables:
               SERVICE_NAME: unknown
-              LANGUAGE: unknown
-              OPTS: ''
-              TYPE: unknown
               ECR_REGION: unknown
               ECR_REGISTRY_ID: unkonwn
               GS_TAG: develop
@@ -437,23 +446,27 @@ Resources:
           phases:
             install:
               commands:
-                # Print env
+                # Print environment
                 - env | sort
 
                 # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
+                # Pull oauth token from parameter store
+                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
+          
                 # log in to ECR for custom Docker images
+                - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
-                - aws ecr --region=${SEED_REGION} get-login-password | docker login --password-stdin --username AWS "${SEED_REGISTRY_ID}.dkr.ecr.${SEED_REGION}.amazonaws.com"
 
-                # setup rake
+                # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
 
             build:
               commands:
                 # run test suite
+                - bundle exec rake app:build
                 - bundle exec rake app:test
 
 #            post_build:
@@ -472,132 +485,132 @@ Resources:
 #                - 'coverage/lcov-report/clover.xml'
 #              file-format: CLOVERXML
 #
-#  LintServiceRole:
-#    Type: AWS::IAM::Role
-#    Properties:
-#      AssumeRolePolicyDocument:
-#        Version: 2012-10-17
-#        Statement:
-#          - Effect: Allow
-#            Principal:
-#              Service:
-#                - codebuild.amazonaws.com
-#            Action: sts:AssumeRole
-#      Path: /
-#      Policies:
-#        - PolicyName: LintServiceRolePolicy
-#          PolicyDocument:
-#            Version: 2012-10-17
-#            Statement:
-#              - Effect: Allow
-#                Action:
-#                  - ecr:GetDownloadUrlForLayer
-#                  - ecr:BatchGetImage
-#                  - ecr:BatchCheckLayerAvailability
-#                Resource:
-#                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
-#                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
-#                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
-#      ManagedPolicyArns:
-#        - !ImportValue fdp-base-codebuild-managed-policy-arn
-#
-#  LintProjectLogGroup:
-#    Type: AWS::Logs::LogGroup
-#    Properties:
-#      LogGroupName: !Sub /aws/codebuild/${AWS::StackName}-LintProject
-#      RetentionInDays: 30
-#
-#  LintProject:
-#    Type: AWS::CodeBuild::Project
-#    Properties:
-#      Name: !Sub ${AWS::StackName}-LintProject
-#      Description: Runs the code standards for the Givesource application
-#      Artifacts:
-#        Type: CODEPIPELINE
-#      Cache:
-#        Type: NO_CACHE
-#      EncryptionKey: !ImportValue fdp-cicd-key-arn
-#      Environment:
-#        Type: LINUX_CONTAINER
-#        ComputeType: BUILD_GENERAL1_SMALL
-#        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
-#        ImagePullCredentialsType: SERVICE_ROLE
-#        EnvironmentVariables:
-#          - Type: PLAINTEXT
-#            Name: BASE_REPO_REGISTRY_ID
-#            Value: !GetAtt BaseRepoRegistryId.Value
-#          - Type: PLAINTEXT
-#            Name: BASE_REPO_REGION
-#            Value: !GetAtt BaseRepoRegion.Value
-#          - Type: PLAINTEXT
-#            Name: BASE_REPO
-#            Value: !Sub ${BaseRepoRegistryId.Value}.dkr.ecr.${BaseRepoRegion.Value}.amazonaws.com/firespring/base
-#          - Type: PLAINTEXT
-#            Name: ECR_REGION
-#            Value: !GetAtt EcrRegion.Value
-#          - Type: PLAINTEXT
-#            Name: ECR_REGISTRY_ID
-#            Value: !GetAtt EcrRegistryId.Value
-#        PrivilegedMode: true
-#      LogsConfig:
-#        CloudWatchLogs:
-#          GroupName: !Ref LintProjectLogGroup
-#          Status: ENABLED
-#      QueuedTimeoutInMinutes: 10
-#      ServiceRole: !GetAtt LintServiceRole.Arn
-#      TimeoutInMinutes: 60
-#      Source:
-#        Type: CODEPIPELINE
-#        BuildSpec: |
-#          version: 0.2
-#          env:
-#            shell: bash
-#            variables:
-#              SERVICE_NAME: unknown
-#              LANGUAGE: unknown
-#              ECR_REGION: unknown
-#              ECR_REGISTRY_ID: unkonwn
-#              CYP_TAG: develop
-#              FDP_TAG: develop
-#              USERNAME: codebuild
-#              DEV_VOLUMES: false
-#              BRANCH_TAGS: false
-#
-#          phases:
-#            install:
-#              commands:
-#                # Print env
-#                - env | sort
-#
-#                # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
-#                - dockerd-entrypoint.sh &>/dev/null &
-#                - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
-#
-#                # log in to ECR for custom Docker images
-#                - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
-#                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
-#
-#                # setup rake
-#                - cd ${CODEBUILD_SRC_DIR} && bundle install
-#
-#            pre_build:
-#              commands:
-#                - bundle exec rake ci:setup
-#
-#            build:
-#              commands:
-#                # run php linting
-#                - bundle exec rake ${SERVICE_NAME}:${LANGUAGE}:lint
-#
-#            post_build:
-#              commands:
-#                # Copy back the test artifacts
-#                - docker cp fdp-devops-givesource-1:/usr/src/app/results.junit.xml ${CODEBUILD_SRC_DIR}/results.junit.xml
-#
-#          artifacts:
-#            files:
-#              - results.junit.xml
-#            discard-paths: no
+  LintServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: LintServiceRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                Resource:
+                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
+                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
+                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+      ManagedPolicyArns:
+        - !ImportValue fdp-base-codebuild-managed-policy-arn
+
+  LintProjectLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${AWS::StackName}-LintProject
+      RetentionInDays: 30
+
+  LintProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-LintProject
+      Description: Runs the code standards for the Givesource application
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      EncryptionKey: !ImportValue fdp-cicd-key-arn
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        ImagePullCredentialsType: SERVICE_ROLE
+        EnvironmentVariables:
+          - Type: PLAINTEXT
+            Name: BASE_REPO_REGISTRY_ID
+            Value: !GetAtt BaseRepoRegistryId.Value
+          - Type: PLAINTEXT
+            Name: BASE_REPO_REGION
+            Value: !GetAtt BaseRepoRegion.Value
+          - Type: PLAINTEXT
+            Name: BASE_REPO
+            Value: !Sub ${BaseRepoRegistryId.Value}.dkr.ecr.${BaseRepoRegion.Value}.amazonaws.com/firespring/base
+          - Type: PLAINTEXT
+            Name: ECR_REGION
+            Value: !GetAtt EcrRegion.Value
+          - Type: PLAINTEXT
+            Name: ECR_REGISTRY_ID
+            Value: !GetAtt EcrRegistryId.Value
+        PrivilegedMode: true
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Ref LintProjectLogGroup
+          Status: ENABLED
+      QueuedTimeoutInMinutes: 10
+      ServiceRole: !GetAtt LintServiceRole.Arn
+      TimeoutInMinutes: 60
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          env:
+            shell: bash
+            variables:
+              SERVICE_NAME: unknown
+              LANGUAGE: unknown
+              ECR_REGION: unknown
+              ECR_REGISTRY_ID: unkonwn
+              CYP_TAG: develop
+              FDP_TAG: develop
+              USERNAME: codebuild
+              DEV_VOLUMES: false
+              BRANCH_TAGS: false
+
+          phases:
+            install:
+              commands:
+                # Print environment
+                - env | sort
+
+                # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
+                - dockerd-entrypoint.sh &>/dev/null &
+                - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
+
+                # Pull oauth token from parameter store
+                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
+          
+                # log in to ECR for custom Docker images
+                - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+
+                # Install libraries used by the rake scripts
+                - cd ${CODEBUILD_SRC_DIR} && bundle install
+
+            build:
+              commands:
+                # run php linting
+                - bundle exec rake app:build
+                - bundle exec rake app:lint
+
+            post_build:
+              commands:
+                # Copy back the test artifacts
+                - docker cp givesource-1:/usr/src/app/results.junit.xml ${CODEBUILD_SRC_DIR}/results.junit.xml
+
+          artifacts:
+            files:
+              - results.junit.xml
+            discard-paths: no
 #
 #  AuditServiceRole:
 #    Type: AWS::IAM::Role
