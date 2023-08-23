@@ -83,6 +83,15 @@ namespace :app do
      Dev::Docker::Compose.new(services: 'app').exec(*command)
   end
 
+  namespace :test do
+    desc 'Run the tests with coverage for Givesource'
+    task coverage: %i[init_docker up_no_deps] do
+         command = Dev::Node.new(container_path: '/usr/src/app/packages/lambda').base_command
+         command << 'run' << 'test:coverage'
+        Dev::Docker::Compose.new(services: 'app').exec(*command)
+     end
+  end
+
   namespace :dev do
     desc 'Open browser windows to ports 3000-3003 (local dev)'
     task gui: %w[init_docker up_no_deps] do
