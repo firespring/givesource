@@ -227,134 +227,6 @@ Resources:
 
   # AWS CloudFront Resources
 
-  longLivedCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomLongLivedCachingHeadersPolicyMK
-        SecurityHeadersConfig:
-          ContentSecurityPolicy:
-            ContentSecurityPolicy: !Sub >-
-              default-src 'none';
-              base-uri 'none';
-              img-src 'self';
-              script-src 'none';
-              font-src 'self';
-              form-action 'none';
-              frame-ancestors 'none';
-              style-src 'self';
-              object-src 'none';
-            Override: false
-          ContentTypeOptions:
-            Override: false
-          FrameOptions:
-            FrameOption: DENY
-            Override: false
-          ReferrerPolicy:
-            ReferrerPolicy: same-origin
-            Override: false
-          StrictTransportSecurity:
-            AccessControlMaxAgeSec: 63072000
-            IncludeSubdomains: true
-            Preload: true
-            Override: false
-          XSSProtection:
-            ModeBlock: true
-            Protection: true
-            Override: false
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: max-age=31536000
-              Override: false
-
-  mediumCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomMediumLivedCachingHeadersPolicyMK
-        SecurityHeadersConfig:
-          ContentSecurityPolicy:
-            ContentSecurityPolicy: !Sub >-
-              default-src 'none';
-              base-uri 'none';
-              img-src 'self';
-              script-src 'none';
-              font-src 'self';
-              form-action 'none';
-              frame-ancestors 'none';
-              style-src 'self';
-              object-src 'none';
-            Override: false
-          ContentTypeOptions:
-            Override: false
-          FrameOptions:
-            FrameOption: DENY
-            Override: false
-          ReferrerPolicy:
-            ReferrerPolicy: same-origin
-            Override: false
-          StrictTransportSecurity:
-            AccessControlMaxAgeSec: 63072000
-            IncludeSubdomains: true
-            Preload: true
-            Override: false
-          XSSProtection:
-            ModeBlock: true
-            Protection: true
-            Override: false
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: max-age=600
-              Override: false
-
-  shortLivedCachingHeaderPolicy:
-    Type: AWS::CloudFront::ResponseHeadersPolicy
-    Properties:
-      ResponseHeadersPolicyConfig:
-        Name: CustomShortLivedCachingHeadersPolicyMK
-        SecurityHeadersConfig:
-          ContentSecurityPolicy:
-            ContentSecurityPolicy: !Sub >-
-              default-src 'none';
-              base-uri 'none';
-              connect-src 'self' https://*.cloudfront.net https://*.amazonaws.com https://api.paymentspring.com https://vimeo.com
-              https://www.google-analytics.com;
-              font-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://use.fontawesome.com;
-              form-action 'self';
-              frame-ancestors 'self';
-              frame-src 'self' https://www.youtube.com https://player.vimeo.com;
-              img-src 'self' data: www.google-analytics.com https://*.cloudfront.net
-              https://www.gravatar.com https://img.youtube.com https://i.vimeocdn.com https://cdnjs.cloudflare.com;
-              script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com
-              https://www.google.com/recaptcha/api.js https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com/gtag/js;
-              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com https://cdnjs.cloudflare.com;
-              object-src 'none'
-            Override: false
-          ContentTypeOptions:
-            Override: false
-          FrameOptions:
-            FrameOption: DENY
-            Override: false
-          ReferrerPolicy:
-            ReferrerPolicy: same-origin
-            Override: false
-          StrictTransportSecurity:
-            AccessControlMaxAgeSec: 63072000
-            IncludeSubdomains: true
-            Preload: true
-            Override: false
-          XSSProtection:
-            ModeBlock: true
-            Protection: true
-            Override: false
-        CustomHeadersConfig:
-          Items:
-            - Header: Cache-Control
-              Value: no-cache
-              Override: true
-
   AdminPagesDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -379,7 +251,7 @@ Resources:
           MinTTL: 0
           Compress: true
           ViewerProtocolPolicy: redirect-to-https
-          ResponseHeadersPolicyId: !GetAtt shortLivedCachingHeaderPolicy.Id
+          ResponseHeadersPolicyId: !ImportValue global-short-lived-caching-header-policy
         PriceClass: PriceClass_200
         ViewerCertificate:
           AcmCertificateArn: !If [HasAdminPagesSSLCertificateArn, !Ref AdminPagesSSLCertificateArn, !Ref "AWS::NoValue"]
@@ -423,16 +295,14 @@ Resources:
           MinTTL: 0
           Compress: true
           ViewerProtocolPolicy: redirect-to-https
-#          ResponseHeadersPolicyId: !ImportValue global-short-lived-caching-header-policy
-          ResponseHeadersPolicyId: !GetAtt shortLivedCachingHeaderPolicy.Id
+          ResponseHeadersPolicyId: !ImportValue global-short-lived-caching-header-policy
         CacheBehaviors:
           - PathPattern: assets/*
             DefaultTTL: 31536000 # 365 days
             Compress: true
             ViewerProtocolPolicy: redirect-to-https
             TargetOriginId: !Ref PublicPagesS3
-#            ResponseHeadersPolicyId: !ImportValue global-long-lived-caching-header-policy
-            ResponseHeadersPolicyId: !GetAtt longLivedCachingHeaderPolicy.Id
+            ResponseHeadersPolicyId: !ImportValue global-long-lived-caching-header-policy
             ForwardedValues:
               QueryString: false
         PriceClass: PriceClass_200
@@ -474,8 +344,7 @@ Resources:
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
-#          ResponseHeadersPolicyId: !ImportValue global-medium-caching-header-policy
-          ResponseHeadersPolicyId: !GetAtt mediumCachingHeaderPolicy.Id
+          ResponseHeadersPolicyId: !ImportValue global-medium-caching-header-policy
           ViewerProtocolPolicy: allow-all
         PriceClass: PriceClass_200
         ViewerCertificate:

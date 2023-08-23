@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// Set timezone to UTC for consistency in tests
+process.env.TZ = 'UTC'
+
 const assert = require('assert')
 const Generator = require('./../../src/helpers/generator')
 const promiseMe = require('mocha-promise-me')
