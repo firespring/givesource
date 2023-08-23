@@ -1,5 +1,13 @@
-# Use node 18 (bullseye) as our base
-FROM node:18-bullseye-slim
+ARG BASE_REPO=300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/base
+ARG SRC_TAG=bullseye
+FROM ${BASE_REPO}:${SRC_TAG}
+
+# Install the latest version of node and clean up
+RUN apt-get update \
+  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y git nodejs \
+  && apt-get clean \
+  && rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 # Set up lambda/work dir
 WORKDIR /usr/src/app
