@@ -187,7 +187,6 @@ Resources:
                   - ecr:PutImage
                 Resource:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/cypress
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -231,6 +230,15 @@ Resources:
           - Type: PLAINTEXT
             Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
             Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
+          - Type: PLAINTEXT
+            Name: DEV_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: PRD_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: BRANCH
+            Value: !Ref BranchName
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -249,10 +257,13 @@ Resources:
               SERVICE_NAME: unknown
               ECR_REGION: unknown
               ECR_REGISTRY_ID: unkonwn
-              SPR_TAG: develop
+              GS_TAG: develop
               USERNAME: codebuild
               DEV_VOLUMES: false
               BRANCH_TAGS: false
+              PRD_ACCOUNT_ID: unknown
+              DEV_ACCOUNT_ID: unknown
+              BRANCH: unknown
 
           phases:
             install:
@@ -273,10 +284,13 @@ Resources:
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
+                - ls -a
           
             build:
               commands:
                 - bundle exec rake app:build
+#          so do I need to create an s3 bucket to clone this into manually?
+#           how do I get .git initialized
 #
 #  TestServiceRole:
 #    Type: AWS::IAM::Role
@@ -385,7 +399,7 @@ Resources:
 #              TYPE: unknown
 #              ECR_REGION: unknown
 #              ECR_REGISTRY_ID: unkonwn
-#              SPR_TAG: develop
+#              GS_TAG: develop
 #              USERNAME: codebuild
 #              DEV_VOLUMES: false
 #              BRANCH_TAGS: false

@@ -22,7 +22,7 @@ end
 Dev::Template::Aws.new
 
 ci_cloudformations = []
-branch = Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
+branch = ENV['BRANCH'] || Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
 ci_cloudformations << Dev::Aws::Cloudformation.new(
     "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
     "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
