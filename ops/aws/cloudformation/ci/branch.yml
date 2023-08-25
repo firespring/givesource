@@ -165,6 +165,26 @@ Resources:
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
               RunOrder: 1
+            - Name: NodeLint
+              InputArtifacts:
+                  - Name: givesource
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              OutputArtifacts:
+                - Name: node-lint-summary
+              Configuration:
+                ProjectName: !Ref LintProject
+                EnvironmentVariables: !Sub >
+                  [
+                    {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
+                    {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
+                    {"name":"OPTS","value":"-- -f junit -o results.junit.xml","type":"PLAINTEXT"},
+                    {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
+                  ]
+              RunOrder: 1
       Tags:
         - Key: Application
           Value: Givesource
@@ -551,13 +571,22 @@ Resources:
           - Type: PLAINTEXT
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
+          - Type: PLAINTEXT
+            Name: DEV_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: PRD_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: BRANCH
+            Value: !Ref BranchName
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
           GroupName: !Ref LintProjectLogGroup
           Status: ENABLED
       QueuedTimeoutInMinutes: 10
-      ServiceRole: !GetAtt LintServiceRole.Arn
+      ServiceRole: !GetAtt TestServiceRole.Arn
       TimeoutInMinutes: 60
       Source:
         Type: CODEPIPELINE
@@ -575,6 +604,9 @@ Resources:
               USERNAME: codebuild
               DEV_VOLUMES: false
               BRANCH_TAGS: false
+              PRD_ACCOUNT_ID: unknown
+              DEV_ACCOUNT_ID: unknown
+              BRANCH: unknown
 
           phases:
             install:
@@ -605,7 +637,7 @@ Resources:
             post_build:
               commands:
                 # Copy back the test artifacts
-                - docker cp givesource-1:/usr/src/app/results.junit.xml ${CODEBUILD_SRC_DIR}/results.junit.xml
+                - docker cp givesource-app:/usr/src/app/results.junit.xml ${CODEBUILD_SRC_DIR}/results.junit.xml
 
           artifacts:
             files:
