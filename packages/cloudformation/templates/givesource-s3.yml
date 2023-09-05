@@ -251,6 +251,7 @@ Resources:
           MinTTL: 0
           Compress: true
           ViewerProtocolPolicy: redirect-to-https
+          ResponseHeadersPolicyId: !ImportValue global-short-lived-caching-header-policy
         PriceClass: PriceClass_200
         ViewerCertificate:
           AcmCertificateArn: !If [HasAdminPagesSSLCertificateArn, !Ref AdminPagesSSLCertificateArn, !Ref "AWS::NoValue"]
