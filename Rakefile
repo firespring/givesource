@@ -22,6 +22,7 @@ Dev::Aws::Account::configure do |c|
   c.children << Dev::Aws::Account::Info.new(ENV['PRD_ACCOUNT_NAME'], ENV['PRD_ACCOUNT_ID']) unless ENV['PRD_ACCOUNT_ID'].to_s.blank?
   c.children << Dev::Aws::Account::Info.new(ENV['DEV_ACCOUNT_NAME'], ENV['DEV_ACCOUNT_ID']) unless ENV['DEV_ACCOUNT_ID'].to_s.blank?
   c.ecr_registry_ids = ['300448126090']
+  c.login_to_account_ecr_registry = true
 end
 Dev::Template::Aws.new
 
@@ -63,7 +64,7 @@ end
 Dev::Template::Eol.new
 
 # Create default tasks for the app
-Dev::Template::Docker::Application.new(APP_IDENTIFIER, exclude: %i[pull push])
+Dev::Template::Docker::Application.new(APP_IDENTIFIER)
 namespace APP_IDENTIFIER do
   desc 'Start up a dev server for our frontend assets'
   task dev: %i[init_docker up_no_deps] do

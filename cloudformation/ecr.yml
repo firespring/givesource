@@ -1,0 +1,65 @@
+---
+
+#====================================================================================================
+# AWS CloudFormation template for creating ECR repositories for Givesource services
+#====================================================================================================
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates the ECR Repositories required by the FDP
+
+#==================================================
+# Parameters
+#==================================================
+Parameters:
+
+  DaysToRetainUntaggedContainerImages:
+    Type: Number
+    Description: The number days to retain untagged container images before expiring
+    MinValue: 1
+    MaxValue: 100
+    ConstraintDescription: Value must be between 1 and 100
+    Default: 7
+
+Conditions:
+  IsProduction: !Equals [ !Ref 'AWS::AccountId', 435196416497 ]
+  NotProduction: !Not [ !Equals [ !Ref 'AWS::AccountId', 435196416497 ] ]
+
+#==================================================
+# Resources
+#==================================================
+Resources:
+  givesource:
+    Type: 'AWS::ECR::Repository'
+    Properties:
+      RepositoryName: firespring/givesource
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: !Sub
+        - >
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Only keep untagged images for ${DaysToRetainUntaggedContainerImages} days",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": ${DaysToRetainUntaggedContainerImages}
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Only keep images for 365 days",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 365
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+        - DaysToRetainUntaggedContainerImages: !Ref DaysToRetainUntaggedContainerImages

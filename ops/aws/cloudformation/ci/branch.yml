@@ -331,6 +331,10 @@ Resources:
             build:
               commands:
                 - bundle exec rake app:build
+          
+            post_build:
+              commands:
+                - bundle exec rake app:push
 
   TestServiceRole:
     Type: AWS::IAM::Role
@@ -486,7 +490,6 @@ Resources:
             build:
               commands:
                 # run test suite
-                - bundle exec rake app:build
                 - bundle exec rake app:test
 
 #            post_build:
@@ -631,7 +634,6 @@ Resources:
             build:
               commands:
                 # run php linting
-                - bundle exec rake app:build
                 - bundle exec rake app:lint
 
             post_build:
