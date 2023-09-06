@@ -80,10 +80,17 @@ namespace APP_IDENTIFIER do
      Dev::Docker::Compose.new(services: 'app').exec(*command)
   end
 
-  desc 'Run the tests for Givesource'
+  desc 'Run the linter for Givesource'
   task lint: %i[init_docker up_no_deps] do
       command = Dev::Node.new(container_path: '/usr/src/app').base_command
       command << 'run' << 'lint'
+     Dev::Docker::Compose.new(services: 'app').exec(*command)
+  end
+
+  desc 'Run an audit for Givesource packages'
+  task audit: %i[init_docker up_no_deps] do
+      command = Dev::Node.new(container_path: '/usr/src/app').base_command
+      command << 'run' << 'audit'
      Dev::Docker::Compose.new(services: 'app').exec(*command)
   end
 

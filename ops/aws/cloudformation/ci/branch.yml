@@ -95,6 +95,7 @@ Resources:
                   - !GetAtt BuildProject.Arn
                   - !GetAtt TestProject.Arn
                   - !GetAtt LintProject.Arn
+                  - !GetAtt AuditProject.Arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -182,6 +183,27 @@ Resources:
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"OPTS","value":"-- -f junit -o results.junit.xml","type":"PLAINTEXT"},
+                    {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
+                  ]
+              RunOrder: 1
+        - Name: Scans
+          Actions:
+            - Name: NodeAudit
+              InputArtifacts:
+                - Name: givesource
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              OutputArtifacts:
+                - Name: node-audit-summary
+              Configuration:
+                ProjectName: !Ref AuditProject
+                EnvironmentVariables: !Sub >
+                  [
+                    {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
+                    {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
               RunOrder: 1
@@ -492,22 +514,7 @@ Resources:
                 # run test suite
                 - bundle exec rake app:test
 
-#            post_build:
-#              commands:
-#                # Copy back the test artifacts
-#                - docker cp givesource-1:/usr/src/app//coverage ${CODEBUILD_SRC_DIR}/
-#
-#          artifacts:
-#            files:
-#              - coverage/**/*
-#            discard-paths: no
-#          reports:
-#            codeCoverageReport:
-#              discard-paths: yes
-#              files:
-#                - 'coverage/lcov-report/clover.xml'
-#              file-format: CLOVERXML
-#
+
   LintServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -635,3 +642,109 @@ Resources:
               commands:
                 # run php linting
                 - bundle exec rake app:lint
+
+
+  AuditServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: AuditServiceRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource:
+                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
+              - Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:BatchCheckLayerAvailability
+                Resource:
+                  - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
+                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+      ManagedPolicyArns:
+        - !ImportValue fdp-base-codebuild-managed-policy-arn
+
+  AuditLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${AWS::StackName}-AuditProject
+      RetentionInDays: 30
+
+  AuditProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-AuditProject
+      Description: Runs a security audit for the Givesource application
+      Artifacts:
+        Type: CODEPIPELINE
+      Cache:
+        Type: NO_CACHE
+      EncryptionKey: !ImportValue fdp-cicd-key-arn
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        ImagePullCredentialsType: SERVICE_ROLE
+        EnvironmentVariables:
+          - Type: PLAINTEXT
+            Name: ECR_REGION
+            Value: !GetAtt EcrRegion.Value
+          - Type: PLAINTEXT
+            Name: ECR_REGISTRY_ID
+            Value: !GetAtt EcrRegistryId.Value
+        PrivilegedMode: true
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Ref AuditLogGroup
+          Status: ENABLED
+      QueuedTimeoutInMinutes: 10
+      ServiceRole: !GetAtt AuditServiceRole.Arn
+      TimeoutInMinutes: 60
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          env:
+            shell: bash
+            variables:
+              SERVICE_NAME: unknown
+              ECR_REGION: unknown
+              ECR_REGISTRY_ID: unkonwn
+              ACC_TAG: develop
+              USERNAME: codebuild
+              DEV_VOLUMES: false
+              BRANCH_TAGS: false
+          
+          phases:
+            install:
+              commands:
+                # Print env
+                - env | sort
+          
+                # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
+                - dockerd-entrypoint.sh &>/dev/null &
+                - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
+          
+                # log in to ECR for custom Docker images
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+          
+                # setup rake
+                - cd ${CODEBUILD_SRC_DIR} && bundle install
+          
+            build:
+              commands:
+                # run security audit
+                - bundle exec rake app:audit
