@@ -89,9 +89,7 @@ namespace APP_IDENTIFIER do
 
   desc 'Run an audit for Givesource packages'
   task audit: %i[init_docker up_no_deps] do
-      command = Dev::Node.new(container_path: '/usr/src/app').base_command
-      command << 'run' << 'audit'
-     Dev::Docker::Compose.new(services: 'app').exec(*command)
+      alt_dir_node_audit('app', '/usr/src/app/')
   end
 
   namespace :test do
@@ -126,4 +124,11 @@ end
 desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
+end
+
+def alt_dir_node_audit(service, container_path)
+  node = Dev::Node.new(container_path: container_path)
+  compose = Dev::Docker::Compose.new(services: service, capture: true)
+  audit_data = compose.exec(*node.audit_command)
+  Dev::Node::Audit.new(audit_data).to_report.check
 end

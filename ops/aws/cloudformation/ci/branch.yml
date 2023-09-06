@@ -705,6 +705,15 @@ Resources:
           - Type: PLAINTEXT
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
+          - Type: PLAINTEXT
+            Name: DEV_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: PRD_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Type: PLAINTEXT
+            Name: BRANCH
+            Value: !Ref BranchName
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:

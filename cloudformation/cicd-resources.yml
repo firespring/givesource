@@ -1,12 +1,4 @@
 ---
-#====================================================================================================
-# To deploy, run the command from the <fdp-devops> root to package the template:
-#
-# * First, log in to the account you wish to deploy to
-# * rake cicd:resources:release
-# * And then update the cicd-resources cloudformation stack using the build/cicd-resources-<account>.yml
-#====================================================================================================
-
 Description: Creates the shared resources for cicd
 Parameters:
   DaysToRetainUntaggedContainerImages:
@@ -59,6 +51,38 @@ Resources:
       AliasName: alias/firespring/cicd/default
       TargetKeyId: !GetAtt key.Arn
 
+  gihubOauthTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the readonly github oauth token used to install npm/composer packages
+      Name: /Firespring/CiCd/ReadonlyGithubOauthToken
+      Type: String
+      Value: CHANGEME
+
+  snykApiTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the snyk api auth token
+      Name: /Firespring/CiCd/SnykApiToken
+      Type: String
+      Value: CHANGEME
+
+  dockerUsernameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the docker username
+      Name: /Firespring/CiCd/DockerUsername
+      Type: String
+      Value: dockerboxcicdmachine
+
+  dockerPasswordParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the docker password
+      Name: /Firespring/CiCd/DockerPassword
+      Type: String
+      Value: CHANGEME
+
   cicdArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -81,7 +105,7 @@ Resources:
               - StorageClass: STANDARD_IA
                 TransitionInDays: 30
       LoggingConfiguration:
-        DestinationBucketName: !ImportValue cicd-artifacts-bucket
+        DestinationBucketName: !ImportValue AccessLoggingBucket
         LogFilePrefix: !Sub cicd-artifacts-bucket-${AWS::AccountId}-${AWS::Region}
       VersioningConfiguration:
         Status: Enabled
@@ -92,419 +116,6 @@ Resources:
     Properties:
       DisplayName: Notifications for failed Lambda function events
   #      KmsMasterKeyId: !GetAtt key.KeyId
-
-  slackNotificationLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${slackNotificationLambda}
-      RetentionInDays: 30
-
-  slackNotificationLambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Path: /
-      Policies:
-        - PolicyName: SlackNotificationLambdaExecutionRolePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource:
-                  - '*'
-              - Effect: Allow
-                Action:
-                  - kms:Decrypt
-                Resource:
-                  - !GetAtt key.Arn
-              - Effect: Allow
-                Action:
-                  - sns:Publish
-                Resource:
-                  - !Ref dlqTopic
-
-  slackNotificationLambda:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code: ../../lambda/ci/slack-notification/ # requires AWS CLI to package
-      DeadLetterConfig:
-        TargetArn: !Ref dlqTopic
-      Description: Processes SNS messages from CI workflows and sends the results to Slack
-      Environment:
-        Variables:
-          DEFAULT_SLACK_WEBHOOK_URL: !Ref SlackNotificationWebhookUrl
-          FDP_SLACK_WEBHOOK_URL: !Ref FdpSlackNotificationWebhookUrl
-          SPRNGBRD_SLACK_WEBHOOK_URL: !Ref SprngbrdSlackNotificationWebhookUrl
-          ACCNTS_SLACK_WEBHOOK_URL: !Ref AccntsSlackNotificationWebhookUrl
-          DSHBRD_SLACK_WEBHOOK_URL: !Ref DshbrdSlackNotificationWebhookUrl
-          SSLMNGMNT_SLACK_WEBHOOK_URL: !Ref SslMngmntSlackNotificationWebhookUrl
-      Handler: index.handler
-      KmsKeyArn: !GetAtt key.Arn
-      MemorySize: 128
-      Role: !GetAtt slackNotificationLambdaExecutionRole.Arn
-      Runtime: nodejs18.x
-      Timeout: 30
-      TracingConfig:
-        Mode: PassThrough
-
-  slackNotificationLambdaPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt slackNotificationLambda.Arn
-      Action: lambda:InvokeFunction
-      Principal: sns.amazonaws.com
-      SourceArn: !Ref slackNotificationTopic
-
-  slackNotificationLambdaSnsSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      Endpoint: !GetAtt slackNotificationLambda.Arn
-      Protocol: lambda
-      TopicArn: !Ref slackNotificationTopic
-
-  slackNotificationLambdaErrorAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      AlarmName: !Sub ${AWS::StackName}-SlackNotificationLambda-ErrorCount
-      ActionsEnabled: true
-      AlarmActions:
-        - !ImportValue notifications-slack-sns-topic
-      AlarmDescription: Notification failed to be sent to Slack
-      ComparisonOperator: GreaterThanThreshold
-      Dimensions:
-        - Name: FunctionName
-          Value: !Ref slackNotificationLambda
-      EvaluationPeriods: 1
-      MetricName: Errors
-      Namespace: AWS/Lamdba
-      Period: 60
-      Statistic: Sum
-      Threshold: 0
-      TreatMissingData: notBreaching
-
-  slackNotificationTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      DisplayName: Notifications for CI workflows
-      KmsMasterKeyId: !GetAtt key.KeyId
-
-  slackNotificationTopicPolicy:
-    Type: AWS::SNS::TopicPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action:
-              - sns:Publish
-            Resource:
-              - !Ref slackNotificationTopic
-      Topics:
-        - !Ref slackNotificationTopic
-
-  manageBranchPipelineLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${manageBranchPipelineLambda}
-      RetentionInDays: 30
-
-  manageBranchPipelineLambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Path: /
-      Policies:
-        - PolicyName: ManageDevelopmentPipelineLambdaFunctionExecutionRolePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - iam:GetRole
-                  - iam:PassRole
-                Resource:
-                  - !GetAtt manageCloudformationStackServiceRole.Arn
-              - Effect: Allow
-                Action:
-                  - logs:Create*
-                  - logs:Put*
-                  - logs:Delete*
-                Resource:
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/DevPipelineStack-*
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/DevelopmentPipeline-*
-
-              - Effect: Allow
-                Action:
-                  - iam:DeleteRolePolicy
-                  - iam:Delete*
-                  - iam:Detach*
-                Resource:
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevPipelineStack-*
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - events:RemoveTargets
-                  - events:DeleteRule
-                Resource:
-                  - !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/DevPipelineStack-*
-                  - !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - codepipeline:*
-                Resource:
-                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:DevPipelineStack-*
-                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - codebuild:*
-                Resource:
-                  - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/DevPipelineStack-*
-                  - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - kms:Decrypt
-                Resource:
-                  - !GetAtt key.Arn
-              - Effect: Allow
-                Action:
-                  - codecommit:GetFile
-                Resource:
-                  - !ImportValue fdp-accounts-code-commit-arn
-                  - !ImportValue fdp-dashboard-code-commit-arn
-                  - !ImportValue fdp-accounts-code-commit-arn
-                  - !ImportValue fdp-fdp-code-commit-arn
-                  - !ImportValue fdp-springboard-code-commit-arn
-                  - !ImportValue fdp-ssl-management-code-commit-arn
-              - Effect: Allow
-                Action:
-                  - s3:*
-                Resource:
-                  - !Sub arn:aws:s3:::${CloudformationS3Bucket}*
-              - Effect: Allow
-                Action:
-                  - cloudformation:CreateStack
-                  - cloudformation:DeleteStack
-                Resource:
-                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/DevPipelineStack-*
-                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - ssm:Delete*
-                  - ssm:RemoveTagsFromResource
-                Resource:
-                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/*
-              - Effect: Allow
-                Action:
-                  - iam:DetachRolePolicy
-                  - iam:DeleteRolePolicy
-                Resource:
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevPipelineStack-*
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - sns:Publish
-                Resource:
-                  - !Ref dlqTopic
-
-  manageCloudformationStackServiceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - cloudformation.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Path: /
-      Policies:
-        - PolicyName: CloudFormationServiceRolePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - codepipeline:*
-                Resource:
-                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:DevPipelineStack-*
-                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - codebuild:*
-                Resource:
-                  - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/DevPipelineStack-*
-                  - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - iam:Create*
-                  - iam:Delete*
-                  - iam:Get*
-                  - iam:PassRole
-                  - iam:Put*
-                  - iam:TagRole
-                  - iam:UntagRole
-                  - iam:AttachRolePolicy
-                  - iam:DetachRolePolicy
-                Resource:
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevPipelineStack-*
-                  - !Sub arn:aws:iam::${AWS::AccountId}:role/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - events:DeleteRule
-                  - events:DescribeRule
-                  - events:DisableRule
-                  - events:EnableRule
-                  - events:PutRule
-                  - events:PutTargets
-                  - events:RemoveTargets
-                Resource:
-                  - !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/DevPipelineStack-*
-                  - !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - logs:Create*
-                  - logs:Put*
-                  - logs:Delete*
-                Resource:
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/DevPipelineStack-*
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/DevelopmentPipeline-*
-              - Effect: Allow
-                Action:
-                  - codestar-connections:PassConnection
-                Resource:
-                  - !GetAtt codestarConnection.ConnectionArn
-              - Effect: Allow
-                Action:
-                  - ssm:Get*
-                  - ssm:Put*
-                  - ssm:Delete*
-                  - ssm:AddTagsToResource
-                  - ssm:RemoveTagsFromResource
-                Resource:
-                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/*
-
-  manageBranchPipelineLambda:
-    Type: AWS::Lambda::Function
-    Properties:
-      Description: Performs management actions on development pipeline CloudFormation stacks
-      Code: ../../lambda/ci/branch-pipeline/ # requires AWS CLI to package
-      DeadLetterConfig:
-        TargetArn: !Ref dlqTopic
-      Environment:
-        Variables:
-          CLOUDFORMATION_ROLE_ARN: !GetAtt manageCloudformationStackServiceRole.Arn
-          CLOUDFORMATION_S3_BUCKET: !Ref CloudformationS3Bucket
-      Handler: index.handler
-      KmsKeyArn: !GetAtt key.Arn
-      MemorySize: 128
-      Role: !GetAtt manageBranchPipelineLambdaExecutionRole.Arn
-      Runtime: nodejs18.x
-      Timeout: 120
-      TracingConfig:
-        Mode: PassThrough
-
-  manageBranchPipelineLambdaPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt manageBranchPipelineLambda.Arn
-      Action: lambda:InvokeFunction
-      Principal: sns.amazonaws.com
-      SourceArn: !Ref manageBranchPipelineTopic
-
-  manageBranchPipelineLambdaSnsSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      Endpoint: !GetAtt manageBranchPipelineLambda.Arn
-      Protocol: lambda
-      TopicArn: !Ref manageBranchPipelineTopic
-
-  manageBranchPipelineLambdaErrorAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      AlarmDescription: Development pipeline creation/removal failed to start
-      ActionsEnabled: true
-      AlarmName: !Sub ${AWS::StackName}-aws-lambda-branch-pipeline-ErrorCount
-      ComparisonOperator: GreaterThanThreshold
-      Dimensions:
-        - Name: FunctionName
-          Value: !Ref manageBranchPipelineLambda
-      EvaluationPeriods: 1
-      MetricName: Errors
-      Namespace: AWS/Lamdba
-      Period: 60
-      Statistic: Sum
-      Threshold: 0
-      TreatMissingData: notBreaching
-
-  manageBranchPipelineTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      DisplayName: Trigger the creation or tear down of development CI workflows
-      KmsMasterKeyId: !GetAtt key.KeyId
-
-  manageBranchPipelineTopicPolicy:
-    Type: AWS::SNS::TopicPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action:
-              - sns:Publish
-            Resource:
-              - !Ref manageBranchPipelineTopic
-      Topics:
-        - !Ref manageBranchPipelineTopic
-
-  manageBranchPipelineEventRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Description: Create/remove a build pipeline for the give branch reference
-      EventPattern:
-        source:
-          - aws.codecommit
-        detail-type:
-          - CodeCommit Repository State Change
-        resources:
-          - !ImportValue fdp-accounts-code-commit-arn
-          - !ImportValue fdp-dashboard-code-commit-arn
-          - !ImportValue fdp-accounts-code-commit-arn
-          - !ImportValue fdp-fdp-code-commit-arn
-          - !ImportValue fdp-springboard-code-commit-arn
-          - !ImportValue fdp-ssl-management-code-commit-arn
-        detail:
-          event:
-            - referenceCreated
-            - referenceDeleted
-          referenceType:
-            - branch
-      State: ENABLED
-      Targets:
-        - Arn: !Ref manageBranchPipelineTopic
-          Id: TriggerManageBranchPipeline
 
   # NOTE: this requires additional setup in the console after the create finishes (by a github repo owner)
   # See https://us-east-1.console.aws.amazon.com/codesuite/settings/connections
@@ -569,14 +180,6 @@ Resources:
       Type: String
       Value: none
 
-  phpVulnerabilityIgnorelist:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: A comma separated list of vulnerability ids which will be excluded from the scan report
-      Name: /Firespring/CiCd/Ignorelist/php
-      Type: String
-      Value: none
-
   BaseCodebuildManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -630,21 +233,6 @@ Outputs:
     Export:
       Name: fdp-cicd-artifacts-bucket-arn
 
-  cicdSlackNotificationTopic:
-    Value: !Ref slackNotificationTopic
-    Export:
-      Name: fdp-cicd-slack-notification-topic
-
-  samlTestUserPassParameter:
-    Value: !Ref fdpSamlTestUserPassParameter
-    Export:
-      Name: fdp-cicd-saml-test-user-pass-parameter
-
-  samlTestUserPassParameterArn:
-    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${fdpSamlTestUserPassParameter}
-    Export:
-      Name: fdp-cicd-saml-test-user-pass-parameter-arn
-
   readonlyGithubOauthTokenParameter:
     Value: !Ref gihubOauthTokenParameter
     Export:
@@ -670,21 +258,25 @@ Outputs:
     Export:
       Name: fdp-cicd-pipeline-state-change-log-group-arn
 
+  # TODO: REMOVE
   dockerUsernameParameter:
     Value: !Ref dockerUsernameParameter
     Export:
       Name: fdp-cicd-docker-username-parameter
 
+  # TODO: REMOVE
   dockerUsernameParameterArn:
     Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerUsernameParameter}
     Export:
       Name: fdp-cicd-docker-username-parameter-arn
 
+  # TODO: REMOVE
   dockerPasswordParameter:
     Value: !Ref dockerPasswordParameter
     Export:
       Name: fdp-cicd-docker-password-parameter
 
+  # TODO: REMOVE
   dockerPasswordParameterArn:
     Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerPasswordParameter}
     Export:
@@ -693,4 +285,4 @@ Outputs:
   BaseCodebuildManagedPolicyArn:
     Value: !Ref BaseCodebuildManagedPolicy
     Export:
-      Name: givesource-base-codebuild-managed-policy-arn
+      Name: fdp-base-codebuild-managed-policy-arn
