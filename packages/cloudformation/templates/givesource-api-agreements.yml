@@ -64,7 +64,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetAgreementLambdaInvokePermission:
@@ -101,7 +101,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetAgreementsLambdaInvokePermission:
@@ -138,7 +138,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostAgreementLambdaInvokePermission:
@@ -175,7 +175,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchAgreementLambdaInvokePermission:
@@ -212,7 +212,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteAgreementLambdaInvokePermission:

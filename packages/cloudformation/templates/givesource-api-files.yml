@@ -71,7 +71,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DownloadLambdaInvokePermission:
@@ -108,7 +108,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetFileLambdaInvokePermission:
@@ -145,7 +145,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetFilesLambdaInvokePermission:
@@ -183,7 +183,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostFileLambdaInvokePermission:
@@ -221,7 +221,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteFileLambdaInvokePermission:
@@ -259,7 +259,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteFilesLambdaInvokePermission:

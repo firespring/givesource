@@ -67,7 +67,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetDonationLambdaInvokePermission:
@@ -104,7 +104,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetDonationsLambdaInvokePermission:
@@ -141,7 +141,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostDonationLambdaInvokePermission:
@@ -178,7 +178,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchDonationLambdaInvokePermission:
@@ -215,7 +215,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteDonationLambdaInvokePermission:
@@ -252,7 +252,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   ProcessDonationsLambdaInvokePermission:
@@ -290,7 +290,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostDonationsOfflineLambdaInvokePermission:
@@ -329,7 +329,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostDonationsReceiptLambdaInvokePermission:
@@ -366,7 +366,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetDonationsReceiptLambdaInvokePermission:
@@ -405,7 +405,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   AdminPostDonationsReceiptLambdaInvokePermission:

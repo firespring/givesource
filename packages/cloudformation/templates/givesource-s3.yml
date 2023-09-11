@@ -238,7 +238,7 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givsource admin pages S3 bucket
+        Comment: Distribution for Givesource admin pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
