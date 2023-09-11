@@ -110,13 +110,6 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  # TODO: Encryption at rest - what permissions does lambda need?
-  dlqTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      DisplayName: Notifications for failed Lambda function events
-  #      KmsMasterKeyId: !GetAtt key.KeyId
-
   # NOTE: this requires additional setup in the console after the create finishes (by a github repo owner)
   # See https://us-east-1.console.aws.amazon.com/codesuite/settings/connections
   codestarConnection:

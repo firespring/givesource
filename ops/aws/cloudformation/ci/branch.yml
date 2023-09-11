@@ -50,14 +50,6 @@ Resources:
       Type: String
       Value: !Ref AWS::Region
 
-  SeedRegistryId:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: The account id the ecr registry is located in
-      Name: !Sub /Firespring/CiCd/Givesource/${AWS::StackName}/SeedRegistryId
-      Type: String
-      Value: 948629139753
-
   SeedRegion:
     Type: AWS::SSM::Parameter
     Properties:
@@ -389,7 +381,6 @@ Resources:
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
-                  - !Sub arn:aws:ecr:${SeedRegion.Value}:${SeedRegistryId.Value}:repository/firespring/s3
               - Effect: Allow
                 Action:
                   - ecr:BatchCheckLayerAvailability
@@ -451,9 +442,6 @@ Resources:
           - Type: PLAINTEXT
             Name: SEED_REGION
             Value: !GetAtt SeedRegion.Value
-          - Type: PLAINTEXT
-            Name: SEED_REGISTRY_ID
-            Value: !GetAtt SeedRegistryId.Value
           - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
