@@ -602,9 +602,16 @@ Resources:
     Type: AWS::SSM::Parameter
     Properties:
       Description: The global encryption key id
-      Name: !Sub /global/kms/id
+      Name: /global/kms/id
       Type: String
       Value: !Ref globalEncryptionKey
+
+  globalDatabaseMasterPassword:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /global/database/master_password
+      Type: String
+      Value: CHANGEME
 
 Outputs:
   internetGateway:
@@ -754,3 +761,9 @@ Outputs:
     Value: !Ref globalEncryptionKey
     Export:
       Name: global-encryption-key-id
+
+  globalDatabaseMasterPassword:
+    Value: !Ref globalDatabaseMasterPassword
+    Export:
+      Name: global-database-master-password-parameter
+

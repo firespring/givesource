@@ -11,11 +11,6 @@ Parameters:
     Default: root
     Description: The RDS Master username
 
-  RdsMasterPassword:
-    NoEcho: true
-    Type: String
-    Description: The RDS Master password
-
   MinCapacity:
     Type: String
     Default: 0.5
@@ -35,15 +30,10 @@ Metadata:
         Parameters:
           - RdsInstanceClass
           - RdsMasterUsername
-          - RdsMasterPassword
           - RdsAllocatedStorage
           - RdsReplicaInstanceClass
           - MinCapacity
           - MaxCapacity
-      - Label:
-          default: Ingress Settings
-        Parameters:
-          - WhiteListIpRdsSecurityGroupIngress
 
 #==================================================
 # Resources
@@ -107,7 +97,7 @@ Resources:
       EnableIAMDatabaseAuthentication: true
       EnableHttpEndpoint: true
       MasterUsername: !Ref RdsMasterUsername
-      MasterUserPassword: !Ref RdsMasterPassword
+      MasterUserPassword: '{{resolve:ssm-secure:/Firespring/Apps/SslMngmnt/rds/master_user_password:2}}'
       Port: 3306
       PreferredBackupWindow: 02:00-04:00
       PreferredMaintenanceWindow: Sun:15:00-Sun:16:00
