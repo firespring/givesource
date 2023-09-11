@@ -762,8 +762,3 @@ Outputs:
     Export:
       Name: global-encryption-key-id
 
-  globalDatabaseMasterPassword:
-    Value: !Ref globalDatabaseMasterPassword
-    Export:
-      Name: global-database-master-password-parameter
-

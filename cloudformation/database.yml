@@ -93,11 +93,11 @@ Resources:
       DBSubnetGroupName: !Ref PrivateDbSubnetGroup
       DBInstanceParameterGroupName: !Ref DatabaseParameterGroup
       Engine: aurora-mysql
-      EngineVersion: 8.0.mysql_aurora.3.02.1
+      EngineVersion: 8.0.mysql_aurora.3.04.0
       EnableIAMDatabaseAuthentication: true
       EnableHttpEndpoint: true
       MasterUsername: !Ref RdsMasterUsername
-      MasterUserPassword: '{{resolve:ssm-secure:/Firespring/Apps/SslMngmnt/rds/master_user_password:2}}'
+      MasterUserPassword: '{{resolve:ssm-secure:/global/database/master_password:2}}'
       Port: 3306
       PreferredBackupWindow: 02:00-04:00
       PreferredMaintenanceWindow: Sun:15:00-Sun:16:00
@@ -111,11 +111,11 @@ Resources:
   Writer:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceIdentifier: !Sub givesource-writer
+      DBInstanceIdentifier: givesource-writer
       DBInstanceClass: db.serverless
       DBClusterIdentifier: !Ref Rds
       Engine: aurora-mysql
-      EngineVersion: 8.0.mysql_aurora.3.02.1
+      EngineVersion: 8.0.mysql_aurora.3.04.0
 
 #==================================================
 # Outputs
