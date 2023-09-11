@@ -121,6 +121,7 @@ Resources:
 # Outputs
 #==================================================
 Outputs:
+  # TODO: Do we need an export for the GroupId?
   RdsSecurityGroup:
     Description: Database Security Group
     Value: !Ref RdsSecurityGroup
