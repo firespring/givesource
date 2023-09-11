@@ -89,7 +89,7 @@ Resources:
     Type: AWS::RDS::DBCluster
     Properties:
       BackupRetentionPeriod: 30
-      DBClusterIdentifier: givesource-v1
+      DBClusterIdentifier: givesource
       DBSubnetGroupName: !Ref PrivateDbSubnetGroup
       DBInstanceParameterGroupName: !Ref DatabaseParameterGroup
       Engine: aurora-mysql
