@@ -129,6 +129,18 @@ Resources:
       DBClusterIdentifier: !Ref Rds
       Engine: aurora-mysql
       EngineVersion: 8.0.mysql_aurora.3.04.0
+      CACertificateIdentifier: rds-ca-rsa2048-g1
+
+  RdsCaCertificateParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /global/database/ca_cert
+      Type: String
+      Value: CHANGEME
+
+
+# TODO: Create the VPN?
+
 
 #==================================================
 # Outputs
@@ -173,4 +185,9 @@ Outputs:
     Value: !GetAtt Writer.Endpoint.Port
     Export:
       Name: givesource-writer-endpoint-port
+
+  RdsCaCertificateParameter:
+    Value: !Ref RdsCaCertificateParameter
+    Export:
+      Name: givesource-rds-ca-parameter
 

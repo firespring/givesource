@@ -1,0 +1,245 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS Aurora resources for Givesource(R)
+Parameters:
+  StackName:
+    Type: String
+  LambdaRole:
+    Type: String
+  SecureLambdaRole:
+    Type: String
+  LambdaSecurityGroupId:
+    Type: String
+  LogDatabaseDebug:
+    Type: String
+    Default: false
+    AllowedValues:
+    - true
+    - false
+  AutoPause:
+    Type: String
+    Default: false
+    AllowedValues:
+    - true
+    - false
+  DeadLetterQueueTopic:
+    Type: String
+Resources:
+  RDSDatabaseName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /${StackName}/rds/database
+      Type: String
+      Value: !Sub ${StackName}-database
+
+  RDSDatabaseReadWriteUser:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /${StackName}/rds/rw_username
+      Type: String
+      Value: !Sub ${StackName}-readwrite
+
+  ReadwriteUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${StackName}/ReadwriteUserSecret
+      Description: Givesource database auto-generated readwrite user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${RDSDatabaseReadWriteUser.Value}", "database": "${RDSDatabaseName.Value}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+  ReadwriteUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref ReadwriteUserSecret
+      TargetId: !ImportValue givesource-rds-resource-id
+      TargetType: AWS::RDS::DBCluster
+
+  SecretsManagerPolicyReadWrite:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: readwrite_user_secret_get
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Ref ReadwriteUserSecret
+      Roles:
+      - !Ref LambdaRole
+      - !Ref SecureLambdaRole
+
+  LambdaGlobalAuroraIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: allows access from lambda into aurora
+      GroupId: !ImportValue givesource-rds-security-group-serverless
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !Ref LambdaSecurityGroupId
+
+  BootstrapDatabaseLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Path: /
+      Policies:
+      - PolicyName: secrets-manager
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - !Ref ReadwriteUserSecret
+      - PolicyName: dead_letter_queue_publish
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource:
+                - !Ref DeadLetterQueueTopic
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+
+
+
+
+  BootstrapDatabaseLambdaFunction2:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/BootstrapSharedDatabase.zip
+      DeadLetterConfig:
+        TargetArn: !Ref DeadLetterQueueTopic
+      Description: Database Init
+      Environment:
+        Variables:
+          AWS_STACK_NAME: !Ref StackName
+          ADMIN_SECRET_ID: !ImportValue givesource-rds-admin-user-secret
+          READWRITE_SECRET_ID: !Sub ${StackName}/ReadwriteUserSecret
+          RDS_CA_PARAMETER: !ImportValue givesource-rds-ca-parameter
+      FunctionName: !Sub ${StackName}-BootstrapDatabase
+      Handler: index.handle
+      MemorySize: 1024
+      Role: !GetAtt BootstrapDatabaseLambdaRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 60
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroupId
+        SubnetIds:
+          - !ImportValue givesource-primary-private-subnet
+          - !ImportValue givesource-secondary-private-subnet
+
+#  BootstrapDatabaseLambdaLambdaInvoker2:
+#    Type: Custom::BootstrapDatabaseLambdaInvoker
+#    Properties:
+#      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
+#    DependsOn:
+#      - AdminUserSecretAttachment
+#      - MaintenanceUserSecretAttachment
+#      - ReadwriteUserSecretAttachment
+#      - ReadonlyUserSecretAttachment
+
+
+
+
+
+
+#  MigrateDatabaseLambdaRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      AssumeRolePolicyDocument:
+#        Statement:
+#          - Effect: Allow
+#            Action: sts:AssumeRole
+#            Principal:
+#              Service:
+#                - lambda.amazonaws.com
+#      Path: /
+#      Policies:
+#      - PolicyName: secrets-manager
+#        PolicyDocument:
+#          Version: 2012-10-17
+#          Statement:
+#          - Effect: Allow
+#            Action:
+#              - secretsmanager:GetSecretValue
+#            Resource:
+#              - !Ref MaintenanceUserSecret
+#          - Effect: Allow
+#            Action:
+#            - s3:ListBucket
+#            Resource:
+#            - arn:aws:s3:::{{awsReleaseBucket}}
+#          - Effect: Allow
+#            Action:
+#            - s3:GetObject*
+#            Resource:
+#            - arn:aws:s3:::{{awsReleaseBucket}}/*
+#      - PolicyName: dead_letter_queue_publish
+#        PolicyDocument:
+#          Version: 2012-10-17
+#          Statement:
+#            - Effect: Allow
+#              Action:
+#                - sns:Publish
+#              Resource:
+#                - !Ref DeadLetterQueueTopic
+#      ManagedPolicyArns:
+#        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+#  MigrateDatabaseLambdaFunction:
+#    Type: AWS::Lambda::Function
+#    Properties:
+#      Code:
+#        S3Bucket: !Sub |-
+#          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+#        S3Key: fn/{{version}}/MigrateDatabase.zip
+#      DeadLetterConfig:
+#        TargetArn: !Ref DeadLetterQueueTopic
+#      Description: Database Init
+#      Environment:
+#        Variables:
+#          AWS_STACK_NAME: !Ref StackName
+#          DATABASE_HOST: !GetAtt RDSCluster.Endpoint.Address
+#          MAINTENANCE_DATABASE_SECRET_ID: !Sub ${StackName}/MaintenanceUserSecret
+#          DATABASE_NAME: !Ref DatabaseName
+#          MIGRATIONS_BUCKET: {{awsReleaseBucket}}
+#          MIGRATIONS_LOCATION: migrations/{{version}}
+#      FunctionName: !Sub ${StackName}-MigrateDatabase
+#      Handler: index.handle
+#      MemorySize: 1024
+#      Role: !GetAtt MigrateDatabaseLambdaRole.Arn
+#      Runtime: nodejs14.x
+#      Timeout: 180
+#      VpcConfig:
+#        SecurityGroupIds:
+#          - !Ref LambdaSecurityGroupId
+#        SubnetIds:
+#          - !ImportValue givesource-primary-private-subnet
+#          - !ImportValue givesource-secondary-private-subnet
+#  MigrateDatabaseLambdaLambdaInvoker:
+#    Type: Custom::MigrateDatabaseLambdaInvoker
+#    Properties:
+#      ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
+#    DependsOn: BootstrapDatabaseLambdaLambdaInvoker
+#Outputs:
+#  Identifier:
+#    Value: !Ref RDSCluster

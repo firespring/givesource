@@ -606,13 +606,6 @@ Resources:
       Type: String
       Value: !Ref globalEncryptionKey
 
-  globalDatabaseMasterPassword:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: /global/database/master_password
-      Type: String
-      Value: CHANGEME
-
 Outputs:
   internetGateway:
     Description: Internet Gateway for the Givesource VPC
@@ -761,4 +754,3 @@ Outputs:
     Value: !Ref globalEncryptionKey
     Export:
       Name: global-encryption-key-id
-
