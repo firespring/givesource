@@ -138,9 +138,25 @@ Resources:
       Type: String
       Value: CHANGEME
 
+  RdsSecurityGroupVpnIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: All traffic from the client VPN endpoint to RDS
+      FromPort: 3306
+      GroupId: !Ref RdsSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !ImportValue vpn-security-group
+      ToPort: 3306
 
-# TODO: Create the VPN?
-
+  VpnSecurityGroupRdsEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: MySQL traffic to the RDS instances
+      DestinationSecurityGroupId: !Ref RdsSecurityGroup
+      GroupId: !ImportValue vpn-security-group
+      FromPort: 3306
+      IpProtocol: tcp
+      ToPort: 3306
 
 #==================================================
 # Outputs

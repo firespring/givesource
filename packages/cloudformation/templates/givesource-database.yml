@@ -25,19 +25,23 @@ Parameters:
   DeadLetterQueueTopic:
     Type: String
 Resources:
-  RDSDatabaseName:
-    Type: AWS::SSM::Parameter
+  MaintenanceUserSecret:
+    Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub /${StackName}/rds/database
-      Type: String
-      Value: !Sub ${StackName}-database
+      Name: !Sub ${StackName}/MaintenanceUserSecret
+      Description: Givesource database auto-generated maintenance user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${StackName}-maintenance", "database": "${StackName}-database"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
 
-  RDSDatabaseReadWriteUser:
-    Type: AWS::SSM::Parameter
+  MaintenanceUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
-      Name: !Sub /${StackName}/rds/rw_username
-      Type: String
-      Value: !Sub ${StackName}-readwrite
+      SecretId: !Ref MaintenanceUserSecret
+      TargetId: !ImportValue givesource-rds-resource-id
+      TargetType: AWS::RDS::DBCluster
 
   ReadwriteUserSecret:
     Type: AWS::SecretsManager::Secret
@@ -45,7 +49,7 @@ Resources:
       Name: !Sub ${StackName}/ReadwriteUserSecret
       Description: Givesource database auto-generated readwrite user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${RDSDatabaseReadWriteUser.Value}", "database": "${RDSDatabaseName.Value}"}'
+        SecretStringTemplate: !Sub '{"username": "${StackName}-readwrite", "database": "${StackName}-database"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
@@ -103,6 +107,7 @@ Resources:
             Action:
               - secretsmanager:GetSecretValue
             Resource:
+              - !Ref MaintenanceUserSecret
               - !Ref ReadwriteUserSecret
       - PolicyName: dead_letter_queue_publish
         PolicyDocument:
@@ -116,10 +121,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
 
-
-
-
-  BootstrapDatabaseLambdaFunction2:
+  BootstrapDatabaseLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Code:
@@ -133,6 +135,7 @@ Resources:
         Variables:
           AWS_STACK_NAME: !Ref StackName
           ADMIN_SECRET_ID: !ImportValue givesource-rds-admin-user-secret
+          MAINTENANCE_SECRET_ID: !Sub ${StackName}/MaintenanceUserSecret
           READWRITE_SECRET_ID: !Sub ${StackName}/ReadwriteUserSecret
           RDS_CA_PARAMETER: !ImportValue givesource-rds-ca-parameter
       FunctionName: !Sub ${StackName}-BootstrapDatabase
@@ -148,7 +151,7 @@ Resources:
           - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
-#  BootstrapDatabaseLambdaLambdaInvoker2:
+#  BootstrapDatabaseLambdaLambdaInvoker:
 #    Type: Custom::BootstrapDatabaseLambdaInvoker
 #    Properties:
 #      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
@@ -157,11 +160,6 @@ Resources:
 #      - MaintenanceUserSecretAttachment
 #      - ReadwriteUserSecretAttachment
 #      - ReadonlyUserSecretAttachment
-
-
-
-
-
 
 #  MigrateDatabaseLambdaRole:
 #    Type: AWS::IAM::Role
