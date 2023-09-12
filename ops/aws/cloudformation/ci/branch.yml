@@ -50,14 +50,6 @@ Resources:
       Type: String
       Value: !Ref AWS::Region
 
-  SeedRegion:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: The region the ecr registry is located in
-      Name: !Sub /Firespring/CiCd/Givesource/${AWS::StackName}/SeedRegion
-      Type: String
-      Value: !Ref AWS::Region
-
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -439,9 +431,6 @@ Resources:
           - Type: PLAINTEXT
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
-          - Type: PLAINTEXT
-            Name: SEED_REGION
-            Value: !GetAtt SeedRegion.Value
           - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
