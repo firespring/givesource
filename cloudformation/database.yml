@@ -6,11 +6,6 @@ Description: Creates Reader/Writer Aurora Based MySql RDS Instance.
 # Parameters
 #==================================================
 Parameters:
-  RdsMasterUsername:
-    Type: String
-    Default: root
-    Description: The RDS Master username
-
   MinCapacity:
     Type: String
     Default: 0.5
@@ -29,7 +24,6 @@ Metadata:
           default: RDS Settings
         Parameters:
           - RdsInstanceClass
-          - RdsMasterUsername
           - RdsAllocatedStorage
           - RdsReplicaInstanceClass
           - MinCapacity
@@ -85,6 +79,24 @@ Resources:
         - !ImportValue givesource-primary-private-subnet
         - !ImportValue givesource-secondary-private-subnet
 
+  AdminUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: givesource-AdminUserSecret
+      Description: Givesource database auto-generated admin user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+  AdminUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref AdminUserSecret
+      TargetId: !Ref Rds
+      TargetType: AWS::RDS::DBCluster
+
   Rds:
     Type: AWS::RDS::DBCluster
     Properties:
@@ -96,8 +108,8 @@ Resources:
       EngineVersion: 8.0.mysql_aurora.3.04.0
       EnableIAMDatabaseAuthentication: true
       EnableHttpEndpoint: true
-      MasterUsername: !Ref RdsMasterUsername
-      MasterUserPassword: '{{resolve:ssm-secure:/global/database/master_password:2}}'
+      MasterUsername: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:password}}'
       Port: 3306
       PreferredBackupWindow: 02:00-04:00
       PreferredMaintenanceWindow: Sun:15:00-Sun:16:00
@@ -107,6 +119,7 @@ Resources:
       StorageEncrypted: true
       VpcSecurityGroupIds:
         - !Ref RdsSecurityGroup
+    DependsOn: AdminUserSecret
 
   Writer:
     Type: AWS::RDS::DBInstance
@@ -121,7 +134,6 @@ Resources:
 # Outputs
 #==================================================
 Outputs:
-  # TODO: Do we need an export for the GroupId?
   RdsSecurityGroup:
     Description: Database Security Group
     Value: !Ref RdsSecurityGroup
@@ -145,3 +157,14 @@ Outputs:
     Value: !GetAtt Writer.DbiResourceId
     Export:
       Name: givesource-writer-resource-id-serverless
+
+  WriterEndpoint:
+    Value: !GetAtt Writer.Endpoint.Address
+    Export:
+      Name: givesource-writer-endpoint-address
+
+  WriterPort:
+    Value: !GetAtt Writer.Endpoint.Port
+    Export:
+      Name: givesource-writer-endpoint-port
+
