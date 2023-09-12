@@ -73,7 +73,7 @@ exports.handle = function (event, context, callback) {
       'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
       'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
       'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
-      'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + readwriteSecret.database + '`.* TO "' + readwriteSecret.username + '"@"%";' +
+      'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + readwriteSecret.database + '`.* TO "' + readwriteSecret.username + '"@"%";'
     )
   }).then(function () {
     response.send(event, context, response.SUCCESS)
