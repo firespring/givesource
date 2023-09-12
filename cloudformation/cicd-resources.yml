@@ -128,8 +128,7 @@ Resources:
     Type: AWS::Logs::ResourcePolicy
     Properties:
       PolicyName: events-logs-resource-policy
-      PolicyDocument: !Sub
-        - >
+      PolicyDocument: !Sub >
           {
             "Statement": [
               {
@@ -144,13 +143,12 @@ Resources:
                     "delivery.logs.amazonaws.com"
                   ]
                 },
-                "Resource": "arn:aws:logs:region:account:log-group:/aws/events/*:*",
+                "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/events/*",
                 "Sid": "TrustEventsToStoreLogEvent"
               }
             ],
             "Version": "2012-10-17"
           }
-        - {}
 
   pipelineStateChangeLogging:
     Type: AWS::Events::Rule
@@ -163,7 +161,7 @@ Resources:
       State: ENABLED
       Targets:
         - Id: LogTarget
-          Arn: !GetAtt pipelineStateChangeLogGroup.Arn
+          Arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${pipelineStateChangeLogGroup}
 
   nodeVulnerabilityIgnorelist:
     Type: AWS::SSM::Parameter
