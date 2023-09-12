@@ -140,23 +140,29 @@ Outputs:
     Export:
       Name: givesource-rds-security-group-serverless
 
+  AdminUserSecret:
+    Description: Database Admin User Secret
+    Value: !Ref AdminUserSecret
+    Export:
+      Name: givesource-rds-admin-user-secret
+
   RdsHostname:
     Description: Database Hostname
     Value: !GetAtt Rds.Endpoint.Address
     Export:
-      Name: givesource-rds-hostname-serverless
+      Name: givesource-rds-hostname
 
   RdsResourceId:
     Description: Database Hostname
     Value: !GetAtt Rds.DBClusterResourceId
     Export:
-      Name: givesource-rds-resource-id-serverless
+      Name: givesource-rds-resource-id
 
   WriterResourceId:
     Description: Database Hostname
     Value: !GetAtt Writer.DbiResourceId
     Export:
-      Name: givesource-writer-resource-id-serverless
+      Name: givesource-writer-resource-id
 
   WriterEndpoint:
     Value: !GetAtt Writer.Endpoint.Address
