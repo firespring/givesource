@@ -28,7 +28,7 @@ Resources:
   MaintenanceUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub ${StackName}/MaintenanceUserSecret
+      Name: !Sub ${StackName}/MaintenanceDatabaseUserSecret
       Description: Givesource database auto-generated maintenance user password
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"username": "${StackName}-maintenance", "database": "${StackName}-database"}'
@@ -40,13 +40,13 @@ Resources:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
       SecretId: !Ref MaintenanceUserSecret
-      TargetId: !ImportValue givesource-rds-resource-id
       TargetType: AWS::RDS::DBCluster
+      TargetId: !ImportValue givesource-rds-cluster-id
 
   ReadwriteUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub ${StackName}/ReadwriteUserSecret
+      Name: !Sub ${StackName}/ReadwriteDatabaseUserSecret
       Description: Givesource database auto-generated readwrite user password
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"username": "${StackName}-readwrite", "database": "${StackName}-database"}'
@@ -58,8 +58,8 @@ Resources:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
       SecretId: !Ref ReadwriteUserSecret
-      TargetId: !ImportValue givesource-rds-resource-id
       TargetType: AWS::RDS::DBCluster
+      TargetId: !ImportValue givesource-rds-cluster-id
 
   SecretsManagerPolicyReadWrite:
     Type: AWS::IAM::Policy
@@ -109,6 +109,11 @@ Resources:
             Resource:
               - !Ref MaintenanceUserSecret
               - !Ref ReadwriteUserSecret
+          - Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource:
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/global/database/ca_cert
       - PolicyName: dead_letter_queue_publish
         PolicyDocument:
           Version: 2012-10-17
@@ -138,7 +143,7 @@ Resources:
           MAINTENANCE_SECRET_ID: !Sub ${StackName}/MaintenanceUserSecret
           READWRITE_SECRET_ID: !Sub ${StackName}/ReadwriteUserSecret
           RDS_CA_PARAMETER: !ImportValue givesource-rds-ca-parameter
-      FunctionName: !Sub ${StackName}-BootstrapDatabase
+      FunctionName: !Sub ${StackName}-BootstrapSharedDatabase
       Handler: index.handle
       MemorySize: 1024
       Role: !GetAtt BootstrapDatabaseLambdaRole.Arn
@@ -151,15 +156,13 @@ Resources:
           - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
-#  BootstrapDatabaseLambdaLambdaInvoker:
-#    Type: Custom::BootstrapDatabaseLambdaInvoker
-#    Properties:
-#      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
-#    DependsOn:
-#      - AdminUserSecretAttachment
-#      - MaintenanceUserSecretAttachment
-#      - ReadwriteUserSecretAttachment
-#      - ReadonlyUserSecretAttachment
+  BootstrapDatabaseLambdaLambdaInvoker:
+    Type: Custom::BootstrapDatabaseLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
+    DependsOn:
+      - MaintenanceUserSecretAttachment
+      - ReadwriteUserSecretAttachment
 
 #  MigrateDatabaseLambdaRole:
 #    Type: AWS::IAM::Role

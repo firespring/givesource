@@ -180,6 +180,12 @@ Outputs:
     Export:
       Name: givesource-rds-hostname
 
+  RdsClusterId:
+    Description: Database Cluster Id
+    Value: !Ref Rds
+    Export:
+      Name: givesource-rds-cluster-id
+
   RdsResourceId:
     Description: Database Hostname
     Value: !GetAtt Rds.DBClusterResourceId
