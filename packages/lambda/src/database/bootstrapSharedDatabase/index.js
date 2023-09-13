@@ -69,7 +69,7 @@ exports.handle = function (event, context, callback) {
     return sequelize.query(
       'CREATE DATABASE IF NOT EXISTS `' + readwriteSecret.database + '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ' +
       'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
-      'GRANT ALL PRIVILEGES ON `' + dbName + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
+      'GRANT ALL PRIVILEGES ON `' + maintenanceSecret.database + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
       'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
       'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + readwriteSecret.database + '`.* TO "' + readwriteSecret.username + '"@"%";'
     )

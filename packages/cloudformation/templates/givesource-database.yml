@@ -157,13 +157,13 @@ Resources:
           - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
-#  BootstrapDatabaseLambdaLambdaInvoker:
-#    Type: Custom::BootstrapDatabaseLambdaInvoker
-#    Properties:
-#      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
-#    DependsOn:
-#      - MaintenanceUserSecretAttachment
-#      - ReadwriteUserSecretAttachment
+  BootstrapDatabaseLambdaLambdaInvoker:
+    Type: Custom::BootstrapDatabaseLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt BootstrapDatabaseLambdaFunction.Arn
+    DependsOn:
+      - MaintenanceUserSecretAttachment
+      - ReadwriteUserSecretAttachment
 
 #  MigrateDatabaseLambdaRole:
 #    Type: AWS::IAM::Role
