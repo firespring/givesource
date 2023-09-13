@@ -40,19 +40,17 @@ exports.handle = function (event, context, callback) {
   request.validate().then(function () {
     return ssm.getParameter(process.env.AWS_REGION, process.env.RDS_CA_PARAMETER, false)
   }).then(function (parameter) {
-    console.log(parameter)
     cacert = parameter.Parameter.Value
 
     return Promise.all([
-      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.ADMIN_SECRET_ID),
-      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.MAINTENANCE_SECRET_ID),
-      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.READWRITE_SECRET_ID)
+      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.ADMIN_SECRET_ARN),
+      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.MAINTENANCE_SECRET_ARN),
+      secretsManager.getSecretValue(process.env.AWS_REGION, process.env.READWRITE_SECRET_ARN)
     ])
   }).then(function (secrets) {
-    console.log(secrets)
-    const adminSecret = JSON.parse(secrets.find(it => it.Name === process.env.ADMIN_SECRET_ID).SecretString)
-    const maintenanceSecret = JSON.parse(secrets.find(it => it.Name === process.env.MAINTENANCE_SECRET_ID).SecretString)
-    const readwriteSecret = JSON.parse(secrets.find(it => it.Name === process.env.READWRITE_SECRET_ID).SecretString)
+    const adminSecret = JSON.parse(secrets.find(it => it.ARN === process.env.ADMIN_SECRET_ARN).SecretString)
+    const maintenanceSecret = JSON.parse(secrets.find(it => it.ARN === process.env.MAINTENANCE_SECRET_ARN).SecretString)
+    const readwriteSecret = JSON.parse(secrets.find(it => it.ARN === process.env.READWRITE_SECRET_ARN).SecretString)
 
     sequelize = new Sequelize({
       host: adminSecret.host,
