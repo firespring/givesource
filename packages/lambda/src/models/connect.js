@@ -17,7 +17,7 @@
 'use strict'
 
 const SecretsManager = require('../aws/secretsManager')
-const Ssm = require('./../../aws/ssm')
+const Ssm = require('../aws/ssm')
 const mysql2 = require('mysql2')
 const Sequelize = require('sequelize')
 

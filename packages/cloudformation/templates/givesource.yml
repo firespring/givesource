@@ -32,6 +32,9 @@ Parameters:
     Description: Conditionally the creation/deletion of the monitoring stack
     Type: String
     Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
 
 Mappings:
   ApiGateway:

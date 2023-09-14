@@ -421,34 +421,7 @@ Resources:
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-  DbSlowQueryMetricFilter:
-    Type: AWS::Logs::MetricFilter
-    Properties:
-      LogGroupName: !Sub /aws/rds/cluster/${DatabaseIdentifier}/slowquery
-      FilterPattern: ''
-      MetricTransformations:
-      - MetricNamespace: !Ref StackName
-        MetricName: SlowQueryLogs
-        MetricValue: 1
-        DefaultValue: 0
-
-  DbSlowQueryAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      AlarmName: !Sub "${StackName}-DbSlowQuery"
-      AlarmDescription: Alarms when query takes >10s on the database
-      #AlarmActions:
-      #  - !Ref AlertSns
-      #OKActions:
-      #  - !Ref AlertSns
-      MetricName: SlowQueryLogs
-      Namespace: !Ref StackName
-      ComparisonOperator: GreaterThanOrEqualToThreshold
-      EvaluationPeriods: 1
-      Period: 300
-      Statistic: Sum
-      Threshold: 1
-      TreatMissingData: notBreaching
+  # TODO: Add back slow query monitoring for the global DB?
 
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -2460,24 +2433,6 @@ Resources:
                   "stacked": false,
                   "region": "${AWS::Region}",
                   "title": "RDS Unexpected Activity"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 18,
-                "y": 36,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "title": "SlowQueries",
-                  "annotations": {
-                    "alarms": [
-                      "${DbSlowQueryAlarm.Arn}"
-                    ]
-                  },
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "type": "chart"
                 }
               }
             ]
