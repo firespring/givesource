@@ -30,6 +30,7 @@ exports.handle = function (event, context, callback) {
   logger.log('migrateDatabase event: %j', event)
 
   const secretsManager = new SecretsManager()
+  const ssm = new Ssm()
   const request = new Request(event, context)
   const s3 = new S3()
   const localPath = '/tmp'
@@ -39,7 +40,9 @@ exports.handle = function (event, context, callback) {
     return
   }
 
+
   let cacert
+  let sequelize
   request.validate().then(function () {
     fs.rmdirSync(path.join(localPath, process.env.MIGRATIONS_LOCATION), { recursive: true })
     return s3.listObjects(process.env.AWS_REGION, process.env.MIGRATIONS_BUCKET, process.env.MIGRATIONS_LOCATION).then(function (objects) {
@@ -57,7 +60,7 @@ exports.handle = function (event, context, callback) {
     const dbHost = process.env.DATABASE_HOST
     const dbName = process.env.DATABASE_NAME
     const maintenanceSecret = JSON.parse(secret.SecretString)
-    const sequelize = new Sequelize({
+    sequelize = new Sequelize({
       host: dbHost,
       username: maintenanceSecret.username,
       password: maintenanceSecret.password,
@@ -101,5 +104,9 @@ exports.handle = function (event, context, callback) {
     logger.log(err)
     response.send(event, context, response.FAILED, {})
     callback(err)
+  }).finally(function () {
+    if (sequelize) {
+      sequelize.close()
+    }
   })
 }

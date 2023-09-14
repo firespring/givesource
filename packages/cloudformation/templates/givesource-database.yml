@@ -35,14 +35,12 @@ Resources:
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
-
   MaintenanceUserSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
       SecretId: !Ref MaintenanceUserSecret
       TargetType: AWS::RDS::DBCluster
       TargetId: !ImportValue givesource-rds-cluster-id
-
   ReadwriteUserSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
@@ -53,14 +51,12 @@ Resources:
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
-
   ReadwriteUserSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
       SecretId: !Ref ReadwriteUserSecret
       TargetType: AWS::RDS::DBCluster
       TargetId: !ImportValue givesource-rds-cluster-id
-
   SecretsManagerPolicyReadWrite:
     Type: AWS::IAM::Policy
     Properties:
@@ -76,7 +72,6 @@ Resources:
       Roles:
       - !Ref LambdaRole
       - !Ref SecureLambdaRole
-
   LambdaGlobalAuroraIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -86,7 +81,6 @@ Resources:
       FromPort: 3306
       ToPort: 3306
       SourceSecurityGroupId: !Ref LambdaSecurityGroupId
-
   BootstrapDatabaseLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -126,7 +120,6 @@ Resources:
                 - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-
   BootstrapDatabaseLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -164,7 +157,6 @@ Resources:
     DependsOn:
       - MaintenanceUserSecretAttachment
       - ReadwriteUserSecretAttachment
-
   MigrateDatabaseLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -207,7 +199,6 @@ Resources:
                 - !Ref DeadLetterQueueTopic
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-
   MigrateDatabaseLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -237,12 +228,8 @@ Resources:
         SubnetIds:
           - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
-
-#  MigrateDatabaseLambdaLambdaInvoker:
-#    Type: Custom::MigrateDatabaseLambdaInvoker
-#    Properties:
-#      ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
-#    DependsOn: BootstrapDatabaseLambdaLambdaInvoker
-#Outputs:
-#  Identifier:
-#    Value: !Ref RDSCluster
+  MigrateDatabaseLambdaLambdaInvoker:
+    Type: Custom::MigrateDatabaseLambdaInvoker
+    Properties:
+      ServiceToken: !GetAtt MigrateDatabaseLambdaFunction.Arn
+    DependsOn: BootstrapDatabaseLambdaLambdaInvoker
