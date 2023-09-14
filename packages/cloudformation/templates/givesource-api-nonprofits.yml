@@ -70,7 +70,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitLambdaInvokePermission:
@@ -107,7 +107,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitsLambdaInvokePermission:
@@ -144,7 +144,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitLambdaInvokePermission:
@@ -181,7 +181,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitLambdaInvokePermission:
@@ -218,7 +218,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitLambdaInvokePermission:
@@ -257,7 +257,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationLambdaInvokePermission:
@@ -294,7 +294,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationsLambdaInvokePermission:
@@ -331,7 +331,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitDonationLambdaInvokePermission:
@@ -368,7 +368,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitDonationLambdaInvokePermission:
@@ -405,7 +405,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitDonationLambdaInvokePermission:
@@ -444,7 +444,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationTierLambdaInvokePermission:
@@ -481,7 +481,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitDonationTiersLambdaInvokePermission:
@@ -518,7 +518,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitDonationTierLambdaInvokePermission:
@@ -555,7 +555,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitDonationTiersLambdaInvokePermission:
@@ -592,7 +592,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitDonationTiersLambdaInvokePermission:
@@ -631,7 +631,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitPageLambdaInvokePermission:
@@ -670,7 +670,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitReportLambdaInvokePermission:
@@ -707,7 +707,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitReportLambdaInvokePermission:
@@ -746,7 +746,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitSlideLambdaInvokePermission:
@@ -783,7 +783,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitSlidesLambdaInvokePermission:
@@ -820,7 +820,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitSlideLambdaInvokePermission:
@@ -857,7 +857,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitSlideLambdaInvokePermission:
@@ -894,7 +894,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitSlidesLambdaInvokePermission:
@@ -932,7 +932,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitSlideLambdaInvokePermission:
@@ -971,7 +971,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   GetNonprofitUsersLambdaInvokePermission:
@@ -1009,7 +1009,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PostNonprofitUserLambdaInvokePermission:
@@ -1047,7 +1047,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   DeleteNonprofitUserLambdaInvokePermission:
@@ -1087,7 +1087,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   NonprofitAdminRegisterLambdaInvokePermission:
@@ -1126,7 +1126,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   NonprofitRegisterLambdaInvokePermission:
@@ -1165,7 +1165,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   SearchNonprofitsLambdaInvokePermission:
@@ -1205,7 +1205,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PatchNonprofitStatusLambdaInvokePermission:

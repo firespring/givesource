@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.7)
+    activesupport (7.0.8)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -11,14 +11,14 @@ GEM
     atlassian-jwt (0.2.1)
       jwt (~> 2.1)
     aws-eventstream (1.2.0)
-    aws-partitions (1.808.0)
+    aws-partitions (1.820.0)
     aws-sdk-cloudformation (1.83.0)
       aws-sdk-core (~> 3, >= 3.176.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-codepipeline (1.59.0)
       aws-sdk-core (~> 3, >= 3.176.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-core (3.180.3)
+    aws-sdk-core (3.181.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.5)
@@ -47,7 +47,7 @@ GEM
       excon (>= 0.47.0)
       multi_json
     dotenv (2.8.1)
-    excon (0.100.0)
+    excon (0.102.0)
     faraday (2.7.10)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -57,7 +57,7 @@ GEM
     faraday-multipart (1.0.4)
       multipart-post (~> 2)
     faraday-net_http (3.0.2)
-    firespring_dev_commands (2.1.2)
+    firespring_dev_commands (2.1.7)
       activesupport (~> 7.0.6)
       aws-sdk-cloudformation (~> 1.83.0)
       aws-sdk-codepipeline (~> 1.59.0)
@@ -93,7 +93,7 @@ GEM
     launchy (2.5.2)
       addressable (~> 2.8)
     libxml-ruby (4.1.1)
-    minitest (5.19.0)
+    minitest (5.20.0)
     multi_json (1.15.0)
     multipart-post (2.3.0)
     oauth (0.6.2)
@@ -124,7 +124,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  firespring_dev_commands (= 2.1.2)
+  firespring_dev_commands (= 2.1.7)
   launchy
   rake
 

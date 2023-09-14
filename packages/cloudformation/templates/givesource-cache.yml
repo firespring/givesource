@@ -50,7 +50,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PutNonprofitSocialSharingLambdaFunction:
@@ -78,7 +78,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   WarmSocialSharingLambdaFunction:
@@ -106,7 +106,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   WarmGivesourceSocialSharingLambdaLambdaInvoker:
@@ -144,7 +144,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   PutNonprofitSEOLambdaFunction:
@@ -172,7 +172,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   WarmSEOLambdaFunction:
@@ -200,7 +200,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
 
   WarmSEOLambdaLambdaInvoker:
