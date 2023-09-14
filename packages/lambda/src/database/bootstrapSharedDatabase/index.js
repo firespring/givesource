@@ -67,10 +67,10 @@ exports.handle = function (event, context, callback) {
     })
 
     return sequelize.query(
-      'CREATE DATABASE IF NOT EXISTS `' + readwriteSecret.database + '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ' +
-      'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '"; ' +
+      'CREATE DATABASE IF NOT EXISTS `' + maintenanceSecret.database + '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ' +
+      'CREATE USER IF NOT EXISTS "' + maintenanceSecret.username + '"@"%" IDENTIFIED BY "' + maintenanceSecret.password + '" REQUIRE SSL; ' +
       'GRANT ALL PRIVILEGES ON `' + maintenanceSecret.database + '`.* TO "' + maintenanceSecret.username + '"@"%"; ' +
-      'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '"; ' +
+      'CREATE USER IF NOT EXISTS "' + readwriteSecret.username + '"@"%" IDENTIFIED BY "' + readwriteSecret.password + '" REQURE SSL; ' +
       'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, EXECUTE ON `' + readwriteSecret.database + '`.* TO "' + readwriteSecret.username + '"@"%";'
     )
   }).then(function () {

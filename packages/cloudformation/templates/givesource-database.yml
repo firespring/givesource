@@ -31,7 +31,7 @@ Resources:
       Name: !Sub ${StackName}/MaintenanceDatabaseUserSecret
       Description: Givesource database auto-generated maintenance user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${StackName}-maintenance", "database": "${StackName}-database"}'
+        SecretStringTemplate: !Sub '{"username": "${StackName}-maintenance", "database": "${StackName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
@@ -47,7 +47,7 @@ Resources:
       Name: !Sub ${StackName}/ReadwriteDatabaseUserSecret
       Description: Givesource database auto-generated readwrite user password
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${StackName}-readwrite", "database": "${StackName}-database"}'
+        SecretStringTemplate: !Sub '{"username": "${StackName}-readwrite", "database": "${StackName}"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
