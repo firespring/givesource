@@ -57,14 +57,12 @@ exports.handle = function (event, context, callback) {
 
     return secretsManager.getSecretValue(process.env.AWS_REGION, process.env.MAINTENANCE_DATABASE_SECRET_ARN)
   }).then(function (secret) {
-    const dbHost = process.env.DATABASE_HOST
-    const dbName = process.env.DATABASE_NAME
     const maintenanceSecret = JSON.parse(secret.SecretString)
     sequelize = new Sequelize({
-      host: dbHost,
+      host: maintenanceSecret.host,
       username: maintenanceSecret.username,
       password: maintenanceSecret.password,
-      database: dbName,
+      database: maintenanceSecret.database,
       dialect: 'mysql',
       dialectModule: mysql2,
       port: 3306,
