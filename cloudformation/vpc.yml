@@ -602,7 +602,7 @@ Resources:
     Type: AWS::SSM::Parameter
     Properties:
       Description: The global encryption key id
-      Name: !Sub /global/kms/id
+      Name: /global/kms/id
       Type: String
       Value: !Ref globalEncryptionKey
 
@@ -637,11 +637,18 @@ Outputs:
     Export:
       Name: givesource-vpc-ip-range
 
+  # TODO: REMOVEME Some day
   primaryPublicSubnet:
-    Description: Primary Public Subnet for Givesource
+    Description: Primary Public Subnet for Givesource (old/misspelled export)
     Value: !Ref primaryPublicSubnet
     Export:
       Name: givsource-primary-public-subnet
+
+  primaryPublicSubnet2:
+    Description: Primary Public Subnet for Givesource
+    Value: !Ref primaryPublicSubnet
+    Export:
+      Name: givesource-primary-public-subnet
 
   secondaryPublicSubnet:
     Description: Secondary Public Subnet for Givesource
@@ -649,11 +656,18 @@ Outputs:
     Export:
       Name: givesource-secondary-public-subnet
 
+  # TODO: REMOVEME Some day
   primaryPrivateSubnet:
-    Description: Primary Private Subnet for Givesource
+    Description: Primary Private Subnet for Givesource (old/misspelled export)
     Value: !Ref primaryPrivateSubnet
     Export:
       Name: givsource-primary-private-subnet
+
+  primaryPrivateSubnet2:
+    Description: Primary Private Subnet for Givesource
+    Value: !Ref primaryPrivateSubnet
+    Export:
+      Name: givesource-primary-private-subnet
 
   secondaryPrivateSubnet:
     Description: Secondary Private Subnet for Givesource

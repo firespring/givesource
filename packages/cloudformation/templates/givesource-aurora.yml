@@ -77,7 +77,7 @@ Resources:
     Properties:
       DBSubnetGroupDescription: CloudFormation managed DB subnet group.
       SubnetIds:
-        - !ImportValue givsource-primary-private-subnet
+        - !ImportValue givesource-primary-private-subnet
         - !ImportValue givesource-secondary-private-subnet
   AdminUserSecret:
     Type: AWS::SecretsManager::Secret
@@ -281,7 +281,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
   BootstrapDatabaseLambdaLambdaInvoker:
     Type: Custom::BootstrapDatabaseLambdaInvoker
@@ -362,7 +362,7 @@ Resources:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroupId
         SubnetIds:
-          - !ImportValue givsource-primary-private-subnet
+          - !ImportValue givesource-primary-private-subnet
           - !ImportValue givesource-secondary-private-subnet
   MigrateDatabaseLambdaLambdaInvoker:
     Type: Custom::MigrateDatabaseLambdaInvoker
