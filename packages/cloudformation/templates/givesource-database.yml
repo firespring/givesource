@@ -69,6 +69,13 @@ Resources:
               - secretsmanager:GetSecretValue
             Resource:
               - !Ref ReadwriteUserSecret
+          - Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource:
+              - !Sub
+                - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${CaParam}
+                - CaParam: !ImportValue givesource-rds-ca-parameter
       Roles:
       - !Ref LambdaRole
       - !Ref SecureLambdaRole
@@ -108,7 +115,9 @@ Resources:
             Action:
               - ssm:GetParameter
             Resource:
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/global/database/ca_cert
+              - !Sub
+                - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${CaParam}
+                - CaParam: !ImportValue givesource-rds-ca-parameter
       - PolicyName: dead_letter_queue_publish
         PolicyDocument:
           Version: 2012-10-17
@@ -182,7 +191,9 @@ Resources:
             Action:
               - ssm:GetParameter
             Resource:
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/global/database/ca_cert
+              - !Sub
+                - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${CaParam}
+                - CaParam: !ImportValue givesource-rds-ca-parameter
       - PolicyName: s3_read
         PolicyDocument:
           Version: 2012-10-17
