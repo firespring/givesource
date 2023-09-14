@@ -93,7 +93,7 @@ Resources:
                 - lambda.amazonaws.com
       Path: /
       Policies:
-      - PolicyName: secrets-manager
+      - PolicyName: secrets_manager
         PolicyDocument:
           Version: 2012-10-17
           Statement:
@@ -169,7 +169,7 @@ Resources:
                 - lambda.amazonaws.com
       Path: /
       Policies:
-      - PolicyName: secrets-manager
+      - PolicyName: secrets_manager
         PolicyDocument:
           Version: 2012-10-17
           Statement:
@@ -178,6 +178,15 @@ Resources:
               - secretsmanager:GetSecretValue
             Resource:
               - !Ref MaintenanceUserSecret
+          - Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource:
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/global/database/ca_cert
+      - PolicyName: s3_read
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
           - Effect: Allow
             Action:
             - s3:ListBucket
