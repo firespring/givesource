@@ -399,6 +399,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   SecureSettingsLambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -492,6 +493,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiDonationsStack:
     Type: AWS::CloudFormation::Stack
@@ -513,6 +515,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
       - CustomStack
 
   ApiDonorsStack:
@@ -534,6 +537,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiFilesStack:
     Type: AWS::CloudFormation::Stack
@@ -556,6 +560,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiMessagesStack:
     Type: AWS::CloudFormation::Stack
@@ -576,6 +581,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiAgreementsStack:
     Type: AWS::CloudFormation::Stack
@@ -596,6 +602,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiMetricsStack:
     Type: AWS::CloudFormation::Stack
@@ -616,6 +623,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiNonprofitsStack:
     Type: AWS::CloudFormation::Stack
@@ -638,6 +646,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiPaymentTransactionsStack:
     Type: AWS::CloudFormation::Stack
@@ -658,6 +667,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiReportsStack:
     Type: AWS::CloudFormation::Stack
@@ -679,6 +689,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiSettingsStack:
     Type: AWS::CloudFormation::Stack
@@ -703,6 +714,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
       - CustomStack
 
   ApiSponsorsStack:
@@ -724,6 +736,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiUsersStack:
     Type: AWS::CloudFormation::Stack
@@ -745,6 +758,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiRecaptchaStack:
     Type: AWS::CloudFormation::Stack
@@ -765,6 +779,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiDeployStack:
     Type: AWS::CloudFormation::Stack
@@ -800,6 +815,7 @@ Resources:
       - ApiDeployStack
       - CustomStack
       - AuroraDbStack
+      - SharedDbStack
       - S3Stack
 
   MonitoringStack:
@@ -835,6 +851,7 @@ Resources:
       TimeoutInMinutes: 60
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   SqsStack:
     Type: AWS::CloudFormation::Stack
