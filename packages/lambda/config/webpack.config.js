@@ -169,6 +169,7 @@ module.exports = {
     BootstrapDatabase: './src/database/bootstrapDatabase/index.js',
     BootstrapSharedDatabase: './src/database/bootstrapSharedDatabase/index.js',
     MigrateDatabase: './src/database/migrateDatabase/index.js',
+    MigrateSharedDatabase: './src/database/migrateSharedDatabase/index.js',
 
     // Cache Lambda Functions
     PutSocialSharing: './src/cache/putSocialSharing/index.js',
