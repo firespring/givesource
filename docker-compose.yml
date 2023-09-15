@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   app:
+    image: 948629139753.dkr.ecr.us-east-1.amazonaws.com/firespring/givesource:latest
     build:
       context: .
       dockerfile: Dockerfile
