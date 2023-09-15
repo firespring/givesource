@@ -1,0 +1,279 @@
+---
+Description: Creates the shared resources for cicd
+Parameters:
+  DaysToRetainUntaggedContainerImages:
+    Description: The number days to retain untagged container images before expiring
+    Type: Number
+    MinValue: 1
+    MaxValue: 100
+    ConstraintDescription: Value must be between 1 and 100
+    Default: 7
+
+  CloudformationS3Bucket:
+    Type: String
+    Description: The name of the cloudformation s3 bucket to use
+
+Resources:
+  key:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Type: AWS::KMS::Key
+    Properties:
+      Description: KMS encryption key used when encrypting CI resources
+      Enabled: true
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action:
+              - kms:*
+            Resource:
+              - '*'
+
+          - Effect: Allow
+            Principal:
+              Service:
+                - sns.amazonaws.com
+                - events.amazonaws.com
+                - cloudwatch.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey*
+            Resource:
+              - '*'
+
+  keyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/firespring/cicd/default
+      TargetKeyId: !GetAtt key.Arn
+
+  gihubOauthTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the readonly github oauth token used to install npm/composer packages
+      Name: /Firespring/CiCd/ReadonlyGithubOauthToken
+      Type: String
+      Value: CHANGEME
+
+  snykApiTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the snyk api auth token
+      Name: /Firespring/CiCd/SnykApiToken
+      Type: String
+      Value: CHANGEME
+
+  dockerUsernameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the docker username
+      Name: /Firespring/CiCd/DockerUsername
+      Type: String
+      Value: dockerboxcicdmachine
+
+  dockerPasswordParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the docker password
+      Name: /Firespring/CiCd/DockerPassword
+      Type: String
+      Value: CHANGEME
+
+  cicdArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub cicd-artifacts-bucket-${AWS::AccountId}-${AWS::Region}
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              KMSMasterKeyID: !Ref key
+              SSEAlgorithm: 'aws:kms'
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+            NoncurrentVersionExpirationInDays: 30
+          - Status: Enabled
+            ExpirationInDays: 90
+            Transitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 30
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue AccessLoggingBucket
+        LogFilePrefix: !Sub cicd-artifacts-bucket-${AWS::AccountId}-${AWS::Region}
+      VersioningConfiguration:
+        Status: Enabled
+
+  # NOTE: this requires additional setup in the console after the create finishes (by a github repo owner)
+  # See https://us-east-1.console.aws.amazon.com/codesuite/settings/connections
+  codestarConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: !Sub GitHubConnection-${AWS::Region}
+      ProviderType: GitHub
+
+  pipelineStateChangeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/events/codepipeline-state-change
+      RetentionInDays: 30
+
+  pipelineStateChangeLogGroupResourcePolicy:
+    Type: AWS::Logs::ResourcePolicy
+    Properties:
+      PolicyName: events-logs-resource-policy
+      PolicyDocument: !Sub >
+          {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ],
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": [
+                    "events.amazonaws.com",
+                    "delivery.logs.amazonaws.com"
+                  ]
+                },
+                "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/events/*",
+                "Sid": "TrustEventsToStoreLogEvent"
+              }
+            ],
+            "Version": "2012-10-17"
+          }
+
+  pipelineStateChangeLogging:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Pipeline Execution State Change
+      State: ENABLED
+      Targets:
+        - Id: LogTarget
+          Arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${pipelineStateChangeLogGroup}
+
+  nodeVulnerabilityIgnorelist:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: A comma separated list of vulnerability ids which will be excluded from the scan report
+      Name: /Firespring/CiCd/Ignorelist/node
+      Type: String
+      Value: none
+
+  BaseCodebuildManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: base_codebuild
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey
+              - kms:DescribeKey
+              - kms:Decrypt
+            Resource:
+              - !GetAtt key.Arn
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - s3:Get*
+              - s3:List*
+              - s3:PutObject
+              - s3:CreateMultipartUpload
+            Resource:
+              - !Sub ${cicdArtifactsBucket.Arn}*
+          - Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource:
+              - '*'
+
+Outputs:
+  keyArn:
+    Value: !GetAtt key.Arn
+    Export:
+      Name: fdp-cicd-key-arn
+
+  cicdArtifactsBucket:
+    Value: !Ref cicdArtifactsBucket
+    Export:
+      Name: fdp-cicd-artifacts-bucket
+
+  cicdArtifactsBucketArn:
+    Value: !GetAtt cicdArtifactsBucket.Arn
+    Export:
+      Name: fdp-cicd-artifacts-bucket-arn
+
+  readonlyGithubOauthTokenParameter:
+    Value: !Ref gihubOauthTokenParameter
+    Export:
+      Name: fdp-cicd-readonly-github-oauth-token-parameter
+
+  readonlyGithubOauthTokenParameterArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${gihubOauthTokenParameter}
+    Export:
+      Name: fdp-cicd-readonly-github-oauth-token-parameter-arn
+
+  codestarConnection:
+    Value: !GetAtt codestarConnection.ConnectionArn
+    Export:
+      Name: fdp-cicd-codestar-connection-arn
+
+  pipelineStateChangeLogGroup:
+    Value: !Ref pipelineStateChangeLogGroup
+    Export:
+      Name: fdp-cicd-pipeline-state-change-log-group
+
+  pipelineStateChangeLogGroupArn:
+    Value: !GetAtt pipelineStateChangeLogGroup.Arn
+    Export:
+      Name: fdp-cicd-pipeline-state-change-log-group-arn
+
+  # TODO: REMOVE
+  dockerUsernameParameter:
+    Value: !Ref dockerUsernameParameter
+    Export:
+      Name: fdp-cicd-docker-username-parameter
+
+  # TODO: REMOVE
+  dockerUsernameParameterArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerUsernameParameter}
+    Export:
+      Name: fdp-cicd-docker-username-parameter-arn
+
+  # TODO: REMOVE
+  dockerPasswordParameter:
+    Value: !Ref dockerPasswordParameter
+    Export:
+      Name: fdp-cicd-docker-password-parameter
+
+  # TODO: REMOVE
+  dockerPasswordParameterArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerPasswordParameter}
+    Export:
+      Name: fdp-cicd-docker-password-parameter-arn
+
+  BaseCodebuildManagedPolicyArn:
+    Value: !Ref BaseCodebuildManagedPolicy
+    Export:
+      Name: fdp-base-codebuild-managed-policy-arn
