@@ -46,9 +46,6 @@ Dev::EndOfLife.config do |c|
 end
 Dev::Template::Eol.new
 
-
-Dev::Template::Application::Config.new('global', '/global')
-
 # Create default tasks for the app
 Dev::Template::Docker::Application.new(APP_IDENTIFIER, exclude: %i[pull push])
 namespace APP_IDENTIFIER do
