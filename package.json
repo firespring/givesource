@@ -50,7 +50,7 @@
     "release:force": "npm run cloudformation:release:force && npm run frontend:release:force && npm run lambda:release:force",
     "test": "cd packages/lambda && npm run test",
     "lint": "eslint --cache --ext .js,.vue .",
-    "lint-fix": "eslint --cache --ext .js,.vue --fix ."
+    "lint:fix": "eslint --cache --ext .js,.vue --fix ."
   },
   "author": "Firespring",
   "devDependencies": {

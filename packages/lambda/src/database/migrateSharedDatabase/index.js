@@ -40,7 +40,6 @@ exports.handle = function (event, context, callback) {
     return
   }
 
-
   let cacert
   let sequelize
   request.validate().then(function () {

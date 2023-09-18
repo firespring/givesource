@@ -29,13 +29,13 @@ Dev::Template::Aws.new
 ci_cloudformations = []
 branch = ENV['BRANCH'] || Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
 ci_cloudformations << Dev::Aws::Cloudformation.new(
-    "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
-    "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
-    parameters: Dev::Aws::Cloudformation::Parameters.new(
-      BranchName: branch
-    ),
-    capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']
-  )
+  "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
+  "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
+  parameters: Dev::Aws::Cloudformation::Parameters.new(
+    BranchName: branch
+  ),
+  capabilities: ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']
+)
 Dev::Template::Aws::Ci.new(ci_cloudformations)
 
 # Configure docker required versions and create tasks
@@ -75,30 +75,44 @@ namespace APP_IDENTIFIER do
 
   desc 'Run the tests for Givesource'
   task test: %i[init_docker up_no_deps] do
-      command = Dev::Node.new(container_path: '/usr/src/app').base_command
-      command << 'run' << 'test'
-     Dev::Docker::Compose.new(services: 'app').exec(*command)
+    command = Dev::Node.new(container_path: '/usr/src/app').base_command
+    command << 'run' << 'test'
+    Dev::Docker::Compose.new(services: APP_IDENTIFIER).exec(*command)
   end
 
   desc 'Run the linter for Givesource'
   task lint: %i[init_docker up_no_deps] do
+    command = Dev::Node.new(container_path: '/usr/src/app').base_command
+    command << 'run' << 'lint'
+    Dev::Docker::Compose.new(services: APP_IDENTIFIER).exec(*command)
+  end
+
+  namespace :lint do
+    desc 'Run the linter for Givesource and fix everything that is auto-fixable'
+    task fix: %i[init_docker up_no_deps] do
       command = Dev::Node.new(container_path: '/usr/src/app').base_command
-      command << 'run' << 'lint'
-     Dev::Docker::Compose.new(services: 'app').exec(*command)
+      command << 'run' << 'lint:fix'
+      Dev::Docker::Compose.new(services: APP_IDENTIFIER).exec(*command)
+    end
   end
 
   desc 'Run an audit for Givesource packages'
   task audit: %i[init_docker up_no_deps] do
-      alt_dir_node_audit('app', '/usr/src/app/')
+    %w(/usr/src/app /usr/src/app/packages/cloudformation /usr/src/app/packages/frontend /usr/src/app/packages/lambda).each do |container_path|
+      node = Dev::Node.new(container_path: container_path)
+      compose = Dev::Docker::Compose.new(services: APP_IDENTIFIER, capture: true)
+      audit_data = compose.exec(*node.audit_command)
+      Dev::Node::Audit.new(audit_data).to_report.check
+    end
   end
 
   namespace :test do
     desc 'Run the tests with coverage for Givesource'
     task coverage: %i[init_docker up_no_deps] do
-         command = Dev::Node.new(container_path: '/usr/src/app/packages/lambda').base_command
-         command << 'run' << 'test:coverage'
-        Dev::Docker::Compose.new(services: 'app').exec(*command)
-     end
+      command = Dev::Node.new(container_path: '/usr/src/app/packages/lambda').base_command
+      command << 'run' << 'test:coverage'
+      Dev::Docker::Compose.new(services: APP_IDENTIFIER).exec(*command)
+    end
   end
 
   namespace :dev do
@@ -124,11 +138,4 @@ end
 desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
-end
-
-def alt_dir_node_audit(service, container_path)
-  node = Dev::Node.new(container_path: container_path)
-  compose = Dev::Docker::Compose.new(services: service, capture: true)
-  audit_data = compose.exec(*node.audit_command)
-  Dev::Node::Audit.new(audit_data).to_report.check
 end
