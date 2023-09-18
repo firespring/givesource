@@ -22,14 +22,17 @@ const Repository = require('./../../src/repositories/repository')
 const sinon = require('sinon')
 const Sequelize = require('sequelize')
 const SecretsManager = require('../../src/aws/secretsManager')
+const Ssm = require('../../src/aws/ssm')
 
 describe('MetricsRepository', function () {
   beforeEach(() => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
   })
   afterEach(function () {
     const stubbedFunctions = [
       SecretsManager.prototype.getSecretValue,
+      Ssm.prototype.getParameter,
       Sequelize.Model.destroy,
       Sequelize.Model.findAll,
       Sequelize.Model.upsert

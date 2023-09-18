@@ -19,6 +19,7 @@ const NonprofitSlideHelper = require('../../src/helpers/nonprofitSlide')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
 const SecretsManager = require('../../src/aws/secretsManager')
+const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 let NonprofitSlide
@@ -26,10 +27,12 @@ let NonprofitSlide
 describe('NonprofitSlide', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
     NonprofitSlide = (await loadModels()).NonprofitSlide
   })
   afterEach(function () {
     SecretsManager.prototype.getSecretValue.restore()
+    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
