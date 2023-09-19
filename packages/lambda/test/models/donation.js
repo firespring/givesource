@@ -26,7 +26,7 @@ let Donation
 describe('Donation', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Donation = (await loadModels()).Donation
   })
   afterEach(function () {

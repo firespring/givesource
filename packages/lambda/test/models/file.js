@@ -26,7 +26,7 @@ let File
 describe('File', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     File = (await loadModels()).File
   })
   afterEach(function () {

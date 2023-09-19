@@ -27,7 +27,7 @@ const Ssm = require('../../src/aws/ssm')
 describe('MetricsRepository', function () {
   beforeEach(() => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
   })
   afterEach(function () {
     const stubbedFunctions = [

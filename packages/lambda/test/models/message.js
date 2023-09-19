@@ -26,7 +26,7 @@ let Message
 describe('Message', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Message = (await loadModels()).Message
   })
   afterEach(function () {

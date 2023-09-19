@@ -30,7 +30,7 @@ let Report
 describe('ReportsRepository', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({Parameter: {Value: ''}})
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Report = (await loadModels()).Report
   })
   afterEach(function () {
