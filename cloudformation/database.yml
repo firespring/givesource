@@ -1,0 +1,215 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates Reader/Writer Aurora Based MySql RDS Instance.
+
+#==================================================
+# Parameters
+#==================================================
+Parameters:
+  MinCapacity:
+    Type: String
+    Default: 0.5
+
+  MaxCapacity:
+    Type: String
+    Default: 16
+
+#==================================================
+# Metadata
+#==================================================
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: RDS Settings
+        Parameters:
+          - RdsInstanceClass
+          - RdsAllocatedStorage
+          - RdsReplicaInstanceClass
+          - MinCapacity
+          - MaxCapacity
+
+#==================================================
+# Resources
+#==================================================
+Resources:
+  DatabaseParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: Customized parameters for the RDS instances using MySQL
+      Family: MySQL8.0
+      Parameters:
+        character_set_server: utf8
+        event_scheduler: 'ON'
+        init_connect: 'SET collation_connection = utf8_unicode_ci; SET NAMES utf8;'
+        innodb_flush_log_at_trx_commit: 2
+        key_buffer_size: 268435456
+        log_bin_trust_function_creators: 1
+        log_queries_not_using_indexes: 0 # should be enabled to monitor queries with missing or bad indexes
+        log_output: FILE # must be FILE to log to CloudWatch
+        long_query_time: 1
+        max_allowed_packet: 16777216
+        max_heap_table_size: 64000000
+        skip_name_resolve: 0 # users do not use hostnames, disable for better performance
+        slow_query_log: 1 # must be enabled to monitor slow queries
+        tmp_table_size: 64000000
+        wait_timeout: 1800
+        collation_connection: utf8_unicode_ci
+        max_connect_errors: 9223372036854775807 # max allowed value
+      Tags:
+        - Key: Name
+          Value: MySQL parameter group
+
+  RdsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Ingress/egress rules for the database
+      VpcId: !ImportValue givesource-vpc
+      SecurityGroupIngress: []
+      SecurityGroupEgress: []
+      Tags:
+        - Key: Name
+          Value: !Sub rds-givesource-serverless
+
+  PrivateDbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Public subnet group for the database
+      SubnetIds:
+        - !ImportValue givesource-primary-private-subnet
+        - !ImportValue givesource-secondary-private-subnet
+
+  AdminUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: givesource-AdminUserSecret
+      Description: Givesource database auto-generated admin user password
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+  AdminUserSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref AdminUserSecret
+      TargetId: !Ref Rds
+      TargetType: AWS::RDS::DBCluster
+
+  Rds:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      BackupRetentionPeriod: 30
+      DBClusterIdentifier: givesource
+      DBSubnetGroupName: !Ref PrivateDbSubnetGroup
+      DBInstanceParameterGroupName: !Ref DatabaseParameterGroup
+      Engine: aurora-mysql
+      EngineVersion: 8.0.mysql_aurora.3.04.0
+      EnableIAMDatabaseAuthentication: true
+      EnableHttpEndpoint: true
+      MasterUsername: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${AdminUserSecret}:SecretString:password}}'
+      Port: 3306
+      PreferredBackupWindow: 02:00-04:00
+      PreferredMaintenanceWindow: Sun:15:00-Sun:16:00
+      ServerlessV2ScalingConfiguration:
+        MinCapacity: !Ref MinCapacity
+        MaxCapacity: !Ref MaxCapacity
+      StorageEncrypted: true
+      VpcSecurityGroupIds:
+        - !Ref RdsSecurityGroup
+    DependsOn: AdminUserSecret
+
+  Writer:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: givesource-writer
+      DBInstanceClass: db.serverless
+      DBClusterIdentifier: !Ref Rds
+      Engine: aurora-mysql
+      EngineVersion: 8.0.mysql_aurora.3.04.0
+      CACertificateIdentifier: rds-ca-rsa2048-g1
+
+  RdsCaCertificateParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /global/database/ca_cert
+      Type: String
+      Value: CHANGEME
+
+  RdsSecurityGroupVpnIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: All traffic from the client VPN endpoint to RDS
+      FromPort: 3306
+      GroupId: !Ref RdsSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !ImportValue vpn-security-group
+      ToPort: 3306
+
+  VpnSecurityGroupRdsEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: MySQL traffic to the RDS instances
+      DestinationSecurityGroupId: !Ref RdsSecurityGroup
+      GroupId: !ImportValue vpn-security-group
+      FromPort: 3306
+      IpProtocol: tcp
+      ToPort: 3306
+
+#==================================================
+# Outputs
+#==================================================
+Outputs:
+  RdsSecurityGroup:
+    Description: Database Security Group
+    Value: !Ref RdsSecurityGroup
+    Export:
+      Name: givesource-rds-security-group-serverless
+
+  AdminUserSecret:
+    Description: Database Admin User Secret
+    Value: !Ref AdminUserSecret
+    Export:
+      Name: givesource-rds-admin-user-secret
+
+  RdsHostname:
+    Description: Database Hostname
+    Value: !GetAtt Rds.Endpoint.Address
+    Export:
+      Name: givesource-rds-hostname
+
+  RdsClusterId:
+    Description: Database Cluster Id
+    Value: !Ref Rds
+    Export:
+      Name: givesource-rds-cluster-id
+
+  RdsResourceId:
+    Description: Database Hostname
+    Value: !GetAtt Rds.DBClusterResourceId
+    Export:
+      Name: givesource-rds-resource-id
+
+  WriterResourceId:
+    Description: Database Hostname
+    Value: !GetAtt Writer.DbiResourceId
+    Export:
+      Name: givesource-writer-resource-id
+
+  WriterEndpoint:
+    Value: !GetAtt Writer.Endpoint.Address
+    Export:
+      Name: givesource-writer-endpoint-address
+
+  WriterPort:
+    Value: !GetAtt Writer.Endpoint.Port
+    Export:
+      Name: givesource-writer-endpoint-port
+
+  RdsCaCertificateParameter:
+    Value: !Ref RdsCaCertificateParameter
+    Export:
+      Name: givesource-rds-ca-parameter
+

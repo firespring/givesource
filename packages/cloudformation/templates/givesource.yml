@@ -32,11 +32,9 @@ Parameters:
     Description: Conditionally the creation/deletion of the monitoring stack
     Type: String
     Default: "false"
-
-  ReplicaRegion:
-    Description: The region where this stack will be replicated
-    Type: String
-    Default: ""
+    AllowedValues:
+      - "true"
+      - "false"
 
 Mappings:
   ApiGateway:
@@ -96,13 +94,8 @@ Conditions:
 
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
-  IsReplicaRegion: !Equals [!Ref "AWS::Region", !Ref ReplicaRegion]
-
-  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
-
 Resources:
   AuroraDbStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -114,14 +107,17 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
       TimeoutInMinutes: 60
 
-  AuroraDbSnapshotCopyStack:
-    Condition: IsReplicaRegion
+  SharedDbStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         StackName: !Ref AWS::StackName
+        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaRole: !Ref LambdaRole
+        SecureLambdaRole: !Ref SecureLambdaRole
         DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
-      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora-snapshot-copy.yml
+      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-database.yml
+      TimeoutInMinutes: 60
 
   S3Stack:
     Type: AWS::CloudFormation::Stack
@@ -374,7 +370,6 @@ Resources:
           Value: givesource-lambda
 
   CustomStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -404,6 +399,7 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   SecureSettingsLambdaFunctionRole:
     Type: AWS::IAM::Role
@@ -479,7 +475,6 @@ Resources:
         - !Ref SESManagedPolicy
 
   ApiContentsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -498,9 +493,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiDonationsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -520,10 +515,10 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
       - CustomStack
 
   ApiDonorsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -542,9 +537,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiFilesStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -565,9 +560,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiMessagesStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -586,9 +581,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiAgreementsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -607,9 +602,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiMetricsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -628,9 +623,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiNonprofitsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -651,9 +646,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiPaymentTransactionsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -672,9 +667,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiReportsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -694,9 +689,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiSettingsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -719,10 +714,10 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
       - CustomStack
 
   ApiSponsorsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -741,9 +736,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiUsersStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -763,9 +758,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiRecaptchaStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -784,9 +779,9 @@ Resources:
       TimeoutInMinutes: 30
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   ApiDeployStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -811,7 +806,6 @@ Resources:
       - RestApi
 
   CognitoInitialUser:
-    Condition: NotReplicaRegion
     Type: Custom::CognitoSuperAdminUser
     Properties:
       ServiceToken: !GetAtt CustomStack.Outputs.CognitoCreateUserFunctionArn
@@ -821,6 +815,7 @@ Resources:
       - ApiDeployStack
       - CustomStack
       - AuroraDbStack
+      - SharedDbStack
       - S3Stack
 
   MonitoringStack:
@@ -843,7 +838,6 @@ Resources:
       - CognitoInitialUser
 
   CacheStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -857,9 +851,9 @@ Resources:
       TimeoutInMinutes: 60
     DependsOn:
       - AuroraDbStack
+      - SharedDbStack
 
   SqsStack:
-    Condition: NotReplicaRegion
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
@@ -913,11 +907,9 @@ Outputs:
     Value: !GetAtt S3Stack.Outputs.UploadsS3BucketUrl
 
   UserPoolClientId:
-    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolClientId
 
   UserPoolId:
-    Condition: NotReplicaRegion
     Value: !GetAtt CustomStack.Outputs.CognitoUserPoolId
 
   Version:

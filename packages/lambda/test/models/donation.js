@@ -18,6 +18,7 @@ const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
 const SecretsManager = require('../../src/aws/secretsManager')
+const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 let Donation
@@ -25,10 +26,12 @@ let Donation
 describe('Donation', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Donation = (await loadModels()).Donation
   })
   afterEach(function () {
     SecretsManager.prototype.getSecretValue.restore()
+    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {

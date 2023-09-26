@@ -20,6 +20,7 @@ const Repository = require('../../src/repositories/repository')
 const TestHelper = require('../helpers/test')
 
 const SecretsManager = require('../../src/aws/secretsManager')
+const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 const Sequelize = require('sequelize')
@@ -30,11 +31,13 @@ const promiseMe = require('mocha-promise-me')
 describe('UsersRepository', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     User = (await loadModels()).User
   })
   afterEach(function () {
     const stubbedFunctions = [
       SecretsManager.prototype.getSecretValue,
+      Ssm.prototype.getParameter,
       Sequelize.Model.destroy,
       Sequelize.Model.findAll,
       Sequelize.Model.upsert

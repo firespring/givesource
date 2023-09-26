@@ -19,6 +19,7 @@ const Model = require('sequelize').Model
 const SponsorHelper = require('../../src/helpers/sponsor')
 const TestHelper = require('../helpers/test')
 const SecretsManager = require('../../src/aws/secretsManager')
+const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 let SponsorTier
@@ -26,10 +27,12 @@ let SponsorTier
 describe('SponsorTier', function () {
   beforeEach(async () => {
     sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     SponsorTier = (await loadModels()).SponsorTier
   })
   afterEach(function () {
     SecretsManager.prototype.getSecretValue.restore()
+    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
