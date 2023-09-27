@@ -2189,35 +2189,6 @@ Resources:
                 "type": "metric",
                 "x": 6,
                 "y": 24,
-                "width": 6,
-                "height": 6,
-                "properties": {
-                  "metrics": [
-                    [
-                      "AWS/RDS",
-                      "CPUUtilization",
-                      "DBClusterIdentifier",
-                      "${DatabaseIdentifier}",
-                      {"label": "CPUUtilization"}
-                    ],
-                    [
-                      "AWS/RDS",
-                      "ACUUtilization",
-                      "DBClusterIdentifier",
-                      "${DatabaseIdentifier}",
-                      {"label": "ACUUtilization"}
-                    ]
-                  ],
-                  "view": "timeSeries",
-                  "stacked": false,
-                  "region": "${AWS::Region}",
-                  "title": "RDS Compute Utilization"
-                }
-              },
-              {
-                "type": "metric",
-                "x": 12,
-                "y": 24,
                 "width": 3,
                 "height": 6,
                 "properties": {
@@ -2234,7 +2205,7 @@ Resources:
               },
               {
                 "type": "metric",
-                "x": 15,
+                "x": 9,
                 "y": 24,
                 "width": 3,
                 "height": 6,
@@ -2252,7 +2223,7 @@ Resources:
               },
               {
                 "type": "metric",
-                "x": 18,
+                "x": 12,
                 "y": 24,
                 "width": 6,
                 "height": 6,
@@ -2266,6 +2237,70 @@ Resources:
                   "view": "timeSeries",
                   "stacked": false,
                   "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 18,
+                "y": 24,
+                "width": 6,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "TempStorageThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "TempStorageThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkReceiveThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkReceiveThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkTransmitThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkTransmitThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkReceiveThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkReceiveThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkTransmitThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkTransmitThroughput"}
+                    ]
+                  ],
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "region": "${AWS::Region}",
+                  "title": "RDS Throughput (Temp/Network/Storage)"
                 }
               },
               {
@@ -2440,14 +2475,3 @@ Resources:
           }
         - {DatabaseIdentifier: !ImportValue givesource-rds-cluster-id}
 
-#TempStorageIops. The number of IOPS done on local storage attached to the DB instance. It includes the IOPS for both reads and writes. This metric represents a count and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
-#TempStorageThroughput. The amount of data transferred to and from local storage associated with the DB instance. This metric represents bytes and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
-#
-#NetworkReceiveThroughput
-#NetworkThroughput
-#NetworkTransmitThroughput
-#StorageNetworkReceiveThroughput
-#StorageNetworkThroughput
-#StorageNetworkTransmitThroughput
-#
-  # ServerlessDatabaseCapacity, ACUUtilization, CPUUtilization, and FreeableMemory
