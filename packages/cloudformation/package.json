@@ -4,7 +4,6 @@
   "scripts": {
     "build": "npm run clean && node bin/build.js",
     "clean": "rimraf build/*",
-    "check": "node bin/check.js",
     "create": "node bin/create.js",
     "delete": "node bin/delete.js",
     "release": "npm run build && node bin/release.js",
