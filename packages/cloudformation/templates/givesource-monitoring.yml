@@ -324,7 +324,7 @@ Resources:
       Dimensions:
       - Name: DBClusterIdentifier
         Value: !ImportValue givesource-rds-cluster-id
-      Statistic: Sum
+      Statistic: Average
       Period: 300
       ComparisonOperator: GreaterThanThreshold
       Threshold: 95
@@ -345,8 +345,8 @@ Resources:
       Dimensions:
       - Name: DBClusterIdentifier
         Value: !ImportValue givesource-rds-cluster-id
-      Statistic: Sum
-      Period: 60
+      Statistic: Average
+      Period: 300
       ComparisonOperator: GreaterThanThreshold
       Threshold: 85
       EvaluationPeriods: 1
@@ -2218,13 +2218,31 @@ Resources:
                 "type": "metric",
                 "x": 12,
                 "y": 24,
-                "width": 6,
+                "width": 3,
                 "height": 6,
                 "properties": {
-                  "title": "RDS JOEUPDATE Utilization",
+                  "title": "RDS CPU Utilization",
                   "annotations": {
                     "alarms": [
-                      "${rdsFreeableMemoryAlarm.Arn}"
+                      "${rdsCpuUtilizationAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 15,
+                "y": 24,
+                "width": 3,
+                "height": 6,
+                "properties": {
+                  "title": "RDS ACU Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsAcuUtilizationAlarm.Arn}"
                     ]
                   },
                   "view": "timeSeries",
