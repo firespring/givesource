@@ -26,27 +26,6 @@ function S3 () {
 }
 
 /**
- * List AWS S3 buckets
- *
- * @param {string} region
- * @param {string} bucketName
- * @param {string} prefix
- * @return {Promise}
- */
-S3.prototype.listBuckets = function (region) {
-  const awsS3 = new AWS.S3({ region: region })
-  return new Promise(function (resolve, reject) {
-    const params = {}
-    awsS3.listBuckets(params, function (err, results) {
-      if (err) {
-        reject(err)
-      }
-      resolve(results.Buckets)
-    })
-  })
-}
-
-/**
  * List AWS S3 objects
  *
  * @param {string} region
