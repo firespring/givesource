@@ -310,9 +310,6 @@ Resources:
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-
-
-  # ServerlessDatabaseCapacity, ACUUtilization, CPUUtilization, and FreeableMemory
   rdsCpuUtilizationAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -326,66 +323,32 @@ Resources:
       MetricName: CPUUtilization
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !ImportValue givesource-writer-resource-id
+        Value: !ImportValue givesource-rds-cluster-id
       Statistic: Sum
       Period: 300
       ComparisonOperator: GreaterThanThreshold
-      Threshold: 90
+      Threshold: 95
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-  rdsCpuUtilizationAlarm:
+  rdsAcuUtilizationAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
+      AlarmDescription: !Sub ${StackName} RDS ACUUtilization Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
       Namespace: AWS/RDS
-      MetricName: CPUUtilization
+      MetricName: ACUUtilization
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !ImportValue givesource-writer-resource-id
+        Value: !ImportValue givesource-rds-cluster-id
       Statistic: Sum
       Period: 60
       ComparisonOperator: GreaterThanThreshold
-      Threshold: 90
-      EvaluationPeriods: 1
-      TreatMissingData: breaching
-
-
-
-#TempStorageIops. The number of IOPS done on local storage attached to the DB instance. It includes the IOPS for both reads and writes. This metric represents a count and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
-#TempStorageThroughput. The amount of data transferred to and from local storage associated with the DB instance. This metric represents bytes and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
-#
-#NetworkReceiveThroughput
-#NetworkThroughput
-#NetworkTransmitThroughput
-#StorageNetworkReceiveThroughput
-#StorageNetworkThroughput
-#StorageNetworkTransmitThroughput
-
-  rdsFreeLocalStorageAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${StackName} RDS FreeLocalStorage Alarm
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/RDS
-      MetricName: FreeLocalStorage
-      Dimensions:
-      - Name: DBClusterIdentifier
-        Value: !ImportValue givesource-writer-resource-id
-      Statistic: Sum
-      Period: 300
-      ComparisonOperator: LessThanThreshold
-      # < 10GB
-      Threshold: 10737418240
+      Threshold: 85
       EvaluationPeriods: 1
       TreatMissingData: breaching
 
@@ -402,12 +365,12 @@ Resources:
       MetricName: FreeableMemory
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !ImportValue givesource-writer-resource-id
+        Value: !ImportValue givesource-rds-cluster-id
       Statistic: Sum
       Period: 300
       ComparisonOperator: LessThanThreshold
-      # < 512MB
-      Threshold: 536870912
+      # < 2048MB
+      Threshold: 2147483648
       EvaluationPeriods: 1
       TreatMissingData: breaching
 
@@ -431,8 +394,6 @@ Resources:
       Threshold: 27000
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
-
-  # TODO: Add back slow query monitoring for the global DB?
 
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -2231,15 +2192,26 @@ Resources:
                 "width": 6,
                 "height": 6,
                 "properties": {
-                  "title": "RDS CPU Utilization",
-                  "annotations": {
-                    "alarms": [
-                      "${rdsCpuUtilizationAlarm.Arn}"
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "CPUUtilization",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "CPUUtilization"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "ACUUtilization",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "ACUUtilization"}
                     ]
-                  },
+                  ],
                   "view": "timeSeries",
                   "stacked": false,
-                  "type": "chart"
+                  "region": "${AWS::Region}",
+                  "title": "RDS Compute Utilization"
                 }
               },
               {
@@ -2249,10 +2221,10 @@ Resources:
                 "width": 6,
                 "height": 6,
                 "properties": {
-                  "title": "RDS FreeLocalStorage Utilization",
+                  "title": "RDS JOEUPDATE Utilization",
                   "annotations": {
                     "alarms": [
-                      "${rdsFreeLocalStorageAlarm.Arn}"
+                      "${rdsFreeableMemoryAlarm.Arn}"
                     ]
                   },
                   "view": "timeSeries",
@@ -2448,5 +2420,16 @@ Resources:
               }
             ]
           }
-        - {}
+        - {DatabaseIdentifier: !ImportValue givesource-rds-cluster-id}
 
+#TempStorageIops. The number of IOPS done on local storage attached to the DB instance. It includes the IOPS for both reads and writes. This metric represents a count and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
+#TempStorageThroughput. The amount of data transferred to and from local storage associated with the DB instance. This metric represents bytes and is measured once per second. This is a new metric for Aurora Serverless v2. For details, see Instance-level metrics for Amazon Aurora.
+#
+#NetworkReceiveThroughput
+#NetworkThroughput
+#NetworkTransmitThroughput
+#StorageNetworkReceiveThroughput
+#StorageNetworkThroughput
+#StorageNetworkTransmitThroughput
+#
+  # ServerlessDatabaseCapacity, ACUUtilization, CPUUtilization, and FreeableMemory
