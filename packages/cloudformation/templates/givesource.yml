@@ -95,18 +95,6 @@ Conditions:
   EnableMonitoring: !Equals ["true", !Ref EnableMonitoring]
 
 Resources:
-  AuroraDbStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        StackName: !Ref AWS::StackName
-        LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
-        LambdaRole: !Ref LambdaRole
-        SecureLambdaRole: !Ref SecureLambdaRole
-        DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
-      TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-aurora.yml
-      TimeoutInMinutes: 60
-
   SharedDbStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -398,7 +386,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-custom.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   SecureSettingsLambdaFunctionRole:
@@ -492,7 +479,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-contents.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiDonationsStack:
@@ -514,7 +500,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donations.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
       - CustomStack
 
@@ -536,7 +521,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-donors.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiFilesStack:
@@ -559,7 +543,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-files.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiMessagesStack:
@@ -580,7 +563,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-messages.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiAgreementsStack:
@@ -601,7 +583,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-agreements.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiMetricsStack:
@@ -622,7 +603,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-metrics.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiNonprofitsStack:
@@ -645,7 +625,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-nonprofits.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiPaymentTransactionsStack:
@@ -666,7 +645,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-payment-transactions.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiReportsStack:
@@ -688,7 +666,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-reports.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiSettingsStack:
@@ -713,7 +690,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-settings.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
       - CustomStack
 
@@ -735,7 +711,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-sponsors.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiUsersStack:
@@ -757,7 +732,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-users.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiRecaptchaStack:
@@ -778,7 +752,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-api-recaptcha.yml
       TimeoutInMinutes: 30
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   ApiDeployStack:
@@ -814,7 +787,6 @@ Resources:
     DependsOn:
       - ApiDeployStack
       - CustomStack
-      - AuroraDbStack
       - SharedDbStack
       - S3Stack
 
@@ -831,7 +803,6 @@ Resources:
         PublicPagesCloudFrontDomainName: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDomainName
         PublicPagesCloudFrontDistribution: !GetAtt S3Stack.Outputs.PublicPagesCloudFrontDistribution
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
-        DatabaseIdentifier: !GetAtt AuroraDbStack.Outputs.Identifier
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-monitoring.yml
       TimeoutInMinutes: 30
     DependsOn:
@@ -850,7 +821,6 @@ Resources:
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-cache.yml
       TimeoutInMinutes: 60
     DependsOn:
-      - AuroraDbStack
       - SharedDbStack
 
   SqsStack:

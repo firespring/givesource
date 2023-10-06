@@ -34,10 +34,6 @@ Parameters:
     Type: CommaDelimitedList
     Default: ""
 
-  DatabaseIdentifier:
-    Description: The identifier of the rds database
-    Type: String
-
 Conditions:
   HasAdminPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref AdminPagesCNAMEs]]]
   HasPublicPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref PublicPagesCNAMEs]]]
@@ -327,54 +323,32 @@ Resources:
       MetricName: CPUUtilization
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !Ref DatabaseIdentifier
-      Statistic: Sum
+        Value: !ImportValue givesource-rds-cluster-id
+      Statistic: Average
       Period: 300
       ComparisonOperator: GreaterThanThreshold
-      Threshold: 90
+      Threshold: 95
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
 
-  rdsCpuUtilizationAlarm:
+  rdsAcuUtilizationAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ActionsEnabled: true
-      AlarmDescription: !Sub ${StackName} RDS CPUUtilization Alarm
+      AlarmDescription: !Sub ${StackName} RDS ACUUtilization Alarm
       AlarmActions:
         - !Ref AlertSns
       OKActions:
         - !Ref AlertSns
       Namespace: AWS/RDS
-      MetricName: CPUUtilization
+      MetricName: ACUUtilization
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !Ref DatabaseIdentifier
-      Statistic: Sum
-      Period: 60
-      ComparisonOperator: GreaterThanThreshold
-      Threshold: 90
-      EvaluationPeriods: 1
-      TreatMissingData: breaching
-
-  rdsFreeLocalStorageAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmDescription: !Sub ${StackName} RDS FreeLocalStorage Alarm
-      AlarmActions:
-        - !Ref AlertSns
-      OKActions:
-        - !Ref AlertSns
-      Namespace: AWS/RDS
-      MetricName: FreeLocalStorage
-      Dimensions:
-      - Name: DBClusterIdentifier
-        Value: !Ref DatabaseIdentifier
-      Statistic: Sum
+        Value: !ImportValue givesource-rds-cluster-id
+      Statistic: Average
       Period: 300
-      ComparisonOperator: LessThanThreshold
-      # < 10GB
-      Threshold: 10737418240
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 85
       EvaluationPeriods: 1
       TreatMissingData: breaching
 
@@ -391,12 +365,12 @@ Resources:
       MetricName: FreeableMemory
       Dimensions:
       - Name: DBClusterIdentifier
-        Value: !Ref DatabaseIdentifier
+        Value: !ImportValue givesource-rds-cluster-id
       Statistic: Sum
       Period: 300
       ComparisonOperator: LessThanThreshold
-      # < 512MB
-      Threshold: 536870912
+      # < 2048MB
+      Threshold: 2147483648
       EvaluationPeriods: 1
       TreatMissingData: breaching
 
@@ -420,8 +394,6 @@ Resources:
       Threshold: 27000
       EvaluationPeriods: 1
       TreatMissingData: notBreaching
-
-  # TODO: Add back slow query monitoring for the global DB?
 
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -759,8 +731,8 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-BootstrapDatabase",
-                      {"label": "BootstrapDatabase"}
+                      "${StackName}-BootstrapSharedDatabase",
+                      {"label": "BootstrapSharedDatabase"}
                     ],
                     [
                       "...",
@@ -1124,8 +1096,8 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-MigrateDatabase",
-                      {"label": "MigrateDatabase"}
+                      "${StackName}-MigrateSharedDatabase",
+                      {"label": "MigrateSharedDatabase"}
                     ],
                     [
                       "...",
@@ -1486,8 +1458,8 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-BootstrapDatabase",
-                      {"label": "BootstrapDatabase"}
+                      "${StackName}-BootstrapSharedDatabase",
+                      {"label": "BootstrapSharedDatabase"}
                     ],
                     [
                       "...",
@@ -1851,8 +1823,8 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-MigrateDatabase",
-                      {"label": "MigrateDatabase"}
+                      "${StackName}-MigrateSharedDatabase",
+                      {"label": "MigrateSharedDatabase"}
                     ],
                     [
                       "...",
@@ -2217,7 +2189,7 @@ Resources:
                 "type": "metric",
                 "x": 6,
                 "y": 24,
-                "width": 6,
+                "width": 3,
                 "height": 6,
                 "properties": {
                   "title": "RDS CPU Utilization",
@@ -2233,15 +2205,33 @@ Resources:
               },
               {
                 "type": "metric",
+                "x": 9,
+                "y": 24,
+                "width": 3,
+                "height": 6,
+                "properties": {
+                  "title": "RDS ACU Utilization",
+                  "annotations": {
+                    "alarms": [
+                      "${rdsAcuUtilizationAlarm.Arn}"
+                    ]
+                  },
+                  "view": "timeSeries",
+                  "stacked": false,
+                  "type": "chart"
+                }
+              },
+              {
+                "type": "metric",
                 "x": 12,
                 "y": 24,
                 "width": 6,
                 "height": 6,
                 "properties": {
-                  "title": "RDS FreeLocalStorage Utilization",
+                  "title": "RDS FreeableMemory Utilization",
                   "annotations": {
                     "alarms": [
-                      "${rdsFreeLocalStorageAlarm.Arn}"
+                      "${rdsFreeableMemoryAlarm.Arn}"
                     ]
                   },
                   "view": "timeSeries",
@@ -2256,15 +2246,61 @@ Resources:
                 "width": 6,
                 "height": 6,
                 "properties": {
-                  "title": "RDS FreeableMemory Utilization",
-                  "annotations": {
-                    "alarms": [
-                      "${rdsFreeableMemoryAlarm.Arn}"
+                  "metrics": [
+                    [
+                      "AWS/RDS",
+                      "TempStorageThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "TempStorageThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkReceiveThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkReceiveThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "NetworkTransmitThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "NetworkTransmitThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkReceiveThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkReceiveThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkThroughput"}
+                    ],
+                    [
+                      "AWS/RDS",
+                      "StorageNetworkTransmitThroughput",
+                      "DBClusterIdentifier",
+                      "${DatabaseIdentifier}",
+                      {"label": "StorageNetworkTransmitThroughput"}
                     ]
-                  },
+                  ],
                   "view": "timeSeries",
                   "stacked": false,
-                  "type": "chart"
+                  "region": "${AWS::Region}",
+                  "title": "RDS Throughput (Temp/Network/Storage)"
                 }
               },
               {
@@ -2437,5 +2473,5 @@ Resources:
               }
             ]
           }
-        - {}
+        - {DatabaseIdentifier: !ImportValue givesource-rds-cluster-id}
 
