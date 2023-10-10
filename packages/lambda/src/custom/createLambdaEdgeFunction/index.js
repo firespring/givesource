@@ -94,7 +94,6 @@ exports.handle = (event, context, callback) => {
         return lambda.createFunction(region, functionName, 'index.handle', role, event.ResourceProperties.Runtime, { ZipFile: code })
       })
     } else if (event.RequestType === 'Update') {
-      // todo.....
       promise = promise.then(async () => {
         await lambda.updateFunctionCode(region, functionName, code)
         await lambda.waitFor(region, functionName)
@@ -106,8 +105,6 @@ exports.handle = (event, context, callback) => {
     }
 
     promise.then(async () => {
-      // this is necessary because of nodejs14 update... sorry to whoever sees this in the future
-      // await (new Promise(res => setTimeout(res, 5000)))
       return lambda.publishVersion(region, functionName)
     }).then(data => {
       response.send(event, context, response.SUCCESS, { LambdaFunctionARN: data.FunctionArn }, data.FunctionArn)
