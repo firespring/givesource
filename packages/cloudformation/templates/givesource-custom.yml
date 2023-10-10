@@ -778,7 +778,8 @@ Resources:
   GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
-      Nonce: 123456789
+      Nonce: 123456789abcd
+      CreateLambdaEdgeFunctionRole: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
       S3Bucket: !Sub |-
         {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
@@ -815,7 +816,7 @@ Resources:
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
     Properties:
-      Nonce: 123456789
+      #Nonce: 123456789abc
       ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
       CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
       Functions: !Sub |-
