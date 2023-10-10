@@ -22,8 +22,6 @@ exports.handle = (event, context, callback) => {
   const userAgent = request.headers['user-agent'][0].value
   const s3 = new S3()
 
-  console.log('start request: ', request.uri)
-
   // request targets non-html files
   if (request.uri.match(/\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)/i)) {
     callback(null, request)

@@ -508,8 +508,6 @@ Resources:
               Resource: '*'
       - PolicyName: Lambda
         PolicyDocument:
-          # todo does this need a separate deploy?
-          # chicken and egg
           Statement:
             - Action:
               - lambda:CreateFunction
@@ -778,7 +776,11 @@ Resources:
   GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
-      Nonce: 123456789abcd
+      # Properties.CreateLambdaEdgeFunctionRole isn't actually utilized by CreateLambdaEdgeFunction
+      # but is required to force a deploy update when GeneratePublicPagesHtml lambda code is updated
+      Nonce: {{lambdaEdgeGenPubPagesHash}}
+      # Properties.CreateLambdaEdgeFunctionRole isn't actually utilized by CreateLambdaEdgeFunction
+      # but is required to ensure cloudformation updates to CreateLambdaEdgeFunctionRole happen first
       CreateLambdaEdgeFunctionRole: !GetAtt CreateLambdaEdgeFunctionRole.Arn
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
       S3Bucket: !Sub |-
@@ -816,7 +818,6 @@ Resources:
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
     Properties:
-      #Nonce: 123456789abc
       ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
       CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
       Functions: !Sub |-

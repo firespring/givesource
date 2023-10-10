@@ -31,9 +31,6 @@ exports.handle = (event, context, callback) => {
   const functionName = process.env.AWS_STACK_NAME + '-' + event.ResourceProperties.FunctionName
   const region = 'us-east-1'
   const role = event.ResourceProperties.Role
-  // event.ResourceProperties.Runtime
-  // event.OldResourceProperties.Runtime
-  const runtime = 'nodejs18.x'
 
   if (event.RequestType === 'Delete') {
     lambda.deleteFunction(region, event.PhysicalResourceId).then(() => {
@@ -94,7 +91,7 @@ exports.handle = (event, context, callback) => {
 
     if (event.RequestType === 'Create') {
       promise = promise.then(() => {
-        return lambda.createFunction(region, functionName, 'index.handle', role, runtime, { ZipFile: code })
+        return lambda.createFunction(region, functionName, 'index.handle', role, event.ResourceProperties.Runtime, { ZipFile: code })
       })
     } else if (event.RequestType === 'Update') {
       // todo.....
@@ -102,16 +99,8 @@ exports.handle = (event, context, callback) => {
         await lambda.updateFunctionCode(region, functionName, code)
         await lambda.waitFor(region, functionName)
       }).then(async () => {
-        // todo runtime from params?
-        console.log('Updating runtime to ', {runtime, old: event.ResourceProperties.Runtime, new: event.OldResourceProperties.Runtime})
-        // await (new Promise(res => setTimeout(res, 5 * 60 * 1000))) // 5 min
-        // await (new Promise(res => setTimeout(res, 5000)))
-
-
-
-        // event.ResourceProperties.Runtime
-        // event.OldResourceProperties.Runtime
-        await lambda.updateFunctionConfiguration(region, functionName, runtime)
+        console.log('Updating runtime to ', event.ResourceProperties.Runtime)
+        await lambda.updateFunctionConfiguration(region, functionName, event.ResourceProperties.Runtime)
         await lambda.waitFor(region, functionName)
       })
     }
@@ -126,7 +115,6 @@ exports.handle = (event, context, callback) => {
       logger.log(err)
       response.send(event, context, response.FAILED)
     })
-
   } else {
     response.send(event, context, response.SUCCESS)
   }
