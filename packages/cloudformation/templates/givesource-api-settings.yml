@@ -70,7 +70,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -107,7 +107,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -144,7 +144,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -181,7 +181,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -218,7 +218,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -255,7 +255,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -292,7 +292,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -331,7 +331,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetEmailLambdaInvokePermission:
@@ -363,7 +363,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   GetSenderEmailAddressLambdaInvokePermission:
@@ -398,7 +398,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   PatchSenderEmailAddressLambdaInvokePermission:
@@ -429,7 +429,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   VerifyEmailLambdaInvokePermission:
@@ -460,7 +460,7 @@ Resources:
      Handler: "index.handle"
      MemorySize: 512
      Role: !Ref SecureSettingsLambdaFunctionRoleArn
-     Runtime: "nodejs14.x"
+     Runtime: nodejs18.x
      Timeout: !Ref DefaultLambdaFunctionTimeout
      VpcConfig:
        SecurityGroupIds:
@@ -495,7 +495,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref SecureSettingsLambdaFunctionRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:

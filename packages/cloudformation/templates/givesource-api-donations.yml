@@ -61,7 +61,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -98,7 +98,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -135,7 +135,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -172,7 +172,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -209,7 +209,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -246,7 +246,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 1024
       Role: !Ref SecureLambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 90
       VpcConfig:
         SecurityGroupIds:
@@ -284,7 +284,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -323,7 +323,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -360,7 +360,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -399,7 +399,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:

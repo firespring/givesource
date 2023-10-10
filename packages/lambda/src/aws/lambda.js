@@ -178,4 +178,41 @@ Lambda.prototype.updateFunctionCode = function (region, functionName, zipFile) {
   })
 }
 
+/**
+ * Update an AWS Lambda function's configuration (currently only Runtime supported)
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @param {*} runtime
+ * @return {Promise}
+ */
+Lambda.prototype.updateFunctionConfiguration = function (region, functionName, runtime) {
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName,
+      Runtime: runtime
+    }
+    awsLambda.updateFunctionConfiguration(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
+Lambda.prototype.waitFor = function (region, functionName) {
+  const awsLambda = new AWS.Lambda({ region: region })
+
+  // Has to wait for the function update status to transition to "Updated"
+  // until making further re-configuration.
+  // https://github.com/claudiajs/claudia/issues/226
+  // https://aws.amazon.com/de/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/
+  // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Lambda.html
+  return awsLambda.waitFor('functionUpdated', {
+    FunctionName: functionName
+  }).promise()
+}
+
 module.exports = Lambda

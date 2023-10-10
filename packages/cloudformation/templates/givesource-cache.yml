@@ -44,7 +44,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -72,7 +72,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -100,7 +100,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 900 # In case there are a lot of Nonprofits to warm
       VpcConfig:
         SecurityGroupIds:
@@ -138,7 +138,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -166,7 +166,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 300
       VpcConfig:
         SecurityGroupIds:
@@ -194,7 +194,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 900 # In case there are a lot of Nonprofits to warm
       VpcConfig:
         SecurityGroupIds:

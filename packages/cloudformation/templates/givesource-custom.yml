@@ -93,7 +93,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -137,7 +137,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   ApiGatewayFlushCacheLambdaFunction:
@@ -159,7 +159,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Api Gateway Authorizers
@@ -214,7 +214,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -242,7 +242,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -269,7 +269,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -296,7 +296,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -326,7 +326,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -430,7 +430,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -460,7 +460,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn:
       - GenerateCustomFrontendCssLambdaFunction
@@ -508,14 +508,18 @@ Resources:
               Resource: '*'
       - PolicyName: Lambda
         PolicyDocument:
+          # todo does this need a separate deploy?
+          # chicken and egg
           Statement:
             - Action:
               - lambda:CreateFunction
               - lambda:DeleteFunction
               - lambda:EnableReplication
               - lambda:GetFunction
+              - lambda:GetFunctionConfiguration
               - lambda:PublishVersion
               - lambda:UpdateFunctionCode
+              - lambda:UpdateFunctionConfiguration
               Effect: Allow
               Resource: !Sub |-
                 arn:aws:lambda:us-east-1:${AWS::AccountId}:function:*
@@ -578,7 +582,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CreateLambdaEdgeFunctionRole
 
@@ -600,7 +604,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !GetAtt CreateLambdaEdgeFunctionRole.Arn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
     DependsOn: CreateLambdaEdgeFunctionRole
 
@@ -624,7 +628,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 256
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Report Lambda Resources
@@ -648,7 +652,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 2048
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 900
       VpcConfig:
         SecurityGroupIds:
@@ -676,7 +680,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -716,7 +720,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -745,7 +749,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   S3SyncObjectsFunction:
@@ -766,7 +770,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
 
   # Create Lambda@Edge Functions
@@ -774,6 +778,7 @@ Resources:
   GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
+      Nonce: 123456789
       ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
       S3Bucket: !Sub |-
         {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
@@ -783,7 +788,7 @@ Resources:
       FunctionName: GeneratePublicPagesHtml
       StackName: !Ref StackName
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
     DependsOn:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
@@ -810,6 +815,7 @@ Resources:
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
     Properties:
+      Nonce: 123456789
       ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
       CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
       Functions: !Sub |-
@@ -942,7 +948,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -969,7 +975,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 1024
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: 120
       VpcConfig:
         SecurityGroupIds:
@@ -996,7 +1002,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -1023,7 +1029,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -1050,7 +1056,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -1079,7 +1085,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
@@ -1106,7 +1112,7 @@ Resources:
       Handler: "index.handle"
       MemorySize: 512
       Role: !Ref LambdaRoleArn
-      Runtime: "nodejs14.x"
+      Runtime: nodejs18.x
       Timeout: !Ref DefaultLambdaFunctionTimeout
       VpcConfig:
         SecurityGroupIds:
