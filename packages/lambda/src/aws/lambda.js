@@ -202,6 +202,13 @@ Lambda.prototype.updateFunctionConfiguration = function (region, functionName, r
   })
 }
 
+/**
+ * Waits until the lambda function update is complete
+ *
+ * @param region
+ * @param functionName
+ * @returns {Promise}
+ */
 Lambda.prototype.waitFor = function (region, functionName) {
   const awsLambda = new AWS.Lambda({ region: region })
 

@@ -779,7 +779,7 @@ Resources:
   GeneratePublicPagesHtml:
     Type: Custom::LambdaEdgeSocialShare
     Properties:
-      # Properties.CreateLambdaEdgeFunctionRole isn't actually utilized by CreateLambdaEdgeFunction
+      # Properties.Nonce isn't actually utilized by CreateLambdaEdgeFunction
       # but is required to force a deploy update when GeneratePublicPagesHtml lambda code is updated
       Nonce: {{lambdaEdgeGenPubPagesHash}}
       # Properties.CreateLambdaEdgeFunctionRole isn't actually utilized by CreateLambdaEdgeFunction
