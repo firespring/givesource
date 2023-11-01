@@ -10,6 +10,8 @@ Parameters:
     Type: String
   LambdaSecurityGroupId:
     Type: String
+  LambdaDefaultRuntime:
+    Type: String
   LogDatabaseDebug:
     Type: String
     Default: false
@@ -150,7 +152,7 @@ Resources:
       Handler: index.handle
       MemorySize: 1024
       Role: !GetAtt BootstrapDatabaseLambdaRole.Arn
-      Runtime: nodejs14.x
+      Runtime: !Ref LambdaDefaultRuntime
       Timeout: 60
       VpcConfig:
         SecurityGroupIds:
@@ -240,7 +242,7 @@ Resources:
       Handler: index.handle
       MemorySize: 1024
       Role: !GetAtt MigrateDatabaseLambdaRole.Arn
-      Runtime: nodejs14.x
+      Runtime: !Ref LambdaDefaultRuntime
       Timeout: 180
       VpcConfig:
         SecurityGroupIds:

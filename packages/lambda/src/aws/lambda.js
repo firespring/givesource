@@ -178,4 +178,43 @@ Lambda.prototype.updateFunctionCode = function (region, functionName, zipFile) {
   })
 }
 
+/**
+ * Update an AWS Lambda function's configuration (currently only Runtime supported)
+ *
+ * @param {String} region
+ * @param {String} functionName
+ * @param {*} runtime
+ * @return {Promise}
+ */
+Lambda.prototype.updateFunctionConfiguration = function (region, functionName, runtime) {
+  const awsLambda = new AWS.Lambda({ region: region })
+  return new Promise(function (resolve, reject) {
+    const params = {
+      FunctionName: functionName,
+      Runtime: runtime
+    }
+    awsLambda.updateFunctionConfiguration(params, function (err, data) {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  })
+}
+
+/**
+ * Waits until the lambda function update is complete
+ *
+ * @param region
+ * @param functionName
+ * @returns {Promise}
+ */
+Lambda.prototype.waitFor = function (region, functionName) {
+  const awsLambda = new AWS.Lambda({ region: region })
+
+  return awsLambda.waitFor('functionUpdated', {
+    FunctionName: functionName
+  }).promise()
+}
+
 module.exports = Lambda

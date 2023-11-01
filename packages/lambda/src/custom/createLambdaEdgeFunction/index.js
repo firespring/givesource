@@ -31,7 +31,6 @@ exports.handle = (event, context, callback) => {
   const functionName = process.env.AWS_STACK_NAME + '-' + event.ResourceProperties.FunctionName
   const region = 'us-east-1'
   const role = event.ResourceProperties.Role
-  const runtime = 'nodejs14.x'
 
   if (event.RequestType === 'Delete') {
     lambda.deleteFunction(region, event.PhysicalResourceId).then(() => {
@@ -92,25 +91,27 @@ exports.handle = (event, context, callback) => {
 
     if (event.RequestType === 'Create') {
       promise = promise.then(() => {
-        return lambda.createFunction(region, functionName, 'index.handle', role, runtime, { ZipFile: code })
+        return lambda.createFunction(region, functionName, 'index.handle', role, event.ResourceProperties.Runtime, { ZipFile: code })
       })
     } else if (event.RequestType === 'Update') {
-      promise = promise.then(() => {
-        return lambda.updateFunctionCode(region, functionName, code)
+      promise = promise.then(async () => {
+        await lambda.updateFunctionCode(region, functionName, code)
+        await lambda.waitFor(region, functionName)
+      }).then(async () => {
+        console.log('Updating runtime to ', event.ResourceProperties.Runtime)
+        await lambda.updateFunctionConfiguration(region, functionName, event.ResourceProperties.Runtime)
+        await lambda.waitFor(region, functionName)
       })
     }
 
-    // this is necessary because of nodejs14 update... sorry to whoever sees this in the future
-    setTimeout(() => {
-      promise.then(() => {
-        return lambda.publishVersion(region, functionName)
-      }).then(data => {
-        response.send(event, context, response.SUCCESS, { LambdaFunctionARN: data.FunctionArn }, data.FunctionArn)
-      }).catch(err => {
-        logger.log(err)
-        response.send(event, context, response.FAILED)
-      })
-    }, 5000)
+    promise.then(async () => {
+      return lambda.publishVersion(region, functionName)
+    }).then(data => {
+      response.send(event, context, response.SUCCESS, { LambdaFunctionARN: data.FunctionArn }, data.FunctionArn)
+    }).catch(err => {
+      logger.log(err)
+      response.send(event, context, response.FAILED)
+    })
   } else {
     response.send(event, context, response.SUCCESS)
   }
