@@ -110,7 +110,7 @@ module.exports = function () {
     },
     resolve: {
       alias: {
-        vue$: 'vue/dist/vue.esm.js'
+        vue$: 'vue/dist/vue.runtime.esm-bundler.js'
       },
       fallback: {
         crypto: require.resolve('crypto-browserify'),

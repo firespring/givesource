@@ -74,15 +74,13 @@ import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
 import store from './../store'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { getCurrentInstance } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter)
-
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(),
   hashbang: false,
   linkActiveClass: 'here',
-  mode: 'history',
   base: __dirname,
   scrollBehavior: function (to, from, savedPosition) {
     if (savedPosition) {
@@ -621,7 +619,7 @@ const router = new VueRouter({
 
     // Error Pages
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       name: '404',
       component: Component404,
       meta: { requiresAuth: false }
@@ -687,6 +685,7 @@ const loadSettings = function () {
  */
 const loadUser = function () {
   const request = new Request()
+  const Vue = getCurrentInstance()
   return request.get('user-profile').then(function (response) {
     Vue.prototype.user = response.data
   })

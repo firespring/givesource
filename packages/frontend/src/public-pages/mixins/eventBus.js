@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import Vue from 'vue'
+import mitt from 'mitt'
 
-const bus = new Vue()
+const emitter = new mitt()
+
 const mixin = {
   data: function () {
     return {
-      bus: bus
+      bus: emitter
     }
   }
 }
