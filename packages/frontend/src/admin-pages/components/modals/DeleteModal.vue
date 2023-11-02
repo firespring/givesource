@@ -103,7 +103,7 @@ export default {
       const vue = this
       vue.clearModals()
       if (vue.callback) {
-        vue.bus.$emit(vue.callback)
+        vue.emitter.emit(vue.callback)
       }
     }
   }

@@ -363,7 +363,7 @@
 </template>
 
 <script>
-import VueRecaptcha from 'vue-recaptcha'
+import { VueRecaptcha } from 'vue-recaptcha'
 import * as Settings from './../../helpers/settings'
 import * as Utils from './../../helpers/utils'
 import ComponentAddressState from './../forms/AddressState.vue'

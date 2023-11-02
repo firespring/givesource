@@ -116,8 +116,8 @@ export default {
   created: function () {
     const vue = this
 
-    vue.bus.$off('deleteAgreement')
-    vue.bus.$on('deleteAgreement', function () {
+    vue.emitter.off('deleteAgreement')
+    vue.emitter.on('deleteAgreement', function () {
       vue.addModal('spinner')
       vue.$request.delete('agreements/' + vue.agreementToDelete.id).then(function (response) {
         vue.agreements = vue.agreements.filter(function (agreement) {

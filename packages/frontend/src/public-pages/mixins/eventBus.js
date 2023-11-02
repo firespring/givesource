@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import mitt from 'mitt'
-
-const emitter = new mitt()
 
 const mixin = {
   data: function () {

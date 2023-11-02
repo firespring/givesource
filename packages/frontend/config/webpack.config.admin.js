@@ -131,6 +131,10 @@ module.exports = function () {
     devtool: 'hidden-source-map',
     plugins: [
       new CKEditorTranslationsPlugin({ language: 'en' }),
+      new webpack.DefinePlugin({
+        __VUE_OPTIONS_API__: true,
+        __VUE_PROD_DEVTOOLS__: false,
+      }),
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',

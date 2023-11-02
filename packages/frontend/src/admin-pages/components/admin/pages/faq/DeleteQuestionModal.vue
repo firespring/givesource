@@ -82,7 +82,7 @@ export default {
 
       vue.addModal('spinner')
       vue.$request.delete('contents/' + vue.data.content.id).then(function () {
-        vue.bus.$emit('deleteFAQList', vue.data.content)
+        vue.emitter.emit('deleteFAQList', vue.data.content)
         vue.clearModals()
       })
     }

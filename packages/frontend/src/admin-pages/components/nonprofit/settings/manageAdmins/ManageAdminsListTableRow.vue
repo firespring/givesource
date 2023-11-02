@@ -135,7 +135,7 @@ export default {
     },
     removeUser: function () {
       const vue = this
-      vue.bus.$emit('deleteUserNonprofitModal', vue.selectedNonprofitUser)
+      vue.emitter.emit('deleteUserNonprofitModal', vue.selectedNonprofitUser)
     },
     resendVerificationEmail: function () {
       const vue = this

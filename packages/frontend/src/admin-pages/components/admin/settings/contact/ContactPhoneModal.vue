@@ -170,7 +170,7 @@ export default {
         if (response.data.errorMessage) {
           console.log(response.data)
         }
-        vue.bus.$emit('updateSetting', {
+        vue.emitter.emit('updateSetting', {
           key: 'CONTACT_PHONE',
           value: vue.formData.CONTACT_PHONE
         })

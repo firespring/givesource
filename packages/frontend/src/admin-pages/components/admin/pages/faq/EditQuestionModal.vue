@@ -223,7 +223,7 @@ export default {
         vue.$request.patch('contents', {
           contents: toUpdate
         }).then(function () {
-          vue.bus.$emit('updateFAQList', vue.data.content)
+          vue.emitter.emit('updateFAQList', vue.data.content)
           vue.clearModals()
         }).catch(function (err) {
           vue.removeModal('spinner')

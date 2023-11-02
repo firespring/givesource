@@ -138,7 +138,7 @@ export default {
     },
     removeUser: function () {
       const vue = this
-      vue.bus.$emit('deleteUserAdminModal', vue.selectedAdminUser)
+      vue.emitter.emit('deleteUserAdminModal', vue.selectedAdminUser)
     },
     resendVerificationEmail: function () {
       const vue = this

@@ -22,15 +22,33 @@ import toCents from './string/toCents'
 import toPercent from './string/toPercent'
 import zeroToEmptyString from './string/zeroToEmptyString'
 
+export const $filters = {
+  fromCents (value) {
+    return fromCents(value)
+  },
+  toCents (value) {
+    return toCents(value)
+  },
+  fromPercent (value) {
+    return fromPercent(value)
+  },
+  toPercent (value) {
+    return toPercent(value)
+  },
+  money (value) {
+    return money(value)
+  },
+  percent (value) {
+    return percent(value)
+  },
+  zeroToEmptyString (value) {
+    return zeroToEmptyString(value)
+  }
+}
+
 const VueFilters = {
-  install: function (Vue) {
-    Vue.filter('fromCents', fromCents)
-    Vue.filter('fromPercent', fromPercent)
-    Vue.filter('money', money)
-    Vue.filter('percent', percent)
-    Vue.filter('toCents', toCents)
-    Vue.filter('toPercent', toPercent)
-    Vue.filter('zeroToEmptyString', zeroToEmptyString)
+  install: function (app) {
+    app.config.globalProperties.$filters = $filters
   }
 }
 

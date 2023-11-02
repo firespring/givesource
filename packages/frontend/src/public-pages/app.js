@@ -18,7 +18,6 @@ import * as VueMoney from 'v-money'
 import ApiErrorComponent from './components/errors/ApiError.vue'
 import App from './components/App.vue'
 import axios from 'axios'
-import EventBusMixin from './mixins/eventBus'
 import ModalsMixin from './mixins/modals'
 import router from './router'
 import store from './store'
@@ -28,6 +27,9 @@ import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
 import { createApp } from 'vue'
 import VueFilters from './filters'
+import mitt from 'mitt'
+
+const emitter = new mitt()
 
 import './assets/css/site.css'
 import './assets/css/donation.css'
@@ -40,7 +42,7 @@ window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // Bootstrap the app
-createApp(App)
+const app = createApp(App)
   .use(store)
   .use(router)
   // Register filters
@@ -48,7 +50,6 @@ createApp(App)
   // Register plugins
   .use(SocialSharing)
   // Register mixins
-  .mixin(EventBusMixin)
   .mixin(ModalsMixin)
   .mixin(UtilsMixin)
   .mixin(ValidateMixin)
@@ -61,4 +62,8 @@ createApp(App)
   .use(VueGtag, {
     config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
   }, router)
-  .mount('#app')
+  .provide('emitter', emitter)
+
+app.config.globalProperties.emitter = emitter
+
+app.mount('#app')

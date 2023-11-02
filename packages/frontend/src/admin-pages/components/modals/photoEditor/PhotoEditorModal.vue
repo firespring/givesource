@@ -199,7 +199,7 @@ export default {
         fillColor: '#fff'
       }).toDataURL(vue.data.file.type)
 
-      vue.bus.$emit(vue.data.listener, vue.data.file, vue.dataURLToBlob(dataUrl, vue.data.file.type))
+      vue.emitter.emit(vue.data.listener, vue.data.file, vue.dataURLToBlob(dataUrl, vue.data.file.type))
       vue.removeModal('photo-editor')
     },
     dataURLToBlob: function (dataUrl, type) {

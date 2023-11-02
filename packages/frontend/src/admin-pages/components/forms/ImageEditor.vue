@@ -147,12 +147,12 @@ export default {
   created () {
     const vm = this
 
-    vm.bus.$on('imageEditorSave', (original, blob) => {
+    vm.emitter.on('imageEditorSave', (original, blob) => {
       vm.localValue = vm.blobToFile(blob, original.name)
     })
   },
   beforeDestroy () {
-    this.bus.$off('imageEditorSave')
+    this.emitter.off('imageEditorSave')
   },
   methods: {
     onTrigger () {

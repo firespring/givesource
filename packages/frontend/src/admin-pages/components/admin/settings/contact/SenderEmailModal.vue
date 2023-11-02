@@ -179,7 +179,7 @@ export default {
         if (response.data.errorMessage) {
           console.log(response.data)
         }
-        vue.bus.$emit('updateSetting', {
+        vue.emitter.emit('updateSetting', {
           key: 'SENDER_EMAIL',
           value: vue.formData.SENDER_EMAIL
         })

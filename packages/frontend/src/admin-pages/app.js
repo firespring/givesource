@@ -24,7 +24,6 @@ import ComponentApp from './components/App.vue'
 import ComponentGravatar from 'vue-gravatar'
 import ComponentNavigation from './components/header/Navigation.vue'
 import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringKeysBanner.vue'
-import EventBusMixin from './mixins/eventBus'
 import FloatingLabelDirective from './directives/floatingLabel'
 import ModalMixin from './mixins/modals'
 import Request from './helpers/request'
@@ -36,12 +35,14 @@ import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
 import VueFilters from './filters'
+import mitt from 'mitt'
+
+const emitter = new mitt()
 
 // Register window globals
 window._ = require('lodash')
 window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
-
 
 const app = createApp(ComponentApp)
   .use(router)
@@ -50,7 +51,6 @@ const app = createApp(ComponentApp)
   .use(VueFilters)
   .use(CKEditor)
   // Register mixins
-  .mixin(EventBusMixin)
   .mixin(ModalMixin)
   .mixin(UserMixin)
   .mixin(UtilsMixin)
@@ -66,13 +66,17 @@ const app = createApp(ComponentApp)
   .component('Navigation', ComponentNavigation)
   .component('VGravatar', ComponentGravatar)
   .component('PaymentspringKeysBanner', ComponentPaymentspringKeysBanner)
-  // Start the app
-  .mount('#app')
+  // Event Bus
+  .provide('emitter', emitter)
+  .provide('$axios', axios)
 
-app.provide('$axios', axios)
+app.config.globalProperties.emitter = emitter
 
 // Register vue global
 app.prototype.user = {}
 app.prototype.user.groups = []
 // Bootstrap the request library
 app.prototype.$request = new Request()
+
+// Start the app
+app.mount('#app')

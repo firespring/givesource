@@ -74,7 +74,6 @@ import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
 import store from './../store'
-import { getCurrentInstance } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -683,11 +682,10 @@ const loadSettings = function () {
  *
  * @return {Promise}
  */
-const loadUser = function () {
+const loadUser = function (app) {
   const request = new Request()
-  const Vue = getCurrentInstance()
   return request.get('user-profile').then(function (response) {
-    Vue.prototype.user = response.data
+    app.prototype.user = response.data
   })
 }
 

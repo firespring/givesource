@@ -171,14 +171,14 @@ export default {
   created () {
     const vm = this
 
-    vm.bus.$on('navigate', () => {
+    vm.emitter.on('navigate', () => {
       vm.formData.search = ''
     })
   },
   beforeDestroy () {
     const vm = this
 
-    vm.bus.$off('navigate')
+    vm.emitter.off('navigate')
   },
   methods: {
     getConstraints () {

@@ -205,7 +205,7 @@ export default {
         faqListContent.value = Object.keys(vue.formData).map(function (key) {
           return vue.formData[key]
         })
-        vue.bus.$emit('addFAQList', faqListContent)
+        vue.emitter.emit('addFAQList', faqListContent)
         vue.clearModals()
       }).catch(function (err) {
         vue.removeModal('spinner')

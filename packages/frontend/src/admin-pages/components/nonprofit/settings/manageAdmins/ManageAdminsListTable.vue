@@ -84,19 +84,19 @@ export default {
       vue.loaded = true
     })
 
-    vue.bus.$on('deleteUserNonprofit', function () {
+    vue.emitter.on('deleteUserNonprofit', function () {
       vue.removeUser()
     })
 
-    vue.bus.$on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
+    vue.emitter.on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
       vue.selectedNonprofitUser = selectedNonprofitUser
       vue.deleteModal(selectedNonprofitUser)
     })
   },
   beforeDestroy: function () {
     const vue = this
-    vue.bus.$off('deleteUserNonprofit')
-    vue.bus.$off('deleteUserNonprofitModal')
+    vue.emitter.off('deleteUserNonprofit')
+    vue.emitter.off('deleteUserNonprofitModal')
   },
   methods: {
     deleteModal: function (selectedNonprofitUser) {

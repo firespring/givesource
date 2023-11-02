@@ -84,19 +84,19 @@ export default {
       vue.loaded = true
     })
 
-    vue.bus.$on('deleteUserAdmin', function () {
+    vue.emitter.on('deleteUserAdmin', function () {
       vue.removeUser()
     })
 
-    vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
+    vue.emitter.on('deleteUserAdminModal', function (selectedAdminUser) {
       vue.selectedAdminUser = selectedAdminUser
       vue.deleteModal(selectedAdminUser)
     })
   },
   beforeDestroy: function () {
     const vue = this
-    vue.bus.$off('deleteUserAdmin')
-    vue.bus.$off('deleteUserAdminModal')
+    vue.emitter.off('deleteUserAdmin')
+    vue.emitter.off('deleteUserAdminModal')
   },
   methods: {
     deleteModal: function (selectedAdminUser) {

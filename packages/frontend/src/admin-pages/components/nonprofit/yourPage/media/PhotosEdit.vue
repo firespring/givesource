@@ -245,14 +245,14 @@ export default {
   created: function () {
     const vue = this
 
-    vue.bus.$on('photoEditorSave-Edit', function (data, file) {
+    vue.emitter.on('photoEditorSave-Edit', function (data, file) {
       vue.uploadFile(data, file)
     })
   },
   beforeDestroy: function () {
     const vue = this
 
-    vue.bus.$off('photoEditorSave-Edit')
+    vue.emitter.off('photoEditorSave-Edit')
   },
   methods: {
     getConstraints: function () {
