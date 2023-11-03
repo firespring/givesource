@@ -21,7 +21,7 @@ import axios from 'axios'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ComponentApiError from './components/errors/ApiError.vue'
 import ComponentApp from './components/App.vue'
-import ComponentGravatar from 'vue-gravatar'
+import ComponentGravatar from 'vue3-gravatar'
 import ComponentNavigation from './components/header/Navigation.vue'
 import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringKeysBanner.vue'
 import FloatingLabelDirective from './directives/floatingLabel'
@@ -45,7 +45,6 @@ window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 const app = createApp(ComponentApp)
-  .use(router)
   .use(store)
   // Register plugins
   .use(VueFilters)
@@ -71,12 +70,13 @@ const app = createApp(ComponentApp)
   .provide('$axios', axios)
 
 app.config.globalProperties.emitter = emitter
+router.app = app
+app.use(router)
 
-// Register vue global
-app.prototype.user = {}
-app.prototype.user.groups = []
-// Bootstrap the request library
-app.prototype.$request = new Request()
+app.config.globalProperties.$request = new Request()
+
+app.config.globalProperties.user = {}
+app.config.globalProperties.groups = []
 
 // Start the app
 app.mount('#app')

@@ -77,10 +77,9 @@ import store from './../store'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(__dirname),
   hashbang: false,
   linkActiveClass: 'here',
-  base: __dirname,
   scrollBehavior: function (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -95,13 +94,14 @@ const router = createRouter({
       props: true,
       beforeEnter: function (to, from, next) {
         if (User.isAuthenticated()) {
-          if (router.app.user.groups.indexOf('SuperAdmin') > -1 || router.app.user.groups.indexOf('Admin') > -1) {
+          if (router.app.config.globalProperties.user.groups.indexOf('SuperAdmin') > -1
+            || router.app.config.globalProperties.user.groups.indexOf('Admin') > -1) {
             next({ name: 'donations-list' })
           } else {
             next({
               name: 'nonprofit-donations-list',
               params: {
-                nonprofitId: router.app.user.nonprofitId
+                nonprofitId: router.app.config.globalProperties.user.nonprofitId
               }
             })
           }
@@ -682,10 +682,10 @@ const loadSettings = function () {
  *
  * @return {Promise}
  */
-const loadUser = function (app) {
+const loadUser = function () {
   const request = new Request()
   return request.get('user-profile').then(function (response) {
-    app.prototype.user = response.data
+    router.app.config.globalProperties.user = response.data
   })
 }
 
@@ -749,7 +749,9 @@ const nonprofitStatusMiddleware = function (to, from, next) {
  */
 const nonprofitMiddleware = function (to, from, next) {
   if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitId') && to.params.hasOwnProperty('nonprofitId')) {
-    if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && parseInt(router.app.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
+    if (_.intersection(
+      router.app.config.globalProperties.user.groups, ['SuperAdmin', 'Admin']
+    ).length === 0 && parseInt(router.app.config.globalProperties.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
       next({ name: '404' })
     } else {
       next()
@@ -767,7 +769,9 @@ const nonprofitMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const groupsMiddleware = function (to, from, next) {
-  if (User.isAuthenticated() && to.meta.hasOwnProperty('allowedGroups') && _.intersection(router.app.user.groups, to.meta.allowedGroups).length === 0) {
+  if (User.isAuthenticated() && to.meta.hasOwnProperty('allowedGroups') && _.intersection(
+    router.app.config.globalProperties.user.groups, to.meta.allowedGroups
+  ).length === 0) {
     next({ name: '404' })
   } else {
     next()
