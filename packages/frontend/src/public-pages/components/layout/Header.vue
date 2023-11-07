@@ -59,7 +59,10 @@
       class="page-header__search flex justify-center items-center"
       @submit.prevent="submit"
     >
-      <label class="u-hidden-visually" for="searchNonprofits">Find a Nonprofit</label>
+      <label
+        class="u-hidden-visually"
+        for="searchNonprofits"
+      >Find a Nonprofit</label>
       <input
         id="searchNonprofits"
         ref="search"
