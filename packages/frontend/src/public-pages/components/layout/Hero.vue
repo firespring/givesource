@@ -18,6 +18,8 @@
   <div
     class="page-hero"
     :style="mastheadStyle"
+    role="region"
+    aria-label="Introduction"
   >
     <div
       v-if="hasSpotlightSlot"

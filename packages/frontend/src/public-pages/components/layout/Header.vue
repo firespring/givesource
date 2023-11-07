@@ -59,6 +59,7 @@
       class="page-header__search flex justify-center items-center"
       @submit.prevent="submit"
     >
+      <label class="u-hidden-visually" for="searchNonprofits">Find a Nonprofit</label>
       <input
         id="searchNonprofits"
         ref="search"
@@ -93,6 +94,7 @@
             data-fa-transform="right-4 up-6"
           >{{ cartItems.length }}</span>
         </span>
+        <span class="u-hidden-visually">{{ cartItems.length }} items in cart</span>
       </router-link>
     </div>
 
