@@ -35,7 +35,7 @@
           v-if="search && pagination.loaded"
           class="mt3 mb3 text-c"
         >
-          <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} {{ pagination.items.length | pluralize('result') }}.</strong>
+          <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} {{ $filters.pluralize(pagination.items.length, 'result') }}.</strong>
         </p>
 
         <div

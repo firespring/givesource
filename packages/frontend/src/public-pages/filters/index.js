@@ -16,11 +16,7 @@
 
 import pluralize from './string/pluralize'
 
-export const $filters = {
-  pluralize (value, word, options) {
-    return pluralize(value, word, options)
-  }
-}
+export const $filters = { pluralize }
 
 const VueFilters = {
   install: function (app) {
