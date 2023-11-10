@@ -184,9 +184,12 @@ module.exports = {
     libraryTarget: 'commonjs2'
   },
   target: 'node',
-  externals: {
-    'aws-sdk': 'commonjs aws-sdk'
-  },
+  // aws-sdk v2 was provided built into aws node14 runtimes - so we were able to exclude it from the build to reduce size
+  // node18 runtime does not provide aws-sdk v2 - it does? provide v3 though so we may be able to add the externals
+  // back after we upgrade to v3
+  // externals: {
+  //   'aws-sdk': 'commonjs aws-sdk'
+  // },
   module: {
     rules: [
       {

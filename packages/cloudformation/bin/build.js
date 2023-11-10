@@ -25,16 +25,24 @@ const mkdirp = require('mkdirp')
 const mustache = require('mustache')
 const packageJson = require('./../../../package.json')
 
+const crypto = require('crypto')
+
 /**
  * Create CloudFormation yaml file from templates
  */
 const build = function () {
+  const fileBuffer = fs.readFileSync('./../lambda/src/custom/generatePublicPagesHtml/index.js')
+  const hashSum = crypto.createHash('md5')
+  hashSum.update(fileBuffer)
+
   const data = {
     version: packageJson.version,
     awsReleaseBucket: config.get('release.AWS_RELEASE_BUCKET'),
     awsReleaseBucketRegion: config.get('release.AWS_RELEASE_BUCKET_REGION'),
-    awsLambdaReleaseBucketPrefix: config.get('release.AWS_LAMBDA_RELEASE_BUCKET_PREFIX')
+    awsLambdaReleaseBucketPrefix: config.get('release.AWS_LAMBDA_RELEASE_BUCKET_PREFIX'),
+    lambdaEdgeGenPubPagesHash: hashSum.digest('hex')
   }
+
   const buildDir = path.resolve(__dirname, './../build')
   const templatesDir = path.resolve(__dirname, './../templates/')
   const templates = fs.readdirSync(templatesDir, 'utf8').filter(function (filename) {

@@ -89,6 +89,8 @@ Mappings:
   Lambda:
     Timeout:
       Default: 30
+    Runtime:
+      Default: nodejs18.x
 
 Conditions:
 
@@ -102,6 +104,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
         LambdaRole: !Ref LambdaRole
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         SecureLambdaRole: !Ref SecureLambdaRole
         DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-database.yml
@@ -368,6 +371,7 @@ Resources:
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         SecureLambdaRole: !Ref SecureLambdaRole
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CognitoSnsCallerRoleArn: !GetAtt CognitoSnsCallerRole.Arn
         AdminPagesS3: !GetAtt S3Stack.Outputs.AdminPagesS3
@@ -468,6 +472,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -488,6 +493,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         SecureLambdaRoleArn: !GetAtt SecureLambdaRole.Arn
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
@@ -510,6 +516,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -530,6 +537,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -552,6 +560,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -572,6 +581,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -592,6 +602,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -612,6 +623,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -634,6 +646,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -654,6 +667,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -675,6 +689,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -700,6 +715,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -720,6 +736,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         IntegrationRequestTemplate: !FindInMap [ApiGateway, IntegrationRequestTemplate, Default]
         IntegrationResponsesTemplate: !FindInMap [ApiGateway, IntegrationResponsesTemplate, Default]
@@ -740,6 +757,7 @@ Resources:
       Parameters:
         StackName: !Ref AWS::StackName
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [ Lambda, Timeout, Default ]
         IntegrationRequestTemplate: !FindInMap [ ApiGateway, IntegrationRequestTemplate, Default ]
         IntegrationResponsesTemplate: !FindInMap [ ApiGateway, IntegrationResponsesTemplate, Default ]
@@ -815,6 +833,7 @@ Resources:
         StackName: !Ref AWS::StackName
         LambdaRoleArn: !GetAtt LambdaRole.Arn
         LambdaSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
         DefaultLambdaFunctionTimeout: !FindInMap [Lambda, Timeout, Default]
         CacheS3: !GetAtt S3Stack.Outputs.GivesourceCache
         DeadLetterQueueTopic: !GetAtt SqsStack.Outputs.DeadLetterQueueTopic
