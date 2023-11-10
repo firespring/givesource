@@ -105,7 +105,7 @@ export default {
         vue.$emit('loaded')
       })
 
-      vue.$parent.on('save', this.save)
+      vue.$parent.emitter.on('save', this.save)
     } else {
       vue.$emit('loaded')
     }
