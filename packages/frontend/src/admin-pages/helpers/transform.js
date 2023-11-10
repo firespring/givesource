@@ -64,9 +64,7 @@ const transform = function (value, transformers, options) {
  */
 const getTransformer = function (transformer) {
   if (_.isString(transformer)) {
-    transformer = computed(() => {
-      return transformer
-    })
+    transformer = $filters[transformer]
   }
   return transformer
 }

@@ -17,7 +17,7 @@
 <template>
   <tr>
     <td class="image">
-      <v-gravatar
+      <vue-gravatar
         :email="adminUser.email"
         :size="150"
         default-img="mm"

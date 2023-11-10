@@ -21,7 +21,7 @@ import axios from 'axios'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import ComponentApiError from './components/errors/ApiError.vue'
 import ComponentApp from './components/App.vue'
-import ComponentGravatar from 'vue3-gravatar'
+import VueGravatar from 'vue3-gravatar'
 import ComponentNavigation from './components/header/Navigation.vue'
 import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringKeysBanner.vue'
 import FloatingLabelDirective from './directives/floatingLabel'
@@ -49,6 +49,7 @@ const app = createApp(ComponentApp)
   // Register plugins
   .use(VueFilters)
   .use(CKEditor)
+  .use(VueGravatar)
   // Register mixins
   .mixin(ModalMixin)
   .mixin(UserMixin)
@@ -63,7 +64,6 @@ const app = createApp(ComponentApp)
   // Register global components
   .component('ApiError', ComponentApiError)
   .component('Navigation', ComponentNavigation)
-  .component('VGravatar', ComponentGravatar)
   .component('PaymentspringKeysBanner', ComponentPaymentspringKeysBanner)
   // Event Bus
   .provide('emitter', emitter)

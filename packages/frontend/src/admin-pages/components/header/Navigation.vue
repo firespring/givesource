@@ -45,7 +45,7 @@
             title="Manage Your Account"
             @click="toggleMenu"
           >
-            <v-gravatar
+            <vue-gravatar
               :email="email"
               :size="150"
               default-img="mm"
