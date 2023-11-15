@@ -44,6 +44,19 @@ a:visited {
 }
 
 /* ----------------------------------------------------------------------------
+Hide only visually, but have it available for screenreaders
+---------------------------------------------------------------------------- */
+.u-hidden-visually {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px; }
+
+/* ----------------------------------------------------------------------------
 Typography
 ---------------------------------------------------------------------------- */
 
@@ -652,7 +665,7 @@ legend {
   text-transform: uppercase;
   letter-spacing: 1px;
   line-height: 1;
-  color: #9B9B97;
+  color: #767676;
 }
 
 fieldset.compact legend {
@@ -981,7 +994,7 @@ Page header
   background: transparent url('../img/search.svg') center no-repeat;
   background-size: 16px 16px;
   content: '';
-  opacity: .25;
+  opacity: .5;
 }
 
 .page-header__search [type=search] {
@@ -995,20 +1008,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-  color: #9B9B97;
+  color: #767676;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-  color: #9B9B97;
+  color: #767676;
   opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-  color: #9B9B97;
+  color: #767676;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-  color: #9B9B97;
+  color: #767676;
 }
 
 /* Page header user info
@@ -1022,6 +1035,10 @@ Page header
 
 .page-header__cart .fa-layers-text {
   font-size: .875rem;
+}
+.page-header__cart i + .fa-layers-text {
+    /* Only use the (white) color after svg loads */
+    color: unset;
 }
 
 .page-header__cart [class*=fa-] {
@@ -1495,7 +1512,7 @@ Spotlight box
 
 .countdown {
   text-align: center;
-  color: #9B9B97;
+  color: #767676;
 }
 
 .countdown__timer {
@@ -1741,7 +1758,7 @@ Leaderboard
   -webkit-box-flex: 1;
   flex: 1 0 45px;
   max-width: 45px;
-  color: #9B9B97;
+  color: #767676;
   text-align: right;
 }
 
