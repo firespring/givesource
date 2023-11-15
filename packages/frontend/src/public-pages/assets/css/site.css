@@ -665,7 +665,7 @@ legend {
   text-transform: uppercase;
   letter-spacing: 1px;
   line-height: 1;
-  color: #949494;
+  color: #767676;
 }
 
 fieldset.compact legend {
@@ -1008,20 +1008,20 @@ Page header
 }
 
 .page-header__search [type=search]::-webkit-input-placeholder {
-  color: #949494;
+  color: #767676;
 }
 
 .page-header__search [type=search]::-moz-placeholder {
-  color: #949494;
+  color: #767676;
   opacity: 1;
 }
 
 .page-header__search [type=search]:-ms-input-placeholder {
-  color: #949494;
+  color: #767676;
 }
 
 .page-header__search [type=search]::-ms-input-placeholder {
-  color: #949494;
+  color: #767676;
 }
 
 /* Page header user info
@@ -1512,7 +1512,7 @@ Spotlight box
 
 .countdown {
   text-align: center;
-  color: #949494;
+  color: #767676;
 }
 
 .countdown__timer {
@@ -1758,7 +1758,7 @@ Leaderboard
   -webkit-box-flex: 1;
   flex: 1 0 45px;
   max-width: 45px;
-  color: #949494;
+  color: #767676;
   text-align: right;
 }
 
