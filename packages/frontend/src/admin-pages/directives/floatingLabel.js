@@ -18,7 +18,7 @@
  Floating labels for text inputs
  ============================================================================ */
 const directive = {
-  inserted: function (el) {
+  mounted: function (el) {
     const $el = $(el)
 
     $el.find('input, textarea').each(function () {
@@ -47,7 +47,7 @@ const directive = {
       }
     })
   },
-  update: function (el) {
+  updated: function (el) {
     const $el = $(el)
 
     $el.find('input, textarea').each(function () {
