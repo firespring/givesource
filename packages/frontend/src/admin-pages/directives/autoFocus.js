@@ -18,7 +18,7 @@
  Autofocus on form inputs
  ============================================================================ */
 const directive = {
-  inserted: function (el) {
+  mounted: function (el) {
     const $el = $(el)
     $el.focus()
   }

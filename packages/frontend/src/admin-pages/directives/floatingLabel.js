@@ -56,16 +56,6 @@ const directive = {
         $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
       }
     })
-  },
-  componentUpdated: function (el) {
-    const $el = $(el)
-
-    $el.find('input, textarea').each(function () {
-      if ($(this).val() !== '' || $(this).is(':focus')) {
-        $(this).siblings('label').hide()
-        $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
-      }
-    })
   }
 }
 
