@@ -68,11 +68,11 @@ export default {
       this.localValue = newVal
     },
     localValue: function () {
-      this.$emit('input', this.localValue)
+      this.emitter.emit('input', this.localValue)
     }
   },
   mounted: function () {
-    this.$emit('input', this.localValue)
+    this.emitter.emit('input', this.localValue)
   }
 }
 </script>

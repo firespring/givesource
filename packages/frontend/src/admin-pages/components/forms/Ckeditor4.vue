@@ -93,7 +93,7 @@ export default {
       const value = window.CKEDITOR.instances[vm.id].getData()
 
       if (value !== vm.value) {
-        vm.$emit('input', value)
+        vm.emitter.emit('input', value)
       }
     })
   },

@@ -213,12 +213,12 @@ export default {
 
       if (toggle) {
         vue.displayAuthorizing = true
-        vue.$emit('set-display-header', false)
-        vue.$emit('set-display-links', false)
+        vue.emitter.emit('set-display-header', false)
+        vue.emitter.emit('set-display-links', false)
       } else {
         vue.displayAuthorizing = false
-        vue.$emit('set-display-header', true)
-        vue.$emit('set-display-links', true)
+        vue.emitter.emit('set-display-header', true)
+        vue.emitter.emit('set-display-links', true)
       }
     },
     redirectToIntendedUri: function () {

@@ -123,7 +123,7 @@ export default {
       event.preventDefault()
       const vue = this
 
-      vue.$emit('delete-slide', vue.slide)
+      vue.emitter.emit('delete-slide', vue.slide)
     }
   }
 }

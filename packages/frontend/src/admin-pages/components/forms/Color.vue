@@ -67,7 +67,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.$emit('input', value)
+      vue.emitter.emit('input', value)
     },
     value: function (value, oldValue) {
       const vue = this

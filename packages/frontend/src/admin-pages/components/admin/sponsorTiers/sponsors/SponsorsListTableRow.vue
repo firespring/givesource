@@ -87,10 +87,10 @@ export default {
         return vue.$request.delete('sponsor-tiers/' + vue.sponsor.sponsorTierId + '/sponsors/' + vue.sponsor.id)
       }).then(function () {
         vue.clearModals()
-        vue.$emit('delete-sponsor', vue.sponsor.id)
+        vue.emitter.emit('delete-sponsor', vue.sponsor.id)
       }).catch(function (err) {
         vue.clearModals()
-        vue.$emit('has-error', err)
+        vue.emitter.emit('has-error', err)
       })
     }
   }

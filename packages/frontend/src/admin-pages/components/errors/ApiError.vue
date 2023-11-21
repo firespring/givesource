@@ -72,7 +72,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.$emit('input', vue.localValue)
+      vue.emitter.emit('input', vue.localValue)
     },
     value: function (value, oldValue) {
       const vue = this

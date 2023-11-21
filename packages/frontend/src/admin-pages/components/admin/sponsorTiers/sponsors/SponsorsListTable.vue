@@ -29,29 +29,33 @@
 
     <draggable
       v-model="localSponsors"
-      :options="draggableOptions"
-      :element="'tbody'"
+      handle='.c-drag-handle'
+      ghost-class='reorder-placeholder'
+      tag="tbody"
+      item-key="id"
       @end="updateSortOrder"
     >
-      <sponsors-list-table-row
-        v-for="sponsor in localSponsors"
-        :key="sponsor.id"
-        :sponsor="sponsor"
-        :file="getFile(sponsor.fileId)"
-        @has-error="hasError"
-        @delete-sponsor="deleteSponsor"
-      />
+      <template #item="{ sponsor }">
+        <sponsors-list-table-row
+            v-for="sponsor in localSponsors"
+            :key="sponsor.id"
+            :sponsor="sponsor"
+            :file="getFile(sponsor.fileId)"
+            @has-error="hasError"
+            @delete-sponsor="deleteSponsor"
+        />
+      </template>
     </draggable>
   </table>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue'
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable,
     'sponsors-list-table-row': ComponentSponsorsListTableRow
   },
   props: {
@@ -78,9 +82,6 @@ export default {
 
       // Sort Options
       draggableOptions: {
-        handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
       }
     }
   },
@@ -89,7 +90,7 @@ export default {
       this.localSponsors = value
     },
     localSponsors: function () {
-      this.$emit('sponsors', this.localSponsors)
+      this.emitter.emit('sponsors', this.localSponsors)
     }
   },
   methods: {
@@ -108,7 +109,7 @@ export default {
       vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors', {
         sponsors: toUpdate
       }).catch(function (err) {
-        vue.$emit('has-error', err)
+        vue.emitter.emit('has-error', err)
       })
     },
     deleteSponsor: function (sponsorId) {
@@ -120,7 +121,7 @@ export default {
     },
     hasError: function (err) {
       const vue = this
-      vue.$emit('has-error', err)
+      vue.emitter.emit('has-error', err)
     }
   }
 }

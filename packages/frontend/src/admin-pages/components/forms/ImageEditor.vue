@@ -141,7 +141,7 @@ export default {
         reader.readAsDataURL(vm.localValue)
       }
 
-      vm.$emit('input', vm.localValue)
+      vm.emitter.emit('input', vm.localValue)
     }
   },
   created () {

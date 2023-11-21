@@ -92,7 +92,7 @@ export default {
     vue.$request.get('metrics', { keys: Object.keys(vue.metrics) }).then(function (response) {
       vue.metrics = response.data
     }).catch(function (err) {
-      vue.$emit('has-error', err)
+      vue.emitter.emit('has-error', err)
     })
   }
 }

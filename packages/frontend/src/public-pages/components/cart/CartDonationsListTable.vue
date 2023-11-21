@@ -97,7 +97,7 @@ export default {
       })
     },
     hasError (hasError) {
-      this.$emit('has-error', hasError)
+      this.emitter.emit('has-error', hasError)
     }
   }
 }

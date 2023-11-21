@@ -24,7 +24,8 @@
     "vue-class-component": "^8.0.0-rc.1",
     "vue-gtag": "^2.0.1",
     "vue-property-decorator": "^10.0.0-rc.3",
-    "vue-recaptcha": "^2.0.2"
+    "vue-recaptcha": "^2.0.2",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -92,7 +93,6 @@
     "vue-slider-component": "^4.1.0-beta.7",
     "vue-social-sharing": "^4.0.0-alpha4",
     "vue3-gravatar": "^3.0.0",
-    "vuedraggable": "^2.24.3",
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0",
     "webpack": "^5.75.0",

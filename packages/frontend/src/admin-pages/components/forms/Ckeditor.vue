@@ -80,7 +80,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      this.$emit('input', value)
+      this.emitter.emit('input', value)
     },
     value: function (value, oldValue) {
       if (value === oldValue) {

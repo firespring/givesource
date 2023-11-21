@@ -28,28 +28,31 @@
 
     <draggable
       v-model="localSponsorTiers"
-      :options="draggableOptions"
-      :element="'tbody'"
+      v-bind="draggableOptions"
+      tag="tbody"
+      item-key="id"
       @end="updateSortOrder"
     >
-      <sponsors-list-table-row
-        v-for="sponsorTier in localSponsorTiers"
-        :key="sponsorTier.id"
-        :sponsor-tier="sponsorTier"
-        @delete-sponsor-tier="deleteSponsorTier"
-        @has-error="hasError"
-      />
+      <template #item="{ sponsorTier }">
+        <sponsors-list-table-row
+            v-for="sponsorTier in localSponsorTiers"
+            :key="sponsorTier.id"
+            :sponsor-tier="sponsorTier"
+            @delete-sponsor-tier="deleteSponsorTier"
+            @has-error="hasError"
+        />
+      </template>
     </draggable>
   </table>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentSponsorsTiersListTableRow from './SponsorsTiersListTableRow.vue'
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable: draggable,
     'sponsors-list-table-row': ComponentSponsorsTiersListTableRow
   },
   props: {
@@ -79,7 +82,7 @@ export default {
       this.localSponsorTiers = value
     },
     localSponsorTiers: function () {
-      this.$emit('sponsor-tiers', this.localSponsorTiers)
+      this.emitter.emit('sponsor-tiers', this.localSponsorTiers)
     }
   },
   methods: {
@@ -95,7 +98,7 @@ export default {
       vue.$request.patch('sponsor-tiers', {
         sponsorTiers: toUpdate
       }).catch(function (err) {
-        vue.$emit('has-error', err)
+        vue.emitter.emit('has-error', err)
       })
     },
     deleteSponsorTier: function (sponsorTierId) {
@@ -107,7 +110,7 @@ export default {
     },
     hasError: function (err) {
       const vue = this
-      vue.$emit('has-error', err)
+      vue.emitter.emit('has-error', err)
     }
   }
 }
