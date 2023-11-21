@@ -17,13 +17,13 @@
 const mixin = {
   methods: {
     addModal: function (modal, data) {
-      this.emitter.emit('addModal', modal, data)
+      this.emitter.emit('addModal', { modal, data })
     },
     removeModal: function (modal) {
-      this.emitter.emit('removeModal', modal)
+      this.emitter.emit('removeModal', { modal })
     },
     replaceModal: function (modal, data) {
-      this.emitter.emit('replaceModal', modal, data)
+      this.emitter.emit('replaceModal', { modal: modal, data: data })
     },
     clearModals: function () {
       this.emitter.emit('clearModals')
