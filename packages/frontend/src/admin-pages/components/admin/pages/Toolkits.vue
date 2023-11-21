@@ -254,7 +254,7 @@ export default {
       vue.contents[index > -1 ? index : vue.contents.length] = data
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.emitter.off('addToolkitResourceList')

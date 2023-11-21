@@ -249,7 +249,7 @@ export default {
       vue.uploadFile(data, file)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.emitter.off('photoEditorSave-Edit')

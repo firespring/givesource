@@ -145,7 +145,7 @@ export default {
       vue.lastName = data.lastName
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.emitter.off('userAccountUpdateInfo')

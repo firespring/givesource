@@ -175,7 +175,7 @@ export default {
       vm.formData.search = ''
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     const vm = this
 
     vm.emitter.off('navigate')

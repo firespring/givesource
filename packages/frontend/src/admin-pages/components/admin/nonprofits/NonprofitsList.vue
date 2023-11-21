@@ -88,7 +88,7 @@ export default {
       vue.updateNonprofit(nonprofitId)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.emitter.off('revokeNonprofit')

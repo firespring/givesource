@@ -151,7 +151,7 @@ export default {
       vm.localValue = vm.blobToFile(blob, original.name)
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.emitter.off('imageEditorSave')
   },
   methods: {

@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     cardEventTitle () {
-      const eventTitle = this.event_title ? this.event_title : this.url.replace(/(http|https):\/\//, '')
+      const eventTitle = this.eventTitle ? this.eventTitle : this.url.replace(/(http|https):\/\//, '')
       return eventTitle.toUpperCase()
     },
     cardImageSrc () {

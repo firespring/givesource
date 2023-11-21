@@ -93,7 +93,7 @@ export default {
       vue.deleteModal(selectedAdminUser)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
     vue.emitter.off('deleteUserAdmin')
     vue.emitter.off('deleteUserAdminModal')
