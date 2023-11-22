@@ -147,8 +147,8 @@ export default {
   created () {
     const vm = this
 
-    vm.emitter.on('imageEditorSave', (original, blob) => {
-      vm.localValue = vm.blobToFile(blob, original.name)
+    vm.emitter.on('imageEditorSave', (fileData) => {
+      vm.localValue = vm.blobToFile(fileData.blob, fileData.file.name)
     })
   },
   beforeUnmount () {

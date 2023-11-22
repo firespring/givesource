@@ -199,7 +199,10 @@ export default {
         fillColor: '#fff'
       }).toDataURL(vue.data.file.type)
 
-      vue.emitter.emit(vue.data.listener, vue.data.file, vue.dataURLToBlob(dataUrl, vue.data.file.type))
+      vue.emitter.emit(vue.data.listener, {
+        file: vue.data.file,
+        blob: vue.dataURLToBlob(dataUrl, vue.data.file.type)
+      })
       vue.removeModal('photo-editor')
     },
     dataURLToBlob: function (dataUrl, type) {
@@ -208,7 +211,8 @@ export default {
       for (let i = 0; i < binary.length; i++) {
         array.push(binary.charCodeAt(i))
       }
-      return new Blob([new Uint8Array(array)], { type: type })
+      const blarb = new Blob([new Uint8Array(array)], { type: type })
+      return blarb
     }
   }
 }
