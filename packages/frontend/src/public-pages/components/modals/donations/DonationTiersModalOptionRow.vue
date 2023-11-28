@@ -43,7 +43,7 @@ export default {
       event.preventDefault()
       const vue = this
 
-      vue.emitter.emit('select-tier', vue.donationTier.amount)
+      vue.bus.$emit('select-tier', vue.donationTier.amount)
     }
   }
 }

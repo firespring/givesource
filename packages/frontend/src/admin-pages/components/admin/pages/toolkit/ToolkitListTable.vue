@@ -69,7 +69,7 @@ export default {
       this.localContents = value
     },
     localContents: function () {
-      this.emitter.emit('contents', this.localContents)
+      this.bus.$emit('contents', this.localContents)
     }
   },
   methods: {
@@ -85,7 +85,7 @@ export default {
       vue.$request.patch('contents', {
         contents: toUpdate
       }).catch(function (err) {
-        vue.emitter.emit('has-error', err)
+        vue.bus.$emit('has-error', err)
       })
     }
   }

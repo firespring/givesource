@@ -338,7 +338,7 @@ export default {
               if (response.data.errorMessage) {
                 console.log(response.data)
               }
-              vm.emitter.emit('update-nonprofit', response.data)
+              vm.bus.$emit('update-nonprofit', response.data)
             })
           })
         }

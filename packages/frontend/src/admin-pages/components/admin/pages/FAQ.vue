@@ -124,15 +124,15 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('addFAQList', function (data) {
+    vue.bus.$on('addFAQList', function (data) {
       vue.contents.push(data)
     })
 
-    vue.emitter.on('deleteFAQList', function (data) {
+    vue.bus.$on('deleteFAQList', function (data) {
       vue.contents = _.reject(vue.contents, { id: data.id })
     })
 
-    vue.emitter.on('updateFAQList', function (data) {
+    vue.bus.$on('updateFAQList', function (data) {
       const index = _.findIndex(vue.contents, { id: data.id })
       vue.contents[index > -1 ? index : vue.contents.length] = data
     })
@@ -140,9 +140,9 @@ export default {
   beforeUnmount: function () {
     const vue = this
 
-    vue.emitter.off('addFAQList')
-    vue.emitter.off('deleteFAQList')
-    vue.emitter.off('updateFAQList')
+    vue.bus.$off('addFAQList')
+    vue.bus.$off('deleteFAQList')
+    vue.bus.$off('updateFAQList')
   },
   methods: {
     addQuestion: function (event) {

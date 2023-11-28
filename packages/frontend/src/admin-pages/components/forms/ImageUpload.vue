@@ -127,7 +127,7 @@ export default {
         reader.readAsDataURL(vue.localValue)
       }
 
-      vue.emitter.emit('input', this.localValue)
+      vue.bus.$emit('input', this.localValue)
     }
   },
   methods: {

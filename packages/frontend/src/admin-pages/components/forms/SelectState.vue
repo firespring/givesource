@@ -316,7 +316,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.emitter.emit('input', vue.selectedValue)
+      vue.bus.$emit('input', vue.selectedValue)
     },
     value: function (value, oldValue) {
       const vue = this
@@ -328,7 +328,7 @@ export default {
   },
   mounted: function () {
     const vue = this
-    vue.emitter.emit('input', vue.selectedValue)
+    vue.bus.$emit('input', vue.selectedValue)
   }
 }
 </script>

@@ -111,7 +111,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vm.emitter.emit('input', value)
+      vm.bus.$emit('input', value)
     },
     value (value, oldValue) {
       const vm = this
@@ -142,7 +142,7 @@ export default {
       }
     },
     hasError (hasError) {
-      this.emitter.emit('has-error', hasError)
+      this.bus.$emit('has-error', hasError)
     }
   }
 }

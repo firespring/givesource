@@ -289,10 +289,10 @@ export default {
         status: status
       }).then(function () {
         vue.clearModals()
-        vue.emitter.emit('update-nonprofit', vue.nonprofit.id)
+        vue.bus.$emit('update-nonprofit', vue.nonprofit.id)
       }).catch(function (err) {
         vue.clearModals()
-        vue.emitter.emit('has-error', err)
+        vue.bus.$emit('has-error', err)
       })
     },
     revokeNonprofit: function () {

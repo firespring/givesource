@@ -308,14 +308,14 @@ export default {
   created () {
     const vm = this
 
-    vm.emitter.on('deletePage', () => {
+    vm.bus.$on('deletePage', () => {
       vm.$router.push({ name: 'pages-list' })
     })
   },
   beforeUnmount () {
     const vm = this
 
-    vm.emitter.off('deletePage')
+    vm.bus.$off('deletePage')
   },
   methods: {
     getConstraints () {

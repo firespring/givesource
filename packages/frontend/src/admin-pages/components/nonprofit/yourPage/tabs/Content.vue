@@ -277,7 +277,7 @@ export default {
                 console.log(response.data)
               }
               vue.editSlug = false
-              vue.emitter.emit('update-nonprofit', response.data)
+              vue.bus.$emit('update-nonprofit', response.data)
             })
           })
         }

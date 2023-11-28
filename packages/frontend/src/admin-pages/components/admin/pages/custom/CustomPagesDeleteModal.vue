@@ -130,7 +130,7 @@ export default {
         return promise
       }).then(() => {
         vm.clearModals()
-        vm.emitter.emit('deletePage')
+        vm.bus.$emit('deletePage')
       }).catch(() => {
         vm.clearModals()
       })

@@ -81,7 +81,7 @@ export default {
       const vue = this
 
       if (value !== oldValue) {
-        vue.emitter.emit('update-cart-item', vue.index, vue.localAmount)
+        vue.bus.$emit('update-cart-item', vue.index, vue.localAmount)
       }
     },
     amount: function (value, oldValue) {
@@ -91,7 +91,7 @@ export default {
         return
       }
       vue.formErrors = vue.validate({ amount: value }, vue.getConstraints())
-      vue.emitter.emit('has-error', (Object.keys(vue.formErrors).length > 0))
+      vue.bus.$emit('has-error', (Object.keys(vue.formErrors).length > 0))
       vue.localAmount = value
     }
   },
@@ -111,7 +111,7 @@ export default {
       const vue = this
 
       vue.$store.commit('removeCartItem', vue.timestamp)
-      vue.emitter.emit('remove-cart-item', vue.index)
+      vue.bus.$emit('remove-cart-item', vue.index)
     }
   }
 }

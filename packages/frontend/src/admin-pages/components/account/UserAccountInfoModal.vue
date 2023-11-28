@@ -190,7 +190,7 @@ export default {
           console.log(response.data)
         } else {
           vue.clearModals()
-          vue.emitter.emit('userAccountUpdateInfo', response.data[0])
+          vue.bus.$emit('userAccountUpdateInfo', response.data[0])
         }
       }).catch(function (err) {
         vue.removeModal()

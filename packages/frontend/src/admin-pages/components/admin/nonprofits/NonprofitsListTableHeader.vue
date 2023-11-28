@@ -138,7 +138,7 @@ export default {
         if (vue.formData.search.replace(/\s/g, '')) {
           vue.searchNonprofits()
         } else {
-          vue.emitter.emit('reset-pagination')
+          vue.bus.$emit('reset-pagination')
         }
       }
     },
@@ -158,7 +158,7 @@ export default {
         params.sort = vue.sort
       }
 
-      vue.emitter.emit('search-nonprofits', params)
+      vue.bus.$emit('search-nonprofits', params)
     },
     getFilter: function () {
       const vue = this

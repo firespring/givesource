@@ -140,7 +140,7 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('userAccountUpdateInfo', function (data) {
+    vue.bus.$on('userAccountUpdateInfo', function (data) {
       vue.firstName = data.firstName
       vue.lastName = data.lastName
     })
@@ -148,7 +148,7 @@ export default {
   beforeUnmount: function () {
     const vue = this
 
-    vue.emitter.off('userAccountUpdateInfo')
+    vue.bus.$off('userAccountUpdateInfo')
   },
   beforeMount: function () {
     document.body.classList.add('has-menubar', 'has-menubar--secondary')

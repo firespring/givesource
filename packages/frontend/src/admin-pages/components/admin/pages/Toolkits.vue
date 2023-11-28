@@ -241,15 +241,15 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('addToolkitResourceList', function (data) {
+    vue.bus.$on('addToolkitResourceList', function (data) {
       vue.contents.push(data)
     })
 
-    vue.emitter.on('deleteToolkitResourceList', function (data) {
+    vue.bus.$on('deleteToolkitResourceList', function (data) {
       vue.contents = _.reject(vue.contents, { id: data.id })
     })
 
-    vue.emitter.on('updateToolkitResourceList', function (data) {
+    vue.bus.$on('updateToolkitResourceList', function (data) {
       const index = _.findIndex(vue.contents, { id: data.id })
       vue.contents[index > -1 ? index : vue.contents.length] = data
     })
@@ -257,9 +257,9 @@ export default {
   beforeUnmount: function () {
     const vue = this
 
-    vue.emitter.off('addToolkitResourceList')
-    vue.emitter.off('deleteToolkitResourceList')
-    vue.emitter.off('updateToolkitResourceList')
+    vue.bus.$off('addToolkitResourceList')
+    vue.bus.$off('deleteToolkitResourceList')
+    vue.bus.$off('updateToolkitResourceList')
   },
   methods: {
     submit: function (event) {

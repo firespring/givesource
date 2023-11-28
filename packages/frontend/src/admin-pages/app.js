@@ -66,10 +66,14 @@ const app = createApp(ComponentApp)
   .component('Navigation', ComponentNavigation)
   .component('PaymentspringKeysBanner', ComponentPaymentspringKeysBanner)
   // Event Bus
-  .provide('emitter', emitter)
+  .provide('bus', emitter)
   .provide('$axios', axios)
 
-app.config.globalProperties.emitter = emitter
+emitter.$on = emitter.on
+emitter.$off = emitter.off
+emitter.$emit = emitter.emit
+
+app.config.globalProperties.bus = emitter
 router.app = app
 app.use(router)
 

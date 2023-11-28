@@ -84,19 +84,19 @@ export default {
       vue.loaded = true
     })
 
-    vue.emitter.on('deleteUserNonprofit', function () {
+    vue.bus.$on('deleteUserNonprofit', function () {
       vue.removeUser()
     })
 
-    vue.emitter.on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
+    vue.bus.$on('deleteUserNonprofitModal', function (selectedNonprofitUser) {
       vue.selectedNonprofitUser = selectedNonprofitUser
       vue.deleteModal(selectedNonprofitUser)
     })
   },
   beforeUnmount: function () {
     const vue = this
-    vue.emitter.off('deleteUserNonprofit')
-    vue.emitter.off('deleteUserNonprofitModal')
+    vue.bus.$off('deleteUserNonprofit')
+    vue.bus.$off('deleteUserNonprofitModal')
   },
   methods: {
     deleteModal: function (selectedNonprofitUser) {
@@ -119,7 +119,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.clearModals()
-        vue.emitter.emit('has-error', err)
+        vue.bus.$emit('has-error', err)
       })
     }
   }

@@ -198,7 +198,7 @@ export default {
     selectedNonprofit (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.emitter.emit('change', vm.getRow)
+        vm.bus.$emit('change', vm.getRow)
       }
     },
     /**
@@ -210,7 +210,7 @@ export default {
     dollarAmount (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.emitter.emit('change', vm.getRow)
+        vm.bus.$emit('change', vm.getRow)
       }
     },
     /**
@@ -222,7 +222,7 @@ export default {
     note (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.emitter.emit('change', vm.getRow)
+        vm.bus.$emit('change', vm.getRow)
       }
     }
   },
@@ -236,7 +236,7 @@ export default {
     removeRow (event) {
       const vm = this
       event.preventDefault()
-      vm.emitter.emit('remove', vm.getRow)
+      vm.bus.$emit('remove', vm.getRow)
     }
   }
 }

@@ -71,7 +71,7 @@ export default {
       this.localValue = newVal
     },
     localValue: function () {
-      this.emitter.emit('input', this.localValue)
+      this.bus.$emit('input', this.localValue)
     }
   },
   methods: {

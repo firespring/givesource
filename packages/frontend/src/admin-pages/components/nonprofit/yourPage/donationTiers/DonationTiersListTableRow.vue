@@ -72,14 +72,14 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.emitter.emit('change', vue.index, { amount: value, description: vue.localDescription })
+      vue.bus.$emit('change', vue.index, { amount: value, description: vue.localDescription })
     },
     localDescription: function (value, oldValue) {
       const vue = this
       if (value === oldValue) {
         return
       }
-      vue.emitter.emit('change', vue.index, { amount: vue.localAmount, description: value })
+      vue.bus.$emit('change', vue.index, { amount: vue.localAmount, description: value })
     },
     amount: function (value, oldValue) {
       const vue = this

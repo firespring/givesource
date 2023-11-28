@@ -289,14 +289,14 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('updateSetting', function (data) {
+    vue.bus.$on('updateSetting', function (data) {
       _.remove(vue.settings, { key: data.key })
       vue.settings.push(data)
     })
   },
   beforeUnmount: function () {
     const vue = this
-    vue.emitter.off('updateSetting')
+    vue.bus.$off('updateSetting')
   },
   methods: {
     editContactEmail: function () {

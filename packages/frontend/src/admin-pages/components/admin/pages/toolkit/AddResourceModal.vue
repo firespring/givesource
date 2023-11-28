@@ -388,7 +388,7 @@ export default {
         toolkitResourceListContent.value = Object.keys(vue.formData).map(function (key) {
           return vue.formData[key]
         })
-        vue.emitter.emit('addToolkitResourceList', toolkitResourceListContent)
+        vue.bus.$emit('addToolkitResourceList', toolkitResourceListContent)
         vue.clearModals()
       }).catch(function (err) {
         vue.removeModal('spinner')

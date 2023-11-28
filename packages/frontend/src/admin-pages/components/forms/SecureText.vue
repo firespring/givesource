@@ -83,7 +83,7 @@ export default {
       }
     },
     localValue: function () {
-      this.emitter.emit('input', this.localValue)
+      this.bus.$emit('input', this.localValue)
     }
   },
   created: function () {
@@ -102,12 +102,12 @@ export default {
           vue.displayTextInput = false
         }
 
-        vue.emitter.emit('loaded')
+        vue.bus.$emit('loaded')
       })
 
-      vue.$parent.emitter.on('save', this.save)
+      vue.$parent.bus.$on('save', this.save)
     } else {
-      vue.emitter.emit('loaded')
+      vue.bus.$emit('loaded')
     }
   },
   methods: {

@@ -78,7 +78,7 @@ export default {
     },
     localValue: function () {
       const vm = this
-      this.emitter.emit('input', vm.localValue)
+      this.bus.$emit('input', vm.localValue)
       if (vm.$refs.input) {
         vm.$refs.input.dispatchEvent(new Event('input'))
       }

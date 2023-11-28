@@ -82,7 +82,7 @@ export default {
       this.localSponsorTiers = value
     },
     localSponsorTiers: function () {
-      this.emitter.emit('sponsor-tiers', this.localSponsorTiers)
+      this.bus.$emit('sponsor-tiers', this.localSponsorTiers)
     }
   },
   methods: {
@@ -98,7 +98,7 @@ export default {
       vue.$request.patch('sponsor-tiers', {
         sponsorTiers: toUpdate
       }).catch(function (err) {
-        vue.emitter.emit('has-error', err)
+        vue.bus.$emit('has-error', err)
       })
     },
     deleteSponsorTier: function (sponsorTierId) {
@@ -110,7 +110,7 @@ export default {
     },
     hasError: function (err) {
       const vue = this
-      vue.emitter.emit('has-error', err)
+      vue.bus.$emit('has-error', err)
     }
   }
 }

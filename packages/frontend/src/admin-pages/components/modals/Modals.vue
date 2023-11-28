@@ -91,7 +91,7 @@ export default {
        *
        * @param {String} modal
        */
-    vue.emitter.on('addModal', function (options) {
+    vue.bus.$on('addModal', function (options) {
       vue.modals.push(options.modal)
       vue.data[options.modal] = options.data || null
     })
@@ -99,7 +99,7 @@ export default {
     /**
        * Remove the top-most modal from the stack
        */
-    vue.emitter.on('removeModal', function (options) {
+    vue.bus.$on('removeModal', function (options) {
       if (vue.modals.indexOf(options.modal) > -1) {
         vue.modals.splice(vue.modals.indexOf(options.modal), 1)
       } else if (vue.modals.length) {
@@ -110,7 +110,7 @@ export default {
     /**
        * Replace the top-most modal
        */
-    vue.emitter.on('replaceModal', function (options) {
+    vue.bus.$on('replaceModal', function (options) {
       if (vue.modals.length > 0) {
         vue.modals[vue.modals.length - 1] = options.modal
         vue.data[options.modal] = options.data || null
@@ -123,7 +123,7 @@ export default {
     /**
        * Clear all modals from the stack
        */
-    vue.emitter.on('clearModals', function () {
+    vue.bus.$on('clearModals', function () {
       vue.modals = []
       vue.data = {}
     })

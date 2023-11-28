@@ -97,7 +97,7 @@ export default {
       })
     },
     hasError (hasError) {
-      this.emitter.emit('has-error', hasError)
+      this.bus.$emit('has-error', hasError)
     }
   }
 }

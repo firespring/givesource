@@ -84,14 +84,14 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('revokeNonprofit', function (nonprofitId) {
+    vue.bus.$on('revokeNonprofit', function (nonprofitId) {
       vue.updateNonprofit(nonprofitId)
     })
   },
   beforeUnmount: function () {
     const vue = this
 
-    vue.emitter.off('revokeNonprofit')
+    vue.bus.$off('revokeNonprofit')
   },
   methods: {
     updateNonprofit: function (nonprofitId) {

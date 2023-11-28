@@ -141,18 +141,18 @@ export default {
         reader.readAsDataURL(vm.localValue)
       }
 
-      vm.emitter.emit('input', vm.localValue)
+      vm.bus.$emit('input', vm.localValue)
     }
   },
   created () {
     const vm = this
 
-    vm.emitter.on('imageEditorSave', (fileData) => {
+    vm.bus.$on('imageEditorSave', (fileData) => {
       vm.localValue = vm.blobToFile(fileData.blob, fileData.file.name)
     })
   },
   beforeUnmount () {
-    this.emitter.off('imageEditorSave')
+    this.bus.$off('imageEditorSave')
   },
   methods: {
     onTrigger () {

@@ -62,8 +62,11 @@ const app = createApp(App)
   .use(VueGtag, {
     config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
   }, router)
-  .provide('emitter', emitter)
+  .provide('bus', emitter)
 
-app.config.globalProperties.emitter = emitter
+emitter.$on = emitter.on
+emitter.$off = emitter.off
+emitter.$emit = emitter.emit
+app.config.globalProperties.bus = emitter
 
 app.mount('#app')

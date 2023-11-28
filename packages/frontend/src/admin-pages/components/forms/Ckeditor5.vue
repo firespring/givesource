@@ -66,7 +66,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      this.emitter.emit('input', value)
+      this.bus.$emit('input', value)
     },
     value: function (value, oldValue) {
       if (value === oldValue) {

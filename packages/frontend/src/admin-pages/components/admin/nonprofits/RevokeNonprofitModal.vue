@@ -94,7 +94,7 @@ export default {
         status: 'REVOKED'
       }).then(function () {
         vue.clearModals()
-        vue.emitter.emit('revokeNonprofit', vue.data.nonprofit.id)
+        vue.bus.$emit('revokeNonprofit', vue.data.nonprofit.id)
       }).catch(function (err) {
         vue.apiError = err.response.data.errors
         vue.removeModal('spinner')

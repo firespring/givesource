@@ -93,7 +93,7 @@ export default {
       promise.then(function () {
         return vue.$request.delete('contents/' + vue.data.content.id)
       }).then(function () {
-        vue.emitter.emit('deleteToolkitResourceList', vue.data.content)
+        vue.bus.$emit('deleteToolkitResourceList', vue.data.content)
         vue.clearModals()
       })
     }

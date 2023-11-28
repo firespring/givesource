@@ -84,19 +84,19 @@ export default {
       vue.loaded = true
     })
 
-    vue.emitter.on('deleteUserAdmin', function () {
+    vue.bus.$on('deleteUserAdmin', function () {
       vue.removeUser()
     })
 
-    vue.emitter.on('deleteUserAdminModal', function (selectedAdminUser) {
+    vue.bus.$on('deleteUserAdminModal', function (selectedAdminUser) {
       vue.selectedAdminUser = selectedAdminUser
       vue.deleteModal(selectedAdminUser)
     })
   },
   beforeUnmount: function () {
     const vue = this
-    vue.emitter.off('deleteUserAdmin')
-    vue.emitter.off('deleteUserAdminModal')
+    vue.bus.$off('deleteUserAdmin')
+    vue.bus.$off('deleteUserAdminModal')
   },
   methods: {
     deleteModal: function (selectedAdminUser) {
@@ -119,7 +119,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.removeModal('spinner')
-        vue.emitter.emit('has-error', err)
+        vue.bus.$emit('has-error', err)
       })
     }
   }

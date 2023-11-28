@@ -171,14 +171,14 @@ export default {
   created: function () {
     const vue = this
 
-    vue.emitter.on('photoEditorSave-New', function (data, file) {
+    vue.bus.$on('photoEditorSave-New', function (data, file) {
       vue.uploadFile(data, file)
     })
   },
   beforeUnmount: function () {
     const vue = this
 
-    vue.emitter.off('photoEditorSave-New')
+    vue.bus.$off('photoEditorSave-New')
   },
   methods: {
     getFile: function (fileId) {
