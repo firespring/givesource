@@ -17,51 +17,56 @@
 <template>
   <div class="o-menubar__secondary">
     <ul>
-      <router-link
-        tag="li"
-        :to="{ name: 'donations-list' }"
-      >
-        <a><i
-          class="fa fa-fw fa-credit-card"
-          aria-hidden="true"
-        />Donations</a>
-      </router-link>
-      <router-link
-        tag="li"
-        :to="{ name: 'nonprofits-list' }"
-      >
-        <a><i
-          class="fa fa-fw fa-bank"
-          aria-hidden="true"
-        />Nonprofits</a>
-      </router-link>
-      <router-link
-        tag="li"
-        :to="{ name: 'sponsor-tiers-list' }"
-      >
-        <a><i
-          class="fa fa-fw fa-star"
-          aria-hidden="true"
-        />Sponsors</a>
-      </router-link>
-      <router-link
-        tag="li"
-        :to="{ name: 'pages-list' }"
-      >
-        <a><i
-          class="fa fa-fw fa-files-o"
-          aria-hidden="true"
-        />Pages</a>
-      </router-link>
-      <router-link
-        tag="li"
-        :to="{ name: 'settings-list' }"
-      >
-        <a><i
-          class="fa fa-fw fa-cogs"
-          aria-hidden="true"
-        />Settings</a>
-      </router-link>
+      <li>
+        <router-link
+          :to="{ name: 'donations-list' }"
+        >
+          <a><i
+            class="fa fa-fw fa-credit-card"
+            aria-hidden="true"
+          />Donations</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{ name: 'nonprofits-list' }"
+        >
+          <a><i
+            class="fa fa-fw fa-bank"
+            aria-hidden="true"
+          />Nonprofits</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{ name: 'sponsor-tiers-list' }"
+        >
+          <a><i
+            class="fa fa-fw fa-star"
+            aria-hidden="true"
+          />Sponsors</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{ name: 'pages-list' }"
+        >
+          <a><i
+            class="fa fa-fw fa-files-o"
+            aria-hidden="true"
+          />Pages</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          :to="{ name: 'settings-list' }"
+        >
+          <a><i
+            class="fa fa-fw fa-cogs"
+            aria-hidden="true"
+          />Settings</a>
+        </router-link>
+      </li>
     </ul>
 
     <select
