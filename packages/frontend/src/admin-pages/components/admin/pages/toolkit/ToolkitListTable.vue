@@ -24,9 +24,8 @@
       class="ui-sortable"
       @end="updateSortOrder"
     >
-      <template #item="{ content }">
+      <template #item="{ element: content }">
         <faq-list-table-row
-            v-for="content in localContents"
             :key="content.id"
             :content="content"
         />
@@ -59,8 +58,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       }
     }
   },

@@ -33,9 +33,8 @@
       item-key="id"
       @end="updateSortOrder"
     >
-      <template #item="{ sponsorTier }">
+      <template #item="{ element: sponsorTier }">
         <sponsors-list-table-row
-            v-for="sponsorTier in localSponsorTiers"
             :key="sponsorTier.id"
             :sponsor-tier="sponsorTier"
             @delete-sponsor-tier="deleteSponsorTier"
@@ -70,8 +69,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       },
 
       apiError: {}

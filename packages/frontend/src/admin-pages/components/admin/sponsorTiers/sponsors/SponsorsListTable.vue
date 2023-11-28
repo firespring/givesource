@@ -29,15 +29,13 @@
 
     <draggable
       v-model="localSponsors"
-      handle='.c-drag-handle'
-      ghost-class='reorder-placeholder'
+      v-bind="draggableOptions"
       tag="tbody"
       item-key="id"
       @end="updateSortOrder"
     >
-      <template #item="{ sponsor }">
+      <template #item="{ element: sponsor }">
         <sponsors-list-table-row
-            v-for="sponsor in localSponsors"
             :key="sponsor.id"
             :sponsor="sponsor"
             :file="getFile(sponsor.fileId)"
@@ -82,6 +80,8 @@ export default {
 
       // Sort Options
       draggableOptions: {
+        handle: '.c-drag-handle',
+        ghostClass: 'reorder-placeholder'
       }
     }
   },

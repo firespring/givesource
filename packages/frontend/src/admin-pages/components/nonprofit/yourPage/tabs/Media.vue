@@ -74,9 +74,8 @@
         item-key="id"
         @end="updateSortOrder"
       >
-        <template #item="{ slide }">
+        <template #item="{ element: slide }">
           <media-list-table-row
-              v-for="slide in slidesAfterLoaded"
               :key="slide.id"
               :slide="slide"
               :file="getFile(slide.fileId)"
@@ -113,8 +112,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       },
 
       apiError: {}
