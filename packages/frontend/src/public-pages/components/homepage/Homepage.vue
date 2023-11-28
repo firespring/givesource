@@ -29,7 +29,10 @@
         :src="homepageSpotlightUrl"
       >
 
-      <h1 slot="title">
+      <h1
+        v-if="getContentValue('HOMEPAGE_TITLE')"
+        slot="title"
+      >
         {{ getContentValue('HOMEPAGE_TITLE') }}
       </h1>
 
