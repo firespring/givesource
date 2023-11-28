@@ -169,8 +169,8 @@ export default {
   created: function () {
     const vue = this
 
-    vue.bus.$on('photoEditorSave-New', function (data, file) {
-      vue.uploadFile(data, file)
+    vue.bus.$on('photoEditorSave-New', function (data) {
+      vue.uploadFile(data.file, data.blob)
     })
   },
   beforeUnmount: function () {

@@ -109,6 +109,7 @@
 
 <script>
 import VueCropper from 'vue-cropperjs'
+import 'cropperjs/dist/cropper.css'
 import VueSlider from 'vue-slider-component'
 const MathHelper = require('./../../../helpers/math')
 
