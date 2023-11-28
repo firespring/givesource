@@ -87,6 +87,8 @@ export default {
     SelectNonprofit
   },
 
+  emits: ['change', 'remove'],
+
   props: {
     /**
      * The errors for the given row.
@@ -198,7 +200,7 @@ export default {
     selectedNonprofit (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.bus.$emit('change', vm.getRow)
+        vm.$emit('change', vm.getRow)
       }
     },
     /**
@@ -210,7 +212,7 @@ export default {
     dollarAmount (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.bus.$emit('change', vm.getRow)
+        vm.$emit('change', vm.getRow)
       }
     },
     /**
@@ -222,7 +224,7 @@ export default {
     note (value, oldValue) {
       const vm = this
       if (value !== oldValue) {
-        vm.bus.$emit('change', vm.getRow)
+        vm.$emit('change', vm.getRow)
       }
     }
   },
@@ -236,7 +238,7 @@ export default {
     removeRow (event) {
       const vm = this
       event.preventDefault()
-      vm.bus.$emit('remove', vm.getRow)
+      vm.$emit('remove', vm.getRow)
     }
   }
 }

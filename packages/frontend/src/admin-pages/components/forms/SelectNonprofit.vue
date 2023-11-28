@@ -38,6 +38,7 @@
 require('chosen-js')
 
 export default {
+  emits: ['input'],
   props: {
     value: { type: [String, Number], default: null },
     id: {
@@ -79,7 +80,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('input', vue.selectedValue)
+      vue.$emit('input', vue.selectedValue)
     },
     value: function (value, oldValue) {
       const vue = this

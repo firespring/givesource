@@ -61,6 +61,7 @@
 
 <script>
 export default {
+  emits: ['input', 'loaded'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -83,7 +84,7 @@ export default {
       }
     },
     localValue: function () {
-      this.bus.$emit('input', this.localValue)
+      this.$emit('input', this.localValue)
     }
   },
   created: function () {
@@ -102,12 +103,12 @@ export default {
           vue.displayTextInput = false
         }
 
-        vue.bus.$emit('loaded')
+        vue.$emit('loaded')
       })
 
       vue.$parent.bus.$on('save', this.save)
     } else {
-      vue.bus.$emit('loaded')
+      vue.$emit('loaded')
     }
   },
   methods: {

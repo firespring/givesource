@@ -46,6 +46,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     value: { type: String, default: '' },
     id: {
@@ -316,7 +317,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('input', vue.selectedValue)
+      vue.$emit('input', vue.selectedValue)
     },
     value: function (value, oldValue) {
       const vue = this
@@ -328,7 +329,7 @@ export default {
   },
   mounted: function () {
     const vue = this
-    vue.bus.$emit('input', vue.selectedValue)
+    vue.$emit('input', vue.selectedValue)
   }
 }
 </script>

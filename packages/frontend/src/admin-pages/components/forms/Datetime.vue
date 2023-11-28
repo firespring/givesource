@@ -43,6 +43,7 @@
 // DatePicker needs imported to init the jquery functionality
 import DatePicker from 'jquery-datetimepicker' // eslint-disable-line no-unused-vars
 export default {
+  emits: ['input'],
   props: {
     value: { type: String, default: '' },
     id: {
@@ -108,7 +109,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('input', value)
+      vue.$emit('input', value)
     },
     value: function (value, oldValue) {
       const vue = this

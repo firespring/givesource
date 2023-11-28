@@ -84,6 +84,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -127,7 +128,7 @@ export default {
         reader.readAsDataURL(vue.localValue)
       }
 
-      vue.bus.$emit('input', this.localValue)
+      vue.$emit('input', this.localValue)
     }
   },
   methods: {

@@ -36,6 +36,7 @@ import ComponentCkeditor5 from './Ckeditor5.vue'
 import ComponentSpinner from './../layout/Spinner.vue'
 
 export default {
+  emits: ['input'],
   components: {
     'forms-ckeditor4': ComponentCkeditor4,
     'forms-ckeditor5': ComponentCkeditor5,
@@ -80,7 +81,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      this.bus.$emit('input', value)
+      this.$emit('input', value)
     },
     value: function (value, oldValue) {
       if (value === oldValue) {

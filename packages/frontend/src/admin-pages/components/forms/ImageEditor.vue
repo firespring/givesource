@@ -84,6 +84,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -141,7 +142,7 @@ export default {
         reader.readAsDataURL(vm.localValue)
       }
 
-      vm.bus.$emit('input', vm.localValue)
+      vm.$emit('input', vm.localValue)
     }
   },
   created () {

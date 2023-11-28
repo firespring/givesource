@@ -145,7 +145,7 @@ export default {
         vm.pollReport(response.data)
       }).catch(err => {
         vm.clearModals()
-        vm.bus.$emit('has-error', err)
+        vm.$emit('has-error', err)
       })
     },
 

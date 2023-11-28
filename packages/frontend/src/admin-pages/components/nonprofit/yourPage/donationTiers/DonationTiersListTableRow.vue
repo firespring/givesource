@@ -48,6 +48,7 @@
 
 <script>
 export default {
+  emits: ['change'],
   props: {
     amount: { type: [String, Number], default: null },
     description: { type: String, default: '' },
@@ -72,14 +73,14 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('change', vue.index, { amount: value, description: vue.localDescription })
+      vue.$emit('change', vue.index, { amount: value, description: vue.localDescription })
     },
     localDescription: function (value, oldValue) {
       const vue = this
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('change', vue.index, { amount: vue.localAmount, description: value })
+      vue.$emit('change', vue.index, { amount: vue.localAmount, description: value })
     },
     amount: function (value, oldValue) {
       const vue = this

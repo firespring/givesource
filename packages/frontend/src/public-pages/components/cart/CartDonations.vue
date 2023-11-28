@@ -58,6 +58,7 @@ import { mapState } from 'vuex'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
 
 export default {
+  emits: ['input', 'has-error'],
   components: {
     'cart-donations-list-table': ComponentCartDonationsListTable
   },
@@ -111,7 +112,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vm.bus.$emit('input', value)
+      vm.$emit('input', value)
     },
     value (value, oldValue) {
       const vm = this
@@ -142,7 +143,7 @@ export default {
       }
     },
     hasError (hasError) {
-      this.bus.$emit('has-error', hasError)
+      this.$emit('has-error', hasError)
     }
   }
 }

@@ -36,6 +36,7 @@
 require('@claviska/jquery-minicolors')
 
 export default {
+  emits: ['input'],
   props: {
     value: { type: String, default: null },
     id: {
@@ -67,7 +68,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('input', value)
+      vue.$emit('input', value)
     },
     value: function (value, oldValue) {
       const vue = this

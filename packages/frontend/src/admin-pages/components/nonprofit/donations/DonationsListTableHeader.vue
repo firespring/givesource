@@ -34,7 +34,7 @@
 const slug = require('slug')
 
 export default {
-
+  emits: ['has-error'],
   props: {
     nonprofit: { type: Object, default: () => ({}) }
   },
@@ -63,7 +63,7 @@ export default {
         vm.pollReport()
       }).catch(err => {
         vm.clearModals()
-        vm.bus.$emit('has-error', err)
+        vm.$emit('has-error', err)
       })
     },
 
@@ -94,7 +94,7 @@ export default {
             }
           }).catch(err => {
             vm.clearModals()
-            vm.bus.$emit('has-error', err)
+            vm.$emit('has-error', err)
           })
         }, 1000)
       }

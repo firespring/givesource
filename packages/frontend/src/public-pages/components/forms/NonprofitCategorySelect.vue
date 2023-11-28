@@ -45,6 +45,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     value: { type: [String, Number], default: null },
     name: {
@@ -108,7 +109,7 @@ export default {
       this.localValue = newVal
     },
     localValue: function () {
-      this.bus.$emit('input', this.localValue)
+      this.$emit('input', this.localValue)
     }
   }
 }

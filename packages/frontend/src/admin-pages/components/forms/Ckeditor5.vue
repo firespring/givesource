@@ -30,6 +30,7 @@ import BasicEditor from './../../ckeditor/editors/basic'
 import ModerateEditor from './../../ckeditor/editors/moderate'
 
 export default {
+  emits: ['input'],
   props: {
     value: { type: String, default: '' },
     id: {
@@ -66,7 +67,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      this.bus.$emit('input', value)
+      this.$emit('input', value)
     },
     value: function (value, oldValue) {
       if (value === oldValue) {

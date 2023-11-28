@@ -119,7 +119,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.removeModal('spinner')
-        vue.bus.$emit('has-error', err)
+        vue.$emit('has-error', err)
       })
     }
   }

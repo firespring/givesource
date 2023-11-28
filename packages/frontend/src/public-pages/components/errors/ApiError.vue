@@ -62,6 +62,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     value: { type: Object, default: () => ({}) }
   },
@@ -81,7 +82,7 @@ export default {
       if (value === oldValue) {
         return
       }
-      vue.bus.$emit('input', vue.localValue)
+      vue.$emit('input', vue.localValue)
     },
     value: function (value, oldValue) {
       const vue = this

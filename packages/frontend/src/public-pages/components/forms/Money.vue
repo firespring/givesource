@@ -41,6 +41,7 @@ import * as Utils from './../../helpers/utils'
 const numeral = require('numeral')
 
 export default {
+  emits: ['input'],
   props: {
     value: { type: [String, Number], default: null },
     id: {
@@ -78,7 +79,7 @@ export default {
     },
     localValue: function () {
       const vm = this
-      this.bus.$emit('input', vm.localValue)
+      this.$emit('input', vm.localValue)
       if (vm.$refs.input) {
         vm.$refs.input.dispatchEvent(new Event('input'))
       }

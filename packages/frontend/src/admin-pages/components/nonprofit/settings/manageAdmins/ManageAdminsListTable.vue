@@ -119,7 +119,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.clearModals()
-        vue.bus.$emit('has-error', err)
+        vue.$emit('has-error', err)
       })
     }
   }

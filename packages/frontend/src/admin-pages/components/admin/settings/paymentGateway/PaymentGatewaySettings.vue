@@ -584,7 +584,7 @@ export default {
         vue.clearModals()
         vue.scrollToError()
       } else {
-        vue.bus.$emit('save')
+        vue.$emit('save')
         vue.updateSettings()
       }
     },

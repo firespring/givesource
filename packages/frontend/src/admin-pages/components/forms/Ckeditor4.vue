@@ -25,6 +25,7 @@
 
 <script>
 export default {
+  emits: ['input'],
   props: {
     value: {
       type: String,
@@ -93,7 +94,7 @@ export default {
       const value = window.CKEDITOR.instances[vm.id].getData()
 
       if (value !== vm.value) {
-        vm.bus.$emit('input', value)
+        vm.$emit('input', value)
       }
     })
   },
