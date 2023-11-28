@@ -2882,7 +2882,7 @@ General
 .o-menubar__secondary .here a {
   color: #fff; }
 .o-menubar__secondary a {
-  padding: 10px 20px;
+  padding: 0 20px;
   height: 100%;
   color: #b7d7df; }
 .o-menubar__secondary a .fa {
