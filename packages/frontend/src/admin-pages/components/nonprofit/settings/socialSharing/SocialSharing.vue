@@ -225,7 +225,7 @@ export default {
   },
   computed: {
     displayPreview () {
-      return this.previewDescription || this.previewFallbackImage || this.settings.socialSharingImage || this.previewUrl || this.previewTitle
+      return this.previewDescription || this.settings.socialSharingImage || this.previewUrl || this.previewTitle
     },
     isAdmin () {
       return this.isSuperAdminUser() || this.isAdminUser()

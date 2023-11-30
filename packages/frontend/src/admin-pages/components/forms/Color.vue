@@ -36,9 +36,9 @@
 require('@claviska/jquery-minicolors')
 
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
-    value: { type: String, default: null },
+    modelValue: { type: String, default: null },
     id: {
       type: String,
       default: null
@@ -63,20 +63,24 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', value)
       }
-      vue.$emit('input', value)
     },
-    value: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
+        $(vue.$refs.input).minicolors('value', vue.value)
       }
-      vue.localValue = value
-      $(vue.$refs.input).minicolors('value', vue.value)
     }
   },
   mounted: function () {

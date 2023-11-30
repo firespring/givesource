@@ -30,9 +30,9 @@ import BasicEditor from './../../ckeditor/editors/basic'
 import ModerateEditor from './../../ckeditor/editors/moderate'
 
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: ''
@@ -48,7 +48,7 @@ export default {
   },
   data () {
     return {
-      localValue: this.value ? this.value : '',
+      localValue: this.modelValue ? this.modelValue : '',
       editors: {
         advanced: AdvancedEditor,
         basic: BasicEditor,
@@ -63,17 +63,21 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.$emit('update:modelValue', value)
       }
-      this.$emit('input', value)
     },
-    value: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.localValue = value
       }
-      this.localValue = value
     }
   }
 }

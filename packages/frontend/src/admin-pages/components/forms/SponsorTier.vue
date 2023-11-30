@@ -46,7 +46,7 @@
 
 <script>
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
     id: { type: [String, Number], default: null },
     name: { type: String, default: null },
@@ -57,7 +57,7 @@ export default {
         return []
       }
     },
-    value: { type: [String, Number], default: null }
+    modelValue: { type: [String, Number], default: null }
   },
   data: function () {
     return {
@@ -65,11 +65,15 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handler () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   }
 }

@@ -36,14 +36,14 @@ import ComponentCkeditor5 from './Ckeditor5.vue'
 import ComponentSpinner from './../layout/Spinner.vue'
 
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   components: {
     'forms-ckeditor4': ComponentCkeditor4,
     'forms-ckeditor5': ComponentCkeditor5,
     'layout-spinner': ComponentSpinner
   },
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: ''
@@ -67,7 +67,7 @@ export default {
   },
   data () {
     return {
-      localValue: this.value ? this.value : ''
+      localValue: this.modelValue ? this.modelValue : ''
     }
   },
   computed: {
@@ -77,17 +77,21 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.$emit('update:modelValue', value)
       }
-      this.$emit('input', value)
     },
-    value: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.localValue = value
       }
-      this.localValue = value
     }
   }
 }

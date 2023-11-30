@@ -61,30 +61,34 @@
 
 <script>
 export default {
-  emits: ['input', 'loaded'],
+  emits: ['update:modelValue', 'loaded'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
     placeholder: { type: String, default: '' },
     secureKey: { type: String, default: '' },
-    value: { type: String, default: '' }
+    modelValue: { type: String, default: '' }
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : '',
+      localValue: this.modelValue ? this.modelValue : '',
       displayTextInput: true,
       original: null
     }
   },
   watch: {
-    value: function (newVal) {
-      if (this.localValue !== newVal) {
-        this.localValue = newVal
-        this.displayTextInput = false
+    modelValue: {
+      handler (newVal) {
+        if (this.localValue !== newVal) {
+          this.localValue = newVal
+          this.displayTextInput = false
+        }
       }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handler() {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   },
   created: function () {

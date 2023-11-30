@@ -43,16 +43,16 @@
 
 <script>
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
     placeholder: { type: String, default: '' },
-    value: { type: Object, default: () => null }
+    modelValue: { type: Object, default: () => null }
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : {}
+      localValue: this.modelValue ? this.modelValue : {}
     }
   },
   computed: {
@@ -68,11 +68,15 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handler () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   },
   methods: {
