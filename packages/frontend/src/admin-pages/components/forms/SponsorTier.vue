@@ -46,7 +46,6 @@
 
 <script>
 export default {
-  emits: ['update:modelValue'],
   props: {
     id: { type: [String, Number], default: null },
     name: { type: String, default: null },
@@ -59,6 +58,7 @@ export default {
     },
     modelValue: { type: [String, Number], default: null }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: this.modelValue ? this.modelValue : ''

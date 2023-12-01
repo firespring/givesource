@@ -87,8 +87,6 @@ export default {
     SelectNonprofit
   },
 
-  emits: ['change', 'remove'],
-
   props: {
     /**
      * The errors for the given row.
@@ -138,6 +136,8 @@ export default {
       required: true
     }
   },
+
+  emits: ['change', 'remove'],
 
   data () {
     const vm = this

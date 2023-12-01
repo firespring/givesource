@@ -43,7 +43,6 @@
 require('jquery.payment')
 
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: String, default: '' },
     id: {
@@ -59,6 +58,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: this.modelValue ? this.modelValue : null

@@ -30,7 +30,6 @@ import BasicEditor from './../../ckeditor/editors/basic'
 import ModerateEditor from './../../ckeditor/editors/moderate'
 
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: String, default: '' },
     id: {
@@ -46,6 +45,7 @@ export default {
       default: 'basic'
     }
   },
+  emits: ['update:modelValue'],
   data () {
     return {
       localValue: this.modelValue ? this.modelValue : '',

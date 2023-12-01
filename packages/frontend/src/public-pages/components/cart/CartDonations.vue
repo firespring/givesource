@@ -58,7 +58,6 @@ import { mapState } from 'vuex'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
 
 export default {
-  emits: ['update:modelValue', 'has-error'],
   components: {
     'cart-donations-list-table': ComponentCartDonationsListTable
   },
@@ -69,6 +68,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue', 'has-error'],
   data () {
     return {
       localValue: this.modelValue,

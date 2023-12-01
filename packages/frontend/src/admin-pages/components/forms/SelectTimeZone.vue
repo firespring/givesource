@@ -38,7 +38,6 @@
 require('chosen-js')
 
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: String, default: null },
     id: {
@@ -58,6 +57,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: '',
@@ -1673,7 +1673,7 @@ export default {
   },
   watch: {
     localValue: {
-      handler(value, oldValue) {
+      handler (value, oldValue) {
         const vue = this
         if (value === oldValue) {
           return

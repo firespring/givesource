@@ -36,11 +36,11 @@
     >
       <template #item="{ element: sponsor }">
         <sponsors-list-table-row
-            :key="sponsor.id"
-            :sponsor="sponsor"
-            :file="getFile(sponsor.fileId)"
-            @has-error="hasError"
-            @delete-sponsor="deleteSponsor"
+          :key="sponsor.id"
+          :sponsor="sponsor"
+          :file="getFile(sponsor.fileId)"
+          @has-error="hasError"
+          @delete-sponsor="deleteSponsor"
         />
       </template>
     </draggable>

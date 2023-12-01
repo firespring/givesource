@@ -35,10 +35,10 @@
     >
       <template #item="{ element: sponsorTier }">
         <sponsors-list-table-row
-            :key="sponsorTier.id"
-            :sponsor-tier="sponsorTier"
-            @delete-sponsor-tier="deleteSponsorTier"
-            @has-error="hasError"
+          :key="sponsorTier.id"
+          :sponsor-tier="sponsorTier"
+          @delete-sponsor-tier="deleteSponsorTier"
+          @has-error="hasError"
         />
       </template>
     </draggable>

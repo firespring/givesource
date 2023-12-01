@@ -41,7 +41,6 @@
 
 <script>
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: [String, Number], default: null },
     id: {
@@ -95,6 +94,7 @@ export default {
       }
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: this.modelValue || 0
@@ -130,7 +130,7 @@ export default {
       }
     },
     modelValue: {
-      handler(value, oldValue) {
+      handler (value, oldValue) {
         const vue = this
 
         if (value === oldValue) {

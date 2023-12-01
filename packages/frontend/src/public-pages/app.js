@@ -29,11 +29,11 @@ import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
-const emitter = new mitt()
-
 import './assets/css/site.css'
 import './assets/css/donation.css'
 import './assets/css/default.css'
+
+const emitter = new mitt()
 
 // Register window globals
 window._ = require('lodash')

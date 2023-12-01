@@ -32,7 +32,6 @@
 
 <script>
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: [String, Number], default: '' },
     id: {
@@ -48,6 +47,7 @@ export default {
       default: 10
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: this.modelValue ? this.modelValue : new Date().getFullYear()

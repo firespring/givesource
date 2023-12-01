@@ -36,7 +36,6 @@
 require('@claviska/jquery-minicolors')
 
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: String, default: null },
     id: {
@@ -52,6 +51,7 @@ export default {
       default: null
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: ''

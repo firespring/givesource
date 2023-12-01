@@ -61,7 +61,6 @@
 
 <script>
 export default {
-  emits: ['update:modelValue', 'loaded'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -69,6 +68,7 @@ export default {
     secureKey: { type: String, default: '' },
     modelValue: { type: String, default: '' }
   },
+  emits: ['update:modelValue', 'loaded'],
   data: function () {
     return {
       localValue: this.modelValue ? this.modelValue : '',
@@ -86,7 +86,7 @@ export default {
       }
     },
     localValue: {
-      handler() {
+      handler () {
         this.$emit('update:modelValue', this.localValue)
       }
     }

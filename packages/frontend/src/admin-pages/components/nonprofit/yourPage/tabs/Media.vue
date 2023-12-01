@@ -76,10 +76,10 @@
       >
         <template #item="{ element: slide }">
           <media-list-table-row
-              :key="slide.id"
-              :slide="slide"
-              :file="getFile(slide.fileId)"
-              @delete-slide="deleteSlide"
+            :key="slide.id"
+            :slide="slide"
+            :file="getFile(slide.fileId)"
+            @delete-slide="deleteSlide"
           />
         </template>
       </draggable>

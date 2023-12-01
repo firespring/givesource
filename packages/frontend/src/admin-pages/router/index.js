@@ -94,8 +94,8 @@ const router = createRouter({
       props: true,
       beforeEnter: function (to, from, next) {
         if (User.isAuthenticated()) {
-          if (router.app.config.globalProperties.user.groups.indexOf('SuperAdmin') > -1
-            || router.app.config.globalProperties.user.groups.indexOf('Admin') > -1) {
+          if (router.app.config.globalProperties.user.groups.indexOf('SuperAdmin') > -1 ||
+            router.app.config.globalProperties.user.groups.indexOf('Admin') > -1) {
             next({ name: 'donations-list' })
           } else {
             next({

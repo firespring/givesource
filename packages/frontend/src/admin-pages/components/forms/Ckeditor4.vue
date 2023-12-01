@@ -25,7 +25,6 @@
 
 <script>
 export default {
-  emits: ['input'],
   props: {
     value: {
       type: String,
@@ -48,6 +47,7 @@ export default {
       default: 'basic'
     }
   },
+  emits: ['input'],
   data () {
     return {
       toolbars: {
@@ -98,7 +98,7 @@ export default {
       }
     })
   },
-  destroyed () {
+  unmounted () {
     const vm = this
 
     if (window.CKEDITOR.instances[vm.id]) {

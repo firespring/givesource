@@ -26,8 +26,8 @@
     >
       <template #item="{ element: content }">
         <faq-list-table-row
-            :key="content.id"
-            :content="content"
+          :key="content.id"
+          :content="content"
         />
       </template>
     </draggable>

@@ -48,12 +48,12 @@
 
 <script>
 export default {
-  emits: ['change'],
   props: {
     amount: { type: [String, Number], default: null },
     description: { type: String, default: '' },
     index: { type: [String, Number], default: null }
   },
+  emits: ['change'],
   data: function () {
     return {
       localAmount: this.amount || '',

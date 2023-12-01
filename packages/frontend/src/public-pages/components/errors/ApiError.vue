@@ -62,10 +62,10 @@
 
 <script>
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: Object, default: () => ({}) }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: {}

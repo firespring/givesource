@@ -84,12 +84,12 @@
 
 <script>
 export default {
-  emits: ['update:modelValue'],
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
     modelValue: { type: Object, default: () => null }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: this.modelValue ? this.modelValue : null,

@@ -17,7 +17,6 @@
 import createPersistedState from 'vuex-persistedstate'
 import { createStore } from 'vuex'
 
-
 export default createStore({
   state: {
     cacheKey: 0,
