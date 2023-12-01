@@ -78,7 +78,7 @@ export default {
   },
   watch: {
     localValue: {
-      handle (value, oldValue) {
+      handler (value, oldValue) {
         const vue = this
         if (value === oldValue) {
           return
@@ -87,7 +87,7 @@ export default {
       }
     },
     modelValue: {
-      handle (value, oldValue) {
+      handler (value, oldValue) {
         const vue = this
         if (value === oldValue) {
           return

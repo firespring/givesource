@@ -108,7 +108,7 @@ export default {
       this.updateDonationsSubtotal()
     },
     localValue: {
-      handle (value, oldValue) {
+      handler (value, oldValue) {
         const vm = this
         if (value === oldValue) {
           return
@@ -117,7 +117,7 @@ export default {
       }
     },
     modelValue: {
-      handle (value, oldValue) {
+      handler (value, oldValue) {
         const vm = this
         if (value === oldValue) {
           return

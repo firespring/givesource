@@ -75,12 +75,12 @@ export default {
   },
   watch: {
     modelValue: {
-      handle (val) {
+      handler (val) {
         this.localValue = val
       }
     },
     localValue: {
-      handle () {
+      handler () {
         const vm = this
         this.$emit('update:modelValue', vm.localValue)
         if (vm.$refs.input) {

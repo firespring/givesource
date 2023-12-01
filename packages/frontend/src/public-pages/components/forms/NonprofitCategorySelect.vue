@@ -106,12 +106,12 @@ export default {
   },
   watch: {
     modelValue: {
-      handle (newVal) {
+      handler (newVal) {
         this.localValue = newVal
       }
     },
     localValue: {
-      handle () {
+      handler () {
         this.$emit('update:modelValue', this.localValue)
       }
     }
