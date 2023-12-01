@@ -97,7 +97,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value || 0
+      localValue: this.modelValue || 0
     }
   },
   computed: {

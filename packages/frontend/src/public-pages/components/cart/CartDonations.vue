@@ -58,12 +58,12 @@ import { mapState } from 'vuex'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
 
 export default {
-  emits: ['input', 'has-error'],
+  emits: ['update:modelValue', 'has-error'],
   components: {
     'cart-donations-list-table': ComponentCartDonationsListTable
   },
   props: {
-    value: { type: Boolean, default: null },
+    modelValue: { type: Boolean, default: null },
     displayTotal: {
       type: Boolean,
       default: false
@@ -71,7 +71,7 @@ export default {
   },
   data () {
     return {
-      localValue: this.value,
+      localValue: this.modelValue,
 
       donationFees: 0,
       donationSubtotal: 0
@@ -107,19 +107,23 @@ export default {
     cartItems () {
       this.updateDonationsSubtotal()
     },
-    localValue (value, oldValue) {
-      const vm = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handle (value, oldValue) {
+        const vm = this
+        if (value === oldValue) {
+          return
+        }
+        vm.$emit('update:modelValue', value)
       }
-      vm.$emit('input', value)
     },
-    value (value, oldValue) {
-      const vm = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handle (value, oldValue) {
+        const vm = this
+        if (value === oldValue) {
+          return
+        }
+        vm.localValue = value
       }
-      vm.localValue = value
     }
   },
   created () {

@@ -61,7 +61,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : ''
+      localValue: this.modelValue ? this.modelValue : ''
     }
   },
   watch: {

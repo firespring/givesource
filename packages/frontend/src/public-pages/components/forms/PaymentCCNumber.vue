@@ -92,9 +92,9 @@
 require('jquery.payment')
 
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: null
@@ -110,7 +110,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : null
+      localValue: this.modelValue ? this.modelValue : null
     }
   },
   computed: {
@@ -119,11 +119,15 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handle (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handle () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   },
   mounted: function () {

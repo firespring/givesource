@@ -46,9 +46,9 @@
 
 <script>
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: null
@@ -64,7 +64,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : !this.placeholder ? 'AL' : '',
+      localValue: this.modelValue ? this.modelValue : !this.placeholder ? 'AL' : '',
       states: [
         {
           name: 'Alabama',
@@ -312,24 +312,28 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handle (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', vue.selectedValue)
       }
-      vue.$emit('input', vue.selectedValue)
     },
-    value: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handle (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
       }
-      vue.localValue = value
     }
   },
   mounted: function () {
     const vue = this
-    vue.$emit('input', vue.selectedValue)
+    vue.$emit('update:modelValue', vue.selectedValue)
   }
 }
 </script>

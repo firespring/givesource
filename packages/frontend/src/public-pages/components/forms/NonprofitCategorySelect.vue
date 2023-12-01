@@ -45,9 +45,9 @@
 
 <script>
 export default {
-  emits: ['input'],
+  emits: ['update:modelValue'],
   props: {
-    value: { type: [String, Number], default: null },
+    modelValue: { type: [String, Number], default: null },
     name: {
       type: String,
       default: 'nonprofitCategory'
@@ -67,7 +67,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value || 0,
+      localValue: this.modelValue || 0,
 
       categories: [
         { value: 1, text: 'Animal-Related' },
@@ -105,11 +105,15 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handle (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handle () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   }
 }

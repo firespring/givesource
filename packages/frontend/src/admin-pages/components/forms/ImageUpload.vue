@@ -118,7 +118,7 @@ export default {
       }
     },
     localValue: {
-      localValue: function () {
+      handler () {
         const vue = this
 
         if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {

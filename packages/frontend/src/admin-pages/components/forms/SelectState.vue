@@ -64,7 +64,7 @@ export default {
   },
   data: function () {
     return {
-      localValue: this.value ? this.value : !this.placeholder ? 'AL' : '',
+      localValue: this.modelValue ? this.modelValue : !this.placeholder ? 'AL' : '',
       states: [
         {
           name: 'Alabama',

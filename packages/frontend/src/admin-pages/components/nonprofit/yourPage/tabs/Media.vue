@@ -46,7 +46,7 @@
           :to="{ name: 'nonprofit-your-page-media-videos-add' }"
           role="button"
           class="c-btn c-btn--sm c-btn--icon"
-          :is-active="!disableAddButton"
+          :disabled="disableAddButton ? true : null"
         >
           <i
             class="fa fa-video-camera"

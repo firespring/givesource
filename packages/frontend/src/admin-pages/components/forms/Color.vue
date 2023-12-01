@@ -79,7 +79,7 @@ export default {
           return
         }
         vue.localValue = value
-        $(vue.$refs.input).minicolors('value', vue.value)
+        $(vue.$refs.input).minicolors('value', vue.modelValue)
       }
     }
   },
