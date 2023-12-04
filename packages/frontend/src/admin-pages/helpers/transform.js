@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { computed } from 'vue'
-
 /**
  * Transform a map of data using the provided transformers
  *
@@ -64,7 +62,7 @@ const transform = function (value, transformers, options) {
  */
 const getTransformer = function (transformer) {
   if (_.isString(transformer)) {
-    transformer = $filters[transformer]
+    transformer = this.$filters[transformer]
   }
   return transformer
 }

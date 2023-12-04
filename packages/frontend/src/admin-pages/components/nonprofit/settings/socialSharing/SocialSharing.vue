@@ -200,6 +200,7 @@ export default {
   props: {
     nonprofitId: { type: [String, Number], default: null }
   },
+  emits: ['update-nonprofit'],
   data () {
     return {
       nonprofit: {},

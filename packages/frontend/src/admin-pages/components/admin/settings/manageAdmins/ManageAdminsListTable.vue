@@ -65,6 +65,7 @@ export default {
   props: {
     nonprofitId: { type: [String, Number], default: null }
   },
+  emits: ['has-error'],
   data: function () {
     return {
       adminUsers: [],

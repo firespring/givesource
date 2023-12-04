@@ -65,6 +65,7 @@ export default {
     timestamp: { type: Number, default: 0 },
     index: { type: Number, default: 0 }
   },
+  emits: ['update-cart-item', 'has-error', 'remove-cart-item'],
   data: function () {
     return {
       localAmount: this.amount,

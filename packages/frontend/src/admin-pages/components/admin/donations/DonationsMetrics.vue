@@ -62,6 +62,7 @@
 const numeral = require('numeral')
 
 export default {
+  emits: ['has-error'],
   data: function () {
     return {
       metrics: {

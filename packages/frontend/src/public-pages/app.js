@@ -33,7 +33,7 @@ import './assets/css/site.css'
 import './assets/css/donation.css'
 import './assets/css/default.css'
 
-const emitter = new mitt()
+const emitter = mitt()
 
 // Register window globals
 window._ = require('lodash')

@@ -76,6 +76,7 @@ export default {
     note: { type: String, default: null },
     index: { type: Number, default: null }
   },
+  emits: ['update-cart-item', 'has-error', 'remove-cart-item'],
   data () {
     const vm = this
 

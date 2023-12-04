@@ -128,6 +128,10 @@ export default {
     cognitoUser: { type: Object, default: () => null },
     userAttributes: { type: Object, default: () => null }
   },
+  emits: [
+    'set-display-header',
+    'set-display-links'
+  ],
   data: function () {
     return {
       displayAuthorizing: false,

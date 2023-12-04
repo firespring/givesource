@@ -37,7 +37,7 @@ import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
-const emitter = new mitt()
+const emitter = mitt()
 
 // Register window globals
 window._ = require('lodash')

@@ -178,6 +178,7 @@ export default {
       }
     }
   },
+  emits: ['update-nonprofit'],
   data: function () {
     return {
       loaded: false,

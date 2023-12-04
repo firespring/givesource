@@ -175,6 +175,7 @@ export default {
   props: {
     nonprofit: { type: Object, default: () => null }
   },
+  emits: ['update-nonprofit', 'has-error'],
   data: function () {
     return {
       displayingMenu: false,

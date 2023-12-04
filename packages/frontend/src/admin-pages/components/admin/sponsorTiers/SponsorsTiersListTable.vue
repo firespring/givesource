@@ -62,6 +62,7 @@ export default {
       }
     }
   },
+  emits: ['sponsor-tiers', 'has-error'],
   data: function () {
     return {
       localSponsorTiers: [],

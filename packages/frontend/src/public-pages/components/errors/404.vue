@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero :presented-by="false">
-      <h1 slot="title">
-        Oops!
-      </h1>
+      <template #title>
+        <h1>
+          Oops!
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">

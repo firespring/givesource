@@ -69,6 +69,7 @@ export default {
   components: {
     'donation-cart-modal-list-table-row': ComponentDonationCartModalListTableRow
   },
+  emits: ['find-nonprofit', 'has-error'],
   data: function () {
     return {
       cartItems: []

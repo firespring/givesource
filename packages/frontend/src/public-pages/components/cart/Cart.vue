@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero>
-      <h1 slot="title">
-        Your Donations
-      </h1>
+      <template #title>
+        <h1>
+          Your Donations
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">

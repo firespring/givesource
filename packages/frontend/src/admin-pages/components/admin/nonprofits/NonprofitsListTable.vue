@@ -72,6 +72,7 @@ export default {
       default: false
     }
   },
+  emits: ['update-nonprofit', 'has-error'],
   computed: {
     displayRows: function () {
       return this.loaded && this.nonprofits.length

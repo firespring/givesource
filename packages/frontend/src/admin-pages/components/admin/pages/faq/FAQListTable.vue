@@ -51,6 +51,7 @@ export default {
       }
     }
   },
+  emits: ['contents', 'has-error'],
   data: function () {
     return {
       localContents: [],

@@ -74,6 +74,7 @@ export default {
       default: null
     }
   },
+  emits: ['sponsors', 'has-error'],
   data: function () {
     return {
       localSponsors: [],

@@ -19,21 +19,27 @@
     <layout-header />
 
     <layout-hero>
-      <div
+      <template
         v-if="logoUrl"
-        slot="logo"
-        class="page-hero__logo"
+        #logo
       >
-        <img
-          width="320"
-          height="140"
-          :alt="nonprofit.legalName"
-          :src="logoUrl"
+        <div
+          v-if="logoUrl"
+          class="page-hero__logo"
         >
-      </div>
-      <h1 slot="title">
-        {{ nonprofit.legalName }}
-      </h1>
+          <img
+            width="320"
+            height="140"
+            :alt="nonprofit.legalName"
+            :src="logoUrl"
+          >
+        </div>
+      </template>
+      <template #title>
+        <h1>
+          {{ nonprofit.legalName }}
+        </h1>
+      </template>
     </layout-hero>
 
     <!-- BEGIN page main -->
@@ -91,21 +97,20 @@
               <social-sharing
                 network-tag="a"
                 :url="pageUrl"
-                inline-template
               >
                 <div class="donation-share">
-                  <network network="facebook">
+                  <ShareNetwork network="facebook">
                     <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
                       class="fab fa-facebook-f"
                       aria-hidden="true"
                     />Share</span>
-                  </network>
-                  <network network="twitter">
+                  </ShareNetwork>
+                  <ShareNetwork network="twitter">
                     <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
                       class="fab fa-twitter"
                       aria-hidden="true"
                     />Tweet</span>
-                  </network>
+                  </ShareNetwork>
                 </div>
               </social-sharing>
             </div>

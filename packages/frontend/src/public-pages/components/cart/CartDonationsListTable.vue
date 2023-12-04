@@ -71,6 +71,7 @@ export default {
   components: {
     'cart-donations-list-table-row': ComponentCartDonationsListTableRow
   },
+  emits: ['has-error'],
   computed: {
     cartItems () {
       const vm = this

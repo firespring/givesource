@@ -22,19 +22,22 @@
       :presented-by="true"
       :wrap="true"
     >
-      <img
-        v-show="homepageSpotlightUrl"
-        slot="spotlight"
-        :alt="eventTitle"
-        :src="homepageSpotlightUrl"
-      >
+      <template #spotlight>
+        <img
+          v-show="homepageSpotlightUrl"
+          :alt="eventTitle"
+          :src="homepageSpotlightUrl"
+        >
+      </template>
 
-      <h1
+      <template
         v-if="getContentValue('HOMEPAGE_TITLE')"
-        slot="title"
+        #title
       >
-        {{ getContentValue('HOMEPAGE_TITLE') }}
-      </h1>
+        <h1>
+          {{ getContentValue('HOMEPAGE_TITLE') }}
+        </h1>
+      </template>
 
       <div v-html="getContentValue('HOMEPAGE_MASTHEAD_TEXT')" />
     </layout-hero>
