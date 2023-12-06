@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import $filters from '../filters/index'
 
 /**
  * Transform a map of data using the provided transformers
@@ -62,7 +63,7 @@ const transform = function (value, transformers, options) {
  */
 const getTransformer = function (transformer) {
   if (_.isString(transformer)) {
-    transformer = this.$filters[transformer]
+    transformer = $filters[transformer]
   }
   return transformer
 }
