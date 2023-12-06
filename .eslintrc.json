@@ -11,8 +11,8 @@
         "Modal", "Modals", "Toolkits", "Register", "Pagination", "Nonprofit",
         "Leaderboard", "Sponsors", "Spinner", "Hero", "Header", "Footer", "Metrics",
         "Homepage", "Submit", "Money", "404", "Contact", "Cart", "About", "Media",
-        "Content", "Video", "Navigation", "Datetime", "Color", "Ckeditor5", "Ckeditor4",
-        "Login", "Logout", "Appearance", "Analytics", "Terms", "Checkout", "Ckeditor"
+        "Content", "Video", "Navigation", "Datetime", "Color", "Ckeditor",
+        "Login", "Logout", "Appearance", "Analytics", "Terms", "Checkout"
       ]
     }],
     "vue/v-on-event-hyphenation": ["error", "always", {
