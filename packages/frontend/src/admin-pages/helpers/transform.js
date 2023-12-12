@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import $filters from '../filters/index'
+import { $filters } from '../filters/index'
 
 /**
  * Transform a map of data using the provided transformers
