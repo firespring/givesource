@@ -212,8 +212,7 @@ export default {
       for (let i = 0; i < binary.length; i++) {
         array.push(binary.charCodeAt(i))
       }
-      const blarb = new Blob([new Uint8Array(array)], { type: type })
-      return blarb
+      return new Blob([new Uint8Array(array)], { type: type })
     }
   }
 }
