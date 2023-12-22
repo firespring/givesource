@@ -34,26 +34,24 @@
       />
 
       <div style="margin-top: 1.5rem;">
-        <social-sharing
-          network-tag="a"
-          :url="pageUrl"
-          :title="settings.SOCIAL_SHARING_DESCRIPTION"
-        >
-          <div class="donation-share">
-            <ShareNetwork network="facebook">
+        <div class="donation-share">
+          <ShareNetwork :url="pageUrl"
+                        :title="settings.SOCIAL_SHARING_DESCRIPTION"
+                        network="facebook">
               <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
-                class="fab fa-facebook-f"
-                aria-hidden="true"
+                  class="fab fa-facebook-f"
+                  aria-hidden="true"
               />Share</span>
-            </ShareNetwork>
-            <ShareNetwork network="twitter">
+          </ShareNetwork>
+          <ShareNetwork :url="pageUrl"
+                        :title="settings.SOCIAL_SHARING_DESCRIPTION"
+                        network="twitter">
               <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
-                class="fab fa-twitter"
-                aria-hidden="true"
+                  class="fab fa-twitter"
+                  aria-hidden="true"
               />Tweet</span>
-            </ShareNetwork>
-          </div>
-        </social-sharing>
+          </ShareNetwork>
+        </div>
       </div>
     </main>
 

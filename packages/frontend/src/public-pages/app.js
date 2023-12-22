@@ -21,7 +21,7 @@ import axios from 'axios'
 import ModalsMixin from './mixins/modals'
 import router from './router'
 import store from './store'
-import SocialSharing from 'vue-social-sharing'
+import VueSocialSharing from 'vue-social-sharing'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
@@ -48,7 +48,7 @@ const app = createApp(App)
   // Register filters
   .use(VueFilters)
   // Register plugins
-  .use(SocialSharing)
+  .use(VueSocialSharing)
   // Register mixins
   .mixin(ModalsMixin)
   .mixin(UtilsMixin)
