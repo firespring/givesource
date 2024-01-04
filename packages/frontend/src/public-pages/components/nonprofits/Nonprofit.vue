@@ -95,21 +95,25 @@
               </div>
 
               <div class="donation-share">
-                <ShareNetwork :url="pageUrl"
-                              :title="pageTitle"
-                              network="facebook">
-                    <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
-                        class="fab fa-facebook-f"
-                        aria-hidden="true"
-                    />Share</span>
+                <ShareNetwork
+                  :url="pageUrl"
+                  :title="pageTitle"
+                  network="facebook"
+                >
+                  <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
+                    class="fab fa-facebook-f"
+                    aria-hidden="true"
+                  />Share</span>
                 </ShareNetwork>
-                <ShareNetwork :url="pageUrl"
-                              :title="pageTitle"
-                              network="twitter">
-                    <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
-                        class="fab fa-twitter"
-                        aria-hidden="true"
-                    />Tweet</span>
+                <ShareNetwork
+                  :url="pageUrl"
+                  :title="pageTitle"
+                  network="twitter"
+                >
+                  <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
+                    class="fab fa-twitter"
+                    aria-hidden="true"
+                  />Tweet</span>
                 </ShareNetwork>
               </div>
             </div>
