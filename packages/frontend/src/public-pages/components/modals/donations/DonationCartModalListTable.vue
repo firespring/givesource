@@ -94,7 +94,7 @@ export default {
       const item = vue.cartItems[index]
       item.amount = amount
 
-      vue.$set(vue.cartItems, index, item)
+      vue.cartItems[index] = item
       vue.$store.commit('updateCartItem', {
         timestamp: item.timestamp,
         amount: item.amount
