@@ -54,8 +54,9 @@
 <script>
 export default {
   props: {
-    value: { type: Object, default: () => ({}) }
+    modelValue: { type: Object, default: () => ({}) }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: {}
@@ -67,19 +68,23 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', vue.localValue)
       }
-      vue.$emit('input', vue.localValue)
     },
-    value: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
       }
-      vue.localValue = value
     }
   },
   methods: {

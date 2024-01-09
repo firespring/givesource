@@ -33,7 +33,7 @@
 <script>
 export default {
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: null
@@ -43,9 +43,10 @@ export default {
       default: null
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value ? this.value : '01',
+      localValue: this.modelValue ? this.modelValue : '01',
       options: [
         '01',
         '02',
@@ -63,15 +64,19 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handler () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   },
   mounted: function () {
-    this.$emit('input', this.localValue)
+    this.$emit('update:modelValue', this.localValue)
   }
 }
 </script>

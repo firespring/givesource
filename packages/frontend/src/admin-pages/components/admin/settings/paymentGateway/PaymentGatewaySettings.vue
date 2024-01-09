@@ -460,6 +460,7 @@ export default {
       next()
     })
   },
+  emits: ['save'],
   data: function () {
     return {
       settings: [],

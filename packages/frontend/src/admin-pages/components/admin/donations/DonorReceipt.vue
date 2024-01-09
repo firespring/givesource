@@ -100,7 +100,7 @@ export default {
     }
   },
 
-  destroyed () {
+  unmounted () {
     this.clearReceipt()
   },
 

@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero>
-      <h1 slot="title">
-        {{ page.title }}
-      </h1>
+      <template #title>
+        <h1>
+          {{ page.title }}
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">

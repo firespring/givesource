@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero :presented-by="true">
-      <h1 slot="title">
-        Frequently Asked Questions
-      </h1>
+      <template #title>
+        <h1>
+          Frequently Asked Questions
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">

@@ -39,7 +39,7 @@ require('chosen-js')
 
 export default {
   props: {
-    value: { type: [String, Number], default: null },
+    modelValue: { type: [String, Number], default: null },
     id: {
       type: String,
       default: null
@@ -63,6 +63,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: ''
@@ -74,27 +75,34 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', vue.selectedValue)
       }
-      vue.$emit('input', vue.selectedValue)
     },
-    value: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
-      }
-      vue.localValue = value
-      $(vue.$refs.select).val(value)
-      $(vue.$refs.select).trigger('chosen:updated')
-    },
-    nonprofits: function () {
-      const vue = this
-      vue.$nextTick(function () {
+    modelValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
+        $(vue.$refs.select).val(value)
         $(vue.$refs.select).trigger('chosen:updated')
-      })
+      }
+
+    },
+    nonprofits: {
+      handler () {
+        const vue = this
+        vue.$nextTick(function () {
+          $(vue.$refs.select).trigger('chosen:updated')
+        })
+      }
     }
   },
   mounted: function () {

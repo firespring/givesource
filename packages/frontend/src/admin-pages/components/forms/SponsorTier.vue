@@ -56,19 +56,24 @@ export default {
         return []
       }
     },
-    value: { type: [String, Number], default: null }
+    modelValue: { type: [String, Number], default: null }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value ? this.value : ''
+      localValue: this.modelValue ? this.modelValue : ''
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
+      }
     },
-    localValue: function () {
-      this.$emit('input', this.localValue)
+    localValue: {
+      handler () {
+        this.$emit('update:modelValue', this.localValue)
+      }
     }
   }
 }

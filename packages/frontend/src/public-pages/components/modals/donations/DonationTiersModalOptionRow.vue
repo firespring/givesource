@@ -33,6 +33,7 @@ export default {
   props: {
     donationTier: { type: Object, default: () => ({}) }
   },
+  emits: ['select-tier'],
   computed: {
     amount: function () {
       return this.formatMoney(this.donationTier.amount)

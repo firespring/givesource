@@ -20,7 +20,7 @@ import shave from 'shave'
  Shave
  ============================================================================ */
 const directive = {
-  inserted: function (el, binding) {
+  mounted: function (el, binding) {
     if (binding.value) {
       shave(el, binding.value)
     }

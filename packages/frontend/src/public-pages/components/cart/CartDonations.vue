@@ -62,15 +62,16 @@ export default {
     'cart-donations-list-table': ComponentCartDonationsListTable
   },
   props: {
-    value: { type: Boolean, default: null },
+    modelValue: { type: Boolean, default: null },
     displayTotal: {
       type: Boolean,
       default: false
     }
   },
+  emits: ['update:modelValue', 'has-error'],
   data () {
     return {
-      localValue: this.value,
+      localValue: this.modelValue,
 
       donationFees: 0,
       donationSubtotal: 0
@@ -106,19 +107,23 @@ export default {
     cartItems () {
       this.updateDonationsSubtotal()
     },
-    localValue (value, oldValue) {
-      const vm = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        const vm = this
+        if (value === oldValue) {
+          return
+        }
+        vm.$emit('update:modelValue', value)
       }
-      vm.$emit('input', value)
     },
-    value (value, oldValue) {
-      const vm = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        const vm = this
+        if (value === oldValue) {
+          return
+        }
+        vm.localValue = value
       }
-      vm.localValue = value
     }
   },
   created () {

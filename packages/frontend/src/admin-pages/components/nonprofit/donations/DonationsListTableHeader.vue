@@ -34,10 +34,10 @@
 const slug = require('slug')
 
 export default {
-
   props: {
     nonprofit: { type: Object, default: () => ({}) }
   },
+  emits: ['has-error'],
   data () {
     return {
       report: {},

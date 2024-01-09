@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero :presented-by="true">
-      <h1 slot="title">
-        Nonprofit Search Results
-      </h1>
+      <template #title>
+        <h1>
+          Nonprofit Search Results
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">
@@ -35,7 +37,7 @@
           v-if="search && pagination.loaded"
           class="mt3 mb3 text-c"
         >
-          <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} {{ pagination.items.length | pluralize('result') }}.</strong>
+          <strong>Your search for "{{ search }}" returned {{ pagination.items.length }} {{ $filters.pluralize(pagination.items.length, 'result') }}.</strong>
         </p>
 
         <div

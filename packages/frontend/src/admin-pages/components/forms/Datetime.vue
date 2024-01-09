@@ -44,7 +44,7 @@
 import DatePicker from 'jquery-datetimepicker' // eslint-disable-line no-unused-vars
 export default {
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: 'date'
@@ -76,6 +76,7 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
       localValue: '',
@@ -103,19 +104,23 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', value)
       }
-      vue.$emit('input', value)
     },
-    value: function (value, oldValue) {
-      const vue = this
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        const vue = this
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
       }
-      vue.localValue = value
     }
   },
   mounted: function () {

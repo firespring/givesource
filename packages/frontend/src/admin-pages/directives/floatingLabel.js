@@ -18,7 +18,7 @@
  Floating labels for text inputs
  ============================================================================ */
 const directive = {
-  inserted: function (el) {
+  mounted: function (el) {
     const $el = $(el)
 
     $el.find('input, textarea').each(function () {
@@ -47,17 +47,7 @@ const directive = {
       }
     })
   },
-  update: function (el) {
-    const $el = $(el)
-
-    $el.find('input, textarea').each(function () {
-      if ($(this).val() !== '' || $(this).is(':focus')) {
-        $(this).siblings('label').hide()
-        $(this).parents('.js-floating-label').addClass('has-floating-label--float').find('label').show()
-      }
-    })
-  },
-  componentUpdated: function (el) {
+  updated: function (el) {
     const $el = $(el)
 
     $el.find('input, textarea').each(function () {

@@ -46,7 +46,7 @@
           :to="{ name: 'nonprofit-your-page-media-videos-add' }"
           role="button"
           class="c-btn c-btn--sm c-btn--icon"
-          :disabled="disableAddButton"
+          :disabled="disableAddButton ? true : null"
         >
           <i
             class="fa fa-video-camera"
@@ -69,31 +69,33 @@
 
       <draggable
         v-model="slides"
-        :options="draggableOptions"
-        :element="'tbody'"
+        v-bind="draggableOptions"
+        tag="tbody"
+        item-key="id"
         @end="updateSortOrder"
       >
-        <media-list-table-row
-          v-for="slide in slidesAfterLoaded"
-          :key="slide.id"
-          :slide="slide"
-          :file="getFile(slide.fileId)"
-          @delete-slide="deleteSlide"
-        />
+        <template #item="{ element: slide }">
+          <media-list-table-row
+            :key="slide.id"
+            :slide="slide"
+            :file="getFile(slide.fileId)"
+            @delete-slide="deleteSlide"
+          />
+        </template>
       </draggable>
     </table>
   </div>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
 
 const MediaHelper = require('./../../../../helpers/media')
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable: draggable,
     'media-list-table-row': ComponentMediaListTableRow
   },
   props: {
@@ -110,8 +112,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       },
 
       apiError: {}
@@ -168,11 +169,11 @@ export default {
   created: function () {
     const vue = this
 
-    vue.bus.$on('photoEditorSave-New', function (data, file) {
-      vue.uploadFile(data, file)
+    vue.bus.$on('photoEditorSave-New', function (data) {
+      vue.uploadFile(data.file, data.blob)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.bus.$off('photoEditorSave-New')

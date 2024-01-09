@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import Vue from 'vue'
+import { $filters } from '../filters/index'
 
 /**
  * Transform a map of data using the provided transformers
@@ -64,7 +63,7 @@ const transform = function (value, transformers, options) {
  */
 const getTransformer = function (transformer) {
   if (_.isString(transformer)) {
-    transformer = Vue.filter(transformer)
+    transformer = $filters[transformer]
   }
   return transformer
 }

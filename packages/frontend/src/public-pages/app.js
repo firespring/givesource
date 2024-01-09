@@ -18,38 +18,22 @@ import * as VueMoney from 'v-money'
 import ApiErrorComponent from './components/errors/ApiError.vue'
 import App from './components/App.vue'
 import axios from 'axios'
-import EventBusMixin from './mixins/eventBus'
 import ModalsMixin from './mixins/modals'
 import router from './router'
 import store from './store'
-import SocialSharing from 'vue-social-sharing'
+import VueSocialSharing from 'vue-social-sharing'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
-import Vue from 'vue'
+import { createApp } from 'vue'
 import VueFilters from './filters'
+import mitt from 'mitt'
 
 import './assets/css/site.css'
 import './assets/css/donation.css'
 import './assets/css/default.css'
 
-// Register filters
-Vue.use(VueFilters)
-
-// Register plugins
-Vue.use(SocialSharing)
-
-// Register mixins
-Vue.mixin(EventBusMixin)
-Vue.mixin(ModalsMixin)
-Vue.mixin(UtilsMixin)
-Vue.mixin(ValidateMixin)
-
-// Register directives
-Vue.directive('money', VueMoney.VMoney)
-
-// Register global components
-Vue.component('ApiError', ApiErrorComponent)
+const emitter = mitt()
 
 // Register window globals
 window._ = require('lodash')
@@ -58,15 +42,31 @@ window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // Bootstrap the app
-const main = App
-main.router = router
-main.store = store
+const app = createApp(App)
+  .use(store)
+  .use(router)
+  // Register filters
+  .use(VueFilters)
+  // Register plugins
+  .use(VueSocialSharing)
+  // Register mixins
+  .mixin(ModalsMixin)
+  .mixin(UtilsMixin)
+  .mixin(ValidateMixin)
+  // Register directives
+  .directive('money', VueMoney.VMoney)
+  // Register global components
+  .component('ApiError', ApiErrorComponent)
+  // Start the app
+  // Setup Analytics
+  .use(VueGtag, {
+    config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
+  }, router)
+  .provide('bus', emitter)
 
-// Setup Analytics
-Vue.use(VueGtag, {
-  config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
-}, router)
+emitter.$on = emitter.on
+emitter.$off = emitter.off
+emitter.$emit = emitter.emit
+app.config.globalProperties.bus = emitter
 
-// Start the app
-const app = new Vue(main)
-app.$mount('#app')
+app.mount('#app')

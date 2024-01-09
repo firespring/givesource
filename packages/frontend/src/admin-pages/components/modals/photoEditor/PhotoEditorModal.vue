@@ -109,6 +109,7 @@
 
 <script>
 import VueCropper from 'vue-cropperjs'
+import 'cropperjs/dist/cropper.css'
 import VueSlider from 'vue-slider-component'
 const MathHelper = require('./../../../helpers/math')
 
@@ -199,7 +200,10 @@ export default {
         fillColor: '#fff'
       }).toDataURL(vue.data.file.type)
 
-      vue.bus.$emit(vue.data.listener, vue.data.file, vue.dataURLToBlob(dataUrl, vue.data.file.type))
+      vue.bus.$emit(vue.data.listener, {
+        file: vue.data.file,
+        blob: vue.dataURLToBlob(dataUrl, vue.data.file.type)
+      })
       vue.removeModal('photo-editor')
     },
     dataURLToBlob: function (dataUrl, type) {

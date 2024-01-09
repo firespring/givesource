@@ -74,16 +74,12 @@ import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
 import store from './../store'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter)
-
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(__dirname),
   hashbang: false,
   linkActiveClass: 'here',
-  mode: 'history',
-  base: __dirname,
   scrollBehavior: function (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -98,13 +94,14 @@ const router = new VueRouter({
       props: true,
       beforeEnter: function (to, from, next) {
         if (User.isAuthenticated()) {
-          if (router.app.user.groups.indexOf('SuperAdmin') > -1 || router.app.user.groups.indexOf('Admin') > -1) {
+          if (router.app.config.globalProperties.user.groups.indexOf('SuperAdmin') > -1 ||
+            router.app.config.globalProperties.user.groups.indexOf('Admin') > -1) {
             next({ name: 'donations-list' })
           } else {
             next({
               name: 'nonprofit-donations-list',
               params: {
-                nonprofitId: router.app.user.nonprofitId
+                nonprofitId: router.app.config.globalProperties.user.nonprofitId
               }
             })
           }
@@ -621,7 +618,7 @@ const router = new VueRouter({
 
     // Error Pages
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       name: '404',
       component: Component404,
       meta: { requiresAuth: false }
@@ -688,7 +685,7 @@ const loadSettings = function () {
 const loadUser = function () {
   const request = new Request()
   return request.get('user-profile').then(function (response) {
-    Vue.prototype.user = response.data
+    router.app.config.globalProperties.user = response.data
   })
 }
 
@@ -752,7 +749,9 @@ const nonprofitStatusMiddleware = function (to, from, next) {
  */
 const nonprofitMiddleware = function (to, from, next) {
   if (User.isAuthenticated() && to.meta.hasOwnProperty('validateNonprofitId') && to.params.hasOwnProperty('nonprofitId')) {
-    if (_.intersection(router.app.user.groups, ['SuperAdmin', 'Admin']).length === 0 && parseInt(router.app.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
+    if (_.intersection(
+      router.app.config.globalProperties.user.groups, ['SuperAdmin', 'Admin']
+    ).length === 0 && parseInt(router.app.config.globalProperties.user.nonprofitId) !== parseInt(to.params.nonprofitId)) {
       next({ name: '404' })
     } else {
       next()
@@ -770,7 +769,9 @@ const nonprofitMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const groupsMiddleware = function (to, from, next) {
-  if (User.isAuthenticated() && to.meta.hasOwnProperty('allowedGroups') && _.intersection(router.app.user.groups, to.meta.allowedGroups).length === 0) {
+  if (User.isAuthenticated() && to.meta.hasOwnProperty('allowedGroups') && _.intersection(
+    router.app.config.globalProperties.user.groups, to.meta.allowedGroups
+  ).length === 0) {
     next({ name: '404' })
   } else {
     next()

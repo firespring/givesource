@@ -53,9 +53,9 @@ export default {
        *
        * @param {String} modal
        */
-    vue.bus.$on('addModal', function (modal, data) {
-      vue.modals.push(modal)
-      vue.data[modal] = data || null
+    vue.bus.$on('addModal', function (options) {
+      vue.modals.push(options.modal)
+      vue.data[options.modal] = options.data || null
     })
 
     /**
@@ -72,13 +72,13 @@ export default {
     /**
        * Replace the top-most modal
        */
-    vue.bus.$on('replaceModal', function (modal, data) {
+    vue.bus.$on('replaceModal', function (options) {
       if (vue.modals.length > 0) {
-        vue.modals[vue.modals.length - 1] = modal
-        vue.data[modal] = data || null
+        vue.modals[vue.modals.length - 1] = options.modal
+        vue.data[options.modal] = options.data || null
       } else {
-        vue.modals.push(modal)
-        vue.data[modal] = data || null
+        vue.modals.push(options.modal)
+        vue.data[options.modal] = options.data || null
       }
     })
 

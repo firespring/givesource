@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero>
-      <h1 slot="title">
-        Your Donations
-      </h1>
+      <template #title>
+        <h1>
+          Your Donations
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">
@@ -363,7 +365,7 @@
 </template>
 
 <script>
-import VueRecaptcha from 'vue-recaptcha'
+import { VueRecaptcha } from 'vue-recaptcha'
 import * as Settings from './../../helpers/settings'
 import * as Utils from './../../helpers/utils'
 import ComponentAddressState from './../forms/AddressState.vue'

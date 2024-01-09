@@ -97,6 +97,7 @@ export default {
       }
     }
   },
+  emits: ['reset-pagination', 'search-nonprofits'],
   data: function () {
     return {
       sort: this.pagination.sort,

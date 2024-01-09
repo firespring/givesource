@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero :presented-by="true">
-      <h1 slot="title">
-        Thanks for your donation!
-      </h1>
+      <template #title>
+        <h1>
+          Thanks for your donation!
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">
@@ -32,27 +34,28 @@
       />
 
       <div style="margin-top: 1.5rem;">
-        <social-sharing
-          network-tag="a"
-          :url="pageUrl"
-          :title="settings.SOCIAL_SHARING_DESCRIPTION"
-          inline-template
-        >
-          <div class="donation-share">
-            <network network="facebook">
-              <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
-                class="fab fa-facebook-f"
-                aria-hidden="true"
-              />Share</span>
-            </network>
-            <network network="twitter">
-              <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
-                class="fab fa-twitter"
-                aria-hidden="true"
-              />Tweet</span>
-            </network>
-          </div>
-        </social-sharing>
+        <div class="donation-share">
+          <ShareNetwork
+            :url="pageUrl"
+            :title="settings.SOCIAL_SHARING_DESCRIPTION"
+            network="facebook"
+          >
+            <span class="btn btn--xs btn--dark btn--icon btn--facebook"><i
+              class="fab fa-facebook-f"
+              aria-hidden="true"
+            />Share</span>
+          </ShareNetwork>
+          <ShareNetwork
+            :url="pageUrl"
+            :title="settings.SOCIAL_SHARING_DESCRIPTION"
+            network="twitter"
+          >
+            <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
+              class="fab fa-twitter"
+              aria-hidden="true"
+            />Tweet</span>
+          </ShareNetwork>
+        </div>
       </div>
     </main>
 

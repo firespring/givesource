@@ -18,7 +18,7 @@
  Alerts
  ============================================================================ */
 const directive = {
-  inserted: function (el) {
+  mounted: function (el) {
     const $el = $(el)
 
     $el.find('button').click(function () {

@@ -67,6 +67,7 @@ export default {
     },
     slide: { type: Object, default: () => ({}) }
   },
+  emits: ['delete-slide'],
   computed: {
     icon: function () {
       const vue = this

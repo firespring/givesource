@@ -96,7 +96,7 @@
 
 <script>
 export default {
-
+  emits: ['has-error'],
   data () {
     return {
       displayingMenu: false

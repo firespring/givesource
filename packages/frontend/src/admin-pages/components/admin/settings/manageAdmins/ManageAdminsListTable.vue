@@ -65,6 +65,7 @@ export default {
   props: {
     nonprofitId: { type: [String, Number], default: null }
   },
+  emits: ['has-error'],
   data: function () {
     return {
       adminUsers: [],
@@ -93,7 +94,7 @@ export default {
       vue.deleteModal(selectedAdminUser)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
     vue.bus.$off('deleteUserAdmin')
     vue.bus.$off('deleteUserAdminModal')

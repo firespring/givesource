@@ -15,12 +15,9 @@
  */
 
 import createPersistedState from 'vuex-persistedstate'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
+export default createStore({
   state: {
     settings: {},
     cartItems: [],
@@ -119,5 +116,3 @@ const store = new Vuex.Store({
     createPersistedState()
   ]
 })
-
-export default store

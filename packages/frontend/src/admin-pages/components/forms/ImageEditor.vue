@@ -87,7 +87,7 @@ export default {
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
-    value: { type: [Object, File], default: () => null },
+    modelValue: { type: [Object, File], default: () => null },
     height: {
       type: Number,
       default: 400
@@ -103,9 +103,10 @@ export default {
       }
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value ? this.value : null,
+      localValue: this.modelValue ? this.modelValue : null,
       fileUrl: false
     }
   },
@@ -125,33 +126,37 @@ export default {
     }
   },
   watch: {
-    value (newVal) {
-      this.localValue = newVal
-    },
-    localValue () {
-      const vm = this
-
-      if (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('path')) {
-        vm.fileUrl = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
-      } else if (vm.localValue instanceof File) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          vm.fileUrl = e.target.result
-        }
-        reader.readAsDataURL(vm.localValue)
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
       }
+    },
+    localValue: {
+      handler () {
+        const vm = this
 
-      vm.$emit('input', vm.localValue)
+        if (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('path')) {
+          vm.fileUrl = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
+        } else if (vm.localValue instanceof File) {
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            vm.fileUrl = e.target.result
+          }
+          reader.readAsDataURL(vm.localValue)
+        }
+
+        vm.$emit('update:modelValue', vm.localValue)
+      }
     }
   },
   created () {
     const vm = this
 
-    vm.bus.$on('imageEditorSave', (original, blob) => {
-      vm.localValue = vm.blobToFile(blob, original.name)
+    vm.bus.$on('imageEditorSave', (fileData) => {
+      vm.localValue = vm.blobToFile(fileData.blob, fileData.file.name)
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.bus.$off('imageEditorSave')
   },
   methods: {

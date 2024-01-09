@@ -137,6 +137,8 @@ export default {
     }
   },
 
+  emits: ['change', 'remove'],
+
   data () {
     const vm = this
     return {

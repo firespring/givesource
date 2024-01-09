@@ -29,29 +29,31 @@
 
     <draggable
       v-model="localSponsors"
-      :options="draggableOptions"
-      :element="'tbody'"
+      v-bind="draggableOptions"
+      tag="tbody"
+      item-key="id"
       @end="updateSortOrder"
     >
-      <sponsors-list-table-row
-        v-for="sponsor in localSponsors"
-        :key="sponsor.id"
-        :sponsor="sponsor"
-        :file="getFile(sponsor.fileId)"
-        @has-error="hasError"
-        @delete-sponsor="deleteSponsor"
-      />
+      <template #item="{ element: sponsor }">
+        <sponsors-list-table-row
+          :key="sponsor.id"
+          :sponsor="sponsor"
+          :file="getFile(sponsor.fileId)"
+          @has-error="hasError"
+          @delete-sponsor="deleteSponsor"
+        />
+      </template>
     </draggable>
   </table>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentSponsorsListTableRow from './SponsorsListTableRow.vue'
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable,
     'sponsors-list-table-row': ComponentSponsorsListTableRow
   },
   props: {
@@ -72,6 +74,7 @@ export default {
       default: null
     }
   },
+  emits: ['sponsors', 'has-error'],
   data: function () {
     return {
       localSponsors: [],
@@ -79,8 +82,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       }
     }
   },

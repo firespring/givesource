@@ -53,6 +53,7 @@ export default {
     description: { type: String, default: '' },
     index: { type: [String, Number], default: null }
   },
+  emits: ['change'],
   data: function () {
     return {
       localAmount: this.amount || '',

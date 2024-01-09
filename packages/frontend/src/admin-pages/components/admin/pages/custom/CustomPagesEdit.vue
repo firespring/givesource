@@ -312,7 +312,7 @@ export default {
       vm.$router.push({ name: 'pages-list' })
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     const vm = this
 
     vm.bus.$off('deletePage')

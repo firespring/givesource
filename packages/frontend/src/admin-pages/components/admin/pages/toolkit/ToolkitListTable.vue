@@ -18,27 +18,29 @@
   <table class="table-reorder table-headless">
     <draggable
       v-model="localContents"
-      :options="draggableOptions"
-      :element="'tbody'"
+      v-bind="draggableOptions"
+      tag="tbody"
+      item-key="id"
       class="ui-sortable"
       @end="updateSortOrder"
     >
-      <faq-list-table-row
-        v-for="content in localContents"
-        :key="content.id"
-        :content="content"
-      />
+      <template #item="{ element: content }">
+        <faq-list-table-row
+          :key="content.id"
+          :content="content"
+        />
+      </template>
     </draggable>
   </table>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentToolkitListTableRow from './ToolkitListTableRow.vue'
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable: draggable,
     'faq-list-table-row': ComponentToolkitListTableRow
   },
   props: {
@@ -49,6 +51,7 @@ export default {
       }
     }
   },
+  emits: ['contents', 'has-error'],
   data: function () {
     return {
       localContents: [],
@@ -56,8 +59,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       }
     }
   },

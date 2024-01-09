@@ -19,9 +19,11 @@
     <layout-header />
 
     <layout-hero :presented-by="true">
-      <h1 slot="title">
-        About {{ eventTitle }}
-      </h1>
+      <template #title>
+        <h1>
+          About {{ eventTitle }}
+        </h1>
+      </template>
     </layout-hero>
 
     <main class="main">

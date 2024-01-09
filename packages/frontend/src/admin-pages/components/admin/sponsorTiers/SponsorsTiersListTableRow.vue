@@ -84,6 +84,7 @@ export default {
       }
     }
   },
+  emits: ['delete-sponsor-tier', 'has-error'],
   data: function () {
     return {
       displayingMenu: false,

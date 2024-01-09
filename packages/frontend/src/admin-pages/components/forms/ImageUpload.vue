@@ -87,11 +87,12 @@ export default {
   props: {
     id: { type: String, default: '' },
     name: { type: String, default: '' },
-    value: { type: Object, default: () => null }
+    modelValue: { type: Object, default: () => null }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value ? this.value : null,
+      localValue: this.modelValue ? this.modelValue : null,
       fileUrl: false
     }
   },
@@ -111,23 +112,27 @@ export default {
     }
   },
   watch: {
-    value: function (newVal) {
-      this.localValue = newVal
-    },
-    localValue: function () {
-      const vue = this
-
-      if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {
-        vue.fileUrl = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
-      } else if (vue.localValue instanceof File) {
-        const reader = new FileReader()
-        reader.onload = function (e) {
-          vue.fileUrl = e.target.result
-        }
-        reader.readAsDataURL(vue.localValue)
+    modelValue: {
+      handler (newVal) {
+        this.localValue = newVal
       }
+    },
+    localValue: {
+      handler () {
+        const vue = this
 
-      vue.$emit('input', this.localValue)
+        if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {
+          vue.fileUrl = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
+        } else if (vue.localValue instanceof File) {
+          const reader = new FileReader()
+          reader.onload = function (e) {
+            vue.fileUrl = e.target.result
+          }
+          reader.readAsDataURL(vue.localValue)
+        }
+
+        vue.$emit('update:modelValue', this.localValue)
+      }
     }
   },
   methods: {

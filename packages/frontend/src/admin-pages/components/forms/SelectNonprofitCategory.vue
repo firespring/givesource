@@ -42,7 +42,7 @@
 <script>
 export default {
   props: {
-    value: { type: [String, Number], default: null },
+    modelValue: { type: [String, Number], default: null },
     id: {
       type: String,
       default: null
@@ -94,9 +94,10 @@ export default {
       }
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value || 0
+      localValue: this.modelValue || 0
     }
   },
   computed: {
@@ -118,21 +119,25 @@ export default {
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      const vue = this
+    localValue: {
+      handler (value, oldValue) {
+        const vue = this
 
-      if (value === oldValue) {
-        return
+        if (value === oldValue) {
+          return
+        }
+        vue.$emit('update:modelValue', vue.selectedValue)
       }
-      vue.$emit('input', vue.selectedValue)
     },
-    value: function (value, oldValue) {
-      const vue = this
+    modelValue: {
+      handler (value, oldValue) {
+        const vue = this
 
-      if (value === oldValue) {
-        return
+        if (value === oldValue) {
+          return
+        }
+        vue.localValue = value
       }
-      vue.localValue = value
     }
   }
 }

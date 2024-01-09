@@ -15,34 +15,23 @@
   -->
 
 <template>
-  <component
-    :is="editor"
-    v-if="loaded"
+  <ckeditor
     :id="id"
     v-model="localValue"
-    :type="type"
-    :height="height"
-    :has-errors="hasErrors"
-  />
-  <layout-spinner
-    v-else
-    :height="height"
+    :editor="editor"
+    tag-name="textarea"
+    :class="{'has-errors': hasErrors}"
   />
 </template>
 
 <script>
-import ComponentCkeditor4 from './Ckeditor4.vue'
-import ComponentCkeditor5 from './Ckeditor5.vue'
-import ComponentSpinner from './../layout/Spinner.vue'
+import AdvancedEditor from './../../ckeditor/editors/advanced'
+import BasicEditor from './../../ckeditor/editors/basic'
+import ModerateEditor from './../../ckeditor/editors/moderate'
 
 export default {
-  components: {
-    'forms-ckeditor4': ComponentCkeditor4,
-    'forms-ckeditor5': ComponentCkeditor5,
-    'layout-spinner': ComponentSpinner
-  },
   props: {
-    value: { type: String, default: '' },
+    modelValue: { type: String, default: '' },
     id: {
       type: String,
       default: ''
@@ -51,42 +40,44 @@ export default {
       type: Boolean,
       default: false
     },
-    height: {
-      type: String,
-      default: '200'
-    },
-    loaded: {
-      type: Boolean,
-      default: true
-    },
     type: {
       type: String,
       default: 'basic'
     }
   },
+  emits: ['update:modelValue'],
   data () {
     return {
-      localValue: this.value ? this.value : ''
+      localValue: this.modelValue ? this.modelValue : '',
+      editors: {
+        advanced: AdvancedEditor,
+        basic: BasicEditor,
+        moderate: ModerateEditor
+      }
     }
   },
   computed: {
     editor () {
       const vm = this
-      return vm.isInternetExplorer() || vm.isMicrosoftEdge() ? 'forms-ckeditor4' : 'forms-ckeditor5'
+      return vm.type && vm.editors.hasOwnProperty(vm.type) ? vm.editors[vm.type] : vm.editors.basic
     }
   },
   watch: {
-    localValue: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    localValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.$emit('update:modelValue', value)
       }
-      this.$emit('input', value)
     },
-    value: function (value, oldValue) {
-      if (value === oldValue) {
-        return
+    modelValue: {
+      handler (value, oldValue) {
+        if (value === oldValue) {
+          return
+        }
+        this.localValue = value
       }
-      this.localValue = value
     }
   }
 }

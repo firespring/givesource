@@ -45,7 +45,7 @@
             title="Manage Your Account"
             @click="toggleMenu"
           >
-            <v-gravatar
+            <vue-gravatar
               :email="email"
               :size="150"
               default-img="mm"
@@ -145,7 +145,7 @@ export default {
       vue.lastName = data.lastName
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
 
     vue.bus.$off('userAccountUpdateInfo')

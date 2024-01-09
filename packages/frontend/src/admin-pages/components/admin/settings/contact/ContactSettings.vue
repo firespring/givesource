@@ -294,7 +294,7 @@ export default {
       vue.settings.push(data)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
     vue.bus.$off('updateSetting')
   },

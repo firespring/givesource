@@ -69,6 +69,7 @@ export default {
   components: {
     'donation-cart-modal-list-table-row': ComponentDonationCartModalListTableRow
   },
+  emits: ['find-nonprofit', 'has-error'],
   data: function () {
     return {
       cartItems: []
@@ -93,7 +94,7 @@ export default {
       const item = vue.cartItems[index]
       item.amount = amount
 
-      vue.$set(vue.cartItems, index, item)
+      vue.cartItems[index] = item
       vue.$store.commit('updateCartItem', {
         timestamp: item.timestamp,
         amount: item.amount

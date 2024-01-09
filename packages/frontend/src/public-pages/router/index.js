@@ -33,15 +33,12 @@ import ComponentSearchResults from './../components/search/SearchResults.vue'
 import ComponentTermsOfService from './../components/terms/TermsOfService.vue'
 import ComponentToolkits from './../components/toolkits/Toolkits.vue'
 import store from './../store'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter)
-
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(),
   hashbang: false,
   linkActiveClass: 'here',
-  mode: 'history',
   base: __dirname,
   scrollBehavior (to, from, savedPosition) {
     if (to.hash) {
@@ -185,7 +182,7 @@ const router = new VueRouter({
 
     // Custom Pages
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       name: 'custom-page',
       meta: {
         page: null
@@ -211,7 +208,7 @@ const router = new VueRouter({
 
     // Error Pages
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       name: '404',
       component: Component404
     }

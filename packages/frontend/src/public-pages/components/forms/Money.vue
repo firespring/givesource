@@ -42,7 +42,7 @@ const numeral = require('numeral')
 
 export default {
   props: {
-    value: { type: [String, Number], default: null },
+    modelValue: { type: [String, Number], default: null },
     id: {
       type: String,
       default: null
@@ -56,9 +56,10 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   data: function () {
     return {
-      localValue: this.value ? this.value : '0.00',
+      localValue: this.modelValue ? this.modelValue : '0.00',
 
       options: {
         precision: 2,
@@ -73,14 +74,18 @@ export default {
     }
   },
   watch: {
-    value: function (val) {
-      this.localValue = val
+    modelValue: {
+      handler (val) {
+        this.localValue = val
+      }
     },
-    localValue: function () {
-      const vm = this
-      this.$emit('input', vm.localValue)
-      if (vm.$refs.input) {
-        vm.$refs.input.dispatchEvent(new Event('input'))
+    localValue: {
+      handler () {
+        const vm = this
+        this.$emit('update:modelValue', vm.localValue)
+        if (vm.$refs.input) {
+          vm.$refs.input.dispatchEvent(new Event('input'))
+        }
       }
     }
   },

@@ -65,6 +65,7 @@ export default {
   props: {
     nonprofitId: { type: [String, Number], default: null }
   },
+  emits: ['has-error'],
   data: function () {
     return {
       nonprofitUsers: [],
@@ -93,7 +94,7 @@ export default {
       vue.deleteModal(selectedNonprofitUser)
     })
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     const vue = this
     vue.bus.$off('deleteUserNonprofit')
     vue.bus.$off('deleteUserNonprofitModal')

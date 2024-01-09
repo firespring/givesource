@@ -28,28 +28,30 @@
 
     <draggable
       v-model="localSponsorTiers"
-      :options="draggableOptions"
-      :element="'tbody'"
+      v-bind="draggableOptions"
+      tag="tbody"
+      item-key="id"
       @end="updateSortOrder"
     >
-      <sponsors-list-table-row
-        v-for="sponsorTier in localSponsorTiers"
-        :key="sponsorTier.id"
-        :sponsor-tier="sponsorTier"
-        @delete-sponsor-tier="deleteSponsorTier"
-        @has-error="hasError"
-      />
+      <template #item="{ element: sponsorTier }">
+        <sponsors-list-table-row
+          :key="sponsorTier.id"
+          :sponsor-tier="sponsorTier"
+          @delete-sponsor-tier="deleteSponsorTier"
+          @has-error="hasError"
+        />
+      </template>
     </draggable>
   </table>
 </template>
 
 <script>
-import ComponentDraggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import ComponentSponsorsTiersListTableRow from './SponsorsTiersListTableRow.vue'
 
 export default {
   components: {
-    draggable: ComponentDraggable,
+    draggable: draggable,
     'sponsors-list-table-row': ComponentSponsorsTiersListTableRow
   },
   props: {
@@ -60,6 +62,7 @@ export default {
       }
     }
   },
+  emits: ['sponsor-tiers', 'has-error'],
   data: function () {
     return {
       localSponsorTiers: [],
@@ -67,8 +70,7 @@ export default {
       // Sort Options
       draggableOptions: {
         handle: '.c-drag-handle',
-        ghostClass: 'reorder-placeholder',
-        draggable: 'tr'
+        ghostClass: 'reorder-placeholder'
       },
 
       apiError: {}

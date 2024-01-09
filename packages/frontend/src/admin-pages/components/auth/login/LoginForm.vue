@@ -123,6 +123,13 @@ export default {
   components: {
     authorizing: ComponentAuthorizingSpinner
   },
+  emits: [
+    'set-cognito-user',
+    'set-user-attributes',
+    'set-main-component',
+    'set-display-header',
+    'set-display-links'
+  ],
   data: function () {
     return {
       displayAuthorizing: false,
