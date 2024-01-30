@@ -48,6 +48,8 @@ Dev::Docker::Compose.configure do |c|
 end
 Dev::Template::Docker::Default.new(exclude: %i[push pull])
 
+Dev::Docker::Desktop.new.configure
+
 # Configure git required version and create tasks
 Dev::Git.configure do |c|
   c.min_version = '2.27.0'
