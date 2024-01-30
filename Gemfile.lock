@@ -79,7 +79,7 @@ GEM
       multipart-post (~> 2)
     faraday-net_http (3.1.0)
       net-http
-    firespring_dev_commands (2.1.25.pre.alpha.1)
+    firespring_dev_commands (2.1.25.pre.alpha.2)
       activesupport (~> 7.1.2)
       aws-sdk-cloudformation (~> 1.97.0)
       aws-sdk-codepipeline (~> 1.67.0)
@@ -154,7 +154,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  firespring_dev_commands (= 2.1.25.pre.alpha.1)
+  firespring_dev_commands (= 2.1.25.pre.alpha.2)
   launchy
   rake
 
