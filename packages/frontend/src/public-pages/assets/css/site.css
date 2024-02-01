@@ -310,6 +310,12 @@ Grids
   align-items: center;
 }
 
+.grid--end {
+    -ms-flex-align: end;
+    -webkit-box-align: end;
+    align-items: end;
+}
+
 .grid--row {
   -ms-flex-direction: row;
   -webkit-box-orient: horizontal;

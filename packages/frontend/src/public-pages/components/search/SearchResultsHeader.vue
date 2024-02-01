@@ -21,8 +21,11 @@
       style="width: 100%;"
     >
       <form @submit.prevent="submit">
-        <div class="grid grid--compact grid--middle">
+        <div class="grid grid--compact grid--end">
           <div class="grid-item grid-item--expand">
+            <div class="form-item__label">
+              <label for="nonprofitCategory">Search by Category</label>
+            </div>
             <div class="select-wrap">
               <forms-nonprofit-category-select
                 v-model="formData.category"
@@ -34,8 +37,12 @@
           </div>
 
           <div class="grid-item grid-item--expand">
+            <div class="form-item__label">
+              <label for="search">Search by Name</label>
+            </div>
             <div class="search-wrap">
               <input
+                id="search"
                 v-model="formData.search"
                 type="search"
                 name="search"

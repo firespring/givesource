@@ -45,7 +45,7 @@
       >
         <i
           class="fab fa-cc-visa"
-          aria-hidden="true"
+          aria-label="Visa"
         />
       </div>
       <div
@@ -54,7 +54,7 @@
       >
         <i
           class="fab fa-cc-mastercard"
-          aria-hidden="true"
+          aria-label="Mastercard"
         />
       </div>
       <div
@@ -63,7 +63,7 @@
       >
         <i
           class="fab fa-cc-amex"
-          aria-hidden="true"
+          aria-label="American Express"
         />
       </div>
       <div
@@ -72,7 +72,7 @@
       >
         <i
           class="fab fa-cc-discover"
-          aria-hidden="true"
+          aria-label="Discover"
         />
       </div>
       <div
@@ -81,7 +81,7 @@
       >
         <i
           class="fab fa-cc-diners-club"
-          aria-hidden="true"
+          aria-label="Diners Club"
         />
       </div>
     </div>

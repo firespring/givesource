@@ -42,11 +42,15 @@
 
             <div class="form-item form-item--required">
               <div class="form-item__label">
-                <label for="donorNameFirst">Your Name</label>
+                <label>Your Name</label>
               </div>
               <div class="form-item__control">
                 <div class="grid">
                   <div class="grid-item">
+                    <label
+                      for="donorNameFirst"
+                      class="u-hidden-visually"
+                    >First Name</label>
                     <input
                       id="donorNameFirst"
                       v-model="donor.firstName"
@@ -54,9 +58,14 @@
                       name="donorNameFirst"
                       placeholder="First Name"
                       :class="{'has-error': formErrors.donor.firstName}"
+                      required
                     >
                   </div>
                   <div class="grid-item">
+                    <label
+                      for="donorNameLast"
+                      class="u-hidden-visually"
+                    >Last Name</label>
                     <input
                       id="donorNameLast"
                       v-model="donor.lastName"
@@ -64,6 +73,7 @@
                       name="donorNameLast"
                       placeholder="Last Name"
                       :class="{'has-error': formErrors.donor.lastName}"
+                      required
                     >
                   </div>
                 </div>
@@ -87,6 +97,7 @@
                   type="email"
                   name="donorEmail"
                   :class="{'has-error': formErrors.donor.email}"
+                  required
                 >
                 <div
                   v-if="formErrors.donor.email"
@@ -99,10 +110,14 @@
 
             <div class="form-item form-item--address form-item--required">
               <div class="form-item__label">
-                <label for="billingAddress1">Your Billing Address</label>
+                <label>Your Billing Address</label>
               </div>
               <div class="form-item__control">
                 <div class="address1">
+                  <label
+                    for="billingAddress1"
+                    class="u-hidden-visually"
+                  >Billing Address Line 1</label>
                   <input
                     id="billingAddress1"
                     v-model="donor.address1"
@@ -110,6 +125,7 @@
                     name="billingAddress1"
                     placeholder="Address Line 1"
                     :class="{'has-error': formErrors.donor.address1}"
+                    required
                   >
                   <div
                     v-if="formErrors.donor.address1"
@@ -120,6 +136,10 @@
                 </div>
 
                 <div class="address2">
+                  <label
+                    for="billingAddress2"
+                    class="u-hidden-visually"
+                  >Billing Address Line 2</label>
                   <input
                     id="billingAddress2"
                     v-model="donor.address2"
@@ -138,6 +158,10 @@
 
                 <div class="city-state-zip">
                   <div class="city-state-zip__city">
+                    <label
+                      for="billingCity"
+                      class="u-hidden-visually"
+                    >Billing Address City</label>
                     <input
                       id="billingCity"
                       v-model="donor.city"
@@ -145,17 +169,27 @@
                       name="billingCity"
                       placeholder="City"
                       :class="{'has-error': formErrors.donor.city}"
+                      required
                     >
                   </div>
                   <div class="city-state-zip__state select-wrap">
+                    <label
+                      for="billingState"
+                      class="u-hidden-visually"
+                    >Billing Address State</label>
                     <forms-address-state
                       id="billingState"
                       v-model="donor.state"
                       name="billingState"
                       placeholder="State"
+                      required
                     />
                   </div>
                   <div class="city-state-zip__zip">
+                    <label
+                      for="billingZip"
+                      class="u-hidden-visually"
+                    >Billing Address Zip</label>
                     <input
                       id="billingZip"
                       v-model="donor.zip"
@@ -163,6 +197,7 @@
                       name="billingZip"
                       placeholder="ZIP"
                       :class="{'has-error': formErrors.donor.zip}"
+                      required
                     >
                   </div>
                 </div>
@@ -186,6 +221,7 @@
                   type="tel"
                   name="billingPhone"
                   :class="{'has-error': formErrors.donor.phone}"
+                  required
                 >
                 <div
                   v-if="formErrors.donor.phone"
@@ -268,7 +304,7 @@
                 <div class="grid-item grid-item--collapse">
                   <div class="form-item form-item--required">
                     <div class="form-item__label">
-                      <label for="cc_exp_month">Expiration Date</label>
+                      <label>Expiration Date</label>
                     </div>
                     <div
                       class="form-item__control"
@@ -278,6 +314,10 @@
                         class="select-wrap"
                         style="margin: 0 .5rem 0 0;"
                       >
+                        <label
+                          for="cc_exp_month"
+                          class="u-hidden-visually"
+                        >Expiration Month</label>
                         <forms-payment-cc-month
                           id="cc_exp_month"
                           v-model="paymentDetails.ccExpMonth"
@@ -286,6 +326,10 @@
                       </div>
 
                       <div class="select-wrap">
+                        <label
+                          for="cc_exp_year"
+                          class="u-hidden-visually"
+                        >Expiration Year</label>
                         <forms-payment-cc-year
                           id="cc_exp_year"
                           v-model="paymentDetails.ccExpYear"
