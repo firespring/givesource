@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.1.2)
+    activesupport (7.1.3)
       base64
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
@@ -16,14 +16,14 @@ GEM
     atlassian-jwt (0.2.1)
       jwt (~> 2.1)
     aws-eventstream (1.3.0)
-    aws-partitions (1.871.0)
+    aws-partitions (1.886.0)
     aws-sdk-cloudformation (1.97.0)
       aws-sdk-core (~> 3, >= 3.188.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-codepipeline (1.67.0)
       aws-sdk-core (~> 3, >= 3.188.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-core (3.190.1)
+    aws-sdk-core (3.191.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.8)
@@ -34,8 +34,8 @@ GEM
     aws-sdk-elasticache (1.95.0)
       aws-sdk-core (~> 3, >= 3.188.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-kms (1.75.0)
-      aws-sdk-core (~> 3, >= 3.188.0)
+    aws-sdk-kms (1.77.0)
+      aws-sdk-core (~> 3, >= 3.191.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-lambda (1.113.0)
       aws-sdk-core (~> 3, >= 3.188.0)
@@ -59,9 +59,9 @@ GEM
     aws-sigv4 (1.8.0)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
-    bigdecimal (3.1.5)
+    bigdecimal (3.1.6)
     colorize (1.1.0)
-    concurrent-ruby (1.2.2)
+    concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
     docker-api (2.2.0)
       excon (>= 0.47.0)
@@ -69,18 +69,17 @@ GEM
     dotenv (2.8.1)
     drb (2.2.0)
       ruby2_keywords
-    excon (0.108.0)
-    faraday (2.8.1)
-      base64
-      faraday-net_http (>= 2.0, < 3.1)
-      ruby2_keywords (>= 0.0.4)
+    excon (0.109.0)
+    faraday (2.9.0)
+      faraday-net_http (>= 2.0, < 3.2)
     faraday-mashify (0.1.1)
       faraday (~> 2.0)
       hashie
     faraday-multipart (1.0.4)
       multipart-post (~> 2)
-    faraday-net_http (3.0.2)
-    firespring_dev_commands (2.1.20)
+    faraday-net_http (3.1.0)
+      net-http
+    firespring_dev_commands (2.1.25)
       activesupport (~> 7.1.2)
       aws-sdk-cloudformation (~> 1.97.0)
       aws-sdk-codepipeline (~> 1.67.0)
@@ -119,10 +118,12 @@ GEM
     jwt (2.7.1)
     launchy (2.5.2)
       addressable (~> 2.8)
-    minitest (5.20.0)
+    minitest (5.21.2)
     multi_json (1.15.0)
     multipart-post (2.3.0)
     mutex_m (0.2.0)
+    net-http (0.4.1)
+      uri
     oauth (0.6.2)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
@@ -142,6 +143,7 @@ GEM
       version_gem (~> 1.1, >= 1.1.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uri (0.13.0)
     version_gem (1.1.3)
 
 PLATFORMS
@@ -152,7 +154,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  firespring_dev_commands (= 2.1.20)
+  firespring_dev_commands (= 2.1.25)
   launchy
   rake
 
