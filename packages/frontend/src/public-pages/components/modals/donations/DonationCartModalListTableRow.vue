@@ -24,7 +24,12 @@
         class="donation-amount"
         :class="{ 'u-control-icon--has-error': formErrors.amount}"
       >
+        <label
+          :for="`amount-${index}`"
+          class="u-hidden-visually"
+        >Donation Amount</label>
         <forms-money
+          :id="`amount-${index}`"
           v-model="localAmount"
           name="amount"
           :has-error="formErrors.hasOwnProperty('amount')"

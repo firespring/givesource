@@ -28,23 +28,27 @@
         ref="donationModalOptions"
         class="donation-modal donation-modal--options"
       >
-        <header
+        <section
           v-if="displayDonationTiers"
           class="donation-modal__header"
+          role="region"
+          aria-label="Pick a Donation Amount"
         >
           <h1 class="donation-modal__title">
             Pick a Donation Amount
           </h1>
-        </header>
+        </section>
 
-        <header
+        <section
           v-else
           class="donation-modal__header"
+          role="region"
+          aria-label="Enter a Donation Amount"
         >
           <h1 class="donation-modal__title">
             Enter a Donation Amount
           </h1>
-        </header>
+        </section>
 
         <div class="donation-modal__content">
           <div
@@ -65,16 +69,22 @@
             </h2>
             <form @submit="customAmount">
               <div class="input">
+                <label
+                  for="customAmount"
+                  class="u-hidden-visually"
+                >Donation Amount</label>
                 <forms-money
                   id="customAmount"
                   v-model="formData.customAmount"
                   name="customAmount"
                   placeholder="Enter Amount"
+                  aria-describedby="donation-amount-error"
                   :has-error="formErrors.hasOwnProperty('customAmount')"
                 />
               </div>
               <div class="action">
                 <button class="btn">
+                  <span class="u-hidden-visually">Add to cart</span>
                   <i
                     class="fas fa-arrow-right"
                     aria-hidden="true"
@@ -83,10 +93,15 @@
               </div>
             </form>
             <div
-              v-if="formErrors.customAmount"
-              class="notes notes--below notes--error"
+              id="donation-amount-error"
+              aria-live="polite"
             >
-              A custom donation amount must be at least $10.00
+              <div
+                v-if="formErrors.customAmount"
+                class="notes notes--below notes--error"
+              >
+                A custom donation amount must be at least $10.00
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +111,7 @@
           class="donation-close"
           role="button"
           @click="close"
-        ><i
+        ><span class="u-hidden-visually">Close</span><i
           class="fas fa-times-circle"
           aria-hidden="true"
         /></a>
@@ -166,7 +181,18 @@ export default {
         }
       },
       deep: true
+    },
+    loaded: {
+      handler (value) {
+        const vue = this
+        if (!value) return
+
+        vue.$nextTick(() => {
+          $(vue.$el).find('input, textarea, select').eq(0).focus()
+        })
+      }
     }
+
   },
   created: function () {
     const vue = this

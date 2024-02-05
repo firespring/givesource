@@ -20,7 +20,9 @@
       :to="{ name: 'nonprofit-landing-page', params: { slug: nonprofit.slug } }"
       class="leaderboard-item__image leaderboard-item__image--full"
       :style="'background-image: url(' + logoUrl + ')'"
-    />
+    >
+      <span class="u-hidden-visually">{{ nonprofit.legalName }}</span>
+    </router-link>
 
     <div class="leaderboard-item__info">
       <h3>
@@ -47,11 +49,13 @@
       v-if="canDonate"
       class="leaderboard-item__action"
     >
-      <a
-        href="#"
+      <button
+        type="button"
         class="btn btn--accent btn--sm"
         @click.prevent="donate"
-      >Donate</a>
+      >
+        Donate <span class="u-hidden-visually"> to {{ nonprofit.legalName }}</span>
+      </button>
     </div>
   </div>
 </template>

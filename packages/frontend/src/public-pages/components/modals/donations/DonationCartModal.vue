@@ -24,11 +24,15 @@
         ref="donationModalCart"
         class="donation-modal donation-modal--cart"
       >
-        <header class="donation-modal__header">
+        <section
+          class="donation-modal__header"
+          role="region"
+          aria-label="Your Donations"
+        >
           <h1 class="donation-modal__title">
             Your Donations
           </h1>
-        </header>
+        </section>
 
         <div class="donation-modal__content">
           <donation-cart-modal-list-table
@@ -59,7 +63,7 @@
           class="donation-close"
           role="button"
           @click.prevent="close"
-        ><i
+        ><span class="u-hidden-visually">Close</span><i
           class="fas fa-times-circle"
           aria-hidden="true"
         /></a>

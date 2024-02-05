@@ -20,7 +20,12 @@
       <strong>{{ nonprofit.legalName }}</strong>
       <div class="form-item mt2">
         <div class="form-item__control">
+          <label
+            :for="`note-text-${index}`"
+            class="u-hidden-visually"
+          >{{ placeHolder }}</label>
           <input
+            :id="`note-text-${index}`"
             v-model="localNote"
             type="text"
             name="note1"
