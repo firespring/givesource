@@ -22,17 +22,14 @@ exports.handle = (event, context, callback) => {
 
   const isAssetUri = !!request.uri.match(/\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)/i)
   // todo remove headers check
-  const isSocialBot = request.headers.sbtest || !!userAgent.match(/twitterbot|facebookexternalhit|linkedinbot|slackbot/i)
-  const isSearchEngine = request.headers.setest || !!userAgent.match(/googlebot|bingbot|slur|duckduckbot|ia_archiver/i)
+  const isSocialBot = !!userAgent.match(/twitterbot|facebookexternalhit|linkedinbot|slackbot/i)
+  const isSearchEngine = !!userAgent.match(/googlebot|bingbot|slur|duckduckbot|ia_archiver/i)
   const isNonprofitUri = request.uri.indexOf('/nonprofits/') === 0
   const nonprofitSlug = !isNonprofitUri ? null : request.uri
     .replace('/nonprofits/', '')
     .split('/')[0]
     .split('.')[0]
     .split('&')[0]
-
-  //  userAgent: 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.85 Mobile Safari/537.36 (compatible; Google-InspectionTool/1.0)',
-  console.log({ userAgent, uri: request.uri, request, isAssetUri, isSocialBot, isSearchEngine })
 
   function sendCustomResponse (body) {
     const response = {
@@ -42,8 +39,7 @@ exports.handle = (event, context, callback) => {
       headers: {
         'cache-control': [{
           key: 'Cache-Control',
-          // value: 'max-age=300' // todo
-          value: 'max-age=1'
+          value: 'max-age=300'
         }],
         'content-type': [{
           key: 'Content-Type',

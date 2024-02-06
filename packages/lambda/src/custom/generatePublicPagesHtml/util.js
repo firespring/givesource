@@ -29,7 +29,6 @@ const getConfig = (() => {
   let configPromise
   function getConfig () {
     if (!configPromise) {
-      console.log('get fresh config')
       configPromise = (new SSM())
         .getParameter('us-east-1', '/' + functionName + '/config')
         .then(response => JSON.parse(response.Parameter.Value))
@@ -46,7 +45,6 @@ const getConfig = (() => {
  * @returns {Promise<string>}
  */
 async function getS3Body (objectPath) {
-  console.log('getS3Body', objectPath)
   const config = await getConfig()
   const s3Object = await s3.getObject(config.AWS_STACK_REGION, config.AWS_S3_BUCKET_NAME, objectPath)
   return s3Object.Body.toString()
@@ -64,12 +62,11 @@ async function getFirstMatchFromS3 (paths) {
     try {
       body = await getS3Body(path)
       if (body) {
-        console.log('found s3 ', path)
         return body
       }
     } catch (e) {
       // continue trying next path
-      console.log(path, ' not found. continue', e)
+      // console.log(path, ' not found. continue', e)
     }
   }
 }
