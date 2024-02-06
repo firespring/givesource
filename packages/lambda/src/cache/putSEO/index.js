@@ -44,7 +44,7 @@ exports.handle = function (event, context, callback) {
       }
     })
 
-    data.description = seoDefaults.SOCIAL_SHARING_DESCRIPTION
+    data.description = seoDefaults.SEO_DESCRIPTION
     data.event_title = seoDefaults.EVENT_TITLE
     data.title = seoDefaults.EVENT_TITLE
 
