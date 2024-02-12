@@ -90,8 +90,9 @@ exports.handle = (event, context, callback) => {
     }
 
     if (event.RequestType === 'Create') {
-      promise = promise.then(() => {
-        return lambda.createFunction(region, functionName, 'index.handle', role, event.ResourceProperties.Runtime, { ZipFile: code })
+      promise = promise.then(async () => {
+        await lambda.createFunction(region, functionName, 'index.handle', role, event.ResourceProperties.Runtime, { ZipFile: code })
+        await lambda.waitFor(region, functionName)
       })
     } else if (event.RequestType === 'Update') {
       promise = promise.then(async () => {
