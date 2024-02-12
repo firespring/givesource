@@ -19,6 +19,8 @@
 const { DataTypes, Model } = require('sequelize')
 class Donor extends Model {}
 
+const { isEmail, isString } = require('../helpers/validation')
+
 module.exports = (sequelize) => {
   return Donor.init({
     amountForNonprofit: {
@@ -29,46 +31,55 @@ module.exports = (sequelize) => {
     address1: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     address2: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     city: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isEmail }
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString, notEmpty: true }
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString, notEmpty: true }
     },
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     state: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     zip: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     }
   }, {
     sequelize,

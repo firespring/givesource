@@ -29,13 +29,13 @@ describe('PostMessage', function () {
   it('should return a message', function () {
     const model = TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body
     }
     return PostMessage.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

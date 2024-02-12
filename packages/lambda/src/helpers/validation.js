@@ -15,67 +15,40 @@
  */
 
 const validate = require('validate.js')
+// const InvalidInputException = require('../exceptions/invalidInput')
+
 const validateUuid = require('uuid-validate')
-const InvalidInputException = require('../exceptions/invalidInput')
-
-exports.loadCustom = function () {
-  validate.validators.type = function (value, options, key, attributes) {
-    let isValid = false
-    const types = (typeof options === 'string' && options.length > 0) ? options.split('|') : []
-
-    if (!value || value === false || typeof value === 'undefined' || value === null) {
-      return null
-    }
-
-    for (const i in types) {
-      const type = types[i].toLowerCase()
-      switch (type) {
-        case 'array':
-          if (value instanceof Array) {
-            isValid = true
-          }
-          break
-
-        case 'boolean':
-        case 'function':
-        case 'number':
-        case 'object':
-        case 'string':
-        case 'symbol':
-        case 'undefined':
-        default:
-          if (typeof value === type) { // eslint-disable-line valid-typeof
-            isValid = true
-          }
-          break
-      }
-    }
-
-    if (!isValid) {
-      const message = types.join(', ')
-      throw new InvalidInputException(`${key} is not one of the expected types: ${message}`)
-    }
-
-    return null
-  }
-
-  validate.validators.uuid = function (value, options, key, attributes) {
-    let isValid = false
-
-    if (!value || value === false || typeof value === 'undefined' || value === null) {
-      return null
-    }
-
-    if (options && typeof options === 'number') {
-      isValid = validateUuid(value, options)
-    } else {
-      isValid = validateUuid(value)
-    }
-
-    if (!isValid) {
-      throw new InvalidInputException(`${key} is an invalid uuid`)
-    }
-
-    return null
-  }
+//
+const isUuid = (value) => {
+  if (value === '') return
+  if (!validateUuid(value)) throw new Error('Must be a uuid')
 }
+
+const isNumericType = (value) => {
+  // isNumeric: true // allows number like strings
+  if (typeof value !== 'number') throw new Error('Must be a number')
+}
+
+const isImplicitBool = (value) => {
+  const implicitValidValues = ['', null]
+  const valid = (typeof value === 'boolean') || implicitValidValues.includes(value)
+  if (!valid) throw new Error('Must be a boolean')
+}
+
+const isBoolean = (value) => {
+  if (value === null) return
+  if (typeof value !== 'boolean') throw new Error('Must be a boolean')
+}
+
+const isEmail = (value) => {
+  // todo just isEmail: true
+  const errors = validate.single(value, { presence: false, email: true })
+  if (errors) throw new Error('Must be an email address')
+}
+
+const isString = (value) => {
+  if (value === null) return
+  if (typeof value !== 'string') throw new Error('Must be a string')
+}
+
+module.exports = { isNumericType, isBoolean, isImplicitBool, isString, isEmail, isUuid }

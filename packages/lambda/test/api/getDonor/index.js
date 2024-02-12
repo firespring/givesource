@@ -30,7 +30,7 @@ describe('GetDonor', function () {
     sinon.stub(DonorsRepository.prototype, 'get').resolves(model)
     const params = {
       params: {
-        donorUuid: model.uuid
+        donorUuid: model.uuid // todo
       }
     }
     return GetDonor.handle(params, null, function (error, result) {
@@ -43,7 +43,7 @@ describe('GetDonor', function () {
     sinon.stub(DonorsRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {
-        donorUuid: '1234'
+        donorUuid: '1234' // todo
       }
     }
     return GetDonor.handle(params, null, function (error, result) {

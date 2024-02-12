@@ -35,7 +35,7 @@ describe('PostSponsor', function () {
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
     sinon.stub(SponsorsRepository.prototype, 'getCount').resolves(1)
     sinon.stub(SponsorsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body,
       params: {
@@ -44,7 +44,7 @@ describe('PostSponsor', function () {
     }
     return PostSponsor.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

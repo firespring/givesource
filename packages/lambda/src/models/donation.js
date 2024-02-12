@@ -20,6 +20,8 @@ const { DataTypes, Model } = require('sequelize')
 const numeral = require('numeral')
 const dayjs = require('./../helpers/day')
 
+const { isNumericType, isImplicitBool } = require('../helpers/validation')
+
 class Donation extends Model {}
 
 module.exports = (sequelize) => {
@@ -27,7 +29,7 @@ module.exports = (sequelize) => {
     amountForNonprofit: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: this.total - this.fees
+      defaultValue: this.total - this.fees // ?
     },
     count: {
       type: DataTypes.INTEGER,
@@ -37,27 +39,32 @@ module.exports = (sequelize) => {
     fees: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     isAnonymous: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
+      validate: { isBoolean: true }
     },
     isFeeCovered: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
+      allowNull: true,
+      defaultValue: false,
+      validate: { isImplicitBool }
     },
     isOfflineDonation: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
+      validate: { isBoolean: true }
     },
     nonprofitId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     paymentTransactionIsTestMode: {
       type: DataTypes.BOOLEAN,
@@ -67,12 +74,14 @@ module.exports = (sequelize) => {
     paymentTransactionId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     subtotal: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     subtotalChargedToCard: {
       type: DataTypes.INTEGER,
@@ -82,7 +91,8 @@ module.exports = (sequelize) => {
     total: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     type: {
       type: DataTypes.TINYINT,
@@ -92,7 +102,8 @@ module.exports = (sequelize) => {
     donorId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumeric: true }
     },
     name: {
       type: DataTypes.STRING,

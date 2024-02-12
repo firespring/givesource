@@ -31,13 +31,13 @@ describe('PostSponsorTier', function () {
     const model = TestHelper.generate.model('sponsorTier')
     sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
     sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body
     }
     return PostSponsorTier.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

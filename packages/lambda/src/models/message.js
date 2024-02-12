@@ -18,29 +18,37 @@
 
 const { DataTypes, Model } = require('sequelize')
 const dayjs = require('./../helpers/day')
+
+const { isString, isEmail } = require('../helpers/validation')
+const { TYPE_CONTACT, TYPE_FEEDBACK, TYPE_NAME_CHANGE } = require('../helpers/message')
+
 class Message extends Model {}
 
 module.exports = (sequelize) => {
   return Message.init({
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isEmail, notEmpty: true }
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     message: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     type: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isIn: [[TYPE_CONTACT, TYPE_FEEDBACK, TYPE_NAME_CHANGE]] } // todo verify this is full list
     }
   }, {
     sequelize,

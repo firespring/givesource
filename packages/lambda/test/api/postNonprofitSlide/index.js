@@ -35,7 +35,7 @@ describe('PostNonprofitSlide', function () {
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
     sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1)
     sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body,
       params: {
@@ -44,7 +44,7 @@ describe('PostNonprofitSlide', function () {
     }
     return PostNonprofitSlide.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

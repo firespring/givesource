@@ -32,13 +32,13 @@ describe('PostDonor', function () {
     // const donor = TestHelper.generate.model('donor', { email: data.email })
     sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
     sinon.stub(DonorsRepository.prototype, 'save').resolves(data)
-    const { uuid, createdOn, ...body } = data
+    const { uuid, createdAt, ...body } = data
     const params = {
       body
     }
     return PostDonor.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, data, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, data, ['uuid', 'createdAt'])
     })
   })
 

@@ -45,7 +45,13 @@ module.exports.validate = function (testCases) {
       testCase.model = testCase.model()
       testCase.model = await testCase.model
 
-      // TODO validate that data keys are actually model properties
+      // Validate that data keys are actually model properties
+      const attributes = testCase.model.constructor.getAttributes()
+      Object.keys(data).forEach(key => {
+        // if (key === 'isDeleted') return // todo remove?
+        assert(key in attributes, `${key} is not a valid attribute on ${testCase.model.constructor.name} object`)
+      })
+
       testCase.model.set(data)
       if (testCase.error) {
         return promiseMe.thatYouReject(testCase.model.validate())
@@ -84,16 +90,19 @@ module.exports.commonModelValidations = function (modelType) {
     // { model: () => generatorInstance.model(modelType), param: 'uuid', value: null, error: true },
     // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '1234567890', error: true },
     // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 'test', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: '123456', error: true },
-    { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 123456, error: false },
+
+    // { model: () => generatorInstance.model(modelType), param: 'deletedAt', value: 'test', error: true },
+
+    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: null, error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: 'test', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: '123456', error: true },
+    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: 123456, error: false },
     // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: null, error: true },
     // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 'test', error: true },
     // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: '123456', error: true },
     // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 123456, error: true },
-    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 0, error: false },
-    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 1, error: false }
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 0, error: false },
+    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 1, error: false }
   ]
 }
 

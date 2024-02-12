@@ -33,7 +33,7 @@ exports.handle = function (event, context, callback) {
     let promise = Promise.resolve()
     reports.forEach(function (report) {
       processedCount += 1
-      if (report.createdOn <= expire.getTime()) {
+      if (report.createdOn <= expire.getTime()) { // todo createdAt ?
         reportsCount += 1
         if (report.fileUuid) {
           promise = promise.then(function () {

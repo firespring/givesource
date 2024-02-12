@@ -19,15 +19,19 @@
 const { DataTypes, Model } = require('sequelize')
 class File extends Model {}
 
+const { isString } = require('../helpers/validation')
+
 module.exports = (sequelize) => {
   return File.init({
     path: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     filename: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     }
   }, { sequelize, modelName: 'File' })
 }

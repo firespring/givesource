@@ -17,7 +17,7 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
-
+const { isNumericType, isString } = require('../helpers/validation')
 class Sponsor extends Model {}
 
 module.exports = (sequelize) => {
@@ -29,26 +29,31 @@ module.exports = (sequelize) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     sortOrder: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     url: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString }
     },
     fileId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     sponsorTierId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     }
   },
   { sequelize, modelName: 'Sponsor' })

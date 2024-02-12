@@ -35,7 +35,7 @@ describe('PatchPaymentTransaction', function () {
     const params = {
       body,
       params: {
-        paymentTransactionUuid: original.uuid
+        paymentTransactionUuid: original.uuid // todo
       }
     }
     return PatchPaymentTransaction.handle(params, null, function (error, result) {
@@ -48,7 +48,7 @@ describe('PatchPaymentTransaction', function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const params = {
       params: {
-        paymentTransactionUuid: original.uuid
+        paymentTransactionUuid: original.uuid // todo
       }
     }
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects('Error')
@@ -62,7 +62,7 @@ describe('PatchPaymentTransaction', function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const params = {
       params: {
-        paymentTransactionUuid: original.uuid
+        paymentTransactionUuid: original.uuid // todo
       }
     }
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(original)

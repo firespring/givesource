@@ -17,14 +17,15 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
-
+const { isString } = require('../helpers/validation')
 class SponsorTier extends Model {}
 
 module.exports = (sequelize) => {
   SponsorTier.init({
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     size: {
       type: DataTypes.STRING,

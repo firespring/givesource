@@ -31,13 +31,13 @@ describe('PostSetting', function () {
     const model = TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
     sinon.stub(SettingsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body
     }
     return PostSetting.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

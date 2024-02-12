@@ -19,49 +19,59 @@
 const { DataTypes, Model } = require('sequelize')
 const numeral = require('numeral')
 const dayjs = require('./../helpers/day')
+const { isString, isBoolean, isNumericType } = require('../helpers/validation')
 class PaymentTransaction extends Model {}
 
 module.exports = (sequelize) => {
   return PaymentTransaction.init({
     billingZip: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     creditCardExpirationMonth: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     creditCardExpirationYear: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     creditCardLast4: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     creditCardName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     creditCardType: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     isTestMode: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
+      validate: { isBoolean }
     },
     transactionAmount: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     transactionId: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     transactionStatus: {
       type: DataTypes.STRING,
