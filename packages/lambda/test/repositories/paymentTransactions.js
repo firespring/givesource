@@ -29,19 +29,7 @@ let PaymentTransaction
 
 describe('PaymentTransactionsRepository', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     PaymentTransaction = (await loadModels()).PaymentTransaction
-  })
-  afterEach(function () {
-    const stubbedFunctions = [
-      SecretsManager.prototype.getSecretValue,
-      Ssm.prototype.getParameter,
-      Sequelize.Model.destroy,
-      Sequelize.Model.findAll,
-      Sequelize.Model.upsert
-    ]
-    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
   })
 
   describe('#construct()', function () {

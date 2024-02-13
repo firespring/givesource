@@ -22,14 +22,6 @@ const TestHelper = require('../../helpers/test')
 const SecretsManager = require('../../../src/aws/secretsManager')
 
 describe('DeleteDonation', function () {
-  beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    DonationsRepository.prototype.delete.restore()
-  })
-
   it('should delete a donation', function () {
     const model = TestHelper.generate.model('donation')
     sinon.stub(DonationsRepository.prototype, 'delete').resolves(model)

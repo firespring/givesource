@@ -26,13 +26,7 @@ let Nonprofit
 
 describe('Nonprofit', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Nonprofit = (await loadModels()).Nonprofit
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {

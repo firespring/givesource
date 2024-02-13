@@ -24,24 +24,10 @@ const Sequelize = require('sequelize')
 let Donation
 
 const promiseMe = require('mocha-promise-me')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 
 describe('DonationsRepository', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Donation = (await loadModels()).Donation
-  })
-  afterEach(function () {
-    const stubbedFunctions = [
-      SecretsManager.prototype.getSecretValue,
-      Ssm.prototype.getParameter,
-      Sequelize.Model.destroy,
-      Sequelize.Model.findAll,
-      Sequelize.Model.upsert
-    ]
-    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
   })
   describe('#construct()', function () {
     it('should be an instance of Repository', function () {
@@ -65,9 +51,10 @@ describe('DonationsRepository', function () {
       const data = await TestHelper.generate.model('donation')
       sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new DonationsRepository()
+      // todo uui
       return promiseMe.thatYouResolve(repository.get(data.uuid), function (model) {
         assert.ok(model instanceof Donation)
-        assert.equal(model.uuid, data.uuid)
+        assert.equal(model, data)
       })
     })
 

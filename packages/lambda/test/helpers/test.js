@@ -72,10 +72,14 @@ module.exports.validate = function (testCases) {
  */
 module.exports.assertModelEquals = function (data, model, except) {
   let equality = true
-  const modelData = model.all()
+  const modelData = model.get()
+  console.log({ modelData })
   Object.keys(data).forEach(function (key) {
     if (except.indexOf(key) < 0) {
-      if (data.hasOwnProperty(key) && modelData.hasOwnProperty(key) && data[key] !== modelData[key]) {
+      // if (data.hasOwnProperty(key) && modelData.hasOwnProperty(key) && data[key] !== modelData[key]) {
+      //   equality = false
+      // }
+      if (data[key] !== modelData[key]) {
         equality = false
       }
     }

@@ -25,13 +25,7 @@ let Setting
 
 describe('Setting', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Setting = (await loadModels()).Setting
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {

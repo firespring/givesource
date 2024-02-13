@@ -25,13 +25,7 @@ let File
 
 describe('File', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     File = (await loadModels()).File
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {

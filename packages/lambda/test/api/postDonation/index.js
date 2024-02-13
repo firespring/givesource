@@ -21,26 +21,58 @@ const DonationsRepository = require('../../../src/repositories/donations')
 const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
-describe('PostDonation', function () {
-  afterEach(function () {
-    DonationsRepository.prototype.save.restore()
-  })
+const Request = require('../../../src/aws/request')
+const SecretsManager = require('../../../src/aws/secretsManager')
+const Ssm = require('../../../src/aws/ssm')
 
-  it('should return a donation', function () {
-    const model = TestHelper.generate.model('donation')
-    sinon.stub(DonationsRepository.prototype, 'save').resolves(model)
+describe('PostDonation', function () {
+  // beforeEach(async () => {
+  //   sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
+  //   sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
+  // })
+  // afterEach(function () {
+  //   // SecretsManager.prototype.getSecretValue.restore()
+  //   // Ssm.prototype.getParameter.restore()
+  //
+  //   sinon.restore();
+  // })
+  // afterEach(function () {
+  //   // DonationsRepository.prototype.upsert.restore()
+  //   // DonationsRepository.prototype.populate.restore()
+  //   // Request.prototype.validate.restore()
+  // })
+
+  it('should return a donation', async function () {
+    const model = await TestHelper.generate.model('donation')
+    // console.log({model})
+    sinon.stub(DonationsRepository.prototype, 'upsert').resolves(model)
+    sinon.stub(DonationsRepository.prototype, 'populate').resolves(model)
+
+    sinon.stub(Request.prototype, 'validate').resolves(true)
+
     const { uuid, createdAt, ...body } = model
     const params = {
       body
     }
-    return PostDonation.handle(params, null, function (error, result) {
-      assert(error === null)
-      // TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-      TestHelper.assertModelEquals(result, model)
+
+    // const result = await new Promise(resolve => PostDonation.handle(params, null, ))
+
+    return new Promise(resolve => {
+      PostDonation.handle(params, null, function (error, result) {
+        console.log('PostDonation.handle callback', error)
+        assert(!error)
+        assert(result === model)
+        // TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
+        // assert(false)
+        // TestHelper.assertModelEquals({foo: 'bar'}, model, [])
+        resolve()
+      })
     })
   })
 
   it('should return error on exception thrown', function () {
+    // DonationsRepository.prototype.upsert.restore()
+
     sinon.stub(DonationsRepository.prototype, 'save').rejects('Error')
     return PostDonation.handle({}, null, function (error) {
       assert(error instanceof HttpException)

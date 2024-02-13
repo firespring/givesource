@@ -26,13 +26,7 @@ let User
 // loadModels()
 describe('User', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     User = (await loadModels()).User
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {

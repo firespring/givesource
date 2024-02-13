@@ -25,21 +25,6 @@ const SecretsManager = require('../../src/aws/secretsManager')
 const Ssm = require('../../src/aws/ssm')
 
 describe('Repository', function () {
-  beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
-  })
-  afterEach(function () {
-    const stubbedFunctions = [
-      SecretsManager.prototype.getSecretValue,
-      Ssm.prototype.getParameter,
-      Sequelize.Model.destroy,
-      Sequelize.Model.findAll,
-      Sequelize.Model.upsert
-    ]
-    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
-  })
-
   // #getByKey appears to be dead code (never converted from dynamoDb)
   // describe('#getByKey()', function () {
   //   it('should return the item', function () {
