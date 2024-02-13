@@ -59,8 +59,6 @@ describe('SponsorTier', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('sponsorTier')
     const tests = [
-      ...TestHelper.commonModelValidations('sponsorTier'),
-
       { model, param: 'name', value: null, error: true },
       { model, param: 'name', value: '', error: true },
       { model, param: 'name', value: 'test', error: false },

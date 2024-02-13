@@ -59,8 +59,6 @@ describe('User', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('user')
     const tests = [
-      ...TestHelper.commonModelValidations('user'),
-
       { model, param: 'cognitoUuid', value: null, error: true },
       { model, param: 'cognitoUuid', value: '', error: false },
       { model, param: 'cognitoUuid', value: '123456', error: true },

@@ -87,8 +87,6 @@ describe('Message', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('message')
     const tests = [
-      ...TestHelper.commonModelValidations('message'),
-
       { model, param: 'email', value: null, error: true },
       { model, param: 'email', value: '', error: true },
       { model, param: 'email', value: 'test@email.com', error: false },

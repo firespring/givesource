@@ -84,28 +84,6 @@ module.exports.assertModelEquals = function (data, model, except) {
   assert(equality === true)
 }
 
-module.exports.commonModelValidations = function (modelType) {
-  return [
-    // TODO most/all of the commented out rules below need validation rules added
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '1234567890', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-
-    // { model: () => generatorInstance.model(modelType), param: 'deletedAt', value: 'test', error: true },
-
-    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: 'test', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: '123456', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdAt', value: 123456, error: false },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 'test', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: '123456', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 123456, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 0, error: false },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 1, error: false }
-  ]
-}
-
 /**
  * Format value for console output
  *

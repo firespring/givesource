@@ -64,8 +64,6 @@ describe('Nonprofit', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('nonprofit')
     const tests = [
-      ...TestHelper.commonModelValidations('nonprofit'),
-
       { model, param: 'address1', value: null, error: true },
       { model, param: 'address1', value: '', error: true },
       { model, param: 'address1', value: 'test', error: false },

@@ -87,8 +87,6 @@ describe('PaymentTransaction', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('paymentTransaction')
     const tests = [
-      ...TestHelper.commonModelValidations('paymentTransaction'),
-
       { model, param: 'billingZip', value: null, error: true },
       { model, param: 'billingZip', value: '', error: true },
       { model, param: 'billingZip', value: '123456', error: false },

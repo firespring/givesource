@@ -57,8 +57,6 @@ describe('Sponsor', function () {
 
   describe('#validate()', function () {
     const tests = [
-      ...TestHelper.commonModelValidations('sponsor'),
-
       { model: () => TestHelper.generate.model('sponsor'), param: 'fileId', value: null, error: true },
       { model: () => TestHelper.generate.model('sponsor'), param: 'fileId', value: '1234567890', error: true },
       { model: () => TestHelper.generate.model('sponsor'), param: 'fileId', value: 123, error: false },

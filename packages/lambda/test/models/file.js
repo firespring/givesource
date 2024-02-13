@@ -58,8 +58,6 @@ describe('File', function () {
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('file')
     const tests = [
-      ...TestHelper.commonModelValidations('file'),
-
       { model, param: 'path', value: null, error: true },
       { model, param: 'path', value: '', error: true },
       { model, param: 'path', value: 'test', error: false },

@@ -35,7 +35,8 @@ describe('PostDonation', function () {
     }
     return PostDonation.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
+      // TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
+      TestHelper.assertModelEquals(result, model)
     })
   })
 
