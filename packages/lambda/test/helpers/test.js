@@ -29,6 +29,18 @@ const promiseMe = require('mocha-promise-me')
 const generatorInstance = new Generator()
 module.exports.generate = generatorInstance
 
+module.exports.callApi = function (api, params = {}, context = null) {
+  const event = { params }
+  return new Promise((resolve, reject) => api.handle(event, context, (error, result) => {
+    // console.log('wrapHandle', {error, result})
+    if (error) {
+      reject(error)
+    } else {
+      resolve(result)
+    }
+  }))
+}
+
 /**
  * Assert multiple validation test cases
  *

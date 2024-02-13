@@ -15,66 +15,25 @@
  */
 
 const assert = require('assert')
+const sinon = require('sinon')
+const promiseMe = require('mocha-promise-me')
 const HttpException = require('./../../../src/exceptions/http')
 const PostDonation = require('../../../src/api/postDonation/index')
 const DonationsRepository = require('../../../src/repositories/donations')
-const sinon = require('sinon')
-const TestHelper = require('../../helpers/test')
-
-const Request = require('../../../src/aws/request')
-const SecretsManager = require('../../../src/aws/secretsManager')
-const Ssm = require('../../../src/aws/ssm')
+const { callApi } = require('../../helpers/test')
 
 describe('PostDonation', function () {
-  // beforeEach(async () => {
-  //   sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-  //   sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
-  // })
-  // afterEach(function () {
-  //   // SecretsManager.prototype.getSecretValue.restore()
-  //   // Ssm.prototype.getParameter.restore()
-  //
-  //   sinon.restore();
-  // })
-  // afterEach(function () {
-  //   // DonationsRepository.prototype.upsert.restore()
-  //   // DonationsRepository.prototype.populate.restore()
-  //   // Request.prototype.validate.restore()
-  // })
-
   it('should return a donation', async function () {
-    const model = await TestHelper.generate.model('donation')
-    // console.log({model})
+    const model = {}
     sinon.stub(DonationsRepository.prototype, 'upsert').resolves(model)
-    sinon.stub(DonationsRepository.prototype, 'populate').resolves(model)
 
-    sinon.stub(Request.prototype, 'validate').resolves(true)
-
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body
-    }
-
-    // const result = await new Promise(resolve => PostDonation.handle(params, null, ))
-
-    return new Promise(resolve => {
-      PostDonation.handle(params, null, function (error, result) {
-        console.log('PostDonation.handle callback', error)
-        assert(!error)
-        assert(result === model)
-        // TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-        // assert(false)
-        // TestHelper.assertModelEquals({foo: 'bar'}, model, [])
-        resolve()
-      })
-    })
+    const result = await callApi(PostDonation)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    // DonationsRepository.prototype.upsert.restore()
-
-    sinon.stub(DonationsRepository.prototype, 'save').rejects('Error')
-    return PostDonation.handle({}, null, function (error) {
+  it('should return error on exception thrown', async function () {
+    sinon.stub(DonationsRepository.prototype, 'upsert').rejects(new HttpException())
+    await promiseMe.thatYouReject(callApi(PostDonation), (error) => {
       assert(error instanceof HttpException)
     })
   })

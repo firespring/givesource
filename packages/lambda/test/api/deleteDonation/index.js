@@ -18,33 +18,29 @@ const assert = require('assert')
 const sinon = require('sinon')
 const DeleteDonation = require('../../../src/api/deleteDonation/index')
 const DonationsRepository = require('../../../src/repositories/donations')
-const TestHelper = require('../../helpers/test')
-const SecretsManager = require('../../../src/aws/secretsManager')
+const { callApi } = require('../../helpers/test')
+
+const promiseMe = require('mocha-promise-me')
 
 describe('DeleteDonation', function () {
-  it('should delete a donation', function () {
-    const model = TestHelper.generate.model('donation')
-    sinon.stub(DonationsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        donation_uuid: model.uuid
-      }
-    }
-    return DeleteDonation.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const donationId = '1234'
+
+  it('should delete a donation', async function () {
+    const deleteStub = sinon.stub(DonationsRepository.prototype, 'delete')
+
+    await callApi(DeleteDonation, { donation_id: donationId })
+    assert.equal(deleteStub.withArgs(donationId).callCount, 1)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(DonationsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        donation_uuid: '1234'
-      }
-    }
-    return DeleteDonation.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('hi')
+    sinon.stub(DonationsRepository.prototype, 'delete')
+      .withArgs(donationId)
+      .rejects(errorStub)
+
+    const response = callApi(DeleteDonation, { donation_id: donationId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
