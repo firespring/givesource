@@ -21,10 +21,6 @@ const PaymentTransactionsRepository = require('../../../src/repositories/payment
 const TestHelper = require('../../helpers/test')
 
 describe('DeletePaymentTransaction', function () {
-  afterEach(function () {
-    PaymentTransactionsRepository.prototype.delete.restore()
-  })
-
   it('should delete a paymentTransaction', function () {
     const model = TestHelper.generate.model('paymentTransaction')
     sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model)

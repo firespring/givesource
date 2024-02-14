@@ -21,11 +21,6 @@ const PaymentTransactionsRepository = require('../../../src/repositories/payment
 const TestHelper = require('../../helpers/test')
 
 describe('PatchPaymentTransaction', function () {
-  afterEach(function () {
-    PaymentTransactionsRepository.prototype.get.restore()
-    PaymentTransactionsRepository.prototype.save.restore()
-  })
-
   it('should return an updated paymentTransaction', function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const updated = TestHelper.generate.model('paymentTransaction', { uuid: original.uuid })

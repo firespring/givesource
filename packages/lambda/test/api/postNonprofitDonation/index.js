@@ -22,10 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostNonprofitDonation', function () {
-  afterEach(function () {
-    NonprofitDonationsRepository.prototype.save.restore()
-  })
-
   it('should return a donation', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })

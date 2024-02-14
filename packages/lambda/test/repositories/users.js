@@ -19,8 +19,6 @@ const UsersRepository = require('../../src/repositories/users')
 const Repository = require('../../src/repositories/repository')
 const TestHelper = require('../helpers/test')
 
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 const Sequelize = require('sequelize')

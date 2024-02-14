@@ -23,12 +23,6 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('./../../helpers/test')
 
 describe('PostSponsor', function () {
-  afterEach(function () {
-    SponsorTiersRepository.prototype.get.restore()
-    SponsorsRepository.prototype.getCount.restore()
-    SponsorsRepository.prototype.save.restore()
-  })
-
   it('should return a sponsor', function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const model = TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })

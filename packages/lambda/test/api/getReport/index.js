@@ -21,10 +21,6 @@ const ReportsRepository = require('../../../src/repositories/reports')
 const TestHelper = require('../../helpers/test')
 
 describe('GetReport', function () {
-  afterEach(function () {
-    ReportsRepository.prototype.get.restore()
-  })
-
   it('should return a report', function () {
     const model = TestHelper.generate.model('report')
     sinon.stub(ReportsRepository.prototype, 'get').resolves(model)

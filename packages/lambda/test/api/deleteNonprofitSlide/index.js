@@ -22,11 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteNonprofitSlide', function () {
-  afterEach(function () {
-    NonprofitsRepository.prototype.get.restore()
-    NonprofitSlidesRepository.prototype.delete.restore()
-  })
-
   it('should delete a nonprofit slide', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('nonprofitSlide')

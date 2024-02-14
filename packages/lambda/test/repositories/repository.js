@@ -21,8 +21,6 @@ const sinon = require('sinon')
 const Sequelize = require('sequelize')
 
 const promiseMe = require('mocha-promise-me')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 
 describe('Repository', function () {
   // #getByKey appears to be dead code (never converted from dynamoDb)

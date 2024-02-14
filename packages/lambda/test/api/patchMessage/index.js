@@ -21,11 +21,6 @@ const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchMessage', function () {
-  afterEach(function () {
-    MessagesRepository.prototype.get.restore()
-    MessagesRepository.prototype.save.restore()
-  })
-
   it('should return an updated message', function () {
     const original = TestHelper.generate.model('message')
     const updated = TestHelper.generate.model('message', { uuid: original.uuid })

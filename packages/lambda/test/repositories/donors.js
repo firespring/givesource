@@ -25,8 +25,6 @@ const Sequelize = require('sequelize')
 let Donor
 
 const promiseMe = require('mocha-promise-me')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 
 describe('DonorsRepository', function () {
   beforeEach(async () => {

@@ -23,12 +23,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PostNonprofitSlide', function () {
-  afterEach(function () {
-    NonprofitsRepository.prototype.get.restore()
-    NonprofitSlidesRepository.prototype.getCount.restore()
-    NonprofitSlidesRepository.prototype.save.restore()
-  })
-
   it('should return a slide', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })

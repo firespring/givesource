@@ -23,10 +23,6 @@
 
 describe('PostPaymentTransaction', function () {
   // PostPaymentTransaction is currently un-used/partially implemented
-
-  // afterEach(function () {
-  //   PaymentTransactionsRepository.prototype.save.restore()
-  // })
   //
   // it('should return a paymentTransaction', function () {
   //   const model = TestHelper.generate.model('paymentTransaction')

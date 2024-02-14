@@ -21,10 +21,6 @@ const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('GetMessage', function () {
-  afterEach(function () {
-    MessagesRepository.prototype.get.restore()
-  })
-
   it('should return a message', function () {
     const model = TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'get').resolves(model)

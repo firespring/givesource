@@ -17,10 +17,7 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Donation
 
 describe('Donation', function () {

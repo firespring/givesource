@@ -21,10 +21,6 @@ const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteMessage', function () {
-  afterEach(function () {
-    MessagesRepository.prototype.delete.restore()
-  })
-
   it('should delete a message', function () {
     const model = TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'delete').resolves(model)

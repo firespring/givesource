@@ -20,8 +20,6 @@ const Repository = require('./../../src/repositories/repository')
 const SettingsRepository = require('./../../src/repositories/settings')
 const TestHelper = require('./../helpers/test')
 
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 const Sequelize = require('sequelize')

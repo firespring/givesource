@@ -21,10 +21,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteSetting', function () {
-  afterEach(function () {
-    SettingsRepository.prototype.delete.restore()
-  })
-
   it('should delete a setting', function () {
     const model = TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'delete').resolves(model)

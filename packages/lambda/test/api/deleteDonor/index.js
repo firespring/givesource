@@ -21,10 +21,6 @@ const DonorsRepository = require('../../../src/repositories/donors')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteDonor', function () {
-  afterEach(function () {
-    DonorsRepository.prototype.delete.restore()
-  })
-
   it('should delete a donor', function () {
     const model = TestHelper.generate.model('donor')
     sinon.stub(DonorsRepository.prototype, 'delete').resolves(model)

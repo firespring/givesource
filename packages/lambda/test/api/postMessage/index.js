@@ -22,10 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostMessage', function () {
-  afterEach(function () {
-    MessagesRepository.prototype.save.restore()
-  })
-
   it('should return a message', function () {
     const model = TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'save').resolves(model)

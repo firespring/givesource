@@ -22,11 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostDonor', function () {
-  afterEach(function () {
-    DonorsRepository.prototype.queryEmail.restore()
-    DonorsRepository.prototype.save.restore()
-  })
-
   it('should update a donor by email', function () {
     const data = TestHelper.generate.model('donor')
     // const donor = TestHelper.generate.model('donor', { email: data.email })

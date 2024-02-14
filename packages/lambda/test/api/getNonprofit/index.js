@@ -21,10 +21,6 @@ const NonprofitRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('GetNonprofit', function () {
-  afterEach(function () {
-    NonprofitRepository.prototype.get.restore()
-  })
-
   it('should return a nonprofit', function () {
     const model = TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitRepository.prototype, 'get').resolves(model)

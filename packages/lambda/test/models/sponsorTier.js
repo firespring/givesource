@@ -18,10 +18,7 @@ const assert = require('assert')
 const Model = require('sequelize').Model
 const SponsorHelper = require('../../src/helpers/sponsor')
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let SponsorTier
 
 describe('SponsorTier', function () {

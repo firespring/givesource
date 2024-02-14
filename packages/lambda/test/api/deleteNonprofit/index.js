@@ -21,10 +21,6 @@ const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteNonprofit', function () {
-  afterEach(function () {
-    NonprofitsRepository.prototype.delete.restore()
-  })
-
   it('should delete a nonprofit', function () {
     const model = TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitsRepository.prototype, 'delete').resolves(model)

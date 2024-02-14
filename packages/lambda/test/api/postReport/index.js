@@ -22,10 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostReport', function () {
-  afterEach(function () {
-    ReportsRepository.prototype.save.restore()
-  })
-
   it('should return a report', function () {
     const model = TestHelper.generate.model('report')
     sinon.stub(ReportsRepository.prototype, 'save').resolves(model)

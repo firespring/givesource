@@ -21,11 +21,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchSetting', function () {
-  afterEach(function () {
-    SettingsRepository.prototype.get.restore()
-    SettingsRepository.prototype.save.restore()
-  })
-
   it('should return an updated setting', function () {
     const original = TestHelper.generate.model('setting')
     const updated = TestHelper.generate.model('setting', { uuid: original.uuid, key: original.key })

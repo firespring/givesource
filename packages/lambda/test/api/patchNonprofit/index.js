@@ -21,12 +21,6 @@ const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchNonprofit', function () {
-  afterEach(function () {
-    NonprofitsRepository.prototype.get.restore()
-    NonprofitsRepository.prototype.save.restore()
-    NonprofitsRepository.prototype.generateUniqueSlug.restore()
-  })
-
   it('should return an updated nonprofit', function () {
     const original = TestHelper.generate.model('nonprofit')
     const updated = TestHelper.generate.model('nonprofit', { uuid: original.uuid })

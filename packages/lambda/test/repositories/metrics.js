@@ -21,8 +21,6 @@ const Repository = require('./../../src/repositories/repository')
 
 const sinon = require('sinon')
 const Sequelize = require('sequelize')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 
 describe('MetricsRepository', function () {
   describe('#construct()', function () {
