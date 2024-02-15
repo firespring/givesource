@@ -20,7 +20,7 @@ dotenv.config({ path: `${__dirname}/../../../.env` })
 const path = require('path')
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin')
 
-module.exports = {
+const config = {
   mode: 'development',
   entry: {
     // Api Gateway Authorizer Lambda Function
@@ -210,3 +210,12 @@ module.exports = {
     modules: [path.resolve(__dirname, '../src'), 'node_modules']
   }
 }
+
+// console.log('process.env.LAMBDA::', process.env.LAMBDA)
+// throw new Error('done')
+
+config.entry = {
+  DeleteReports: config.entry.DeleteReports
+}
+
+module.exports = config

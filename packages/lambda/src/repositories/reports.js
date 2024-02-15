@@ -101,7 +101,14 @@ ReportsRepository.prototype.getAll = function () {
     return loadModels().then(function (models) {
       allModels = models
     }).then(function () {
-      return allModels.Report.findAll()
+      return allModels.Report.findAll({
+        include: [
+          {
+            model: allModels.File,
+            required: false
+          }
+        ]
+      })
     }).then(function (results) {
       resolve(results)
     }).catch(function (err) {

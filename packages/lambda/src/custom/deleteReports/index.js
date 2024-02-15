@@ -29,23 +29,58 @@ exports.handle = function (event, context, callback) {
   expire.setHours(expire.getHours() - 1)
 
   let filesCount = 0; let processedCount = 0; let reportsCount = 0
+  // reportsRepository.getAll({
+  //   include: [
+  //     {
+  //       model: allModels.Donation,
+  //       required: false
+  //     }
+  //   ]
+  // })
   reportsRepository.getAll().then(function (reports) {
     let promise = Promise.resolve()
+    // console.log('reports', reports.map(report => {
+    //   return {
+    //     co: report.createdOn,
+    //     uuid: report.fileUuid,
+    //     ca: report.createdAt,
+    //     p: report.path,
+    //     dataValues: JSON.stringify(report.dataValues),
+    //     file: JSON.stringify(report.File?.dataValues),
+    //     filePath: report.File?.path
+    //   }
+    // }))
+    /**
+     * {
+     *     co: undefined,
+     *     uuid: undefined,
+     *     ca: 2023-04-27T16:28:14.000Z,
+     *     p: undefined,
+     *     dataValues: '
+     *     {"id":62,"fileId":63,"nonprofitId":0,"status":"SUCCESS","type":"LAST_4_REPORT","createdAt":"2023-04-27T16:28:14.000Z","updatedAt":"2023-04-27T16:28:15.000Z","FileId":63,"NonprofitId":0}
+     *     '
+     *   }
+     */
     reports.forEach(function (report) {
+      // console.log({report, F: report.File, filePath: report.File?.path, file: JSON.stringify(report.File?.dataValues)})
+      console.log((new Date(report.createdAt)) <= expire, {fid: report.fileId, report: JSON.stringify(report.dataValues), filePath: report.File?.path, file: JSON.stringify(report.File?.dataValues)})
       processedCount += 1
-      if (report.createdOn <= expire.getTime()) { // todo createdAt ?
+      if ((new Date(report.createdAt)) <= expire) { // todo createdAt ?
         reportsCount += 1
-        if (report.fileUuid) {
+        if (report.File?.path && report.fileId) { // todo
           promise = promise.then(function () {
-            return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${report.fileUuid}`).then(function () {
+            console.log('deleting from s3', {rFid: report.fileId, fid: report.File.id})
+            return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, report.File.path).then(function () {
               filesCount += 1
-              return filesRepository.delete(report.fileUuid)
+              console.log('deleting from file repo', {rFid: report.fileId, fid: report.File.id})
+              return filesRepository.delete(report.fileId)
             })
           })
         }
 
         promise = promise.then(function () {
-          return reportsRepository.delete(report.uuid)
+          console.log('deleting from report repo', {rid: report.id})
+          return reportsRepository.delete(report.id)
         })
       }
     })

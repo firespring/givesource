@@ -94,23 +94,25 @@ const searchFunctions = function (answers, input) {
   })
 }
 
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-inquirer.prompt([
-  {
-    type: 'autocomplete',
-    message: 'Select a function to deploy:',
-    name: 'selected',
-    source: searchFunctions,
-    validate: function (answer) {
-      if (answer.length < 1) {
-        return 'C'
-      }
-      return true
-    }
-  }
-]).then(function (answer) {
-  const functions = (answer.selected === 'All') ? list : [answer.selected]
-  return batchDeploy(functions)
-}).catch(function (err) {
-  console.log(err)
-})
+batchDeploy(['DeleteReports'])
+// inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
+// inquirer.prompt([
+//   {
+//     type: 'autocomplete',
+//     message: 'Select a function to deploy:',
+//     name: 'selected',
+//     source: searchFunctions,
+//     validate: function (answer) {
+//       if (answer.length < 1) {
+//         return 'C'
+//       }
+//       return true
+//     }
+//   }
+// ]).then(function (answer) {
+//   console.log({answer, list})
+//   const functions = (answer.selected === 'All') ? list : [answer.selected]
+//   return batchDeploy(functions)
+// }).catch(function (err) {
+//   console.log(err)
+// })
