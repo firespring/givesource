@@ -211,11 +211,13 @@ const config = {
   }
 }
 
-// console.log('process.env.LAMBDA::', process.env.LAMBDA)
-// throw new Error('done')
-
-config.entry = {
-  DeleteReports: config.entry.DeleteReports
+if (process.env.LAMBDA) {
+  if (!config.entry[process.env.LAMBDA]) {
+    throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
+  }
+  config.entry = {
+    [process.env.LAMBDA]: config.entry[process.env.LAMBDA]
+  }
 }
 
 module.exports = config

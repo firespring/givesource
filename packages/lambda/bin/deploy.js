@@ -94,25 +94,35 @@ const searchFunctions = function (answers, input) {
   })
 }
 
-batchDeploy(['DeleteReports'])
-// inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-// inquirer.prompt([
-//   {
-//     type: 'autocomplete',
-//     message: 'Select a function to deploy:',
-//     name: 'selected',
-//     source: searchFunctions,
-//     validate: function (answer) {
-//       if (answer.length < 1) {
-//         return 'C'
-//       }
-//       return true
-//     }
-//   }
-// ]).then(function (answer) {
-//   console.log({answer, list})
-//   const functions = (answer.selected === 'All') ? list : [answer.selected]
-//   return batchDeploy(functions)
-// }).catch(function (err) {
-//   console.log(err)
-// })
+let lambdasToDeploy
+
+if (process.env.LAMBDA) {
+  if (!list.includes(process.env.LAMBDA)) {
+    throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
+  }
+  lambdasToDeploy = Promise.resolve([process.env.LAMBDA])
+} else {
+  inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
+  lambdasToDeploy = inquirer.prompt([
+    {
+      type: 'autocomplete',
+      message: 'Select a function to deploy:',
+      name: 'selected',
+      source: searchFunctions,
+      validate: function (answer) {
+        if (answer.length < 1) {
+          return 'C'
+        }
+        return true
+      }
+    }
+  ]).then(function (answer) {
+    return (answer.selected === 'All') ? list : [answer.selected]
+  })
+}
+
+lambdasToDeploy.then(async (functions) => {
+  await batchDeploy(functions)
+}).catch(function (err) {
+  console.log(err)
+})
