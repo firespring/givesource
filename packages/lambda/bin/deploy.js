@@ -97,11 +97,16 @@ const searchFunctions = function (answers, input) {
 let lambdasToDeploy
 
 if (process.env.LAMBDA) {
-  if (!list.includes(process.env.LAMBDA)) {
+  // if a LAMBDA env was provided deploy that lambda
+  if (process.env.LAMBDA === 'ALL') {
+    lambdasToDeploy = Promise.resolve(list)
+  } else if (list.includes(process.env.LAMBDA)) {
+    lambdasToDeploy = Promise.resolve([process.env.LAMBDA])
+  } else {
     throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
   }
-  lambdasToDeploy = Promise.resolve([process.env.LAMBDA])
 } else {
+  // prompt for lambda(s) to deploy
   inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
   lambdasToDeploy = inquirer.prompt([
     {

@@ -211,7 +211,8 @@ const config = {
   }
 }
 
-if (process.env.LAMBDA) {
+if (process.env.LAMBDA && process.env.LAMBDA !== 'ALL') {
+  // if a LAMBDA env was provided only build that one
   if (!config.entry[process.env.LAMBDA]) {
     throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
   }

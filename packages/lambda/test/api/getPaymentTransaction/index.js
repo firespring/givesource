@@ -26,7 +26,7 @@ describe('GetPaymentTransaction', function () {
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(model)
     const params = {
       params: {
-        paymentTransactionUuid: model.uuid // todo
+        paymentTransactionUuid: model.uuid
       }
     }
     return GetPaymentTransaction.handle(params, null, function (error, result) {
@@ -39,7 +39,7 @@ describe('GetPaymentTransaction', function () {
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {
-        paymentTransactionUuid: '1234' // todo
+        paymentTransactionUuid: '1234'
       }
     }
     return GetPaymentTransaction.handle(params, null, function (error, result) {

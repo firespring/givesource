@@ -48,7 +48,7 @@ module.exports = (sequelize) => {
     type: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: { isIn: [[TYPE_CONTACT, TYPE_FEEDBACK, TYPE_NAME_CHANGE]] } // todo verify this is full list
+      validate: { isIn: [[TYPE_CONTACT, TYPE_FEEDBACK, TYPE_NAME_CHANGE]] }
     }
   }, {
     sequelize,

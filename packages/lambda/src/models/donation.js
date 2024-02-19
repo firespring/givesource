@@ -29,7 +29,15 @@ module.exports = (sequelize) => {
     amountForNonprofit: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: this.total - this.fees // ?
+      defaultValue: 0,
+      get: function () {
+        if (this.dataValues.amountForNonprofit) {
+          // if a value was explicitly set, use that
+          return this.dataValues.amountForNonprofit
+        }
+        // calculate default
+        return (this.total - this.fees) || 0
+      }
     },
     count: {
       type: DataTypes.INTEGER,
@@ -64,7 +72,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-      validate: { isNumericType }
+      validate: { isNumeric: true }
     },
     paymentTransactionIsTestMode: {
       type: DataTypes.BOOLEAN,

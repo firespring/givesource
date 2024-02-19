@@ -15,17 +15,14 @@
  */
 
 const validate = require('validate.js')
-// const InvalidInputException = require('../exceptions/invalidInput')
-
 const validateUuid = require('uuid-validate')
-//
+
 const isUuid = (value) => {
   if (value === '') return
   if (!validateUuid(value)) throw new Error('Must be a uuid')
 }
 
 const isNumericType = (value) => {
-  // isNumeric: true // allows number like strings
   if (typeof value !== 'number') throw new Error('Must be a number')
 }
 
@@ -41,7 +38,6 @@ const isBoolean = (value) => {
 }
 
 const isEmail = (value) => {
-  // todo just isEmail: true
   const errors = validate.single(value, { presence: false, email: true })
   if (errors) throw new Error('Must be an email address')
 }

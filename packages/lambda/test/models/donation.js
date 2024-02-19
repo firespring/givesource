@@ -85,6 +85,19 @@ describe('Donation', function () {
     })
   })
 
+  it('foobars', () => {
+    const total = 1000
+    const fees = 100
+    const model = new Donation({ total, fees })
+    assert.equal(model.amountForNonprofit, total - fees)
+  })
+  it('foobars', () => {
+    const total = 1000
+    const fees = 100
+    const model = new Donation({ total, fees, amountForNonprofit: 123 })
+    assert.equal(model.amountForNonprofit, 123)
+  })
+
   describe('#validate()', function () {
     const model = () => TestHelper.generate.model('donation')
     const tests = [
@@ -117,7 +130,8 @@ describe('Donation', function () {
       { model: () => TestHelper.generate.model('donation', { paymentTransactionId: 123 }), param: 'isOfflineDonation', value: false, error: false },
       { model, param: 'isOfflineDonation', value: true, error: false },
       { model, param: 'nonprofitId', value: null, error: true },
-      { model, param: 'nonprofitId', value: '1234567890', error: true },
+      { model, param: 'nonprofitId', value: 1234567890, error: false },
+      { model, param: 'nonprofitId', value: '1234567890', error: false },
       { model, param: 'nonprofitId', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: true },
       { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionId', value: null, error: true },
       { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionId', value: '1234567890', error: true },

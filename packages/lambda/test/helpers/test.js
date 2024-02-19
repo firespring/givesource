@@ -32,7 +32,6 @@ module.exports.generate = generatorInstance
 module.exports.callApi = function (api, params = {}, context = null) {
   const event = { params }
   return new Promise((resolve, reject) => api.handle(event, context, (error, result) => {
-    // console.log('wrapHandle', {error, result})
     if (error) {
       reject(error)
     } else {
@@ -60,7 +59,6 @@ module.exports.validate = function (testCases) {
       // Validate that data keys are actually model properties
       const attributes = testCase.model.constructor.getAttributes()
       Object.keys(data).forEach(key => {
-        // if (key === 'isDeleted') return // todo remove?
         assert(key in attributes, `${key} is not a valid attribute on ${testCase.model.constructor.name} object`)
       })
 
@@ -85,12 +83,8 @@ module.exports.validate = function (testCases) {
 module.exports.assertModelEquals = function (data, model, except) {
   let equality = true
   const modelData = model.get()
-  console.log({ modelData })
   Object.keys(data).forEach(function (key) {
     if (except.indexOf(key) < 0) {
-      // if (data.hasOwnProperty(key) && modelData.hasOwnProperty(key) && data[key] !== modelData[key]) {
-      //   equality = false
-      // }
       if (data[key] !== modelData[key]) {
         equality = false
       }

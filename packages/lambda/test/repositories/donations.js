@@ -51,7 +51,6 @@ describe('DonationsRepository', function () {
       const data = await TestHelper.generate.model('donation')
       sinon.stub(Sequelize.Model, 'findAll').resolves(data)
       const repository = new DonationsRepository()
-      // todo uui
       return promiseMe.thatYouResolve(repository.get(data.uuid), function (model) {
         assert.ok(model instanceof Donation)
         assert.equal(model, data)
