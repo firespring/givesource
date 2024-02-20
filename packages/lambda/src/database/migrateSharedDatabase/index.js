@@ -42,13 +42,16 @@ exports.handle = function (event, context, callback) {
 
   let cacert
   let sequelize
-  request.validate().then(function () {
-    fs.rmdirSync(path.join(localPath, process.env.MIGRATIONS_LOCATION), { recursive: true })
-    return s3.listObjects(process.env.AWS_REGION, process.env.MIGRATIONS_BUCKET, process.env.MIGRATIONS_LOCATION).then(function (objects) {
-      return Promise.all(objects.map(function (obj) {
-        return s3.downloadObject(process.env.AWS_REGION, process.env.MIGRATIONS_BUCKET, obj.Key, localPath)
-      }))
+  request.validate().then(async () => {
+    await fs.rm(path.join(localPath, process.env.MIGRATIONS_LOCATION), { recursive: true, force: true }, (err) => {
+      // do nothing on error
+      // the directory will not exist on the first execution
     })
+    const objects = await s3.listObjects(process.env.AWS_REGION, process.env.MIGRATIONS_BUCKET, process.env.MIGRATIONS_LOCATION)
+    await Promise.all(objects.map(function (obj) {
+      return s3.downloadObject(process.env.AWS_REGION, process.env.MIGRATIONS_BUCKET, obj.Key, localPath)
+    }))
+
   }).then(function () {
     return ssm.getParameter(process.env.AWS_REGION, process.env.RDS_CA_PARAMETER, false)
   }).then(function (parameter) {
