@@ -20,7 +20,7 @@ dotenv.config({ path: `${__dirname}/../../../.env` })
 const path = require('path')
 const WebpackBundlePlugin = require('./../webpack/webpackBundlePlugin')
 
-module.exports = {
+const config = {
   mode: 'development',
   entry: {
     // Api Gateway Authorizer Lambda Function
@@ -210,3 +210,15 @@ module.exports = {
     modules: [path.resolve(__dirname, '../src'), 'node_modules']
   }
 }
+
+if (process.env.LAMBDA && process.env.LAMBDA !== 'ALL') {
+  // if a LAMBDA env was provided only build that one
+  if (!config.entry[process.env.LAMBDA]) {
+    throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
+  }
+  config.entry = {
+    [process.env.LAMBDA]: config.entry[process.env.LAMBDA]
+  }
+}
+
+module.exports = config

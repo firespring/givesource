@@ -17,6 +17,7 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
+const { isString } = require('../helpers/validation')
 class Setting extends Model {}
 
 module.exports = (sequelize) => {
@@ -24,9 +25,7 @@ module.exports = (sequelize) => {
     key: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: true
-      }
+      validate: { isString, notEmpty: true }
     },
     value: {
       type: DataTypes.STRING

@@ -21,16 +21,12 @@ const DonorsRepository = require('../../../src/repositories/donors')
 const TestHelper = require('../../helpers/test')
 
 describe('GetDonor', function () {
-  afterEach(function () {
-    DonorsRepository.prototype.get.restore()
-  })
-
   it('should return a donor', function () {
     const model = TestHelper.generate.model('donor')
     sinon.stub(DonorsRepository.prototype, 'get').resolves(model)
     const params = {
       params: {
-        donorUuid: model.uuid
+        donorUuid: model.uuid // todo
       }
     }
     return GetDonor.handle(params, null, function (error, result) {
@@ -43,7 +39,7 @@ describe('GetDonor', function () {
     sinon.stub(DonorsRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {
-        donorUuid: '1234'
+        donorUuid: '1234' // todo
       }
     }
     return GetDonor.handle(params, null, function (error, result) {

@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Message
 
 describe('Message', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Message = (await loadModels()).Message
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -85,32 +76,30 @@ describe('Message', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('message')
     const tests = [
-      ...TestHelper.commonModelValidations('message'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('message'), param: 'email', value: null, error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'email', value: '', error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'email', value: 'test@email.com', error: false },
-      // { model: () => TestHelper.generate.model('message'), param: 'email', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'email', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'message', value: null, error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'message', value: '', error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'message', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('message'), param: 'message', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'name', value: null, error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'name', value: '', error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'name', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('message'), param: 'name', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'phone', value: null, error: false },
-      { model: () => TestHelper.generate.model('message'), param: 'phone', value: '', error: false },
-      { model: () => TestHelper.generate.model('message'), param: 'phone', value: 'test', error: false },
-      { model: () => TestHelper.generate.model('message'), param: 'phone', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('message'), param: 'type', value: null, error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'type', value: 'adsf', error: true },
-      // { model: () => TestHelper.generate.model('message'), param: 'type', value: '', error: true },
-      { model: () => TestHelper.generate.model('message'), param: 'type', value: 'CONTACT', error: false },
-      { model: () => TestHelper.generate.model('message'), param: 'type', value: 'FEEDBACK', error: false }
+      { model, param: 'email', value: null, error: true },
+      { model, param: 'email', value: '', error: true },
+      { model, param: 'email', value: 'test@email.com', error: false },
+      { model, param: 'email', value: 'test', error: true },
+      { model, param: 'email', value: 123456, error: true },
+      { model, param: 'message', value: null, error: true },
+      { model, param: 'message', value: '', error: true },
+      { model, param: 'message', value: 'test', error: false },
+      { model, param: 'message', value: 123456, error: true },
+      { model, param: 'name', value: null, error: true },
+      { model, param: 'name', value: '', error: true },
+      { model, param: 'name', value: 'test', error: false },
+      { model, param: 'name', value: 123456, error: true },
+      { model, param: 'phone', value: null, error: false },
+      { model, param: 'phone', value: '', error: false },
+      { model, param: 'phone', value: 'test', error: false },
+      { model, param: 'phone', value: 123456, error: false },
+      { model, param: 'type', value: null, error: true },
+      { model, param: 'type', value: 'adsf', error: true },
+      { model, param: 'type', value: '', error: true },
+      { model, param: 'type', value: 'CONTACT', error: false },
+      { model, param: 'type', value: 'FEEDBACK', error: false }
     ]
     TestHelper.validate(tests)
   })

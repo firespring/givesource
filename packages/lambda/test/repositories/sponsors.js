@@ -21,8 +21,6 @@ const TestHelper = require('../helpers/test')
 
 const promiseMe = require('mocha-promise-me')
 
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
 const sinon = require('sinon')
 const Sequelize = require('sequelize')
@@ -31,22 +29,8 @@ let Sponsor
 
 describe('SponsorsRepository', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Sponsor = (await loadModels()).Sponsor
   })
-  afterEach(function () {
-    const stubbedFunctions = [
-      SponsorTiersRepository.prototype.get,
-      SecretsManager.prototype.getSecretValue,
-      Ssm.prototype.getParameter,
-      Sequelize.Model.destroy,
-      Sequelize.Model.findAll,
-      Sequelize.Model.upsert
-    ]
-    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
-  })
-
   describe('#construct()', function () {
     it('should be an instance of Repository', function () {
       const repository = new SponsorsRepository()

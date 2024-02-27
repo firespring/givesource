@@ -21,10 +21,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetMetrics', function () {
-  afterEach(function () {
-    MetricsRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of settings', function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     sinon.stub(MetricsRepository.prototype, 'getAll').resolves(models)

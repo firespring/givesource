@@ -31,21 +31,22 @@ exports.handle = function (event, context, callback) {
   let filesCount = 0; let processedCount = 0; let reportsCount = 0
   reportsRepository.getAll().then(function (reports) {
     let promise = Promise.resolve()
+
     reports.forEach(function (report) {
       processedCount += 1
-      if (report.createdOn <= expire.getTime()) {
+      if ((new Date(report.createdAt)) <= expire) {
         reportsCount += 1
-        if (report.fileUuid) {
+        if (report.File?.path && report.fileId) {
           promise = promise.then(function () {
-            return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, `reports/${report.fileUuid}`).then(function () {
+            return s3.deleteObject(process.env.AWS_REGION, process.env.AWS_S3_BUCKET_NAME, report.File.path).then(function () {
               filesCount += 1
-              return filesRepository.delete(report.fileUuid)
+              return filesRepository.delete(report.fileId)
             })
           })
         }
 
         promise = promise.then(function () {
-          return reportsRepository.delete(report.uuid)
+          return reportsRepository.delete(report.id)
         })
       }
     })

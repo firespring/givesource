@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Donor
 
 describe('Donor', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Donor = (await loadModels()).Donor
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -56,47 +47,45 @@ describe('Donor', function () {
   })
 
   describe('#validate', function () {
+    const model = () => TestHelper.generate.model('donor')
     const tests = [
-      ...TestHelper.commonModelValidations('donor'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      // { model: () => TestHelper.generate.model('donor'), param: 'address1', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'address1', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'address1', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'address1', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'address2', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'address2', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'address2', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'address2', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'city', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'city', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'city', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'city', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'email', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'email', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'email', value: 'test@email.com', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'email', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'email', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('donor'), param: 'firstName', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'firstName', value: '', error: true },
-      { model: () => TestHelper.generate.model('donor'), param: 'firstName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'firstName', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('donor'), param: 'lastName', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'lastName', value: '', error: true },
-      { model: () => TestHelper.generate.model('donor'), param: 'lastName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'lastName', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'phone', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'phone', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'phone', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'phone', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'state', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'state', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'state', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('donor'), param: 'state', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('donor'), param: 'zip', value: null, error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'zip', value: '', error: false },
-      { model: () => TestHelper.generate.model('donor'), param: 'zip', value: 'test', error: false }
-      // { model: () => TestHelper.generate.model('donor'), param: 'zip', value: 123456, error: true }
+      { model, param: 'address1', value: null, error: true },
+      { model, param: 'address1', value: '', error: false },
+      { model, param: 'address1', value: 'test', error: false },
+      { model, param: 'address1', value: 123456, error: true },
+      { model, param: 'address2', value: null, error: true },
+      { model, param: 'address2', value: '', error: false },
+      { model, param: 'address2', value: 'test', error: false },
+      { model, param: 'address2', value: 123456, error: true },
+      { model, param: 'city', value: null, error: true },
+      { model, param: 'city', value: '', error: false },
+      { model, param: 'city', value: 'test', error: false },
+      { model, param: 'city', value: 123456, error: true },
+      { model, param: 'email', value: null, error: true },
+      { model, param: 'email', value: '', error: false },
+      { model, param: 'email', value: 'test@email.com', error: false },
+      { model, param: 'email', value: 'test', error: true },
+      { model, param: 'email', value: 123456, error: true },
+      { model, param: 'firstName', value: null, error: true },
+      { model, param: 'firstName', value: '', error: true },
+      { model, param: 'firstName', value: 'test', error: false },
+      { model, param: 'firstName', value: 123456, error: true },
+      { model, param: 'lastName', value: null, error: true },
+      { model, param: 'lastName', value: '', error: true },
+      { model, param: 'lastName', value: 'test', error: false },
+      { model, param: 'lastName', value: 123456, error: true },
+      { model, param: 'phone', value: null, error: true },
+      { model, param: 'phone', value: '', error: false },
+      { model, param: 'phone', value: 'test', error: false },
+      { model, param: 'phone', value: 123456, error: true },
+      { model, param: 'state', value: null, error: true },
+      { model, param: 'state', value: '', error: false },
+      { model, param: 'state', value: 'test', error: false },
+      { model, param: 'state', value: 123456, error: true },
+      { model, param: 'zip', value: null, error: true },
+      { model, param: 'zip', value: '', error: false },
+      { model, param: 'zip', value: 'test', error: false },
+      { model, param: 'zip', value: 123456, error: true }
     ]
     TestHelper.validate(tests)
   })

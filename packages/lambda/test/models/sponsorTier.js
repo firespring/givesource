@@ -18,21 +18,12 @@ const assert = require('assert')
 const Model = require('sequelize').Model
 const SponsorHelper = require('../../src/helpers/sponsor')
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let SponsorTier
 
 describe('SponsorTier', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     SponsorTier = (await loadModels()).SponsorTier
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -57,23 +48,19 @@ describe('SponsorTier', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('sponsorTier')
     const tests = [
-      ...TestHelper.commonModelValidations('sponsorTier'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'isDeleted', value: 0, error: false },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'isDeleted', value: 1, error: false },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'name', value: null, error: true },
-      // { model: () => TestHelper.generate.model('sponsorTier'), param: 'name', value: '', error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'name', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('sponsorTier'), param: 'name', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: null, error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: '', error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: 'test', error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: SponsorHelper.SIZE_LARGE, error: false },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: SponsorHelper.SIZE_DEFAULT, error: false },
-      { model: () => TestHelper.generate.model('sponsorTier'), param: 'size', value: SponsorHelper.SIZE_SMALL, error: false }
+      { model, param: 'name', value: null, error: true },
+      { model, param: 'name', value: '', error: true },
+      { model, param: 'name', value: 'test', error: false },
+      { model, param: 'name', value: 123456, error: true },
+      { model, param: 'size', value: null, error: true },
+      { model, param: 'size', value: '', error: true },
+      { model, param: 'size', value: 'test', error: true },
+      { model, param: 'size', value: 123456, error: true },
+      { model, param: 'size', value: SponsorHelper.SIZE_LARGE, error: false },
+      { model, param: 'size', value: SponsorHelper.SIZE_DEFAULT, error: false },
+      { model, param: 'size', value: SponsorHelper.SIZE_SMALL, error: false }
     ]
     TestHelper.validate(tests)
   })

@@ -21,10 +21,6 @@ const NonprofitDonationsRepository = require('../../../src/repositories/nonprofi
 const TestHelper = require('../../helpers/test')
 
 describe('GetNonprofitDonations', function () {
-  afterEach(function () {
-    NonprofitDonationsRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of donations', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const models = TestHelper.generate.modelCollection('donation', 3, { nonprofitUuid: nonprofit.uuid })

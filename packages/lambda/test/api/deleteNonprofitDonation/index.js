@@ -22,11 +22,6 @@ const NonprofitDonationsRepository = require('../../../src/repositories/nonprofi
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteNonprofitDonation', function () {
-  afterEach(function () {
-    NonprofitsRepository.prototype.get.restore()
-    NonprofitDonationsRepository.prototype.delete.restore()
-  })
-
   it('should delete a nonprofit', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('donation')

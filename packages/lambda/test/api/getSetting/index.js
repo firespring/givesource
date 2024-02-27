@@ -21,10 +21,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetSetting', function () {
-  afterEach(function () {
-    SettingsRepository.prototype.get.restore()
-  })
-
   it('should return a setting', function () {
     const model = TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'get').resolves(model)

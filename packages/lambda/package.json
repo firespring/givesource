@@ -18,6 +18,9 @@
   },
   "author": "Firespring",
   "license": "Apache-2.0",
+  "mocha": {
+    "require": "test/hooks.js"
+  },
   "dependencies": {
     "aws-sdk": "^2.1303.0",
     "config": "^3.3.9",
@@ -55,7 +58,7 @@
     "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^1.2.6",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "mocha-promise-me": "^1.0.3",
     "mustache": "^2.3.2",
     "node-uuid": "^1.4.8",
@@ -65,7 +68,7 @@
     "raw-loader": "^0.5.1",
     "request": "^2.88.2",
     "sequelize-cli": "^6.6.0",
-    "sinon": "^2.3.6",
+    "sinon": "^17.0.1",
     "slug": "^0.9.4",
     "uuid-validate": "0.0.2",
     "webpack": "^5.75.0",

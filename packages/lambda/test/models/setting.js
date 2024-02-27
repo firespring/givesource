@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Setting
 
 describe('Setting', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Setting = (await loadModels()).Setting
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -56,18 +47,16 @@ describe('Setting', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('setting')
     const tests = [
-      ...TestHelper.commonModelValidations('setting'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('setting'), param: 'key', value: null, error: true },
-      { model: () => TestHelper.generate.model('setting'), param: 'key', value: '', error: true },
-      { model: () => TestHelper.generate.model('setting'), param: 'key', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('setting'), param: 'key', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('setting'), param: 'value', value: null, error: false },
-      { model: () => TestHelper.generate.model('setting'), param: 'value', value: '', error: false },
-      { model: () => TestHelper.generate.model('setting'), param: 'value', value: 'test', error: false },
-      { model: () => TestHelper.generate.model('setting'), param: 'value', value: 123456, error: false }
+      { model, param: 'key', value: null, error: true },
+      { model, param: 'key', value: '', error: true },
+      { model, param: 'key', value: 'test', error: false },
+      { model, param: 'key', value: 123456, error: true },
+      { model, param: 'value', value: null, error: false },
+      { model, param: 'value', value: '', error: false },
+      { model, param: 'value', value: 'test', error: false },
+      { model, param: 'value', value: 123456, error: false }
     ]
     TestHelper.validate(tests)
   })

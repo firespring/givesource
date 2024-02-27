@@ -18,21 +18,12 @@ const assert = require('assert')
 const ReportHelper = require('../../src/helpers/report')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Report
 
 describe('Report', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Report = (await loadModels()).Report
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -62,29 +53,21 @@ describe('Report', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('report')
     const tests = [
-      ...TestHelper.commonModelValidations('report'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('report'), param: 'isDeleted', value: 0, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'isDeleted', value: 1, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: null, error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: '', error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: 'test', error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_FAILED, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_PENDING, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'status', value: ReportHelper.STATUS_SUCCESS, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: null, error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: 'test', error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: '', error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_DONATIONS, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_PAYOUT_REPORT, error: false },
-      { model: () => TestHelper.generate.model('report'), param: 'type', value: ReportHelper.TYPE_LAST_4, error: false },
-      // { model: () => TestHelper.generate.model('report'), param: 'url', value: null, error: true },
-      // { model: () => TestHelper.generate.model('report'), param: 'url', value: '', error: true },
-      { model: () => TestHelper.generate.model('report'), param: 'url', value: 'http://test.com/report', error: false }
-      // { model: () => TestHelper.generate.model('report'), param: 'url', value: 123456, error: true }
+      { model, param: 'status', value: null, error: true },
+      { model, param: 'status', value: '', error: true },
+      { model, param: 'status', value: 'test', error: true },
+      { model, param: 'status', value: 123456, error: true },
+      { model, param: 'status', value: ReportHelper.STATUS_FAILED, error: false },
+      { model, param: 'status', value: ReportHelper.STATUS_PENDING, error: false },
+      { model, param: 'status', value: ReportHelper.STATUS_SUCCESS, error: false },
+      { model, param: 'type', value: null, error: true },
+      { model, param: 'type', value: 'test', error: true },
+      { model, param: 'type', value: '', error: true },
+      { model, param: 'type', value: ReportHelper.TYPE_DONATIONS, error: false },
+      { model, param: 'type', value: ReportHelper.TYPE_PAYOUT_REPORT, error: false },
+      { model, param: 'type', value: ReportHelper.TYPE_LAST_4, error: false }
     ]
     TestHelper.validate(tests)
   })

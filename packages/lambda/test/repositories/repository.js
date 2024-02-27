@@ -21,25 +21,8 @@ const sinon = require('sinon')
 const Sequelize = require('sequelize')
 
 const promiseMe = require('mocha-promise-me')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 
 describe('Repository', function () {
-  beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
-  })
-  afterEach(function () {
-    const stubbedFunctions = [
-      SecretsManager.prototype.getSecretValue,
-      Ssm.prototype.getParameter,
-      Sequelize.Model.destroy,
-      Sequelize.Model.findAll,
-      Sequelize.Model.upsert
-    ]
-    stubbedFunctions.forEach(toRestore => toRestore.restore && toRestore.restore())
-  })
-
   // #getByKey appears to be dead code (never converted from dynamoDb)
   // describe('#getByKey()', function () {
   //   it('should return the item', function () {
@@ -51,7 +34,7 @@ describe('Repository', function () {
   //     repository.table = 'test-Table'
   //     return promiseMe.thatYouResolve(repository.getByKey('uuid', data.uuid), function (response) {
   //       assert.equal(response.Item.uuid, data.uuid)
-  //       assert.equal(response.Item.createdOn, data.createdOn)
+  //       assert.equal(response.Item.createdAt, data.createdAt)
   //     })
   //   })
   //
@@ -307,7 +290,7 @@ describe('Repository', function () {
   // describe('#query()', function () {
   //   const data = TestHelper.generate.data('model')
   //   const builder = new QueryBuilder('query')
-  //   builder.index('createdOnIndex')
+  //   builder.index('createdAtIndex')
   //
   //   afterEach(function () {
   //     AWS.restore('DynamoDB.DocumentClient')
@@ -370,7 +353,7 @@ describe('Repository', function () {
   describe('#buildUpdateExpression()', function () {
     const data = {
       uuid: 'd08eb977-bda9-4fa1-a2ec-e9802e8668df',
-      createdOn: 11499288551800,
+      createdAt: 11499288551800,
       email: 'alex.rocks@firespring.com'
     }
 
@@ -381,11 +364,11 @@ describe('Repository', function () {
       const updateExpression = func[0]
       const attributeNames = func[1]
       const attributeValues = func[2]
-      assert.equal(updateExpression, 'SET #uuid = :uuid, #createdOn = :createdOn, #email = :email ')
-      assert.deepEqual(attributeNames, { '#uuid': 'uuid', '#createdOn': 'createdOn', '#email': 'email' })
+      assert.equal(updateExpression, 'SET #uuid = :uuid, #createdAt = :createdAt, #email = :email ')
+      assert.deepEqual(attributeNames, { '#uuid': 'uuid', '#createdAt': 'createdAt', '#email': 'email' })
       assert.deepEqual(attributeValues, {
         ':uuid': 'd08eb977-bda9-4fa1-a2ec-e9802e8668df',
-        ':createdOn': 11499288551800,
+        ':createdAt': 11499288551800,
         ':email': 'alex.rocks@firespring.com'
       })
     })

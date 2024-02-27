@@ -29,6 +29,17 @@ const promiseMe = require('mocha-promise-me')
 const generatorInstance = new Generator()
 module.exports.generate = generatorInstance
 
+module.exports.callApi = function (api, params = {}, context = null) {
+  const event = { params }
+  return new Promise((resolve, reject) => api.handle(event, context, (error, result) => {
+    if (error) {
+      reject(error)
+    } else {
+      resolve(result)
+    }
+  }))
+}
+
 /**
  * Assert multiple validation test cases
  *
@@ -45,7 +56,12 @@ module.exports.validate = function (testCases) {
       testCase.model = testCase.model()
       testCase.model = await testCase.model
 
-      // TODO validate that data keys are actually model properties
+      // Validate that data keys are actually model properties
+      const attributes = testCase.model.constructor.getAttributes()
+      Object.keys(data).forEach(key => {
+        assert(key in attributes, `${key} is not a valid attribute on ${testCase.model.constructor.name} object`)
+      })
+
       testCase.model.set(data)
       if (testCase.error) {
         return promiseMe.thatYouReject(testCase.model.validate())
@@ -66,35 +82,16 @@ module.exports.validate = function (testCases) {
  */
 module.exports.assertModelEquals = function (data, model, except) {
   let equality = true
-  const modelData = model.all()
+  const modelData = model.get()
   Object.keys(data).forEach(function (key) {
     if (except.indexOf(key) < 0) {
-      if (data.hasOwnProperty(key) && modelData.hasOwnProperty(key) && data[key] !== modelData[key]) {
+      if (data[key] !== modelData[key]) {
         equality = false
       }
     }
   })
 
   assert(equality === true)
-}
-
-module.exports.commonModelValidations = function (modelType) {
-  return [
-    // TODO most/all of the commented out rules below need validation rules added
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '1234567890', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'uuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 'test', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'createdOn', value: '123456', error: true },
-    { model: () => generatorInstance.model(modelType), param: 'createdOn', value: 123456, error: false },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: null, error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 'test', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: '123456', error: true },
-    // { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 123456, error: true },
-    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 0, error: false },
-    { model: () => generatorInstance.model(modelType), param: 'isDeleted', value: 1, error: false }
-  ]
 }
 
 /**

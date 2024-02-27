@@ -17,6 +17,8 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
+const { isString, isNumericType } = require('../helpers/validation')
+const { TYPE_IMAGE, TYPE_VIMEO, TYPE_YOUTUBE } = require('../helpers/nonprofitSlide')
 class NonprofitSlide extends Model {}
 
 module.exports = (sequelize) => {
@@ -24,11 +26,13 @@ module.exports = (sequelize) => {
     sortOrder: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     caption: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString }
     },
     embedUrl: {
       type: DataTypes.STRING,
@@ -44,11 +48,13 @@ module.exports = (sequelize) => {
     },
     type: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isIn: [[TYPE_IMAGE, TYPE_VIMEO, TYPE_YOUTUBE]] }
     },
     url: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString }
     },
     fileId: {
       type: DataTypes.INTEGER,
@@ -58,7 +64,8 @@ module.exports = (sequelize) => {
     nonprofitId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     }
   },
   { sequelize, modelName: 'NonprofitSlide' })

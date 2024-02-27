@@ -17,40 +17,49 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
+const { isString, isEmail, isNumericType } = require('../helpers/validation')
+const { STATUS_ACTIVE, STATUS_DENIED, STATUS_PENDING, STATUS_REVOKED } = require('../helpers/nonprofit')
 class Nonprofit extends Model {}
 
 module.exports = (sequelize) => {
   Nonprofit.init({
     address1: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     address2: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString }
     },
     category1: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     category2: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     category3: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isEmail }
     },
     firstName: {
       type: DataTypes.STRING,
@@ -66,15 +75,18 @@ module.exports = (sequelize) => {
     },
     state: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     zip: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { notEmpty: true }
     },
     legalName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     legalNameSearch: {
       type: DataTypes.STRING,
@@ -89,17 +101,20 @@ module.exports = (sequelize) => {
     longDescription: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     shortDescription: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     slug: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     socialSharingDescription: {
       type: DataTypes.STRING,
@@ -114,11 +129,13 @@ module.exports = (sequelize) => {
     status: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'PENDING'
+      defaultValue: 'PENDING',
+      validate: { isIn: [[STATUS_ACTIVE, STATUS_DENIED, STATUS_PENDING, STATUS_REVOKED]] }
     },
     taxId: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isString, notEmpty: true }
     },
     receiveDonationNotifications: {
       type: DataTypes.BOOLEAN,

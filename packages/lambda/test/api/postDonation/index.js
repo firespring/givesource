@@ -15,33 +15,25 @@
  */
 
 const assert = require('assert')
+const sinon = require('sinon')
+const promiseMe = require('mocha-promise-me')
 const HttpException = require('./../../../src/exceptions/http')
 const PostDonation = require('../../../src/api/postDonation/index')
 const DonationsRepository = require('../../../src/repositories/donations')
-const sinon = require('sinon')
-const TestHelper = require('../../helpers/test')
+const { callApi } = require('../../helpers/test')
 
 describe('PostDonation', function () {
-  afterEach(function () {
-    DonationsRepository.prototype.save.restore()
+  it('should return a donation', async function () {
+    const model = {}
+    sinon.stub(DonationsRepository.prototype, 'upsert').resolves(model)
+
+    const result = await callApi(PostDonation)
+    assert(result === model)
   })
 
-  it('should return a donation', function () {
-    const model = TestHelper.generate.model('donation')
-    sinon.stub(DonationsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
-    const params = {
-      body
-    }
-    return PostDonation.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
-    })
-  })
-
-  it('should return error on exception thrown', function () {
-    sinon.stub(DonationsRepository.prototype, 'save').rejects('Error')
-    return PostDonation.handle({}, null, function (error) {
+  it('should return error on exception thrown', async function () {
+    sinon.stub(DonationsRepository.prototype, 'upsert').rejects(new HttpException())
+    await promiseMe.thatYouReject(callApi(PostDonation), (error) => {
       assert(error instanceof HttpException)
     })
   })

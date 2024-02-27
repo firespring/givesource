@@ -21,10 +21,6 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteSponsorTier', function () {
-  afterEach(function () {
-    SponsorTiersRepository.prototype.delete.restore()
-  })
-
   it('should delete a sponsor tier', function () {
     const model = TestHelper.generate.model('sponsorTier')
     sinon.stub(SponsorTiersRepository.prototype, 'delete').resolves(model)

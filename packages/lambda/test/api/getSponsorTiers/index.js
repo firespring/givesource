@@ -21,10 +21,6 @@ const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
 const TestHelper = require('../../helpers/test')
 
 describe('GetSponsorTiers', function () {
-  afterEach(function () {
-    SponsorTiersRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of sponsor tiers', function () {
     const models = TestHelper.generate.modelCollection('sponsorTier', 3)
     sinon.stub(SponsorTiersRepository.prototype, 'getAll').resolves(models)

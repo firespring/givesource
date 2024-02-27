@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let File
 
 describe('File', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     File = (await loadModels()).File
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -56,18 +47,16 @@ describe('File', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('file')
     const tests = [
-      ...TestHelper.commonModelValidations('file'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('file'), param: 'path', value: null, error: true },
-      // { model: () => TestHelper.generate.model('file'), param: 'path', value: '', error: true },
-      { model: () => TestHelper.generate.model('file'), param: 'path', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('file'), param: 'path', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('file'), param: 'filename', value: null, error: true },
-      // { model: () => TestHelper.generate.model('file'), param: 'filename', value: '', error: true },
-      { model: () => TestHelper.generate.model('file'), param: 'filename', value: 'test', error: false }
-      // { model: () => TestHelper.generate.model('file'), param: 'filename', value: 123456, error: true }
+      { model, param: 'path', value: null, error: true },
+      { model, param: 'path', value: '', error: true },
+      { model, param: 'path', value: 'test', error: false },
+      { model, param: 'path', value: 123456, error: true },
+      { model, param: 'filename', value: null, error: true },
+      { model, param: 'filename', value: '', error: true },
+      { model, param: 'filename', value: 'test', error: false },
+      { model, param: 'filename', value: 123456, error: true }
     ]
     TestHelper.validate(tests)
   })

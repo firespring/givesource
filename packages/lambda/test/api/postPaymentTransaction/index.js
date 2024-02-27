@@ -23,21 +23,17 @@
 
 describe('PostPaymentTransaction', function () {
   // PostPaymentTransaction is currently un-used/partially implemented
-
-  // afterEach(function () {
-  //   PaymentTransactionsRepository.prototype.save.restore()
-  // })
   //
   // it('should return a paymentTransaction', function () {
   //   const model = TestHelper.generate.model('paymentTransaction')
   //   sinon.stub(PaymentTransactionsRepository.prototype, 'save').resolves(model)
-  //   const {uuid, createdOn, ...body} = model
+  //   const {uuid, createdAt, ...body} = model
   //   const params = {
   //     body
   //   }
   //   return PostPaymentTransaction.handle(params, null, function (error, result) {
   //     assert(error === null)
-  //     TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+  //     TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
   //   })
   // })
   //

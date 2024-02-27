@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let PaymentTransaction
 
 describe('PaymentTransaction', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     PaymentTransaction = (await loadModels()).PaymentTransaction
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -85,52 +76,50 @@ describe('PaymentTransaction', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('paymentTransaction')
     const tests = [
-      ...TestHelper.commonModelValidations('paymentTransaction'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'billingZip', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'billingZip', value: '', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'billingZip', value: '123456', error: false },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'billingZip', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationMonth', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationMonth', value: '', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationMonth', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationMonth', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationYear', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationYear', value: '', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationYear', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardExpirationYear', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardLast4', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardLast4', value: '', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardLast4', value: '123456', error: false },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardLast4', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardName', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardName', value: '', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardName', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardType', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardType', value: '', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardType', value: '123456', error: false },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'creditCardType', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: '', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: '123456', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'isTestMode', value: true, error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionAmount', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionAmount', value: '', error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionAmount', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionAmount', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionId', value: null, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionId', value: '', error: true },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionId', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionId', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionStatus', value: null, error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionStatus', value: '', error: false },
-      { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionStatus', value: 'test', error: false }
-      // { model: () => TestHelper.generate.model('paymentTransaction'), param: 'transactionStatus', value: 123456, error: true }
+      { model, param: 'billingZip', value: null, error: true },
+      { model, param: 'billingZip', value: '', error: true },
+      { model, param: 'billingZip', value: '123456', error: false },
+      { model, param: 'billingZip', value: 123456, error: true },
+      { model, param: 'creditCardExpirationMonth', value: null, error: true },
+      { model, param: 'creditCardExpirationMonth', value: '', error: true },
+      { model, param: 'creditCardExpirationMonth', value: '123456', error: true },
+      { model, param: 'creditCardExpirationMonth', value: 123456, error: false },
+      { model, param: 'creditCardExpirationYear', value: null, error: true },
+      { model, param: 'creditCardExpirationYear', value: '', error: true },
+      { model, param: 'creditCardExpirationYear', value: '123456', error: true },
+      { model, param: 'creditCardExpirationYear', value: 123456, error: false },
+      { model, param: 'creditCardLast4', value: null, error: true },
+      { model, param: 'creditCardLast4', value: '', error: true },
+      { model, param: 'creditCardLast4', value: '123456', error: false },
+      { model, param: 'creditCardLast4', value: 123456, error: true },
+      { model, param: 'creditCardName', value: null, error: true },
+      { model, param: 'creditCardName', value: '', error: true },
+      { model, param: 'creditCardName', value: 'test', error: false },
+      { model, param: 'creditCardName', value: 123456, error: true },
+      { model, param: 'creditCardType', value: null, error: true },
+      { model, param: 'creditCardType', value: '', error: true },
+      { model, param: 'creditCardType', value: '123456', error: false },
+      { model, param: 'creditCardType', value: 123456, error: true },
+      { model, param: 'isTestMode', value: null, error: true },
+      { model, param: 'isTestMode', value: '', error: true },
+      { model, param: 'isTestMode', value: 'test', error: true },
+      { model, param: 'isTestMode', value: '123456', error: true },
+      { model, param: 'isTestMode', value: 123456, error: true },
+      { model, param: 'isTestMode', value: true, error: false },
+      { model, param: 'transactionAmount', value: null, error: true },
+      { model, param: 'transactionAmount', value: '', error: true },
+      { model, param: 'transactionAmount', value: '123456', error: true },
+      { model, param: 'transactionAmount', value: 123456, error: false },
+      { model, param: 'transactionId', value: null, error: true },
+      { model, param: 'transactionId', value: '', error: true },
+      { model, param: 'transactionId', value: 'test', error: false },
+      { model, param: 'transactionId', value: 123456, error: true },
+      { model, param: 'transactionStatus', value: null, error: true },
+      { model, param: 'transactionStatus', value: '', error: false },
+      { model, param: 'transactionStatus', value: 'test', error: false },
+      { model, param: 'transactionStatus', value: 123456, error: false }
     ]
     TestHelper.validate(tests)
   })

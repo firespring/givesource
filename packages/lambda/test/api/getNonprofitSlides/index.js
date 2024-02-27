@@ -21,10 +21,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetNonprofitSlides', function () {
-  afterEach(function () {
-    NonprofitSlidesRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of nonprofit slides', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const models = TestHelper.generate.modelCollection('nonprofitSlide', 3, { nonprofitUuid: nonprofit.uuid })

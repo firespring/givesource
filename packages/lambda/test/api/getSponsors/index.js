@@ -21,10 +21,6 @@ const SponsorsRepository = require('./../../../src/repositories/sponsors')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetSponsors', function () {
-  afterEach(function () {
-    SponsorsRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of nonprofit slides', function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })

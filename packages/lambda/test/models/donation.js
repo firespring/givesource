@@ -17,21 +17,12 @@
 const assert = require('assert')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Donation
 
 describe('Donation', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Donation = (await loadModels()).Donation
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -94,49 +85,61 @@ describe('Donation', function () {
     })
   })
 
-  describe('#validate()', function () {
-    const tests = [
-      ...TestHelper.commonModelValidations('donation'),
+  it('foobars', () => {
+    const total = 1000
+    const fees = 100
+    const model = new Donation({ total, fees })
+    assert.equal(model.amountForNonprofit, total - fees)
+  })
+  it('foobars', () => {
+    const total = 1000
+    const fees = 100
+    const model = new Donation({ total, fees, amountForNonprofit: 123 })
+    assert.equal(model.amountForNonprofit, 123)
+  })
 
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('donation'), param: 'subtotal', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'subtotal', value: '', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'subtotal', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'subtotal', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'donorUuid', value: null, error: false },
-      // { model: () => TestHelper.generate.model('donation'), param: 'donorUuid', value: '1234567890', error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'donorUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'fees', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'fees', value: '', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'fees', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'fees', value: 123456, error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'isAnonymous', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isAnonymous', value: '', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isAnonymous', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isAnonymous', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'isAnonymous', value: true, error: false },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: null, error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: '', error: false },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: '123456', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'isFeeCovered', value: true, error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'isOfflineDonation', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isOfflineDonation', value: '', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isOfflineDonation', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'isOfflineDonation', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('donation', { paymentTransactionUuid: '9ba33b63-41f9-4efc-8869-2b50a35b53df' }), param: 'isOfflineDonation', value: false, error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'isOfflineDonation', value: true, error: false },
-      // { model: () => TestHelper.generate.model('donation'), param: 'nonprofitUuid', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'nonprofitUuid', value: '1234567890', error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      // { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionUuid', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionUuid', value: '1234567890', error: true },
-      { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      { model: () => TestHelper.generate.model('donation'), param: 'total', value: null, error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'total', value: '', error: true },
-      // { model: () => TestHelper.generate.model('donation'), param: 'total', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('donation'), param: 'total', value: 123456, error: false }
+  describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('donation')
+    const tests = [
+      { model, param: 'subtotal', value: null, error: true },
+      { model, param: 'subtotal', value: '', error: true },
+      { model, param: 'subtotal', value: '123456', error: true },
+      { model, param: 'subtotal', value: 123456, error: false },
+      { model, param: 'donorId', value: null, error: true },
+      { model, param: 'donorId', value: 1234567890, error: false },
+      { model, param: 'donorId', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: true },
+      { model, param: 'fees', value: null, error: true },
+      { model, param: 'fees', value: '', error: true },
+      { model, param: 'fees', value: '123456', error: true },
+      { model, param: 'fees', value: 123456, error: false },
+      { model, param: 'isAnonymous', value: null, error: true },
+      { model, param: 'isAnonymous', value: '', error: true },
+      { model, param: 'isAnonymous', value: 'test', error: true },
+      { model, param: 'isAnonymous', value: 123456, error: true },
+      { model, param: 'isAnonymous', value: true, error: false },
+      { model, param: 'isFeeCovered', value: null, error: false },
+      { model, param: 'isFeeCovered', value: '', error: false },
+      { model, param: 'isFeeCovered', value: 'test', error: true },
+      { model, param: 'isFeeCovered', value: '123456', error: true },
+      { model, param: 'isFeeCovered', value: 123456, error: true },
+      { model, param: 'isFeeCovered', value: true, error: false },
+      { model, param: 'isOfflineDonation', value: null, error: true },
+      { model, param: 'isOfflineDonation', value: '', error: true },
+      { model, param: 'isOfflineDonation', value: 'test', error: true },
+      { model, param: 'isOfflineDonation', value: 123456, error: true },
+      { model: () => TestHelper.generate.model('donation', { paymentTransactionId: 123 }), param: 'isOfflineDonation', value: false, error: false },
+      { model, param: 'isOfflineDonation', value: true, error: false },
+      { model, param: 'nonprofitId', value: null, error: true },
+      { model, param: 'nonprofitId', value: 1234567890, error: false },
+      { model, param: 'nonprofitId', value: '1234567890', error: false },
+      { model, param: 'nonprofitId', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: true },
+      { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionId', value: null, error: true },
+      { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionId', value: '1234567890', error: true },
+      { model: () => TestHelper.generate.model('donation', { isOfflineDonation: false }), param: 'paymentTransactionId', value: 123, error: false },
+      { model, param: 'total', value: null, error: true },
+      { model, param: 'total', value: '', error: true },
+      { model, param: 'total', value: '123456', error: true },
+      { model, param: 'total', value: 123456, error: false }
     ]
     TestHelper.validate(tests)
   })

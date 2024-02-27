@@ -22,11 +22,15 @@ class Report extends Model {}
 
 module.exports = (sequelize) => {
   return Report.init({
+    // todo `fileId` is redundant with the `FileId` attribute automatically create by
+    // models.Report.belongsTo(sequelize.models.File, {})
     fileId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
+    // todo `nonprofitId` is redundant with the `NonprofitId` attribute automatically create by
+    // models.Report.belongsTo(sequelize.models.Nonprofit, {})
     nonprofitId: {
       type: DataTypes.INTEGER,
       allowNull: false,

@@ -18,21 +18,12 @@ const assert = require('assert')
 const NonprofitHelper = require('../../src/helpers/nonprofit')
 const Model = require('sequelize').Model
 const TestHelper = require('../helpers/test')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 const loadModels = require('../../src/models')
-const sinon = require('sinon')
 let Nonprofit
 
 describe('Nonprofit', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     Nonprofit = (await loadModels()).Nonprofit
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -62,74 +53,77 @@ describe('Nonprofit', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('nonprofit')
     const tests = [
-      ...TestHelper.commonModelValidations('nonprofit'),
-
-      // TODO most/all of the commented out rules below need validation rules added
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'address1', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'address1', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'address1', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'address1', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'address2', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'address2', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'address2', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'address2', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category1', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category1', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category1', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category1', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category2', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category2', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category2', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category2', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category3', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category3', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'category3', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'category3', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'city', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'city', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'city', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'city', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'legalName', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'legalName', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'legalName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'legalName', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'longDescription', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'longDescription', value: 'test', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'longDescription', value: '123456', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'longDescription', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'phone', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'phone', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'phone', value: 'test', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'phone', value: 123456, error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'shortDescription', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'shortDescription', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'shortDescription', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'shortDescription', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'slug', value: null, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'slug', value: '', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'slug', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'slug', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'state', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'state', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'state', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'state', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: '', error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: NonprofitHelper.STATUS_ACTIVE, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: NonprofitHelper.STATUS_DENIED, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: NonprofitHelper.STATUS_PENDING, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'status', value: NonprofitHelper.STATUS_REVOKED, error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'taxId', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'taxId', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'taxId', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'taxId', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'zip', value: null, error: true },
-      // { model: () => TestHelper.generate.model('nonprofit'), param: 'zip', value: '', error: true },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'zip', value: 'test', error: false },
-      { model: () => TestHelper.generate.model('nonprofit'), param: 'zip', value: 123456, error: false }
+      { model, param: 'address1', value: null, error: true },
+      { model, param: 'address1', value: '', error: true },
+      { model, param: 'address1', value: 'test', error: false },
+      { model, param: 'address1', value: 123456, error: true },
+      { model, param: 'address2', value: null, error: true },
+      { model, param: 'address2', value: '', error: false },
+      { model, param: 'address2', value: 'test', error: false },
+      { model, param: 'address2', value: 123456, error: true },
+      { model, param: 'category1', value: null, error: true },
+      { model, param: 'category1', value: '', error: true },
+      { model, param: 'category1', value: 'test', error: true },
+      { model, param: 'category1', value: 123456, error: false },
+      { model, param: 'category2', value: null, error: true },
+      { model, param: 'category2', value: '', error: true },
+      { model, param: 'category2', value: 'test', error: true },
+      { model, param: 'category2', value: 123456, error: false },
+      { model, param: 'category3', value: null, error: true },
+      { model, param: 'category3', value: '', error: true },
+      { model, param: 'category3', value: 'test', error: true },
+      { model, param: 'category3', value: 123456, error: false },
+      { model, param: 'city', value: null, error: true },
+      { model, param: 'city', value: '', error: true },
+      { model, param: 'city', value: 'test', error: false },
+      { model, param: 'city', value: 123456, error: true },
+      { model, param: 'email', value: null, error: true },
+      { model, param: 'email', value: '', error: false },
+      { model, param: 'email', value: 'test@email.com', error: false },
+      { model, param: 'email', value: 'test', error: true },
+      { model, param: 'email', value: 123456, error: true },
+      { model, param: 'legalName', value: null, error: true },
+      { model, param: 'legalName', value: '', error: true },
+      { model, param: 'legalName', value: 'test', error: false },
+      { model, param: 'legalName', value: 123456, error: true },
+      { model, param: 'longDescription', value: null, error: true },
+      { model, param: 'longDescription', value: 'test', error: false },
+      { model, param: 'longDescription', value: '123456', error: false },
+      { model, param: 'longDescription', value: 123456, error: true },
+      { model, param: 'phone', value: null, error: true },
+      { model, param: 'phone', value: '', error: false },
+      { model, param: 'phone', value: 'test', error: false },
+      { model, param: 'phone', value: 123456, error: false },
+      { model, param: 'shortDescription', value: null, error: true },
+      { model, param: 'shortDescription', value: '', error: false },
+      { model, param: 'shortDescription', value: 'test', error: false },
+      { model, param: 'shortDescription', value: 123456, error: true },
+      { model, param: 'slug', value: null, error: true },
+      { model, param: 'slug', value: '', error: false },
+      { model, param: 'slug', value: 'test', error: false },
+      { model, param: 'slug', value: 123456, error: true },
+      { model, param: 'state', value: null, error: true },
+      { model, param: 'state', value: '', error: true },
+      { model, param: 'state', value: 'test', error: false },
+      { model, param: 'state', value: 123456, error: true },
+      { model, param: 'status', value: null, error: true },
+      { model, param: 'status', value: '', error: true },
+      { model, param: 'status', value: 'test', error: true },
+      { model, param: 'status', value: 123456, error: true },
+      { model, param: 'status', value: NonprofitHelper.STATUS_ACTIVE, error: false },
+      { model, param: 'status', value: NonprofitHelper.STATUS_DENIED, error: false },
+      { model, param: 'status', value: NonprofitHelper.STATUS_PENDING, error: false },
+      { model, param: 'status', value: NonprofitHelper.STATUS_REVOKED, error: false },
+      { model, param: 'taxId', value: null, error: true },
+      { model, param: 'taxId', value: '', error: true },
+      { model, param: 'taxId', value: 'test', error: false },
+      { model, param: 'taxId', value: 123456, error: true },
+      { model, param: 'zip', value: null, error: true },
+      { model, param: 'zip', value: '', error: true },
+      { model, param: 'zip', value: 'test', error: false },
+      { model, param: 'zip', value: 123456, error: false }
     ]
     TestHelper.validate(tests)
   })

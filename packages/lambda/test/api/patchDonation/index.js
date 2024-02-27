@@ -21,11 +21,6 @@ const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchDonation', function () {
-  afterEach(function () {
-    DonationsRepository.prototype.get.restore()
-    DonationsRepository.prototype.save.restore()
-  })
-
   it('should return an updated donation', function () {
     const original = TestHelper.generate.model('donation')
     const updated = TestHelper.generate.model('donation', { uuid: original.uuid })

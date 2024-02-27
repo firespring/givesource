@@ -22,11 +22,6 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchSponsors', function () {
-  afterEach(function () {
-    SponsorTiersRepository.prototype.get.restore()
-    SponsorsRepository.prototype.batchSave.restore()
-  })
-
   it('should return an updated sponsor', function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })

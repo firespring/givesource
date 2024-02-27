@@ -22,12 +22,6 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchMetrics', function () {
-  afterEach(function () {
-    if (MetricsRepository.prototype.batchUpdate.restore) {
-      MetricsRepository.prototype.batchUpdate.restore()
-    }
-  })
-
   it('should return update metrics', function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     sinon.stub(MetricsRepository.prototype, 'batchUpdate').resolves()

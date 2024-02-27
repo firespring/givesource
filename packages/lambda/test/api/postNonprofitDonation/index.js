@@ -22,15 +22,11 @@ const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostNonprofitDonation', function () {
-  afterEach(function () {
-    NonprofitDonationsRepository.prototype.save.restore()
-  })
-
   it('should return a donation', function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const model = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
     sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdOn, ...body } = model
+    const { uuid, createdAt, ...body } = model
     const params = {
       body,
       params: {
@@ -39,7 +35,7 @@ describe('PostNonprofitDonation', function () {
     }
     return PostNonprofitDonation.handle(params, null, function (error, result) {
       assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdOn'])
+      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
     })
   })
 

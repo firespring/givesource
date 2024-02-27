@@ -21,10 +21,6 @@ const PaymentTransactionsRepository = require('../../../src/repositories/payment
 const TestHelper = require('../../helpers/test')
 
 describe('GetPaymentTransactions', function () {
-  afterEach(function () {
-    PaymentTransactionsRepository.prototype.getAll.restore()
-  })
-
   it('should return a list of paymentTransactions', function () {
     const models = TestHelper.generate.modelCollection('paymentTransaction', 3)
     sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').resolves(models)

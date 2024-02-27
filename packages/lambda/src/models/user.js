@@ -1,24 +1,27 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
-
+const { isNumericType, isUuid, isEmail, isString } = require('../helpers/validation')
 class User extends Model {}
 
 module.exports = (sequelize) => {
   return User.init({
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: { isEmail, notEmpty: true }
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isString }
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
@@ -28,7 +31,8 @@ module.exports = (sequelize) => {
     nonprofitId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      validate: { isNumericType }
     },
     cognitoUsername: {
       type: DataTypes.STRING,
@@ -37,7 +41,8 @@ module.exports = (sequelize) => {
     cognitoUuid: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: ''
+      defaultValue: '',
+      validate: { isUuid }
     }
   },
   { sequelize, modelName: 'User' })

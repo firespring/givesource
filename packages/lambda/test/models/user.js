@@ -16,23 +16,14 @@
 
 const assert = require('assert')
 const Model = require('sequelize').Model
-const sinon = require('sinon')
 const TestHelper = require('../helpers/test')
 const loadModels = require('../../src/models')
-const SecretsManager = require('../../src/aws/secretsManager')
-const Ssm = require('../../src/aws/ssm')
 let User
 
 // loadModels()
 describe('User', function () {
   beforeEach(async () => {
-    sinon.stub(SecretsManager.prototype, 'getSecretValue').resolves({ SecretString: '{}' })
-    sinon.stub(Ssm.prototype, 'getParameter').resolves({ Parameter: { Value: '' } })
     User = (await loadModels()).User
-  })
-  afterEach(function () {
-    SecretsManager.prototype.getSecretValue.restore()
-    Ssm.prototype.getParameter.restore()
   })
 
   describe('#construct()', function () {
@@ -57,32 +48,31 @@ describe('User', function () {
   })
 
   describe('#validate()', function () {
+    const model = () => TestHelper.generate.model('user')
     const tests = [
-      ...TestHelper.commonModelValidations('user'),
+      { model, param: 'cognitoUuid', value: null, error: true },
+      { model, param: 'cognitoUuid', value: '', error: false },
+      { model, param: 'cognitoUuid', value: '123456', error: true },
+      { model, param: 'cognitoUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
+      { model, param: 'cognitoUuid', value: 123456, error: true },
+      { model, param: 'email', value: null, error: true },
+      { model, param: 'email', value: '', error: true },
+      { model, param: 'email', value: 'test@email.com', error: false },
+      { model, param: 'email', value: 'test', error: true },
+      { model, param: 'email', value: 123456, error: true },
+      { model, param: 'firstName', value: null, error: true },
+      { model, param: 'firstName', value: '', error: false },
+      { model, param: 'firstName', value: 'test', error: false },
+      { model, param: 'firstName', value: 123456, error: true },
+      { model, param: 'lastName', value: null, error: true },
+      { model, param: 'lastName', value: '', error: false },
+      { model, param: 'lastName', value: 'test', error: false },
+      { model, param: 'lastName', value: 123456, error: true },
 
-      // TODO most/all of the commented out rules below need validation rules added
-      // { model: () => TestHelper.generate.model('user'), param: 'cognitoUuid', value: null, error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'cognitoUuid', value: '', error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'cognitoUuid', value: '123456', error: true },
-      { model: () => TestHelper.generate.model('user'), param: 'cognitoUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'cognitoUuid', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('user'), param: 'email', value: null, error: true },
-      // { model: () => TestHelper.generate.model('user'), param: 'email', value: '', error: true },
-      { model: () => TestHelper.generate.model('user'), param: 'email', value: 'test@email.com', error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'email', value: 'test', error: true },
-      // { model: () => TestHelper.generate.model('user'), param: 'email', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('user'), param: 'firstName', value: null, error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'firstName', value: '', error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'firstName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'firstName', value: 123456, error: true },
-      // { model: () => TestHelper.generate.model('user'), param: 'lastName', value: null, error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'lastName', value: '', error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'lastName', value: 'test', error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'lastName', value: 123456, error: true },
-      { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: '', error: false },
-      { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: null, error: false },
-      // { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: '1234567890', error: true },
-      { model: () => TestHelper.generate.model('user'), param: 'nonprofitUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false }
+      { model, param: 'nonprofitId', value: '', error: true },
+      { model, param: 'nonprofitId', value: null, error: true },
+      { model, param: 'nonprofitId', value: '1234567890', error: true },
+      { model, param: 'nonprofitId', value: 123, error: false }
       // cognitoUsername
     ]
 

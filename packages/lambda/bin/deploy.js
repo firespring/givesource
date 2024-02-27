@@ -94,23 +94,40 @@ const searchFunctions = function (answers, input) {
   })
 }
 
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-inquirer.prompt([
-  {
-    type: 'autocomplete',
-    message: 'Select a function to deploy:',
-    name: 'selected',
-    source: searchFunctions,
-    validate: function (answer) {
-      if (answer.length < 1) {
-        return 'C'
-      }
-      return true
-    }
+let lambdasToDeploy
+
+if (process.env.LAMBDA) {
+  // if a LAMBDA env was provided deploy that lambda
+  if (process.env.LAMBDA === 'ALL') {
+    lambdasToDeploy = Promise.resolve(list)
+  } else if (list.includes(process.env.LAMBDA)) {
+    lambdasToDeploy = Promise.resolve([process.env.LAMBDA])
+  } else {
+    throw new Error(`"${process.env.LAMBDA}" is not a valid lambda`)
   }
-]).then(function (answer) {
-  const functions = (answer.selected === 'All') ? list : [answer.selected]
-  return batchDeploy(functions)
+} else {
+  // prompt for lambda(s) to deploy
+  inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
+  lambdasToDeploy = inquirer.prompt([
+    {
+      type: 'autocomplete',
+      message: 'Select a function to deploy:',
+      name: 'selected',
+      source: searchFunctions,
+      validate: function (answer) {
+        if (answer.length < 1) {
+          return 'C'
+        }
+        return true
+      }
+    }
+  ]).then(function (answer) {
+    return (answer.selected === 'All') ? list : [answer.selected]
+  })
+}
+
+lambdasToDeploy.then(async (functions) => {
+  await batchDeploy(functions)
 }).catch(function (err) {
   console.log(err)
 })

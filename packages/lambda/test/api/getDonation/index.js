@@ -21,10 +21,6 @@ const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
 
 describe('GetDonation', function () {
-  afterEach(function () {
-    DonationsRepository.prototype.get.restore()
-  })
-
   it('should return a donation', function () {
     const model = TestHelper.generate.model('donation')
     sinon.stub(DonationsRepository.prototype, 'get').resolves(model)

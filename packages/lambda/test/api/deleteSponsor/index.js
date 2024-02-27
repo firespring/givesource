@@ -22,11 +22,6 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteSponsor', function () {
-  afterEach(function () {
-    SponsorTiersRepository.prototype.get.restore()
-    SponsorsRepository.prototype.delete.restore()
-  })
-
   it('should delete a sponsor', function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const model = TestHelper.generate.model('sponsor')
