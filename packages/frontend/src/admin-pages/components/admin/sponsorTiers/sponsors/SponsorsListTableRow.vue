@@ -70,7 +70,7 @@ export default {
   emits: ['delete-sponsor', 'has-error'],
   computed: {
     logoUrl: function () {
-      return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false
+      return this.file.hasOwnProperty('path') ? this.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false
     }
   },
   methods: {

@@ -73,8 +73,8 @@ import ComponentTerms from './../components/admin/pages/Terms.vue'
 import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
-import store from './../store'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAdminStore } from "../store"
 
 const router = createRouter({
   history: createWebHistory(__dirname),
@@ -142,6 +142,7 @@ const router = createRouter({
         allowedGroups: ['SuperAdmin', 'Admin']
       },
       beforeEnter (to, from, next) {
+        const store = useAdminStore()
         if (store.state.receipt && store.state.donorEmail) {
           next()
         } else {
@@ -632,6 +633,7 @@ const router = createRouter({
  * @return {Promise}
  */
 const updateSettings = function () {
+  const store = useAdminStore()
   const settings = [
     'EVENT_URL',
     'UPLOADS_CLOUD_FRONT_URL',
@@ -641,21 +643,19 @@ const updateSettings = function () {
 
   return axios.get('/settings.json').then(function (response) {
     window.API_URL = response.data.API_URL
-    store.commit('settings', { API_URL: response.data.API_URL })
+    store.settings.API_URL = response.data.API_URL
   }).then(function () {
     return axios.get(API_URL + 'settings' + Utils.generateQueryString({
       keys: settings
     })).then(function (response) {
       if (response.data.length) {
         response.data.forEach(function (setting) {
-          const set = {}
-          set[setting.key] = setting.value
-          store.commit('settings', set)
+          store.settings[setting.key] = setting.value
         })
       }
     })
   }).then(function () {
-    store.commit('updated')
+    store.updated
   })
 }
 
@@ -665,14 +665,15 @@ const updateSettings = function () {
  * @return {Promise}
  */
 const loadSettings = function () {
+  const store = useAdminStore()
   const date = new Date()
   date.setMinutes(date.getMinutes() - 1)
 
-  const lastUpdated = store.getters.updated
+  const lastUpdated = store.updated
   if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
     return updateSettings()
   } else {
-    window.API_URL = store.getters.setting('API_URL')
+    window.API_URL = store.setting('API_URL')
     return Promise.resolve()
   }
 }

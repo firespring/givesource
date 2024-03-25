@@ -14,53 +14,33 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate'
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
 
-export default createStore({
-  state: {
-    cacheKey: 0,
-    settings: {},
-    updated: 0,
-    receipt: null,
-    donorEmail: null
-  },
-  mutations: {
-    generateCacheKey: function (state) {
-      state.cacheKey = new Date().getTime()
-    },
-    settings: function (state, settings) {
-      Object.keys(settings).forEach(function (key) {
-        state.settings[key] = settings[key]
-      })
-    },
-    setDonorEmail (state, email) {
-      state.donorEmail = email
-    },
-    setReceipt (state, receiptHtml) {
-      state.receipt = receiptHtml
-    },
-    updated: function (state) {
-      state.updated = new Date().getTime()
+export const useAdminStore = defineStore('adminStore', {
+  state: () => {
+    return {
+      cacheKeyValue: 0,
+      settingsValue: {},
+      updatedValue: 0,
+      receipt: null,
+      donorEmail: null
     }
   },
   getters: {
-    cacheKey: function (state) {
-      if (!state.cacheKey) {
-        state.cacheKey = new Date().getTime()
+    cacheKey: (state) => {
+      if (!state.cacheKeyValue) {
+        state.cacheKeyValue = new Date().getTime()
       }
-      return state.cacheKey
+      return state.cacheKeyValue
     },
-    settings: function (state) {
-      return state.settings
+    settings: (state) => {
+      return state.settingsValue
     },
-    setting: function (state) {
-      return function (key) {
-        return state.settings.hasOwnProperty(key) ? state.settings[key] : null
-      }
+    setting: (state) => {
+      return (key) => state.settingsValue.hasOwnProperty(key) ? state.settingsValue[key] : null
     },
-    updated: function (state) {
-      return state.updated
+    updated: (state) => {
+      return state.updatedValue
     }
   },
   actions: {
@@ -72,9 +52,14 @@ export default createStore({
     async clearReceipt ({ commit }) {
       commit('setReceipt', null)
       commit('setDonorEmail', null)
+    },
+
+    generateCacheKey: function (state) {
+      state.cacheKeyValue = new Date().getTime()
+    },
+    setDonorEmail (state, email) {
+      state.donorEmail = email
     }
-  },
-  plugins: [
-    createPersistedState()
-  ]
+
+  }
 })

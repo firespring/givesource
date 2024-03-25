@@ -152,7 +152,7 @@ export default {
       return this.isSuperAdminUser() || this.isAdminUser()
     },
     landingPageUrl: function () {
-      return this.$store.getters.setting('EVENT_URL') + '/nonprofits/' + this.nonprofit.slug
+      return this.$store.setting('EVENT_URL') + '/nonprofits/' + this.nonprofit.slug
     }
   },
   methods: {

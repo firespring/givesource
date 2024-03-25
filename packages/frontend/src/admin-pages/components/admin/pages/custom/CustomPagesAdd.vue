@@ -235,7 +235,7 @@ export default {
   },
   computed: {
     pageLink () {
-      return this.$store.getters.setting('EVENT_URL') + '/'
+      return this.$store.setting('EVENT_URL') + '/'
     }
   },
   watch: {

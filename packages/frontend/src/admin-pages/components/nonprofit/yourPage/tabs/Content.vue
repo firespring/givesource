@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     pageLink: function () {
-      return this.$store.getters.setting('EVENT_URL') + '/nonprofits/'
+      return this.$store.setting('EVENT_URL') + '/nonprofits/'
     }
   },
   watch: {

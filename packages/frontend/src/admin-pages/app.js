@@ -29,7 +29,8 @@ import ModalMixin from './mixins/modals'
 import Request from './helpers/request'
 import router from './router'
 import ShaveDirective from './directives/shave'
-import store from './store'
+import { createPinia } from 'pinia'
+import { useAdminStore } from "./store";
 import UserMixin from './mixins/user'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
@@ -38,6 +39,7 @@ import VueFilters from './filters'
 import mitt from 'mitt'
 
 const emitter = mitt()
+const pinia = createPinia()
 
 // Register window globals
 window._ = require('lodash')
@@ -45,7 +47,6 @@ window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 const app = createApp(ComponentApp)
-  .use(store)
   // Register plugins
   .use(VueFilters)
   .use(CKEditor)
@@ -81,6 +82,8 @@ app.config.globalProperties.$request = new Request()
 
 app.config.globalProperties.user = {}
 app.config.globalProperties.groups = []
+
+app.use(pinia)
 
 // Start the app
 app.mount('#app')
