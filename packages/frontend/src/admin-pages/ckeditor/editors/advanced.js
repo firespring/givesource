@@ -44,6 +44,6 @@ AdvancedEditor.builtinPlugins = [
 ]
 
 AdvancedEditor.defaultConfig = {
-  toolbar: ['heading', '|', 'bold', 'italic', 'blockQuote', '|', 'link', '|', 'bulletedList', 'numberedList', '|', 'insertImage', '|', 'undo', 'redo'],
+  toolbar: ['heading', '|', 'bold', 'italic', 'blockQuote', '|', 'link', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo'],
   language: 'en'
 }
