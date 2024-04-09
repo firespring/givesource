@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import { useAppStore } from "../../store"
+
 export default {
   props: {
     presentedBy: {
@@ -82,6 +84,9 @@ export default {
       default: false
     }
   },
+  beforeMount () {
+    this.$store = useAppStore()
+  },
   computed: {
     mastheadStyle: function () {
       const vue = this
@@ -91,7 +96,7 @@ export default {
     },
     backgroundImageUrl: function () {
       const vue = this
-      return vue.$store.getters.setting('MASTHEAD_IMAGE') ? vue.$store.getters.setting('MASTHEAD_IMAGE') : require('../../assets/img/hero.jpg')
+      return vue.$store.setting('MASTHEAD_IMAGE') ? vue.$store.setting('MASTHEAD_IMAGE') : require('../../assets/img/hero.jpg')
     },
     hasSpotlightSlot: function () {
       return this.$slots.spotlight
@@ -101,11 +106,11 @@ export default {
     },
     foundationLogoUrl: function () {
       const vue = this
-      return vue.$store.getters.setting('FOUNDATION_LOGO') ? vue.$store.getters.setting('FOUNDATION_LOGO') : false
+      return vue.$store.setting('FOUNDATION_LOGO') ? vue.$store.setting('FOUNDATION_LOGO') : false
     },
     foundationUrl: function () {
       const vue = this
-      return vue.$store.getters.setting('FOUNDATION_URL') ? vue.$store.getters.setting('FOUNDATION_URL') : false
+      return vue.$store.setting('FOUNDATION_URL') ? vue.$store.setting('FOUNDATION_URL') : false
     }
   }
 }

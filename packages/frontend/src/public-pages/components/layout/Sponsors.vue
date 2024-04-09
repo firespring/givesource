@@ -75,6 +75,7 @@
 
 <script>
 import * as Utils from './../../helpers/utils'
+import { useAppStore } from "../../store"
 
 export default {
   data: function () {
@@ -89,6 +90,9 @@ export default {
     displaySponsorTiers: function () {
       return this.loaded && Object.keys(this.sponsors).length
     }
+  },
+  beforeMount () {
+    this.$store = useAppStore()
   },
   created: function () {
     const vue = this
@@ -148,7 +152,7 @@ export default {
       const vue = this
 
       const file = vue.files[fileId]
-      return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false
+      return file.hasOwnProperty('path') ? vue.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false
     }
   }
 }

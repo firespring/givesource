@@ -80,6 +80,7 @@ import ComponentHero from './../layout/Hero.vue'
 import ComponentLeaderboard from './Leaderboard.vue'
 import ComponentMetrics from './Metrics.vue'
 import ComponentSponsors from './../layout/Sponsors.vue'
+import { useAppStore } from "../../store"
 
 const fetchData = function () {
   let promise = Promise.resolve()
@@ -205,13 +206,14 @@ export default {
       let url = false
       const file = vue.getContentValue('HOMEPAGE_SPOTLIGHT', false)
       if (_.isPlainObject(file) && file.hasOwnProperty('path')) {
-        url = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path
+        url = vue.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path
       }
       return url
     }
   },
   beforeMount: function () {
     const vue = this
+    vue.$store = useAppStore()
 
     vue.setBodyClasses('home', 'home--live')
     vue.setPageTitle(vue.eventTitle)

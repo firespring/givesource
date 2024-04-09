@@ -32,7 +32,7 @@ import ComponentRegisterResponse from './../components/register/response/Registe
 import ComponentSearchResults from './../components/search/SearchResults.vue'
 import ComponentTermsOfService from './../components/terms/TermsOfService.vue'
 import ComponentToolkits from './../components/toolkits/Toolkits.vue'
-import store from './../store'
+import { useAppStore } from "../store"
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -68,7 +68,8 @@ const router = createRouter({
       name: 'about',
       component: ComponentAbout,
       beforeEnter (to, from, next) {
-        if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
+        const store = useAppStore()
+        if (!store.booleanSetting('PAGE_ABOUT_ENABLED')) {
           next({ name: '404' })
         } else {
           next()
@@ -80,7 +81,8 @@ const router = createRouter({
       name: 'toolkits',
       component: ComponentToolkits,
       beforeEnter (to, from, next) {
-        if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
+        const store = useAppStore()
+        if (!store.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
           next({ name: '404' })
         } else {
           next()
@@ -92,7 +94,8 @@ const router = createRouter({
       name: 'faq',
       component: ComponentFAQ,
       beforeEnter (to, from, next) {
-        if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
+        const store = useAppStore()
+        if (!store.booleanSetting('PAGE_FAQ_ENABLED')) {
           next({ name: '404' })
         } else {
           next()
@@ -124,7 +127,8 @@ const router = createRouter({
       name: 'terms',
       component: ComponentTermsOfService,
       beforeEnter (to, from, next) {
-        if (!store.getters.booleanSetting('PAGE_TERMS_ENABLED')) {
+        const store = useAppStore()
+        if (!store.booleanSetting('PAGE_TERMS_ENABLED')) {
           next({ name: '404' })
         } else {
           next()
@@ -182,14 +186,15 @@ const router = createRouter({
 
     // Custom Pages
     {
-      path: '/:catchAll(.*)',
+      path: '/:catchAll(.*)*',
       name: 'custom-page',
       meta: {
         page: null
       },
       component: ComponentCustomPage,
       beforeEnter (to, from, next) {
-        const pages = store.getters.pages
+        const store = useAppStore()
+        const pages = store.pages
         const slug = to.path
 
         pages.forEach((page) => {
@@ -208,7 +213,7 @@ const router = createRouter({
 
     // Error Pages
     {
-      path: '/:catchAll(.*)',
+      path: '/:catchAll(.*)*',
       name: '404',
       component: Component404
     }
@@ -224,7 +229,8 @@ const router = createRouter({
  */
 const loadCustomPages = (to, from, next) => {
   let promise = Promise.resolve()
-  const setting = store.getters.setting('CUSTOM_PAGES') || ''
+  const store = useAppStore()
+  const setting = store.setting('CUSTOM_PAGES') || ''
   const uuids = setting.split('|')
 
   if (uuids.length) {
@@ -300,8 +306,7 @@ const loadCustomPages = (to, from, next) => {
 
         pages.push(page)
       })
-
-      store.commit('pages', pages)
+      store.setPages(pages)
     })
   }
 
@@ -357,9 +362,10 @@ const updateSettings = () => {
   }
 
   return axios.get('/settings.json').then(response => {
+    const store = useAppStore()
     if (response.data && response.data.API_URL) {
       window.API_URL = response.data.API_URL
-      store.commit('settings', { API_URL: response.data.API_URL })
+      store.settings.API_URL = response.data.API_URL
       return axios.get(response.data.API_URL + 'settings' + Utils.generateQueryString({
         keys: Object.keys(settings)
       }))
@@ -389,6 +395,7 @@ const updateSettings = () => {
 
     return Promise.resolve({})
   }).then(response => {
+    const store = useAppStore()
     if (response.data) {
       response.data.forEach(file => {
         Object.keys(files).forEach(key => {
@@ -399,8 +406,8 @@ const updateSettings = () => {
       })
     }
 
-    store.commit('settings', settings)
-    store.commit('updated')
+    store.updateSettings(settings)
+    store.updated
   })
 }
 
@@ -414,30 +421,31 @@ let initialSettingsLoaded = false
  * @param {function} next
  */
 const loadSettings = (to, from, next) => {
+  const store = useAppStore()
   const date = new Date()
-  const lastUpdated = store.getters.updated
+  const lastUpdated = store.updated
   date.setMinutes(date.getMinutes() - 1)
 
   let promise = Promise.resolve()
   if (!initialSettingsLoaded || lastUpdated === 0 || lastUpdated <= date.getTime()) {
-    const initialApiUrl = store.getters.setting('API_URL')
+    const initialApiUrl = store.setting('API_URL')
     promise = updateSettings()
     if (!initialSettingsLoaded) {
       promise.then(() => {
-        const currentApiUrl = store.getters.setting('API_URL')
+        const currentApiUrl = store.setting('API_URL')
         if (initialApiUrl !== currentApiUrl) {
           if (!initialApiUrl) {
             // clearCartItems or just refresh nonprofits at cart page ?
             // store.commit('clearCartItems')
           } else {
-            store.commit('clearCartItems')
+            store.clearCartItems()
           }
         }
       })
       initialSettingsLoaded = true
     }
   } else {
-    window.API_URL = store.getters.setting('API_URL')
+    window.API_URL = store.setting('API_URL')
   }
 
   promise.then(() => {

@@ -20,7 +20,7 @@ export const useAdminStore = defineStore('adminStore', {
   state: () => {
     return {
       cacheKeyValue: 0,
-      settingsValue: {},
+      settingsValues: {},
       updatedValue: 0,
       receipt: null,
       donorEmail: null
@@ -34,10 +34,10 @@ export const useAdminStore = defineStore('adminStore', {
       return state.cacheKeyValue
     },
     settings: (state) => {
-      return state.settingsValue
+      return state.settingsValues
     },
     setting: (state) => {
-      return (key) => state.settingsValue.hasOwnProperty(key) ? state.settingsValue[key] : null
+      return (key) => state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : null
     },
     updated: (state) => {
       return state.updatedValue

@@ -30,7 +30,6 @@ import Request from './helpers/request'
 import router from './router'
 import ShaveDirective from './directives/shave'
 import { createPinia } from 'pinia'
-import { useAdminStore } from "./store";
 import UserMixin from './mixins/user'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'

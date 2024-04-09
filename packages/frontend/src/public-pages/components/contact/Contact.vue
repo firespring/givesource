@@ -222,7 +222,7 @@ export default {
   },
   computed: {
     contactPhone: function () {
-      return this.$store.getters.setting('CONTACT_PHONE') || null
+      return this.$store.setting('CONTACT_PHONE') || null
     },
     text: function () {
       const text = _.find(this.contents, { key: 'CONTACT_FORM_TEXT' })

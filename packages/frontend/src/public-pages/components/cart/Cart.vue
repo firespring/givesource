@@ -442,7 +442,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       // refresh items
-      vm.$store.getters.cartItems.forEach(async (item) => {
+      vm.$store.cartItems.forEach(async (item) => {
         const response = await axios.get(API_URL + 'nonprofits/' + item.nonprofit.id)
         if (response?.data?.status === 'ACTIVE') {
           // refresh nonprofit data in store
@@ -541,7 +541,7 @@ export default {
        * @return {string|null|undefined}
        */
     getSiteKey () {
-      return this.$store.getters.setting('RECAPTCHA_KEY')
+      return this.$store.setting('RECAPTCHA_KEY')
     }
   },
   watch: {
@@ -747,7 +747,7 @@ export default {
       const vm = this
 
       vm.donations = []
-      const cartItems = vm.$store.getters.cartItems
+      const cartItems = vm.$store.cartItems
       cartItems.forEach(cartItem => {
         const fees = vm.calculateFees([cartItem])
         const total = vm.formData.isFeeCovered ? (cartItem.amount + fees) : cartItem.amount

@@ -83,22 +83,22 @@ export default {
   },
   computed: {
     displayAbout: function () {
-      return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED')
+      return this.$store.booleanSetting('PAGE_ABOUT_ENABLED')
     },
     displayFAQ: function () {
-      return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED')
+      return this.$store.booleanSetting('PAGE_FAQ_ENABLED')
     },
     displayToolkits: function () {
-      return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')
+      return this.$store.booleanSetting('PAGE_TOOLKIT_ENABLED')
     },
     displayCart: function () {
-      return this.$store.getters.cartItems.length > 0
+      return this.$store.cartItems.length > 0
     },
     enabledPages: function () {
       return (this.pages || []).filter(page => page.enabled)
     },
     pages: function () {
-      return this.$store.getters.pages
+      return this.$store.pages
     }
   },
   created: function () {

@@ -14,25 +14,50 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate'
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
 
-export default createStore({
-  state: {
-    settings: {},
-    cartItems: [],
-    updated: 0,
-    pages: []
+export const useAppStore = defineStore('appStore', {
+  state: () => {
+    return {
+      settingsValues: {},
+      cartItemsList: [],
+      updatedValue: 0,
+      pagesList: []
+    }
   },
-  mutations: {
-    updateCartItemNonprofit: function (state, payload) {
-      state.cartItems.forEach(function (item) {
+  getters: {
+    cartItems: (state) => {
+      return state.cartItemsList
+    },
+    settings: (state) => {
+      return state.settingsValues
+    },
+    setting: (state) => {
+      return (key) => state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : null
+    },
+    booleanSetting: (state) => {
+      return (key, defaultValue) => {
+        defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue
+        const value = state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : defaultValue
+        return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true')
+      }
+    },
+    updated: (state)  => {
+      return state.updatedValue
+    },
+    pages: (state) => {
+      return state.pagesList
+    }
+  },
+  actions: {
+    updateCartItemNonprofit: (state, payload) => {
+      state.cartItemsList.forEach(function (item) {
         if (item.nonprofit.id === payload.nonprofit.id) {
           item.nonprofit = payload.nonprofit
         }
       })
     },
-    addCartItem: function (state, payload) {
+    addCartItem: (state, payload) => {
       if (payload.amount && payload.nonprofit !== null) {
         let amount = payload.amount
         if (typeof amount === 'string' && amount.indexOf('.') > -1) {
@@ -40,7 +65,7 @@ export default createStore({
         }
 
         let isNew = true
-        state.cartItems.forEach(function (item) {
+        state.cartItemsList.forEach(function (item) {
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
@@ -49,7 +74,7 @@ export default createStore({
         })
 
         if (isNew) {
-          state.cartItems.push({
+          state.cartItemsList.push({
             amount: amount,
             nonprofit: payload.nonprofit,
             timestamp: Date.now()
@@ -57,62 +82,28 @@ export default createStore({
         }
       }
     },
-    removeCartItem: function (state, timestamp) {
-      state.cartItems = _.reject(state.cartItems, { timestamp: timestamp })
+    removeCartItem: (state, timestamp) => {
+      state.cartItemsList = _.reject(state.cartItemsList, { timestamp: timestamp })
     },
-    updateCartItem: function (state, payload) {
+    updateCartItem: (state, payload) => {
       if (payload.amount && payload.timestamp) {
         let amount = payload.amount
         if (typeof amount === 'string' && amount.indexOf('.') > -1) {
           amount = Math.round(parseFloat(payload.amount) * 100)
         }
 
-        const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
+        const cartItem = _.find(state.cartItemsList, { timestamp: payload.timestamp })
         cartItem.amount = amount
       }
     },
-    clearCartItems: function (state) {
-      state.cartItems = []
+    clearCartItems: (state) => {
+      state.cartItemsList = []
     },
-    settings: function (state, settings) {
-      Object.keys(settings).forEach(function (key) {
-        state.settings[key] = settings[key]
-      })
+    updateSettings: (state, settings) => {
+      state.settingsValues = settings
     },
-    updated: function (state) {
-      state.updated = new Date().getTime()
-    },
-    pages: function (state, pages) {
-      state.pages = pages
+    setPages: (state, pages) => {
+      state.pagesList = pages
     }
-  },
-  getters: {
-    cartItems: function (state) {
-      return state.cartItems
-    },
-    settings: function (state) {
-      return state.settings
-    },
-    setting: function (state) {
-      return function (key) {
-        return state.settings.hasOwnProperty(key) ? state.settings[key] : null
-      }
-    },
-    booleanSetting: function (state) {
-      return function (key, defaultValue) {
-        defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue
-        const value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue
-        return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true')
-      }
-    },
-    updated: function (state) {
-      return state.updated
-    },
-    pages: function (state) {
-      return state.pages
-    }
-  },
-  plugins: [
-    createPersistedState()
-  ]
+  }
 })

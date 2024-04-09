@@ -59,6 +59,7 @@
 
 <script>
 import ComponentMoney from './../../forms/Money.vue'
+import { useAppStore } from "../../../store"
 
 export default {
   components: {
@@ -76,6 +77,9 @@ export default {
       localAmount: this.amount,
       formErrors: {}
     }
+  },
+  beforeMount() {
+    this.$store = useAppStore()
   },
   computed: {
     donationAmount: function () {

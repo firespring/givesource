@@ -131,6 +131,7 @@
 import ComponentDonationTiersModalOptionRow from './DonationTiersModalOptionRow.vue'
 import ComponentMoney from './../../forms/Money.vue'
 import ComponentSpinner from './../../layout/Spinner.vue'
+import { useAppStore } from "../../../store"
 
 export default {
   components: {
@@ -166,6 +167,9 @@ export default {
         thousands: ''
       }
     }
+  },
+  beforeMount() {
+    this.$store = useAppStore()
   },
   computed: {
     displayDonationTiers: function () {
