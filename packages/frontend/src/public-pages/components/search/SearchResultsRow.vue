@@ -68,7 +68,7 @@ export default {
   props: {
     nonprofit: { type: Object, default: () => ({}) }
   },
-  beforeMount() {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   computed: {

@@ -338,9 +338,11 @@ export default {
       deep: true
     }
   },
+  beforeCreate () {
+    this.$store = useAppStore()
+  },
   beforeMount () {
     const vm = this
-    vm.$store = useAppStore()
 
     vm.setBodyClasses('donation', 'donation--nonprofit')
     vm.setPageTitle(vm.pageTitle)

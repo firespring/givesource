@@ -211,9 +211,11 @@ export default {
       return url
     }
   },
+  beforeCreate() {
+    this.$store = useAppStore()
+  },
   beforeMount: function () {
     const vue = this
-    vue.$store = useAppStore()
 
     vue.setBodyClasses('home', 'home--live')
     vue.setPageTitle(vue.eventTitle)

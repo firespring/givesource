@@ -91,7 +91,7 @@ export default {
       return this.loaded && Object.keys(this.sponsors).length
     }
   },
-  beforeMount () {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   created: function () {

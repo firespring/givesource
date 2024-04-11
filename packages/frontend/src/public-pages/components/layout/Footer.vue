@@ -69,7 +69,7 @@
 import * as Settings from './../../helpers/settings'
 import { useAppStore } from "../../store"
 export default {
-  beforeMount () {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   computed: {

@@ -306,7 +306,7 @@ const loadCustomPages = (to, from, next) => {
 
         pages.push(page)
       })
-      store.setPages(pages)
+      store._pages = pages
     })
   }
 
@@ -324,6 +324,7 @@ const loadCustomPages = (to, from, next) => {
  * @return {Promise}
  */
 const updateSettings = () => {
+  const store = useAppStore()
   const settings = {
     ADMIN_URL: null,
     CONTACT_PHONE: null,
@@ -362,7 +363,6 @@ const updateSettings = () => {
   }
 
   return axios.get('/settings.json').then(response => {
-    const store = useAppStore()
     if (response.data && response.data.API_URL) {
       window.API_URL = response.data.API_URL
       store.settings.API_URL = response.data.API_URL
@@ -395,7 +395,6 @@ const updateSettings = () => {
 
     return Promise.resolve({})
   }).then(response => {
-    const store = useAppStore()
     if (response.data) {
       response.data.forEach(file => {
         Object.keys(files).forEach(key => {
@@ -406,7 +405,7 @@ const updateSettings = () => {
       })
     }
 
-    store.updateSettings(settings)
+    store._settings = settings
     store.updated
   })
 }

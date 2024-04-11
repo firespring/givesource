@@ -76,7 +76,7 @@ export default {
       cartItems: []
     }
   },
-  beforeMount() {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   created: function () {

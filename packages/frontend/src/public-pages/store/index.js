@@ -19,39 +19,36 @@ import { defineStore } from 'pinia'
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
-      settingsValues: {},
-      cartItemsList: [],
-      updatedValue: 0,
-      pagesList: []
+      _settings: {},
+      _cartItems: [],
+      _updated: 0,
+      _pages: []
     }
   },
   getters: {
     cartItems: (state) => {
-      return state.cartItemsList
+      return state._cartItems
     },
     settings: (state) => {
-      return state.settingsValues
+      return state._settings
     },
     setting: (state) => {
-      return (key) => state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : null
+      return (key) => state._settings.hasOwnProperty(key) ? state._settings[key] : null
     },
     booleanSetting: (state) => {
       return (key, defaultValue) => {
         defaultValue = (typeof defaultValue === 'undefined') ? false : defaultValue
-        const value = state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : defaultValue
+        const value = state._settings.hasOwnProperty(key) ? state._settings[key] : defaultValue
         return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true')
       }
     },
-    updated: (state)  => {
-      return state.updatedValue
-    },
     pages: (state) => {
-      return state.pagesList
+      return state._pages
     }
   },
   actions: {
     updateCartItemNonprofit: (state, payload) => {
-      state.cartItemsList.forEach(function (item) {
+      state._cartItems.forEach(function (item) {
         if (item.nonprofit.id === payload.nonprofit.id) {
           item.nonprofit = payload.nonprofit
         }
@@ -65,7 +62,7 @@ export const useAppStore = defineStore('appStore', {
         }
 
         let isNew = true
-        state.cartItemsList.forEach(function (item) {
+        state._cartItems.forEach(function (item) {
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
@@ -74,7 +71,7 @@ export const useAppStore = defineStore('appStore', {
         })
 
         if (isNew) {
-          state.cartItemsList.push({
+          state._cartItems.push({
             amount: amount,
             nonprofit: payload.nonprofit,
             timestamp: Date.now()
@@ -83,7 +80,7 @@ export const useAppStore = defineStore('appStore', {
       }
     },
     removeCartItem: (state, timestamp) => {
-      state.cartItemsList = _.reject(state.cartItemsList, { timestamp: timestamp })
+      state._cartItems = _.reject(state._cartItems, { timestamp: timestamp })
     },
     updateCartItem: (state, payload) => {
       if (payload.amount && payload.timestamp) {
@@ -92,18 +89,21 @@ export const useAppStore = defineStore('appStore', {
           amount = Math.round(parseFloat(payload.amount) * 100)
         }
 
-        const cartItem = _.find(state.cartItemsList, { timestamp: payload.timestamp })
+        const cartItem = _.find(state._cartItems, { timestamp: payload.timestamp })
         cartItem.amount = amount
       }
     },
     clearCartItems: (state) => {
-      state.cartItemsList = []
+      state._cartItems = []
     },
     updateSettings: (state, settings) => {
-      state.settingsValues = settings
+      state._settings = settings
     },
     setPages: (state, pages) => {
-      state.pagesList = pages
-    }
+      state._pages = pages
+    },
+    updated: (state) => {
+      state._updated = new Date().getTime()
+    },
   }
 })

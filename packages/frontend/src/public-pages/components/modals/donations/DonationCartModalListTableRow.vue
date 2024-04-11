@@ -78,7 +78,7 @@ export default {
       formErrors: {}
     }
   },
-  beforeMount() {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   computed: {

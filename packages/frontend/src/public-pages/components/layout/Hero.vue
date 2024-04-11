@@ -84,7 +84,7 @@ export default {
       default: false
     }
   },
-  beforeMount () {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   computed: {
