@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { useAdminStore } from "../../../../store"
+
 export default {
   props: {
     file: {
@@ -68,6 +70,9 @@ export default {
     }
   },
   emits: ['delete-sponsor', 'has-error'],
+  beforeCreate() {
+    this.$store = useAdminStore()
+  },
   computed: {
     logoUrl: function () {
       return this.file.hasOwnProperty('path') ? this.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false

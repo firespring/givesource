@@ -143,7 +143,7 @@ const router = createRouter({
       },
       beforeEnter (to, from, next) {
         const store = useAdminStore()
-        if (store.state.receipt && store.state.donorEmail) {
+        if (store.receipt && store.donorEmail) {
           next()
         } else {
           if (from.name) {
@@ -669,7 +669,7 @@ const loadSettings = function () {
   const date = new Date()
   date.setMinutes(date.getMinutes() - 1)
 
-  const lastUpdated = store.updated
+  const lastUpdated = store._updated
   if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
     return updateSettings()
   } else {

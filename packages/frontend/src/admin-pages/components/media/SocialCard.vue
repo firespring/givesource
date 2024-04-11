@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { useAdminStore } from "../../store"
+
 export default {
   props: {
     description: {
@@ -79,6 +81,9 @@ export default {
       fallback_src: null,
       src: null
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   computed: {
     cardEventTitle () {

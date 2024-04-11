@@ -153,11 +153,15 @@
 <script>
 import ComponentImageEditor from './../../../forms/ImageEditor.vue'
 import ComponentSocialCard from './../../../media/SocialCard.vue'
+import { useAdminStore } from "../../../../store"
 
 export default {
   components: {
     'forms-image-editor': ComponentImageEditor,
     'social-card': ComponentSocialCard
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -277,7 +281,7 @@ export default {
         if (vm.formData[key] instanceof File) {
           promise = promise.then(() => {
             return vm.uploadImage(key).then(uploadedFile => {
-              vm.$store.commit('generateCacheKey')
+              vm.$store.generateCacheKey
               settings.push({
                 key: key,
                 value: uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''

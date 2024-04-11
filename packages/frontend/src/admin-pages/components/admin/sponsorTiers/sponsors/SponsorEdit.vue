@@ -168,11 +168,15 @@
 <script>
 import ComponentImageUpload from './../../../forms/ImageUpload.vue'
 import ComponentSponsorTier from './../../../forms/SponsorTier.vue'
+import { useAdminStore } from "../../../../store"
 
 export default {
   components: {
     'forms-image-upload': ComponentImageUpload,
     'forms-sponsor-tier': ComponentSponsorTier
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {
@@ -332,7 +336,7 @@ export default {
 
         return vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors/' + vue.sponsorId, params)
       }).then(function () {
-        vue.$store.commit('generateCacheKey')
+        vue.$store.generateCacheKey
         vue.clearModals()
         vue.$router.push({ name: 'sponsors-list' })
       }).catch(function (err) {

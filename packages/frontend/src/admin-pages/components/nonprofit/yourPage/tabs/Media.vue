@@ -90,6 +90,7 @@
 <script>
 import draggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
+import { useAdminStore } from "../../../../store"
 
 const MediaHelper = require('./../../../../helpers/media')
 
@@ -131,6 +132,9 @@ export default {
       const vue = this
       return vue.loadedSlides ? vue.slides : []
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   beforeMount: function () {
     const vue = this
@@ -249,7 +253,7 @@ export default {
           type: MediaHelper.TYPE_IMAGE
         })
       }).then(function (response) {
-        vue.$store.commit('generateCacheKey')
+        vue.$store.generateCacheKey
         vue.$router.push({
           name: 'nonprofit-your-page-media-photos-edit',
           params: {

@@ -19,28 +19,22 @@ import { defineStore } from 'pinia'
 export const useAdminStore = defineStore('adminStore', {
   state: () => {
     return {
-      cacheKeyValue: 0,
-      settingsValues: {},
-      updatedValue: 0,
+      _cacheKey: 0,
+      settings: {},
+      _updated: 0,
       receipt: null,
       donorEmail: null
     }
   },
   getters: {
     cacheKey: (state) => {
-      if (!state.cacheKeyValue) {
-        state.cacheKeyValue = new Date().getTime()
+      if (!state._cacheKey) {
+        state._cacheKey = new Date().getTime()
       }
-      return state.cacheKeyValue
-    },
-    settings: (state) => {
-      return state.settingsValues
+      return state._cacheKey
     },
     setting: (state) => {
-      return (key) => state.settingsValues.hasOwnProperty(key) ? state.settingsValues[key] : null
-    },
-    updated: (state) => {
-      return state.updatedValue
+      return (key) => state.settings.hasOwnProperty(key) ? state.settings[key] : null
     }
   },
   actions: {
@@ -54,12 +48,14 @@ export const useAdminStore = defineStore('adminStore', {
       commit('setDonorEmail', null)
     },
 
-    generateCacheKey: function (state) {
-      state.cacheKeyValue = new Date().getTime()
+    generateCacheKey: (state) => {
+      state._cacheKey = new Date().getTime()
     },
     setDonorEmail (state, email) {
       state.donorEmail = email
+    },
+    updated: (state) => {
+      state._updated = new Date().getTime()
     }
-
   }
 })

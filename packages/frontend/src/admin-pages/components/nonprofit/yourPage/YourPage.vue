@@ -106,12 +106,16 @@
 import ComponentTabContent from './tabs/Content.vue'
 import ComponentTabDonationTiers from './tabs/DonationTiers.vue'
 import ComponentTabMedia from './tabs/Media.vue'
+import { useAdminStore } from "../../../store"
 
 export default {
   components: {
     'tab-content': ComponentTabContent,
     'tab-donation-tiers': ComponentTabDonationTiers,
     'tab-media': ComponentTabMedia
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {

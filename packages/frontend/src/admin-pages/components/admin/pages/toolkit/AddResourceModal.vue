@@ -216,6 +216,7 @@
 
 <script>
 import ComponentFileUpload from './../../../forms/FileUpload.vue'
+import { useAdminStore } from "../../../../store"
 
 export default {
   components: {
@@ -272,6 +273,9 @@ export default {
       formErrors: {},
       apiError: {}
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   computed: {
     showFileInput: function () {
@@ -384,7 +388,7 @@ export default {
           })
         })
       }).then(function () {
-        vue.$store.commit('generateCacheKey')
+        vue.$store.generateCacheKey
         toolkitResourceListContent.value = Object.keys(vue.formData).map(function (key) {
           return vue.formData[key]
         })

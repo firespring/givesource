@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { useAdminStore } from "../../../../store"
+
 const MediaHelper = require('./../../../../helpers/media')
 
 export default {
@@ -118,6 +120,9 @@ export default {
           return vue.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path
       }
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   methods: {
     deleteSlide: function (event) {

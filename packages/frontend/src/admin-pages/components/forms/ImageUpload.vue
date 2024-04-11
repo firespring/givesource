@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import {useAdminStore} from "../../store"
+
 export default {
   props: {
     id: { type: String, default: '' },
@@ -110,6 +112,9 @@ export default {
       const vue = this
       return (vue.localValue instanceof File || (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('filename')))
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   watch: {
     modelValue: {

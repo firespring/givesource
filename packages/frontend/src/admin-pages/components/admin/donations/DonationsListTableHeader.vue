@@ -95,12 +95,18 @@
 </template>
 
 <script>
+import { useAdminStore } from "../../../store"
+
 export default {
   emits: ['has-error'],
   data () {
     return {
       displayingMenu: false
     }
+  },
+
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
 
   computed: {
@@ -158,7 +164,7 @@ export default {
         vm.clearModals()
         console.log('Report failed to generate')
       } else {
-        vm.$store.commit('generateCacheKey')
+        vm.$store.generateCacheKey
         await new Promise(resolve => setTimeout(resolve, 1000))
         const response = await vm.$request.get('reports/' + report.id)
         return vm.pollReport(response.data)

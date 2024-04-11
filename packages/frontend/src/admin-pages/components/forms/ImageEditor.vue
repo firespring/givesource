@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { useAdminStore } from "../../store"
+
 export default {
   props: {
     id: { type: String, default: '' },
@@ -148,6 +150,9 @@ export default {
         vm.$emit('update:modelValue', vm.localValue)
       }
     }
+  },
+  beforeCreate() {
+    this.$store = useAdminStore()
   },
   created () {
     const vm = this
