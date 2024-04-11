@@ -426,6 +426,19 @@ export default {
       return promise
     },
     uploadImage: function (key) {
+      const truncateFileName = (name) => {
+        // we only store 50 chars of the filename in the database
+        // so if it is longer we need to truncate it, but we also need to keep the file extension intact
+        if (name.length <= 50) return name
+        const parts = name.split('.')
+        const ext = parts.pop()
+        const filename = parts
+          .join('.') // put remain filename parts back
+          .slice(0, 50 - ext.length - 1) // slice to 50chars, minus extension length, minus 1 for period before extension
+          .replace(/\.$/, '') // if we are left with a period at the end, trim it
+
+        return `${filename}.${ext}`
+      }
       const vue = this
       let file = null
       let promise = Promise.resolve()
@@ -433,7 +446,7 @@ export default {
         promise = promise.then(function () {
           return vue.$request.post('files', {
             content_type: vue.formData[key].type,
-            filename: vue.formData[key].name
+            filename: truncateFileName(vue.formData[key].name)
           })
         }).then(function (response) {
           file = response.data.file
