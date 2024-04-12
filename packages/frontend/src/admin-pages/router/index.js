@@ -655,7 +655,8 @@ const updateSettings = function () {
       }
     })
   }).then(function () {
-    store.updated()
+    // eslint-disable-next-line no-unused-expressions
+    store.updated
   })
 }
 

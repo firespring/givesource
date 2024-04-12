@@ -406,7 +406,8 @@ const updateSettings = () => {
     }
 
     store._settings = settings
-    store.updated()
+    // eslint-disable-next-line no-unused-expressions
+    store.updated
   })
 }
 
