@@ -86,7 +86,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from 'pinia'
+import { useAdminStore} from "../../../store"
 
 export default {
   props: {
@@ -119,7 +120,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
+    ...mapActions(useAdminStore, [
       'setReceipt'
     ]),
 
