@@ -230,7 +230,7 @@
 <script>
 import ComponentFileUpload from './../../../forms/FileUpload.vue'
 import ComponentSpinner from './../../../layout/Spinner.vue'
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 export default {
   components: {
@@ -294,9 +294,6 @@ export default {
       apiError: {}
     }
   },
-  beforeCreate() {
-    this.$store = useAdminStore()
-  },
   computed: {
     showFileInput: function () {
       return this.formData.TOOLKIT_RESOURCE_LIST_ITEM_TYPE.value === 'FILE'
@@ -332,6 +329,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   mounted: function () {
     const vue = this
@@ -464,7 +464,7 @@ export default {
       }
 
       promise.then(function () {
-        vue.$store.generateCacheKey
+        vue.$store.generateCacheKey()
         vue.bus.$emit('updateToolkitResourceList', vue.data.content)
         vue.clearModals()
       }).catch(function (err) {

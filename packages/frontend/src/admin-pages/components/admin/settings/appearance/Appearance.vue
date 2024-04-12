@@ -222,7 +222,7 @@
 <script>
 import ComponentColor from './../../../forms/Color.vue'
 import ComponentImageUpload from './../../../forms/ImageUpload.vue'
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 export default {
   components: {
@@ -398,7 +398,7 @@ export default {
           promise = promise.then(function () {
             return vue.uploadImage(key).then(function (uploadedFile) {
               vue.$store = useAdminStore()
-              vue.$store.generateCacheKey
+              vue.$store.generateCacheKey()
               settings.push({
                 key: key,
                 value: uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''

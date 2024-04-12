@@ -26,7 +26,7 @@ import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { useAppStore} from "./store"
+import { useAppStore } from './store'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
@@ -71,7 +71,7 @@ app.use(pinia)
 // Setup Analytics
 const store = useAppStore()
 app.use(VueGtag, {
-        config: { id: store.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
-    }, router)
+  config: { id: store.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
+}, router)
 
 app.mount('#app')

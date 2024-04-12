@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useAdminStore } from "../store";
+import { useAdminStore } from '../store'
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 

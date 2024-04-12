@@ -32,7 +32,7 @@ import ComponentRegisterResponse from './../components/register/response/Registe
 import ComponentSearchResults from './../components/search/SearchResults.vue'
 import ComponentTermsOfService from './../components/terms/TermsOfService.vue'
 import ComponentToolkits from './../components/toolkits/Toolkits.vue'
-import { useAppStore } from "../store"
+import { useAppStore } from '../store'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -406,7 +406,7 @@ const updateSettings = () => {
     }
 
     store._settings = settings
-    store.updated
+    store.updated()
   })
 }
 

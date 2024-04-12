@@ -355,16 +355,13 @@ import ComponentCKEditor from './../../forms/Ckeditor.vue'
 import ComponentImageUpload from './../../forms/ImageUpload.vue'
 import ComponentSelectNonprofit from './../../forms/SelectNonprofit.vue'
 import Request from './../../../helpers/request'
-import { useAdminStore } from "../../../store"
+import { useAdminStore } from '../../../store'
 
 export default {
   components: {
     'forms-ckeditor': ComponentCKEditor,
     'forms-image-upload': ComponentImageUpload,
     'forms-select-nonprofit': ComponentSelectNonprofit
-  },
-  beforeCreate() {
-    this.$store = useAdminStore()
   },
   beforeRouteEnter: function (to, from, next) {
     const fetchData = function () {
@@ -580,6 +577,9 @@ export default {
       deep: true
     }
   },
+  beforeCreate () {
+    this.$store = useAdminStore()
+  },
   methods: {
     getConstraints: function () {
       return {
@@ -715,7 +715,7 @@ export default {
         if (vue.formData.contents[key].value instanceof File) {
           promise = promise.then(function () {
             return vue.uploadFile(vue.formData.contents[key]).then(function (uploadedFile) {
-              vue.$store.generateCacheKey
+              vue.$store.generateCacheKey()
               contents[key] = _.cloneDeep(vue.formData.contents[key])
               contents[key].value = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''
               contents[key].file = uploadedFile

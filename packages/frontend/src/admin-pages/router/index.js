@@ -74,7 +74,7 @@ import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAdminStore } from "../store"
+import { useAdminStore } from '../store'
 
 const router = createRouter({
   history: createWebHistory(__dirname),
@@ -655,7 +655,7 @@ const updateSettings = function () {
       }
     })
   }).then(function () {
-    store.updated
+    store.updated()
   })
 }
 

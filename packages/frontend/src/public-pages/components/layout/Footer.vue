@@ -67,11 +67,8 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 export default {
-  beforeCreate () {
-    this.$store = useAppStore()
-  },
   computed: {
     adminPagesUrl: function () {
       return this.$store.setting('ADMIN_URL') + '/login'
@@ -88,6 +85,9 @@ export default {
     eventTitle: function () {
       return Settings.eventTitle()
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   }
 }
 </script>

@@ -75,7 +75,7 @@
 
 <script>
 import * as Utils from './../../helpers/utils'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 export default {
   data: function () {

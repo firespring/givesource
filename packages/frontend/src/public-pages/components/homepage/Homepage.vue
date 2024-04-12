@@ -80,7 +80,7 @@ import ComponentHero from './../layout/Hero.vue'
 import ComponentLeaderboard from './Leaderboard.vue'
 import ComponentMetrics from './Metrics.vue'
 import ComponentSponsors from './../layout/Sponsors.vue'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 const fetchData = function () {
   let promise = Promise.resolve()
@@ -211,7 +211,7 @@ export default {
       return url
     }
   },
-  beforeCreate() {
+  beforeCreate () {
     this.$store = useAppStore()
   },
   beforeMount: function () {

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { useAdminStore } from "../../../store"
+import { useAdminStore } from '../../../store'
 
 const slug = require('slug')
 
@@ -49,7 +49,7 @@ export default {
       countdown: null
     }
   },
-  beforeCreate() {
+  beforeCreate () {
     this.$store = useAdminStore()
   },
 
@@ -80,7 +80,7 @@ export default {
         vm.clearModals()
       } else {
         vm.countdown = setInterval(() => {
-          vm.$store.generateCacheKey
+          vm.$store.generateCacheKey()
 
           vm.$request.get('nonprofits/' + vm.nonprofit.id + '/reports/' + vm.report.id).then(response => {
             vm.report = response.data

@@ -17,7 +17,7 @@
 import * as _ from 'lodash'
 import * as User from './user'
 import axios from 'axios'
-import { useAdminStore } from "./../store";
+import { useAdminStore } from './../store'
 
 /**
  * Request constructor

@@ -59,7 +59,7 @@
 
 <script>
 import ComponentMoney from './../../forms/Money.vue'
-import { useAppStore } from "../../../store"
+import { useAppStore } from '../../../store'
 
 export default {
   components: {
@@ -77,9 +77,6 @@ export default {
       localAmount: this.amount,
       formErrors: {}
     }
-  },
-  beforeCreate () {
-    this.$store = useAppStore()
   },
   computed: {
     donationAmount: function () {
@@ -104,6 +101,9 @@ export default {
       vue.$emit('has-error', (Object.keys(vue.formErrors).length > 0))
       vue.localAmount = value
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   },
   methods: {
     getConstraints: function () {

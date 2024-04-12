@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 const MediaHelper = require('./../../../../helpers/media')
 
@@ -121,7 +121,7 @@ export default {
       }
     }
   },
-  beforeCreate() {
+  beforeCreate () {
     this.$store = useAdminStore()
   },
   methods: {

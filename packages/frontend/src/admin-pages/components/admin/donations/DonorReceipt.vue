@@ -57,7 +57,7 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAdminStore } from "../../../store"
+import { useAdminStore } from '../../../store'
 
 export default {
   data () {
@@ -67,7 +67,7 @@ export default {
   },
 
   computed: {
-    ...mapState( useAdminStore, {
+    ...mapState(useAdminStore, {
       receipt: state => state.receipt,
       donorEmail: state => state.donorEmail
     })

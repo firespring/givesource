@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 export default {
   props: {
@@ -83,9 +83,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-  beforeCreate () {
-    this.$store = useAppStore()
   },
   computed: {
     mastheadStyle: function () {
@@ -112,6 +109,9 @@ export default {
       const vue = this
       return vue.$store.setting('FOUNDATION_URL') ? vue.$store.setting('FOUNDATION_URL') : false
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   }
 }
 </script>

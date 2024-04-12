@@ -148,12 +148,9 @@
 </template>
 
 <script>
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 export default {
-  beforeCreate() {
-    this.$store = useAdminStore()
-  },
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {
       vue.$request.get('/nonprofits/' + to.params.nonprofitId).then(function (response) {
@@ -246,6 +243,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   created: function () {
     const vue = this
@@ -379,7 +379,7 @@ export default {
           return vue.$request.delete('files/' + vue.slide.fileId)
         }
       }).then(function () {
-        vue.$store.generateCacheKey
+        vue.$store.generateCacheKey()
         vue.clearModals()
         vue.$router.push({ name: 'nonprofit-your-page', query: { tab: 'media' } })
       }).catch(function (err) {

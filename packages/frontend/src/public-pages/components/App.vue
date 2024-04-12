@@ -23,14 +23,13 @@
 
 <script>
 import ComponentModals from './modals/Modals.vue'
-import { useAppStore } from "../store"
+import { useAppStore } from '../store'
 
 export default {
   components: {
     modals: ComponentModals
   },
   beforeCreate () {
-    const vm = this
     const store = useAppStore()
 
     const eventTitle = store.setting('EVENT_TITLE')

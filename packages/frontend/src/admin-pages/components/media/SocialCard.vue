@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { useAdminStore } from "../../store"
+import { useAdminStore } from '../../store'
 
 export default {
   props: {
@@ -81,9 +81,6 @@ export default {
       fallback_src: null,
       src: null
     }
-  },
-  beforeCreate() {
-    this.$store = useAdminStore()
   },
   computed: {
     cardEventTitle () {
@@ -139,6 +136,9 @@ export default {
         vm.fallback_src = vm.fallbackImageUrl
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   }
 }
 </script>

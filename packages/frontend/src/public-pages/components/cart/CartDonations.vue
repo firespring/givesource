@@ -56,7 +56,7 @@
 <script>
 import { mapState } from 'pinia'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 export default {
   components: {

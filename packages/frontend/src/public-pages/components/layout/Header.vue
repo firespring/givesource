@@ -116,7 +116,7 @@
 <script>
 import * as Settings from './../../helpers/settings'
 import { mapState } from 'pinia'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 export default {
   data () {

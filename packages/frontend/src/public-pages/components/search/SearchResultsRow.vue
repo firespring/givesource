@@ -62,14 +62,11 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-import { useAppStore } from "../../store"
+import { useAppStore } from '../../store'
 
 export default {
   props: {
     nonprofit: { type: Object, default: () => ({}) }
-  },
-  beforeCreate () {
-    this.$store = useAppStore()
   },
   computed: {
     amount: function () {
@@ -93,6 +90,9 @@ export default {
       }
       return logo
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   },
   methods: {
     donate: function () {

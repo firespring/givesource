@@ -104,6 +104,6 @@ export const useAppStore = defineStore('appStore', {
     },
     updated: (state) => {
       state._updated = new Date().getTime()
-    },
+    }
   }
 })

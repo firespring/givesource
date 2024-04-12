@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import {useAdminStore} from "../../store"
+import { useAdminStore } from '../../store'
 
 export default {
   props: {
@@ -113,9 +113,6 @@ export default {
       return (vue.localValue instanceof File || (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('filename')))
     }
   },
-  beforeCreate() {
-    this.$store = useAdminStore()
-  },
   watch: {
     modelValue: {
       handler (newVal) {
@@ -139,6 +136,9 @@ export default {
         vue.$emit('update:modelValue', this.localValue)
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     onTrigger: function () {

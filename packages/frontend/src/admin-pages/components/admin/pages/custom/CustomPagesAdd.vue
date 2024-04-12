@@ -171,7 +171,7 @@
 <script>
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import Request from './../../../../helpers/request'
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 const slug = require('slug')
 const uuid = require('node-uuid')
@@ -196,9 +196,6 @@ const fetchData = () => {
 export default {
   components: {
     'forms-ckeditor': ComponentCKEditor
-  },
-  beforeCreate() {
-    this.$store = useAdminStore()
   },
   beforeRouteEnter (to, from, next) {
     fetchData().then((data) => {
@@ -255,6 +252,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getConstraints () {

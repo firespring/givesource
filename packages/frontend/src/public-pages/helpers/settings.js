@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useAppStore } from "./../store";
+import { useAppStore } from './../store'
 import dayjs from './../helpers/day'
 
 /**

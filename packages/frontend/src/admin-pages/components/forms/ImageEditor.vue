@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { useAdminStore } from "../../store"
+import { useAdminStore } from '../../store'
 
 export default {
   props: {
@@ -151,7 +151,7 @@ export default {
       }
     }
   },
-  beforeCreate() {
+  beforeCreate () {
     this.$store = useAdminStore()
   },
   created () {

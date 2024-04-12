@@ -175,15 +175,12 @@
 <script>
 import ComponentImageUpload from './../../../forms/ImageUpload.vue'
 import ComponentSponsorTier from './../../../forms/SponsorTier.vue'
-import { useAdminStore } from "../../../../store"
+import { useAdminStore } from '../../../../store'
 
 export default {
   components: {
     'forms-image-upload': ComponentImageUpload,
     'forms-sponsor-tier': ComponentSponsorTier
-  },
-  beforeCreate() {
-    this.$store = useAdminStore()
   },
   beforeRouteEnter: function (to, from, next) {
     next(function (vue) {
@@ -241,6 +238,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getConstraints: function () {
@@ -309,7 +309,7 @@ export default {
           url: vue.formData.url
         })
       }).then(function (response) {
-        vue.$store.generateCacheKey
+        vue.$store.generateCacheKey()
         vue.clearModals()
         if (response.data.errorMessage) {
           console.log(response.data)

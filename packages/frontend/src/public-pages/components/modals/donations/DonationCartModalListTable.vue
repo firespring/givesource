@@ -64,7 +64,7 @@
 
 <script>
 import ComponentDonationCartModalListTableRow from './DonationCartModalListTableRow.vue'
-import { useAppStore } from "../../../store"
+import { useAppStore } from '../../../store'
 
 export default {
   components: {
