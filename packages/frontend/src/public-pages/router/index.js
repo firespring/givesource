@@ -306,7 +306,7 @@ const loadCustomPages = (to, from, next) => {
 
         pages.push(page)
       })
-      store._pages = pages
+      store.pages = pages
     })
   }
 
@@ -405,9 +405,8 @@ const updateSettings = () => {
       })
     }
 
-    store._settings = settings
-    // eslint-disable-next-line no-unused-expressions
-    store.updated
+    store.settings = settings
+    store.updated = new Date().getTime()
   })
 }
 
@@ -445,7 +444,8 @@ const loadSettings = (to, from, next) => {
       initialSettingsLoaded = true
     }
   } else {
-    window.API_URL = store.setting('API_URL')
+    if (store.setting('API_URL'))
+      window.API_URL = store.setting('API_URL')
   }
 
   promise.then(() => {

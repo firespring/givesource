@@ -21,7 +21,7 @@ export const useAdminStore = defineStore('adminStore', {
     return {
       _cacheKey: 0,
       settings: {},
-      _updated: 0,
+      updated: 0,
       receipt: null,
       donorEmail: null
     }
@@ -38,24 +38,21 @@ export const useAdminStore = defineStore('adminStore', {
     }
   },
   actions: {
-    async setReceipt ({ commit }, payload) {
-      commit('setReceipt', payload.html)
-      commit('setDonorEmail', payload.email)
+    async setReceipt (payload) {
+      this.receipt = payload.html
+      this.donorEmail = payload.email
     },
 
-    async clearReceipt ({ commit }) {
-      commit('setReceipt', null)
-      commit('setDonorEmail', null)
+    async clearReceipt () {
+      this.receipt = null
+      this.donorEmail = null
     },
 
-    generateCacheKey: (state) => {
-      state._cacheKey = new Date().getTime()
+    generateCacheKey: () => {
+      this._cacheKey = new Date().getTime()
     },
-    setDonorEmail (state, email) {
-      state.donorEmail = email
-    },
-    updated: (state) => {
-      state._updated = new Date().getTime()
+    setDonorEmail (email) {
+      this.donorEmail = email
     }
   }
 })

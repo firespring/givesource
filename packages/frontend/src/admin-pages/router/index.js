@@ -655,8 +655,7 @@ const updateSettings = function () {
       }
     })
   }).then(function () {
-    // eslint-disable-next-line no-unused-expressions
-    store.updated
+    store.updated = new Date().getTime()
   })
 }
 
@@ -670,11 +669,13 @@ const loadSettings = function () {
   const date = new Date()
   date.setMinutes(date.getMinutes() - 1)
 
-  const lastUpdated = store._updated
+  const lastUpdated = store.updated
   if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
     return updateSettings()
   } else {
-    window.API_URL = store.setting('API_URL')
+    if (store.setting('API_URL'))
+      window.API_URL = store.setting('API_URL')
+
     return Promise.resolve()
   }
 }
