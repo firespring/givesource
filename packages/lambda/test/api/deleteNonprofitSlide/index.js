@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const DeleteNonprofitSlide = require('./../../../src/api/deleteNonprofitSlide/index')
 const NonprofitsRepository = require('./../../../src/repositories/nonprofits')
 const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides')
@@ -22,35 +23,33 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteNonprofitSlide', function () {
-  it('should delete a nonprofit slide', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const model = TestHelper.generate.model('nonprofitSlide')
+  const nonprofitId = 123
+  const slideId = 456
+
+  it('should delete a nonprofit slide', async function () {
+    const nonprofit = await TestHelper.generate.model('nonprofit', { id: nonprofitId })
+    const model = await TestHelper.generate.model('nonprofitSlide', { id: slideId })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        nonprofit_uuid: nonprofit.uuid,
-        slide_uuid: model.uuid
-      }
-    }
-    return DeleteNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+    sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(model)
+    const deleteStub = sinon.stub(NonprofitSlidesRepository.prototype, 'delete').resolves(model)
+
+    const result = await TestHelper.callApi(DeleteNonprofitSlide, { nonprofit_id: nonprofitId, slide_id: slideId })
+    assert.equal(deleteStub.withArgs(nonprofit.id, model.id).callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    const nonprofit = await TestHelper.generate.model('nonprofit', { id: nonprofitId })
+    const model = await TestHelper.generate.model('nonprofitSlide', { id: slideId })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        nonprofit_uuid: nonprofit.uuid,
-        slide_uuid: '1234'
-      }
-    }
-    return DeleteNonprofitSlide.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(model)
+
+    sinon.stub(NonprofitSlidesRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteNonprofitSlide, { nonprofit_id: nonprofitId, slide_id: slideId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

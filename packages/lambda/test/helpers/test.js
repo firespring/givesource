@@ -29,8 +29,8 @@ const promiseMe = require('mocha-promise-me')
 const generatorInstance = new Generator()
 module.exports.generate = generatorInstance
 
-module.exports.callApi = function (api, params = {}, context = null) {
-  const event = { params }
+module.exports.callApi = function (api, params = {}, context = null, extraEventProperties = {}) {
+  const event = { params, ...extraEventProperties }
   return new Promise((resolve, reject) => api.handle(event, context, (error, result) => {
     if (error) {
       reject(error)

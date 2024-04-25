@@ -15,35 +15,34 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const DeleteSponsorTier = require('./../../../src/api/deleteSponsorTier/index')
 const sinon = require('sinon')
 const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('DeleteSponsorTier', function () {
-  it('should delete a sponsor tier', function () {
-    const model = TestHelper.generate.model('sponsorTier')
-    sinon.stub(SponsorTiersRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        report_uuid: model.uuid
-      }
-    }
-    return DeleteSponsorTier.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const sponsorTierId = 123
+
+  it('should delete a sponsor tier', async function () {
+    const model = await TestHelper.generate.model('sponsorTier', { id: sponsorTierId })
+    const deleteStub = sinon.stub(SponsorTiersRepository.prototype, 'delete').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(DeleteSponsorTier, { sponsor_tier_id: sponsorTierId })
+    assert.equal(deleteStub.withArgs(model.id).callCount, 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(SponsorTiersRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        report_uuid: '1234'
-      }
-    }
-    return DeleteSponsorTier.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SponsorTiersRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteSponsorTier, { sponsor_tier_id: sponsorTierId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

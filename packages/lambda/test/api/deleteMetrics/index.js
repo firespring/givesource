@@ -21,6 +21,7 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteMetrics', function () {
+  // todo
   it('should delete metrics', function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     sinon.stub(MetricsRepository.prototype, 'batchDeleteByKey').resolves()
