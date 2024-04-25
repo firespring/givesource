@@ -26,10 +26,7 @@ exports.handle = function (event, context, callback) {
   request.validate().then(function () {
     return repository.getAll()
   }).then(function (donors) {
-    const results = donors.map(function (donor) {
-      return donor.all()
-    })
-    callback(null, results)
+    callback(null, donors)
   }).catch(function (err) {
     (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
   })
