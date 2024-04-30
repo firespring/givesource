@@ -38,36 +38,30 @@ describe('PatchNonprofitSlide', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const nonprofit = await TestHelper.generate.model('nonprofit')
     const original = await TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid,
-        slideUuid: original.uuid
-      }
-    }
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'get').rejects('Error')
-    sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(original)
-    return PatchNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'upsert').resolves(original)
+
+    const response = TestHelper.callApi(PatchNonprofitSlide)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const nonprofit = await TestHelper.generate.model('nonprofit')
     const original = await TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid,
-        slideUuid: original.uuid
-      }
-    }
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
     sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(original)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'save').rejects('Error')
-    return PatchNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchNonprofitSlide)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

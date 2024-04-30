@@ -37,30 +37,26 @@ describe('PatchSetting', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('setting')
-    const params = {
-      params: {
-        key: original.key
-      }
-    }
-    sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
+    sinon.stub(SettingsRepository.prototype, 'get').rejects(errorStub)
     sinon.stub(SettingsRepository.prototype, 'save').resolves(original)
-    return PatchSetting.handle(params, null, function (error) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('setting')
-    const params = {
-      params: {
-        key: original.key
-      }
-    }
     sinon.stub(SettingsRepository.prototype, 'get').resolves(original)
-    sinon.stub(SettingsRepository.prototype, 'save').rejects('Error')
-    return PatchSetting.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SettingsRepository.prototype, 'save').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

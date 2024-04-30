@@ -42,7 +42,7 @@ describe('PatchPaymentTransaction', function () {
   //       paymentTransactionUuid: original.uuid
   //     }
   //   }
-  //   sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects('Error')
+  //   sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects(errorStub)
   //   sinon.stub(PaymentTransactionsRepository.prototype, 'save').resolves(original)
   //   return PatchPaymentTransaction.handle(params, null, function (error, result) {
   //     assert(error instanceof Error)
@@ -57,7 +57,7 @@ describe('PatchPaymentTransaction', function () {
   //     }
   //   }
   //   sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(original)
-  //   sinon.stub(PaymentTransactionsRepository.prototype, 'save').rejects('Error')
+  //   sinon.stub(PaymentTransactionsRepository.prototype, 'save').rejects(errorStub)
   //   return PatchPaymentTransaction.handle(params, null, function (error, result) {
   //     assert(error instanceof Error)
   //   })

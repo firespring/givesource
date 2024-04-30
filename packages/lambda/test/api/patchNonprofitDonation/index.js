@@ -48,7 +48,7 @@ describe('PatchNonprofitDonation', function () {
   //     }
   //   }
   //   sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-  //   sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects('Error')
+  //   sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects(errorStub)
   //   sinon.stub(NonprofitDonationsRepository.prototype, 'save').resolves(original)
   //   return PatchNonprofitDonation.handle(params, null, function (error, result) {
   //     assert(error instanceof Error)
@@ -66,7 +66,7 @@ describe('PatchNonprofitDonation', function () {
   //   }
   //   sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
   //   sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(original)
-  //   sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects('Error')
+  //   sinon.stub(NonprofitDonationsRepository.prototype, 'save').rejects(errorStub)
   //   return PatchNonprofitDonation.handle(params, null, function (error, result) {
   //     assert(error instanceof Error)
   //   })

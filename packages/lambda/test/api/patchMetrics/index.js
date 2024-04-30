@@ -44,7 +44,7 @@ describe('PatchMetrics', function () {
   //       metrics: models
   //     }
   //   }
-  //   sinon.stub(MetricsRepository.prototype, 'batchUpdate').rejects('Error')
+  //   sinon.stub(MetricsRepository.prototype, 'batchUpdate').rejects(errorStub)
   //   return PatchMetrics.handle(params, null, function (error) {
   //     assert(error instanceof Error)
   //   })

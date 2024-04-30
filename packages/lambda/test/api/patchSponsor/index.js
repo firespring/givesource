@@ -41,36 +41,30 @@ describe('PatchSponsor', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const sponsorTier = await TestHelper.generate.model('sponsorTier')
     const original = await TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
-    const params = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid,
-        sponsor_uuid: original.uuid
-      }
-    }
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
-    sinon.stub(SponsorsRepository.prototype, 'get').rejects('Error')
-    sinon.stub(SponsorsRepository.prototype, 'save').resolves(original)
-    return PatchSponsor.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SponsorsRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(SponsorsRepository.prototype, 'upsert').resolves(original)
+
+    const response = TestHelper.callApi(PatchSponsor)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const sponsorTier = await TestHelper.generate.model('sponsorTier')
     const original = await TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
-    const params = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid,
-        sponsor_uuid: original.uuid
-      }
-    }
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
     sinon.stub(SponsorsRepository.prototype, 'get').resolves(original)
-    sinon.stub(SponsorsRepository.prototype, 'save').rejects('Error')
-    return PatchSponsor.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SponsorsRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchSponsor)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

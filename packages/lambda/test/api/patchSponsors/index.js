@@ -39,20 +39,15 @@ describe('PatchSponsors', function () {
   })
 
   it('should return error on exception thrown - batchSave', async function () {
+    const errorStub = new Error('error')
     const sponsorTier = await TestHelper.generate.model('sponsorTier')
     const models = await TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
-    const params = {
-      body: {
-        sponsors: models
-      },
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid
-      }
-    }
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
-    sinon.stub(SponsorsRepository.prototype, 'batchSave').rejects('Error')
-    return PatchSponsors.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SponsorsRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchSponsors, {}, null, { body: { sponsors: models } })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

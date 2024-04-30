@@ -38,30 +38,26 @@ describe('PatchSponsorTier', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('sponsorTier')
-    const params = {
-      params: {
-        sponsor_tier_uuid: original.uuid
-      }
-    }
-    sinon.stub(SponsorTiersRepository.prototype, 'get').rejects('Error')
-    sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(original)
-    return PatchSponsorTier.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SponsorTiersRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(SponsorTiersRepository.prototype, 'upsert').resolves(original)
+
+    const response = TestHelper.callApi(PatchSponsorTier)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('sponsorTier')
-    const params = {
-      params: {
-        sponsor_tier_uuid: original.uuid
-      }
-    }
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(original)
-    sinon.stub(SponsorTiersRepository.prototype, 'save').rejects('Error')
-    return PatchSponsorTier.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SponsorTiersRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchSponsorTier)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

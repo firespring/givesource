@@ -35,30 +35,26 @@ describe('PatchMessage', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('message')
-    const params = {
-      params: {
-        messageUuid: original.uuid
-      }
-    }
-    sinon.stub(MessagesRepository.prototype, 'get').rejects('Error')
+    sinon.stub(MessagesRepository.prototype, 'get').rejects(errorStub)
     sinon.stub(MessagesRepository.prototype, 'upsert').resolves(original)
-    return PatchMessage.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('message')
-    const params = {
-      params: {
-        messageUuid: original.uuid
-      }
-    }
     sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
-    sinon.stub(MessagesRepository.prototype, 'upsert').rejects('Error')
-    return PatchMessage.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    sinon.stub(MessagesRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

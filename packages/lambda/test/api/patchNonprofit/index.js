@@ -40,32 +40,28 @@ describe('PatchNonprofit', function () {
   })
 
   it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('nonprofit')
-    const params = {
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
-    sinon.stub(NonprofitsRepository.prototype, 'get').rejects('Error')
-    sinon.stub(NonprofitsRepository.prototype, 'save').resolves(original)
+    sinon.stub(NonprofitsRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(NonprofitsRepository.prototype, 'upsert').resolves(original)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchNonprofit)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
   it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
     const original = await TestHelper.generate.model('nonprofit')
-    const params = {
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
-    sinon.stub(NonprofitsRepository.prototype, 'save').rejects('Error')
+    sinon.stub(NonprofitsRepository.prototype, 'upsert').rejects(errorStub)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchNonprofit)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
