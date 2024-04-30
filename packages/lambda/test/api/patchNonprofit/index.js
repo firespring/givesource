@@ -20,29 +20,27 @@ const sinon = require('sinon')
 const PatchNonprofit = require('../../../src/api/patchNonprofit/index')
 const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PatchNonprofit', function () {
   it('should return an updated nonprofit', async function () {
-    const original = TestHelper.generate.model('nonprofit')
-    const updated = TestHelper.generate.model('nonprofit', { uuid: original.uuid })
+    const original = await TestHelper.generate.model('nonprofit')
+    const updated = await TestHelper.generate.model('nonprofit', { uuid: original.uuid })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
-    sinon.stub(NonprofitsRepository.prototype, 'save').resolves(updated)
+    const upsertStub = sinon.stub(NonprofitsRepository.prototype, 'upsert').resolves(updated)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    const { uuid, ...body } = updated
-    const params = {
-      body,
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, updated.all())
-    })
+
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const body = { someUpdatedParam: 'updated' }
+    const result = await TestHelper.callApi(PatchNonprofit, {}, null, { body })
+    assert(result === updated)
+    assert(upsertStub.withArgs(original, body).callCount === 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
   })
 
   it('should return error on exception thrown - get', async function () {
-    const original = TestHelper.generate.model('nonprofit')
+    const original = await TestHelper.generate.model('nonprofit')
     const params = {
       params: {
         nonprofitUuid: original.uuid
@@ -57,7 +55,7 @@ describe('PatchNonprofit', function () {
   })
 
   it('should return error on exception thrown - save', async function () {
-    const original = TestHelper.generate.model('nonprofit')
+    const original = await TestHelper.generate.model('nonprofit')
     const params = {
       params: {
         nonprofitUuid: original.uuid

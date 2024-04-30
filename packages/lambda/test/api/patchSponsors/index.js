@@ -21,29 +21,26 @@ const sinon = require('sinon')
 const SponsorsRepository = require('./../../../src/repositories/sponsors')
 const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers')
 const TestHelper = require('./../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PatchSponsors', function () {
   it('should return an updated sponsor', async function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
+    const sponsorTier = await TestHelper.generate.model('sponsorTier')
+    const models = await TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
-    sinon.stub(SponsorsRepository.prototype, 'batchSave').resolves()
-    const params = {
-      body: {
-        sponsors: models
-      },
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid
-      }
-    }
-    return PatchSponsors.handle(params, null, function (error) {
-      assert(error === undefined)
-    })
+    sinon.stub(SponsorsRepository.prototype, 'populate').resolvesArg(0)
+    const upsertStub = sinon.stub(SponsorsRepository.prototype, 'upsert').resolves()
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    await TestHelper.callApi(PatchSponsors, {}, null, { body: { sponsors: models } })
+    assert(upsertStub.callCount === models.length)
+    models.forEach(model => assert(upsertStub.withArgs(model, sinon.match.any).callCount === 1))
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
   })
 
   it('should return error on exception thrown - batchSave', async function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
+    const sponsorTier = await TestHelper.generate.model('sponsorTier')
+    const models = await TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
     const params = {
       body: {
         sponsors: models

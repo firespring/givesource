@@ -20,28 +20,25 @@ const PatchSponsorTier = require('../../../src/api/patchSponsorTier/index')
 const sinon = require('sinon')
 const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PatchSponsorTier', function () {
   it('should return an updated sponsor tier', async function () {
-    const original = TestHelper.generate.model('sponsorTier')
-    const updated = TestHelper.generate.model('sponsorTier', { uuid: original.uuid })
+    const original = await TestHelper.generate.model('sponsorTier')
+    const updated = await TestHelper.generate.model('sponsorTier', { uuid: original.uuid })
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(original)
-    sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(updated)
-    const { uuid, ...body } = updated
-    const params = {
-      body,
-      params: {
-        sponsor_tier_uuid: original.uuid
-      }
-    }
-    return PatchSponsorTier.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, updated.all())
-    })
+    const upsertStub = sinon.stub(SponsorTiersRepository.prototype, 'upsert').resolves(updated)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const body = { someUpdatedParam: 'updated' }
+    const result = await TestHelper.callApi(PatchSponsorTier, {}, null, { body })
+    assert(result === updated)
+    assert(upsertStub.withArgs(original, body).callCount === 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
   })
 
   it('should return error on exception thrown - get', async function () {
-    const original = TestHelper.generate.model('sponsorTier')
+    const original = await TestHelper.generate.model('sponsorTier')
     const params = {
       params: {
         sponsor_tier_uuid: original.uuid
@@ -55,7 +52,7 @@ describe('PatchSponsorTier', function () {
   })
 
   it('should return error on exception thrown - save', async function () {
-    const original = TestHelper.generate.model('sponsorTier')
+    const original = await TestHelper.generate.model('sponsorTier')
     const params = {
       params: {
         sponsor_tier_uuid: original.uuid
