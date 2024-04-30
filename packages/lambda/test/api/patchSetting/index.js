@@ -15,13 +15,14 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const PatchSetting = require('../../../src/api/patchSetting/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchSetting', function () {
-  it('should return an updated setting', function () {
+  it('should return an updated setting', async function () {
     const original = TestHelper.generate.model('setting')
     const updated = TestHelper.generate.model('setting', { uuid: original.uuid, key: original.key })
     sinon.stub(SettingsRepository.prototype, 'get').resolves(original)
@@ -39,7 +40,7 @@ describe('PatchSetting', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const original = TestHelper.generate.model('setting')
     const params = {
       params: {
@@ -53,7 +54,7 @@ describe('PatchSetting', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const original = TestHelper.generate.model('setting')
     const params = {
       params: {

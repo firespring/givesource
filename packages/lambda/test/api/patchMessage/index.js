@@ -15,13 +15,14 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const PatchMessage = require('../../../src/api/patchMessage/index')
 const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchMessage', function () {
-  it('should return an updated message', function () {
+  it('should return an updated message', async function () {
     const original = TestHelper.generate.model('message')
     const updated = TestHelper.generate.model('message', { uuid: original.uuid })
     sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
@@ -39,7 +40,7 @@ describe('PatchMessage', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const original = TestHelper.generate.model('message')
     const params = {
       params: {
@@ -53,7 +54,7 @@ describe('PatchMessage', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const original = TestHelper.generate.model('message')
     const params = {
       params: {

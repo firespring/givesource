@@ -15,13 +15,14 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const PatchNonprofit = require('../../../src/api/patchNonprofit/index')
 const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchNonprofit', function () {
-  it('should return an updated nonprofit', function () {
+  it('should return an updated nonprofit', async function () {
     const original = TestHelper.generate.model('nonprofit')
     const updated = TestHelper.generate.model('nonprofit', { uuid: original.uuid })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
@@ -40,7 +41,7 @@ describe('PatchNonprofit', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const original = TestHelper.generate.model('nonprofit')
     const params = {
       params: {
@@ -55,7 +56,7 @@ describe('PatchNonprofit', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const original = TestHelper.generate.model('nonprofit')
     const params = {
       params: {

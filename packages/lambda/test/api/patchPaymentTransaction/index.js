@@ -15,13 +15,14 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const PatchPaymentTransaction = require('../../../src/api/patchPaymentTransaction/index')
 const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchPaymentTransaction', function () {
-  it('should return an updated paymentTransaction', function () {
+  it('should return an updated paymentTransaction', async function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const updated = TestHelper.generate.model('paymentTransaction', { uuid: original.uuid })
     sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(original)
@@ -39,7 +40,7 @@ describe('PatchPaymentTransaction', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const params = {
       params: {
@@ -53,7 +54,7 @@ describe('PatchPaymentTransaction', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const original = TestHelper.generate.model('paymentTransaction')
     const params = {
       params: {

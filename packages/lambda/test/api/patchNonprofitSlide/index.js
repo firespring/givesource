@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const NonprofitsRepository = require('./../../../src/repositories/nonprofits')
 const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides')
 const PatchNonprofitSlide = require('./../../../src/api/patchNonprofitSlide/index')
@@ -22,7 +23,7 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchNonprofitSlide', function () {
-  it('should return an updated nonprofit slide', function () {
+  it('should return an updated nonprofit slide', async function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const original = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
     const updated = TestHelper.generate.model('nonprofitSlide', { uuid: original.uuid, nonprofitUuid: nonprofit.uuid })
@@ -43,7 +44,7 @@ describe('PatchNonprofitSlide', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const original = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
     const params = {
@@ -60,7 +61,7 @@ describe('PatchNonprofitSlide', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const nonprofit = TestHelper.generate.model('nonprofit')
     const original = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
     const params = {

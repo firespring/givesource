@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const PatchSponsor = require('./../../../src/api/patchSponsor/index')
 const sinon = require('sinon')
 const SponsorsRepository = require('./../../../src/repositories/sponsors')
@@ -22,7 +23,7 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchSponsor', function () {
-  it('should return an updated sponsor', function () {
+  it('should return an updated sponsor', async function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const original = TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
     const updated = TestHelper.generate.model('sponsor', { uuid: original.uuid, sponsorTierUuid: sponsorTier.uuid })
@@ -43,7 +44,7 @@ describe('PatchSponsor', function () {
     })
   })
 
-  it('should return error on exception thrown - get', function () {
+  it('should return error on exception thrown - get', async function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const original = TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
     const params = {
@@ -60,7 +61,7 @@ describe('PatchSponsor', function () {
     })
   })
 
-  it('should return error on exception thrown - save', function () {
+  it('should return error on exception thrown - save', async function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const original = TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
     const params = {

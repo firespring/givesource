@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const PatchSponsors = require('./../../../src/api/patchSponsors/index')
 const sinon = require('sinon')
 const SponsorsRepository = require('./../../../src/repositories/sponsors')
@@ -22,7 +23,7 @@ const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchSponsors', function () {
-  it('should return an updated sponsor', function () {
+  it('should return an updated sponsor', async function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
@@ -40,7 +41,7 @@ describe('PatchSponsors', function () {
     })
   })
 
-  it('should return error on exception thrown - batchSave', function () {
+  it('should return error on exception thrown - batchSave', async function () {
     const sponsorTier = TestHelper.generate.model('sponsorTier')
     const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
     const params = {

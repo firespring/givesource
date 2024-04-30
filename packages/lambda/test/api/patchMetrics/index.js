@@ -16,13 +16,14 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const MetricsRepository = require('./../../../src/repositories/metrics')
 const PatchMetrics = require('./../../../src/api/patchMetrics/index')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PatchMetrics', function () {
-  it('should return update metrics', function () {
+  it('should return update metrics', async function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     sinon.stub(MetricsRepository.prototype, 'batchUpdate').resolves()
     const params = {
@@ -35,7 +36,7 @@ describe('PatchMetrics', function () {
     })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     const models = TestHelper.generate.modelCollection('metric', 3)
     const params = {
       body: {
