@@ -28,20 +28,14 @@ describe('GetSettings', function () {
 
     const result = await TestHelper.callApi(GetSettings)
     assert(result === models)
-    // //
-    // return GetSettings.handle({}, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
   })
 
-  // it('should return error on exception thrown', async function () {
-  //   sinon.stub(SettingsRepository.prototype, 'batchGet').rejects('Error')
-  //   return GetSettings.handle({}, null, function (error) {
-  //     assert(error instanceof Error)
-  //   })
-  // })
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SettingsRepository.prototype, 'batchGet').rejects(errorStub)
+    const response = TestHelper.callApi(GetSettings)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
+    })
+  })
 })

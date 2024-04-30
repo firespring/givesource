@@ -28,20 +28,14 @@ describe('GetSponsorTiers', function () {
 
     const result = await TestHelper.callApi(GetSponsorTiers)
     assert(result === models)
-    // //
-    // return GetSponsorTiers.handle({}, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(SponsorTiersRepository.prototype, 'getAll').rejects('Error')
-    return GetSponsorTiers.handle({}, null, function (error) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(SponsorTiersRepository.prototype, 'getAll').rejects(errorStub)
+    const response = TestHelper.callApi(GetSponsorTiers)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

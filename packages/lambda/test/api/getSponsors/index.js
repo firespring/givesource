@@ -29,31 +29,14 @@ describe('GetSponsors', function () {
 
     const result = await TestHelper.callApi(GetSponsors)
     assert(result === models)
-    // //
-    // const params = {
-    //   params: {
-    //     sponsor_tier_uuid: sponsorTier.uuid
-    //   }
-    // }
-    // return GetSponsors.handle(params, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    sinon.stub(SponsorsRepository.prototype, 'getAll').rejects('Error')
-    const params = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid
-      }
-    }
-    return GetSponsors.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(SponsorsRepository.prototype, 'getAll').rejects(errorStub)
+    const response = TestHelper.callApi(GetSponsors)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

@@ -28,27 +28,14 @@ describe('GetPaymentTransaction', function () {
 
     const result = await TestHelper.callApi(GetPaymentTransaction)
     assert(result === model)
-    // //
-    // const params = {
-    //   params: {
-    //     paymentTransactionUuid: model.uuid
-    //   }
-    // }
-    // return GetPaymentTransaction.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, model.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        paymentTransactionUuid: '1234'
-      }
-    }
-    return GetPaymentTransaction.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects(errorStub)
+    const response = TestHelper.callApi(GetPaymentTransaction)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

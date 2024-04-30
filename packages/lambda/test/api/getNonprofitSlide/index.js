@@ -29,29 +29,14 @@ describe('GetNonprofitSlide', function () {
 
     const result = await TestHelper.callApi(GetNonprofitSlide)
     assert(result === slide)
-    // //
-    // const params = {
-    //   params: {
-    //     nonprofitUuid: nonprofit.uuid,
-    //     slideUuid: slide.uuid
-    //   }
-    // }
-    // return GetNonprofitSlide.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, slide.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(NonprofitSlidesRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        nonprofitUuid: '1234',
-        slideUuid: '1234'
-      }
-    }
-    return GetNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(NonprofitSlidesRepository.prototype, 'get').rejects(errorStub)
+    const response = TestHelper.callApi(GetNonprofitSlide)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

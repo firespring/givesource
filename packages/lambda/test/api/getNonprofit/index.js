@@ -28,27 +28,14 @@ describe('GetNonprofit', function () {
 
     const result = await TestHelper.callApi(GetNonprofit)
     assert(result === model)
-    // //
-    // const params = {
-    //   params: {
-    //     nonprofitUuid: model.uuid
-    //   }
-    // }
-    // return GetNonprofit.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, model.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(NonprofitRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        nonprofitUuid: '1234'
-      }
-    }
-    return GetNonprofit.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(NonprofitRepository.prototype, 'get').rejects(errorStub)
+    const response = TestHelper.callApi(GetNonprofit)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

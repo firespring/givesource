@@ -28,27 +28,15 @@ describe('GetReport', function () {
 
     const result = await TestHelper.callApi(GetReport)
     assert(result === model)
-    // //
-    // const params = {
-    //   params: {
-    //     reportUuid: model.uuid
-    //   }
-    // }
-    // return GetReport.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, model.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(ReportsRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        reportUuid: '1234'
-      }
-    }
-    return GetReport.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(ReportsRepository.prototype, 'get').rejects(errorStub)
+
+    const response = TestHelper.callApi(GetReport)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

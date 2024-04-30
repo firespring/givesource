@@ -32,20 +32,15 @@ describe('GetNonprofits', function () {
 
     const result = await TestHelper.callApi(GetNonprofits)
     assert(result.items === models)
-    // //
-    // return GetNonprofits.handle({}, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(NonprofitRepository.prototype, 'getAll').rejects('Error')
-    return GetNonprofits.handle({}, null, function (error, results) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(NonprofitRepository.prototype, 'queryNonprofits').rejects(errorStub)
+
+    const response = TestHelper.callApi(GetNonprofits)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

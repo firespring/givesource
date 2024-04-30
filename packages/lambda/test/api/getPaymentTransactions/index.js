@@ -28,20 +28,14 @@ describe('GetPaymentTransactions', function () {
 
     const result = await TestHelper.callApi(GetPaymentTransactions)
     assert(result === models)
-    // //
-    // return GetPaymentTransactions.handle({}, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').rejects('Error')
-    return GetPaymentTransactions.handle({}, null, function (error, results) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').rejects(errorStub)
+    const response = TestHelper.callApi(GetPaymentTransactions)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

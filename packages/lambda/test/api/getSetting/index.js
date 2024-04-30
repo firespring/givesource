@@ -28,27 +28,14 @@ describe('GetSetting', function () {
 
     const result = await TestHelper.callApi(GetSetting)
     assert(result === model)
-    // //
-    // const params = {
-    //   params: {
-    //     key: model.key
-    //   }
-    // }
-    // return GetSetting.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, model.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        key: '1234'
-      }
-    }
-    return GetSetting.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(SettingsRepository.prototype, 'get').rejects(errorStub)
+    const response = TestHelper.callApi(GetSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

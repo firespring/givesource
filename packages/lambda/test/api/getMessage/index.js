@@ -28,27 +28,15 @@ describe('GetMessage', function () {
 
     const result = await TestHelper.callApi(GetMessage)
     assert(result === model)
-    //
-    // const params = {
-    //   params: {
-    //     messageUuid: model.uuid
-    //   }
-    // }
-    // return GetMessage.handle(params, null, function (error, result) {
-    //   assert(error === null)
-    //   assert.deepEqual(result, model.all())
-    // })
   })
 
   it('should return error on exception thrown', async function () {
-    sinon.stub(MessagesRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        messageUuid: '1234'
-      }
-    }
-    return GetMessage.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    const errorStub = new Error('error')
+    sinon.stub(MessagesRepository.prototype, 'get').rejects(errorStub)
+
+    const response = TestHelper.callApi(GetMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
