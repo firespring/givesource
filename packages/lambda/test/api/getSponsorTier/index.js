@@ -15,27 +15,32 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const GetSponsorTier = require('../../../src/api/getSponsorTier/index')
 const sinon = require('sinon')
 const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
 const TestHelper = require('../../helpers/test')
 
 describe('GetSponsorTier', function () {
-  it('should return a sponsor tier', function () {
-    const model = TestHelper.generate.model('sponsorTier')
+  it('should return a sponsor tier', async function () {
+    const model = await TestHelper.generate.model('sponsorTier')
     sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(model)
-    const params = {
-      params: {
-        sponsor_tier_uuid: model.uuid
-      }
-    }
-    return GetSponsorTier.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, model.all())
-    })
+
+    const result = await TestHelper.callApi(GetSponsorTier)
+    assert(result === model)
+    // //
+    // const params = {
+    //   params: {
+    //     sponsor_tier_uuid: model.uuid
+    //   }
+    // }
+    // return GetSponsorTier.handle(params, null, function (error, result) {
+    //   assert(error === null)
+    //   assert.deepEqual(result, model.all())
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(SponsorTiersRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {

@@ -15,29 +15,34 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetNonprofitDonation = require('../../../src/api/getNonprofitDonation/index')
 const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
 const TestHelper = require('../../helpers/test')
 
 describe('GetNonprofitDonation', function () {
-  it('should return a donation', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const donation = TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+  it('should return a donation', async function () {
+    const nonprofit = await TestHelper.generate.model('nonprofit')
+    const donation = await TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
     sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(donation)
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid,
-        donationUuid: donation.uuid
-      }
-    }
-    return GetNonprofitDonation.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, donation.all())
-    })
+
+    const result = await TestHelper.callApi(GetNonprofitDonation)
+    assert(result === donation)
+    // //
+    // const params = {
+    //   params: {
+    //     nonprofitUuid: nonprofit.uuid,
+    //     donationUuid: donation.uuid
+    //   }
+    // }
+    // return GetNonprofitDonation.handle(params, null, function (error, result) {
+    //   assert(error === null)
+    //   assert.deepEqual(result, donation.all())
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {

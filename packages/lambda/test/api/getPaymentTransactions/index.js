@@ -15,25 +15,30 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetPaymentTransactions = require('../../../src/api/getPaymentTransactions/index')
 const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
 const TestHelper = require('../../helpers/test')
 
 describe('GetPaymentTransactions', function () {
-  it('should return a list of paymentTransactions', function () {
-    const models = TestHelper.generate.modelCollection('paymentTransaction', 3)
+  it('should return a list of paymentTransactions', async function () {
+    const models = await TestHelper.generate.modelCollection('paymentTransaction', 3)
     sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').resolves(models)
-    return GetPaymentTransactions.handle({}, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
-    })
+
+    const result = await TestHelper.callApi(GetPaymentTransactions)
+    assert(result === models)
+    // //
+    // return GetPaymentTransactions.handle({}, null, function (error, results) {
+    //   assert(error === null)
+    //   assert(results.length === 3)
+    //   results.forEach(function (result, i) {
+    //     assert(result.uuid === models[i].uuid)
+    //   })
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(PaymentTransactionsRepository.prototype, 'getAll').rejects('Error')
     return GetPaymentTransactions.handle({}, null, function (error, results) {
       assert(error instanceof Error)

@@ -15,29 +15,34 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const GetNonprofitSlide = require('./../../../src/api/getNonprofitSlide/index')
 const NonprofitSlidesRepository = require('./../../../src/repositories/nonprofitSlides')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetNonprofitSlide', function () {
-  it('should return a nonprofit slide', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const slide = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
+  it('should return a nonprofit slide', async function () {
+    const nonprofit = await TestHelper.generate.model('nonprofit')
+    const slide = await TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
     sinon.stub(NonprofitSlidesRepository.prototype, 'get').resolves(slide)
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid,
-        slideUuid: slide.uuid
-      }
-    }
-    return GetNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, slide.all())
-    })
+
+    const result = await TestHelper.callApi(GetNonprofitSlide)
+    assert(result === slide)
+    // //
+    // const params = {
+    //   params: {
+    //     nonprofitUuid: nonprofit.uuid,
+    //     slideUuid: slide.uuid
+    //   }
+    // }
+    // return GetNonprofitSlide.handle(params, null, function (error, result) {
+    //   assert(error === null)
+    //   assert.deepEqual(result, slide.all())
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(NonprofitSlidesRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {

@@ -15,27 +15,32 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetNonprofit = require('../../../src/api/getNonprofit/index')
 const NonprofitRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('GetNonprofit', function () {
-  it('should return a nonprofit', function () {
-    const model = TestHelper.generate.model('nonprofit')
+  it('should return a nonprofit', async function () {
+    const model = await TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitRepository.prototype, 'get').resolves(model)
-    const params = {
-      params: {
-        nonprofitUuid: model.uuid
-      }
-    }
-    return GetNonprofit.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, model.all())
-    })
+
+    const result = await TestHelper.callApi(GetNonprofit)
+    assert(result === model)
+    // //
+    // const params = {
+    //   params: {
+    //     nonprofitUuid: model.uuid
+    //   }
+    // }
+    // return GetNonprofit.handle(params, null, function (error, result) {
+    //   assert(error === null)
+    //   assert.deepEqual(result, model.all())
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(NonprofitRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {

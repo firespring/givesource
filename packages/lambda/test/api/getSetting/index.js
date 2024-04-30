@@ -15,27 +15,32 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const GetSetting = require('./../../../src/api/getSetting/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetSetting', function () {
-  it('should return a setting', function () {
-    const model = TestHelper.generate.model('setting')
+  it('should return a setting', async function () {
+    const model = await TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'get').resolves(model)
-    const params = {
-      params: {
-        key: model.key
-      }
-    }
-    return GetSetting.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, model.all())
-    })
+
+    const result = await TestHelper.callApi(GetSetting)
+    assert(result === model)
+    // //
+    // const params = {
+    //   params: {
+    //     key: model.key
+    //   }
+    // }
+    // return GetSetting.handle(params, null, function (error, result) {
+    //   assert(error === null)
+    //   assert.deepEqual(result, model.all())
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
     const params = {
       params: {

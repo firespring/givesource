@@ -15,25 +15,34 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetNonprofits = require('../../../src/api/getNonprofits/index')
 const NonprofitRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
+const SettingsRepository = require('../../../src/repositories/settings')
 
 describe('GetNonprofits', function () {
-  it('should return a list of nonprofits', function () {
-    const models = TestHelper.generate.modelCollection('nonprofit', 3)
-    sinon.stub(NonprofitRepository.prototype, 'getAll').resolves(models)
-    return GetNonprofits.handle({}, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
-    })
+  it('should return a list of nonprofits', async function () {
+    const models = await TestHelper.generate.modelCollection('nonprofit', 3)
+    sinon.stub(NonprofitRepository.prototype, 'countNonprofits').resolves(3)
+    sinon.stub(NonprofitRepository.prototype, 'queryNonprofits').resolves(models)
+    // stub SettingsRepository.get(SettingHelper.SETTING_MATCH_FUND_NONPROFIT_ID)
+    sinon.stub(SettingsRepository.prototype, 'get')
+
+    const result = await TestHelper.callApi(GetNonprofits)
+    assert(result.items === models)
+    // //
+    // return GetNonprofits.handle({}, null, function (error, results) {
+    //   assert(error === null)
+    //   assert(results.length === 3)
+    //   results.forEach(function (result, i) {
+    //     assert(result.uuid === models[i].uuid)
+    //   })
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(NonprofitRepository.prototype, 'getAll').rejects('Error')
     return GetNonprofits.handle({}, null, function (error, results) {
       assert(error instanceof Error)

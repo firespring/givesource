@@ -15,25 +15,30 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetMessages = require('../../../src/api/getMessages/index')
 const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('GetMessages', function () {
-  it('should return a list of messages', function () {
-    const models = TestHelper.generate.modelCollection('message', 3)
+  it('should return a list of messages', async function () {
+    const models = await TestHelper.generate.modelCollection('message', 3)
     sinon.stub(MessagesRepository.prototype, 'getAll').resolves(models)
-    return GetMessages.handle({}, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
-    })
+
+    const result = await TestHelper.callApi(GetMessages)
+    assert(result === models)
+    // //
+    // return GetMessages.handle({}, null, function (error, results) {
+    //   assert(error === null)
+    //   assert(results.length === 3)
+    //   results.forEach(function (result, i) {
+    //     assert(result.uuid === models[i].uuid)
+    //   })
+    // })
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
     sinon.stub(MessagesRepository.prototype, 'getAll').rejects('Error')
     return GetMessages.handle({}, null, function (error, results) {
       assert(error instanceof Error)
