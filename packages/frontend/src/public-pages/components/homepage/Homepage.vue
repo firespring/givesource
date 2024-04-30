@@ -128,6 +128,8 @@ const fetchData = function () {
           return axios.get(API_URL + 'files/' + content.value).then(function (response) {
             content.value = response.data
           })
+        }).catch(() => {
+          console.error(`Failed retrieving ${API_URL + 'files/' + content.value}`)
         })
       }
     })
