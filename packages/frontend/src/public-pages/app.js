@@ -29,16 +29,22 @@ import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
+import $ from 'jquery'
+import _ from 'lodash'
+
 import './assets/css/site.css'
 import './assets/css/donation.css'
 import './assets/css/default.css'
 
+import 'jquery.payment'
+import 'fireSlider.js/dist/jquery.fireSlider.min'
+import 'fireSlider.js/dist/jquery.fireSlider.velocity'
+
 const emitter = mitt()
 
 // Register window globals
-window._ = require('lodash')
-window.$ = window.jQuery = require('jquery')
-window.axios = axios
+window._ = _
+window.$ = window.jQuery = $
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // Bootstrap the app

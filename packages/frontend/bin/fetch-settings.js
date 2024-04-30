@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const dotenv = require('dotenv')
-const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
 const _ = require('lodash')
 const config = require('config')
-const CloudFormation = require('./aws/cloudFormation')
+import CloudFormation from './aws/cloudFormation.js'
 const fs = require('fs')
 
 /**

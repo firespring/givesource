@@ -205,7 +205,8 @@ import ComponentFooter from './../layout/Footer.vue'
 import ComponentHeader from './../layout/Header.vue'
 import ComponentHero from './../layout/Hero.vue'
 
-require('fireSlider.js/dist/jquery.fireSlider.velocity')
+import 'jquery'
+import 'fireSlider.js/dist/jquery.fireSlider.velocity.js'
 
 export default {
   components: {

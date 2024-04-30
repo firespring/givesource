@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-require('jquery.payment')
+import 'jquery'
+import 'jquery.payment'
 const validate = require('validate.js')
 
 // Add "label" validator to allow custom label mapping functionality
