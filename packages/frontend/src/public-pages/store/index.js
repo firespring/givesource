@@ -70,6 +70,10 @@ export default createStore({
         const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
         cartItem.amount = amount
       }
+      if (('note' in payload) && payload.timestamp) {
+        const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
+        cartItem.note = payload.note
+      }
     },
     clearCartItems: function (state) {
       state.cartItems = []

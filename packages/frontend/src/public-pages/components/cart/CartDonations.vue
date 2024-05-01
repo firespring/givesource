@@ -104,8 +104,12 @@ export default {
     }
   },
   watch: {
-    cartItems () {
-      this.updateDonationsSubtotal()
+    cartItems: {
+      handler () {
+        this.updateDonationsSubtotal()
+      },
+      deep: true,
+      immediate: true
     },
     localValue: {
       handler (value, oldValue) {
