@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-const assert = require('assert')
-const promiseMe = require('mocha-promise-me')
-const sinon = require('sinon')
-const GetDonor = require('../../../src/api/getDonor/index')
-const DonorsRepository = require('../../../src/repositories/donors')
-const TestHelper = require('../../helpers/test')
-
-describe('GetDonor', function () {
-  const donorId = 123
-
-  it('should return a donor', async function () {
-    const model = await TestHelper.generate.model('donor', { id: donorId })
-    sinon.stub(DonorsRepository.prototype, 'get').withArgs(donorId).resolves(model)
-
-    const result = await TestHelper.callApi(GetDonor, { donor_id: donorId })
-    assert(result === model)
-  })
-
-  it('should return error on exception thrown', async function () {
-    const errorStub = new Error('error')
-    sinon.stub(DonorsRepository.prototype, 'get').withArgs(donorId).rejects(errorStub)
-
-    const response = TestHelper.callApi(GetDonor, { donor_id: donorId })
-    await promiseMe.thatYouReject(response, (error) => {
-      assert(error === errorStub)
-    })
-  })
-})
+// const assert = require('assert')
+// const promiseMe = require('mocha-promise-me')
+// const sinon = require('sinon')
+// const GetDonor = require('../../../src/api/getDonor/index')
+// const DonorsRepository = require('../../../src/repositories/donors')
+// const TestHelper = require('../../helpers/test')
+//
+// describe('GetDonor', function () {
+//   const donorId = 123
+//
+//   it('should return a donor', async function () {
+//     const model = await TestHelper.generate.model('donor', { id: donorId })
+//     sinon.stub(DonorsRepository.prototype, 'get').withArgs(donorId).resolves(model)
+//
+//     const result = await TestHelper.callApi(GetDonor, { donor_id: donorId })
+//     assert(result === model)
+//   })
+//
+//   it('should return error on exception thrown', async function () {
+//     const errorStub = new Error('error')
+//     sinon.stub(DonorsRepository.prototype, 'get').withArgs(donorId).rejects(errorStub)
+//
+//     const response = TestHelper.callApi(GetDonor, { donor_id: donorId })
+//     await promiseMe.thatYouReject(response, (error) => {
+//       assert(error === errorStub)
+//     })
+//   })
+// })

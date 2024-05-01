@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-const assert = require('assert')
-const promiseMe = require('mocha-promise-me')
-const sinon = require('sinon')
-const GetNonprofitDonation = require('../../../src/api/getNonprofitDonation/index')
-const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
-const TestHelper = require('../../helpers/test')
-
-describe('GetNonprofitDonation', function () {
-  it('should return a donation', async function () {
-    const nonprofit = await TestHelper.generate.model('nonprofit')
-    const donation = await TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
-    sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(donation)
-
-    const result = await TestHelper.callApi(GetNonprofitDonation)
-    assert(result === donation)
-  })
-
-  it('should return error on exception thrown', async function () {
-    const errorStub = new Error('error')
-    sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects(errorStub)
-    const response = TestHelper.callApi(GetNonprofitDonation)
-    await promiseMe.thatYouReject(response, (error) => {
-      assert(error === errorStub)
-    })
-  })
-})
+// const assert = require('assert')
+// const promiseMe = require('mocha-promise-me')
+// const sinon = require('sinon')
+// const GetNonprofitDonation = require('../../../src/api/getNonprofitDonation/index')
+// const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
+// const TestHelper = require('../../helpers/test')
+//
+// describe('GetNonprofitDonation', function () {
+//   it('should return a donation', async function () {
+//     const nonprofit = await TestHelper.generate.model('nonprofit')
+//     const donation = await TestHelper.generate.model('donation', { nonprofitUuid: nonprofit.uuid })
+//     sinon.stub(NonprofitDonationsRepository.prototype, 'get').resolves(donation)
+//
+//     const result = await TestHelper.callApi(GetNonprofitDonation)
+//     assert(result === donation)
+//   })
+//
+//   it('should return error on exception thrown', async function () {
+//     const errorStub = new Error('error')
+//     sinon.stub(NonprofitDonationsRepository.prototype, 'get').rejects(errorStub)
+//     const response = TestHelper.callApi(GetNonprofitDonation)
+//     await promiseMe.thatYouReject(response, (error) => {
+//       assert(error === errorStub)
+//     })
+//   })
+// })

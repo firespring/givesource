@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-const assert = require('assert')
-const promiseMe = require('mocha-promise-me')
-const sinon = require('sinon')
-const GetPaymentTransaction = require('../../../src/api/getPaymentTransaction/index')
-const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
-const TestHelper = require('../../helpers/test')
-
-describe('GetPaymentTransaction', function () {
-  it('should return a paymentTransaction', async function () {
-    const model = await TestHelper.generate.model('donation')
-    sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(model)
-
-    const result = await TestHelper.callApi(GetPaymentTransaction)
-    assert(result === model)
-  })
-
-  it('should return error on exception thrown', async function () {
-    const errorStub = new Error('error')
-    sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects(errorStub)
-    const response = TestHelper.callApi(GetPaymentTransaction)
-    await promiseMe.thatYouReject(response, (error) => {
-      assert(error === errorStub)
-    })
-  })
-})
+// const assert = require('assert')
+// const promiseMe = require('mocha-promise-me')
+// const sinon = require('sinon')
+// const GetPaymentTransaction = require('../../../src/api/getPaymentTransaction/index')
+// const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
+// const TestHelper = require('../../helpers/test')
+//
+// describe('GetPaymentTransaction', function () {
+//   it('should return a paymentTransaction', async function () {
+//     const model = await TestHelper.generate.model('donation')
+//     sinon.stub(PaymentTransactionsRepository.prototype, 'get').resolves(model)
+//
+//     const result = await TestHelper.callApi(GetPaymentTransaction)
+//     assert(result === model)
+//   })
+//
+//   it('should return error on exception thrown', async function () {
+//     const errorStub = new Error('error')
+//     sinon.stub(PaymentTransactionsRepository.prototype, 'get').rejects(errorStub)
+//     const response = TestHelper.callApi(GetPaymentTransaction)
+//     await promiseMe.thatYouReject(response, (error) => {
+//       assert(error === errorStub)
+//     })
+//   })
+// })

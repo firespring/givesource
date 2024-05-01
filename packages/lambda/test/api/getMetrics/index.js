@@ -14,36 +14,34 @@
  * limitations under the License.
  */
 
-const assert = require('assert')
-const promiseMe = require('mocha-promise-me')
-const GetMetrics = require('./../../../src/api/getMetrics/index')
-const MetricsRepository = require('./../../../src/repositories/metrics')
-const sinon = require('sinon')
-const TestHelper = require('./../../helpers/test')
-
-describe('GetMetrics', function () {
-  it('should return a list of settings', async function () {
-    // todo.....
-    // const models = await TestHelper.generate.modelCollection('metric', 3)
-    // sinon.stub(MetricsRepository.prototype, 'getAll').resolves(models)
-    //
-    // const result = await TestHelper.callApi(GetMetrics)
-    // assert(result === models)
-    // //
-    // return GetMetrics.handle({}, null, function (error, results) {
-    //   assert(error === null)
-    //   assert(results.length === 3)
-    //   results.forEach(function (result, i) {
-    //     assert(result.uuid === models[i].uuid)
-    //   })
-    // })
-  })
-
-  it('should return error on exception thrown', async function () {
-    // todo.....
-    // sinon.stub(MetricsRepository.prototype, 'getAll').rejects('Error')
-    // return GetMetrics.handle({}, null, function (error) {
-    //   assert(error instanceof Error)
-    // })
-  })
-})
+// const assert = require('assert')
+// const promiseMe = require('mocha-promise-me')
+// const GetMetrics = require('./../../../src/api/getMetrics/index')
+// const MetricsRepository = require('./../../../src/repositories/metrics')
+// const sinon = require('sinon')
+// const TestHelper = require('./../../helpers/test')
+//
+// describe('GetMetrics', function () {
+//   it('should return a list of settings', async function () {
+//     // const models = await TestHelper.generate.modelCollection('metric', 3)
+//     // sinon.stub(MetricsRepository.prototype, 'getAll').resolves(models)
+//     //
+//     // const result = await TestHelper.callApi(GetMetrics)
+//     // assert(result === models)
+//     // //
+//     // return GetMetrics.handle({}, null, function (error, results) {
+//     //   assert(error === null)
+//     //   assert(results.length === 3)
+//     //   results.forEach(function (result, i) {
+//     //     assert(result.uuid === models[i].uuid)
+//     //   })
+//     // })
+//   })
+//
+//   it('should return error on exception thrown', async function () {
+//     // sinon.stub(MetricsRepository.prototype, 'getAll').rejects('Error')
+//     // return GetMetrics.handle({}, null, function (error) {
+//     //   assert(error instanceof Error)
+//     // })
+//   })
+// })

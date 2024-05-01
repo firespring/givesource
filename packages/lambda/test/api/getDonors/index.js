@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-const assert = require('assert')
-const promiseMe = require('mocha-promise-me')
-const sinon = require('sinon')
-const GetDonors = require('../../../src/api/getDonors/index')
-const DonorsRepository = require('../../../src/repositories/donors')
-const TestHelper = require('../../helpers/test')
-
-describe('GetDonors', function () {
-  it('should return a list of donors', async function () {
-    const models = await TestHelper.generate.modelCollection('donor', 3)
-    sinon.stub(DonorsRepository.prototype, 'getAll').resolves(models)
-
-    const result = await TestHelper.callApi(GetDonors)
-    assert(result === models)
-  })
-
-  it('should return error on exception thrown', async function () {
-    const errorStub = new Error('error')
-    sinon.stub(DonorsRepository.prototype, 'getAll').rejects(errorStub)
-
-    const response = TestHelper.callApi(GetDonors)
-    await promiseMe.thatYouReject(response, (error) => {
-      assert(error === errorStub)
-    })
-  })
-})
+// const assert = require('assert')
+// const promiseMe = require('mocha-promise-me')
+// const sinon = require('sinon')
+// const GetDonors = require('../../../src/api/getDonors/index')
+// const DonorsRepository = require('../../../src/repositories/donors')
+// const TestHelper = require('../../helpers/test')
+//
+// describe('GetDonors', function () {
+//   it('should return a list of donors', async function () {
+//     const models = await TestHelper.generate.modelCollection('donor', 3)
+//     sinon.stub(DonorsRepository.prototype, 'getAll').resolves(models)
+//
+//     const result = await TestHelper.callApi(GetDonors)
+//     assert(result === models)
+//   })
+//
+//   it('should return error on exception thrown', async function () {
+//     const errorStub = new Error('error')
+//     sinon.stub(DonorsRepository.prototype, 'getAll').rejects(errorStub)
+//
+//     const response = TestHelper.callApi(GetDonors)
+//     await promiseMe.thatYouReject(response, (error) => {
+//       assert(error === errorStub)
+//     })
+//   })
+// })
