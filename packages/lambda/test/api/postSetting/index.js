@@ -21,27 +21,30 @@ const PostSetting = require('./../../../src/api/postSetting/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PostSetting', function () {
-  it('should return a setting', function () {
-    const model = TestHelper.generate.model('setting')
-    sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
-    sinon.stub(SettingsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body
-    }
-    return PostSetting.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-    })
+  it('should return a setting', async function () {
+    const model = {}
+    const body = { someUpdatedParam: 'updated' }
+    sinon.stub(SettingsRepository.prototype, 'populate').resolves(model)
+    const upsertStub = sinon.stub(SettingsRepository.prototype, 'upsert').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(PostSetting, {}, null, { body })
+
+    assert(upsertStub.withArgs(model, {}).callCount === 1)
+    assert(invokeStub.withArgs(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount === 1)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
-    sinon.stub(SettingsRepository.prototype, 'save').rejects('Error')
-    return PostSetting.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SettingsRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PostSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

@@ -171,6 +171,7 @@ exports.calculateFees = function (isOfflineDonation, isFeeCovered, amount, trans
  * @param isOfflineDonation
  */
 exports.getFeeRates = function (isOfflineDonation) {
+  // todo... is this used? _ is undefined?
   let promise = Promise.resolve()
   const repo = new SettingsRepository()
 

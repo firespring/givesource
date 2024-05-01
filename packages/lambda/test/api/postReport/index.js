@@ -16,30 +16,31 @@
 
 const assert = require('assert')
 const promiseMe = require('mocha-promise-me')
-const HttpException = require('./../../../src/exceptions/http')
 const PostReport = require('../../../src/api/postReport/index')
 const ReportsRepository = require('../../../src/repositories/reports')
 const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
 
 describe('PostReport', function () {
-  it('should return a report', function () {
-    const model = TestHelper.generate.model('report')
-    sinon.stub(ReportsRepository.prototype, 'save').resolves(model)
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body
-    }
-    return PostReport.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-    })
+  it('should return a report', async function () {
+    const model = {}
+    const body = { someUpdatedParam: 'updated' }
+    sinon.stub(ReportsRepository.prototype, 'populate').resolves(model)
+    const upsertStub = sinon.stub(ReportsRepository.prototype, 'upsert').resolves(model)
+
+    const result = await TestHelper.callApi(PostReport, {}, null, { body })
+
+    assert(upsertStub.withArgs(model, {}).callCount === 1)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(ReportsRepository.prototype, 'save').rejects('Error')
-    return PostReport.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(ReportsRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PostReport)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

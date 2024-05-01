@@ -22,7 +22,7 @@
 // const TestHelper = require('../../helpers/test')
 
 describe('PostPaymentTransaction', function () {
-  // PostPaymentTransaction is currently un-used/partially implemented
+  // todo... PostPaymentTransaction is currently un-used/partially implemented
   //
   // it('should return a paymentTransaction', function () {
   //   const model = TestHelper.generate.model('paymentTransaction')

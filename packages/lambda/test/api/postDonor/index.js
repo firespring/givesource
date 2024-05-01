@@ -20,7 +20,7 @@ const PostDonor = require('../../../src/api/postDonor/index')
 const DonorsRepository = require('../../../src/repositories/donors')
 const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
-const Lambda = require("../../../src/aws/lambda");
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PostDonor', function () {
   it('should update a donor by email', async function () {

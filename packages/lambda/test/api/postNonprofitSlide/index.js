@@ -24,32 +24,31 @@ const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('PostNonprofitSlide', function () {
-  it('should return a slide', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const model = TestHelper.generate.model('nonprofitSlide', { nonprofitUuid: nonprofit.uuid })
-    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'save').resolves(model)
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body,
-      params: {
-        nonprofit_uuid: nonprofit.uuid
-      }
-    }
-    return PostNonprofitSlide.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-    })
+  it('should return a slide', async function () {
+    const model = {}
+    const nonprofitId = 123
+    const body = { someUpdatedParam: 'updated' }
+    const existingSlideCount = 1
+
+    sinon.stub(NonprofitSlidesRepository.prototype, 'populate').resolves(model)
+    const upsertStub = sinon.stub(NonprofitSlidesRepository.prototype, 'upsert').resolves(model)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(existingSlideCount)
+
+    const result = await TestHelper.callApi(PostNonprofitSlide, { nonprofit_id: nonprofitId }, null, { body })
+    assert(result === model)
+    assert(upsertStub.withArgs(model, { nonprofitId, sortOrder: existingSlideCount }).callCount === 1)
   })
 
-  it('should return error on exception thrown', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    const model = {}
+    sinon.stub(NonprofitSlidesRepository.prototype, 'populate').resolves(model)
     sinon.stub(NonprofitSlidesRepository.prototype, 'getCount').resolves(1)
-    sinon.stub(NonprofitSlidesRepository.prototype, 'save').rejects('Error')
-    return PostNonprofitSlide.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+    sinon.stub(NonprofitSlidesRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PostNonprofitSlide)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
