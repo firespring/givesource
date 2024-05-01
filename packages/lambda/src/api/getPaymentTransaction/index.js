@@ -26,7 +26,7 @@ exports.handle = function (event, context, callback) {
   request.validate().then(function () {
     return repository.get(request.urlParam('payment_transaction_id'))
   }).then(function (paymentTransaction) {
-    callback(null, paymentTransaction)
+    callback(null, paymentTransaction.all())
   }).catch(function (err) {
     (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
   })

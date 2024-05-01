@@ -29,7 +29,7 @@ exports.handle = function (event, context, callback) {
   }).then(function (result) {
     return repository.upsert(result, request._body)
   }).then(function (model) {
-    callback(null, model)
+    callback(null, model[0])
   }).catch(function (err) {
     (err instanceof HttpException) ? callback(err.context(context)) : callback(err)
   })
