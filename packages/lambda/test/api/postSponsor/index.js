@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const HttpException = require('./../../../src/exceptions/http')
 const PostSponsor = require('./../../../src/api/postNonprofitSlide/index')
 const sinon = require('sinon')

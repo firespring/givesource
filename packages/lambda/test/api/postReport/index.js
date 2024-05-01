@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const HttpException = require('./../../../src/exceptions/http')
 const PostReport = require('../../../src/api/postReport/index')
 const ReportsRepository = require('../../../src/repositories/reports')

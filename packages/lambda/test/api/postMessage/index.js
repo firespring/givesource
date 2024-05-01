@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const HttpException = require('./../../../src/exceptions/http')
 const PostMessage = require('../../../src/api/postMessage/index')
 const MessagesRepository = require('../../../src/repositories/messages')
