@@ -29,7 +29,6 @@ import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
-import $ from 'jquery'
 import _ from 'lodash'
 
 import './assets/css/site.css'
@@ -44,8 +43,8 @@ const emitter = mitt()
 
 // Register window globals
 window._ = _
-window.$ = window.jQuery = $
-axios.defaults.headers.common['Content-Type'] = 'application/json'
+window.axios = axios
+window.axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 // Bootstrap the app
 const app = createApp(App)

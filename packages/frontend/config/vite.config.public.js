@@ -5,12 +5,18 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import vitePluginRequire from 'vite-plugin-require'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import inject from '@rollup/plugin-inject'
+import  fetch from "../bin/fetch-dynamic-content.js"
 
 const SOURCE_PATH = '../src/public-pages'
 const BUILD_PATH = '../build/public-pages'
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(async ({ command, mode }) => {
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd() + '/../../..', '') }
+
+	if (command === 'build') {
+		await fetch()
+	}
 
 	return {
 		root: resolve(__dirname, SOURCE_PATH),
@@ -22,6 +28,11 @@ export default defineConfig(({ command, mode }) => {
 			}
 		},
 		plugins: [
+			inject({
+				jQuery: "jquery",
+				"window.jQuery": "jquery",
+				$: "jquery"
+			}),
 			basicSsl(),
 			splitVendorChunkPlugin(),
 			vue({

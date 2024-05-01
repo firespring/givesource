@@ -32,6 +32,8 @@ import ComponentDonationTiersModal from './donations/DonationTiersModal.vue'
 import ComponentMenuModal from './MenuModal.vue'
 import ComponentSpinnerModal from './SpinnerModal.vue'
 
+import $ from 'jquery'
+
 export default {
   components: {
     'menu-overlay': ComponentMenuModal,
