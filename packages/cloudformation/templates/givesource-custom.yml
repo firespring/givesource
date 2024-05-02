@@ -816,6 +816,13 @@ Resources:
     DependsOn:
       - CreateParameterLambdaFunction
 
+  GeneratePublicPagesHtmlVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: GeneratePublicPagesHtml
+    DependsOn:
+      - GeneratePublicPagesHtml
+
   # Associate Lambda@Edge Functions
 
   AssociatePublicPagesFunctions:
@@ -827,13 +834,13 @@ Resources:
         {
           "functions": [
             {
-              "arn": "${GeneratePublicPagesHtml.LambdaFunctionARN}",
+              "arn": "${GeneratePublicPagesHtmlVersion}",
               "type": "origin-request"
             }
           ]
         }
     DependsOn:
-      - GeneratePublicPagesHtml
+      - GeneratePublicPagesHtmlVersion
 
   # S3 Admin Pages Deployment
 
