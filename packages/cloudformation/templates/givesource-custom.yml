@@ -776,14 +776,6 @@ Resources:
 
   # Create Lambda@Edge Functions
 
-
-
-
-
-
-
-
-
   # Lambda@Edge does not support dead letter queues
   GeneratePublicPagesHtmlFunction:
     Type: AWS::Lambda::Function
@@ -821,7 +813,10 @@ Resources:
 
   # Associate Lambda@Edge Functions
 
-  GeneratePublicPagesHtmlVersion2:
+  # NOTE: A new version resource needs created whenever the public html function is updated.
+  #       This does not happen automatically - you have to change the GeneratePublicPagesHtmlVersion
+  #       resource name to something else
+  GeneratePublicPagesHtmlVersion:
     Type: AWS::Lambda::Version
     Properties:
       FunctionName: !Ref GeneratePublicPagesHtmlFunction
@@ -837,24 +832,13 @@ Resources:
         {
           "functions": [
             {
-              "arn": "${GeneratePublicPagesHtmlVersion2}",
+              "arn": "${GeneratePublicPagesHtmlVersion}",
               "type": "origin-request"
             }
           ]
         }
     DependsOn:
-      - GeneratePublicPagesHtmlVersion2
-
-
-
-
-
-
-
-
-
-
-
+      - GeneratePublicPagesHtmlVersion
 
   # S3 Admin Pages Deployment
 
