@@ -776,6 +776,17 @@ Resources:
 
   # Create Lambda@Edge Functions
 
+
+
+
+
+
+
+
+
+
+
+
   # Lambda@Edge does not support dead letter queues
   GeneratePublicPagesHtmlFunction:
     Type: AWS::Lambda::Function
@@ -790,6 +801,28 @@ Resources:
       Handler: "index.handle"
       MemorySize: 128
       Timeout: 5
+    DependsOn:
+      - LambdaEdgeRole
+
+  GeneratePublicPagesHtml:
+    Type: Custom::LambdaEdgeSocialShare
+    Properties:
+      # Properties.Nonce isn't actually utilized by CreateLambdaEdgeFunction
+      # but is required to force a deploy update when GeneratePublicPagesHtml lambda code is updated
+      Nonce: {{lambdaEdgeGenPubPagesHash}}
+      # Properties.CreateLambdaEdgeFunctionRole isn't actually utilized by CreateLambdaEdgeFunction
+      # but is required to ensure cloudformation updates to CreateLambdaEdgeFunctionRole happen first
+      CreateLambdaEdgeFunctionRole: !GetAtt CreateLambdaEdgeFunctionRole.Arn
+      ServiceToken: !GetAtt CreateLambdaEdgeFunction.Arn
+      S3Bucket: !Sub |-
+        {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+      S3Key: fn/{{version}}/GeneratePublicPagesHtml.zip
+      S3Region: !Sub |-
+        ${AWS::Region}
+      FunctionName: GeneratePublicPagesHtml
+      StackName: !Ref StackName
+      Role: !Ref LambdaRoleArn
+      Runtime: !Ref LambdaDefaultRuntime
     DependsOn:
       - CreateLambdaEdgeFunction
       - LambdaEdgeRole
@@ -811,17 +844,17 @@ Resources:
     DependsOn:
       - CreateParameterLambdaFunction
 
-  # Associate Lambda@Edge Functions
-
   # NOTE: A new version resource needs created whenever the public html function is updated.
   #       This does not happen automatically - you have to change the GeneratePublicPagesHtmlVersion
   #       resource name to something else
-  GeneratePublicPagesHtmlVersion:
+  GeneratePublicPagesHtmlVersion2:
     Type: AWS::Lambda::Version
     Properties:
       FunctionName: !Ref GeneratePublicPagesHtmlFunction
     DependsOn:
       - GeneratePublicPagesHtmlFunction
+
+  # Associate Lambda@Edge Functions
 
   AssociatePublicPagesFunctions:
     Type: Custom::AssociateLambdaEdgeFunctions
@@ -832,13 +865,35 @@ Resources:
         {
           "functions": [
             {
-              "arn": "${GeneratePublicPagesHtmlVersion}",
+              "arn": "${GeneratePublicPagesHtml.LambdaFunctionARN}",
               "type": "origin-request"
             }
           ]
         }
     DependsOn:
-      - GeneratePublicPagesHtmlVersion
+      - GeneratePublicPagesHtml
+
+
+
+
+#  AssociatePublicPagesFunctions:
+#    Type: Custom::AssociateLambdaEdgeFunctions
+#    Properties:
+#      ServiceToken: !GetAtt AssociateLambdaEdgeFunctions.Arn
+#      CloudFrontDistribution: !Ref PublicPagesCloudFrontDistribution
+#      Functions: !Sub |-
+#        {
+#          "functions": [
+#            {
+#              "arn": "${GeneratePublicPagesHtmlVersion2}",
+#              "type": "origin-request"
+#            }
+#          ]
+#        }
+#    DependsOn:
+#      - GeneratePublicPagesHtmlVersion2
+
+
 
   # S3 Admin Pages Deployment
 
