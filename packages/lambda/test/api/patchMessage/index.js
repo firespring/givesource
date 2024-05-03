@@ -15,55 +15,46 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const PatchMessage = require('../../../src/api/patchMessage/index')
 const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('PatchMessage', function () {
-  it('should return an updated message', function () {
-    const original = TestHelper.generate.model('message')
-    const updated = TestHelper.generate.model('message', { uuid: original.uuid })
+  it('should return an updated message', async function () {
+    const original = await TestHelper.generate.model('message')
+    const updated = await TestHelper.generate.model('message', { uuid: original.uuid })
     sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
-    sinon.stub(MessagesRepository.prototype, 'save').resolves(updated)
-    const { uuid, ...body } = updated
-    const params = {
-      body,
-      params: {
-        messageUuid: original.uuid
-      }
-    }
-    return PatchMessage.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, updated.all())
+    const upsertStub = sinon.stub(MessagesRepository.prototype, 'upsert').resolves(updated)
+
+    const body = { someUpdatedParam: 'updated' }
+    const result = await TestHelper.callApi(PatchMessage, {}, null, { body })
+    assert(result === updated)
+    assert(upsertStub.withArgs(original, body).callCount === 1)
+  })
+
+  it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('message')
+    sinon.stub(MessagesRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(MessagesRepository.prototype, 'upsert').resolves(original)
+
+    const response = TestHelper.callApi(PatchMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
-  it('should return error on exception thrown - get', function () {
-    const original = TestHelper.generate.model('message')
-    const params = {
-      params: {
-        messageUuid: original.uuid
-      }
-    }
-    sinon.stub(MessagesRepository.prototype, 'get').rejects('Error')
-    sinon.stub(MessagesRepository.prototype, 'save').resolves(original)
-    return PatchMessage.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
-    })
-  })
-
-  it('should return error on exception thrown - save', function () {
-    const original = TestHelper.generate.model('message')
-    const params = {
-      params: {
-        messageUuid: original.uuid
-      }
-    }
+  it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('message')
     sinon.stub(MessagesRepository.prototype, 'get').resolves(original)
-    sinon.stub(MessagesRepository.prototype, 'save').rejects('Error')
-    return PatchMessage.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+    sinon.stub(MessagesRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

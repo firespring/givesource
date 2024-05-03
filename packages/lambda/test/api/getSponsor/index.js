@@ -15,38 +15,28 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const GetSponsor = require('./../../../src/api/getSponsor/index')
 const sinon = require('sinon')
 const SponsorsRepository = require('./../../../src/repositories/sponsors')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetSponsor', function () {
-  it('should return a sponsor', function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    const model = TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
+  it('should return a sponsor', async function () {
+    const sponsorTier = await TestHelper.generate.model('sponsorTier')
+    const model = await TestHelper.generate.model('sponsor', { sponsorTierUuid: sponsorTier.uuid })
     sinon.stub(SponsorsRepository.prototype, 'get').resolves(model)
-    const params = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid,
-        sponsor_uuid: model.uuid
-      }
-    }
-    return GetSponsor.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, model.all())
-    })
+
+    const result = await TestHelper.callApi(GetSponsor)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(SponsorsRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        sponsor_tier_uuid: '1234',
-        sponsor_uuid: '1234'
-      }
-    }
-    return GetSponsor.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SponsorsRepository.prototype, 'get').rejects(errorStub)
+    const response = TestHelper.callApi(GetSponsor)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

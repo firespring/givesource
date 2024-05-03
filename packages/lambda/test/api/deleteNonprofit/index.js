@@ -15,35 +15,34 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
+const Lambda = require('../../../src/aws/lambda')
 const DeleteNonprofit = require('../../../src/api/deleteNonprofit/index')
 const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteNonprofit', function () {
-  it('should delete a nonprofit', function () {
-    const model = TestHelper.generate.model('nonprofit')
-    sinon.stub(NonprofitsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        nonprofit_uuid: model.uuid
-      }
-    }
-    return DeleteNonprofit.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const nonprofitId = 123
+
+  it('should delete a nonprofit', async function () {
+    const model = await TestHelper.generate.model('nonprofit', { id: nonprofitId })
+    const deleteStub = sinon.stub(NonprofitsRepository.prototype, 'delete').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(DeleteNonprofit, { nonprofit_id: nonprofitId })
+    assert.equal(deleteStub.withArgs(model.id).callCount, 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(NonprofitsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        nonprofit_uuid: '1234'
-      }
-    }
-    return DeleteNonprofit.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(NonprofitsRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteNonprofit, { nonprofit_id: nonprofitId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

@@ -15,35 +15,31 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const DeleteMessage = require('../../../src/api/deleteMessage/index')
 const MessagesRepository = require('../../../src/repositories/messages')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteMessage', function () {
-  it('should delete a message', function () {
-    const model = TestHelper.generate.model('message')
-    sinon.stub(MessagesRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        message_uuid: model.uuid
-      }
-    }
-    return DeleteMessage.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const messageId = 123
+
+  it('should delete a message', async function () {
+    const model = await TestHelper.generate.model('message', { id: messageId })
+    const deleteStub = sinon.stub(MessagesRepository.prototype, 'delete').resolves(model)
+
+    const result = await TestHelper.callApi(DeleteMessage, { message_id: messageId })
+    assert.equal(deleteStub.withArgs(model.id).callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(MessagesRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        message_uuid: '1234'
-      }
-    }
-    return DeleteMessage.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(MessagesRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteMessage, { message_id: messageId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

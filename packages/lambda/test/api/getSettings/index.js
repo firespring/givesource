@@ -15,28 +15,27 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const GetSettings = require('./../../../src/api/getSettings/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('GetSettings', function () {
-  it('should return a list of settings', function () {
-    const models = TestHelper.generate.modelCollection('setting', 3)
-    sinon.stub(SettingsRepository.prototype, 'getAll').resolves(models)
-    return GetSettings.handle({}, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
-    })
+  it('should return a list of settings', async function () {
+    const models = await TestHelper.generate.modelCollection('setting', 3)
+    sinon.stub(SettingsRepository.prototype, 'batchGet').resolves(models)
+
+    const result = await TestHelper.callApi(GetSettings)
+    assert(result === models)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(SettingsRepository.prototype, 'getAll').rejects('Error')
-    return GetSettings.handle({}, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SettingsRepository.prototype, 'batchGet').rejects(errorStub)
+    const response = TestHelper.callApi(GetSettings)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

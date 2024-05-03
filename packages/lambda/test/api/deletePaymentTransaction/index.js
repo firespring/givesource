@@ -15,35 +15,30 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const DeletePaymentTransaction = require('../../../src/api/deletePaymentTransaction/index')
 const PaymentTransactionsRepository = require('../../../src/repositories/paymentTransactions')
 const TestHelper = require('../../helpers/test')
 
 describe('DeletePaymentTransaction', function () {
-  it('should delete a paymentTransaction', function () {
-    const model = TestHelper.generate.model('paymentTransaction')
-    sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        payment_transaction_uuid: model.uuid
-      }
-    }
-    return DeletePaymentTransaction.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const paymentTransactionId = 123
+
+  it('should delete a paymentTransaction', async function () {
+    const model = await TestHelper.generate.model('paymentTransaction', { id: paymentTransactionId })
+    const deleteStub = sinon.stub(PaymentTransactionsRepository.prototype, 'delete').resolves(model)
+
+    const result = await TestHelper.callApi(DeletePaymentTransaction, { payment_transaction_id: paymentTransactionId })
+    assert.equal(deleteStub.withArgs(model.id).callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(PaymentTransactionsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        payment_transaction_uuid: '1234'
-      }
-    }
-    return DeletePaymentTransaction.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(PaymentTransactionsRepository.prototype, 'delete').rejects(errorStub)
+    const response = TestHelper.callApi(DeletePaymentTransaction, { payment_transaction_id: paymentTransactionId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

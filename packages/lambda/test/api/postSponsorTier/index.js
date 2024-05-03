@@ -15,32 +15,41 @@
  */
 
 const assert = require('assert')
-const HttpException = require('./../../../src/exceptions/http')
+const promiseMe = require('mocha-promise-me')
 const PostSponsorTier = require('../../../src/api/postSponsorTier/index')
 const sinon = require('sinon')
 const SponsorTiersRepository = require('../../../src/repositories/sponsorTiers')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PostSponsorTier', function () {
-  it('should return a sponsor tier', function () {
-    const model = TestHelper.generate.model('sponsorTier')
+  it('should return a sponsor tier', async function () {
+    const model = await TestHelper.generate.model('sponsorTier')
+    const body = { someUpdatedParam: 'updated' }
+    const populateStub = sinon.stub(SponsorTiersRepository.prototype, 'populate').resolves(model)
     sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
-    sinon.stub(SponsorTiersRepository.prototype, 'save').resolves(model)
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body
-    }
-    return PostSponsorTier.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-    })
+    sinon.stub(model, 'validate').resolves(model)
+    const upsertStub = sinon.stub(SponsorTiersRepository.prototype, 'upsert').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+    const result = await TestHelper.callApi(PostSponsorTier, {}, null, { body })
+
+    assert(populateStub.withArgs(body).callCount === 1)
+    assert(upsertStub.withArgs(model, {}).callCount === 1)
+    assert(invokeStub.withArgs(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount === 1)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
+  it('should return error on exception thrown', async function () {
+    const model = await TestHelper.generate.model('sponsorTier')
+    const errorStub = new Error('error')
+    sinon.stub(SponsorTiersRepository.prototype, 'populate').resolves(model)
+    sinon.stub(model, 'validate').resolves(model)
     sinon.stub(SponsorTiersRepository.prototype, 'getCount').resolves(1)
-    sinon.stub(SponsorTiersRepository.prototype, 'save').rejects('Error')
-    return PostSponsorTier.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+    sinon.stub(SponsorTiersRepository.prototype, 'upsert').rejects(errorStub)
+
+    const response = TestHelper.callApi(PostSponsorTier)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
