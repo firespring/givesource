@@ -118,6 +118,7 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
+        LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 60
 
@@ -326,7 +327,6 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
-                - edgelambda.amazonaws.com
       Policies:
       - PolicyName: dead_letter_queue_publish
         PolicyDocument:
