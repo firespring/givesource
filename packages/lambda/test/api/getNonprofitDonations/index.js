@@ -15,40 +15,33 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetNonprofitDonations = require('../../../src/api/getNonprofitDonations/index')
-const NonprofitDonationsRepository = require('../../../src/repositories/nonprofitDonations')
+const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
+const SettingsRepository = require('../../../src/repositories/settings')
 
 describe('GetNonprofitDonations', function () {
-  it('should return a list of donations', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const models = TestHelper.generate.modelCollection('donation', 3, { nonprofitUuid: nonprofit.uuid })
-    sinon.stub(NonprofitDonationsRepository.prototype, 'getAll').resolves(models)
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid
-      }
-    }
-    return GetNonprofitDonations.handle(params, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
-    })
+  it('should return a list of donations', async function () {
+    const nonprofit = await TestHelper.generate.model('nonprofit')
+    const models = await TestHelper.generate.modelCollection('donation', 3, { nonprofitUuid: nonprofit.uuid })
+    sinon.stub(DonationsRepository.prototype, 'queryDonations').resolves({ rows: models })
+
+    // stub SettingsRepository.get(SettingHelper.SETTING_TEST_PAYMENTS_DISPLAY)
+    sinon.stub(SettingsRepository.prototype, 'get').resolves({ value: null })
+
+    const result = await TestHelper.callApi(GetNonprofitDonations)
+    assert(result.items === models)
   })
 
-  it('should return error on exception thrown', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    sinon.stub(NonprofitDonationsRepository.prototype, 'getAll').rejects('Error')
-    const params = {
-      params: {
-        nonprofitUuid: nonprofit.uuid
-      }
-    }
-    return GetNonprofitDonations.handle(params, null, function (error, results) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(DonationsRepository.prototype, 'queryDonations').rejects(errorStub)
+
+    const response = TestHelper.callApi(GetNonprofitDonations)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

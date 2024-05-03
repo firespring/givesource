@@ -15,30 +15,37 @@
  */
 
 const assert = require('assert')
-const HttpException = require('./../../../src/exceptions/http')
+const promiseMe = require('mocha-promise-me')
 const PostMessage = require('../../../src/api/postMessage/index')
 const MessagesRepository = require('../../../src/repositories/messages')
 const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PostMessage', function () {
-  it('should return a message', function () {
-    const model = TestHelper.generate.model('message')
-    sinon.stub(MessagesRepository.prototype, 'save').resolves(model)
-    const { uuid, createdAt, ...body } = model
-    const params = {
-      body
-    }
-    return PostMessage.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, model, ['uuid', 'createdAt'])
-    })
+  it('should return a message', async function () {
+    const model = {}
+    const body = { someUpdatedParam: 'updated' }
+    const populateStub = sinon.stub(MessagesRepository.prototype, 'populate').resolves(model)
+    const upsertStub = sinon.stub(MessagesRepository.prototype, 'upsert').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+    const result = await TestHelper.callApi(PostMessage, {}, null, { body })
+
+    assert(populateStub.withArgs(body).callCount === 1)
+    assert(upsertStub.withArgs(model, {}).callCount === 1)
+    assert(invokeStub.withArgs(process.env.AWS_REGION, process.env.AWS_STACK_NAME + '-SendContactMessageEmail', { body: { message: model } }).callCount === 1)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(MessagesRepository.prototype, 'save').rejects('Error')
-    return PostMessage.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(MessagesRepository.prototype, 'upsert').rejects(errorStub)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const response = TestHelper.callApi(PostMessage)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
+      assert(invokeStub.callCount === 0)
     })
   })
 })

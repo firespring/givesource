@@ -15,28 +15,44 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetDonations = require('../../../src/api/getDonations/index')
 const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
+const SettingsRepository = require('../../../src/repositories/settings')
 
 describe('GetDonations', function () {
-  it('should return a list of donations', function () {
-    const models = TestHelper.generate.modelCollection('donation', 3)
-    sinon.stub(DonationsRepository.prototype, 'getAll').resolves(models)
-    return GetDonations.handle({}, null, function (error, results) {
-      assert(error === null)
-      assert(results.length === 3)
-      results.forEach(function (result, i) {
-        assert(result.uuid === models[i].uuid)
-      })
+  it('should return a list of donations', async function () {
+    const models = await TestHelper.generate.modelCollection('donation', 3)
+    sinon.stub(DonationsRepository.prototype, 'queryDonations').resolves({
+      count: models.length,
+      rows: models
     })
+
+    // SETTING_TEST_PAYMENTS_DISPLAY
+    const displayPaymentsResponse = { value: 0 }
+    sinon.stub(SettingsRepository.prototype, 'get').resolves(displayPaymentsResponse)
+
+    const result = await TestHelper.callApi(GetDonations)
+    assert(result.total === models.length)
+    assert(result.items === models)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(DonationsRepository.prototype, 'getAll').rejects('Error')
-    return GetDonations.handle({}, null, function (error, results) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(DonationsRepository.prototype, 'queryDonations').rejects(errorStub)
+
+    // SETTING_TEST_PAYMENTS_DISPLAY
+    const displayPaymentsResponse = { value: 0 }
+    sinon.stub(SettingsRepository.prototype, 'get').resolves(displayPaymentsResponse)
+
+    // suppress console.log(err) DonationsRepository.queryDonations catch
+    sinon.stub(console, 'log').withArgs(errorStub)
+
+    const response = TestHelper.callApi(GetDonations)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

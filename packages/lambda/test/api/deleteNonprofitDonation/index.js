@@ -15,6 +15,7 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const DeleteNonprofitDonation = require('../../../src/api/deleteNonprofitDonation/index')
 const NonprofitsRepository = require('../../../src/repositories/nonprofits')
@@ -22,35 +23,29 @@ const NonprofitDonationsRepository = require('../../../src/repositories/nonprofi
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteNonprofitDonation', function () {
-  it('should delete a nonprofit', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
-    const model = TestHelper.generate.model('donation')
+  const nonprofitId = 123
+  const donationId = 456
+
+  it('should delete a nonprofit', async function () {
+    const nonprofit = await TestHelper.generate.model('nonprofit', { id: nonprofitId })
+    const model = await TestHelper.generate.model('donation', { id: donationId })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitDonationsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        nonprofit_uuid: nonprofit.uuid,
-        donation_uuid: model.uuid
-      }
-    }
-    return DeleteNonprofitDonation.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+    const deleteStub = sinon.stub(NonprofitDonationsRepository.prototype, 'delete').resolves(model)
+
+    const result = await TestHelper.callApi(DeleteNonprofitDonation, { nonprofit_id: nonprofitId, donation_id: donationId })
+    assert.equal(deleteStub.withArgs(nonprofit.id, model.id).callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    const nonprofit = TestHelper.generate.model('nonprofit')
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    const nonprofit = await TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(nonprofit)
-    sinon.stub(NonprofitDonationsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        nonprofit_uuid: nonprofit.uuid,
-        donation_uuid: '1234'
-      }
-    }
-    return DeleteNonprofitDonation.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(NonprofitDonationsRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteNonprofitDonation, { nonprofit_id: nonprofitId, donation_id: donationId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

@@ -15,35 +15,31 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const GetDonation = require('../../../src/api/getDonation/index')
 const DonationsRepository = require('../../../src/repositories/donations')
 const TestHelper = require('../../helpers/test')
 
 describe('GetDonation', function () {
-  it('should return a donation', function () {
-    const model = TestHelper.generate.model('donation')
+  const donationId = 123
+  const params = { donation_id: donationId }
+
+  it('should return a donation', async function () {
+    const model = await TestHelper.generate.model('donation', { id: donationId })
     sinon.stub(DonationsRepository.prototype, 'get').resolves(model)
-    const params = {
-      params: {
-        donationUuid: model.uuid
-      }
-    }
-    return GetDonation.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, model.all())
-    })
+
+    const result = await TestHelper.callApi(GetDonation, params)
+    assert(result === model)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(DonationsRepository.prototype, 'get').rejects('Error')
-    const params = {
-      params: {
-        donationUuid: '1234'
-      }
-    }
-    return GetDonation.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(DonationsRepository.prototype, 'get').rejects(errorStub)
+
+    const response = TestHelper.callApi(GetDonation, params)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

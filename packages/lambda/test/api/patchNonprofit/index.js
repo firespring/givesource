@@ -15,58 +15,53 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const PatchNonprofit = require('../../../src/api/patchNonprofit/index')
 const NonprofitsRepository = require('../../../src/repositories/nonprofits')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PatchNonprofit', function () {
-  it('should return an updated nonprofit', function () {
-    const original = TestHelper.generate.model('nonprofit')
-    const updated = TestHelper.generate.model('nonprofit', { uuid: original.uuid })
+  it('should return an updated nonprofit', async function () {
+    const original = await TestHelper.generate.model('nonprofit')
+    const updated = await TestHelper.generate.model('nonprofit', { uuid: original.uuid })
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
-    sinon.stub(NonprofitsRepository.prototype, 'save').resolves(updated)
+    const upsertStub = sinon.stub(NonprofitsRepository.prototype, 'upsert').resolves(updated)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    const { uuid, ...body } = updated
-    const params = {
-      body,
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, updated.all())
+
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const body = { someUpdatedParam: 'updated' }
+    const result = await TestHelper.callApi(PatchNonprofit, {}, null, { body })
+    assert(result === updated)
+    assert(upsertStub.withArgs(original, body).callCount === 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
+  })
+
+  it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('nonprofit')
+    sinon.stub(NonprofitsRepository.prototype, 'get').rejects(errorStub)
+    sinon.stub(NonprofitsRepository.prototype, 'upsert').resolves(original)
+    sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
+
+    const response = TestHelper.callApi(PatchNonprofit)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
-  it('should return error on exception thrown - get', function () {
-    const original = TestHelper.generate.model('nonprofit')
-    const params = {
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
-    sinon.stub(NonprofitsRepository.prototype, 'get').rejects('Error')
-    sinon.stub(NonprofitsRepository.prototype, 'save').resolves(original)
-    sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
-    })
-  })
-
-  it('should return error on exception thrown - save', function () {
-    const original = TestHelper.generate.model('nonprofit')
-    const params = {
-      params: {
-        nonprofitUuid: original.uuid
-      }
-    }
+  it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('nonprofit')
     sinon.stub(NonprofitsRepository.prototype, 'get').resolves(original)
-    sinon.stub(NonprofitsRepository.prototype, 'save').rejects('Error')
+    sinon.stub(NonprofitsRepository.prototype, 'upsert').rejects(errorStub)
     sinon.stub(NonprofitsRepository.prototype, 'generateUniqueSlug').resolves()
-    return PatchNonprofit.handle(params, null, function (error, result) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchNonprofit)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

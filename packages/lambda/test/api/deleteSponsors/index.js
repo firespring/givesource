@@ -15,46 +15,41 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const DeleteSponsors = require('./../../../src/api/deleteSponsors/index')
 const sinon = require('sinon')
 const SponsorsRepository = require('./../../../src/repositories/sponsors')
-const SponsorTiersRepository = require('./../../../src/repositories/sponsorTiers')
 const TestHelper = require('./../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('DeleteSponsors', function () {
-  it('should delete a sponsor', function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    const models = TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierUuid: sponsorTier.uuid })
-    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
-    sinon.stub(SponsorsRepository.prototype, 'batchRemove').resolves()
-    const event = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid
-      },
-      body: {
-        sponsors: models
-      }
-    }
-    return DeleteSponsors.handle(event, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const sponsorTierId = 123
+
+  it('should delete a sponsor', async function () {
+    const sponsorTier = await TestHelper.generate.model('sponsorTier', { id: sponsorTierId })
+    const models = await TestHelper.generate.modelCollection('sponsor', 3, { sponsorTierTd: sponsorTier.id })
+    sinon.stub(SponsorsRepository.prototype, 'get')
+      .onCall(0).resolves(models[0])
+      .onCall(1).resolves(models[1])
+      .onCall(2).resolves(models[2])
+    const deleteStub = sinon.stub(SponsorsRepository.prototype, 'bulkDelete').resolves()
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(DeleteSponsors, { sponsor_tier_id: sponsorTierId }, null, { body: { sponsors: models } })
+    assert.equal(deleteStub.withArgs(
+      sinon.match.array.deepEquals(models)
+    ).callCount, 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    const sponsorTier = TestHelper.generate.model('sponsorTier')
-    sinon.stub(SponsorTiersRepository.prototype, 'get').resolves(sponsorTier)
-    sinon.stub(SponsorsRepository.prototype, 'batchRemove').rejects('Error')
-    const event = {
-      params: {
-        sponsor_tier_uuid: sponsorTier.uuid
-      },
-      body: {
-        sponsors: []
-      }
-    }
-    return DeleteSponsors.handle(event, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SponsorsRepository.prototype, 'bulkDelete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteSponsors, { sponsor_tier_id: sponsorTierId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

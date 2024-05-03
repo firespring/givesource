@@ -15,34 +15,35 @@
  */
 
 const assert = require('assert')
-const HttpException = require('./../../../src/exceptions/http')
+const promiseMe = require('mocha-promise-me')
 const PostDonor = require('../../../src/api/postDonor/index')
 const DonorsRepository = require('../../../src/repositories/donors')
 const sinon = require('sinon')
 const TestHelper = require('../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PostDonor', function () {
-  it('should update a donor by email', function () {
-    const data = TestHelper.generate.model('donor')
-    // const donor = TestHelper.generate.model('donor', { email: data.email })
-    sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
-    sinon.stub(DonorsRepository.prototype, 'save').resolves(data)
-    const { uuid, createdAt, ...body } = data
-    const params = {
-      body
-    }
-    return PostDonor.handle(params, null, function (error, result) {
-      assert(error === null)
-      TestHelper.assertModelEquals(result, data, ['uuid', 'createdAt'])
-    })
+  it('should update a donor by email', async function () {
+    const model = {}
+    const body = { someUpdatedParam: 'updated', email: 'foo2@example.com' }
+    sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(model)
+    const upsertStub = sinon.stub(DonorsRepository.prototype, 'upsert').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(PostDonor, {}, null, { body })
+    assert(upsertStub.withArgs(model, body).callCount === 1)
+    assert(result === model)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
   })
 
-  it('should return error on exception thrown', function () {
-    const data = TestHelper.generate.model('donor')
-    sinon.stub(DonorsRepository.prototype, 'queryEmail').resolves(data)
-    sinon.stub(DonorsRepository.prototype, 'save').rejects('Error')
-    return PostDonor.handle({}, null, function (error) {
-      assert(error instanceof HttpException)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(DonorsRepository.prototype, 'upsert').rejects(errorStub)
+    sinon.stub(Lambda.prototype, 'invoke')
+
+    const response = TestHelper.callApi(PostDonor)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

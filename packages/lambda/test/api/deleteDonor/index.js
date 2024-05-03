@@ -15,35 +15,30 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const sinon = require('sinon')
 const DeleteDonor = require('../../../src/api/deleteDonor/index')
 const DonorsRepository = require('../../../src/repositories/donors')
 const TestHelper = require('../../helpers/test')
 
 describe('DeleteDonor', function () {
-  it('should delete a donor', function () {
-    const model = TestHelper.generate.model('donor')
-    sinon.stub(DonorsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        donor_uuid: model.uuid
-      }
-    }
-    return DeleteDonor.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const donorId = 123
+
+  it('should delete a donor', async function () {
+    const model = await TestHelper.generate.model('donor', { id: donorId })
+    const deleteStub = sinon.stub(DonorsRepository.prototype, 'delete').resolves(model)
+    const result = await TestHelper.callApi(DeleteDonor, { donor_id: donorId })
+    assert.equal(deleteStub.withArgs(model.id).callCount, 1)
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(DonorsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        donor_uuid: '1234'
-      }
-    }
-    return DeleteDonor.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(DonorsRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteDonor, { donor_id: donorId })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

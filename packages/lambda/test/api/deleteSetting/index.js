@@ -15,35 +15,35 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
+const Lambda = require('../../../src/aws/lambda')
 const DeleteSetting = require('./../../../src/api/deleteSetting/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
 
 describe('DeleteSetting', function () {
-  it('should delete a setting', function () {
-    const model = TestHelper.generate.model('setting')
-    sinon.stub(SettingsRepository.prototype, 'delete').resolves(model)
-    const params = {
-      params: {
-        key: model.key
-      }
-    }
-    return DeleteSetting.handle(params, null, function (error, result) {
-      assert(error === undefined)
-      assert(result === undefined)
-    })
+  const settingKey = 'SOME_SETTING'
+
+  it('should delete a setting', async function () {
+    const model = await TestHelper.generate.model('setting', { key: settingKey })
+    const deleteStub = sinon.stub(SettingsRepository.prototype, 'delete').resolves(model)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(DeleteSetting, { key: settingKey })
+    assert.equal(deleteStub.withArgs(settingKey).callCount, 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
+
+    assert(result === undefined)
   })
 
-  it('should return error on exception thrown', function () {
-    sinon.stub(SettingsRepository.prototype, 'delete').rejects('Error')
-    const params = {
-      params: {
-        key: '1234'
-      }
-    }
-    return DeleteSetting.handle(params, null, function (error) {
-      assert(error instanceof Error)
+  it('should return error on exception thrown', async function () {
+    const errorStub = new Error('error')
+    sinon.stub(SettingsRepository.prototype, 'delete').rejects(errorStub)
+
+    const response = TestHelper.callApi(DeleteSetting, { key: settingKey })
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })
