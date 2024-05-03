@@ -721,11 +721,6 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-AssociateLambdaEdgeFunctions",
-                      {"label": "AssociateLambdaEdgeFunctions"}
-                    ],
-                    [
-                      "...",
                       "${StackName}-AuthorizeUsers",
                       {"label": "AuthorizeUsers"}
                     ],
@@ -758,11 +753,6 @@ Resources:
                       "...",
                       "${StackName}-CognitoCustomMessage",
                       {"label": "CognitoCustomMessage"}
-                    ],
-                    [
-                      "...",
-                      "${StackName}-CreateLambdaEdgeFunction",
-                      {"label": "CreateLambdaEdgeFunction"}
                     ],
                     [
                       "...",
@@ -1448,11 +1438,6 @@ Resources:
                     ],
                     [
                       "...",
-                      "${StackName}-AssociateLambdaEdgeFunctions",
-                      {"label": "AssociateLambdaEdgeFunctions"}
-                    ],
-                    [
-                      "...",
                       "${StackName}-AuthorizeUsers",
                       {"label": "AuthorizeUsers"}
                     ],
@@ -1485,11 +1470,6 @@ Resources:
                       "...",
                       "${StackName}-CognitoCustomMessage",
                       {"label": "CognitoCustomMessage"}
-                    ],
-                    [
-                      "...",
-                      "${StackName}-CreateLambdaEdgeFunction",
-                      {"label": "CreateLambdaEdgeFunction"}
                     ],
                     [
                       "...",

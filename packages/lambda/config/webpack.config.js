@@ -141,13 +141,11 @@ const config = {
     // Custom Lambda Functions
     ApiDistributionInvalidation: './src/custom/apiDistributionInvalidation/index.js',
     ApiGatewayFlushCache: './src/custom/apiGatewayFlushCache/index.js',
-    AssociateLambdaEdgeFunctions: './src/custom/associateLambdaEdgeFunctions/index.js',
     CognitoCreateUser: './src/custom/cognitoCreateUser/index.js',
     CognitoCreateUserGroup: './src/custom/cognitoCreateUserGroup/index.js',
     CognitoCreateUserPool: './src/custom/cognitoCreateUserPool/index.js',
     CognitoCreateUserPoolClient: './src/custom/cognitoCreateUserPoolClient/index.js',
     CognitoCustomMessage: './src/custom/cognitoCustomMessage/index.js',
-    CreateLambdaEdgeFunction: './src/custom/createLambdaEdgeFunction/index.js',
     CreateParameter: './src/custom/createParameter/index.js',
     DeleteReports: './src/custom/deleteReports/index.js',
     GenerateCustomFrontendCss: './src/custom/generateCustomFrontendCss/index.js',
