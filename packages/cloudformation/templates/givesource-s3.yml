@@ -15,6 +15,9 @@ Parameters:
   PublicPagesSSLCertificateArn:
     Type: String
 
+  StackName:
+    Type: String
+
   LambdaDefaultRuntime:
     Type: String
 
@@ -165,7 +168,7 @@ Resources:
         RestrictPublicBuckets: true
       LoggingConfiguration:
         DestinationBucketName: !ImportValue AccessLoggingBucket
-        LogFilePrefix: !Sub reports-${AWS::StackName}/
+        LogFilePrefix: !Sub reports-${StackName}/
 
   ReportsBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -381,7 +384,7 @@ Resources:
   GeneratePublicPagesHtmlFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-GeneratePublicPagesHtml
+      FunctionName: !Sub ${StackName}-GeneratePublicPagesHtml
       Code:
         S3Bucket: !Sub |-
           {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}

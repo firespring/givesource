@@ -118,6 +118,7 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
+        StackName: !Ref AWS::StackName
         LambdaDefaultRuntime: !FindInMap [Lambda, Runtime, Default]
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 60
