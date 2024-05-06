@@ -100,6 +100,11 @@ namespace APP_IDENTIFIER do
 
   desc 'Run an audit for Givesource packages'
   task audit: %i[init_docker up_no_deps] do
+    ENV['IGNORELIST'] ||= Dev::Aws::Parameter.new.get_value('/Firespring/CiCd/Ignorelist/node')
+    puts
+    puts "The IGNORELIST is set to [ #{ENV.fetch('IGNORELIST', nil)} ]"
+    puts
+
     %w(/usr/src/app /usr/src/app/packages/cloudformation /usr/src/app/packages/frontend /usr/src/app/packages/lambda).each do |container_path|
       node = Dev::Node.new(container_path: container_path)
       compose = Dev::Docker::Compose.new(services: APP_IDENTIFIER, capture: true)
