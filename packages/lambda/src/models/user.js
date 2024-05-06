@@ -1,7 +1,7 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
-const { isNumericType, isUuid, isEmail, isString } = require('../helpers/validation')
+const { isNumericType, isEmail, isString } = require('../helpers/validation')
 class User extends Model {}
 
 module.exports = (sequelize) => {
@@ -44,7 +44,7 @@ module.exports = (sequelize) => {
       defaultValue: '',
       // Cognito is returning a v7 uuid as the cognitoUuid now and that version is not supported by sequelize
       // which was causing validation to fail. This has been changed to require a non-empty string instead for now.
-      validate: { isString, notEmpty: true }
+      validate: { isString }
     }
   },
   { sequelize, modelName: 'User' })
