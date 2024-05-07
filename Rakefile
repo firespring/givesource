@@ -59,7 +59,7 @@ Dev::Template::Git.new
 # Configure software versions used and create tasks
 Dev::EndOfLife.config do |c|
   c.product_versions = [
-    Dev::EndOfLife::ProductVersion.new('nodejs', '14', 'the version of node running in the lambdas'),
+    Dev::EndOfLife::ProductVersion.new('debian', '12', 'the OS version in the local dev environment'),
     Dev::EndOfLife::ProductVersion.new('nodejs', '18', 'the version of node running in the local dev environment')
   ]
 end
