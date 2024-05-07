@@ -262,7 +262,7 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !If [HasAdminPagesSSLCertificateArn, !Ref AdminPagesSSLCertificateArn, !Ref "AWS::NoValue"]
           CloudFrontDefaultCertificate: !If [HasAdminPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
-          MinimumProtocolVersion: !If [HasAdminPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          MinimumProtocolVersion: !If [HasAdminPagesSSLCertificateArn, "TLSv1.2_2021", !Ref "AWS::NoValue"]
           SslSupportMethod: !If [HasAdminPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
@@ -318,7 +318,7 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
           CloudFrontDefaultCertificate: !If [HasPublicPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
-          MinimumProtocolVersion: !If [HasPublicPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          MinimumProtocolVersion: !If [HasPublicPagesSSLCertificateArn, "TLSv1.2_2021", !Ref "AWS::NoValue"]
           SslSupportMethod: !If [HasPublicPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
@@ -352,32 +352,27 @@ Resources:
               - logs:CreateLogGroup
               - logs:CreateLogStream
               - logs:PutLogEvents
-              Resource: arn:aws:logs:*:*:*
+              Resource:
+                - arn:aws:logs:*:*:*
+      - PolicyName: SSMGetParameter
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+              - ssm:GetParameter
+              Resource:
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-GeneratePublicPagesHtml/config
       - PolicyName: S3Access
         PolicyDocument:
           Statement:
             - Effect: Allow
               Action: s3:ListBucket
               Resource:
-                - !GetAtt AdminPagesS3.Arn
-                - !GetAtt PublicPagesS3.Arn
-                - !GetAtt UploadsS3.Arn
                 - !GetAtt GivesourceCache.Arn
             - Effect: Allow
-              Action: s3:Get*
-              Resource:
-                - !Sub ${AdminPagesS3.Arn}/*
-                - !Sub ${PublicPagesS3.Arn}/*
-                - !Sub ${UploadsS3.Arn}/*
-                - !Sub ${GivesourceCache.Arn}/*
-            - Effect: Allow
               Action:
-                - s3:Delete*
-                - s3:Put*
+                - s3:Get*
               Resource:
-                - !Sub ${AdminPagesS3.Arn}/*
-                - !Sub ${PublicPagesS3.Arn}/*
-                - !Sub ${UploadsS3.Arn}/*
                 - !Sub ${GivesourceCache.Arn}/*
 
   # Lambda@Edge does not support dead letter queues
