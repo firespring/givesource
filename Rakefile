@@ -26,6 +26,7 @@ Dev::Aws::Account::configure do |c|
 end
 Dev::Template::Aws.new
 
+# Configure the tasks for the ci pipelines
 ci_cloudformations = []
 branch = ENV['BRANCH'] || Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
 ci_cloudformations << Dev::Aws::Cloudformation.new(
@@ -38,16 +39,23 @@ ci_cloudformations << Dev::Aws::Cloudformation.new(
 )
 Dev::Template::Aws::Ci.new(ci_cloudformations)
 
-# Configure docker required versions and create tasks
+# Set the docker tag based off the current branch name
+ENV['GIVESOURCE_TAG'] = branch.split('/')[-1]
+
+# Configure docker required versions
 Dev::Docker.configure do |c|
   c.min_version = '23.0.0'
 end
 
+# Configure docker compose required versions
 Dev::Docker::Compose.configure do |c|
   c.max_version = '3.0.0'
 end
+
+# Create default docker tasks
 Dev::Template::Docker::Default.new(exclude: %i[push pull])
 
+# Configure to work with docker desktop
 Dev::Docker::Desktop.new.configure
 
 # Configure git required version and create tasks
@@ -132,10 +140,6 @@ namespace APP_IDENTIFIER do
 end
 
 # Add some custom pre/post tasks
-task _pre_build_hooks: %w[init_docker ensure_aws_credentials] do
-  ENV['GIVESOURCE_TAG'] = branch.split('/')[-1]
-end
-
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
   Dev::Aws::Credentials.new.export!
 end
