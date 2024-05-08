@@ -132,6 +132,10 @@ namespace APP_IDENTIFIER do
 end
 
 # Add some custom pre/post tasks
+task _pre_build_hooks: %w[init_docker ensure_aws_credentials] do
+  ENV['GIVESOURCE_TAG'] = branch.split('/')[-1]
+end
+
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
   Dev::Aws::Credentials.new.export!
 end
