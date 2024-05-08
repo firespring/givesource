@@ -40,39 +40,39 @@
 
   Resources:
     DefaultRegionalWebAcl:
-      Type: 'AWS::WAFv2::WebACL'
+      Type: AWS::WAFv2::WebACL
       Properties:
+        Name: !Sub ${AWS::StackName}-DefaultRegionalWebAcl
+        Description: Regional web ACL for Sites served by the FDP
         DefaultAction:
           Allow: {}
-        Description: Regional web ACL for Sites served by the FDP
-        Name: !Sub '${AWS::StackName}-DefaultRegionalWebAcl'
         Rules:
           - !If
             - HasAllowedIpv4Set
             - Action:
                 Allow: {}
-              Name: !Sub '${AWS::StackName}-AllowByIpWebAclRule'
+              Name: !Sub ${AWS::StackName}-AllowByIpWebAclRule
               Priority: 1
               Statement:
                 IPSetReferenceStatement:
                   Arn: !GetAtt RegionalAllowedIpv4IpSet.Arn
               VisibilityConfig:
                 CloudWatchMetricsEnabled: true
-                MetricName: !Sub '${AWS::StackName}-AllowByIpWebAclRule'
+                MetricName: !Sub ${AWS::StackName}-AllowByIpWebAclRule
                 SampledRequestsEnabled: true
             - !Ref AWS::NoValue
           - !If
             - HasBlockedIpv4Set
             - Action:
                 Block: {}
-              Name: !Sub '${AWS::StackName}-BlockByIpWebAclRule'
+              Name: !Sub ${AWS::StackName}-BlockByIpWebAclRule
               Priority: 2
               Statement:
                 IPSetReferenceStatement:
                   Arn: !GetAtt RegionalBlockedIpv4IpSet.Arn
               VisibilityConfig:
                 CloudWatchMetricsEnabled: true
-                MetricName: !Sub '${AWS::StackName}-BlockByIpWebAclRule'
+                MetricName: !Sub ${AWS::StackName}-BlockByIpWebAclRule
                 SampledRequestsEnabled: true
             - !Ref AWS::NoValue
           # TODO: Should we consider flipping this to only allow traffic from certain geo regions?
@@ -81,19 +81,19 @@
             - HasBlockedIpGeoLocations
             - Action:
                 Block: {}
-              Name: !Sub '${AWS::StackName}-BlockByIpGeoLocationRule'
+              Name: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
               Priority: 3
               Statement:
                 GeoMatchStatement:
                   CountryCodes: !Ref BlockedIpGeoLocations
               VisibilityConfig:
                 CloudWatchMetricsEnabled: true
-                MetricName: !Sub '${AWS::StackName}-BlockByIpGeoLocationRule'
+                MetricName: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
                 SampledRequestsEnabled: true
             - !Ref AWS::NoValue
           - Action:
               Block: {}
-            Name: !Sub '${AWS::StackName}-TooManyRequestsWebAclRule'
+            Name: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
             Priority: 4
             Statement:
               RateBasedStatement:
@@ -104,9 +104,9 @@
                 Limit: !Ref DefaultTooManyRequestsRateLimit
             VisibilityConfig:
               CloudWatchMetricsEnabled: true
-              MetricName: !Sub '${AWS::StackName}-TooManyRequestsWebAclRule'
+              MetricName: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
               SampledRequestsEnabled: true
-          - Name: !Sub '${AWS::StackName}-BlockIpReputationWebAclRule'
+          - Name: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
             OverrideAction:
               None: {}
             Priority: 5
@@ -116,36 +116,36 @@
                 VendorName: AWS
             VisibilityConfig:
               CloudWatchMetricsEnabled: true
-              MetricName: !Sub '${AWS::StackName}-BlockIpReputationWebAclRule'
+              MetricName: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
               SampledRequestsEnabled: true
         Scope: REGIONAL
         VisibilityConfig:
           CloudWatchMetricsEnabled: true
-          MetricName: !Sub '${AWS::StackName}-DefaultRegionalWebAcl'
+          MetricName: !Sub ${AWS::StackName}-DefaultRegionalWebAcl
           SampledRequestsEnabled: true
 
     RegionalAllowedIpv4IpSet:
-      Type: 'AWS::WAFv2::IPSet'
+      Type: AWS::WAFv2::IPSet
       Properties:
+        Name: !Sub ${AWS::StackName}-RegionalAllowedIpv4IpSet
+        Description: IP set used to allow specific traffic sources
         Addresses: !Ref AllowedIpv4IpSetList
         IPAddressVersion: IPV4
         Scope: REGIONAL
-        Description: IP set used to allow specific traffic sources
-        Name: !Sub '${AWS::StackName}-RegionalAllowedIpv4IpSet'
       Condition: HasAllowedIpv4Set
 
     RegionalBlockedIpv4IpSet:
-      Type: 'AWS::WAFv2::IPSet'
+      Type: AWS::WAFv2::IPSet
       Properties:
+        Name: !Sub ${AWS::StackName}-RegionalBlockedIpv4IpSet
+        Description: IP set used to block specific traffic sources
         Addresses: !Ref BlockedIpv4IpSetList
         IPAddressVersion: IPV4
         Scope: REGIONAL
-        Description: IP set used to block specific traffic sources
-        Name: !Sub '${AWS::StackName}-RegionalBlockedIpv4IpSet'
       Condition: HasBlockedIpv4Set
 
     EncryptionKey:
-      Type: 'AWS::KMS::Key'
+      Type: AWS::KMS::Key
       Properties:
         Description: KMS encryption key used when encrypting WAF resources
         Enabled: true
@@ -156,7 +156,7 @@
             - Effect: Allow
               Principal:
                 AWS:
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+                  - !Sub arn:aws:iam::${AWS::AccountId}:root
               Action:
                 - 'kms:*'
               Resource:
@@ -164,34 +164,34 @@
       DeletionPolicy: Retain
 
     EncryptionKeyAlias:
-      Type: 'AWS::KMS::Alias'
+      Type: AWS::KMS::Alias
       Properties:
         AliasName: alias/firespring/wafv2
         TargetKeyId: !GetAtt EncryptionKey.Arn
 
     DefaultRegionalLoggingConfiguration:
-      Type: 'AWS::WAFv2::LoggingConfiguration'
+      Type: AWS::WAFv2::LoggingConfiguration
       Properties:
         LogDestinationConfigs:
           - !GetAtt DeliveryStream.Arn
         ResourceArn: !GetAtt DefaultRegionalWebAcl.Arn
 
     LogGroupForDeliveryStream:
-      Type: 'AWS::Logs::LogGroup'
+      Type: AWS::Logs::LogGroup
       Properties:
-        LogGroupName: !Sub '/firespring/aws/waf/${AWS::StackName}'
+        LogGroupName: !Sub /firespring/aws/waf/${AWS::StackName}
         RetentionInDays: 90
       DeletionPolicy: Retain
 
     LogStreamForLogGroup:
-      Type: 'AWS::Logs::LogStream'
+      Type: AWS::Logs::LogStream
       Properties:
         LogGroupName: !Ref LogGroupForDeliveryStream
-        LogStreamName: !Sub 'aws-waf-logs-${AWS::StackName}-DeliveryStream'
+        LogStreamName: !Sub aws-waf-logs-${AWS::StackName}-DeliveryStream
       DeletionPolicy: Retain
 
     BucketForAwsWafDeliveryStream:
-      Type: 'AWS::S3::Bucket'
+      Type: AWS::S3::Bucket
       Properties:
         AccessControl: Private
         BucketEncryption:
@@ -223,13 +223,13 @@
                   TransitionInDays: 90 # 3 months
         LoggingConfiguration:
           DestinationBucketName: !ImportValue AccessLoggingBucket
-          LogFilePrefix: !Sub '${AWS::StackName}-BucketForAwsWafDeliveryStream/'
+          LogFilePrefix: !Sub ${AWS::StackName}-BucketForAwsWafDeliveryStream/
         VersioningConfiguration:
           Status: Enabled
       DeletionPolicy: Retain
 
     KinesisFirehoseS3ServiceRole:
-      Type: 'AWS::IAM::Role'
+      Type: AWS::IAM::Role
       Properties:
         AssumeRolePolicyDocument:
           Version: 2012-10-17
@@ -239,7 +239,7 @@
                 Service:
                   - firehose.amazonaws.com
               Action:
-                - 'sts:AssumeRole'
+                - sts:AssumeRole
         Path: /
         Policies:
           - PolicyName: KinesisFirehoseS3ServiceRolePolicy
@@ -248,39 +248,39 @@
               Statement:
                 - Effect: Allow
                   Action:
-                    - 's3:AbortMultipartUpload'
-                    - 's3:GetBucketLocation'
-                    - 's3:GetObject'
-                    - 's3:ListBucket'
-                    - 's3:ListBucketMultipartUploads'
-                    - 's3:PutObject'
+                    - s3:AbortMultipartUpload
+                    - s3:GetBucketLocation
+                    - s3:GetObject
+                    - s3:ListBucket
+                    - s3:ListBucketMultipartUploads
+                    - s3:PutObject
                   Resource:
                     - !GetAtt BucketForAwsWafDeliveryStream.Arn
-                    - !Join [ '', [ !GetAtt BucketForAwsWafDeliveryStream.Arn, '/*' ] ]
+                    - !Sub ${BucketForAwsWafDeliveryStream.Arn}/*
                 - Effect: Allow
                   Action:
-                    - 'kms:Decrypt'
-                    - 'kms:GenerateDataKey'
+                    - kms:Decrypt
+                    - kms:GenerateDataKey
                   Resource:
                     - !GetAtt EncryptionKey.Arn
                   Condition:
                     StringEquals:
-                      kms:ViaService: !Sub 's3.${AWS::Region}.amazonaws.com'
+                      kms:ViaService: !Sub s3.${AWS::Region}.amazonaws.com
                     StringLike:
-                      kms:EncryptionContext:aws:s3:arn: !Join [ '', [ !GetAtt BucketForAwsWafDeliveryStream.Arn, '/*' ] ]
+                      kms:EncryptionContext:aws:s3:arn: !Sub ${BucketForAwsWafDeliveryStream.Arn}/*
                 - Effect: Allow
                   Action:
-                    - 'logs:PutLogEvents'
+                    - logs:PutLogEvents
                   Resource:
-                    - !Join [ '', [ !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:', !Ref LogGroupForDeliveryStream, ':log-stream:', !Ref LogStreamForLogGroup ] ]
+                    - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupForDeliveryStream}:log-stream:${LogStreamForLogGroup}
 
     DeliveryStream:
-      Type: 'AWS::KinesisFirehose::DeliveryStream'
+      Type: AWS::KinesisFirehose::DeliveryStream
       Properties:
         DeliveryStreamEncryptionConfigurationInput:
           KeyARN: !GetAtt EncryptionKey.Arn
           KeyType: CUSTOMER_MANAGED_CMK
-        DeliveryStreamName: !Sub 'aws-waf-logs-${AWS::StackName}-DeliveryStream'
+        DeliveryStreamName: !Sub aws-waf-logs-${AWS::StackName}-DeliveryStream
         DeliveryStreamType: DirectPut
         S3DestinationConfiguration:
           BucketARN: !GetAtt BucketForAwsWafDeliveryStream.Arn
@@ -298,3 +298,9 @@
           ErrorOutputPrefix: errors/
           Prefix: logs/
           RoleARN: !GetAtt KinesisFirehoseS3ServiceRole.Arn
+
+  Outputs:
+    DefaultRegionalWebAclArn:
+      Value: !GetAtt DefaultRegionalWebAcl.Arn
+      Export:
+        Name: givesource-default-regional-waf-arn
