@@ -115,5 +115,5 @@ Resources:
   ApiProdWebACLAssociation:
     Type: AWS::WAFv2::WebACLAssociation
     Properties:
-      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/{rest_api_id}/stages/${ApiProdStage}
+      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/stages/${ApiProdStage}
       WebACLArn: !ImportValue givesource-default-regional-waf-arn
