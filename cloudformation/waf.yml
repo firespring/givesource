@@ -9,6 +9,7 @@
           Parameters:
             - AllowedIpv4IpSetList
             - BlockedIpv4IpSetList
+            - BlockedIpGeoLocations
         - Label:
             default: Rate limits
           Parameters:
