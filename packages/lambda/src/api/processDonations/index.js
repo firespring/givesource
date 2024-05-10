@@ -113,6 +113,7 @@ exports.handle = function handle (event, context, callback) {
         return popDonor
       })
     }
+
     return donorsRepository.populate(data)
   }).then((popDonor) => {
     donor = popDonor
@@ -122,6 +123,8 @@ exports.handle = function handle (event, context, callback) {
       data: {
         token: payment.id,
         amount: total,
+        cvv: payment.ccCvv,
+        zip: donor.zip,
         send_receipt: false,
         description: settings[SettingHelper.SETTING_EVENT_TITLE]
       },
