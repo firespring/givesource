@@ -31,7 +31,7 @@
     DefaultTooManyRequestsRateLimit:
       Description: Limit (per 5 minutes) used when rate blocking traffic by IP address (forwarded or otherwise)
       Type: Number
-      Default: 5000
+      Default: 3000
       MinValue: 100
 
   Conditions:
@@ -40,145 +40,6 @@
     HasBlockedIpGeoLocations: !Not [ !Equals [ '', !Join [ '', !Ref BlockedIpGeoLocations ] ] ]
 
   Resources:
-    DefaultRegionalWebAcl:
-      Type: AWS::WAFv2::WebACL
-      Properties:
-        Name: !Sub ${AWS::StackName}-DefaultRegionalWebAcl
-        Description: Regional web ACL for Sites served by the FDP
-        DefaultAction:
-          Allow: {}
-        Rules:
-          - !If
-            - HasAllowedIpv4Set
-            - Action:
-                Allow: {}
-              Name: !Sub ${AWS::StackName}-AllowByIpWebAclRule
-              Priority: 1
-              Statement:
-                IPSetReferenceStatement:
-                  Arn: !GetAtt RegionalAllowedIpv4IpSet.Arn
-              VisibilityConfig:
-                CloudWatchMetricsEnabled: true
-                MetricName: !Sub ${AWS::StackName}-AllowByIpWebAclRule
-                SampledRequestsEnabled: true
-            - !Ref AWS::NoValue
-          - !If
-            - HasBlockedIpv4Set
-            - Action:
-                Block: {}
-              Name: !Sub ${AWS::StackName}-BlockByIpWebAclRule
-              Priority: 2
-              Statement:
-                IPSetReferenceStatement:
-                  Arn: !GetAtt RegionalBlockedIpv4IpSet.Arn
-              VisibilityConfig:
-                CloudWatchMetricsEnabled: true
-                MetricName: !Sub ${AWS::StackName}-BlockByIpWebAclRule
-                SampledRequestsEnabled: true
-            - !Ref AWS::NoValue
-          # TODO: Should we consider flipping this to only allow traffic from certain geo regions?
-          #       Or one that can be conditionally toggled which only allows US/CA traffic?
-          - !If
-            - HasBlockedIpGeoLocations
-            - Action:
-                Block: {}
-              Name: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
-              Priority: 3
-              Statement:
-                GeoMatchStatement:
-                  CountryCodes: !Ref BlockedIpGeoLocations
-              VisibilityConfig:
-                CloudWatchMetricsEnabled: true
-                MetricName: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
-                SampledRequestsEnabled: true
-            - !Ref AWS::NoValue
-          - Action:
-              Block: {}
-            Name: !Sub '${AWS::StackName}-BlockJA3FingerprintWebAclRule'
-            Priority: 4
-            Statement:
-              ByteMatchStatement:
-                FieldToMatch:
-                  JA3Fingerprint:
-                    FallbackBehavior: NO_MATCH
-                PositionalConstraint: EXACTLY
-                SearchString: test
-                TextTransformations:
-                - Priority: 0
-                  Type: NONE
-            VisibilityConfig:
-              CloudWatchMetricsEnabled: true
-              MetricName: !Sub '${AWS::StackName}-BlockJA3FingerprintWebAclRule'
-              SampledRequestsEnabled: true
-          - Action:
-              Block: {}
-            Name: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
-            Priority: 5
-            Statement:
-              RateBasedStatement:
-                AggregateKeyType: FORWARDED_IP
-                ForwardedIPConfig:
-                  FallbackBehavior: MATCH
-                  HeaderName: X-Forwarded-For
-                Limit: !Ref DefaultTooManyRequestsRateLimit
-            VisibilityConfig:
-              CloudWatchMetricsEnabled: true
-              MetricName: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
-              SampledRequestsEnabled: true
-          - Name: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
-            OverrideAction:
-              None: {}
-            Priority: 6
-            Statement:
-              ManagedRuleGroupStatement:
-                Name: AWSManagedRulesAmazonIpReputationList
-                VendorName: AWS
-            VisibilityConfig:
-              CloudWatchMetricsEnabled: true
-              MetricName: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
-              SampledRequestsEnabled: true
-        Scope: REGIONAL
-        VisibilityConfig:
-          CloudWatchMetricsEnabled: true
-          MetricName: !Sub ${AWS::StackName}-DefaultRegionalWebAcl
-          SampledRequestsEnabled: true
-
-    RegionalAllowedIpv4IpSet:
-      Type: AWS::WAFv2::IPSet
-      Properties:
-        Name: !Sub ${AWS::StackName}-RegionalAllowedIpv4IpSet
-        Description: IP set used to allow specific traffic sources
-        Addresses: !Ref AllowedIpv4IpSetList
-        IPAddressVersion: IPV4
-        Scope: REGIONAL
-      Condition: HasAllowedIpv4Set
-
-    RegionalBlockedIpv4IpSet:
-      Type: AWS::WAFv2::IPSet
-      Properties:
-        Name: !Sub ${AWS::StackName}-RegionalBlockedIpv4IpSet
-        Description: IP set used to block specific traffic sources
-        Addresses: !Ref BlockedIpv4IpSetList
-        IPAddressVersion: IPV4
-        Scope: REGIONAL
-      Condition: HasBlockedIpv4Set
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     DefaultCloudfrontWebAcl:
       Type: AWS::WAFv2::WebACL
       Properties:
@@ -195,7 +56,7 @@
               Priority: 1
               Statement:
                 IPSetReferenceStatement:
-                  Arn: !GetAtt RegionalAllowedIpv4IpSet.Arn
+                  Arn: !GetAtt CloudfrontAllowedIpv4IpSet.Arn
               VisibilityConfig:
                 CloudWatchMetricsEnabled: true
                 MetricName: !Sub ${AWS::StackName}-AllowByIpWebAclRule
@@ -209,7 +70,7 @@
               Priority: 2
               Statement:
                 IPSetReferenceStatement:
-                  Arn: !GetAtt RegionalBlockedIpv4IpSet.Arn
+                  Arn: !GetAtt CloudfrontBlockedIpv4IpSet.Arn
               VisibilityConfig:
                 CloudWatchMetricsEnabled: true
                 MetricName: !Sub ${AWS::StackName}-BlockByIpWebAclRule
@@ -302,21 +163,6 @@
         Scope: CLOUDFRONT
       Condition: HasBlockedIpv4Set
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     EncryptionKey:
       Type: AWS::KMS::Key
       Properties:
@@ -342,26 +188,12 @@
         AliasName: alias/firespring/wafv2
         TargetKeyId: !GetAtt EncryptionKey.Arn
 
-    DefaultRegionalLoggingConfiguration:
-      Type: AWS::WAFv2::LoggingConfiguration
-      Properties:
-        LogDestinationConfigs:
-          - !GetAtt DeliveryStream.Arn
-        ResourceArn: !GetAtt DefaultRegionalWebAcl.Arn
-
-
-
-
     DefaultCloudfrontLoggingConfiguration:
       Type: AWS::WAFv2::LoggingConfiguration
       Properties:
         LogDestinationConfigs:
           - !GetAtt DeliveryStream.Arn
         ResourceArn: !GetAtt DefaultCloudfrontWebAcl.Arn
-
-
-
-
 
     LogGroupForDeliveryStream:
       Type: AWS::Logs::LogGroup
@@ -487,11 +319,6 @@
           RoleARN: !GetAtt KinesisFirehoseS3ServiceRole.Arn
 
   Outputs:
-    DefaultRegionalWebAclArn:
-      Value: !GetAtt DefaultRegionalWebAcl.Arn
-      Export:
-        Name: givesource-default-regional-waf-arn
-
     DefaultCloudfrontWebAclArn:
       Value: !GetAtt DefaultCloudfrontWebAcl.Arn
       Export:

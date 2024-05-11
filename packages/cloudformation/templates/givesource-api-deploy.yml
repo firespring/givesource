@@ -111,9 +111,3 @@ Resources:
           CacheTtlInSeconds: 300
           CachingEnabled: true
     DependsOn: ApiGatewayAccount
-
-  ApiProdWebACLAssociation:
-    Type: AWS::WAFv2::WebACLAssociation
-    Properties:
-      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/stages/${ApiProdStage}
-      WebACLArn: !ImportValue givesource-default-regional-waf-arn
