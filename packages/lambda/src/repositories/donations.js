@@ -328,6 +328,7 @@ DonationsRepository.prototype.bulkCreateDonations = function (values) {
  * @param data
  */
 function sanitizeData (data) {
+  if (Object.keys(data).length === 0) return {}
   const sanitized = Object.assign({}, data)
   sanitized.note = sanitized.note || ''
   return sanitized
