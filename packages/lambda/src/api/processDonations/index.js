@@ -123,7 +123,7 @@ exports.handle = function handle (event, context, callback) {
       data: {
         token: payment.id,
         amount: total,
-        cvv: payment.ccCvv,
+        cvv: payment.cvv,
         zip: donor.zip,
         send_receipt: false,
         description: settings[SettingHelper.SETTING_EVENT_TITLE]
