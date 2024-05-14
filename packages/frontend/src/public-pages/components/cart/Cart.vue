@@ -723,6 +723,7 @@ export default {
         const payment = response.data
         const mode = _.find(vm.settings, { key: 'PAYMENT_SPRING_LIVE_MODE' }).value
         payment.is_test_mode = mode === '0'
+        payment.cvv = vm.paymentDetails.ccCvv
         return axios.post(API_URL + 'donations/process', {
           donor: vm.donor,
           donations: vm.getDonations(),
