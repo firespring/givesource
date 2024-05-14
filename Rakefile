@@ -26,8 +26,10 @@ Dev::Aws::Account::configure do |c|
 end
 Dev::Template::Aws.new
 
+# Configure the tasks for the ci pipelines
 ci_cloudformations = []
 branch = ENV['BRANCH'] || Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
+branch = branch.split(/\s/)[-1] if branch.include?('detached')
 ci_cloudformations << Dev::Aws::Cloudformation.new(
   "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
   "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
@@ -38,16 +40,23 @@ ci_cloudformations << Dev::Aws::Cloudformation.new(
 )
 Dev::Template::Aws::Ci.new(ci_cloudformations)
 
-# Configure docker required versions and create tasks
+# Set the docker tag based off the current branch name
+ENV['GIVESOURCE_TAG'] = branch.split('/')[-1]
+
+# Configure docker required versions
 Dev::Docker.configure do |c|
   c.min_version = '23.0.0'
 end
 
+# Configure docker compose required versions
 Dev::Docker::Compose.configure do |c|
   c.max_version = '3.0.0'
 end
+
+# Create default docker tasks
 Dev::Template::Docker::Default.new(exclude: %i[push pull])
 
+# Configure to work with docker desktop
 Dev::Docker::Desktop.new.configure
 
 # Configure git required version and create tasks

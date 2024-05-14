@@ -15,6 +15,9 @@ Parameters:
   PublicPagesSSLCertificateArn:
     Type: String
 
+  StackName:
+    Type: String
+
 Conditions:
 
   HasAdminPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref AdminPagesCNAMEs ] ] ]
@@ -238,7 +241,7 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource admin pages S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} admin pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -267,6 +270,7 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: AdminPagesS3
 
   PublicPagesDistribution:
@@ -280,7 +284,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) public pages S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} public pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -320,6 +324,7 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: PublicPagesS3
 
   UploadsDistribution:
@@ -332,7 +337,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) uploads S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} uploads S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           ForwardedValues:
@@ -358,6 +363,7 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: UploadsS3
 
   CloudFrontOAI:
@@ -376,7 +382,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) caching S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} caching S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -397,6 +403,7 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: GivesourceCache
 
 
