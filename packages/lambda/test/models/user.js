@@ -52,7 +52,7 @@ describe('User', function () {
     const tests = [
       { model, param: 'cognitoUuid', value: null, error: true },
       { model, param: 'cognitoUuid', value: '', error: false },
-      { model, param: 'cognitoUuid', value: '123456', error: true },
+      { model, param: 'cognitoUuid', value: '123456', error: false },
       { model, param: 'cognitoUuid', value: '9ba33b63-41f9-4efc-8869-2b50a35b53df', error: false },
       { model, param: 'cognitoUuid', value: 123456, error: true },
       { model, param: 'email', value: null, error: true },

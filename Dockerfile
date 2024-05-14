@@ -1,5 +1,5 @@
 ARG BASE_REPO=300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/base
-ARG SRC_TAG=bullseye
+ARG SRC_TAG=bookworm
 FROM ${BASE_REPO}:${SRC_TAG}
 
 # Install the latest version of node and clean up
