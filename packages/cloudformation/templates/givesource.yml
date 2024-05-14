@@ -118,6 +118,7 @@ Resources:
         AdminPagesSSLCertificateArn: !Ref AdminPagesSSLCertificateArn
         PublicPagesCNAMEs: !Join [",", !Ref PublicPagesCNAMEs]
         PublicPagesSSLCertificateArn: !Ref PublicPagesSSLCertificateArn
+        StackName: !Ref AWS::StackName
       TemplateURL: https://s3.{{awsReleaseBucketRegion}}.amazonaws.com/{{awsReleaseBucket}}/cf-templates/{{version}}/givesource-s3.yml
       TimeoutInMinutes: 60
 
@@ -139,7 +140,7 @@ Resources:
             OriginSSLProtocols: ["TLSv1.2"]
             OriginProtocolPolicy: "https-only"
         Enabled: true
-        Comment: Distribution for Givesource(R) api caching
+        Comment: !Sub Distribution for Givesource(R) ${AWS::StackName} api caching
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           AllowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
@@ -163,6 +164,7 @@ Resources:
           CachePolicyId: !ImportValue global-cache-policy
           TargetOriginId: !Ref RestApi
           ViewerProtocolPolicy: redirect-to-https
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
 
   ApiGatewayManagedPolicy:
     Type: AWS::IAM::ManagedPolicy
