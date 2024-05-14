@@ -116,7 +116,6 @@ exports.handle = function handle (event, context, callback) {
     return donorsRepository.populate(data)
   }).then((popDonor) => {
     donor = popDonor
-    console.log('payemnt deatilsa', payment) // DM: Debug
     return axios({
       method: 'post',
       url: 'https://api.paymentspring.com/api/v1/charge',
