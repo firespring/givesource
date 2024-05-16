@@ -155,3 +155,25 @@ desc 'Open a browser showing the givesource documentation'
 task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
+
+namespace :eol do
+  task :node do
+    alt_dir_node_eol('.')
+    alt_dir_node_eol('packages/cloudformation')
+    alt_dir_node_eol('packages/frontend')
+    alt_dir_node_eol('packages/lambda')
+  end
+end
+
+
+def alt_dir_node_eol(local_path)
+  node = Dev::Node.new(local_path:)
+  eol = Dev::EndOfLife::Node.new(node)
+  node_products = eol.default_products
+  return if node_products.empty?
+
+  puts
+  puts "Node product versions (in #{eol.lockfile})".light_yellow
+  Dev::EndOfLife.new(product_versions: node_products).status
+  puts
+end
