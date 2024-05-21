@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 import { createRequire } from 'node:module'
-const require = createRequire( import.meta.url )
 import path from 'path'
 import { fileURLToPath } from 'url'
+import S3 from './aws/s3'
+const require = createRequire(import.meta.url)
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const dotenv = require('dotenv')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
@@ -28,9 +29,8 @@ process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 const config = require('config')
 const deployInfo = require('../config/deploy-info.json')
 const fs = require('fs')
-import S3 from './aws/s3'
 
-export default fetch = () => {
+const fetch = () => {
   const s3 = new S3()
   const configDir = path.resolve(__dirname, '../build/public-pages')
   s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'custom.css').then(response => {
@@ -46,3 +46,5 @@ export default fetch = () => {
     fs.writeFileSync(configDir + '/custom.css', '/* No custom styles */')
   })
 }
+
+export default fetch

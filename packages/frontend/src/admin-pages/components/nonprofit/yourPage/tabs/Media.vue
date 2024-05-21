@@ -248,7 +248,7 @@ export default {
           type: Media.TYPE_IMAGE
         })
       }).then(function (response) {
-        console.log("RESP", response)
+        console.log('RESP', response)
         vue.$store.commit('generateCacheKey')
         vue.$router.push({
           name: 'nonprofit-your-page-media-photos-edit',
@@ -259,7 +259,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.clearModals()
-        console.log("ERR", err)
+        console.log('ERR', err)
         vue.apiError = err.response.data.errors
       })
     },

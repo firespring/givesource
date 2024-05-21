@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 import { createRequire } from 'node:module'
-const require = createRequire( import.meta.url )
 import path from 'path'
 import { fileURLToPath } from 'url'
+import CloudFormation from './aws/cloudFormation.js'
+const require = createRequire(import.meta.url)
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const dotenv = require('dotenv')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
@@ -27,7 +28,6 @@ process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
 const _ = require('lodash')
 const config = require('config')
-import CloudFormation from './aws/cloudFormation.js'
 const fs = require('fs')
 
 /**
