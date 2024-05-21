@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-const getContentKeys = (setting) => {
+function Content () {
+}
+
+Content.prototype.getContentKeys = (setting) => {
   const keys = []
   const uuids = _getUuids(setting)
   const list = [
@@ -32,7 +35,7 @@ const getContentKeys = (setting) => {
   return keys
 }
 
-const getSettingKeys = (setting) => {
+Content.prototype.getSettingKeys = (setting) => {
   const keys = []
   const uuids = _getUuids(setting)
   const list = [
@@ -61,7 +64,4 @@ const _getUuids = (setting) => {
   return []
 }
 
-export {
-  getContentKeys,
-  getSettingKeys
-}
+export default Content

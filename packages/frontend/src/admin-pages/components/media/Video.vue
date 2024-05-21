@@ -29,7 +29,7 @@
 </template>
 
 <script>
-const MediaHelper = require('./../../helpers/media')
+import Media from './../../helpers/media'
 
 export default {
   props: {
@@ -69,7 +69,7 @@ export default {
       const vue = this
 
       if (vue.url) {
-        MediaHelper.getVideoData(vue.url).then(function (response) {
+        Media.getVideoData(vue.url).then(function (response) {
           vue.src = response.embedUrl
         }).then(function () {
           vue.loaded = true

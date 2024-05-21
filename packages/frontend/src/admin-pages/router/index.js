@@ -77,7 +77,7 @@ import store from './../store'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(__dirname),
+  history: createWebHistory(),
   hashbang: false,
   linkActiveClass: 'here',
   scrollBehavior: function (to, from, savedPosition) {

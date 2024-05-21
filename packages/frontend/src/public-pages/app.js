@@ -30,19 +30,17 @@ import VueFilters from './filters'
 import mitt from 'mitt'
 
 import _ from 'lodash'
+import $ from 'jquery'
 
 import './assets/css/site.css'
 import './assets/css/donation.css'
 import './assets/css/default.css'
 
-import 'jquery.payment'
-import 'fireSlider.js/dist/jquery.fireSlider.min'
-import 'fireSlider.js/dist/jquery.fireSlider.velocity'
-
 const emitter = mitt()
 
 // Register window globals
 window._ = _
+window.$ = window.jQuery = $
 window.axios = axios
 window.axios.defaults.headers.common['Content-Type'] = 'application/json'
 

@@ -158,19 +158,19 @@ export default {
       event.preventDefault()
       const vue = this
       if (vue.displayingMenu) {
-        $(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active')
-        $(vue.$refs.oMenubarPopup).fadeOut(200)
+        window.$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active')
+        window.$(vue.$refs.oMenubarPopup).fadeOut(200)
       } else {
-        $(vue.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active')
-        $(vue.$refs.oMenubarPopup).fadeIn(200)
+        window.$(vue.$refs.oMenubarPopupParent).addClass('o-menubar-popup-parent--active')
+        window.$(vue.$refs.oMenubarPopup).fadeIn(200)
       }
       vue.displayingMenu = !vue.displayingMenu
     },
     closeMenu: function () {
       const vue = this
       vue.timer = setTimeout(function () {
-        $(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active')
-        $(vue.$refs.oMenubarPopup).fadeOut(200)
+        window.$(vue.$refs.oMenubarPopupParent).removeClass('o-menubar-popup-parent--active')
+        window.$(vue.$refs.oMenubarPopup).fadeOut(200)
         vue.displayingMenu = false
       }, 500)
     },

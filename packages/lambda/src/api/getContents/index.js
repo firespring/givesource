@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const ContentHelper = require('./../../helpers/content')
+import Content from './../../helpers/content'
 const ContentsRepository = require('./../../repositories/contents')
 const HttpException = require('./../../exceptions/http')
 const Request = require('./../../aws/request')
@@ -31,7 +31,7 @@ exports.handle = function (event, context, callback) {
     let promise = Promise.resolve()
     results = []
     contents.forEach(function (content) {
-      if (content.type === ContentHelper.TYPE_COLLECTION) {
+      if (content.type === Content.TYPE_COLLECTION) {
         promise = promise.then(function () {
           return repository.getByParentId(content.id)
         }).then(function (models) {

@@ -90,8 +90,7 @@
 <script>
 import draggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
-
-const MediaHelper = require('./../../../../helpers/media')
+import Media from './../../../../helpers/media'
 
 export default {
   components: {
@@ -246,9 +245,10 @@ export default {
       }).then(function () {
         return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
           fileId: vue.file.id,
-          type: MediaHelper.TYPE_IMAGE
+          type: Media.TYPE_IMAGE
         })
       }).then(function (response) {
+        console.log("RESP", response)
         vue.$store.commit('generateCacheKey')
         vue.$router.push({
           name: 'nonprofit-your-page-media-photos-edit',
@@ -259,6 +259,7 @@ export default {
         vue.clearModals()
       }).catch(function (err) {
         vue.clearModals()
+        console.log("ERR", err)
         vue.apiError = err.response.data.errors
       })
     },

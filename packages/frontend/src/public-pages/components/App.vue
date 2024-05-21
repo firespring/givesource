@@ -25,6 +25,28 @@
 import ComponentModals from './modals/Modals.vue'
 
 export default {
+  setup () {
+    $(document).ready(() => {
+      let velocity = document.createElement('script');
+      velocity.setAttribute(
+          'src',
+          '//cdnjs.cloudflare.com/ajax/libs/velocity/2.0.6/velocity.min.js'
+      )
+      document.head.appendChild(velocity)
+      let fireSlider= document.createElement('script');
+      fireSlider.setAttribute(
+          'src',
+          'https://cdn.jsdelivr.net/gh/mmonkey/fireSlider@master/dist/jquery.fireSlider.min.js'
+      )
+      document.head.appendChild(fireSlider)
+      let jqueryPayment = document.createElement('script');
+      jqueryPayment.setAttribute(
+          'src',
+          'https://cdn.jsdelivr.net/gh/stripe-archive/jquery.payment@master/lib/jquery.payment.min.js'
+      )
+      document.head.appendChild(jqueryPayment)
+    })
+  },
   components: {
     modals: ComponentModals
   },

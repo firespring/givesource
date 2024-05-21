@@ -15,8 +15,11 @@
  */
 
 import store from './../store'
-
-const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
+import {
+  CognitoUser,
+  CognitoUserPool,
+  AuthenticationDetails
+} from 'amazon-cognito-identity-js'
 
 /**
  * Login CognitoUser
@@ -30,17 +33,17 @@ const login = function (username, password, callbacks) {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
   }
-  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userPool = new CognitoUserPool(data)
   const userData = {
     Username: username,
     Pool: userPool
   }
-  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  const cognitoUser = new CognitoUser(userData)
   const authenticationData = {
     Username: username,
     Password: password
   }
-  const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData)
+  const authenticationDetails = new AuthenticationDetails(authenticationData)
   cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: function (result) {
       if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
@@ -98,12 +101,12 @@ const forgotPassword = function (username, callbacks) {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
   }
-  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userPool = new CognitoUserPool(data)
   const userData = {
     Username: username,
     Pool: userPool
   }
-  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  const cognitoUser = new CognitoUser(userData)
   cognitoUser.forgotPassword({
     onSuccess: function (result) {
       if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
@@ -131,12 +134,12 @@ const resetPassword = function (username, code, password, callbacks) {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
   }
-  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
+  const userPool = new CognitoUserPool(data)
   const userData = {
     Username: username,
     Pool: userPool
   }
-  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData)
+  const cognitoUser = new CognitoUser(userData)
   cognitoUser.confirmPassword(code, password, {
     onSuccess: function (result) {
       if (callbacks.hasOwnProperty('onSuccess') && typeof callbacks.onSuccess === 'function') {
@@ -213,7 +216,7 @@ const getCognitoUser = function () {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
   }
-  const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+  const userPool = new CognitoUserPool(userPoolData)
   return userPool.getCurrentUser()
 }
 

@@ -2,6 +2,7 @@ import { createRequire } from 'node:module'
 const require = createRequire( import.meta.url )
 
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
+import inject from '@rollup/plugin-inject'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import basicSsl from '@vitejs/plugin-basic-ssl'
@@ -19,8 +20,11 @@ export default defineConfig(({ command, mode }) => {
 	return {
 		root: resolve(__dirname, SOURCE_PATH),
 		publicDir: resolve(__dirname, BUILD_PATH),
-		emptyOutDir: true,
+		emptyOutDir: false,
 		plugins: [
+			inject({
+				jQuery: 'jquery'
+			}),
 			basicSsl(),
 			ckeditor5({
 				theme: require.resolve('@ckeditor/ckeditor5-theme-lark')
@@ -41,6 +45,15 @@ export default defineConfig(({ command, mode }) => {
 			vitePluginRequire.default(),
 			viteStaticCopy({
 				targets: [
+					{
+						src: resolve(__dirname, './settings.json'),
+						dest: resolve(__dirname, SOURCE_PATH)
+					},
+					{
+						src: resolve(__dirname, './robots-allow.txt'),
+						dest: resolve(__dirname, SOURCE_PATH),
+						rename: 'robots.txt'
+					},
 					{
 						src: resolve(__dirname, './settings.json'),
 						dest: resolve(__dirname, BUILD_PATH)
@@ -67,15 +80,24 @@ export default defineConfig(({ command, mode }) => {
 			},
 			include: [
 				'jquery',
+				'chosen-js',
+				'@claviska/jquery-minicolors'
 			]
 		},
 		build: {
 			outDir: resolve(__dirname, BUILD_PATH),
+			emptyOutDir: false,
 			rollupOptions: {
 				input: {
 					'admin-pages': resolve(__dirname, SOURCE_PATH + '/index.html')
 				}
-			}
+			},
+			commonJsOptions: [
+				'jquery',
+				'chosen-js',
+				'@claviska/jquery-minicolors',
+				'node_modules'
+			]
 		},
 		server: {
 			https: {

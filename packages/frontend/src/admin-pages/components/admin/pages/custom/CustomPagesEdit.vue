@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { getContentKeys, getSettingKeys } from './../../../../helpers/content'
+import Content from './../../../../helpers/content'
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import Request from './../../../../helpers/request'
 
@@ -196,8 +196,8 @@ const slug = require('slug')
    */
 const fetchData = (id) => {
   const request = new Request()
-  const contentKeys = getContentKeys(id)
-  const settingKeys = getSettingKeys(id)
+  const contentKeys = Content.getContentKeys(id)
+  const settingKeys = Content.getSettingKeys(id)
   settingKeys.push('CUSTOM_PAGES')
 
   let settings = []

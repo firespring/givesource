@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const ContentHelper = require('./../../helpers/content')
+import Content from './../../helpers/content'
 const ContentsRepository = require('./../../repositories/contents')
 const HttpException = require('./../../exceptions/http')
 const Lambda = require('./../../aws/lambda')
@@ -29,7 +29,7 @@ exports.handle = function (event, context, callback) {
   request.validate().then(function () {
     return repository.get(request.urlParam('content_id'))
   }).then(function (content) {
-    if (content.type === ContentHelper.TYPE_COLLECTION) {
+    if (content.type === Content.TYPE_COLLECTION) {
       return repository.batchDeleteByParentId(request.urlParam('content_id')).then(function () {
         return repository.delete(request.urlParam('content_id'))
       })

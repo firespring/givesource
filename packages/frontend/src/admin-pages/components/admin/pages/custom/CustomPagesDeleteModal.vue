@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { getSettingKeys } from './../../../../helpers/content'
+import Content from './../../../../helpers/content'
 
 export default {
   props: {
@@ -112,7 +112,7 @@ export default {
         }
 
         promise = promise.then(() => {
-          const keys = getSettingKeys(vm.data.pageId)
+          const keys = Content.getSettingKeys(vm.data.pageId)
           const toDelete = []
 
           keys.forEach((key) => {

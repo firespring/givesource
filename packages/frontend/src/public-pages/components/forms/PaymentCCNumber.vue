@@ -89,8 +89,6 @@
 </template>
 
 <script>
-import 'jquery'
-import 'jquery.payment'
 
 export default {
   props: {

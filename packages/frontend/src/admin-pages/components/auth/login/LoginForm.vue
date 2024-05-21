@@ -116,8 +116,7 @@
 
 <script>
 import ComponentAuthorizingSpinner from './../AuthorizingSpinner.vue'
-
-const User = require('../../../helpers/user')
+import * as User from '../../../helpers/user'
 
 export default {
   components: {

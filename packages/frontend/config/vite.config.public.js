@@ -20,8 +20,6 @@ export default defineConfig(async ({ command, mode }) => {
 
 	return {
 		root: resolve(__dirname, SOURCE_PATH),
-		publicDir: resolve(__dirname, BUILD_PATH),
-		emptyOutDir: true,
 		resolve: {
 			alias: {
 				vue: resolve(__dirname, '../node_modules/vue/dist/vue.runtime.esm-bundler.js')
@@ -29,9 +27,7 @@ export default defineConfig(async ({ command, mode }) => {
 		},
 		plugins: [
 			inject({
-				jQuery: "jquery",
-				"window.jQuery": "jquery",
-				$: "jquery"
+				jQuery: 'jquery'
 			}),
 			basicSsl(),
 			splitVendorChunkPlugin(),
@@ -52,16 +48,12 @@ export default defineConfig(async ({ command, mode }) => {
 				targets: [
 					{
 						src: resolve(__dirname, './settings.json'),
-						dest: resolve(__dirname, BUILD_PATH)
+						dest: resolve(__dirname, SOURCE_PATH)
 					},
 					{
 						src: resolve(__dirname, './robots-allow.txt'),
-						dest: resolve(__dirname, BUILD_PATH),
+						dest: resolve(__dirname, SOURCE_PATH),
 						rename: 'robots.txt'
-					},
-					{
-						src: resolve(__dirname, SOURCE_PATH + '/*'),
-						dest: resolve(__dirname, BUILD_PATH)
 					},
 				]
 			}),
@@ -80,14 +72,11 @@ export default defineConfig(async ({ command, mode }) => {
 			},
 			include: [
 				'jquery',
-				'jquery.payment',
-				'fireSlider.js/dist/jquery.fireSlider.min.js',
-				'fireSlider.js/dist/jquery.fireSlider.velocity.js',
 			]
 		},
 		build: {
 			outDir: resolve(__dirname, BUILD_PATH),
-			emptyOutDir: true,
+			emptyOutDir: false,
 			rollupOptions: {
 				input: {
 					'public-pages': resolve(__dirname, SOURCE_PATH + '/index.html')

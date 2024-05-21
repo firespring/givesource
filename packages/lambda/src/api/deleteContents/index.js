@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const _ = require('lodash')
-const ContentHelper = require('./../../helpers/content')
+import _ from 'lodash'
+import Content from './../../helpers/content'
 const ContentsRepository = require('./../../repositories/contents')
 const HttpException = require('./../../exceptions/http')
 const Lambda = require('./../../aws/lambda')
@@ -43,7 +43,7 @@ exports.handle = function (event, context, callback) {
   }).then(function () {
     let promise = Promise.resolve()
     contents.forEach(function (content) {
-      if (content.get('type') === ContentHelper.TYPE_COLLECTION) {
+      if (content.get('type') === Content.TYPE_COLLECTION) {
         promise = promise.then(function () {
           return repository.getByParentId(content.id).then(function (response) {
             response.forEach(function (model) {
