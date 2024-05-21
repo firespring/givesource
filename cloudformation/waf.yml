@@ -1,0 +1,326 @@
+---
+  AWSTemplateFormatVersion: '2010-09-09'
+  Description: Creates web ACL, rules, pattern sets, and other associated resources
+  Metadata:
+    AWS::CloudFormation::Interface:
+      ParameterGroups:
+        - Label:
+            default: IP sets
+          Parameters:
+            - AllowedIpv4IpSetList
+            - BlockedIpv4IpSetList
+            - BlockedIpGeoLocations
+        - Label:
+            default: Rate limits
+          Parameters:
+            - DefaultTooManyRequestsRateLimit
+
+  Parameters:
+    AllowedIpv4IpSetList:
+      Description: IPv4 addresses used when allowing specific IP addresses or ranges
+      Type: CommaDelimitedList
+
+    BlockedIpv4IpSetList:
+      Description: IPv4 addresses used when blocking specific IP addresses or ranges
+      Type: CommaDelimitedList
+
+    BlockedIpGeoLocations:
+      Description: List of country codes to block
+      Type: CommaDelimitedList
+
+    DefaultTooManyRequestsRateLimit:
+      Description: Limit (per 5 minutes) used when rate blocking traffic by IP address (forwarded or otherwise)
+      Type: Number
+      Default: 3000
+      MinValue: 100
+
+  Conditions:
+    HasAllowedIpv4Set: !Not [ !Equals [ '', !Join [ '', !Ref AllowedIpv4IpSetList ] ] ]
+    HasBlockedIpv4Set: !Not [ !Equals [ '', !Join [ '', !Ref BlockedIpv4IpSetList ] ] ]
+    HasBlockedIpGeoLocations: !Not [ !Equals [ '', !Join [ '', !Ref BlockedIpGeoLocations ] ] ]
+
+  Resources:
+    DefaultCloudfrontWebAcl:
+      Type: AWS::WAFv2::WebACL
+      Properties:
+        Name: !Sub ${AWS::StackName}-DefaultCloudfrontWebAcl
+        Description: Cloudfront web ACL for all Givesource distributions
+        DefaultAction:
+          Allow: {}
+        Rules:
+          - !If
+            - HasAllowedIpv4Set
+            - Action:
+                Allow: {}
+              Name: !Sub ${AWS::StackName}-AllowByIpWebAclRule
+              Priority: 1
+              Statement:
+                IPSetReferenceStatement:
+                  Arn: !GetAtt CloudfrontAllowedIpv4IpSet.Arn
+              VisibilityConfig:
+                CloudWatchMetricsEnabled: true
+                MetricName: !Sub ${AWS::StackName}-AllowByIpWebAclRule
+                SampledRequestsEnabled: true
+            - !Ref AWS::NoValue
+          - !If
+            - HasBlockedIpv4Set
+            - Action:
+                Block: {}
+              Name: !Sub ${AWS::StackName}-BlockByIpWebAclRule
+              Priority: 2
+              Statement:
+                IPSetReferenceStatement:
+                  Arn: !GetAtt CloudfrontBlockedIpv4IpSet.Arn
+              VisibilityConfig:
+                CloudWatchMetricsEnabled: true
+                MetricName: !Sub ${AWS::StackName}-BlockByIpWebAclRule
+                SampledRequestsEnabled: true
+            - !Ref AWS::NoValue
+          # TODO: Should we consider flipping this to only allow traffic from certain geo regions?
+          #       Or one that can be conditionally toggled which only allows US/CA traffic?
+          - !If
+            - HasBlockedIpGeoLocations
+            - Action:
+                Block: {}
+              Name: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
+              Priority: 3
+              Statement:
+                GeoMatchStatement:
+                  CountryCodes: !Ref BlockedIpGeoLocations
+              VisibilityConfig:
+                CloudWatchMetricsEnabled: true
+                MetricName: !Sub ${AWS::StackName}-BlockByIpGeoLocationRule
+                SampledRequestsEnabled: true
+            - !Ref AWS::NoValue
+          - Action:
+              Block: {}
+            Name: !Sub '${AWS::StackName}-BlockJA3FingerprintWebAclRule'
+            Priority: 4
+            Statement:
+              ByteMatchStatement:
+                FieldToMatch:
+                  JA3Fingerprint:
+                    FallbackBehavior: NO_MATCH
+                PositionalConstraint: EXACTLY
+                SearchString: test
+                TextTransformations:
+                - Priority: 0
+                  Type: NONE
+            VisibilityConfig:
+              CloudWatchMetricsEnabled: true
+              MetricName: !Sub '${AWS::StackName}-BlockJA3FingerprintWebAclRule'
+              SampledRequestsEnabled: true
+          - Action:
+              Block: {}
+            Name: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
+            Priority: 5
+            Statement:
+              RateBasedStatement:
+                AggregateKeyType: FORWARDED_IP
+                ForwardedIPConfig:
+                  FallbackBehavior: MATCH
+                  HeaderName: X-Forwarded-For
+                Limit: !Ref DefaultTooManyRequestsRateLimit
+            VisibilityConfig:
+              CloudWatchMetricsEnabled: true
+              MetricName: !Sub ${AWS::StackName}-TooManyRequestsWebAclRule
+              SampledRequestsEnabled: true
+          - Name: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
+            OverrideAction:
+              None: {}
+            Priority: 6
+            Statement:
+              ManagedRuleGroupStatement:
+                Name: AWSManagedRulesAmazonIpReputationList
+                VendorName: AWS
+            VisibilityConfig:
+              CloudWatchMetricsEnabled: true
+              MetricName: !Sub ${AWS::StackName}-BlockIpReputationWebAclRule
+              SampledRequestsEnabled: true
+        Scope: CLOUDFRONT
+        VisibilityConfig:
+          CloudWatchMetricsEnabled: true
+          MetricName: !Sub ${AWS::StackName}-DefaultCloudfrontWebAcl
+          SampledRequestsEnabled: true
+
+    CloudfrontAllowedIpv4IpSet:
+      Type: AWS::WAFv2::IPSet
+      Properties:
+        Name: !Sub ${AWS::StackName}-CloudfrontAllowedIpv4IpSet
+        Description: IP set used to allow specific traffic sources
+        Addresses: !Ref AllowedIpv4IpSetList
+        IPAddressVersion: IPV4
+        Scope: CLOUDFRONT
+      Condition: HasAllowedIpv4Set
+
+    CloudfrontBlockedIpv4IpSet:
+      Type: AWS::WAFv2::IPSet
+      Properties:
+        Name: !Sub ${AWS::StackName}-CloudfrontBlockedIpv4IpSet
+        Description: IP set used to block specific traffic sources
+        Addresses: !Ref BlockedIpv4IpSetList
+        IPAddressVersion: IPV4
+        Scope: CLOUDFRONT
+      Condition: HasBlockedIpv4Set
+
+    EncryptionKey:
+      Type: AWS::KMS::Key
+      Properties:
+        Description: KMS encryption key used when encrypting WAF resources
+        Enabled: true
+        EnableKeyRotation: true
+        KeyPolicy:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS:
+                  - !Sub arn:aws:iam::${AWS::AccountId}:root
+              Action:
+                - 'kms:*'
+              Resource:
+                - '*'
+      DeletionPolicy: Retain
+
+    EncryptionKeyAlias:
+      Type: AWS::KMS::Alias
+      Properties:
+        AliasName: alias/firespring/wafv2
+        TargetKeyId: !GetAtt EncryptionKey.Arn
+
+    DefaultCloudfrontLoggingConfiguration:
+      Type: AWS::WAFv2::LoggingConfiguration
+      Properties:
+        LogDestinationConfigs:
+          - !GetAtt DeliveryStream.Arn
+        ResourceArn: !GetAtt DefaultCloudfrontWebAcl.Arn
+
+    LogGroupForDeliveryStream:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: !Sub /firespring/aws/waf/${AWS::StackName}
+        RetentionInDays: 90
+      DeletionPolicy: Retain
+
+    LogStreamForLogGroup:
+      Type: AWS::Logs::LogStream
+      Properties:
+        LogGroupName: !Ref LogGroupForDeliveryStream
+        LogStreamName: !Sub aws-waf-logs-${AWS::StackName}-DeliveryStream
+      DeletionPolicy: Retain
+
+    BucketForAwsWafDeliveryStream:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                KMSMasterKeyID: !Ref EncryptionKey
+                SSEAlgorithm: 'aws:kms' # custom encryption key
+        LifecycleConfiguration:
+          Rules:
+            - Status: Enabled
+              AbortIncompleteMultipartUpload:
+                DaysAfterInitiation: 7 # 1 week
+              NoncurrentVersionExpirationInDays: 30 # 3 months
+            - Status: Enabled
+              ExpirationInDays: 380 # 1 year + 2 weeks
+              Prefix: logs/
+              Transitions:
+                - StorageClass: STANDARD_IA
+                  TransitionInDays: 30 # 1 month
+                - StorageClass: GLACIER
+                  TransitionInDays: 90 # 3 months
+            - Status: Enabled
+              ExpirationInDays: 380 # 1 year + 2 weeks
+              Prefix: errors/
+              Transitions:
+                - StorageClass: STANDARD_IA
+                  TransitionInDays: 30 # 1 month
+                - StorageClass: GLACIER
+                  TransitionInDays: 90 # 3 months
+        LoggingConfiguration:
+          DestinationBucketName: !ImportValue AccessLoggingBucket
+          LogFilePrefix: !Sub ${AWS::StackName}-BucketForAwsWafDeliveryStream/
+        VersioningConfiguration:
+          Status: Enabled
+      DeletionPolicy: Retain
+
+    KinesisFirehoseS3ServiceRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - firehose.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: /
+        Policies:
+          - PolicyName: KinesisFirehoseS3ServiceRolePolicy
+            PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:AbortMultipartUpload
+                    - s3:GetBucketLocation
+                    - s3:GetObject
+                    - s3:ListBucket
+                    - s3:ListBucketMultipartUploads
+                    - s3:PutObject
+                  Resource:
+                    - !GetAtt BucketForAwsWafDeliveryStream.Arn
+                    - !Sub ${BucketForAwsWafDeliveryStream.Arn}/*
+                - Effect: Allow
+                  Action:
+                    - kms:Decrypt
+                    - kms:GenerateDataKey
+                  Resource:
+                    - !GetAtt EncryptionKey.Arn
+                  Condition:
+                    StringEquals:
+                      kms:ViaService: !Sub s3.${AWS::Region}.amazonaws.com
+                    StringLike:
+                      kms:EncryptionContext:aws:s3:arn: !Sub ${BucketForAwsWafDeliveryStream.Arn}/*
+                - Effect: Allow
+                  Action:
+                    - logs:PutLogEvents
+                  Resource:
+                    - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupForDeliveryStream}:log-stream:${LogStreamForLogGroup}
+
+    DeliveryStream:
+      Type: AWS::KinesisFirehose::DeliveryStream
+      Properties:
+        DeliveryStreamEncryptionConfigurationInput:
+          KeyARN: !GetAtt EncryptionKey.Arn
+          KeyType: CUSTOMER_MANAGED_CMK
+        DeliveryStreamName: !Sub aws-waf-logs-${AWS::StackName}-DeliveryStream
+        DeliveryStreamType: DirectPut
+        S3DestinationConfiguration:
+          BucketARN: !GetAtt BucketForAwsWafDeliveryStream.Arn
+          BufferingHints:
+            IntervalInSeconds: 300
+            SizeInMBs: 5
+          CloudWatchLoggingOptions:
+            Enabled: true
+            LogGroupName: !Ref LogGroupForDeliveryStream
+            LogStreamName: !Ref LogStreamForLogGroup
+          CompressionFormat: GZIP
+          EncryptionConfiguration:
+            KMSEncryptionConfig:
+              AWSKMSKeyARN: !GetAtt EncryptionKey.Arn
+          ErrorOutputPrefix: errors/
+          Prefix: logs/
+          RoleARN: !GetAtt KinesisFirehoseS3ServiceRole.Arn
+
+  Outputs:
+    DefaultCloudfrontWebAclArn:
+      Value: !GetAtt DefaultCloudfrontWebAcl.Arn
+      Export:
+        Name: givesource-default-cloudfront-waf-arn
+

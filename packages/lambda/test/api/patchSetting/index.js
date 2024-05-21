@@ -15,55 +15,48 @@
  */
 
 const assert = require('assert')
+const promiseMe = require('mocha-promise-me')
 const PatchSetting = require('../../../src/api/patchSetting/index')
 const SettingsRepository = require('./../../../src/repositories/settings')
 const sinon = require('sinon')
 const TestHelper = require('./../../helpers/test')
+const Lambda = require('../../../src/aws/lambda')
 
 describe('PatchSetting', function () {
-  it('should return an updated setting', function () {
-    const original = TestHelper.generate.model('setting')
-    const updated = TestHelper.generate.model('setting', { uuid: original.uuid, key: original.key })
+  it('should return an updated setting', async function () {
+    const original = await TestHelper.generate.model('setting')
+    const updated = await TestHelper.generate.model('setting', { uuid: original.uuid, key: original.key })
     sinon.stub(SettingsRepository.prototype, 'get').resolves(original)
-    sinon.stub(SettingsRepository.prototype, 'save').resolves(updated)
-    const { uuid, createdAt, ...body } = updated
-    const params = {
-      body,
-      params: {
-        key: original.key
-      }
-    }
-    return PatchSetting.handle(params, null, function (error, result) {
-      assert(error === null)
-      assert.deepEqual(result, updated.all())
-    })
+    const upsertStub = sinon.stub(SettingsRepository.prototype, 'save').resolves(updated)
+    const invokeStub = sinon.stub(Lambda.prototype, 'invoke')
+
+    const result = await TestHelper.callApi(PatchSetting)
+    assert(result === updated)
+    assert(upsertStub.withArgs(original).callCount === 1)
+    assert.equal(invokeStub.withArgs(sinon.match.any, process.env.AWS_STACK_NAME + '-ApiGatewayFlushCache').callCount, 1)
   })
 
-  it('should return error on exception thrown - get', function () {
-    const original = TestHelper.generate.model('setting')
-    const params = {
-      params: {
-        key: original.key
-      }
-    }
-    sinon.stub(SettingsRepository.prototype, 'get').rejects('Error')
+  it('should return error on exception thrown - get', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('setting')
+    sinon.stub(SettingsRepository.prototype, 'get').rejects(errorStub)
     sinon.stub(SettingsRepository.prototype, 'save').resolves(original)
-    return PatchSetting.handle(params, null, function (error) {
-      assert(error instanceof Error)
+
+    const response = TestHelper.callApi(PatchSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 
-  it('should return error on exception thrown - save', function () {
-    const original = TestHelper.generate.model('setting')
-    const params = {
-      params: {
-        key: original.key
-      }
-    }
+  it('should return error on exception thrown - save', async function () {
+    const errorStub = new Error('error')
+    const original = await TestHelper.generate.model('setting')
     sinon.stub(SettingsRepository.prototype, 'get').resolves(original)
-    sinon.stub(SettingsRepository.prototype, 'save').rejects('Error')
-    return PatchSetting.handle(params, null, function (error) {
-      assert(error instanceof Error)
+    sinon.stub(SettingsRepository.prototype, 'save').rejects(errorStub)
+
+    const response = TestHelper.callApi(PatchSetting)
+    await promiseMe.thatYouReject(response, (error) => {
+      assert(error === errorStub)
     })
   })
 })

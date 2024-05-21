@@ -15,6 +15,12 @@ Parameters:
   PublicPagesSSLCertificateArn:
     Type: String
 
+  StackName:
+    Type: String
+
+  LambdaDefaultRuntime:
+    Type: String
+
 Conditions:
 
   HasAdminPagesCNAMEs: !Not [!Equals ["", !Join ["", !Ref AdminPagesCNAMEs ] ] ]
@@ -162,7 +168,7 @@ Resources:
         RestrictPublicBuckets: true
       LoggingConfiguration:
         DestinationBucketName: !ImportValue AccessLoggingBucket
-        LogFilePrefix: !Sub reports-${AWS::StackName}/
+        LogFilePrefix: !Sub reports-${StackName}/
 
   ReportsBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -238,7 +244,7 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource admin pages S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} admin pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -256,7 +262,7 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !If [HasAdminPagesSSLCertificateArn, !Ref AdminPagesSSLCertificateArn, !Ref "AWS::NoValue"]
           CloudFrontDefaultCertificate: !If [HasAdminPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
-          MinimumProtocolVersion: !If [HasAdminPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          MinimumProtocolVersion: !If [HasAdminPagesSSLCertificateArn, "TLSv1.2_2021", !Ref "AWS::NoValue"]
           SslSupportMethod: !If [HasAdminPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
@@ -267,6 +273,7 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: AdminPagesS3
 
   PublicPagesDistribution:
@@ -280,7 +287,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) public pages S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} public pages S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -291,6 +298,9 @@ Resources:
             Headers:
               - User-Agent
           TargetOriginId: !Ref PublicPagesS3
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              LambdaFunctionARN: !Ref GeneratePublicPagesHtmlVersion{{lambdaEdgeGenPubPagesHash}}
           MaxTTL: 86400
           MinTTL: 0
           Compress: true
@@ -309,7 +319,7 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !If [HasPublicPagesSSLCertificateArn, !Ref PublicPagesSSLCertificateArn, !Ref "AWS::NoValue"]
           CloudFrontDefaultCertificate: !If [HasPublicPagesSSLCertificateArn, !Ref "AWS::NoValue", true]
-          MinimumProtocolVersion: !If [HasPublicPagesSSLCertificateArn, "TLSv1.1_2016", !Ref "AWS::NoValue"]
+          MinimumProtocolVersion: !If [HasPublicPagesSSLCertificateArn, "TLSv1.2_2021", !Ref "AWS::NoValue"]
           SslSupportMethod: !If [HasPublicPagesSSLCertificateArn, "sni-only", !Ref "AWS::NoValue"]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
@@ -320,7 +330,78 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: PublicPagesS3
+
+  LambdaEdgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+      - PolicyName: CloudWatchLogs
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Resource:
+                - arn:aws:logs:*:*:*
+      - PolicyName: SSMGetParameter
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action:
+              - ssm:GetParameter
+              Resource:
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${StackName}-GeneratePublicPagesHtml/config
+      - PolicyName: S3Access
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Action: s3:ListBucket
+              Resource:
+                - !GetAtt GivesourceCache.Arn
+            - Effect: Allow
+              Action:
+                - s3:Get*
+              Resource:
+                - !Sub ${GivesourceCache.Arn}/*
+
+  # Lambda@Edge does not support dead letter queues
+  GeneratePublicPagesHtmlFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${StackName}-GeneratePublicPagesHtml
+      Code:
+        S3Bucket: !Sub |-
+          {{awsLambdaReleaseBucketPrefix}}-${AWS::Region}
+        S3Key: fn/{{version}}/GeneratePublicPagesHtml.zip
+      Role: !GetAtt LambdaEdgeRole.Arn
+      Runtime: !Ref LambdaDefaultRuntime
+      Handler: "index.handle"
+      MemorySize: 128
+      Timeout: 5
+
+  # NOTE: A new version resource needs created whenever the public html function is updated.
+  #       This does not happen automatically - you have to change the GeneratePublicPagesHtmlVersion
+  #       resource name to something else. We are using the hash of the function source as part of the
+  #       resource name in order to accomplish this.
+  GeneratePublicPagesHtmlVersion{{lambdaEdgeGenPubPagesHash}}:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref GeneratePublicPagesHtmlFunction
+    DependsOn:
+      - GeneratePublicPagesHtmlFunction
 
   UploadsDistribution:
     Type: AWS::CloudFront::Distribution
@@ -332,7 +413,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) uploads S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} uploads S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           ForwardedValues:
@@ -358,6 +439,7 @@ Resources:
             ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: UploadsS3
 
   CloudFrontOAI:
@@ -376,7 +458,7 @@ Resources:
           S3OriginConfig:
             OriginAccessIdentity: !Join ['', ['origin-access-identity/cloudfront/', !Ref CloudFrontOAI]]
         Enabled: true
-        Comment: Distribution for Givesource(R) caching S3 bucket
+        Comment: !Sub Distribution for Givesource(R) ${StackName} caching S3 bucket
         DefaultRootObject: index.html
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -397,6 +479,7 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: /index.html
+        WebACLId: !ImportValue givesource-default-cloudfront-waf-arn
     DependsOn: GivesourceCache
 
 
