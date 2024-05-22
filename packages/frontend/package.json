@@ -9,8 +9,9 @@
     "build:public": "npm run clean:public && npm run fetch && vite build --config config/vite.config.public.js --mode=development",
     "build": "npm run build:admin && npm run build:public",
     "deploy": "npm run build && node bin/deploy.js",
-    "dev:admin": "npm run clean:admin && npm run fetch && vite --config config/vite.config.admin.js",
-    "dev:public": "npm run clean:public && npm run fetch && vite --config config/vite.config.public.js",
+    "dev:admin": "npm run fetch && vite --config config/vite.config.admin.js",
+    "dev:public": "npm run fetch && vite --config config/vite.config.public.js",
+    "dev": "npm run dev:admin && npm run dev:public",
     "fetch": "node bin/fetch-settings",
     "release": "npm run build && node bin/release.js",
     "release:force": "npm run build && node bin/release.js --force"

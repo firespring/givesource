@@ -11,6 +11,8 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import vitePluginRequire from 'vite-plugin-require'
 const require = createRequire(import.meta.url)
 
+const styles = require('@ckeditor/ckeditor5-dev-utils').styles
+
 const SOURCE_PATH = '../src/admin-pages'
 const BUILD_PATH = '../build/admin-pages'
 
@@ -18,9 +20,19 @@ export default defineConfig(({ command, mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd() + '/../../..', '') }
 
   return {
+    css: {
+      postcss: {
+        plugins: [
+          styles.getPostCssConfig({
+            themeImporter: {
+              themePath: require.resolve('@ckeditor/ckeditor5-theme-lark')
+            },
+            minify: true
+          })
+        ]
+      }
+    },
     root: resolve(__dirname, SOURCE_PATH),
-    publicDir: resolve(__dirname, BUILD_PATH),
-    emptyOutDir: false,
     plugins: [
       inject({
         jQuery: 'jquery'

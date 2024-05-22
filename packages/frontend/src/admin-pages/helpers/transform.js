@@ -86,7 +86,7 @@ const getTransformers = function (transformers, options) {
   return transformers
 }
 
-export default {
+export {
   transformData,
   transform
 }

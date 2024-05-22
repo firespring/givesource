@@ -14,10 +14,6 @@ const BUILD_PATH = '../build/public-pages'
 export default defineConfig(async ({ command, mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd() + '/../../..', '') }
 
-  if (command === 'build') {
-    await fetch()
-  }
-
   return {
     root: resolve(__dirname, SOURCE_PATH),
     resolve: {
@@ -57,6 +53,7 @@ export default defineConfig(async ({ command, mode }) => {
           }
         ]
       })
+
     ],
     optimizeDeps: {
       esbuildOptions: {
@@ -78,6 +75,15 @@ export default defineConfig(async ({ command, mode }) => {
       outDir: resolve(__dirname, BUILD_PATH),
       emptyOutDir: false,
       rollupOptions: {
+        plugins: [{
+          buildEnd (error) {
+            if (error) {
+              console.log('BUILD ERROR: ', error)
+              return
+            }
+            fetch()
+          }
+        }],
         input: {
           'public-pages': resolve(__dirname, SOURCE_PATH + '/index.html')
         }

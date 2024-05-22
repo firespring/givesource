@@ -69,6 +69,20 @@ const login = function (username, password, callbacks) {
 }
 
 /**
+ * Get the CognitoUser
+ *
+ * @return {CognitoUser|null}
+ */
+const getCognitoUser = function () {
+  const userPoolData = {
+    UserPoolId: store.getters.setting('USER_POOL_ID'),
+    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+  }
+  const userPool = new CognitoUserPool(userPoolData)
+  return userPool.getCurrentUser()
+}
+
+/**
  * Change user password
  *
  * @param {String} oldPassword
@@ -76,7 +90,7 @@ const login = function (username, password, callbacks) {
  * @param {function} callback
  */
 const changePassword = function (oldPassword, newPassword, callback) {
-  const cognitoUser = this.getCognitoUser()
+  const cognitoUser = getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, response) {
       if (err) {
@@ -161,7 +175,7 @@ const resetPassword = function (username, code, password, callbacks) {
  */
 const isAuthenticated = function () {
   let authenticated = false
-  const cognitoUser = this.getCognitoUser()
+  const cognitoUser = getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, session) {
       if (err) {
@@ -181,7 +195,7 @@ const isAuthenticated = function () {
  * @param {function} callback
  */
 const refreshSession = function (callback) {
-  const cognitoUser = this.getCognitoUser()
+  const cognitoUser = getCognitoUser()
   if (cognitoUser) {
     cognitoUser.getSession(function (err, session) {
       if (err) {
@@ -200,24 +214,10 @@ const refreshSession = function (callback) {
  * Log out CognitoUser
  */
 const logout = function () {
-  const cognitoUser = this.getCognitoUser()
+  const cognitoUser = getCognitoUser()
   if (cognitoUser) {
     cognitoUser.signOut()
   }
-}
-
-/**
- * Get the CognitoUser
- *
- * @return {CognitoUser|null}
- */
-const getCognitoUser = function () {
-  const userPoolData = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
-  }
-  const userPool = new CognitoUserPool(userPoolData)
-  return userPool.getCurrentUser()
 }
 
 /**
