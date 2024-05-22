@@ -59,15 +59,6 @@ export default defineConfig(({ command, mode }) => {
         targets: [
           {
             src: resolve(__dirname, './settings.json'),
-            dest: resolve(__dirname, SOURCE_PATH)
-          },
-          {
-            src: resolve(__dirname, './robots-allow.txt'),
-            dest: resolve(__dirname, SOURCE_PATH),
-            rename: 'robots.txt'
-          },
-          {
-            src: resolve(__dirname, './settings.json'),
             dest: resolve(__dirname, BUILD_PATH)
           },
           {

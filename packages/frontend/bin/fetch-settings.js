@@ -87,6 +87,14 @@ const writeConfig = (filename, data) => {
   const filePath = path.resolve(__dirname, './../config/' + filename)
   fs.writeFileSync(filePath, jsonData)
   console.log(filename + ' created')
+  if (filename === 'settings.json') {
+    const publicSrcPath = path.resolve(__dirname, './../src/public-pages/' + filename)
+    fs.writeFileSync(publicSrcPath, jsonData)
+    console.log(filename + ' created in public')
+    const adminSrcPath = path.resolve(__dirname, './../src/admin-pages/' + filename)
+    fs.writeFileSync(adminSrcPath, jsonData)
+    console.log(filename + ' created in admin')
+  }
 }
 
 getSettings().then(data => {
