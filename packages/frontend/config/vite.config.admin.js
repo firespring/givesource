@@ -35,8 +35,6 @@ export default defineConfig(({ command, mode }) => {
     root: resolve(__dirname, SOURCE_PATH),
     plugins: [
       inject({
-        include: 'App.vue',
-        $: 'jquery',
         jQuery: 'jquery'
       }),
       basicSsl(),
