@@ -76,6 +76,7 @@ Dev::Template::Eol.new
 
 # Create default tasks for the app
 Dev::Template::Docker::Application.new(APP_IDENTIFIER)
+Dev::Template::Docker::Node::Application.new('app', exclude: [:test, :lint, :audit])
 namespace APP_IDENTIFIER do
   desc 'Start up a dev server for our frontend assets'
   task dev: %i[init_docker up_no_deps] do
@@ -156,24 +157,21 @@ task :docs do
   Launchy.open('https://github.com/firespring/givesource-ops/wiki')
 end
 
+#Dev::Template::Docker::Node::Application.new('app', exclude: [:test])
 namespace :eol do
   task :node do
-    alt_dir_node_eol('.')
-    alt_dir_node_eol('packages/cloudformation')
-    alt_dir_node_eol('packages/frontend')
-    alt_dir_node_eol('packages/lambda')
+    alt_dir_node_eol(File.join(ROOT_DIR, 'packages/cloudformation'))
+    alt_dir_node_eol(File.join(ROOT_DIR, 'packages/frontend'))
+    alt_dir_node_eol(File.join(ROOT_DIR, 'packages/lambda'))
   end
 end
-
 
 def alt_dir_node_eol(local_path)
   node = Dev::Node.new(local_path:)
   eol = Dev::EndOfLife::Node.new(node)
   node_products = eol.default_products
-  return if node_products.empty?
 
   puts
   puts "Node product versions (in #{eol.lockfile})".light_yellow
   Dev::EndOfLife.new(product_versions: node_products).status
-  puts
 end
