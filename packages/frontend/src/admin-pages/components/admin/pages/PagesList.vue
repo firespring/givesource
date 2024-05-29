@@ -369,7 +369,7 @@
 </template>
 
 <script>
-import Content from './../../../helpers/content'
+import { getSettingKeys, getContentKeys } from './../../../helpers/content'
 import Request from './../../../helpers/request'
 
 /**
@@ -401,7 +401,7 @@ const fetchData = () => {
       }
     })
 
-    const keys = Content.getSettingKeys(settings)
+    const keys = getSettingKeys(settings)
     if (keys.length) {
       return request.get('settings', {
         keys: keys
@@ -416,7 +416,7 @@ const fetchData = () => {
       })
     }
 
-    const keys = Content.getContentKeys(settings)
+    const keys = getContentKeys(settings)
     if (keys.length) {
       return request.get('contents', {
         keys: keys
