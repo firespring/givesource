@@ -67,17 +67,17 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-
+import { useAppStore } from '../../store'
 export default {
   computed: {
     adminPagesUrl: function () {
-      return this.$store.getters.setting('ADMIN_URL') + '/login'
+      return this.$store.setting('ADMIN_URL') + '/login'
     },
     contactPhone: function () {
-      return this.$store.getters.setting('CONTACT_PHONE') || null
+      return this.$store.setting('CONTACT_PHONE') || null
     },
     displayTerms: function () {
-      return this.$store.getters.booleanSetting('PAGE_TERMS_ENABLED')
+      return this.$store.booleanSetting('PAGE_TERMS_ENABLED')
     },
     year: function () {
       return new Date().getFullYear()
@@ -85,6 +85,9 @@ export default {
     eventTitle: function () {
       return Settings.eventTitle()
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   }
 }
 </script>

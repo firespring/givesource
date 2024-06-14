@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { useAdminStore } from '../../store'
+
 export default {
   props: {
     id: { type: String, default: '' },
@@ -136,7 +138,7 @@ export default {
         const vm = this
 
         if (_.isPlainObject(vm.localValue) && vm.localValue.hasOwnProperty('path')) {
-          vm.fileUrl = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
+          vm.fileUrl = vm.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.localValue.path
         } else if (vm.localValue instanceof File) {
           const reader = new FileReader()
           reader.onload = (e) => {
@@ -148,6 +150,9 @@ export default {
         vm.$emit('update:modelValue', vm.localValue)
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   created () {
     const vm = this

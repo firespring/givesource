@@ -106,6 +106,7 @@
 import ComponentTabContent from './tabs/Content.vue'
 import ComponentTabDonationTiers from './tabs/DonationTiers.vue'
 import ComponentTabMedia from './tabs/Media.vue'
+import { useAdminStore } from '../../../store'
 
 export default {
   components: {
@@ -152,8 +153,11 @@ export default {
       return this.isSuperAdminUser() || this.isAdminUser()
     },
     landingPageUrl: function () {
-      return this.$store.getters.setting('EVENT_URL') + '/nonprofits/' + this.nonprofit.slug
+      return this.$store.setting('EVENT_URL') + '/nonprofits/' + this.nonprofit.slug
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getTabComponent: function (query) {

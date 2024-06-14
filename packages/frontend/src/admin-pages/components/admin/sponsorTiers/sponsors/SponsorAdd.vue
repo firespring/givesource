@@ -175,6 +175,7 @@
 <script>
 import ComponentImageUpload from './../../../forms/ImageUpload.vue'
 import ComponentSponsorTier from './../../../forms/SponsorTier.vue'
+import { useAdminStore } from '../../../../store'
 
 export default {
   components: {
@@ -237,6 +238,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getConstraints: function () {
@@ -305,7 +309,7 @@ export default {
           url: vue.formData.url
         })
       }).then(function (response) {
-        vue.$store.commit('generateCacheKey')
+        vue.$store.generateCacheKey()
         vue.clearModals()
         if (response.data.errorMessage) {
           console.log(response.data)

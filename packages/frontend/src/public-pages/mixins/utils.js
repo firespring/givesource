@@ -51,10 +51,10 @@ const mixin = {
     calculateFees: function (cartItems) {
       const vm = this
 
-      let transactionFlatFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE')
+      let transactionFlatFee = vm.$store.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE')
       transactionFlatFee = transactionFlatFee ? parseInt(transactionFlatFee) : 0
 
-      let transactionPercentFee = vm.$store.getters.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE')
+      let transactionPercentFee = vm.$store.setting('PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE')
       transactionPercentFee = transactionPercentFee ? parseFloat(transactionPercentFee) : 0
 
       let fees = 0

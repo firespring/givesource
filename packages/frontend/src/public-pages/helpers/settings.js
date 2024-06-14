@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import store from './../store'
+import { useAppStore } from './../store'
 import dayjs from './../helpers/day'
 
 /**
@@ -22,7 +22,8 @@ import dayjs from './../helpers/day'
  * @returns {String}
  */
 const eventTitle = function () {
-  let title = store.getters.setting('EVENT_TITLE')
+  const store = useAppStore()
+  let title = store.setting('EVENT_TITLE')
   if (title === null || title === '') {
     title = 'Give to Our City'
   }
@@ -35,8 +36,9 @@ const eventTitle = function () {
  * @return {Object|null}
  */
 const eventStartDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
-  const dateEventStart = store.getters.setting('DATE_EVENT_START')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
+  const dateEventStart = store.setting('DATE_EVENT_START')
 
   if (dateEventStart && eventTimezone) {
     return dayjs(new Date(dateEventStart)).startOf('day').tz(eventTimezone, true)
@@ -51,8 +53,9 @@ const eventStartDate = function () {
  * @return {Object|null}
  */
 const eventEndDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
-  const dateEventEnd = store.getters.setting('DATE_EVENT_END')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
+  const dateEventEnd = store.setting('DATE_EVENT_END')
 
   if (dateEventEnd && eventTimezone) {
     return dayjs(new Date(dateEventEnd)).endOf('day').tz(eventTimezone, true)
@@ -134,9 +137,10 @@ const countdownUntilEventEnd = function () {
  * @returns {Object|null}
  */
 const registrationStartDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
   const dateEventStart = eventStartDate()
-  const dateRegistrationsStart = store.getters.setting('DATE_REGISTRATIONS_START')
+  const dateRegistrationsStart = store.setting('DATE_REGISTRATIONS_START')
 
   if (dateRegistrationsStart) {
     return dayjs(new Date(dateRegistrationsStart)).startOf('day').tz(eventTimezone, true)
@@ -153,9 +157,10 @@ const registrationStartDate = function () {
  * @returns {Object|null}
  */
 const registrationEndDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
   const dateEventStart = eventStartDate()
-  const dateRegistrationsEnd = store.getters.setting('DATE_REGISTRATIONS_END')
+  const dateRegistrationsEnd = store.setting('DATE_REGISTRATIONS_END')
 
   if (dateRegistrationsEnd) {
     return dayjs(new Date(dateRegistrationsEnd)).endOf('day').tz(eventTimezone, true)
@@ -221,8 +226,9 @@ const isAfterRegistrations = function () {
  * @return {Object|null}
  */
 const donationsStartDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
-  const dateDonationsStart = store.getters.setting('DATE_DONATIONS_START')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
+  const dateDonationsStart = store.setting('DATE_DONATIONS_START')
 
   if (dateDonationsStart && eventTimezone) {
     return dayjs(new Date(dateDonationsStart)).startOf('day').tz(eventTimezone, true)
@@ -237,8 +243,9 @@ const donationsStartDate = function () {
  * @return {Object|null}
  */
 const donationsEndDate = function () {
-  const eventTimezone = store.getters.setting('EVENT_TIMEZONE')
-  const dateDonationsEnd = store.getters.setting('DATE_DONATIONS_END')
+  const store = useAppStore()
+  const eventTimezone = store.setting('EVENT_TIMEZONE')
+  const dateDonationsEnd = store.setting('DATE_DONATIONS_END')
 
   if (dateDonationsEnd && eventTimezone) {
     return dayjs(new Date(dateDonationsEnd)).endOf('day').tz(eventTimezone, true)

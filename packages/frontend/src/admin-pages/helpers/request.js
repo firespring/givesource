@@ -17,7 +17,7 @@
 import * as _ from 'lodash'
 import * as User from './user'
 import axios from 'axios'
-import store from './../store'
+import { useAdminStore } from './../store'
 
 /**
  * Request constructor
@@ -35,8 +35,9 @@ function Request () {
  * @param {{}} [headers]
  */
 Request.prototype.delete = function (uri, data, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     const config = data ? { data: data, headers: response } : { headers: response }
     store.commit('generateCacheKey')
@@ -52,8 +53,9 @@ Request.prototype.delete = function (uri, data, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.get = function (uri, query, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     return axios.get(apiUrl + uri + request.buildQuery(query), { headers: response })
   })
@@ -67,8 +69,9 @@ Request.prototype.get = function (uri, query, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.patch = function (uri, body, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     body = body || {}
     store.commit('generateCacheKey')
@@ -84,8 +87,9 @@ Request.prototype.patch = function (uri, body, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.post = function (uri, body, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     body = body || {}
     store.commit('generateCacheKey')
@@ -100,11 +104,12 @@ Request.prototype.post = function (uri, body, headers) {
  * @return {string}
  */
 Request.prototype.buildQuery = function (query) {
+  const store = useAdminStore()
   const params = []
   query = query || {}
 
   if (!query.hasOwnProperty('c')) {
-    query.c = store.getters.cacheKey
+    query.c = store.cacheKey
   }
 
   if (query) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import store from './../store'
+import { useAdminStore } from '../store'
 
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
@@ -26,9 +26,10 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
  * @param {{}} callbacks
  */
 const login = function (username, password, callbacks) {
+  const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
   const userData = {
@@ -94,9 +95,10 @@ const changePassword = function (oldPassword, newPassword, callback) {
  * @param {{}} callbacks
  */
 const forgotPassword = function (username, callbacks) {
+  const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
   const userData = {
@@ -127,9 +129,10 @@ const forgotPassword = function (username, callbacks) {
  * @param {{}} callbacks
  */
 const resetPassword = function (username, code, password, callbacks) {
+  const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new AmazonCognitoIdentity.CognitoUserPool(data)
   const userData = {
@@ -209,9 +212,10 @@ const logout = function () {
  * @return {CognitoUser|null}
  */
 const getCognitoUser = function () {
+  const store = useAdminStore()
   const userPoolData = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
   return userPool.getCurrentUser()

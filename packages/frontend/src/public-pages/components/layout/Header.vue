@@ -115,7 +115,8 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import { useAppStore } from '../../store'
 
 export default {
   data () {
@@ -130,33 +131,33 @@ export default {
     }
   },
   computed: {
-    ...mapState({
+    ...mapState(useAppStore, {
       cartItems: state => state.cartItems
     }),
     canDonate () {
       return Settings.isDuringDonations() || Settings.isDuringEvent()
     },
     displayAbout () {
-      return this.$store.getters.booleanSetting('PAGE_ABOUT_ENABLED')
+      return this.$store.booleanSetting('PAGE_ABOUT_ENABLED')
     },
     displayFAQ () {
-      return this.$store.getters.booleanSetting('PAGE_FAQ_ENABLED')
+      return this.$store.booleanSetting('PAGE_FAQ_ENABLED')
     },
     displayToolkits () {
-      return this.$store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')
+      return this.$store.booleanSetting('PAGE_TOOLKIT_ENABLED')
     },
     logoTitle () {
       return Settings.eventTitle() + ' Logo'
     },
     logoUrl () {
-      const eventLogo = this.$store.getters.setting('EVENT_LOGO')
+      const eventLogo = this.$store.setting('EVENT_LOGO')
       return eventLogo || require('../../assets/img/logo-event.png')
     },
     enabledPages: function () {
       return (this.pages || []).filter(page => page.enabled)
     },
     pages () {
-      return this.$store.getters.pages
+      return this.$store.pages
     }
   },
   watch: {
@@ -172,6 +173,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   },
   created () {
     const vm = this

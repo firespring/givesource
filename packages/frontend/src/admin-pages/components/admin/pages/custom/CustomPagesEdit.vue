@@ -185,6 +185,7 @@
 import { getContentKeys, getSettingKeys } from './../../../../helpers/content'
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import Request from './../../../../helpers/request'
+import { useAdminStore } from '../../../../store'
 
 const slug = require('slug')
 
@@ -270,7 +271,7 @@ export default {
   },
   computed: {
     pageLink () {
-      return this.$store.getters.setting('EVENT_URL') + '/'
+      return this.$store.setting('EVENT_URL') + '/'
     }
   },
   watch: {
@@ -304,6 +305,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   created () {
     const vm = this

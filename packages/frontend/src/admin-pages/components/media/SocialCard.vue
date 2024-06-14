@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { useAdminStore } from '../../store'
+
 export default {
   props: {
     description: {
@@ -94,7 +96,7 @@ export default {
       const vm = this
 
       if (_.isPlainObject(vm.image) && vm.image.hasOwnProperty('path')) {
-        vm.src = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.image.path
+        vm.src = vm.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.image.path
       } else if (vm.image instanceof File) {
         const reader = new FileReader()
         reader.onload = (e) => {
@@ -116,7 +118,7 @@ export default {
       const vm = this
 
       if (_.isPlainObject(vm.fallbackImage) && vm.fallbackImage.hasOwnProperty('path')) {
-        vm.fallback_src = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.fallbackImage.path
+        vm.fallback_src = vm.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.fallbackImage.path
       } else if (vm.fallbackImage instanceof File) {
         const reader = new FileReader()
         reader.onload = (e) => {
@@ -134,6 +136,9 @@ export default {
         vm.fallback_src = vm.fallbackImageUrl
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   }
 }
 </script>

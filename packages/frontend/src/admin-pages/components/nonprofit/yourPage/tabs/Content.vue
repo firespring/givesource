@@ -162,6 +162,7 @@
 <script>
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import ComponentImageUpload from './../../../forms/ImageUpload.vue'
+import { useAdminStore } from '../../../../store'
 
 const slug = require('slug')
 
@@ -200,7 +201,7 @@ export default {
   },
   computed: {
     pageLink: function () {
-      return this.$store.getters.setting('EVENT_URL') + '/nonprofits/'
+      return this.$store.setting('EVENT_URL') + '/nonprofits/'
     }
   },
   watch: {
@@ -231,6 +232,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getConstraints: function () {
@@ -316,7 +320,7 @@ export default {
       if (vue.formData.logo instanceof File) {
         promise = promise.then(function () {
           return vue.uploadFile('logo').then(function (uploadedFile) {
-            vue.$store.commit('generateCacheKey')
+            vue.$store.generateCacheKey()
             vue.formData.logoFileId = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : ''
           })
         })

@@ -171,6 +171,7 @@
 <script>
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import Request from './../../../../helpers/request'
+import { useAdminStore } from '../../../../store'
 
 const slug = require('slug')
 const uuid = require('node-uuid')
@@ -235,7 +236,7 @@ export default {
   },
   computed: {
     pageLink () {
-      return this.$store.getters.setting('EVENT_URL') + '/'
+      return this.$store.setting('EVENT_URL') + '/'
     }
   },
   watch: {
@@ -251,6 +252,9 @@ export default {
       },
       deep: true
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     getConstraints () {

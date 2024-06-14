@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { useAdminStore } from '../../store'
+
 export default {
   props: {
     id: { type: String, default: '' },
@@ -122,7 +124,7 @@ export default {
         const vue = this
 
         if (_.isPlainObject(vue.localValue) && vue.localValue.hasOwnProperty('path')) {
-          vue.fileUrl = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
+          vue.fileUrl = vue.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.localValue.path
         } else if (vue.localValue instanceof File) {
           const reader = new FileReader()
           reader.onload = function (e) {
@@ -134,6 +136,9 @@ export default {
         vue.$emit('update:modelValue', this.localValue)
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     onTrigger: function () {

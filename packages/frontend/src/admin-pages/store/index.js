@@ -14,67 +14,45 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate'
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
 
-export default createStore({
-  state: {
-    cacheKey: 0,
-    settings: {},
-    updated: 0,
-    receipt: null,
-    donorEmail: null
-  },
-  mutations: {
-    generateCacheKey: function (state) {
-      state.cacheKey = new Date().getTime()
-    },
-    settings: function (state, settings) {
-      Object.keys(settings).forEach(function (key) {
-        state.settings[key] = settings[key]
-      })
-    },
-    setDonorEmail (state, email) {
-      state.donorEmail = email
-    },
-    setReceipt (state, receiptHtml) {
-      state.receipt = receiptHtml
-    },
-    updated: function (state) {
-      state.updated = new Date().getTime()
+export const useAdminStore = defineStore('adminStore', {
+  state: () => {
+    return {
+      _cacheKey: 0,
+      settings: {},
+      updated: 0,
+      receipt: null,
+      donorEmail: null
     }
   },
   getters: {
-    cacheKey: function (state) {
-      if (!state.cacheKey) {
-        state.cacheKey = new Date().getTime()
+    cacheKey: (state) => {
+      if (!state._cacheKey) {
+        state._cacheKey = new Date().getTime()
       }
-      return state.cacheKey
+      return state._cacheKey
     },
-    settings: function (state) {
-      return state.settings
-    },
-    setting: function (state) {
-      return function (key) {
-        return state.settings.hasOwnProperty(key) ? state.settings[key] : null
-      }
-    },
-    updated: function (state) {
-      return state.updated
+    setting: (state) => {
+      return (key) => state.settings.hasOwnProperty(key) ? state.settings[key] : null
     }
   },
   actions: {
-    async setReceipt ({ commit }, payload) {
-      commit('setReceipt', payload.html)
-      commit('setDonorEmail', payload.email)
+    async setReceipt (payload) {
+      this.receipt = payload.html
+      this.donorEmail = payload.email
     },
 
-    async clearReceipt ({ commit }) {
-      commit('setReceipt', null)
-      commit('setDonorEmail', null)
+    async clearReceipt () {
+      this.receipt = null
+      this.donorEmail = null
+    },
+
+    generateCacheKey: () => {
+      this._cacheKey = new Date().getTime()
+    },
+    setDonorEmail (email) {
+      this.donorEmail = email
     }
-  },
-  plugins: [
-    createPersistedState()
-  ]
+  }
 })

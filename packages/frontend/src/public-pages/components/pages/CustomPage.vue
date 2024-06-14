@@ -64,7 +64,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     const vm = this
 
-    const pages = vm.$store.getters.pages
+    const pages = vm.$store.pages
     const slug = to.path
 
     let matched = null

@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { useAdminStore } from '../../../../store'
+
 const MediaHelper = require('./../../../../helpers/media')
 
 export default {
@@ -115,9 +117,12 @@ export default {
           return vue.slide.thumbnail
         case MediaHelper.TYPE_IMAGE:
         default:
-          return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path
+          return vue.$store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path
       }
     }
+  },
+  beforeCreate () {
+    this.$store = useAdminStore()
   },
   methods: {
     deleteSlide: function (event) {

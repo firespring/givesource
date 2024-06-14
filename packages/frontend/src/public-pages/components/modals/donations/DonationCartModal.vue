@@ -74,6 +74,7 @@
 
 <script>
 import ComponentDonationCartModalListTable from './DonationCartModalListTable.vue'
+import { useAppStore } from '../../../store'
 
 export default {
   components: {
@@ -95,6 +96,9 @@ export default {
     isCartEmpty () {
       return this.$store.state.cartItems.length === 0
     }
+  },
+  beforeCreate () {
+    this.$store = useAppStore()
   },
   created () {
     this.addBodyClasses('has-donation-overlay')
