@@ -69,7 +69,7 @@ validate.validators.ccCvv = function (value, options) {
  * @return {*}
  */
 validate.validators.arrayIncludes = function (value, options, attribute, allValues) {
-  if (typeof value === 'undefined') {
+  if ((validate.isDefined(value) && !validate.isArray(value)) || typeof value === 'undefined') {
     value = allValues[options.attributeName]
   }
   if (options.required.length === 0) {
