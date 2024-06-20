@@ -46,14 +46,12 @@ module.exports = (sequelize) => {
     fileId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
-      validate: { isNumericType }
+      defaultValue: 0
     },
     sponsorTierId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
-      validate: { isNumericType }
+      defaultValue: 0
     }
   },
   { sequelize, modelName: 'Sponsor' })
