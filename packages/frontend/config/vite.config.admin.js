@@ -33,6 +33,7 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     root: resolve(__dirname, SOURCE_PATH),
+    publicDir: resolve(__dirname, SOURCE_PATH + '/assets'),
     plugins: [
       inject({
         jQuery: 'jquery'
@@ -57,6 +58,10 @@ export default defineConfig(({ command, mode }) => {
       vitePluginRequire.default(),
       viteStaticCopy({
         targets: [
+          {
+            src: resolve(__dirname, SOURCE_PATH + '/assets/*'),
+            dest: resolve(__dirname, BUILD_PATH + '/assets/')
+          },
           {
             src: resolve(__dirname, './settings.json'),
             dest: resolve(__dirname, BUILD_PATH)
