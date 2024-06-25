@@ -64,8 +64,7 @@ module.exports = (sequelize) => {
     nonprofitId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
-      validate: { isNumericType }
+      defaultValue: 0
     }
   },
   { sequelize, modelName: 'NonprofitSlide' })
