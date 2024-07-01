@@ -16,7 +16,7 @@
 import { createRequire } from 'node:module'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import CloudFormation from './aws/cloudFormation.js'
+import CloudFormation from './aws/cloudFormation'
 const require = createRequire(import.meta.url)
 
 const __filename = fileURLToPath(import.meta.url)

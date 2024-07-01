@@ -111,7 +111,7 @@
 import VueCropper from 'vue-cropperjs'
 import 'cropperjs/dist/cropper.css'
 import VueSlider from 'vue-slider-component'
-import precise from './../../../helpers/math.js'
+import precise from './../../../helpers/math'
 
 export default {
   components: {

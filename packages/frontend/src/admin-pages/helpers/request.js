@@ -15,7 +15,7 @@
  */
 
 import * as _ from 'lodash'
-import { getCognitoUser } from './user.js'
+import { getCognitoUser } from './user'
 import axios from 'axios'
 import store from './../store'
 
