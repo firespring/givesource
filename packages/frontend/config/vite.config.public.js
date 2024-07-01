@@ -76,12 +76,8 @@ export default defineConfig(async ({ command, mode }) => {
       emptyOutDir: false,
       rollupOptions: {
         plugins: [{
-          buildEnd (error) {
-            if (error) {
-              console.log('BUILD ERROR: ', error)
-              return
-            }
-            fetch()
+          async buildStart (options) {
+            await fetch()
           }
         }],
         input: {

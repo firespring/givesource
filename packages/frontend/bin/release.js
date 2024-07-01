@@ -17,7 +17,7 @@
 import { createRequire } from 'node:module'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import S3 from './aws/s3'
+import S3 from './aws/s3.js'
 const require = createRequire(import.meta.url)
 
 const __filename = fileURLToPath(import.meta.url)
