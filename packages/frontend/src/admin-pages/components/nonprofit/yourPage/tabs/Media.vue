@@ -90,8 +90,7 @@
 <script>
 import draggable from 'vuedraggable'
 import ComponentMediaListTableRow from './../media/MediaListTableRow.vue'
-
-const MediaHelper = require('./../../../../helpers/media')
+import Media from './../../../../helpers/media'
 
 export default {
   components: {
@@ -137,7 +136,6 @@ export default {
 
     vue.$request.get('nonprofits/' + vue.nonprofitId + '/slides').then(function (response) {
       if (response.data.errorMessage) {
-        console.log(response.data)
         return Promise.reject(new Error(response.data.errorMessage))
       } else {
         response.data.sort(function (a, b) {
@@ -246,7 +244,7 @@ export default {
       }).then(function () {
         return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
           fileId: vue.file.id,
-          type: MediaHelper.TYPE_IMAGE
+          type: Media.TYPE_IMAGE
         })
       }).then(function (response) {
         vue.$store.commit('generateCacheKey')

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-exports.TYPE_IMAGE = 'IMAGE'
-exports.TYPE_VIMEO = 'VIMEO'
-exports.TYPE_YOUTUBE = 'YOUTUBE'
+function Media () {
+}
 
-exports.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
+Media.prototype.TYPE_IMAGE = 'IMAGE'
+Media.prototype.TYPE_VIMEO = 'VIMEO'
+Media.prototype.TYPE_YOUTUBE = 'YOUTUBE'
+
+Media.prototype.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
 
 /**
  * Get data from this video's url
@@ -26,13 +29,13 @@ exports.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.c
  * @param {String} videoUrl
  * @return {Promise}
  */
-exports.getVideoData = function (videoUrl) {
+Media.prototype.getVideoData = function (videoUrl) {
   const media = this
   return new Promise(function (resolve, reject) {
     videoUrl.match(media.VIDEO_REGEX)
 
     if (RegExp.$3.indexOf('youtu') > -1) {
-      resolve(media.getYoutubeData(RegExp.$6))
+      resolve(getYoutubeData(RegExp.$6))
     } else if (RegExp.$3.indexOf('vimeo') > -1) {
       resolve(media.getVimeoData(RegExp.$6))
     } else {
@@ -47,7 +50,7 @@ exports.getVideoData = function (videoUrl) {
  * @param {String} vimeoId
  * @return {Promise}
  */
-exports.getVimeoData = function (vimeoId) {
+Media.prototype.getVimeoData = function (vimeoId) {
   const media = this
   return new Promise(function (resolve, reject) {
     axios.get('https://vimeo.com/api/v2/video/' + vimeoId + '.json').then(function (response) {
@@ -70,7 +73,7 @@ exports.getVimeoData = function (vimeoId) {
  * @param {String} youtubeId
  * @return {{}}
  */
-exports.getYoutubeData = function (youtubeId) {
+const getYoutubeData = (youtubeId) => {
   const media = this
   return {
     id: youtubeId,
@@ -79,3 +82,5 @@ exports.getYoutubeData = function (youtubeId) {
     embedUrl: 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=0&modestbranding=1'
   }
 }
+
+export default Media

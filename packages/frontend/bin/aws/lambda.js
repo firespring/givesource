@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk')
+import AWS from 'aws-sdk'
 
 /**
  * Lambda constructor
@@ -50,4 +50,4 @@ Lambda.prototype.invoke = function (region, functionName, payload, invocationTyp
   })
 }
 
-module.exports = Lambda
+export default Lambda

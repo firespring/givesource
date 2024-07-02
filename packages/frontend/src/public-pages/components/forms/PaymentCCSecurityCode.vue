@@ -40,7 +40,6 @@
 </template>
 
 <script>
-require('jquery.payment')
 
 export default {
   props: {

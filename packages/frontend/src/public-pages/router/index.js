@@ -39,7 +39,6 @@ const router = createRouter({
   history: createWebHistory(),
   hashbang: false,
   linkActiveClass: 'here',
-  base: __dirname,
   scrollBehavior (to, from, savedPosition) {
     if (to.hash) {
       return { selector: to.hash }

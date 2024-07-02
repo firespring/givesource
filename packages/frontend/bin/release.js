@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
+import { createRequire } from 'node:module'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import S3 from './aws/s3.js'
+const require = createRequire(import.meta.url)
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const dotenv = require('dotenv')
-const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
 const config = require('config')
 const fs = require('fs')
 const packageJson = require('../../../package.json')
-const S3 = require('./aws/s3')
 
 /**
  * Check if assets already exist for this version

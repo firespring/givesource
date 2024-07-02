@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import { getContentKeys, getSettingKeys } from './../../../../helpers/content'
+import { getSettingKeys, getContentKeys } from '../../../../helpers/content'
 import ComponentCKEditor from './../../../forms/Ckeditor.vue'
 import Request from './../../../../helpers/request'
 

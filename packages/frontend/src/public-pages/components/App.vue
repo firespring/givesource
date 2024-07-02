@@ -28,6 +28,36 @@ export default {
   components: {
     modals: ComponentModals
   },
+  setup () {
+    $(document).ready(() => {
+      const velocity = document.createElement('script')
+      velocity.setAttribute(
+        'src',
+        '//cdnjs.cloudflare.com/ajax/libs/velocity/2.0.6/velocity.min.js'
+      )
+      document.head.appendChild(velocity)
+      const fireSlider = document.createElement('script')
+      fireSlider.setAttribute(
+        'src',
+        'https://cdn.jsdelivr.net/gh/mmonkey/fireSlider@master/dist/jquery.fireSlider.min.js'
+      )
+      document.head.appendChild(fireSlider)
+      const jqueryPayment = document.createElement('script')
+      jqueryPayment.setAttribute(
+        'src',
+        'https://cdn.jsdelivr.net/gh/stripe-archive/jquery.payment@master/lib/jquery.payment.min.js'
+      )
+      document.head.appendChild(jqueryPayment)
+      // moved custom_css here to avoid vite overriding it
+      const customCss = document.createElement('link')
+      customCss.setAttribute('rel', 'preload')
+      customCss.setAttribute('href', '/custom.css?inline')
+      customCss.setAttribute('as', 'style')
+      customCss.setAttribute('id', 'custom_css')
+      customCss.setAttribute('onload', "this.onload=null;this.rel='stylesheet'")
+      document.head.appendChild(customCss)
+    })
+  },
   beforeCreate () {
     const vm = this
 

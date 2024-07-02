@@ -33,7 +33,6 @@
 </template>
 
 <script>
-require('@claviska/jquery-minicolors')
 
 export default {
   props: {

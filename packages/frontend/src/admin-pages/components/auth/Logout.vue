@@ -19,7 +19,7 @@
 </template>
 
 <script>
-const User = require('../../helpers/user')
+import * as User from '../../helpers/user'
 
 export default {
   mounted: function () {

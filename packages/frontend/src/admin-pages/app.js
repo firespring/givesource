@@ -37,10 +37,17 @@ import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
+import _ from 'lodash'
+import $ from 'jquery'
+
+import 'chosen-js'
+import '@claviska/jquery-minicolors'
+
 const emitter = mitt()
 
 // Register window globals
-window._ = require('lodash')
+window._ = _
+window.$ = window.jQuery = $
 window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 

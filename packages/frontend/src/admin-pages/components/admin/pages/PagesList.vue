@@ -369,7 +369,7 @@
 </template>
 
 <script>
-import { getContentKeys, getSettingKeys } from './../../../helpers/content'
+import { getSettingKeys, getContentKeys } from './../../../helpers/content'
 import Request from './../../../helpers/request'
 
 /**
