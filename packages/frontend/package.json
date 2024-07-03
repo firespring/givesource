@@ -29,7 +29,6 @@
     "config": "^1.31.0",
     "mime": "^2.6.0",
     "mitt": "^3.0.1",
-    "velocity-animate": "^2.0.6",
     "vite": "^5.2.11",
     "vite-plugin-require": "^1.1.14",
     "vite-plugin-static-copy": "^0.17.1",

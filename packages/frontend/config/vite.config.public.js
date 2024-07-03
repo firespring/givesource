@@ -44,12 +44,16 @@ export default defineConfig(async ({ command, mode }) => {
         targets: [
           {
             src: resolve(__dirname, './settings.json'),
-            dest: resolve(__dirname, BUILD_PATH)
+            dest: './'
           },
           {
             src: resolve(__dirname, './robots-allow.txt'),
-            dest: resolve(__dirname, BUILD_PATH),
+            dest: './',
             rename: 'robots.txt'
+          },
+          {
+            src: resolve(__dirname, '../config/custom.css'),
+            dest: './'
           }
         ]
       })

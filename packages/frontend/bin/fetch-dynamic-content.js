@@ -32,11 +32,9 @@ const fs = require('fs')
 
 const fetch = () => {
   const s3 = new S3()
-  const devDir = path.resolve(__dirname, '../src/public-pages')
-  const configDir = path.resolve(__dirname, '../build/public-pages')
+  const configDir = path.resolve(__dirname, '../config')
   s3.getObject(config.get('stack.AWS_REGION'), deployInfo.PublicPagesS3BucketName, 'custom.css').then(response => {
     fs.writeFileSync(configDir + '/custom.css', response.Body)
-    fs.writeFileSync(devDir + '/custom.css', response.Body)
     console.log('custom.css downloaded from S3')
   }).catch(function (err) { // eslint-disable-line handle-callback-err
     console.log('No custom css found. Using empty file', {
