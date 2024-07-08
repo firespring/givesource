@@ -15,3 +15,6 @@ build/
 # Ignore environment variables
 .env
 config/*.json
+
+src/admin-pages/settings.json
+src/public-pages/settings.json
