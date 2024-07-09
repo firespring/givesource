@@ -5,32 +5,32 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 ## Table of Contents
 ### Global configurations
-1. [Givesource-VPC]
-1. [Recaptcha]
+1. [Givesource-VPC](givesource-vpc.md)
+1. [Recaptcha](recaptcha.md)
 
 ### Preparation for Development and Deployment
-1. [AWS-Console]
-1. [[Setup-Environment]]
-1. [[Configuring-a-Stack]]
-1. [[Releasing]]
+1. [AWS-Console](aws-console.md)
+1. [Setup-Environment](setup-environment.md)
+1. [Configuring-a-Stack](configuring-a-stack.md)
+1. [Releasing](releaseing.md)
 
 ### Development
-1. [[Creating-a-New-Stack]]
-1. [[Development]]
-1. [[Seeding-the-Database]]
+1. [Creating-a-New-Stack](creating-a-new-stack.md)
+1. [Development](development.md)
+1. [Seeding-the-Database](seeding-the-database.md)
 
 ### Managing a Givesource Instance
-1. [[Updating-a-Stack]]
-1. [[Deleting-a-Stack]]
-1. [[Resource-Management]]
-1. [[Database-Migrations]]
+1. [Updating-a-Stack](updating-a-stack.md)
+1. [Deleting-a-Stack](deleting-a-stack.md)
+1. [Resource-Management](resource-management.md)
+1. [Database-Migrations](database-migrations.md)
 
 ### Application
-1. [[Application-Setup]]
+1. [Application-Setup](application-setup.md)
 
 ### Other Resources
-1. [[Event-Timeline]]
-1. [[Addons-Stack]]
-1. [[Domains]]
-1. [[Reporting]]
-1. [[Refunds-and-Reallocations]]
+1. [Event-Timeline](event-timeline.md)
+1. [Addons-Stack](addons-stack.md)
+1. [Domains](domains.md)
+1. [Reporting](reporting.md)
+1. [Refunds-and-Reallocations](refunds-and-reallocations.md)
