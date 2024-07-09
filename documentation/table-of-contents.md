@@ -12,7 +12,7 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 1. [AWS-Console](aws-console.md)
 1. [Setup-Environment](setup-environment.md)
 1. [Configuring-a-Stack](configuring-a-stack.md)
-1. [Releasing](releaseing.md)
+1. [Releasing](releasing.md)
 
 ### Development
 1. [Creating-a-New-Stack](creating-a-new-stack.md)
