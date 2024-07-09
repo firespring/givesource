@@ -5,11 +5,11 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 ## Table of Contents
 ### Global configurations
-1. [[Givesource-VPC]]
-1. [[Recaptcha]]
+1. [Givesource-VPC]
+1. [Recaptcha]
 
 ### Preparation for Development and Deployment
-1. [[AWS-Console]]
+1. [AWS-Console]
 1. [[Setup-Environment]]
 1. [[Configuring-a-Stack]]
 1. [[Releasing]]
