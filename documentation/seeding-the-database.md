@@ -1,5 +1,5 @@
 # Prerequisites
-1. Follow the [[Development]] wiki to configure your development stack.
+1. Follow the [Development](development.md) wiki to configure your development stack.
 2. You will need to be connected to the [VPN](https://github.com/firespring/engineering-devops/blob/master/documentation/vpn.md) while running seed.
 
 # Seeding the Database

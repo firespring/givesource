@@ -1,8 +1,8 @@
 # Prerequisites
-1. Follow the [[Setup Environment]] wiki to setup your development environment.
-2. Follow the [[Configuring a Stack]] wiki to configure your development stack settings.
-2. Follow the [[Releasing]] wiki to create a development release on the bucket's created in step 1.
-3. Follow the [[Creating a New Stack]] wiki to create a new development stack.
+1. Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
+2. Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure your development stack settings.
+2. Follow the [Releasing](releasing.md) wiki to create a development release on the bucket's created in step 1.
+3. Follow the [Creating a New Stack](creating-a-new-stack.md) wiki to create a new development stack.
 
 # Development
 ## Understanding Givesource Development
@@ -35,7 +35,7 @@ _Understanding how Givesource uses AWS resources is just as important, if not mo
 	```
 4. For the CloudFormation package, there is no "deploy", as in, you cannot just release the stack changes to a single stack.
 The templates are either released (on the S3 bucket) or not.
-5. Follow the [[Releasing]] wiki (see: CloudFormation Templates) to make your changes available in AWS.
+5. Follow the [Releasing](releasing.md) wiki (see: CloudFormation Templates) to make your changes available in AWS.
 
 ## Frontend Development
 Frontend development requires a stack on AWS, as there is no way to mock the API.

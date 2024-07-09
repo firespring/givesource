@@ -102,4 +102,4 @@ any other purpose conferring impermissible private benefit. For the full story, 
 ```
 
 ## Pages - Terms
-Be sure to add the legal terms to this page. See an existing stack for the terms or see: [[Terms]].
+Be sure to add the legal terms to this page. See an existing stack for the terms or see: [Terms](terms.md).

@@ -3,7 +3,7 @@ The addons stack is used to add an RSS feed, public metrics API and iframe embed
 
 # Setup
 1. Code is found in the givesource-ops repo
-2. Setup is exactly like Givesource, see: [[Setup-Environment]]
+2. Setup is exactly like Givesource, see: [Setup-Environment](setup-environment.md)
 3. Create a new config, example:
 	```
 	{
@@ -27,7 +27,7 @@ The addons stack is used to add an RSS feed, public metrics API and iframe embed
 
 	```
 4. Install dependencies: `npm install`
-5. Create a release bucket, similar to [[Setup-Environment#preparing-aws-release-buckets]]
+5. Create a release bucket, similar to [Setup-Environment](setup-environment.md#preparing-aws-release-buckets)
 6. Release the code: `npm run release`
 7. Create the stack: `npm run cloudformation:create`
 

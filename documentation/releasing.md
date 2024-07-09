@@ -1,6 +1,6 @@
 # Prerequisites
-1. Follow the [[Setup Environment]] wiki to prepare for releasing.
-2. Follow the [[Configuring a Stack]] wiki to configure the AWS settings needed for release.
+1. Follow the [Setup Environment](setup-environment.md) wiki to prepare for releasing.
+2. Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure the AWS settings needed for release.
 
 # Releasing
 ## Versions

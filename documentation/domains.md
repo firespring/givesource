@@ -10,8 +10,8 @@
 	- Find the distribution id for the admin and public pages.
 	- Visit AWS web console -> Route53
 	- Select Hosted Zones and update the A and CNAME records to match the appropriate distribution id from above
-3. Update the stack configuration, see: [[Configuring-a-Stack]]
-4. Update the stack, see: [[Updating-a-Stack]]
+3. Update the stack configuration, see: [Configuring-a-Stack](configuring-a-stack.md)
+4. Update the stack, see: [Updating-a-Stack](updating-a-stack.md)
 5. Update the url settings in the app:
 	- Run `npm run lambda:setting`
 	- Select `EVENT_URL` and enter (for example): `https://givetolincoln.com`

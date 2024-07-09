@@ -1,5 +1,5 @@
 # Prerequisites
-1. Follow the [[Setup Environment]] wiki to setup your development environment.
+1. Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
 
 # Configuring a Stack
 A configuration template can be found at `config/default.json`. This file contains all the details needed to release and deploy a Givesource stack.
@@ -71,7 +71,7 @@ A configuration template can be found at `config/default.json`. This file contai
 	| AWS_LAMBDA_RELEASE_BUCKET_PREFIX | required | The naming prefix used for the Lambda function releases. |
 	| AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS | required | An array containing the available regions where Lambda functions can be deployed. |
 
-4. See the [[Setup-Environment]] wiki for more information about the release buckets.
+4. See the [Setup-Environment](setup-environment.md) wiki for more information about the release buckets.
 
 # Configure the Local Environment
 To switch between the stacks you are managing, update the `.env` file:  

@@ -1,5 +1,5 @@
 # Prerequisites
-1. Follow the [[AWS-Console]] wiki to access the proper AWS accounts.
+1. Follow the [AWS-Console](aws-console.md) wiki to access the proper AWS accounts.
 
 # Setup Environment
 ## Preparing for Local Development and Deployment
