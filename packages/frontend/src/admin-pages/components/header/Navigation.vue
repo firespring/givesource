@@ -25,7 +25,7 @@
           <div class="o-branding__logo">
             <img
               alt="Givesource Logo"
-              src="/assets/img/logo-givesource.png"
+              src="/img/logo-givesource.png"
               class="logo"
             >
           </div>

@@ -111,7 +111,7 @@
 import VueCropper from 'vue-cropperjs'
 import 'cropperjs/dist/cropper.css'
 import VueSlider from 'vue-slider-component'
-const MathHelper = require('./../../../helpers/math')
+import precise from './../../../helpers/math'
 
 export default {
   components: {
@@ -170,7 +170,7 @@ export default {
     },
     onZoom: function (event) {
       const vue = this
-      const value = Math.floor(MathHelper.precise(event.detail.ratio * 100))
+      const value = Math.floor(precise(event.detail.ratio * 100))
 
       if (vue.zoom !== value) {
         vue.zoom = value

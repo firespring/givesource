@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk')
+import AWS from 'aws-sdk'
 
 /**
  * CloudFront constructor
@@ -56,4 +56,4 @@ CloudFront.prototype.createInvalidation = function (id, paths) {
   })
 }
 
-module.exports = CloudFront
+export default CloudFront

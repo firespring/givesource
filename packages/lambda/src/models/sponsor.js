@@ -35,8 +35,7 @@ module.exports = (sequelize) => {
     sortOrder: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
-      validate: { isNumericType }
+      defaultValue: 0
     },
     url: {
       type: DataTypes.STRING,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk')
+import AWS from 'aws-sdk'
 
 /**
  * CloudFormation constructor
@@ -61,4 +61,4 @@ CloudFormation.prototype.describeStacks = (region, stackName, nextToken, stacks)
   })
 }
 
-module.exports = CloudFormation
+export default CloudFormation

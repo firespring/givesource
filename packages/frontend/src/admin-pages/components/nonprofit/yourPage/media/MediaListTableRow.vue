@@ -55,7 +55,7 @@
 </template>
 
 <script>
-const MediaHelper = require('./../../../../helpers/media')
+import Media from './../../../../helpers/media'
 
 export default {
   props: {
@@ -73,11 +73,11 @@ export default {
       const vue = this
 
       switch (vue.slide.type) {
-        case MediaHelper.TYPE_VIMEO:
+        case Media.TYPE_VIMEO:
           return 'fa-vimeo-square'
-        case MediaHelper.TYPE_YOUTUBE:
+        case Media.TYPE_YOUTUBE:
           return 'fa-youtube-square'
-        case MediaHelper.TYPE_IMAGE:
+        case Media.TYPE_IMAGE:
         default:
           return 'fa-picture-o'
       }
@@ -86,10 +86,10 @@ export default {
       const vue = this
 
       switch (vue.slide.type) {
-        case MediaHelper.TYPE_VIMEO:
-        case MediaHelper.TYPE_YOUTUBE:
+        case Media.TYPE_VIMEO:
+        case Media.TYPE_YOUTUBE:
           return 'nonprofit-your-page-media-videos-edit'
-        case MediaHelper.TYPE_IMAGE:
+        case Media.TYPE_IMAGE:
         default:
           return 'nonprofit-your-page-media-photos-edit'
       }
@@ -98,10 +98,10 @@ export default {
       const vue = this
 
       switch (vue.slide.type) {
-        case MediaHelper.TYPE_VIMEO:
-        case MediaHelper.TYPE_YOUTUBE:
+        case Media.TYPE_VIMEO:
+        case Media.TYPE_YOUTUBE:
           return vue.slide.caption || vue.slide.url
-        case MediaHelper.TYPE_IMAGE:
+        case Media.TYPE_IMAGE:
         default:
           return vue.slide.caption || vue.file.filename
       }
@@ -110,10 +110,10 @@ export default {
       const vue = this
 
       switch (vue.slide.type) {
-        case MediaHelper.TYPE_VIMEO:
-        case MediaHelper.TYPE_YOUTUBE:
+        case Media.TYPE_VIMEO:
+        case Media.TYPE_YOUTUBE:
           return vue.slide.thumbnail
-        case MediaHelper.TYPE_IMAGE:
+        case Media.TYPE_IMAGE:
         default:
           return vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.file.path
       }
