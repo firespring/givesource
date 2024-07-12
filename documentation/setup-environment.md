@@ -3,27 +3,20 @@
 
 # Setup Environment
 ## Preparing for Local Development and Deployment
-##### docker
-* Install [instructions](https://docs.docker.com/desktop/)
-
-##### git
-* Install [instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* Docker install [instructions](https://docs.docker.com/desktop/)
+* Git install [instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
     * If you are upgrading `git`, you may need to close and re-open your terminal window for the upgrade to take effect
 * Clone the givesource codebase into the current directory
 ```
 git clone git@github.com:firespring/givesource.git
 ```
-
-##### ruby
-* Install [instructions](https://rvm.io/rvm/install)
+* Ruby install [instructions](https://rvm.io/rvm/install)
 ```
 curl -sSL https://get.rvm.io | bash
 rvm install 3.2.2
 rvm --default use 3.2.2
 ```
-
-##### aws
-* Install [instructions](https://aws.amazon.com/cli/)
+* AWS Cli install [instructions](https://aws.amazon.com/cli/)
 
 
 
