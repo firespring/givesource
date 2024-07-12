@@ -146,9 +146,9 @@ namespace APP_IDENTIFIER do
   end
 end
 
-#Dev::Template::Application::Config.new('cicd', '/Firespring/CiCd')
-#/global/database
-#/recaptcha/secure
+Dev::Template::Application::Config.new('cicd', '/Firespring/CiCd')
+Dev::Template::Application::Config.new('global', '/global/database')
+Dev::Template::Application::Config.new('recaptcha', '/recaptcha/secure')
 
 # Add some custom pre/post tasks
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do

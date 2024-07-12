@@ -38,14 +38,6 @@ Resources:
       AliasName: alias/firespring/cicd/default
       TargetKeyId: !GetAtt key.Arn
 
-  gihubOauthTokenParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: Parameter for the readonly github oauth token used to install npm/composer packages
-      Name: /Firespring/CiCd/ReadonlyGithubOauthToken
-      Type: String
-      Value: CHANGEME
-
   cicdArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -186,16 +178,6 @@ Outputs:
     Value: !GetAtt cicdArtifactsBucket.Arn
     Export:
       Name: fdp-cicd-artifacts-bucket-arn
-
-  readonlyGithubOauthTokenParameter:
-    Value: !Ref gihubOauthTokenParameter
-    Export:
-      Name: fdp-cicd-readonly-github-oauth-token-parameter
-
-  readonlyGithubOauthTokenParameterArn:
-    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${gihubOauthTokenParameter}
-    Export:
-      Name: fdp-cicd-readonly-github-oauth-token-parameter-arn
 
   codestarConnection:
     Value: !GetAtt codestarConnection.ConnectionArn
