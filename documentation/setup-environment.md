@@ -2,8 +2,7 @@
 1. Follow the [AWS-Console](aws-console.md) wiki to access the proper AWS accounts.
 
 # Setup Environment
-## Preparing for Local Development and Deployment
-### Required Software
+## Required Software
 * Docker install [instructions](https://docs.docker.com/desktop/)
 * Git install [instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
     * If you are upgrading `git`, you may need to close and re-open your terminal window for the upgrade to take effect
@@ -25,11 +24,11 @@ rvm --default use 3.2.2
   * Create a new stack using the `cloudformation/user-s3.yml` template
   * Set the `BucketIdentifier` to something meaningful to you
 
-### Configuration
+## Configuration
 * Create the app `.env` file
   * Copy the `.env.example` file into place and then update the file for your local settings
   * Update the NODE_APP_INSTANCE to whatever name will be used for your config file (this is up to you)
-  * For Firespring, the file should look like this
+  * For Firespring Engineers, the file should look like this
 ```
 NODE_ENV=development
 NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
