@@ -19,10 +19,6 @@ Parameters:
     ConstraintDescription: Value must be between 1 and 100
     Default: 7
 
-Conditions:
-  IsProduction: !Equals [ !Ref 'AWS::AccountId', 435196416497 ]
-  NotProduction: !Not [ !Equals [ !Ref 'AWS::AccountId', 435196416497 ] ]
-
 #==================================================
 # Resources
 #==================================================

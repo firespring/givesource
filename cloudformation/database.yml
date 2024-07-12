@@ -23,9 +23,6 @@ Metadata:
       - Label:
           default: RDS Settings
         Parameters:
-          - RdsInstanceClass
-          - RdsAllocatedStorage
-          - RdsReplicaInstanceClass
           - MinCapacity
           - MaxCapacity
 

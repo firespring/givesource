@@ -1,18 +1,5 @@
 ---
 Description: Creates the shared resources for cicd
-Parameters:
-  DaysToRetainUntaggedContainerImages:
-    Description: The number days to retain untagged container images before expiring
-    Type: Number
-    MinValue: 1
-    MaxValue: 100
-    ConstraintDescription: Value must be between 1 and 100
-    Default: 7
-
-  CloudformationS3Bucket:
-    Type: String
-    Description: The name of the cloudformation s3 bucket to use
-
 Resources:
   key:
     DeletionPolicy: Retain
@@ -56,30 +43,6 @@ Resources:
     Properties:
       Description: Parameter for the readonly github oauth token used to install npm/composer packages
       Name: /Firespring/CiCd/ReadonlyGithubOauthToken
-      Type: String
-      Value: CHANGEME
-
-  snykApiTokenParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: Parameter for the snyk api auth token
-      Name: /Firespring/CiCd/SnykApiToken
-      Type: String
-      Value: CHANGEME
-
-  dockerUsernameParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: Parameter for the docker username
-      Name: /Firespring/CiCd/DockerUsername
-      Type: String
-      Value: dockerboxcicdmachine
-
-  dockerPasswordParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: Parameter for the docker password
-      Name: /Firespring/CiCd/DockerPassword
       Type: String
       Value: CHANGEME
 
@@ -248,30 +211,6 @@ Outputs:
     Value: !GetAtt pipelineStateChangeLogGroup.Arn
     Export:
       Name: fdp-cicd-pipeline-state-change-log-group-arn
-
-  # TODO: REMOVE
-  dockerUsernameParameter:
-    Value: !Ref dockerUsernameParameter
-    Export:
-      Name: fdp-cicd-docker-username-parameter
-
-  # TODO: REMOVE
-  dockerUsernameParameterArn:
-    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerUsernameParameter}
-    Export:
-      Name: fdp-cicd-docker-username-parameter-arn
-
-  # TODO: REMOVE
-  dockerPasswordParameter:
-    Value: !Ref dockerPasswordParameter
-    Export:
-      Name: fdp-cicd-docker-password-parameter
-
-  # TODO: REMOVE
-  dockerPasswordParameterArn:
-    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${dockerPasswordParameter}
-    Export:
-      Name: fdp-cicd-docker-password-parameter-arn
 
   BaseCodebuildManagedPolicyArn:
     Value: !Ref BaseCodebuildManagedPolicy
