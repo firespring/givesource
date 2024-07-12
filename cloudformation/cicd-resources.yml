@@ -1,5 +1,5 @@
 ---
-Description: Creates the shared resources for cicd
+Description: Creates the shared resources for cicd pipelines
 Resources:
   key:
     DeletionPolicy: Retain
