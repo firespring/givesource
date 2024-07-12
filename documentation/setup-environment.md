@@ -3,22 +3,32 @@
 
 # Setup Environment
 ## Preparing for Local Development and Deployment
-1. [NodeJS](https://nodejs.org/en/) (LTS)
-2. [AWS CLI](https://aws.amazon.com/cli/)
-3. A deploy user setup on the AWS account you will be developing / deploying on. This user will need the ability to configure resources for:
-	- API Gateway
-	- CloudFront
-	- CloudFormation
-	- CloudWatch
-	- Cognito
-	- DynamoDb
-	- Lambda
-	- Lambda@Edge
-	- S3
-	- SES
-	- SNS
-	- SSM Parameter Store
-4. A profile setup on your local machine for AWS CLI with that deploy user's api keys.
+##### docker
+* Install [instructions](https://docs.docker.com/desktop/)
+
+##### git
+* Install [instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * If you are upgrading `git`, you may need to close and re-open your terminal window for the upgrade to take effect
+* Clone the givesource codebase into the current directory
+```
+git clone git@github.com:firespring/givesource.git
+```
+
+##### ruby
+* Install [instructions](https://rvm.io/rvm/install)
+```
+curl -sSL https://get.rvm.io | bash
+rvm install 3.2.2
+rvm --default use 3.2.2
+```
+
+##### aws
+* Install [instructions](https://aws.amazon.com/cli/)
+
+
+
+
+
 
 ## Preparing AWS Release Buckets
 1. Create the AWS S3 release buckets on the AWS account you'd like to develop/deploy on:
