@@ -216,11 +216,6 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
-                Resource:
-                  - !ImportValue fdp-cicd-readonly-github-oauth-token-parameter-arn
-              - Effect: Allow
-                Action:
                   - ecr:GetDownloadUrlForLayer
                   - ecr:BatchGetImage
                   - ecr:BatchCheckLayerAvailability
@@ -277,9 +272,6 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
-            Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
-            Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
-          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -324,9 +316,6 @@ Resources:
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
@@ -359,11 +348,6 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              - Effect: Allow
-                Action:
-                  - ssm:GetParameter
-                Resource:
-                  - !ImportValue fdp-cicd-readonly-github-oauth-token-parameter-arn
               - Effect: Allow
                 Action:
                   - ecr:GetDownloadUrlForLayer
@@ -423,9 +407,6 @@ Resources:
             Name: BASE_REPO
             Value: !Sub ${BaseRepoRegistryId.Value}.dkr.ecr.${BaseRepoRegion.Value}.amazonaws.com/firespring/base
           - Type: PLAINTEXT
-            Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
-            Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
-          - Type: PLAINTEXT
             Name: ECR_REGION
             Value: !GetAtt EcrRegion.Value
           - Type: PLAINTEXT
@@ -476,9 +457,6 @@ Resources:
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
@@ -605,9 +583,6 @@ Resources:
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
