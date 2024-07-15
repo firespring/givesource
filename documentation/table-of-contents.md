@@ -27,7 +27,6 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 ### Managing a Givesource Instance
 1. [Updating-a-Stack](updating-a-stack.md)
 1. [Deleting-a-Stack](deleting-a-stack.md)
-1. [Resource-Management](resource-management.md)
 1. [Database-Migrations](database-migrations.md)
 
 ### Application

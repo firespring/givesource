@@ -1,4 +1,5 @@
 # Database Migrations
+
 1. All migrations that are present when a stack is created will automatically be run.
 1. Migrations can also be run from AWS Lambda.
    1. Find the `[STACK-NAME]-MigrateDatabase` function and click on it

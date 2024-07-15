@@ -82,14 +82,6 @@ Frontend development requires a stack on AWS, as there is no way to mock the API
 	npm run lambda:deploy
 	```
 
-## AWS Profile
-If your default AWS CLI profile is not the AWS account you want to release to, you will need to prepend the AWS_PROFILE environment varable to the commands
-that interact with AWS, in this case:
-```
-AWS_PROFILE=givesource-dev npm run frontend:deploy
-AWS_PROFILE=givesource-dev npm run lambda:deploy
-```
-
 ## Troubleshooting changes that don't appear to be taking affect and some things to try
 
 ### Navigate to AWS API Gateway

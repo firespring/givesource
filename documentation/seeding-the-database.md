@@ -1,6 +1,8 @@
 # Prerequisites
-1. Follow the [Development](development.md) wiki to configure your development stack.
-2. You will need to be connected to the [VPN](https://github.com/firespring/engineering-devops/blob/master/documentation/vpn.md) while running seed.
+* Follow the [Development](development.md) wiki to configure your development stack.
+* You will need to be able to connect to the subnet which contains the givesource database you wish to seed
+  * The way Firespring accomplishes this it by connecting to the [VPN](https://github.com/firespring/engineering-devops/blob/master/documentation/vpn.md)
+  * There are several additional ways to accomplish this based off how your AWS Account has been configured - discuss these with your AWS Solutions Architect if you require a different one
 
 # Seeding the Database
 The database seeds includes `donations`, `messages` and `nonprofits`. Under-the-hood the seeders use the faker library.
@@ -11,10 +13,3 @@ The database seeds includes `donations`, `messages` and `nonprofits`. Under-the-
 	npm run lambda:seed
 	```
 3. Follow the prompts from the command.
-
-## AWS Profile
-If your default AWS CLI profile is not the AWS account you want to release to, you will need to prepend the AWS_PROFILE environment varable to the commands
-that interact with AWS, in this case:
-```
-AWS_PROFILE=givesource-dev npm run lambda:seed
-```
