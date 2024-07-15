@@ -82,12 +82,12 @@ A configuration template can be found at `config/default.json`. This file contai
 ```
 NODE_ENV=development
 NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
-ORG_ACCOUNT_NAME="FDP Root"
-ORG_ACCOUNT_ID="020401666882"
+ORG_ACCOUNT_NAME="Root Org"
+ORG_ACCOUNT_ID="123123123123"
 PRD_ACCOUNT_NAME="Givesource Prod"
-PRD_ACCOUNT_ID="016226103026"
+PRD_ACCOUNT_ID="456456456456"
 DEV_ACCOUNT_NAME="Givesource Dev"
-DEV_ACCOUNT_ID="948629139753"
+DEV_ACCOUNT_ID="789789789789"
 ```
 * To switch between the stacks you are managing, update the `.env` file:  
 Example - manage the `production-NORFOLK2019.json` stack:
