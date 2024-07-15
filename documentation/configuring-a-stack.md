@@ -1,62 +1,64 @@
 # Prerequisites
 1. Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
 
-# Configuring a Stack
+## Configuring a Stack
 A configuration template can be found at `config/default.json`. This file contains all the details needed to release and deploy a Givesource stack.
 
-1. Create a copy of `config/default.json` with the following naming convention:
-	- Prefix: `default`, `development` or `production`. This prefix correlates to the NPM mode that should be used when deploying the stack. Setting
-	this value to `default` will work as a catch-all mode.
-	- Followed by: `-<Stack Name>`
-	- It should look something like: `default-DEMO-STACK.json`, `production-NORFOLK2020.json`, `development-CJ-TEST-STACK.json`
+1. Copy the `config/default.json` to `<PREFIX>-<YOUR_CONFIG_NAME>.json`
+	- Prefix: `default`, `development` or `production`. This prefix correlates to the NPM mode that should be used when deploying the stack. Setting this value to `default` will work as a catch-all mode.
+	- Followed by: `-<YOUR_CONFIG_NAME>`
+	- It should look something like: `default-DEMO.json`, `production-LANCASTER-2024.json`, `development-JOHN-TEST.json`
 	- The file should be saved in the `config/` directory in the root of the project.
+  - The bucket names in your config should be set `givesource-` followed by whatever you used as your `BucketIdentifier` when you prepared your release bucket
+
 2. Example configurations:
-	- Development stack `default-CJ-TEST` (no domain):
+	- Development stack `default-JOHN-TEST` (no domain):
 	```
 	{
     	"app": {
-    		"ADMIN_EMAIL": "cj.ohara@firespring.com",
+    		"ADMIN_EMAIL": "john.doe@gmail.com",
     		"ADMIN_PAGES_CNAMES": [],
     		"ADMIN_PAGES_SSL_CERTIFICATE_ARN": "",
     		"PUBLIC_PAGES_CNAMES": [],
     		"PUBLIC_PAGES_SSL_CERTIFICATE_ARN": ""
     	},
     	"stack": {
-    		"AWS_REGION": "us-west-2",
-    		"AWS_STACK_NAME": "CJ-TEST"
+    		"AWS_REGION": "us-east-1",
+    		"AWS_STACK_NAME": "JOHN-TEST"
     	},
     	"release": {
-    		"AWS_RELEASE_BUCKET": "givesource-cj",
-    		"AWS_RELEASE_BUCKET_REGION": "us-west-2",
-    		"AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-cj",
-    		"AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS": ["us-east-1", "us-west-2"]
+    		"AWS_RELEASE_BUCKET": "givesource-john",
+    		"AWS_RELEASE_BUCKET_REGION": "us-east-1",
+    		"AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-john",
+    		"AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS": ["us-east-1"]
     	}
     }
 	```
-	- Production stack `production-G2CD2020.json` (with domain):
+
+	- Production stack `production-LANCASTER-2024.json` (with domain):
 	```
 	{
     	"app": {
-    		"ADMIN_EMAIL": "cj.ohara@firespring.com",
-    		"ADMIN_PAGES_CNAMES": ["manage.givetocityday.org", "www.manage.givetocityday.org"],
-    		"ADMIN_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:016226103026:certificate/11111111-2222-3333-4444-555555555555",
-    		"PUBLIC_PAGES_CNAMES": ["givetocityday.org", "www.givetocityday.org"],
-    		"PUBLIC_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:016226103026:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    		"ADMIN_EMAIL": "admin@gmail.com",
+    		"ADMIN_PAGES_CNAMES": ["manage.lancastergive.org", "www.manage.lancastergive.org"],
+    		"ADMIN_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:000000000000:certificate/11111111-2222-3333-4444-555555555555",
+    		"PUBLIC_PAGES_CNAMES": ["lancastergive.org", "www.lancastergive.org"],
+    		"PUBLIC_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:000000000000:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
     	},
     	"stack": {
     		"AWS_REGION": "us-east-1",
-    		"AWS_STACK_NAME": "G2CD2020"
+    		"AWS_STACK_NAME": "LANCASTER-2024"
     	},
     	"release": {
-    		"AWS_RELEASE_BUCKET": "givesource-plus",
+    		"AWS_RELEASE_BUCKET": "givesource-prod",
     		"AWS_RELEASE_BUCKET_REGION": "us-east-1",
-    		"AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-plus",
-    		"AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS": ["us-east-1", "us-west-2"]
+    		"AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-prod",
+    		"AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS": ["us-east-1"]
     	}
     }
 	```
-3. Parameters:
 
+3. Parameters:
 	| Parameter | Required | Description |
 	| --------- | -------- | ----------- |
 	| ADMIN_EMAIL | required | The email address of the initial super-admin user. This person will be contacted when the stack is finished creating. |
@@ -73,17 +75,23 @@ A configuration template can be found at `config/default.json`. This file contai
 
 4. See the [Setup-Environment](setup-environment.md) wiki for more information about the release buckets.
 
-# Configure the Local Environment
-To switch between the stacks you are managing, update the `.env` file:  
-
+## Configure the Local Environment
+* Copy the `.env.example` file to `.env`
+  * Update the NODE_APP_INSTANCE to whatever name you used for your config file above
+* For Firespring Engineers, the file should look like this
+```
+NODE_ENV=development
+NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
+ORG_ACCOUNT_NAME="FDP Root"
+ORG_ACCOUNT_ID="020401666882"
+PRD_ACCOUNT_NAME="Givesource Prod"
+PRD_ACCOUNT_ID="016226103026"
+DEV_ACCOUNT_NAME="Givesource Dev"
+DEV_ACCOUNT_ID="948629139753"
+```
+* To switch between the stacks you are managing, update the `.env` file:  
 Example - manage the `production-NORFOLK2019.json` stack:
 ```
 NODE_ENV=production
 NODE_APP_INSTANCE=NORFOLK2019
 ```
-
-Example - manage the `development-CJ-TEST.json` stack:
-```
-NODE_ENV=development
-NODE_APP_INSTANCE=CJ-TEST
-``
