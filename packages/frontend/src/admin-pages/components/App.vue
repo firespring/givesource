@@ -23,6 +23,7 @@
 
 <script>
 import ComponentModals from './modals/Modals.vue'
+import jQuery from 'jquery'
 
 export default {
   components: {

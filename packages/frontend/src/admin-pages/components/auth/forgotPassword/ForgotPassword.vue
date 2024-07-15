@@ -22,7 +22,7 @@
           <header class="c-page-section__header u-justify-center">
             <a href="#"><img
               alt="Givesource Logo"
-              src="../../../assets/img/logo-givesource.png"
+              src="/img/logo-givesource.png"
               class="logo"
             ></a>
           </header>

@@ -15,7 +15,7 @@
  */
 
 import * as _ from 'lodash'
-import * as User from './user'
+import { getCognitoUser } from './user'
 import axios from 'axios'
 import store from './../store'
 
@@ -125,7 +125,7 @@ Request.prototype.buildQuery = function (query) {
  */
 Request.prototype.buildHeaders = function (headers) {
   return new Promise(function (resolve, reject) {
-    const cognitoUser = User.getCognitoUser()
+    const cognitoUser = getCognitoUser()
     if (cognitoUser) {
       cognitoUser.getSession(function (err, session) {
         if (err) {

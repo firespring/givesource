@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { createRequire } from 'node:module'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import CloudFormation from './aws/cloudFormation.js'
+const require = createRequire(import.meta.url)
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const dotenv = require('dotenv')
-const path = require('path')
 dotenv.config({ path: path.resolve(__dirname, './../../../.env') })
 process.env.NODE_CONFIG_DIR = path.resolve(__dirname, './../../../config/')
 
 const _ = require('lodash')
 const config = require('config')
-const CloudFormation = require('./aws/cloudFormation')
 const fs = require('fs')
 
 /**
@@ -81,6 +87,14 @@ const writeConfig = (filename, data) => {
   const filePath = path.resolve(__dirname, './../config/' + filename)
   fs.writeFileSync(filePath, jsonData)
   console.log(filename + ' created')
+  if (filename === 'settings.json') {
+    const publicSrcPath = path.resolve(__dirname, './../src/public-pages/' + filename)
+    fs.writeFileSync(publicSrcPath, jsonData)
+    console.log(filename + ' created in public')
+    const adminSrcPath = path.resolve(__dirname, './../src/admin-pages/' + filename)
+    fs.writeFileSync(adminSrcPath, jsonData)
+    console.log(filename + ' created in admin')
+  }
 }
 
 getSettings().then(data => {

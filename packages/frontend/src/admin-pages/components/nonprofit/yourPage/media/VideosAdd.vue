@@ -140,7 +140,7 @@
 </template>
 
 <script>
-const MediaHelper = require('./../../../../helpers/media')
+import Media from './../../../../helpers/media'
 
 export default {
   beforeRouteEnter: function (to, from, next) {
@@ -230,7 +230,7 @@ export default {
           url: true,
           label: 'Video URL',
           format: {
-            pattern: MediaHelper.VIDEO_REGEX,
+            pattern: Media.VIDEO_REGEX,
             message: 'must be a Youtube or Vimeo URL.'
           }
         },
@@ -259,7 +259,7 @@ export default {
     addNonprofitSlide: function (action) {
       const vue = this
 
-      MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
+      Media.getVideoData(vue.formData.url).then(function (videoData) {
         return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
           caption: vue.formData.caption,
           embedUrl: videoData.embedUrl,

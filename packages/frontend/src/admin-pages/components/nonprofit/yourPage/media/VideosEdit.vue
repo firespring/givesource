@@ -142,8 +142,7 @@
 
 <script>
 import ComponentVideo from './../../../media/Video.vue'
-
-const MediaHelper = require('./../../../../helpers/media')
+import Media from './../../../../helpers/media'
 
 export default {
   components: {
@@ -225,7 +224,7 @@ export default {
           url: true,
           label: 'Video URL',
           format: {
-            pattern: MediaHelper.VIDEO_REGEX,
+            pattern: Media.VIDEO_REGEX,
             message: 'must be a Youtube or Vimeo URL.'
           }
         },
@@ -259,7 +258,7 @@ export default {
         return
       }
 
-      MediaHelper.getVideoData(vue.formData.url).then(function (videoData) {
+      Media.getVideoData(vue.formData.url).then(function (videoData) {
         if (params.hasOwnProperty('url')) {
           params.embedUrl = videoData.embedUrl
           params.externalId = videoData.id

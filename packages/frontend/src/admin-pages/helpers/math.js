@@ -20,6 +20,8 @@
  * @param {Number} number
  * @return {string}
  */
-exports.precise = function (number) {
+const precise = (number) => {
   return (parseFloat(number).toPrecision(12))
 }
+
+export default precise
