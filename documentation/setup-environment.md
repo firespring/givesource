@@ -1,5 +1,5 @@
 # Prerequisites
-* Follow the [AWS-Console](aws-account.md#console) wiki to access the proper AWS accounts.
+* Follow the [AWS-Console](aws-account.md#aws-console) wiki to access the proper AWS accounts.
 
 # Setup Environment
 ## Required Software

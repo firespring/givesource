@@ -1,7 +1,7 @@
 # Resource Management
 The only resources that should be managed are DynamoDB tables. 
 
-1. Access the [AWS-Console](aws-account.md#console).
+1. Access the [AWS-Console](aws-account.md#aws-console).
 2. Navigate to AWS DynamoDB.
 3. Select the table you want to manage auto-scaling for and Select Capacity.
 4. Update the read and write capacity scaling.

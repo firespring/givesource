@@ -1,6 +1,8 @@
 # Prerequisites
-1. Follow the [Setup Environment](setup-environment.md) wiki to prepare for releasing.
-2. Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure the AWS settings needed for release.
+* Follow the [Setup Environment](setup-environment.md) wiki to prepare for releasing.
+* Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure the AWS settings needed for release.
+* Log in using these [instructions](aws-account.md#aws-command-line)
+* Connect to your local container using [rake app:sh](local-environment.md)
 
 # Releasing
 ## Versions
@@ -20,7 +22,6 @@ A release consists of two steps: `build` and `release`. Each of the packages lis
 
 **CloudFormation Templates**
 ```
-cd givesource
 npm run cloudformation:install
 npm run cloudformation:release
 OR
@@ -29,7 +30,6 @@ npm run cloudformation:release:force // to override the current release
 
 **Frontend Assets**
 ```
-cd givesource
 npm run frontend:install
 npm run frontend:release
 OR
@@ -38,7 +38,6 @@ npm run frontend:release:force // to override the current release
 
 **Lambda Functions**
 ```
-cd givesource
 npm run lambd:install
 npm run lambda:release
 OR
@@ -47,19 +46,8 @@ npm run lambda:release:force // to override the current release
 
 **All Packages**
 ```
-cd givesourcxe
 npm install
 npm run release
 OR
 npm run release:force // to override the current release for all packages
-```
-
-## AWS Profile
-If your default AWS CLI profile is not the AWS account you want to release to, you will need to prepend the AWS_PROFILE environment varable to the commands
-that interact with AWS, in this case:
-```
-AWS_PROFILE=givesource-dev npm run cloudformation:release
-AWS_PROFILE=givesource-dev npm run frontend:release
-AWS_PROFILE=givesource-dev npm run lambda:release
-AWS_PROFILE=givesource-dev npm run release
 ```
