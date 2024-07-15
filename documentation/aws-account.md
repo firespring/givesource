@@ -10,6 +10,10 @@
 
 # AWS Command Line
 * Your local AWS credentials are by default managed by the Firespring dev command library
-* In a terminal
-
-* If your organization does not use a separate AWS account for users, then simply log in to the account in which your Givesource instance will reside
+  * Log in to the aws console in a web browser using the credentials you set up previously
+  * Navigate to the IAM dashboard for your user and generate an AWS Access Key/Secret
+  * Run `rake aws:configure:default:credentials` and enter the key information from the above step
+  * Run `rake aws:login`
+    * Answer any questions you are presented
+    * Enter your 2FA code when prompted
+* If your organization does not use a separate AWS account for users, simply ensure that your AWS credentials are exported as env variables and the rake scripts will read them from your environment

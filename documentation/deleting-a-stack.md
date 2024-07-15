@@ -1,6 +1,6 @@
 # Deleting a Stack
 Givesource includes a delete stack command, but I recommend doing it manually from the AWS web console.  
-1. Access the [AWS-Console](aws-console.md).
+1. Access the [AWS-Console](aws-account.md#console).
 1. Snapshot the Database in RDS
 1. Navigate to AWS S3
    1. All files in S3 buckets for the stack we are deleting **must** be deleted manually for stack deletion to succeed.
