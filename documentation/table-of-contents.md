@@ -34,7 +34,6 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 ### Other Resources
 1. [Event-Timeline](event-timeline.md)
-1. [Addons-Stack](addons-stack.md)
 1. [Domains](domains.md)
 1. [Reporting](reporting.md)
 1. [Refunds-and-Reallocations](refunds-and-reallocations.md)

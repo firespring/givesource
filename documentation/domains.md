@@ -23,10 +23,3 @@
 The CloudFront distribution url can be used to access a stack regardless of the domain settings.  
 
 **If there is no entry for Route53, see Craig to help set one up.**
-
-## AWS Profile
-If your default AWS CLI profile is not the AWS account you want to release to, you will need to prepend the AWS_PROFILE environment varable to the commands
-that interact with AWS, in this case:
-```
-AWS_PROFILE=givesource-dev npm run lambda:setting
-```
