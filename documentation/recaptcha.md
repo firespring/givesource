@@ -1,11 +1,3 @@
-# Add recaptcha
-### If givesource-vpc already exists do below, if not ignore
-1. Locate `givesource-vpc` stack and select it.
-2. Select `Update` -> `Replace Current template` -> `Upload a template file`
-3. Select `vpc.yml` -> Click `Next` until `Review` step
-4. Confirm the changes exist in `Change set preview`
-5. Update
-
 # Update the Parameter Store Secrety key
 1. Login to AWS via cli
 2. run

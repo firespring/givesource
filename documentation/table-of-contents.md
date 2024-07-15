@@ -5,13 +5,7 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 
 ## Table of Contents
 ### Global configurations
-1. [Givesource-VPC](givesource-vpc.md)
-1. givesource-dev-vpn
-1. givesource-dev-vpn-access-rules
-1. cicd-resources
-1. ecr
-1. database
-1. waf
+1. [Givesource-Stacks](givesource-stacks.md)
 1. [Recaptcha](recaptcha.md)
 
 ### Preparation for Development and Deployment
