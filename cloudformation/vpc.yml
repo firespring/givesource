@@ -227,14 +227,6 @@ Resources:
       AliasName: "alias/global/recaptcha/secure"
       TargetKeyId: !Ref RecaptchaKey
 
-  RecaptchaKeyIdParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: The recaptcha encryption key id
-      Name: /recaptcha/kms/id
-      Type: String
-      Value: !Ref RecaptchaKey
-
   internetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
