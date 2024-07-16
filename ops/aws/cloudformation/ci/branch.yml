@@ -7,7 +7,8 @@ Parameters:
     Type: String
 
 Conditions:
-  IsDevelop: !Equals [ !Ref 'BranchName', 'develop' ]
+  IsMasterOrDevelop: !Or [!Equals [!Ref 'BranchName', 'master'], !Equals [!Ref 'BranchName', 'develop']]
+  IsMaster: !Equals [ !Ref 'BranchName', 'master' ]
 
 Resources:
   BranchIdentifier:
@@ -16,7 +17,7 @@ Resources:
       Description: The identifier only part of the branch name
       Name: !Sub /Firespring/CiCd/Givesource/${AWS::StackName}/BranchIdentifier
       Type: String
-      Value: !If [ IsDevelop, !Ref BranchName, !Join [ '_', !Split [ '-', !Select [ 1, !Split [ '/', !Ref BranchName ] ] ] ] ]
+      Value: !If [ IsMasterOrDevelop, !Ref BranchName, !Join [ '_', !Split [ '-', !Select [ 1, !Split [ '/', !Ref BranchName ] ] ] ] ]
 
   EcrRegistryId:
     Type: AWS::SSM::Parameter
@@ -196,7 +197,7 @@ Resources:
           Value: Givesource
         - Key: Branch
           Value: !GetAtt BranchIdentifier.Value
-  #
+
   BuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -709,3 +710,73 @@ Resources:
               commands:
                 # run security audit
                 - bundle exec rake app:audit
+
+  ScheduledPipelineExecutionRole:
+    Condition: IsMaster
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: CodePipelineEventRuleRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codepipeline:StartPipelineExecution
+                Resource:
+                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+
+  PipelineExecutionSchedule:
+    Condition: IsMaster
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Trigger automated master Givesource pipeline execution
+      FlexibleTimeWindow:
+        Mode: 'OFF'
+      GroupName: default
+      KmsKeyArn: !ImportValue fdp-cicd-key-arn
+      Name: !Sub ${AWS::StackName}-PipelineExecution
+      ScheduleExpression: cron(0 10 ? * MON *)
+      ScheduleExpressionTimezone: America/Chicago
+      State: 'ENABLED'
+      Target:
+        Arn: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+        RoleArn: !GetAtt ScheduledPipelineExecutionRole.Arn
+
+  PipelineFailedMetricFilter:
+    Condition: IsMaster
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: !Sub '{($.detail.pipeline = "${Pipeline}") && ($.detail.state = "FAILED")}'
+      LogGroupName: !ImportValue fdp-cicd-pipeline-state-change-log-group
+      MetricTransformations:
+        - DefaultValue: 0
+          MetricName: !Sub ${Pipeline}-Failed
+          MetricNamespace: !Sub CodePipeline/StateChange
+          MetricValue: 1
+
+  PipelineFailedAlarm:
+    Condition: IsMaster
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmActions:
+        - !ImportValue notifications-devops-pager-next-business-day-sns-topic
+      AlarmDescription: Givesource Master Pipeline Execution Failed
+      AlarmName: !Sub ${Pipeline}-Execution-Failed
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      MetricName: !Sub ${Pipeline}-Failed
+      Namespace: !Sub CodePipeline/StateChange
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+      TreatMissingData: notBreaching
