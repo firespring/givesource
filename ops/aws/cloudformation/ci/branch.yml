@@ -243,7 +243,7 @@ Resources:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
               - Effect: Allow
                 Action:
-                  - ssm:GetParameters
+                  - ssm:GetParameter*
                 Resource:
                   - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
@@ -424,7 +424,7 @@ Resources:
                   - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${AWS::StackName}-*
               - Effect: Allow
                 Action:
-                  - ssm:GetParameters
+                  - ssm:GetParameter*
                 Resource:
                   - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
@@ -574,7 +574,7 @@ Resources:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
               - Effect: Allow
                 Action:
-                  - ssm:GetParameters
+                  - ssm:GetParameter*
                 Resource:
                   - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
@@ -725,7 +725,7 @@ Resources:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
+                  - ssm:GetParameter*
                 Resource:
                   - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
                   - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
