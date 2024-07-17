@@ -334,7 +334,7 @@ Resources:
 
                 # Print environment
                 - env | sort
-          
+
                 # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
@@ -357,7 +357,7 @@ Resources:
             build:
               commands:
                 - bundle exec rake app:build
-          
+
               finally:
                 - |
                     if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
@@ -411,14 +411,22 @@ Resources:
                   - ecr:UploadLayerPart
                   - ecr:CompleteLayerUpload
                   - ecr:PutImage
+                Resource:
+                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
                   - codebuild:BatchPutCodeCoverages
                 Resource:
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
                   - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${AWS::StackName}-*
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -468,6 +476,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -497,6 +508,9 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="BuildProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
 
@@ -511,11 +525,26 @@ Resources:
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run test suite
                 - bundle exec rake app:test
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   LintServiceRole:
     Type: AWS::IAM::Role
@@ -543,6 +572,11 @@ Resources:
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -592,6 +626,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -623,6 +660,9 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="LintProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
 
@@ -637,11 +677,26 @@ Resources:
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run php linting
                 - bundle exec rake app:lint
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   AuditServiceRole:
     Type: AWS::IAM::Role
@@ -660,11 +715,7 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              - Effect: Allow
-                Action:
-                  - ssm:GetParameter
                 Resource:
-                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
               - Effect: Allow
                 Action:
                   - ecr:GetDownloadUrlForLayer
@@ -673,6 +724,12 @@ Resources:
                 Resource:
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource:
+                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -713,6 +770,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -735,27 +795,46 @@ Resources:
               USERNAME: codebuild
               DEV_VOLUMES: false
               BRANCH_TAGS: false
-          
+
           phases:
             install:
               commands:
+                - export CONTEXT="AuditProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print env
                 - env | sort
-          
+
                 # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
-          
+
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
-          
+
                 # setup rake
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
-          
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run security audit
                 - bundle exec rake app:audit
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   ScheduledPipelineExecutionRole:
     Condition: IsMaster
