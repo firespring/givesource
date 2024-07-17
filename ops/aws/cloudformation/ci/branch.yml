@@ -99,6 +99,7 @@ Resources:
         - Name: Source
           Actions:
             - Name: !Sub Givesource_${BranchIdentifier.Value}
+              Namespace: GivesourceVariables
               ActionTypeId:
                 Category: Source
                 Owner: AWS
@@ -126,6 +127,8 @@ Resources:
                 PrimarySource: givesource
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
@@ -147,6 +150,8 @@ Resources:
                 PrimarySource: givesource
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
@@ -165,6 +170,8 @@ Resources:
                 ProjectName: !Ref LintProject
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"OPTS","value":"-- -f junit -o results.junit.xml","type":"PLAINTEXT"},
@@ -187,6 +194,8 @@ Resources:
                 ProjectName: !Ref AuditProject
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
@@ -232,6 +241,11 @@ Resources:
                   - ecr:PutImage
                 Resource:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -281,6 +295,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -296,6 +313,8 @@ Resources:
           env:
             shell: bash
             variables:
+              REPOSITORY: unknown
+              COMMIT_ID: unknown
               SERVICE_NAME: unknown
               ECR_REGION: unknown
               ECR_REGISTRY_ID: unkonwn
@@ -310,6 +329,9 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="BuildProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
           
@@ -323,14 +345,38 @@ Resources:
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
-          
+                - bundle exec rake git:commit_status:pending
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 - bundle exec rake app:build
           
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             post_build:
               commands:
                 - bundle exec rake app:push
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   TestServiceRole:
     Type: AWS::IAM::Role

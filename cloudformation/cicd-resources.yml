@@ -38,6 +38,14 @@ Resources:
       AliasName: alias/firespring/cicd/default
       TargetKeyId: !GetAtt key.Arn
 
+  keyIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Contains the key used to encrypt/decrypt CiCd parameters
+      Name: /Firespring/CiCd/kms/id
+      Type: String
+      Value: !Ref key
+
   cicdArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -163,6 +171,14 @@ Resources:
             Resource:
               - '*'
 
+  statusGithubOauthTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for the github CI status oauth toke.
+      Name: /Firespring/CiCd/StatusGithubOauthToken
+      Type: String
+      Value: CHANGEME
+
 Outputs:
   keyArn:
     Value: !GetAtt key.Arn
@@ -198,3 +214,14 @@ Outputs:
     Value: !Ref BaseCodebuildManagedPolicy
     Export:
       Name: fdp-base-codebuild-managed-policy-arn
+
+  statusGithubOauthTokenParameter:
+    Value: !Ref statusGithubOauthTokenParameter
+    Export:
+      Name: fdp-cicd-status-github-oauth-token-parameter
+
+  statusGithubOauthTokenParameterArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${statusGithubOauthTokenParameter}
+    Export:
+      Name: fdp-cicd-status-github-oauth-token-parameter-arn
+
