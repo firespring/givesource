@@ -54,7 +54,8 @@ Frontend development requires a stack on AWS, as there is no way to mock the API
 	```
 3. Build the assets, watch the assets, and reload the browser when changes are detected:
 	```
-	npm run frontend:dev
+  npm run frontend:dev:admin
+  npm run frontend:dev:public
 	```
 4. You can access the frontend applications from:
 	- Management app: [http://localhost:3000](http://localhost:3000)
