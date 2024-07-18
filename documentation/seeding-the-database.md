@@ -9,7 +9,7 @@ The database seeds includes `donations`, `messages` and `nonprofits`. Under-the-
 
 1. Verify your `.env` file is pointed to the correct Givesource stack.
 2. Seed the database:
-	```
-	npm run lambda:seed
-	```
+  ```
+  npm run lambda:seed
+  ```
 3. Follow the prompts from the command.

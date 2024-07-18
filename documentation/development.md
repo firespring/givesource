@@ -10,9 +10,9 @@ Before you make any code changes, let's talk about what maybe unique with develo
 
 1. Making changes to the frontend applications are all done locally, and should work like any other app.
 2. Making changes to the API may require:
-	- Updating lambda functions on AWS
-	- Updating / Adding / Deleting API resources or methods (endpoints). Changes must be applied through CloudFormation.
-	- Updating a backing service like a DynamoDb table. Changes must be applied through CloudFormation.
+  - Updating lambda functions on AWS
+  - Updating / Adding / Deleting API resources or methods (endpoints). Changes must be applied through CloudFormation.
+  - Updating a backing service like a DynamoDb table. Changes must be applied through CloudFormation.
 
 _Understanding how Givesource uses AWS resources is just as important, if not more important, than understanding the codebase._
 
@@ -26,13 +26,13 @@ _Understanding how Givesource uses AWS resources is just as important, if not mo
 **Making Changes**:  
 1. Verify your `.env` file is pointed to the correct Givesource stack.
 2. Verify the dependencies are up to date:
-	```
-	npm run frontend:install
-	```
+  ```
+  npm run frontend:install
+  ```
 3. Build the templates:
-	```
-	npm run cloudformation:build
-	```
+  ```
+  npm run cloudformation:build
+  ```
 4. For the CloudFormation package, there is no "deploy", as in, you cannot just release the stack changes to a single stack.
 The templates are either released (on the S3 bucket) or not.
 5. Follow the [Releasing](releasing.md) wiki (see: CloudFormation Templates) to make your changes available in AWS.
@@ -49,21 +49,21 @@ Frontend development requires a stack on AWS, as there is no way to mock the API
 **Making Changes**:  
 1. Verify your `.env` file is pointed to the correct Givesource stack.
 2. Verify the dependencies are up to date:
-	```
-	npm run frontend:install
-	```
+  ```
+  npm run frontend:install
+  ```
 3. Build the assets, watch the assets, and reload the browser when changes are detected:
-	```
+  ```
   npm run frontend:dev:admin
   npm run frontend:dev:public
-	```
+  ```
 4. You can access the frontend applications from:
-	- Management app: [http://localhost:3000](http://localhost:3000)
-	- Event app: [http://localhost:3002](http://localhost:3000)
+  - Management app: [http://localhost:3000](http://localhost:3000)
+  - Event app: [http://localhost:3002](http://localhost:3000)
 5. Deploy your changes to your development Givesource stack.
-	```
-	npm run frontend:deploy
-	```
+  ```
+  npm run frontend:deploy
+  ```
 
 ## Lambda (API) Development
 **Code Directory**:  
@@ -75,13 +75,13 @@ Frontend development requires a stack on AWS, as there is no way to mock the API
 **Making Changes**:  
 1. Verify your `.env` file is pointed to the correct Givesource stack.
 2. Verify the dependencies are up to date:
-	```
-	npm run lambda:install
-	```
+  ```
+  npm run lambda:install
+  ```
 3. Deploy your changes to your development Givesource stack. This command will let you choose which lambda function to deploy, or you can choose "All".
-	```
-	npm run lambda:deploy
-	```
+  ```
+  npm run lambda:deploy
+  ```
 
 ## Troubleshooting changes that don't appear to be taking affect and some things to try
 

@@ -30,9 +30,9 @@ These instructions were written for PhpStorm, other editors may vary.
 
 * Set the project Javascript version to: `ECMAScript 6`
 * Disable indexing for:
-	* packages/cloudformation/build
-	* packages/frontend/build
-	* packages/lambda/build
+  * packages/cloudformation/build
+  * packages/frontend/build
+  * packages/lambda/build
 * Add Copyright Profile: Apache-2.0-Firespring
 ```
 
