@@ -59,6 +59,7 @@ A configuration template can be found at `config/default.json`. This file contai
   ```
 
 3. Parameters:
+
   | Parameter | Required | Description |
   | --------- | -------- | ----------- |
   | ADMIN_EMAIL | required | The email address of the initial super-admin user. This person will be contacted when the stack is finished creating. |
