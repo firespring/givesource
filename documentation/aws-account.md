@@ -28,7 +28,7 @@ DEV_ACCOUNT_ID="333333333333"
 ```
 
 * Update the account ids to match your AWS Account setup
-* Run `rake aws:configure:default:credentials` and enter the AWS Access Key/Secret from the above step
+* Run `rake aws:configure:default:credentials` and enter the AWS Access Key/Secret from the IAM Dashboard step
   * Run `rake aws:login`
     * Answer any questions you are presented
     * Enter your 2FA code when prompted
