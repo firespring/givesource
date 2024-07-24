@@ -77,18 +77,13 @@ A configuration template can be found at `config/default.json`. This file contai
 4. See the [Setup-Environment](setup-environment.md) wiki for more information about the release buckets.
 
 ## Configure the Local Environment
-* Copy the `.env.example` file to `.env`
+* Copy the `.env.example` file to `.env` if you don't already haveone
   * Update the NODE_APP_INSTANCE to whatever name you used for your config file above
 * For Firespring Engineers, the file should look like this
 ```
 NODE_ENV=development
 NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
-ORG_ACCOUNT_NAME="Root Org"
-ORG_ACCOUNT_ID="123123123123"
-PRD_ACCOUNT_NAME="Givesource Prod"
-PRD_ACCOUNT_ID="456456456456"
-DEV_ACCOUNT_NAME="Givesource Dev"
-DEV_ACCOUNT_ID="789789789789"
+...
 ```
 * To switch between the stacks you are managing, update the `.env` file:  
 Example - manage the `production-NORFOLK2019.json` stack:
