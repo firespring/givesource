@@ -25,7 +25,13 @@ bundle install
 ```
 * AWS Cli install [instructions](https://aws.amazon.com/cli/)
 
-## Setup Your Editor
+## Preparing AWS Release Buckets
+* Log into the aws console in a browser
+  * Navigate to the cloudformation console
+  * Create a new stack using the `cloudformation/user-s3.yml` template
+  * Set the `BucketIdentifier` to something meaningful to you
+
+## Setup Your Editor (optional)
 These instructions were written for PhpStorm, other editors may vary.
 
 * Set the project Javascript version to: `ECMAScript 6`
@@ -34,10 +40,4 @@ These instructions were written for PhpStorm, other editors may vary.
   * packages/frontend/build
   * packages/lambda/build
 * Add Copyright Profile: Apache-2.0-Firespring
-```
 
-## Preparing AWS Release Buckets
-* Log into the aws console in a browser
-  * Navigate to the cloudformation console
-  * Create a new stack using the `cloudformation/user-s3.yml` template
-  * Set the `BucketIdentifier` to something meaningful to you
