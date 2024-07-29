@@ -34,7 +34,7 @@ This is the typical format for emails:
 **Text Before Donation Details**  
 Be sure to change the event name.  
 ```
-Congratulations! Your organization has received a donation during the Norfolk Area Big Give event! 
+Congratulations! Your organization has received a donation during the Scranton Give event! 
 ```
 **Text After Donation Details**  
 ```
@@ -46,7 +46,7 @@ can also view their donation information on the Donations tab of your admin page
 **Text Before Donations List**  
 Be sure to change the event name.  
 ```
-Thank you for supporting local charities during the Norfolk Area Big Give.
+Thank you for supporting local charities during the Scranton Give.
 ```
 **Text After Donations List**  
 Be sure to change the fee amounts and urls.  
@@ -62,7 +62,7 @@ to retain 3.9% plus $0.30 for credit card processing and platform expenses. If y
 charities to receive 100% of the intended amount.
 
 Firespring Foundation's distributions to or for the benefit of your advised charity and/or purpose must not be used for the personal benefit of you, any other donor advisor, or any
- other purpose conferring impermissible private benefit. For the full story, please see our terms of use: https://norfolkareabiggive.org/terms
+ other purpose conferring impermissible private benefit. For the full story, please see our terms of use: `<WEBSITE_NAME>`/terms
 ```
 
 ## Payment Gateway Settings
@@ -84,7 +84,7 @@ To change the user's permissions: go to the AWS web console -> Cognito -> Mange 
 **Checkout Text**  
 Be sure to change the event name, fee amounts and urls.  
 ```
-Thank you for supporting local charities for the Norfolk Area Big Give. All donations on this site are made to Firespring Foundation. The nonprofit(s) you supported today will 
+Thank you for supporting local charities for the Scranton Give. All donations on this site are made to Firespring Foundation. The nonprofit(s) you supported today will 
 receive information about your gift in real time, unless you chose to be Anonymous.
 
 Your contribution is to the Firespring Foundation donor-advised fund (Tax ID 30-0358636), intended for the benefit of the charity you indicated. The Foundation makes every 
@@ -98,7 +98,7 @@ to retain 3.9% plus $0.30 for credit card processing and platform expenses. If y
 charities to receive 100% of the intended amount.
 
 Firespring Foundation's distributions to or for the benefit of your advised charity and/or purpose must not be used for the personal benefit of you, any other donor advisor, or 
-any other purpose conferring impermissible private benefit. For the full story, please see our terms of use: https://norfolkareabiggive.org/terms
+any other purpose conferring impermissible private benefit. For the full story, please see our terms of use: `<WEBSITE_NAME>`/terms
 ```
 
 ## Pages - Terms

@@ -7,7 +7,7 @@ A configuration template can be found at `config/default.json`. This file contai
 1. Copy the `config/default.json` to `<PREFIX>-<YOUR_CONFIG_NAME>.json`
   - Prefix: `default`, `development` or `production`. This prefix correlates to the NPM mode that should be used when deploying the stack. Setting this value to `default` will work as a catch-all mode.
   - Followed by: `-<YOUR_CONFIG_NAME>`
-  - It should look something like: `default-DEMO.json`, `production-LANCASTER-2024.json`, `development-JOHN-TEST.json`
+  - It should look something like: `default-DEMO.json`, `production-SCRANTON.json`
   - The file should be saved in the `config/` directory in the root of the project.
   - The bucket names in your config should be set `givesource-` followed by whatever you used as your `BucketIdentifier` when you prepared your release bucket
 
@@ -35,19 +35,19 @@ A configuration template can be found at `config/default.json`. This file contai
     }
   ```
 
-  - Production stack `production-LANCASTER-2024.json` (with domain):
+  - Production stack `production-SCRANTON.json` (with domain):
   ```
   {
       "app": {
         "ADMIN_EMAIL": "admin@gmail.com",
-        "ADMIN_PAGES_CNAMES": ["manage.lancastergive.org", "www.manage.lancastergive.org"],
+        "ADMIN_PAGES_CNAMES": ["manage.scrantongive.org", "www.manage.scrantongive.org"],
         "ADMIN_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:000000000000:certificate/11111111-2222-3333-4444-555555555555",
-        "PUBLIC_PAGES_CNAMES": ["lancastergive.org", "www.lancastergive.org"],
+        "PUBLIC_PAGES_CNAMES": ["scrantongive.org", "www.scrantongive.org"],
         "PUBLIC_PAGES_SSL_CERTIFICATE_ARN": "arn:aws:acm:us-east-1:000000000000:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
       },
       "stack": {
         "AWS_REGION": "us-east-1",
-        "AWS_STACK_NAME": "LANCASTER-2024"
+        "AWS_STACK_NAME": "SCRANTON"
       },
       "release": {
         "AWS_RELEASE_BUCKET": "givesource-prod",
@@ -86,8 +86,8 @@ NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
 ...
 ```
 * To switch between the stacks you are managing, update the `.env` file:  
-Example - manage the `production-NORFOLK2019.json` stack:
+Example - manage the `production-SCRANTON.json` stack:
 ```
 NODE_ENV=production
-NODE_APP_INSTANCE=NORFOLK2019
+NODE_APP_INSTANCE=SCRANTON
 ```

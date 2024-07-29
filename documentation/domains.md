@@ -14,9 +14,9 @@
 4. Update the stack, see: [Updating-a-Stack](updating-a-stack.md)
 5. Update the url settings in the app:
   - Run `npm run lambda:setting`
-  - Select `EVENT_URL` and enter (for example): `https://givetolincoln.com`
+  - Select `EVENT_URL` and enter (for example): `https://scrantongive.com`
   - Run `npm run lambda:setting`
-  - Select `ADMIN_URL` and enter (for example): `https://manage.givetolincoln.com`
+  - Select `ADMIN_URL` and enter (for example): `https://manage.scrantongive.com`
 6. Repeat step 5 for the old stack, and set the urls back to the CloudFront distribution urls found in CloudFront.
 
 *Note*  
