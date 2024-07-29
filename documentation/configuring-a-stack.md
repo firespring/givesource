@@ -7,16 +7,16 @@ A configuration template can be found at `config/default.json`. This file contai
 1. Copy the `config/default.json` to `<PREFIX>-<YOUR_CONFIG_NAME>.json`
   - Prefix: `default`, `development` or `production`. This prefix correlates to the NPM mode that should be used when deploying the stack. Setting this value to `default` will work as a catch-all mode.
   - Followed by: `-<YOUR_CONFIG_NAME>`
-  - It should look something like: `default-DEMO.json`, `production-SCRANTON.json`
+  - It should look something like: `default-MICHAEL.json`, `production-SCRANTON.json`
   - The file should be saved in the `config/` directory in the root of the project.
-  - The bucket names in your config should be set `givesource-` followed by whatever you used as your `BucketIdentifier` when you prepared your release bucket
+  - The bucket names in your config should be set `givesource-` followed by whatever you used as your `BucketIdentifier` parameter when you prepared your release bucket (note this is not the cloudformation stack name)
 
 2. Example configurations:
-  - Development stack `default-JOHN-TEST` (no domain):
+  - Development stack `default-MICHAEL` (no domain):
   ```
   {
       "app": {
-        "ADMIN_EMAIL": "john.doe@gmail.com",
+        "ADMIN_EMAIL": "michael.scott@gmail.com",
         "ADMIN_PAGES_CNAMES": [],
         "ADMIN_PAGES_SSL_CERTIFICATE_ARN": "",
         "PUBLIC_PAGES_CNAMES": [],
@@ -24,12 +24,12 @@ A configuration template can be found at `config/default.json`. This file contai
       },
       "stack": {
         "AWS_REGION": "us-east-1",
-        "AWS_STACK_NAME": "JOHN-TEST"
+        "AWS_STACK_NAME": "MICHAEL"
       },
       "release": {
-        "AWS_RELEASE_BUCKET": "givesource-john",
+        "AWS_RELEASE_BUCKET": "givesource-michael",
         "AWS_RELEASE_BUCKET_REGION": "us-east-1",
-        "AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-john",
+        "AWS_LAMBDA_RELEASE_BUCKET_PREFIX": "givesource-michael",
         "AWS_LAMBDA_RELEASE_BUCKET_AVAILABLE_REGIONS": ["us-east-1"]
       }
     }
