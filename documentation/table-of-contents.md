@@ -27,7 +27,6 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 1. [Application-Setup](application-setup.md)
 
 ### Other Resources
-1. [Event-Timeline](event-timeline.md)
 1. [Domains](domains.md)
 1. [Reporting](reporting.md)
-1. [Refunds-and-Reallocations](refunds-and-reallocations.md)
+1. [Refunds-and-Reallocations](https://github.com/firespring/givesource-ops/tree/master/documentation/refunds-and-reallocations.md)
