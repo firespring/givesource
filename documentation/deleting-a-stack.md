@@ -25,6 +25,7 @@ Givesource includes a delete stack command, but I recommend doing it manually fr
       1. Firespring specific documentation can be found [here](https://github.com/firespring/engineering-devops/blob/master/documentation/vpn.md)
    1. Connect as the admin user to mysql
       1. Credentials can be found in the AdminUserSecret in the SecretsManager console in AWS
+         1. Click the `Retrieve secret value` button and search for `password`
       1. An example mysql command should look something like `mysql -hgivesource.cluster-000000000000.us-east-1.rds.amazonaws.com -u admin -p --ssl-ca ./certificates/global-bundle.pem`
          1. Enter the password from SecretsManager when prompted
    1. Run ``drop database `<StackName>` ;``
