@@ -1,5 +1,5 @@
 # Prerequisites
-1. Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
+1. Follow the [Setup Environment](setup-environment.md) wiki to set up your development environment.
 
 ## Configuring a Stack
 A configuration template can be found at `config/default.json`. This file contains all the details needed to release and deploy a Givesource stack.
@@ -77,7 +77,7 @@ A configuration template can be found at `config/default.json`. This file contai
 4. See the [Setup-Environment](setup-environment.md) wiki for more information about the release buckets.
 
 ## Configure the Local Environment
-* Copy the `.env.example` file to `.env` if you don't already haveone
+* Copy the `.env.example` file to `.env` if you don't already have one
   * Update the NODE_APP_INSTANCE to whatever name you used for your config file above
 * For Firespring Engineers, the file should look like this
 ```

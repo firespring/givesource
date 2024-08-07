@@ -1,5 +1,5 @@
 # Prerequisites
-* These stacks only need to be created once and will then be shared by all givesource stacks
+* These stacks only need to be created once and will then be shared by all Givesource stacks
 * Log in to the Givesource account on the [AWS console](aws-account.md#aws-console)
 * Navigate to the Cloudformation dashboard in the region in which you will be running Givesource
 

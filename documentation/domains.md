@@ -21,5 +21,3 @@
 
 *Note*  
 The CloudFront distribution url can be used to access a stack regardless of the domain settings.  
-
-**If there is no entry for Route53, see Craig to help set one up.**

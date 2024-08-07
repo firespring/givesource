@@ -1,6 +1,6 @@
-# Update the Parameter Store Secrety key
+# Update the Parameter Store Secret key
 1. Login to AWS via cli
-2. run
+2. Run the following command:
 ```
     aws ssm put-parameter \
     --overwrite \

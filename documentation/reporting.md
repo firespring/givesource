@@ -1,7 +1,5 @@
 # Post Event Reporting
 
-The following reports are generally gathered and sent to Andrew.
-
 1. Donations Export (From management app)
 2. Nonprofits Export - Manually from AWS DynamoDB web console
   - Navigate to the stack's Nonprofits table

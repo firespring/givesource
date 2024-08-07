@@ -72,13 +72,13 @@ Firespring Foundation's distributions to or for the benefit of your advised char
 4. Display test payment information is generally only used in develop.
 
 ## Google Analytics Settings
-See the Firespring's google analytics account for Tracking ID. There is one specifically for each giving day. See Andrew with questions.
+See the Firespring's google analytics account for Tracking ID. There is one specifically for each giving day.
 
 ## Manage Admins Settings
 For setup, add the support representatives email address and other Engineering team's addresses as needed. The support representative will add the clients' emails.  
 
 **Note**  
-To change the user's permissions: go to the AWS web console -> Cognito -> Mange User Pools. Choose the stack and find the user in the Users and Groups page. From here you can pick a new user group for that user. SuperAdmin, Admin, and Nonprofit are currently the options for groups.  If you are adding the "SuperAdmin" group to an admin user you can remove the "Admin" group at that time.
+To change the user's permissions: go to the AWS web console -> Cognito -> Manage User Pools. Choose the stack and find the user in the Users and Groups page. From here you can pick a new user group for that user. SuperAdmin, Admin, and Nonprofit are currently the options for groups.  If you are adding the "SuperAdmin" group to an admin user you can remove the "Admin" group at that time.
 
 ## Pages - Donation Checkout
 **Checkout Text**  

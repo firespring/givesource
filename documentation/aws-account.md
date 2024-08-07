@@ -9,7 +9,7 @@
   * Navigate to the IAM dashboard for your user and generate an AWS Access Key/Secret
 
 ### Configure your local AWS account settings
-* Copy the `.env.example` file to `.env` if you don't already haveone
+* Copy the `.env.example` file to `.env` if you don't already have one
 * For Firespring Engineers, the file should look like this
 ```
 ...

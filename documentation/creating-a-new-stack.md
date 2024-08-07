@@ -1,7 +1,7 @@
 # Prerequisites
-* Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
+* Follow the [Setup Environment](setup-environment.md) wiki to set up your development environment.
 * Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure your development stack settings.
-* Follow the [Releasing](releasing.md) wiki to create a development release on the bucket's created in step 1.
+* Follow the [Releasing](releasing.md) wiki to create a development release on the buckets created in step 1.
 * Log in using these [instructions](aws-account.md#aws-command-line)
 * Connect to your local container using [rake app:sh](local-environment.md)
 

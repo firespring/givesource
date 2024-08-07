@@ -1,5 +1,5 @@
 # Deleting a Stack
-Givesource includes a delete stack command, but I recommend doing it manually from the AWS web console.  
+Givesource includes a delete stack command, but Firespring recommends deleting a stack manually from the AWS web console.
 1. Access the [AWS-Console](aws-account.md#aws-console).
 1. Snapshot the Database in RDS
 1. Navigate to AWS S3

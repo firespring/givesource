@@ -6,13 +6,13 @@
 ## Rake
 * `rake` is a combination of `ruby` and `make`
 * Firespring had built a library of common development environment commands to be re-used for many of our projects
-  * This also provides and easy framework for extending those commands
+  * This also provides an easy framework for extending those commands
 * To see what commands are available, use `rake -T`
 
 ## Docker
 * Docker is a linux based framework for segmenting processes safely and securely
   * In most instances, these docker containers can be thought of as VMs - although this description is not _entirely_ accurate
-* Givesource uses docker to provide a standardized environment for making and verifying changes it's code changes
+* Givesource uses docker to provide a standardized environment for making and verifying changes to it's code
 
 ## Local Dev Environment
 * Build the local containers

@@ -1,12 +1,12 @@
 # Prerequisites
-1. Follow the [Setup Environment](setup-environment.md) wiki to setup your development environment.
+1. Follow the [Setup Environment](setup-environment.md) wiki to set up your development environment.
 2. Follow the [Configuring a Stack](configuring-a-stack.md) wiki to configure your development stack settings.
-2. Follow the [Releasing](releasing.md) wiki to create a development release on the bucket's created in step 1.
+2. Follow the [Releasing](releasing.md) wiki to create a development release on the buckets created in step 1.
 3. Follow the [Creating a New Stack](creating-a-new-stack.md) wiki to create a new development stack.
 
 # Development
 ## Understanding Givesource Development
-Before you make any code changes, let's talk about what maybe unique with developing a serverless AWS application vs traditional web applications.
+Before making any code changes, you should consider what may be unique with developing a serverless AWS application vs. a traditional web application.
 
 1. Making changes to the frontend applications are all done locally, and should work like any other app.
 2. Making changes to the API may require:
