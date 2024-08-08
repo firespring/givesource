@@ -31,7 +31,7 @@ ci_cloudformations = []
 branch = ENV['BRANCH'] || Dev::Git.new.branch_name(dir: "#{ROOT_DIR}")
 branch = branch.split(/\s/)[-1] if branch.include?('detached')
 ci_cloudformations << Dev::Aws::Cloudformation.new(
-  "DevelopmentPipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
+  "pipeline-givesource-#{branch.split('/')[-1].split('GD-')[-1]}",
   "#{ROOT_DIR}/ops/aws/cloudformation/ci/branch.yml",
   parameters: Dev::Aws::Cloudformation::Parameters.new(
     BranchName: branch

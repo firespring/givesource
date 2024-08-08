@@ -1,5 +1,31 @@
 ---
 Description: Creates the shared resources for cicd pipelines
+Parameters:
+  SlackWorkspaceId:
+    Description: Slack workspace ID from the AWS Chatbot configuration console
+    Type: String
+
+  CriticalBuildFailureNotificationSlackChannelId:
+    Description: ID of the Slack channel used for Critical Build Failure notifications
+    Type: String
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Slack
+        Parameters:
+          - SlackWorkspaceId
+      - Label:
+          default: Slack Channels
+        Parameters:
+          - CriticalBuildFailureNotificationSlackChannelId
+    ParameterLabels:
+      SlackWorkspaceId:
+        default: Workspace ID
+      CriticalBuildFailureNotificationSlackChannelId:
+        default: Critical Build Failures Channel
+
 Resources:
   key:
     DeletionPolicy: Retain
@@ -45,6 +71,55 @@ Resources:
       Name: /Firespring/CiCd/kms/id
       Type: String
       Value: !Ref key
+
+  defaultChatbotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-DefaultChatbotRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - chatbot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Path: /
+
+  criticalBuildFailureSnsTopicForChatbot:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub CriticalBuildFailure events for Slack, managed by ${AWS::StackName}
+      TopicName: !Sub ${AWS::StackName}-CriticalBuildFailureSnsTopic
+
+  criticalBuildFailureSnsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action:
+              - sns:Publish
+            Resource:
+              - !Ref criticalBuildFailureSnsTopicForChatbot
+      Topics:
+        - !Ref criticalBuildFailureSnsTopicForChatbot
+
+  criticalBuildFailureDefaultSlackChannelConfiguration:
+    Type: AWS::Chatbot::SlackChannelConfiguration
+    Properties:
+      ConfigurationName: !Sub ${AWS::StackName}-CriticalBuildFailureDefaultSlackChannel
+      IamRoleArn: !GetAtt defaultChatbotRole.Arn
+      LoggingLevel: INFO
+      SlackChannelId: !Ref CriticalBuildFailureNotificationSlackChannelId
+      SlackWorkspaceId: !Ref SlackWorkspaceId
+      SnsTopicArns:
+        - !Ref criticalBuildFailureSnsTopicForChatbot
 
   cicdArtifactsBucket:
     Type: AWS::S3::Bucket
@@ -184,6 +259,26 @@ Outputs:
     Value: !GetAtt key.Arn
     Export:
       Name: fdp-cicd-key-arn
+
+  SlackWorkspaceId:
+    Value: !Ref SlackWorkspaceId
+    Export:
+      Name: chatbot-default-slack-workspace-id
+
+  defaultChatbotRole:
+    Value: !GetAtt defaultChatbotRole.Arn
+    Export:
+      Name: chatbot-default-iam-role
+
+  criticalBuildFailureSnsTopicForChatbot:
+    Value: !Ref criticalBuildFailureSnsTopicForChatbot
+    Export:
+      Name: chatbot-sns-topic-critical-build-failure
+
+  criticalBuildFailureDefaultSlackChannelConfiguration:
+    Value: !Ref criticalBuildFailureDefaultSlackChannelConfiguration
+    Export:
+      Name: chatbot-slack-config-critical-build-failure
 
   cicdArtifactsBucket:
     Value: !Ref cicdArtifactsBucket
