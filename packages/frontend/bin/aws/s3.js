@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const AWS = require('aws-sdk')
-const mime = require('mime')
+import AWS from 'aws-sdk'
+import mime from 'mime'
 
 /**
  * S3 constructor
@@ -133,4 +133,4 @@ S3.prototype.listObjects = function (region, bucketName, prefix) {
   })
 }
 
-module.exports = S3
+export default S3

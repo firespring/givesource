@@ -146,6 +146,10 @@ namespace APP_IDENTIFIER do
   end
 end
 
+Dev::Template::Application::Config.new('cicd', '/Firespring/CiCd')
+Dev::Template::Application::Config.new('global', '/global/database')
+Dev::Template::Application::Config.new('recaptcha', '/recaptcha/secure')
+
 # Add some custom pre/post tasks
 task _pre_up_hooks: %w[init_docker ensure_aws_credentials] do
   Dev::Aws::Credentials.new.export!
@@ -154,10 +158,12 @@ end
 # Add a task to open our docuemtnation in a browser
 desc 'Open a browser showing the givesource documentation'
 task :docs do
-  Launchy.open('https://github.com/firespring/givesource-ops/wiki')
+  branch_name = Dev::Git.new.branch_name
+  url = "https://github.com/firespring/givesource/blob/#{branch_name}/documentation/table-of-contents.md"
+  puts "Opening #{url} in a browser window..."
+  Launchy.open(url)
 end
 
-#Dev::Template::Docker::Node::Application.new('app', exclude: [:test])
 namespace :eol do
   task :node do
     alt_dir_node_eol(File.join(ROOT_DIR, 'packages/cloudformation'))

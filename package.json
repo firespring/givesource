@@ -1,6 +1,6 @@
 {
   "name": "givesource",
-  "version": "4.1.3",
+  "version": "4.2.1",
   "description": "Pay-as-you-go highly scalable software application that helps community foundations set up and manage a platform where they can raise funds for non-profits through event pages.",
   "license": "Apache-2.0",
   "repository": {
@@ -22,7 +22,8 @@
     "frontend:cache": "cd packages/frontend && npm run cache",
     "frontend:clean": "cd packages/frontend && npm run clean",
     "frontend:deploy": "cd packages/frontend && npm run deploy",
-    "frontend:dev": "cd packages/frontend && npm run dev",
+    "frontend:dev:admin": "cd packages/frontend && npm run dev:admin",
+    "frontend:dev:public": "cd packages/frontend && npm run dev:public",
     "frontend:install": "cd packages/frontend && npm install",
     "frontend:release": "cd packages/frontend && npm run release",
     "frontend:release:force": "cd packages/frontend && npm run release:force",

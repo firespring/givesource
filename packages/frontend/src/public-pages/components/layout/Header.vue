@@ -153,7 +153,7 @@ export default {
       return eventLogo || require('../../assets/img/logo-event.png')
     },
     enabledPages: function () {
-      return (this.pages || []).filter(page => page.enabled)
+      return (this.pages || []).filter(page => page.enabled && page.enabled !== '0')
     },
     pages () {
       return this.$store.getters.pages

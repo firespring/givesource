@@ -5,20 +5,8 @@ Parameters:
   BucketIdentifier:
     Type: String
 
-  ReplicaRegion:
-    Type: String
-    Default: ''
-    AllowedValues:
-    - ''
-    - 'us-west-2'
-    - 'us-east-1'
-
-Conditions:
-  NotReplicaRegion: !Not [!Equals [!Ref "AWS::Region", !Ref ReplicaRegion]]
-
 Resources:
   StorageBucket:
-    Condition: NotReplicaRegion
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub givesource-${BucketIdentifier}
@@ -36,7 +24,6 @@ Resources:
         LogFilePrefix: !Sub givesource-${BucketIdentifier}/
 
   StorageBucketPolicy:
-    Condition: NotReplicaRegion
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref StorageBucket
