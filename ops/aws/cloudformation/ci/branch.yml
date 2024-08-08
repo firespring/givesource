@@ -287,6 +287,9 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
+            Name: ECR_REPO
+            Value: !Sub ${EcrRegistryId.Value}.dkr.ecr.${EcrRegion.Value}.amazonaws.com
+          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -341,7 +344,7 @@ Resources:
 
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
-                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REPO}"
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
@@ -468,6 +471,9 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
+            Name: ECR_REPO
+            Value: !Sub ${EcrRegistryId.Value}.dkr.ecr.${EcrRegion.Value}.amazonaws.com
+          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -520,7 +526,7 @@ Resources:
 
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
-                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REPO}"
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
@@ -618,6 +624,9 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
+            Name: ECR_REPO
+            Value: !Sub ${EcrRegistryId.Value}.dkr.ecr.${EcrRegion.Value}.amazonaws.com
+          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -672,7 +681,7 @@ Resources:
 
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
-                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REPO}"
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
@@ -761,6 +770,9 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
+            Name: ECR_REPO
+            Value: !Sub ${EcrRegistryId.Value}.dkr.ecr.${EcrRegion.Value}.amazonaws.com
+          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -809,7 +821,7 @@ Resources:
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
                 # log in to ECR for custom Docker images
-                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
+                - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REPO}"
 
                 # setup rake
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
@@ -836,7 +848,7 @@ Resources:
                     fi
 
   ScheduledPipelineExecutionRole:
-    Condition: IsMaster
+    Condition: IsMasterOrDevelop
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -859,7 +871,7 @@ Resources:
                   - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
 
   PipelineExecutionSchedule:
-    Condition: IsMaster
+    Condition: IsMasterOrDevelop
     Type: AWS::Scheduler::Schedule
     Properties:
       Description: Trigger automated master Givesource pipeline execution
@@ -875,32 +887,17 @@ Resources:
         Arn: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
         RoleArn: !GetAtt ScheduledPipelineExecutionRole.Arn
 
-  PipelineFailedMetricFilter:
-    Condition: IsMaster
-    Type: AWS::Logs::MetricFilter
+  BuildFailureNotificationRule:
+    Condition: IsMasterOrDevelop
+    Type: AWS::CodeStarNotifications::NotificationRule
     Properties:
-      FilterPattern: !Sub '{($.detail.pipeline = "${Pipeline}") && ($.detail.state = "FAILED")}'
-      LogGroupName: !ImportValue fdp-cicd-pipeline-state-change-log-group
-      MetricTransformations:
-        - DefaultValue: 0
-          MetricName: !Sub ${Pipeline}-Failed
-          MetricNamespace: !Sub CodePipeline/StateChange
-          MetricValue: 1
+      Name: !Sub ${Pipeline}-FailureNotificationRule
+      DetailType: BASIC
+      EventTypeIds:
+        - codepipeline-pipeline-pipeline-execution-failed
+      Resource: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+      Status: 'ENABLED'
+      Targets:
+        - TargetType: AWSChatbotSlack
+          TargetAddress: !ImportValue chatbot-slack-config-critical-build-failure
 
-  PipelineFailedAlarm:
-    Condition: IsMaster
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ActionsEnabled: true
-      AlarmActions:
-        - !ImportValue notifications-devops-pager-next-business-day-sns-topic
-      AlarmDescription: Givesource Master Pipeline Execution Failed
-      AlarmName: !Sub ${Pipeline}-Execution-Failed
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 1
-      MetricName: !Sub ${Pipeline}-Failed
-      Namespace: !Sub CodePipeline/StateChange
-      Period: 60
-      Statistic: Sum
-      Threshold: 0
-      TreatMissingData: notBreaching
