@@ -17,7 +17,7 @@
 'use strict'
 
 const { DataTypes, Model } = require('sequelize')
-const { isNumericType, isString } = require('../helpers/validation')
+const { isString } = require('../helpers/validation')
 class Sponsor extends Model {}
 
 module.exports = (sequelize) => {

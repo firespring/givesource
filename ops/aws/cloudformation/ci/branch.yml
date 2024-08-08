@@ -7,7 +7,8 @@ Parameters:
     Type: String
 
 Conditions:
-  IsDevelop: !Equals [ !Ref 'BranchName', 'develop' ]
+  IsMasterOrDevelop: !Or [!Equals [!Ref 'BranchName', 'master'], !Equals [!Ref 'BranchName', 'develop']]
+  IsMaster: !Equals [ !Ref 'BranchName', 'master' ]
 
 Resources:
   BranchIdentifier:
@@ -16,7 +17,7 @@ Resources:
       Description: The identifier only part of the branch name
       Name: !Sub /Firespring/CiCd/Givesource/${AWS::StackName}/BranchIdentifier
       Type: String
-      Value: !If [ IsDevelop, !Ref BranchName, !Join [ '_', !Split [ '-', !Select [ 1, !Split [ '/', !Ref BranchName ] ] ] ] ]
+      Value: !If [ IsMasterOrDevelop, !Ref BranchName, !Join [ '_', !Split [ '-', !Select [ 1, !Split [ '/', !Ref BranchName ] ] ] ] ]
 
   EcrRegistryId:
     Type: AWS::SSM::Parameter
@@ -98,6 +99,7 @@ Resources:
         - Name: Source
           Actions:
             - Name: !Sub Givesource_${BranchIdentifier.Value}
+              Namespace: GivesourceVariables
               ActionTypeId:
                 Category: Source
                 Owner: AWS
@@ -125,6 +127,8 @@ Resources:
                 PrimarySource: givesource
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
@@ -146,6 +150,8 @@ Resources:
                 PrimarySource: givesource
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
                   ]
@@ -164,6 +170,8 @@ Resources:
                 ProjectName: !Ref LintProject
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"OPTS","value":"-- -f junit -o results.junit.xml","type":"PLAINTEXT"},
@@ -186,6 +194,8 @@ Resources:
                 ProjectName: !Ref AuditProject
                 EnvironmentVariables: !Sub >
                   [
+                    {"name":"REPOSITORY","value":"#{GivesourceVariables.FullRepositoryName}","type":"PLAINTEXT"},
+                    {"name":"COMMIT_ID","value":"#{GivesourceVariables.CommitId}","type":"PLAINTEXT"},
                     {"name":"SERVICE_NAME","value":"givesource","type":"PLAINTEXT"},
                     {"name":"LANGUAGE","value":"node","type":"PLAINTEXT"},
                     {"name":"GS_TAG","value":"${BranchIdentifier.Value}","type":"PLAINTEXT"}
@@ -196,7 +206,7 @@ Resources:
           Value: Givesource
         - Key: Branch
           Value: !GetAtt BranchIdentifier.Value
-  #
+
   BuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -216,11 +226,6 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
-                Resource:
-                  - !ImportValue fdp-cicd-readonly-github-oauth-token-parameter-arn
-              - Effect: Allow
-                Action:
                   - ecr:GetDownloadUrlForLayer
                   - ecr:BatchGetImage
                   - ecr:BatchCheckLayerAvailability
@@ -236,6 +241,11 @@ Resources:
                   - ecr:PutImage
                 Resource:
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter*
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -277,9 +287,6 @@ Resources:
             Name: ECR_REGISTRY_ID
             Value: !GetAtt EcrRegistryId.Value
           - Type: PLAINTEXT
-            Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
-            Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
-          - Type: PLAINTEXT
             Name: DEV_ACCOUNT_ID
             Value: !Ref AWS::AccountId
           - Type: PLAINTEXT
@@ -288,6 +295,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -303,6 +313,8 @@ Resources:
           env:
             shell: bash
             variables:
+              REPOSITORY: unknown
+              COMMIT_ID: unknown
               SERVICE_NAME: unknown
               ECR_REGION: unknown
               ECR_REGISTRY_ID: unkonwn
@@ -317,30 +329,54 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="BuildProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
-          
+
                 # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
 
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
-          
+                - bundle exec rake git:commit_status:pending
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 - bundle exec rake app:build
-          
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             post_build:
               commands:
                 - bundle exec rake app:push
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   TestServiceRole:
     Type: AWS::IAM::Role
@@ -361,11 +397,6 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
-                Resource:
-                  - !ImportValue fdp-cicd-readonly-github-oauth-token-parameter-arn
-              - Effect: Allow
-                Action:
                   - ecr:GetDownloadUrlForLayer
                   - ecr:BatchGetImage
                   - ecr:BatchCheckLayerAvailability
@@ -380,14 +411,22 @@ Resources:
                   - ecr:UploadLayerPart
                   - ecr:CompleteLayerUpload
                   - ecr:PutImage
+                Resource:
+                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
                   - codebuild:CreateReportGroup
                   - codebuild:CreateReport
                   - codebuild:UpdateReport
                   - codebuild:BatchPutTestCases
                   - codebuild:BatchPutCodeCoverages
                 Resource:
-                  - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
                   - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${AWS::StackName}-*
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter*
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -423,9 +462,6 @@ Resources:
             Name: BASE_REPO
             Value: !Sub ${BaseRepoRegistryId.Value}.dkr.ecr.${BaseRepoRegion.Value}.amazonaws.com/firespring/base
           - Type: PLAINTEXT
-            Name: READONLY_GITHUB_OAUTH_TOKEN_PARAMETER
-            Value: !ImportValue fdp-cicd-readonly-github-oauth-token-parameter
-          - Type: PLAINTEXT
             Name: ECR_REGION
             Value: !GetAtt EcrRegion.Value
           - Type: PLAINTEXT
@@ -440,6 +476,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -469,6 +508,9 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="BuildProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
 
@@ -476,9 +518,6 @@ Resources:
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
@@ -486,11 +525,26 @@ Resources:
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run test suite
                 - bundle exec rake app:test
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   LintServiceRole:
     Type: AWS::IAM::Role
@@ -518,6 +572,11 @@ Resources:
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/base
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter*
+                Resource:
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -567,6 +626,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -598,6 +660,9 @@ Resources:
           phases:
             install:
               commands:
+                - export CONTEXT="LintProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print environment
                 - env | sort
 
@@ -605,9 +670,6 @@ Resources:
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
 
-                # Pull oauth token from parameter store
-                - export GITHUB_OAUTH_TOKEN=$(aws ssm get-parameter --with-decryption --name "${READONLY_GITHUB_OAUTH_TOKEN_PARAMETER}" --output text --query 'Parameter.Value')
-          
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${BASE_REPO_REGION} get-login-password | docker login --password-stdin --username AWS "${BASE_REPO_REGISTRY_ID}.dkr.ecr.${BASE_REPO_REGION}.amazonaws.com"
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
@@ -615,11 +677,26 @@ Resources:
                 # Install libraries used by the rake scripts
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run php linting
                 - bundle exec rake app:lint
 
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
 
   AuditServiceRole:
     Type: AWS::IAM::Role
@@ -640,17 +717,18 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
-                Resource:
-                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
-              - Effect: Allow
-                Action:
                   - ecr:GetDownloadUrlForLayer
                   - ecr:BatchGetImage
                   - ecr:BatchCheckLayerAvailability
                 Resource:
                   - !Sub arn:aws:ecr:${BaseRepoRegion.Value}:${BaseRepoRegistryId.Value}:repository/firespring/dind
                   - !Sub arn:aws:ecr:${EcrRegion.Value}:${EcrRegistryId.Value}:repository/firespring/givesource
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter*
+                Resource:
+                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/CiCd/Ignorelist/*
+                  - !ImportValue fdp-cicd-status-github-oauth-token-parameter-arn
       ManagedPolicyArns:
         - !ImportValue fdp-base-codebuild-managed-policy-arn
 
@@ -691,6 +769,9 @@ Resources:
           - Type: PLAINTEXT
             Name: BRANCH
             Value: !Ref BranchName
+          - Type: PARAMETER_STORE
+            Name: GITHUB_TOKEN
+            Value: !ImportValue fdp-cicd-status-github-oauth-token-parameter
         PrivilegedMode: true
       LogsConfig:
         CloudWatchLogs:
@@ -713,24 +794,113 @@ Resources:
               USERNAME: codebuild
               DEV_VOLUMES: false
               BRANCH_TAGS: false
-          
+
           phases:
             install:
               commands:
+                - export CONTEXT="AuditProject-${SERVICE_NAME}"
+                - export TARGET_URL=${CODEBUILD_BUILD_URL}
+
                 # Print env
                 - env | sort
-          
+
                 # CodeBuild overwrites the entry point, call the original entry point script and wait for Docker to start
                 - dockerd-entrypoint.sh &>/dev/null &
                 - timeout 30 sh -c "until docker info &>/dev/null; do sleep 1; echo 'Waiting for docker to start...'; done; echo 'Docker is started'"
-          
+
                 # log in to ECR for custom Docker images
                 - aws ecr --region=${ECR_REGION} get-login-password | docker login --password-stdin --username AWS "${ECR_REGISTRY_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com"
-          
+
                 # setup rake
                 - cd ${CODEBUILD_SRC_DIR} && bundle install
-          
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    fi
+
             build:
               commands:
                 # run security audit
                 - bundle exec rake app:audit
+
+              finally:
+                - |
+                    if [[ $CODEBUILD_BUILD_SUCCEEDING == 0 ]]
+                    then
+                      bundle exec rake git:commit_status:error
+                    else
+                      bundle exec rake git:commit_status:success
+                    fi
+
+  ScheduledPipelineExecutionRole:
+    Condition: IsMaster
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: CodePipelineEventRuleRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codepipeline:StartPipelineExecution
+                Resource:
+                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+
+  PipelineExecutionSchedule:
+    Condition: IsMaster
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Trigger automated master Givesource pipeline execution
+      FlexibleTimeWindow:
+        Mode: 'OFF'
+      GroupName: default
+      KmsKeyArn: !ImportValue fdp-cicd-key-arn
+      Name: !Sub ${AWS::StackName}-PipelineExecution
+      ScheduleExpression: cron(0 10 ? * MON *)
+      ScheduleExpressionTimezone: America/Chicago
+      State: 'ENABLED'
+      Target:
+        Arn: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+        RoleArn: !GetAtt ScheduledPipelineExecutionRole.Arn
+
+  PipelineFailedMetricFilter:
+    Condition: IsMaster
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: !Sub '{($.detail.pipeline = "${Pipeline}") && ($.detail.state = "FAILED")}'
+      LogGroupName: !ImportValue fdp-cicd-pipeline-state-change-log-group
+      MetricTransformations:
+        - DefaultValue: 0
+          MetricName: !Sub ${Pipeline}-Failed
+          MetricNamespace: !Sub CodePipeline/StateChange
+          MetricValue: 1
+
+  PipelineFailedAlarm:
+    Condition: IsMaster
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmActions:
+        - !ImportValue notifications-devops-pager-next-business-day-sns-topic
+      AlarmDescription: Givesource Master Pipeline Execution Failed
+      AlarmName: !Sub ${Pipeline}-Execution-Failed
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      MetricName: !Sub ${Pipeline}-Failed
+      Namespace: !Sub CodePipeline/StateChange
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+      TreatMissingData: notBreaching

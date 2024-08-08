@@ -226,7 +226,6 @@ Resources:
     Properties:
       AliasName: "alias/global/recaptcha/secure"
       TargetKeyId: !Ref RecaptchaKey
-    DependsOn: RecaptchaKey
 
   internetGateway:
     Type: AWS::EC2::InternetGateway

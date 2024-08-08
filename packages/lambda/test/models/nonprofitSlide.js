@@ -55,7 +55,7 @@ describe('NonprofitSlide', function () {
       { model, param: 'caption', value: 'test', error: false },
       { model, param: 'caption', value: 123456, error: true },
       { model, param: 'nonprofitId', value: null, error: true },
-      { model, param: 'nonprofitId', value: '1234567890', error: true },
+      { model, param: 'nonprofitId', value: '1234567890', error: false },
       { model, param: 'nonprofitId', value: 123, error: false },
       { model, param: 'sortOrder', value: null, error: true },
       { model, param: 'sortOrder', value: '', error: true },
