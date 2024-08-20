@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BASE_REPO: "${BASE_REPO:-300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/base}"
+        SRC_TAG: "${SRC_TAG:-bookworm}"
     environment:
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID:

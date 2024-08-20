@@ -85,6 +85,13 @@ NODE_ENV=development
 NODE_APP_INSTANCE="<YOUR_CONFIG_NAME>"
 ...
 ```
+* For non-Firespring Engineers, you will want to point to public docker images when building
+  * Add the following at the end of your .env file
+```
+...
+BASE_REPO=debian
+SRC_TAG=bookworm-slim
+```
 * To switch between the stacks you are managing, update the `.env` file:  
 Example - manage the `production-SCRANTON.json` stack:
 ```
