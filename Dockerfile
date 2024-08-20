@@ -4,6 +4,7 @@ FROM ${BASE_REPO}:${SRC_TAG}
 
 # Install the latest version of node and clean up
 RUN apt-get update \
+  && apt-get install -y curl \
   && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
   && apt-get install -y git nodejs \
   && apt-get clean \
