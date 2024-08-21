@@ -123,6 +123,7 @@
                           </div>
                           <div class="c-form-item__control">
                             <forms-secure-text
+                              ref="secureKey"
                               id="key"
                               secure-key="payment-spring-api-key"
                               name="key"
@@ -585,7 +586,7 @@ export default {
         vue.clearModals()
         vue.scrollToError()
       } else {
-        vue.$emit('save')
+        vue.bus.$emit('save')
         vue.updateSettings()
       }
     },
