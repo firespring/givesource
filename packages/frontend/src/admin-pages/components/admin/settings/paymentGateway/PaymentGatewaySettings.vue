@@ -123,7 +123,6 @@
                           </div>
                           <div class="c-form-item__control">
                             <forms-secure-text
-                              ref="secureKey"
                               id="key"
                               secure-key="payment-spring-api-key"
                               name="key"
