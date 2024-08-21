@@ -91,109 +91,6 @@
                         <label for="processRealCC-0">No</label>
                       </li>
                     </ul>
-
-                    <div
-                      v-if="formErrors.PAYMENT_SPRING_LIVE_MODE"
-                      class="c-notes c-notes--below c-notes--bad c-form-control-error"
-                    >
-                      {{ formErrors.PAYMENT_SPRING_LIVE_MODE }}
-                    </div>
-
-                    <div class="sub-options-inline-wrapper sub-options-inline-wrapper--show">
-                      <div
-                        class="sub-options-inline"
-                        :class="{'sub-options-inline--show': formData.PAYMENT_SPRING_LIVE_MODE}"
-                      >
-                        <div class="c-alert c-alert--expand c-alert--info u-flex u-justify-center">
-                          <div class="c-alert__body">
-                            <div class="c-alert__text">
-                              <p>
-                                You must enter these API keys to process real credit cards. Otherwise, you can only process test credit cards.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="c-form-item c-form-item--text c-form-item--required">
-                          <div class="c-form-item__label">
-                            <label
-                              for="key"
-                              class="c-form-item-label-text"
-                            >API Key</label>
-                          </div>
-                          <div class="c-form-item__control">
-                            <forms-secure-text
-                              id="key"
-                              secure-key="payment-spring-api-key"
-                              name="key"
-                            />
-                          </div>
-                        </div>
-
-                        <div class="c-form-item c-form-item--text c-form-item--required">
-                          <div class="c-form-item__label">
-                            <label
-                              for="keyPublic"
-                              class="c-form-item-label-text"
-                            >Public API Key</label>
-                          </div>
-                          <div class="c-form-item__control">
-                            <forms-secure-text
-                              id="keyPublic"
-                              v-model="formData.PAYMENT_SPRING_PUBLIC_API_KEY"
-                              name="keyPublic"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div
-                        class="sub-options-inline"
-                        :class="{'sub-options-inline--show': !formData.PAYMENT_SPRING_LIVE_MODE}"
-                      >
-                        <div class="c-alert c-alert--expand c-alert--info u-flex u-justify-center">
-                          <div class="c-alert__body">
-                            <div class="c-alert__text">
-                              <p>
-                                These API keys are for testing purposes only. They will not accept real credit cards.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="c-form-item c-form-item--text c-form-item--required">
-                          <div class="c-form-item__label">
-                            <label
-                              for="testKey"
-                              class="c-form-item-label-text"
-                            >Test API Key</label>
-                          </div>
-                          <div class="c-form-item__control">
-                            <forms-secure-text
-                              id="testKey"
-                              secure-key="payment-spring-test-api-key"
-                              name="testKey"
-                            />
-                          </div>
-                        </div>
-
-                        <div class="c-form-item c-form-item--text c-form-item--required">
-                          <div class="c-form-item__label">
-                            <label
-                              for="testKeyPublic"
-                              class="c-form-item-label-text"
-                            >Test Public API Key</label>
-                          </div>
-                          <div class="c-form-item__control">
-                            <forms-secure-text
-                              id="testKeyPublic"
-                              v-model="formData.PAYMENT_SPRING_TEST_PUBLIC_API_KEY"
-                              name="testKeyPublic"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -472,8 +369,6 @@ export default {
         PAYMENT_GATEWAY_TRANSACTION_FEE_FLAT_RATE: '0.00',
         PAYMENT_GATEWAY_TRANSACTION_FEE_PERCENTAGE: '0.0',
         PAYMENT_SPRING_LIVE_MODE: false,
-        PAYMENT_SPRING_PUBLIC_API_KEY: '',
-        PAYMENT_SPRING_TEST_PUBLIC_API_KEY: '',
         TEST_PAYMENTS_DISPLAY: false
       },
 
@@ -539,14 +434,6 @@ export default {
         PAYMENT_SPRING_LIVE_MODE: {
           label: 'This field',
           presence: true
-        },
-        PAYMENT_SPRING_PUBLIC_API_KEY: {
-          label: 'Public API Key',
-          presence: false
-        },
-        PAYMENT_SPRING_TEST_PUBLIC_API_KEY: {
-          label: 'Test Public API Key',
-          presence: false
         },
         TEST_PAYMENTS_DISPLAY: {
           label: 'This field',

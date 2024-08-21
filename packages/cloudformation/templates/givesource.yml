@@ -315,9 +315,11 @@ Resources:
             Action:
               - ssm:DeleteParameter
               - ssm:GetParameter
+              - ssm:GetParameters
               - ssm:PutParameter
             Resource:
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}*
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/Firespring/paymentKey*
 
   LambdaRole:
     Type: AWS::IAM::Role

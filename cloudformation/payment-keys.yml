@@ -1,0 +1,55 @@
+---
+Description: Payment keys for the payment service for all your Givesource projects
+Resources:
+  paymentPublicKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for a global public payment key.
+      Name: /Firespring/paymentKey/public_key
+      Type: String
+      Value: CHANGEME
+
+  paymentPrivateKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for a global private payment key.
+      Name: /Firespring/paymentKey/private_key
+      Type: String
+      Value: CHANGEME
+
+  testPaymentPublicKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for a global public payment key.
+      Name: /Firespring/paymentKey/test_public_key
+      Type: String
+      Value: CHANGEME
+
+  testPaymentPrivateKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter for a global private payment key.
+      Name: /Firespring/paymentKey/test_private_key
+      Type: String
+      Value: CHANGEME
+
+Outputs:
+  paymentPublicKeyArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${paymentPublicKey}
+    Export:
+      Name: givesource-payment-key-public-arn
+
+  paymentPrivateKeyArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${paymentPrivateKey}
+    Export:
+      Name: givesource-payment-key-private-arn
+
+  testPaymentPublicKeyArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${testPaymentPublicKey}
+    Export:
+      Name: givesource-payment-key-test-public-arn
+
+  testPaymentPrivateKeyArn:
+    Value: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${testPaymentPrivateKey}
+    Export:
+      Name: givesource-payment-key-test-private-arn

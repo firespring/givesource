@@ -43,6 +43,24 @@ SSM.prototype.getParameter = (region, name, decryption) => {
 }
 
 /**
+ * Get parameters from AWS SSM parameter store
+ *
+ * @param region
+ * @param names
+ * @param decryption
+ * @returns {*}
+ */
+SSM.prototype.getParameters = (region, names, decryption) => {
+  const awsSSM = new AWS.SSM({ region: region })
+  decryption = decryption || false
+  const params = {
+    Names: names,
+    WithDecryption: decryption
+  }
+  return awsSSM.getParameters(params).promise()
+}
+
+/**
  * Update a parameter in AWS SSM parameter store
  *
  * @param {String} region
