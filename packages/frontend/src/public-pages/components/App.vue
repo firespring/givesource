@@ -33,7 +33,7 @@ export default {
       const velocity = document.createElement('script')
       velocity.setAttribute(
         'src',
-        '//cdnjs.cloudflare.com/ajax/libs/velocity/2.0.6/velocity.min.js'
+        'https://cdn.jsdelivr.net/gh/mmonkey/fireSlider@master/dist/jquery.fireSlider.velocity.min.js'
       )
       document.head.appendChild(velocity)
       const fireSlider = document.createElement('script')
