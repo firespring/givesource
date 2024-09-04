@@ -333,6 +333,45 @@ export default {
         vm.setPageTitle(vm.pageTitle)
       },
       deep: true
+    },
+    slides () {
+      const vm = this
+      $(document).ready(() => {
+        // Do this on the next tick so Safari and Firefox to work correctly
+        vm.$nextTick(() => {
+          const slider = $(vm.$refs.slider).data({
+            pager: $(vm.$refs.sliderNav)
+          }).fireSlider({
+            activePagerClass: 'current',
+            pagerTemplate: '<a href="#"></a>',
+            slide: 'div.slide'
+          })
+
+          if (vm.slides.length > 1) {
+            slider.on('mouseenter mouseover touchenter touchstart', () => {
+              vm.hover = true
+            }).on('mouseelave mouseout touchleave touchend', () => {
+              vm.hover = false
+            })
+
+            // Pause slider if we interact with a slide (including videos)
+            window.addEventListener('blur', () => {
+              if (vm.hover) {
+                slider.data('fireSlider').pause()
+              }
+            })
+
+            slider.data('fireSlider').slides.on('click', () => {
+              slider.data('fireSlider').pause()
+            })
+
+            // Resume playing slider if we interact with the pager
+            slider.data('fireSlider').pages.on('click', () => {
+              slider.data('fireSlider').play()
+            })
+          }
+        })
+      })
     }
   },
   beforeMount () {
@@ -340,46 +379,6 @@ export default {
 
     vm.setBodyClasses('donation', 'donation--nonprofit')
     vm.setPageTitle(vm.pageTitle)
-  },
-  mounted () {
-    const vm = this
-
-    $(document).ready(() => {
-      // Do this on the next tick so Safari and Firefox to work correctly
-      vm.$nextTick(() => {
-        const slider = $(vm.$refs.slider).data({
-          pager: $(vm.$refs.sliderNav)
-        }).fireSlider({
-          activePagerClass: 'current',
-          pagerTemplate: '<a href="#"></a>',
-          slide: 'div.slide'
-        })
-
-        if (vm.slides.length > 1) {
-          slider.on('mouseenter mouseover touchenter touchstart', () => {
-            vm.hover = true
-          }).on('mouseelave mouseout touchleave touchend', () => {
-            vm.hover = false
-          })
-
-          // Pause slider if we interact with a slide (including videos)
-          window.addEventListener('blur', () => {
-            if (vm.hover) {
-              slider.data('fireSlider').pause()
-            }
-          })
-
-          slider.data('fireSlider').slides.on('click', () => {
-            slider.data('fireSlider').pause()
-          })
-
-          // Resume playing slider if we interact with the pager
-          slider.data('fireSlider').pages.on('click', () => {
-            slider.data('fireSlider').play()
-          })
-        }
-      })
-    })
   },
   methods: {
     loadSettings () {
