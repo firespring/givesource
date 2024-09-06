@@ -67,6 +67,15 @@ Media.prototype.getVimeoData = function (vimeoId) {
   })
 }
 
+// todo - we should likely revert the moving of these to the prototype
+// this is a functional, but hacky, fix
+Media.TYPE_IMAGE = Media.prototype.TYPE_IMAGE
+Media.TYPE_VIMEO = Media.prototype.TYPE_VIMEO
+Media.TYPE_YOUTUBE = Media.prototype.TYPE_YOUTUBE
+Media.VIDEO_REGEX = Media.prototype.VIDEO_REGEX
+Media.getVideoData = Media.prototype.getVideoData
+Media.getVimeoData = Media.prototype.getVimeoData
+
 /**
  * Get data from this Youtube id
  *
@@ -74,10 +83,9 @@ Media.prototype.getVimeoData = function (vimeoId) {
  * @return {{}}
  */
 const getYoutubeData = (youtubeId) => {
-  const media = this
   return {
     id: youtubeId,
-    type: media.TYPE_YOUTUBE,
+    type: Media.TYPE_YOUTUBE,
     thumbnail: 'https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg',
     embedUrl: 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=0&modestbranding=1'
   }
