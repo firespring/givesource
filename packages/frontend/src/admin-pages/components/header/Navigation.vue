@@ -15,91 +15,96 @@
   -->
 
 <template>
-  <div class="o-menubar">
-    <div class="o-menubar__primary">
-      <div class="o-branding">
-        <router-link
-          :to="logoLink"
-          class="u-flex u-items-center"
-        >
-          <div class="o-branding__logo">
-            <img
-              alt="Givesource Logo"
-              src="/img/logo-givesource.png"
-              class="logo"
-            >
-          </div>
-        </router-link>
-      </div>
+  <header>
+    <div class="o-menubar">
+      <div class="o-menubar__primary">
+        <div class="o-branding">
+          <router-link
+              :to="logoLink"
+              class="u-flex u-items-center"
+          >
+            <div class="o-branding__logo">
+              <img
+                  alt="Givesource Logo"
+                  src="/img/logo-givesource.png"
+                  class="logo"
+              >
+            </div>
+          </router-link>
+        </div>
 
-      <div class="o-user">
-        <div
-          ref="oMenubarPopupParent"
-          class="o-user__current o-menubar-popup-parent"
-          @mouseout="closeMenu"
-          @mouseover="cancelCloseMenu"
-        >
-          <a
-            href="#"
-            class="js-user-popup-toggle has-tooltip"
-            title="Manage Your Account"
-            @click="toggleMenu"
-          >
-            <vue-gravatar
-              :email="email"
-              :size="150"
-              default-img="mm"
-              :alt="gravatarAlt"
-              class="o-user__avatar"
-            />
-          </a>
+        <div class="o-user">
           <div
-            ref="oMenubarPopup"
-            class="o-menubar-popup o-menubar-popup--current-user"
+              ref="oMenubarPopupParent"
+              class="o-user__current o-menubar-popup-parent"
+              v-on:keyup.esc="closeMenu"
+              @mouseout="closeMenu"
+              @mouseover="cancelCloseMenu"
           >
-            <div
-              v-if="firstName"
-              class="o-menubar-popup__header o-current-user"
+            <a
+                href="#"
+                class="js-user-popup-toggle has-tooltip"
+                title="Manage Your Account"
+                @click="toggleMenu"
             >
-              <div class="o-current-user-info">
-                <div class="account-user-name">
-                  <strong>{{ firstName }} {{ lastName }}</strong>
+              <vue-gravatar
+                  :email="email"
+                  :size="150"
+                  default-img="mm"
+                  :alt="gravatarAlt"
+                  class="o-user__avatar"
+              />
+            </a>
+            <div
+                ref="oMenubarPopup"
+                class="o-menubar-popup o-menubar-popup--current-user"
+                @focusin="cancelCloseMenu"
+                @focusout="closeMenu"
+            >
+              <div
+                  v-if="firstName"
+                  class="o-menubar-popup__header o-current-user"
+              >
+                <div class="o-current-user-info">
+                  <div class="account-user-name">
+                    <strong>{{ firstName }} {{ lastName }}</strong>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <nav class="o-menubar-popup__nav">
-              <ul>
-                <li>
-                  <router-link :to="{name: 'user-account'}">
-                    <i
-                      class="fa fa-fw fa-user"
-                      aria-hidden="true"
-                    />Your Account
-                  </router-link>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <router-link :to="{ name: 'logout' }">
-                    <i
-                      class="fa fa-fw fa-sign-out"
-                      aria-hidden="true"
-                    />Sign Out
-                  </router-link>
-                </li>
-              </ul>
-            </nav>
+              <nav class="o-menubar-popup__nav">
+                <ul>
+                  <li>
+                    <router-link :to="{name: 'user-account'}">
+                      <i
+                          class="fa fa-fw fa-user"
+                          aria-hidden="true"
+                      />Your Account
+                    </router-link>
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    <router-link :to="{ name: 'logout' }">
+                      <i
+                          class="fa fa-fw fa-sign-out"
+                          aria-hidden="true"
+                      />Sign Out
+                    </router-link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <component
-      :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'"
-      :nonprofit-id="nonprofitId"
-    />
-  </div>
+      <component
+          :is="isAdmin ? 'navigation-admin' : 'navigation-nonprofit'"
+          :nonprofit-id="nonprofitId"
+      />
+    </div>
+  </header>
 </template>
 
 <script>

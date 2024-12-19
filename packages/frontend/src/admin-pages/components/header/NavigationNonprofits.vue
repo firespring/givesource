@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div class="o-menubar__secondary">
+  <nav class="o-menubar__secondary">
     <ul>
       <li>
         <router-link
@@ -52,6 +52,7 @@
     <select
       v-model="selected"
       @change="mobileSelect"
+      name="Nonprofit Navigation Menu"
     >
       <option
         disabled
@@ -72,7 +73,7 @@
         Settings
       </option>
     </select>
-  </div>
+  </nav>
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template>
   <div class="o-app">
     <navigation class="no-print" />
-    <main class="o-app__main o-app__main--compact">
+    <main id="main-content" class="o-app__main o-app__main--compact">
       <div class="o-app_main-content o-app_main-content o-app_main-content--md">
         <div
           ref="content"
