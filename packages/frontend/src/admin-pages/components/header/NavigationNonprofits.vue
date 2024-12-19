@@ -53,6 +53,7 @@
       v-model="selected"
       name="Nonprofit Navigation Menu"
       @change="mobileSelect"
+      name="Nonprofit Navigation Menu"
     >
       <option
         disabled
