@@ -25,7 +25,7 @@
       v-if="displaySize"
       class="c-table-footer__rows-page"
     >
-      <span>Show</span>
+      <label for="rowsPage">Show</label>
       <select
         id="rowsPage"
         v-model="size"
