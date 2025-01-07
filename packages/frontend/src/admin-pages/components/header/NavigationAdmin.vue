@@ -69,11 +69,14 @@
       </li>
     </ul>
 
-    <label for="admin-nav-menu" class="u-hidden-visually">Admin Navigation Menu</label>
+    <label
+      for="admin-nav-menu"
+      class="u-hidden-visually"
+    >Admin Navigation Menu</label>
     <select
+      id="admin-nav-menu"
       v-model="selected"
       @change="mobileSelect"
-      id="admin-nav-menu"
     >
       <option
         disabled

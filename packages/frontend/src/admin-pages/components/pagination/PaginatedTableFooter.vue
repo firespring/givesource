@@ -52,7 +52,10 @@
       v-if="displayPagination"
       class="c-table-footer__pagination"
     >
-      <nav class="c-pagination" aria-label="Pagination">
+      <nav
+        class="c-pagination"
+        aria-label="Pagination"
+      >
         <router-link
           v-if="start > 0"
           :to="generatePageLink({start: 0})"
