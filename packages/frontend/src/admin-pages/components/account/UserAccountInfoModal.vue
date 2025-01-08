@@ -35,6 +35,7 @@
                   class="c-page-section__fieldset"
                   aria-labelledby="section-your-info"
                 >
+                  <legend>Your Info</legend>
                   <div class="c-form-item c-form-item--text c-form-item--required">
                     <div class="c-form-item__control">
                       <div class="c-form-control-grid">
@@ -50,6 +51,8 @@
                               type="text"
                               name="nameFirst"
                               :class="{ 'has-error': formErrors.firstName }"
+                              required
+                              aria-describedby="first-name-error"
                             >
                             <label
                               for="nameFirst"
@@ -58,6 +61,7 @@
                           </div>
                           <div
                             v-if="formErrors.firstName"
+                            id="first-name-error"
                             class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                           >
                             {{ formErrors.firstName }}
@@ -74,6 +78,8 @@
                               type="text"
                               name="nameLast"
                               :class="{ 'has-error': formErrors.lastName }"
+                              required
+                              aria-describedby="last-name-error"
                             >
                             <label
                               for="nameLast"
@@ -82,6 +88,7 @@
                           </div>
                           <div
                             v-if="formErrors.lastName"
+                            id="last-name-error"
                             class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                           >
                             {{ formErrors.lastName }}

@@ -346,27 +346,8 @@ button:-moz-focusring,
 fieldset {
   border: 0;
   margin: 0;
-  padding: 0; }
-
-/**
- * 1. Correct the text wrapping in Edge and IE.
- * 2. Correct the color inheritance from `fieldset` elements in IE.
- * 3. Remove the padding so developers are not caught out when they zero out
- *    `fieldset` elements in all browsers.
- */
-legend {
-  box-sizing: border-box;
-  /* 1 */
-  color: inherit;
-  /* 2 */
-  display: table;
-  /* 1 */
-  max-width: 100%;
-  /* 1 */
-  padding: 0;
-  /* 3 */
-  white-space: normal;
-  /* 1 */ }
+  padding: 16px 8px 8px 8px;
+}
 
 /**
  * Remove the default vertical scrollbar in IE.
@@ -2548,8 +2529,6 @@ App Nav Toggle
   transition: border .2s; }
 .o-sidebar-toggle button:hover, .o-sidebar-toggle button:active {
   border: 1px solid white; }
-.o-sidebar-toggle button:focus, .o-sidebar-toggle button:active {
-  outline: none; }
 
 /* Media queries */
 @media (min-width: 800px) {
@@ -3104,9 +3083,6 @@ General
   -webkit-transform: translate3d(0, 0, 0);
   vertical-align: middle; }
 
-.c-btn:focus {
-  outline: none; }
-
 .c-btn:hover {
   box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
   background-color: #07336a; }
@@ -3267,8 +3243,7 @@ General
   color: #fff; }
 
 .c-btn--text:active {
-  box-shadow: none;
-  outline: none; }
+  box-shadow: none; }
 
 /**
 * @desc      Pill Buttons
@@ -3860,8 +3835,7 @@ textarea {
 [type='tel']:focus,
 [type='color']:focus,
 textarea:focus {
-  border-color: #6c6c6c;
-  outline: none; }
+  border-color: #6c6c6c; }
 [type='text'][disabled],
 [type='password'][disabled],
 [type='date'][disabled],
@@ -3984,8 +3958,7 @@ select {
   line-height: 1.1;
   transition: border-color .15s; }
 select:focus {
-  border-color: #6c6c6c;
-  outline: none; }
+  border-color: #6c6c6c; }
 select::-ms-expand {
   display: none; }
 select[disabled] {
@@ -5893,7 +5866,7 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   background: none;
   font-size: 1rem;
   line-height: 1;
-  color: #919191;
+  color: #222;
   transition: all .2s;
   cursor: text; }
 .has-floating-label > input.sm + label,
@@ -5918,7 +5891,7 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   background: linear-gradient(to top, #fff 0%, #fff 50%, #f4f4f4 50%, #f4f4f4 100%);
   padding: 0 6px;
   font-size: 0.8333rem;
-  color: #b5b5b5; }
+  color: #222; }
 
 .has-floating-label--float > input.sm + label,
 .has-floating-label--float > textarea.sm + label,
@@ -5943,7 +5916,7 @@ li.ui-timepicker-selected .ui-timepicker-duration,
   margin: 0 0 0 0.4444rem;
   content: 'Required';
   text-transform: uppercase;
-  color: #919191;
+  color: #222;
   font-size: 0.6667rem;
   line-height: 1.25;
   letter-spacing: .75px; }
