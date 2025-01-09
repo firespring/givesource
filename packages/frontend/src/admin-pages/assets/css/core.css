@@ -2448,12 +2448,12 @@ Error-specific styles
 * @author    Firespring
 */
 a:link {
-  color: #107899;
+  color: #222;
   text-decoration: none;
   transition: color .15s; }
 
 a:visited {
-  color: #107899;
+  color: #343535;
   text-decoration: none; }
 
 a:hover {
@@ -2730,9 +2730,9 @@ body.has-menubar--secondary .o-menubar-popup {
   padding: 5px 0;
   color: #222; }
 .o-menubar-popup__nav a:hover, .o-menubar-popup__nav a:active {
-  color: #107899; }
+  color: #222; }
 .o-menubar-popup__nav a:hover .fa, .o-menubar-popup__nav a:active .fa {
-  color: #107899; }
+  color: #222; }
 .o-menubar-popup__nav a .fa {
   margin: 0 5px 0 0;
   color: #b5b5b5;
@@ -2856,7 +2856,7 @@ General
 .o-menubar__secondary {
   padding: 6px 20px 7px;
   font-size: 0.8889rem;
-  background: #107899; }
+  background: #222; }
 .o-menubar__secondary select {
   display: block;
   max-width: 320px;
@@ -3514,7 +3514,7 @@ General
   text-decoration: none;
   padding: 0.3333rem 0.8889rem; }
 .c-btn-dropdown-menu a:hover, .c-btn-dropdown-menu a:active {
-  color: #107899; }
+  color: #222; }
 .c-btn-dropdown-menu a:first-child {
   padding-top: 0.6667rem; }
 .c-btn-dropdown-menu a:last-child {
@@ -3649,7 +3649,7 @@ a.c-card:hover .c-card-title-text, a.c-card:active .c-card-title-text {
   text-decoration: underline;
   color: #000; }
 a.c-card .c-card-title-text {
-  color: #107899;
+  color: #222;
   transition: color .15s; }
 
 /******************************************************************************

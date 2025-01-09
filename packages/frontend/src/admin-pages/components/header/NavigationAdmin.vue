@@ -15,7 +15,7 @@
   -->
 
 <template>
-  <div class="o-menubar__secondary">
+  <nav class="o-menubar__secondary">
     <ul>
       <li>
         <router-link
@@ -69,7 +69,12 @@
       </li>
     </ul>
 
+    <label
+      for="admin-nav-menu"
+      class="u-hidden-visually"
+    >Admin Navigation Menu</label>
     <select
+      id="admin-nav-menu"
       v-model="selected"
       @change="mobileSelect"
     >
@@ -95,7 +100,7 @@
         Settings
       </option>
     </select>
-  </div>
+  </nav>
 </template>
 
 <script>

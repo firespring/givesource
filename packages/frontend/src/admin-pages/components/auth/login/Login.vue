@@ -16,7 +16,10 @@
 
 <template>
   <div class="o-app o-app--no-nav o-app--centered">
-    <main class="o-app__main o-app__main--compact">
+    <main
+      id="main-content"
+      class="o-app__main o-app__main--compact"
+    >
       <div class="o-app_main-content o-app_main-content--xs">
         <section
           class="c-page-section c-page-section--border c-page-section--shadow"

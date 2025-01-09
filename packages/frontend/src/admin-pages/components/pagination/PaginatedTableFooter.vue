@@ -25,7 +25,7 @@
       v-if="displaySize"
       class="c-table-footer__rows-page"
     >
-      <span>Show</span>
+      <label for="rowsPage">Show</label>
       <select
         id="rowsPage"
         v-model="size"
@@ -52,7 +52,10 @@
       v-if="displayPagination"
       class="c-table-footer__pagination"
     >
-      <nav class="c-pagination">
+      <nav
+        class="c-pagination"
+        aria-label="Pagination"
+      >
         <router-link
           v-if="start > 0"
           :to="generatePageLink({start: 0})"
