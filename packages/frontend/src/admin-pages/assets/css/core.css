@@ -6530,7 +6530,7 @@ Defaults
 .c-page-section--border > .c-page-section__header a:active {
   color: #fff; }
 .c-page-section--border > .c-page-section__header .c-notes {
-  color: rgba(255, 255, 255, 0.6); }
+  color: #222; }
 
 .c-page-section--border > .c-page-section__main {
   border-bottom-left-radius: 3px;
@@ -6891,15 +6891,13 @@ td .c-drag-handle {
 * @author    Firespring
 */
 .c-notes {
-  color: #919191;
+  color: #222;
   font-size: 0.7778rem;
   line-height: 1.375; }
 .c-notes > p {
   margin: 0 0 .875rem; }
 .c-notes > p:last-child {
   margin: 0; }
-.c-notes strong {
-  color: #222; }
 
 .c-notes--above {
   margin-bottom: 0.3333rem; }
@@ -6908,10 +6906,10 @@ td .c-drag-handle {
   margin-top: 0.3333rem; }
 
 .c-notes--good {
-  color: #3aac70; }
+  color: darkgreen; }
 
 .c-notes--bad {
-  color: #ec302e; }
+  color: darkred; }
 
 .c-notes--clipped {
   max-height: 2.2rem;
