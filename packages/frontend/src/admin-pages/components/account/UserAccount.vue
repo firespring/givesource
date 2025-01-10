@@ -106,7 +106,10 @@
               </div>
             </section>
 
-            <div class="u-margin-top-scale">
+            <div
+              v-if="canDelete"
+              class="u-margin-top-scale"
+            >
               <button
                 class="c-btn c-btn--sm c-btn--bad c-btn--icon c-btn--text"
                 @click="deleteAccount"
@@ -131,6 +134,11 @@ export default {
       firstName: this.user.firstName || '',
       lastName: this.user.lastName || '',
       nonprofitId: this.user.nonprofitId
+    }
+  },
+  computed: {
+    canDelete: () => {
+      return false
     }
   },
   created: function () {
