@@ -395,7 +395,7 @@ textarea {
  */
 ::-webkit-input-placeholder {
   color: inherit;
-  opacity: 0.54; }
+  opacity: 0.90; }
 
 /**
  * 1. Correct the inability to style clickable types in iOS and Safari.
@@ -2429,16 +2429,16 @@ Error-specific styles
 * @author    Firespring
 */
 a:link {
-  color: #222;
+  color: #219;
   text-decoration: none;
   transition: color .15s; }
 
 a:visited {
-  color: #343535;
+  color: #249;
   text-decoration: none; }
 
 a:hover {
-  color: #000;
+  color: #259;
   text-decoration: underline; }
 
 a:active {
@@ -6540,7 +6540,7 @@ Defaults
 .c-page-section--border > .c-page-section__header a:active {
   color: #fff; }
 .c-page-section--border > .c-page-section__header .c-notes {
-  color: #222; }
+  color: #eee; }
 
 .c-page-section--border > .c-page-section__main {
   border-bottom-left-radius: 3px;
