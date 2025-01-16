@@ -15,12 +15,9 @@
   -->
 
 <template>
-  <strong
-    v-if="page == current"
-    class="c-pagination__here"
-  >{{ page + 1 }}</strong>
   <router-link
-    v-else
+    :aria-current-value="(page === current) ? 'page' : null"
+    :exact-active-class="(page === current) ? 'c-pagination__here' : null"
     :to="generatePageLink({start: start})"
   >
     {{ page + 1 }}

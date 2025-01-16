@@ -61,6 +61,7 @@
           :to="generatePageLink({start: 0})"
           class="c-pagination__first"
           title="Jump to the first page"
+          :aria-current="null"
         >
           <i
             class="fa fa-angle-double-left"
@@ -82,6 +83,7 @@
           :to="generatePageLink({start: prevPageStart})"
           class="c-pagination__prev"
           title="Go to the previous page"
+          :aria-current="null"
         >
           <i
             class="fa fa-angle-left"
@@ -111,6 +113,7 @@
           :to="generatePageLink({start: nextPageStart})"
           class="c-pagination__next"
           title="Go to the next page"
+          :aria-current="null"
         >
           <i
             class="fa fa-angle-right"
@@ -132,6 +135,7 @@
           :to="generatePageLink({start: lastPageStart})"
           class="c-pagination__last"
           title="Jump to the last page"
+          :aria-current="null"
         >
           <i
             class="fa fa-angle-double-right"

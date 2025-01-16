@@ -2972,10 +2972,20 @@ General
   text-align: center;
   line-height: 1;
   padding: 0.2222rem 0.4444rem; }
+.c-pagination__here,
 .c-pagination strong {
   margin: 0 0.3333rem;
   background: #474747;
   color: #fff; }
+
+.c-pagination__here,
+.c-pagination__here:link,
+.c-pagination__here:hover,
+.c-pagination__here:visited,
+.c-pagination__here:active {
+  color: #fff;
+}
+
 
 /**
 * @desc      Breadcrumb navigation (global settings)
@@ -6127,7 +6137,7 @@ td.image img {
   border-radius: 3px; }
 td.empty:after {
   content: 'n/a';
-  color: #919191; }
+  color: #669; }
 td.item-actions {
   vertical-align: middle;
   padding: 0 12px !important; }
@@ -7639,7 +7649,7 @@ corresponds to the arrow we want to display */
   padding: 0 1rem; }
 .c-leaderboard__metric .metric-title {
   margin: 0;
-  color: #919191;
+  color: #222;
   font-weight: 400;
   font-size: 0.6667rem;
   line-height: 1.25;

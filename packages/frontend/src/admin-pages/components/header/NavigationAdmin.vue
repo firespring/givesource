@@ -76,8 +76,8 @@
     <select
       id="admin-nav-menu"
       v-model="selected"
-      @change="mobileSelect"
       name="Admin Navigation Menu"
+      @change="mobileSelect"
     >
       <option
         disabled
