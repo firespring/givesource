@@ -15,6 +15,10 @@
   -->
 
 <template>
+  <label
+    :for="id"
+    class="u-hidden-visually"
+  >Select State</label>
   <select
     :id="id"
     ref="input"

@@ -23,9 +23,12 @@
         :name="nonprofitFieldName"
         :nonprofits="nonprofits"
         :has-error="hasNonprofitIdError"
+        :is-required="true"
+        :aria-describedby="'nonprofit=' + nonprofitFieldName"
       />
       <div
         v-if="errors[nonprofitFieldName]"
+        :id="'nonprofit-' + nonprofitFieldName"
         class="c-notes c-notes--below c-notes--bad c-form-control-error"
       >
         {{ errors[nonprofitFieldName] }}
@@ -33,6 +36,10 @@
     </td>
     <td class="input input--text">
       <div class="u-control-icon u-control-icon--dollar">
+        <label
+          :for="dollarAmountFieldName"
+          class="u-hidden-visually"
+        >Donation Amount</label>
         <input
           :id="dollarAmountFieldName"
           v-model="dollarAmount"
@@ -40,25 +47,34 @@
           step="0.01"
           :name="dollarAmountFieldName"
           :class="{ 'has-error': errors[dollarAmountFieldName] }"
+          required
+          aria-describedby="'dollarAmount-' + dollarAmountFieldName"
         >
       </div>
       <div
         v-if="errors[dollarAmountFieldName]"
+        :id="'dollarAmount-' + dollarAmountFieldName"
         class="c-notes c-notes--below c-notes--bad c-form-control-error"
       >
         {{ errors[dollarAmountFieldName] }}
       </div>
     </td>
     <td class="input input--text">
+      <label
+        :for="noteFieldName"
+        class="u-hidden-visually"
+      >Note</label>
       <input
         :id="noteFieldName"
         v-model="note"
         type="text"
         :name="noteFieldName"
         :class="{ 'has-error': errors[noteFieldName] }"
+        aria-describedby="'noteField-' + noteFieldName"
       >
       <div
         v-if="errors[noteFieldName]"
+        :id="'noteField-' + noteFieldName"
         class="c-notes c-notes--below c-notes--bad c-form-control-error"
       >
         {{ errors[noteFieldName] }}
@@ -70,6 +86,7 @@
         href="#"
         role="button"
         class="icon icon--bad"
+        :aria-label="'Remove row ' + donationData.row"
         @click="removeRow"
       ><i
         class="fa fa-minus-circle"

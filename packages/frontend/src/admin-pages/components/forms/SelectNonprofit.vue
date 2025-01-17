@@ -15,6 +15,10 @@
   -->
 
 <template>
+  <label
+    :for="id"
+    class="u-hidden-visually"
+  >Select a nonprofit</label>
   <select
     :id="id"
     ref="select"
@@ -23,6 +27,7 @@
     class="combobox"
     :data-placeholder="placeholder"
     :class="{'has-error': hasError}"
+    :required="isRequired"
   >
     <option value="" />
     <option
@@ -58,6 +63,10 @@ export default {
       }
     },
     hasError: {
+      type: Boolean,
+      default: false
+    },
+    isRequired: {
       type: Boolean,
       default: false
     }

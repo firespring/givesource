@@ -25,7 +25,10 @@
         <div class="o-app-main-content">
           <div class="o-page-header">
             <div class="o-page-header__text">
-              <nav class="o-page-header-nav c-breadcrumb">
+              <nav
+                aria-label="donation-breadcrumbs"
+                class="o-page-header-nav c-breadcrumb"
+              >
                 <span><router-link :to="{ name: 'donations-list' }">Donations</router-link></span>
               </nav>
               <h1 class="o-page-header-title">
@@ -50,175 +53,175 @@
                   class="c-form-item c-form-item--text c-form-item--required"
                   :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }"
                 >
-                  <div class="c-form-item__label">
-                    <label
-                      for="donorNameFirst"
-                      class="c-form-item-label-text"
-                    >Donor Name</label>
-                  </div>
-                  <div class="c-form-item__control">
-                    <div class="c-form-control-grid">
-                      <div class="c-form-control-grid__item">
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="donorNameFirst"
-                            v-model="formData.firstName"
-                            type="text"
-                            name="donorNameFirst"
-                            :class="{ 'has-error': formErrors.firstName }"
+                  <fieldset>
+                    <legend>Donor Name</legend>
+                    <div class="c-form-item__control">
+                      <div class="c-form-control-grid">
+                        <div class="c-form-control-grid__item">
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
                           >
-                          <label for="donorNameFirst">First Name</label>
-                        </div>
-                        <div
-                          v-if="formErrors.firstName"
-                          class="c-notes c-notes--below c-notes--bad c-form-control-error"
-                        >
-                          {{ formErrors.firstName }}
-                        </div>
-                      </div>
-                      <div class="c-form-control-grid__item">
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="donorNameLast"
-                            v-model="formData.lastName"
-                            type="text"
-                            name="donorNameLast"
-                            :class="{ 'has-error': formErrors.lastName }"
+                            <input
+                              id="donorNameFirst"
+                              v-model="formData.firstName"
+                              type="text"
+                              name="donorNameFirst"
+                              :class="{ 'has-error': formErrors.firstName }"
+                              required
+                              aria-describedby="firstNameError"
+                            >
+                            <label for="donorNameFirst">First Name</label>
+                          </div>
+                          <div
+                            v-if="formErrors.firstName"
+                            id="firstNameError"
+                            class="c-notes c-notes--below c-notes--bad c-form-control-error"
                           >
-                          <label for="donorNameLast">Last Name</label>
+                            {{ formErrors.firstName }}
+                          </div>
                         </div>
-                        <div
-                          v-if="formErrors.lastName"
-                          class="c-notes c-notes--below c-notes--bad c-form-control-error"
-                        >
-                          {{ formErrors.lastName }}
+                        <div class="c-form-control-grid__item">
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
+                          >
+                            <input
+                              id="donorNameLast"
+                              v-model="formData.lastName"
+                              type="text"
+                              name="donorNameLast"
+                              :class="{ 'has-error': formErrors.lastName }"
+                              required
+                              aria-describedby="lastNameError"
+                            >
+                            <label for="donorNameLast">Last Name</label>
+                          </div>
+                          <div
+                            v-if="formErrors.lastName"
+                            id="lastNameError"
+                            class="c-notes c-notes--below c-notes--bad c-form-control-error"
+                          >
+                            {{ formErrors.lastName }}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </fieldset>
                 </div>
 
                 <div class="c-form-item c-form-item--control-group c-form-item--control-group--address">
-                  <div class="c-form-item__label">
-                    <div class="c-form-item-label-text">
-                      Address
-                    </div>
-                  </div>
-
-                  <div class="c-form-item__control u-margin-top-thick">
-                    <div class="c-form-control-grid">
-                      <div class="c-form-control-grid__item">
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="address1"
-                            v-model="formData.address1"
-                            type="text"
-                            name="address1"
-                            :class="{ 'has-error': formErrors.address1 }"
+                  <fieldset>
+                    <legend>Address</legend>
+                    <div class="c-form-item__control u-margin-top-thick">
+                      <div class="c-form-control-grid">
+                        <div class="c-form-control-grid__item">
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
                           >
-                          <label for="address1">Address Line 1</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-if="formErrors.address1"
-                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
-                    >
-                      {{ formErrors.address1 }}
-                    </div>
-
-                    <div class="c-form-control-grid">
-                      <div class="c-form-control-grid__item">
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="address2"
-                            v-model="formData.address2"
-                            type="text"
-                            name="address2"
-                            :class="{ 'has-error': formErrors.address2 }"
-                          >
-                          <label for="address2">Address Line 2</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-if="formErrors.address2"
-                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
-                    >
-                      {{ formErrors.address2 }}
-                    </div>
-
-                    <div class="c-form-control-grid">
-                      <div class="c-form-control-grid__item">
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="city"
-                            v-model="formData.city"
-                            type="text"
-                            name="city"
-                            :class="{ 'has-error': formErrors.city }"
-                          >
-                          <label for="city">City</label>
+                            <input
+                              id="address1"
+                              v-model="formData.address1"
+                              type="text"
+                              name="address1"
+                              :class="{ 'has-error': formErrors.address1 }"
+                            >
+                            <label for="address1">Address Line 1</label>
+                          </div>
                         </div>
                       </div>
                       <div
-                        id="addressGroupDefaultCountryOptions-US"
-                        class="c-form-control-grid__item u-flex-collapse"
+                        v-if="formErrors.address1"
+                        class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                       >
-                        <state-select
-                          id="state"
-                          v-model="formData.state"
-                          name="state"
-                          placeholder="State"
-                          :class="{ 'has-error': formErrors.state }"
-                        />
+                        {{ formErrors.address1 }}
                       </div>
-                      <div
-                        class="c-form-control-grid__item"
-                        style="flex: 1 0 11rem; max-width: 11rem;"
-                      >
-                        <div
-                          v-floating-label
-                          class="has-floating-label js-floating-label"
-                        >
-                          <input
-                            id="zip"
-                            v-model="formData.zip"
-                            type="text"
-                            name="zip"
-                            :class="{ 'has-error': formErrors.zip }"
+
+                      <div class="c-form-control-grid">
+                        <div class="c-form-control-grid__item">
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
                           >
-                          <label for="zip">ZIP Code</label>
+                            <input
+                              id="address2"
+                              v-model="formData.address2"
+                              type="text"
+                              name="address2"
+                              :class="{ 'has-error': formErrors.address2 }"
+                            >
+                            <label for="address2">Address Line 2</label>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                      <div
+                        v-if="formErrors.address2"
+                        class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
+                      >
+                        {{ formErrors.address2 }}
+                      </div>
 
-                    <div
-                      v-if="formErrors.city || formErrors.state || formErrors.zip"
-                      class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
-                    >
-                      <span v-if="formErrors.city">{{
-                        formErrors.city
-                      }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
-                        v-if="formErrors.zip"
-                      >{{ formErrors.zip }}.</span>
+                      <div class="c-form-control-grid">
+                        <div class="c-form-control-grid__item">
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
+                          >
+                            <input
+                              id="city"
+                              v-model="formData.city"
+                              type="text"
+                              name="city"
+                              :class="{ 'has-error': formErrors.city }"
+                            >
+                            <label for="city">City</label>
+                          </div>
+                        </div>
+                        <div
+                          id="addressGroupDefaultCountryOptions-US"
+                          class="c-form-control-grid__item u-flex-collapse"
+                        >
+                          <state-select
+                            id="state"
+                            v-model="formData.state"
+                            name="state"
+                            placeholder="State"
+                            :class="{ 'has-error': formErrors.state }"
+                          />
+                        </div>
+                        <div
+                          class="c-form-control-grid__item"
+                          style="flex: 1 0 11rem; max-width: 11rem;"
+                        >
+                          <div
+                            v-floating-label
+                            class="has-floating-label js-floating-label"
+                          >
+                            <input
+                              id="zip"
+                              v-model="formData.zip"
+                              type="text"
+                              name="zip"
+                              :class="{ 'has-error': formErrors.zip }"
+                            >
+                            <label for="zip">ZIP Code</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        v-if="formErrors.city || formErrors.state || formErrors.zip"
+                        class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
+                      >
+                        <span v-if="formErrors.city">{{
+                          formErrors.city
+                        }}. </span><span v-if="formErrors.state">{{ formErrors.state }}. </span><span
+                          v-if="formErrors.zip"
+                        >{{ formErrors.zip }}.</span>
+                      </div>
                     </div>
-                  </div>
+                  </fieldset>
                 </div>
 
                 <div
