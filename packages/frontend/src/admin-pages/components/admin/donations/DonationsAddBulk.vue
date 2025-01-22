@@ -61,9 +61,11 @@
                       name="nonprofitId"
                       :nonprofits="nonprofits"
                       :has-error="formErrors.hasOwnProperty('nonprofitId')"
+                      :is-required="true"
                     />
                     <div
                       v-if="formErrors.nonprofitId"
+                      id="nonprofitIdError"
                       class="c-notes c-notes--below c-notes--bad c-form-control-error"
                     >
                       {{ formErrors.nonprofitId }}
@@ -91,10 +93,13 @@
                         name="donationAmount"
                         style="width: 10rem;"
                         :class="{ 'has-error': formErrors.subtotal }"
+                        required
+                        aria-describedby="subtotalError"
                       >
                     </div>
                     <div
                       v-if="formErrors.subtotal"
+                      id="subtotalError"
                       class="c-notes c-notes--below c-notes--bad c-form-control-error"
                     >
                       {{ formErrors.subtotal }}
@@ -121,10 +126,13 @@
                           type="number"
                           name="donationNum"
                           :class="{ 'has-error': formErrors.count }"
+                          required
+                          aria-describedby="countError"
                         >
                       </div>
                       <div
                         v-if="formErrors.count"
+                        id="countError"
                         class="c-notes c-notes--below c-notes--bad c-form-control-error"
                       >
                         {{ formErrors.count }}
@@ -149,10 +157,12 @@
                       type="text"
                       name="donationNote"
                       :class="{ 'has-error': formErrors.note }"
+                      aria-describedby="noteError"
                     >
                   </div>
                   <div
                     v-if="formErrors.note"
+                    id="noteError"
                     class="c-notes c-notes--below c-notes--bad c-form-control-error"
                   >
                     {{ formErrors.note }}

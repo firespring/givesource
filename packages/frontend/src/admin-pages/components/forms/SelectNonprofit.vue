@@ -100,6 +100,8 @@ export default {
         }
         vue.localValue = value
         $(vue.$refs.select).val(value)
+        $(vue.$refs.select).find('option').attr('aria-selected', false)
+        $(vue.$refs.select).find("option[value='" + value + "']").attr('aria-selected', true)
         $(vue.$refs.select).trigger('chosen:updated')
       }
 
