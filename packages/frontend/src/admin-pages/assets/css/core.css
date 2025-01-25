@@ -3740,7 +3740,7 @@ hr + .c-form-item {
   margin: 0 0 0 0.4444rem;
   content: 'Required';
   text-transform: uppercase;
-  color: #919191;
+  color: #333;
   font-size: 0.6667rem;
   line-height: 1.25;
   letter-spacing: .75px; }
