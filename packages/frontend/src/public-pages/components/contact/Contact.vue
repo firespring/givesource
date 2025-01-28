@@ -53,8 +53,7 @@
                       name="nameFirst"
                       :class="{'has-error': formErrors.firstName}"
                       required
-                      aria-describedby="nameErrors"
-                      aria-labelledby="nameLabel"
+                      aria-describedby="nameLabel nameErrors"
                     >
                   </div>
                   <div class="grid-item">
@@ -66,8 +65,7 @@
                       name="nameLast"
                       :class="{'has-error': formErrors.lastName}"
                       required
-                      aria-describedby="nameErrors"
-                      aria-labelledby="nameLabel"
+                      aria-describedby="nameLabel nameErrors"
                     >
                   </div>
                 </div>

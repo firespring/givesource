@@ -106,7 +106,7 @@
                       maxlength="200"
                       :class="{'has-error': formErrors.firstName}"
                       required
-                      aria-describedby="contactNameErrors"
+                      aria-describedby="contactNameLabel contactNameErrors"
                     >
                   </div>
                   <div class="grid-item">
@@ -119,7 +119,7 @@
                       maxlength="200"
                       :class="{'has-error': formErrors.lastName}"
                       required
-                      aria-describedby="contactNameErrors"
+                      aria-describedby="contactNameLabel contactNameErrors"
                     >
                   </div>
                 </div>
@@ -173,7 +173,7 @@
                     name="address1"
                     :class="{'has-error': formErrors.address1}"
                     required
-                    aria-describedby="address1Errors"
+                    aria-describedby="addressLabel address1Errors"
                   >
                   <div
                     v-if="formErrors.address1"
@@ -191,6 +191,7 @@
                     v-model="formData.address2"
                     type="text"
                     name="address2"
+                    aria-describedby="addressLabel"
                   >
                 </div>
 
@@ -205,7 +206,7 @@
                       maxlength="200"
                       :class="{'has-error': formErrors.city}"
                       required
-                      aria-describedby="cszErrors"
+                      aria-describedby="addressLabel cszErrors"
                     >
                   </div>
 
@@ -217,7 +218,7 @@
                       name="state"
                       placeholder="State"
                       required
-                      aria-describedby="cszErrors"
+                      aria-describedby="addressLabel cszErrors"
                     />
                   </div>
 
@@ -231,7 +232,7 @@
                       maxlength="200"
                       :class="{'has-error': formErrors.zip}"
                       required
-                      aria-describedby="cszErrors"
+                      aria-describedby="addressLabel cszErrors"
                     >
                   </div>
                 </div>
@@ -271,7 +272,10 @@
             </div>
 
             <div class="form-item">
-              <div class="form-item__label">
+              <div
+                id="orgCategories"
+                class="form-item__label"
+              >
                 Organization Categories (Check up to 3)
               </div>
               <div class="form-item__control">
@@ -282,7 +286,11 @@
                 >
                   {{ formErrors.categories }}
                 </div>
-                <forms-nonprofit-category v-model="formData.categories" />
+                <forms-nonprofit-category
+                  v-model="formData.categories"
+                  group-label="orgCategories"
+                  error-label="categoryErrors"
+                />
               </div>
             </div>
           </fieldset>
@@ -297,20 +305,24 @@
               class="form-item"
               :class="{'form-item--required': agreement.isRequired}"
             >
-              <div class="form-item__label">
+              <div
+                :id="'agreement' + agreement.id + 'label'"
+                class="form-item__label"
+              >
                 Do you agree to the <strong>{{ agreement.agreementTitle }}</strong>?
               </div>
               <div class="form-item__control">
                 <ul class="list-plain list-checkbox">
                   <li>
-                    <label>
+                    <label :for="'agreement' + agreement.id">
                       <input
+                        :id="'agreement' + agreement.id"
                         v-model="formData.agreedIds"
                         type="checkbox"
                         name="agreedIds[]"
                         :value="agreement.id"
                         :required="agreement.isRequired"
-                        :aria-describedby="'agreedIds' + agreement.id"
+                        :aria-describedby="'agreedIds' + agreement.id + ' ' + 'agreement' + agreement.id + 'label'"
                       >
                       <span>Yes, I agree to the <strong>{{ agreement.agreementTitle }}</strong>.</span>
                     </label>
