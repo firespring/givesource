@@ -37,35 +37,43 @@
 
         <form @submit="submit">
           <fieldset>
+            <legend>Contact Us</legend>
             <div class="form-item form-item--required">
               <div class="form-item__label">
-                <label for="nameFirst">Your Name</label>
+                <label id="nameLabel">Your Name</label>
               </div>
               <div class="form-item__control">
                 <div class="grid">
                   <div class="grid-item">
+                    <label for="nameFirst">First Name</label>
                     <input
                       id="nameFirst"
                       v-model="formData.firstName"
                       type="text"
                       name="nameFirst"
-                      placeholder="First Name"
                       :class="{'has-error': formErrors.firstName}"
+                      required
+                      aria-describedby="nameErrors"
+                      aria-labelledby="nameLabel"
                     >
                   </div>
                   <div class="grid-item">
+                    <label for="nameLast">Last Name</label>
                     <input
                       id="nameLast"
                       v-model="formData.lastName"
                       type="text"
                       name="nameLast"
-                      placeholder="Last Name"
                       :class="{'has-error': formErrors.lastName}"
+                      required
+                      aria-describedby="nameErrors"
+                      aria-labelledby="nameLabel"
                     >
                   </div>
                 </div>
                 <div
                   v-if="formErrors.firstName || formErrors.lastName"
+                  id="nameErrors"
                   class="notes notes--below notes--error"
                 >
                   Enter your first name and last name
@@ -84,9 +92,12 @@
                   type="email"
                   name="email"
                   :class="{'has-error': formErrors.email}"
+                  required
+                  aria-describedby="emailErrors"
                 >
                 <div
                   v-if="formErrors.email"
+                  id="emailErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.email }}
@@ -105,9 +116,11 @@
                   type="tel"
                   name="phone"
                   :class="{'has-error': formErrors.phone}"
+                  aria-describedby="phoneErrors"
                 >
                 <div
                   v-if="formErrors.phone"
+                  id="phoneErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.phone }}
@@ -125,9 +138,12 @@
                   v-model="formData.message"
                   name="questions"
                   :class="{'has-error': formErrors.message}"
+                  required
+                  aria-describedby="questionErrors"
                 />
                 <div
                   v-if="formErrors.message"
+                  id="questionErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.message }}
