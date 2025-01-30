@@ -194,7 +194,7 @@
 
                     <div
                       id="addressGroupDefaultCountryOptions-US"
-                      class="c-form-control-grid__item c-form-item--required u-flex-collapse"
+                      class="c-form-control-grid__item c-form-item--required"
                     >
                       <state-select
                         id="state"

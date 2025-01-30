@@ -180,7 +180,7 @@
                         </div>
                         <div
                           id="addressGroupDefaultCountryOptions-US"
-                          class="c-form-control-grid__item u-flex-collapse"
+                          class="c-form-control-grid__item"
                         >
                           <state-select
                             id="state"

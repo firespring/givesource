@@ -15,43 +15,260 @@
   -->
 
 <template>
-  <label
-    :for="id"
-    class="u-hidden-visually"
-  >Select State</label>
-  <select
-    :id="id"
-    ref="input"
-    v-model="localValue"
-    :name="name"
+  <VueSelect
+      v-model="localValue"
+      :input-id="id"
+      :name="name"
+      placeholder="Select a state"
+      :options="[
+        {
+          label: 'Alabama',
+          value: 'AL'
+        },
+        {
+          label: 'Alaska',
+          value: 'AK'
+        },
+        {
+          label: 'American Samoa',
+          value: 'AS'
+        },
+        {
+          label: 'Arizona',
+          value: 'AZ'
+        },
+        {
+          label: 'Arkansas',
+          value: 'AR'
+        },
+        {
+          label: 'California',
+          value: 'CA'
+        },
+        {
+          label: 'Colorado',
+          value: 'CO'
+        },
+        {
+          label: 'Connecticut',
+          value: 'CT'
+        },
+        {
+          label: 'Delaware',
+          value: 'DE'
+        },
+        {
+          label: 'District Of Columbia',
+          value: 'DC'
+        },
+        {
+          label: 'Federated States Of Micronesia',
+          value: 'FM'
+        },
+        {
+          label: 'Florida',
+          value: 'FL'
+        },
+        {
+          label: 'Georgia',
+          value: 'GA'
+        },
+        {
+          label: 'Guam',
+          value: 'GU'
+        },
+        {
+          label: 'Hawaii',
+          value: 'HI'
+        },
+        {
+          label: 'Idaho',
+          value: 'ID'
+        },
+        {
+          label: 'Illinois',
+          value: 'IL'
+        },
+        {
+          label: 'Indiana',
+          value: 'IN'
+        },
+        {
+          label: 'Iowa',
+          value: 'IA'
+        },
+        {
+          label: 'Kansas',
+          value: 'KS'
+        },
+        {
+          label: 'Kentucky',
+          value: 'KY'
+        },
+        {
+          label: 'Louisiana',
+          value: 'LA'
+        },
+        {
+          label: 'Maine',
+          value: 'ME'
+        },
+        {
+          label: 'Marshall Islands',
+          value: 'MH'
+        },
+        {
+          label: 'Maryland',
+          value: 'MD'
+        },
+        {
+          label: 'Massachusetts',
+          value: 'MA'
+        },
+        {
+          label: 'Michigan',
+          value: 'MI'
+        },
+        {
+          label: 'Minnesota',
+          value: 'MN'
+        },
+        {
+          label: 'Mississippi',
+          value: 'MS'
+        },
+        {
+          label: 'Missouri',
+          value: 'MO'
+        },
+        {
+          label: 'Montana',
+          value: 'MT'
+        },
+        {
+          label: 'Nebraska',
+          value: 'NE'
+        },
+        {
+          label: 'Nevada',
+          value: 'NV'
+        },
+        {
+          label: 'New Hampshire',
+          value: 'NH'
+        },
+        {
+          label: 'New Jersey',
+          value: 'NJ'
+        },
+        {
+          label: 'New Mexico',
+          value: 'NM'
+        },
+        {
+          label: 'New York',
+          value: 'NY'
+        },
+        {
+          label: 'North Carolina',
+          value: 'NC'
+        },
+        {
+          label: 'North Dakota',
+          value: 'ND'
+        },
+        {
+          label: 'Northern Mariana Islands',
+          value: 'MP'
+        },
+        {
+          label: 'Ohio',
+          value: 'OH'
+        },
+        {
+          label: 'Oklahoma',
+          value: 'OK'
+        },
+        {
+          label: 'Oregon',
+          value: 'OR'
+        },
+        {
+          label: 'Palau',
+          value: 'PW'
+        },
+        {
+          label: 'Pennsylvania',
+          value: 'PA'
+        },
+        {
+          label: 'Puerto Rico',
+          value: 'PR'
+        },
+        {
+          label: 'Rhode Island',
+          value: 'RI'
+        },
+        {
+          label: 'South Carolina',
+          value: 'SC'
+        },
+        {
+          label: 'South Dakota',
+          value: 'SD'
+        },
+        {
+          label: 'Tennessee',
+          value: 'TN'
+        },
+        {
+          label: 'Texas',
+          value: 'TX'
+        },
+        {
+          label: 'Utah',
+          value: 'UT'
+        },
+        {
+          label: 'Vermont',
+          value: 'VT'
+        },
+        {
+          label: 'Virgin Islands',
+          value: 'VI'
+        },
+        {
+          label: 'Virginia',
+          value: 'VA'
+        },
+        {
+          label: 'Washington',
+          value: 'WA'
+        },
+        {
+          label: 'West Virginia',
+          value: 'WV'
+        },
+        {
+          label: 'Wisconsin',
+          value: 'WI'
+        },
+        {
+          label: 'Wyoming',
+          value: 'WY'
+        }
+      ]"
   >
-    <option
-      v-if="placeholder"
-      disabled
-      value=""
-    >
-      {{ placeholder }}
-    </option>
-    <option
-      v-if="placeholder"
-      disabled
-      value=""
-    >
-      -----
-    </option>
-    <option
-      v-for="state in states"
-      :value="state.abbreviation"
-    >
-      {{ state.name }}
-    </option>
-  </select>
+  </VueSelect>
 </template>
 
 <script>
+import { ref, computed, watch, onMounted } from 'vue'
+
 export default {
+  emits: ['update:modelValue'],
   props: {
-    modelValue: { type: String, default: null },
+    modelValue: { type: [String, Number], default: null },
     id: {
       type: String,
       default: null
@@ -62,284 +279,39 @@ export default {
     },
     placeholder: {
       type: String,
-      default: null
-    }
-  },
-  emits: ['update:modelValue'],
-  data: function () {
-    return {
-      localValue: this.modelValue ? this.modelValue : !this.placeholder ? 'AL' : '',
-      states: [
-        {
-          name: 'Alabama',
-          abbreviation: 'AL'
-        },
-        {
-          name: 'Alaska',
-          abbreviation: 'AK'
-        },
-        {
-          name: 'American Samoa',
-          abbreviation: 'AS'
-        },
-        {
-          name: 'Arizona',
-          abbreviation: 'AZ'
-        },
-        {
-          name: 'Arkansas',
-          abbreviation: 'AR'
-        },
-        {
-          name: 'California',
-          abbreviation: 'CA'
-        },
-        {
-          name: 'Colorado',
-          abbreviation: 'CO'
-        },
-        {
-          name: 'Connecticut',
-          abbreviation: 'CT'
-        },
-        {
-          name: 'Delaware',
-          abbreviation: 'DE'
-        },
-        {
-          name: 'District Of Columbia',
-          abbreviation: 'DC'
-        },
-        {
-          name: 'Federated States Of Micronesia',
-          abbreviation: 'FM'
-        },
-        {
-          name: 'Florida',
-          abbreviation: 'FL'
-        },
-        {
-          name: 'Georgia',
-          abbreviation: 'GA'
-        },
-        {
-          name: 'Guam',
-          abbreviation: 'GU'
-        },
-        {
-          name: 'Hawaii',
-          abbreviation: 'HI'
-        },
-        {
-          name: 'Idaho',
-          abbreviation: 'ID'
-        },
-        {
-          name: 'Illinois',
-          abbreviation: 'IL'
-        },
-        {
-          name: 'Indiana',
-          abbreviation: 'IN'
-        },
-        {
-          name: 'Iowa',
-          abbreviation: 'IA'
-        },
-        {
-          name: 'Kansas',
-          abbreviation: 'KS'
-        },
-        {
-          name: 'Kentucky',
-          abbreviation: 'KY'
-        },
-        {
-          name: 'Louisiana',
-          abbreviation: 'LA'
-        },
-        {
-          name: 'Maine',
-          abbreviation: 'ME'
-        },
-        {
-          name: 'Marshall Islands',
-          abbreviation: 'MH'
-        },
-        {
-          name: 'Maryland',
-          abbreviation: 'MD'
-        },
-        {
-          name: 'Massachusetts',
-          abbreviation: 'MA'
-        },
-        {
-          name: 'Michigan',
-          abbreviation: 'MI'
-        },
-        {
-          name: 'Minnesota',
-          abbreviation: 'MN'
-        },
-        {
-          name: 'Mississippi',
-          abbreviation: 'MS'
-        },
-        {
-          name: 'Missouri',
-          abbreviation: 'MO'
-        },
-        {
-          name: 'Montana',
-          abbreviation: 'MT'
-        },
-        {
-          name: 'Nebraska',
-          abbreviation: 'NE'
-        },
-        {
-          name: 'Nevada',
-          abbreviation: 'NV'
-        },
-        {
-          name: 'New Hampshire',
-          abbreviation: 'NH'
-        },
-        {
-          name: 'New Jersey',
-          abbreviation: 'NJ'
-        },
-        {
-          name: 'New Mexico',
-          abbreviation: 'NM'
-        },
-        {
-          name: 'New York',
-          abbreviation: 'NY'
-        },
-        {
-          name: 'North Carolina',
-          abbreviation: 'NC'
-        },
-        {
-          name: 'North Dakota',
-          abbreviation: 'ND'
-        },
-        {
-          name: 'Northern Mariana Islands',
-          abbreviation: 'MP'
-        },
-        {
-          name: 'Ohio',
-          abbreviation: 'OH'
-        },
-        {
-          name: 'Oklahoma',
-          abbreviation: 'OK'
-        },
-        {
-          name: 'Oregon',
-          abbreviation: 'OR'
-        },
-        {
-          name: 'Palau',
-          abbreviation: 'PW'
-        },
-        {
-          name: 'Pennsylvania',
-          abbreviation: 'PA'
-        },
-        {
-          name: 'Puerto Rico',
-          abbreviation: 'PR'
-        },
-        {
-          name: 'Rhode Island',
-          abbreviation: 'RI'
-        },
-        {
-          name: 'South Carolina',
-          abbreviation: 'SC'
-        },
-        {
-          name: 'South Dakota',
-          abbreviation: 'SD'
-        },
-        {
-          name: 'Tennessee',
-          abbreviation: 'TN'
-        },
-        {
-          name: 'Texas',
-          abbreviation: 'TX'
-        },
-        {
-          name: 'Utah',
-          abbreviation: 'UT'
-        },
-        {
-          name: 'Vermont',
-          abbreviation: 'VT'
-        },
-        {
-          name: 'Virgin Islands',
-          abbreviation: 'VI'
-        },
-        {
-          name: 'Virginia',
-          abbreviation: 'VA'
-        },
-        {
-          name: 'Washington',
-          abbreviation: 'WA'
-        },
-        {
-          name: 'West Virginia',
-          abbreviation: 'WV'
-        },
-        {
-          name: 'Wisconsin',
-          abbreviation: 'WI'
-        },
-        {
-          name: 'Wyoming',
-          abbreviation: 'WY'
-        }
-      ]
-    }
-  },
-  computed: {
-    selectedValue: function () {
-      const vue = this
-      return vue.localValue
-    }
-  },
-  watch: {
-    localValue: {
-      handler (value, oldValue) {
-        const vue = this
-
-        if (value === oldValue) {
-          return
-        }
-        vue.$emit('update:modelValue', vue.selectedValue)
+      default: 'Select a state'
+    },
+    nonprofits: {
+      type: Array,
+      default: function () {
+        return []
       }
     },
-    modelValue: {
-      handler (value, oldValue) {
-        const vue = this
-
-        if (value === oldValue) {
-          return
-        }
-        vue.localValue = value
-      }
+    hasError: {
+      type: Boolean,
+      default: false
+    },
+    isRequired: {
+      type: Boolean,
+      default: false
     }
   },
-  mounted: function () {
-    const vue = this
-    vue.$emit('update:modelValue', vue.selectedValue)
+  setup (props, { emit }) {
+    const localValue = ref("")
+
+    watch(localValue, (newValue) => {
+      emit('update:modelValue', newValue + '')
+    })
+
+    onMounted(() => {
+      watch(() => props.modelValue, (newValue) => {
+        localValue.value = newValue
+      })
+    })
+
+    return {
+      localValue
+    }
   }
 }
 </script>

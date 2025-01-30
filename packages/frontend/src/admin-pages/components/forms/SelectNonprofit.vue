@@ -15,33 +15,22 @@
   -->
 
 <template>
-  <label
-    :for="id"
-    class="u-hidden-visually"
-  >Select a nonprofit</label>
-  <select
-    :id="id"
-    ref="select"
-    v-model="localValue"
-    :name="name"
-    class="combobox"
-    :data-placeholder="placeholder"
-    :class="{'has-error': hasError}"
-    :required="isRequired"
+  <VueSelect
+      v-model="localValue"
+      :input-id="id"
+      :name="name"
+      placeholder="Select a nonprofit"
+      :options="selectOptions"
   >
-    <option value="" />
-    <option
-      v-for="nonprofit in nonprofits"
-      :value="nonprofit.id"
-    >
-      {{ nonprofit.legalName }}
-    </option>
-  </select>
+  </VueSelect>
 </template>
 
 <script>
 
+import { ref, computed, watch, onMounted } from 'vue'
+
 export default {
+  emits: ['update:modelValue'],
   props: {
     modelValue: { type: [String, Number], default: null },
     id: {
@@ -71,59 +60,23 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue'],
-  data: function () {
-    return {
-      localValue: ''
-    }
-  },
-  computed: {
-    selectedValue: function () {
-      return this.localValue
-    }
-  },
-  watch: {
-    localValue: {
-      handler (value, oldValue) {
-        const vue = this
-        if (value === oldValue) {
-          return
-        }
-        vue.$emit('update:modelValue', vue.selectedValue)
-      }
-    },
-    modelValue: {
-      handler (value, oldValue) {
-        const vue = this
-        if (value === oldValue) {
-          return
-        }
-        vue.localValue = value
-        $(vue.$refs.select).val(value)
-        $(vue.$refs.select).find('option').attr('aria-selected', false)
-        $(vue.$refs.select).find("option[value='" + value + "']").attr('aria-selected', true)
-        $(vue.$refs.select).trigger('chosen:updated')
-      }
-
-    },
-    nonprofits: {
-      handler () {
-        const vue = this
-        vue.$nextTick(function () {
-          $(vue.$refs.select).trigger('chosen:updated')
-        })
-      }
-    }
-  },
-  mounted: function () {
-    const vue = this
-
-    $(vue.$refs.select).chosen({
-      allow_single_deselect: true,
-      width: '100%'
-    }).change(function () {
-      vue.localValue = $(this).val()
+  setup (props, { emit }) {
+    const localValue = ref("")
+    const selectOptions = computed(() => {
+      return props.nonprofits.map((nonprofit) => {
+        return { label: nonprofit.legalName, value: nonprofit.id }
+      })
     })
+
+
+    watch(localValue, (newValue) => {
+      emit('update:modelValue', newValue + '')
+    })
+
+    return {
+      localValue,
+      selectOptions
+    }
   }
 }
 </script>
