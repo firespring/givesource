@@ -41,7 +41,6 @@ import VueSelect from 'vue3-select-component'
 import _ from 'lodash'
 import $ from 'jquery'
 
-import 'chosen-js'
 import '@claviska/jquery-minicolors'
 
 const emitter = mitt()

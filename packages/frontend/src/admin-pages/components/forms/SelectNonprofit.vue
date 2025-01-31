@@ -16,21 +16,19 @@
 
 <template>
   <VueSelect
-      v-model="localValue"
-      :input-id="id"
-      :name="name"
-      placeholder="Select a nonprofit"
-      :options="selectOptions"
-  >
-  </VueSelect>
+    v-model="localValue"
+    :input-id="id"
+    :name="name"
+    placeholder="Select a nonprofit"
+    :options="selectOptions"
+  />
 </template>
 
 <script>
 
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export default {
-  emits: ['update:modelValue'],
   props: {
     modelValue: { type: [String, Number], default: null },
     id: {
@@ -60,14 +58,14 @@ export default {
       default: false
     }
   },
+  emits: ['update:modelValue'],
   setup (props, { emit }) {
-    const localValue = ref("")
+    const localValue = ref('')
     const selectOptions = computed(() => {
       return props.nonprofits.map((nonprofit) => {
         return { label: nonprofit.legalName, value: nonprofit.id }
       })
     })
-
 
     watch(localValue, (newValue) => {
       emit('update:modelValue', newValue + '')
