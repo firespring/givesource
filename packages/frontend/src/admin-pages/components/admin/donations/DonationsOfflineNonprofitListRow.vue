@@ -17,6 +17,10 @@
 <template>
   <tr>
     <td class="input input--text">
+      <label
+        :for="nonprofitFieldName"
+        class="u-hidden-visually"
+      >Select a nonprofit</label>
       <SelectNonprofit
         :id="nonprofitFieldName"
         v-model="selectedNonprofit"
@@ -24,11 +28,13 @@
         :nonprofits="nonprofits"
         :has-error="hasNonprofitIdError"
         :is-required="true"
-        :aria-describedby="'nonprofit=' + nonprofitFieldName"
+        :aria="{
+          describedby: 'related-nonprofit-id nonprofit-' + nonprofitFieldName + '-error'
+        }"
       />
       <div
         v-if="errors[nonprofitFieldName]"
-        :id="'nonprofit-' + nonprofitFieldName"
+        :id="'nonprofit-' + nonprofitFieldName + '-error'"
         class="c-notes c-notes--below c-notes--bad c-form-control-error"
       >
         {{ errors[nonprofitFieldName] }}
@@ -48,7 +54,7 @@
           :name="dollarAmountFieldName"
           :class="{ 'has-error': errors[dollarAmountFieldName] }"
           required
-          aria-describedby="'dollarAmount-' + dollarAmountFieldName"
+          :aria-describedby="'dollar-amount-label dollarAmount-' + dollarAmountFieldName"
         >
       </div>
       <div
@@ -70,7 +76,7 @@
         type="text"
         :name="noteFieldName"
         :class="{ 'has-error': errors[noteFieldName] }"
-        aria-describedby="'noteField-' + noteFieldName"
+        :aria-describedby="'note-label noteField-' + noteFieldName"
       >
       <div
         v-if="errors[noteFieldName]"

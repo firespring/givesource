@@ -36,7 +36,6 @@
     "vue-gtag": "^2.0.1",
     "vue-property-decorator": "^10.0.0-rc.3",
     "vue-recaptcha": "^2.0.2",
-    "vue3-select-component": "^0.7.0",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

@@ -201,7 +201,7 @@
                         v-model="formData.state"
                         name="state"
                         placeholder="State"
-                        :class="{ 'has-error': formErrors.state }"
+                        :select-class="{ 'has-error': formErrors.state }"
                       />
                     </div>
 

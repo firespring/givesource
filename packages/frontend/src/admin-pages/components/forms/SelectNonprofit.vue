@@ -15,13 +15,35 @@
   -->
 
 <template>
-  <VueSelect
+  <select
+    :id="id"
+    ref="select"
     v-model="localValue"
-    :input-id="id"
     :name="name"
-    placeholder="Select a nonprofit"
-    :options="selectOptions"
-  />
+    :data-placeholder="placeholder"
+    :class="{'has-error': hasError}"
+    :required="isRequired"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
+  >
+    <option
+      v-if="placeholder"
+      value=""
+      disabled
+    >
+      {{ placeholder }}
+    </option>
+    <option
+      v-else
+      value=""
+    />
+    <option
+      v-for="option in selectOptions"
+      :value="option.value"
+    >
+      {{ option.label }}
+    </option>
+  </select>
 </template>
 
 <script>
@@ -45,7 +67,7 @@ export default {
     },
     nonprofits: {
       type: Array,
-      default: function () {
+      default: () => {
         return []
       }
     },
@@ -56,6 +78,12 @@ export default {
     isRequired: {
       type: Boolean,
       default: false
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],

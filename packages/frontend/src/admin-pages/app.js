@@ -36,7 +36,6 @@ import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
 import VueFilters from './filters'
 import mitt from 'mitt'
-import VueSelect from 'vue3-select-component'
 
 import _ from 'lodash'
 import $ from 'jquery'
@@ -72,7 +71,6 @@ const app = createApp(ComponentApp)
   .component('ApiError', ComponentApiError)
   .component('Navigation', ComponentNavigation)
   .component('PaymentspringKeysBanner', ComponentPaymentspringKeysBanner)
-  .component('VueSelect', VueSelect)
   // Event Bus
   .provide('bus', emitter)
   .provide('$axios', axios)

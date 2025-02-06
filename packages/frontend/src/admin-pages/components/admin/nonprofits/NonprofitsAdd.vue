@@ -178,7 +178,7 @@
                           name="state"
                           placeholder="State"
                           :required="true"
-                          :class="{ 'has-error': formErrors.state }"
+                          :select-class="{ 'has-error': formErrors.state }"
                         />
                       </div>
                       <div
