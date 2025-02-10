@@ -40,7 +40,6 @@ import mitt from 'mitt'
 import _ from 'lodash'
 import $ from 'jquery'
 
-import 'chosen-js'
 import '@claviska/jquery-minicolors'
 
 const emitter = mitt()
