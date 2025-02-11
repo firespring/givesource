@@ -180,14 +180,14 @@
                         </div>
                         <div
                           id="addressGroupDefaultCountryOptions-US"
-                          class="c-form-control-grid__item u-flex-collapse"
+                          class="c-form-control-grid__item"
                         >
                           <state-select
                             id="state"
                             v-model="formData.state"
                             name="state"
                             placeholder="State"
-                            :class="{ 'has-error': formErrors.state }"
+                            :select-class="{ 'has-error': formErrors.state }"
                           />
                         </div>
                         <div
@@ -258,13 +258,22 @@
                   <table>
                     <thead>
                       <tr>
-                        <th class="u-width-33p">
+                        <th
+                          id="related-nonprofit-label"
+                          class="u-width-33p"
+                        >
                           Related Nonprofit (Required)
                         </th>
-                        <th class="u-width-33p">
+                        <th
+                          id="donation-amount-label"
+                          class="u-width-33p"
+                        >
                           Donation Amount (Required)
                         </th>
-                        <th class="u-width-33p">
+                        <th
+                          id="note-label"
+                          class="u-width-33p"
+                        >
                           Note (Optional)
                         </th>
                         <th />

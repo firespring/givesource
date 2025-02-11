@@ -170,14 +170,15 @@
                       </div>
                       <div
                         id="addressGroupDefaultCountryOptions-US"
-                        class="c-form-control-grid__item c-form-item--required u-flex-collapse"
+                        class="c-form-control-grid__item c-form-item--required"
                       >
                         <state-select
                           id="state"
                           v-model="formData.state"
                           name="state"
                           placeholder="State"
-                          :class="{ 'has-error': formErrors.state }"
+                          :required="true"
+                          :select-class="{ 'has-error': formErrors.state }"
                         />
                       </div>
                       <div

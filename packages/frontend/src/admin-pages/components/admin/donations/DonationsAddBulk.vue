@@ -61,6 +61,9 @@
                       name="nonprofitId"
                       :nonprofits="nonprofits"
                       :has-error="formErrors.hasOwnProperty('nonprofitId')"
+                      :aria="{
+                        describedby: 'nonprofitIdError'
+                      }"
                       :is-required="true"
                     />
                     <div

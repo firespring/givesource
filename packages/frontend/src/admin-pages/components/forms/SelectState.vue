@@ -18,12 +18,13 @@
   <label
     :for="id"
     class="u-hidden-visually"
-  >Select State</label>
+  >State</label>
   <select
     :id="id"
     ref="input"
     v-model="localValue"
     :name="name"
+    :class="selectClass"
   >
     <option
       v-if="placeholder"
@@ -63,6 +64,12 @@ export default {
     placeholder: {
       type: String,
       default: null
+    },
+    selectClass: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],
