@@ -21,7 +21,7 @@ HTML, box model
 html {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font: 16px/1.625 Lato,sans-serif;
+  font: 1rem/1.625 Lato,sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -49,12 +49,12 @@ Hide only visually, but have it available for screenreaders
 .u-hidden-visually {
     border: 0;
     clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
+    height: 0.0625rem;
+    margin: -0.0625rem;
     overflow: hidden;
     padding: 0;
     position: absolute;
-    width: 1px; }
+    width: 0.0625rem; }
 
 /* ----------------------------------------------------------------------------
 Typography
@@ -89,8 +89,8 @@ blockquote:last-child {
 
 blockquote {
   font-style: italic;
-  margin-left: 40px;
-  margin-right: 40px;
+  margin-left: 2.25rem;
+  margin-right: 2.25rem;
 }
 
 .list-plain {
@@ -103,7 +103,7 @@ hr {
   height: 0;
   margin: 1.5rem 0;
   border: 0;
-  border-top: 1px solid #2a2a28;
+  border-top: 0.0625rem solid #2a2a28;
 }
 
 .fw7 {
@@ -177,17 +177,17 @@ Helper classes
 }
 
 .wrapper {
-  max-width: 1170px;
+  max-width: 73.125rem;
   margin-left: auto;
   margin-right: auto;
 }
 
 .wrapper--sm {
-  max-width: 870px;
+  max-width: 53.375rem;
 }
 
 .wrapper--xs {
-  max-width: 640px;
+  max-width: 62.25rem;
 }
 
 .width-100 {
@@ -203,7 +203,7 @@ Helper classes
 }
 
 .width-100px {
-  width: 100px;
+  width: 6.25rem;
 }
 
 .width-auto {
@@ -211,7 +211,7 @@ Helper classes
 }
 
 .rounded {
-  border-radius: 3px;
+  border-radius: 0.1875rem;
 }
 
 .ma0 { margin: 0; }
@@ -282,7 +282,7 @@ img {
 
 .video {
   height: 0;
-  padding: 30px 0 56.25%;
+  padding: 1.875rem 0 56.25%;
 }
 
 .video > * {
@@ -368,7 +368,7 @@ Alerts
   -ms-flex-align: start;
   align-items: flex-start;
   margin: 0 0 1.5rem;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   padding: .625rem 1rem;
   background-color: #2a2a28;
   color: #fff;
@@ -427,8 +427,8 @@ Buttons
   -ms-flex-align: center;
   -webkit-box-align: center;
   align-items: center;
-  border-radius: 3px;
-  height: 42px;
+  border-radius: 0.1875rem;
+  height: 2.625rem;
   padding: 0 .75rem;
   border: 0;
   text-decoration: none;
@@ -457,7 +457,7 @@ Buttons
 .btn--loading,
 button[disabled].btn--loading {
   background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, rgba(255, 255, 255, .1) 25%, rgba(255, 255, 255, .1) 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, rgba(255, 255, 255, .1) 75%, rgba(255, 255, 255, .1)) !important;
-  background-size: 32px 32px !important;
+  background-size: 2rem 2rem !important;
   background-repeat: repeat !important;
   transition: background-position 60000s linear !important;
   background-position: 4000000px !important;
@@ -571,7 +571,7 @@ button[disabled].btn--loading {
 .btn--round,
 .btn--round:link,
 .btn--round:visited {
-  border-radius: 100px;
+  border-radius: 6.25rem;
   padding: 0 1rem;
 }
 
@@ -581,7 +581,7 @@ button[disabled].btn--loading {
 .btn--xs,
 .btn--xs:link,
 .btn--xs:visited {
-  height: 28px;
+  height: 1.75rem;
   padding: 0 .5rem;
   font-size: .8rem;
 }
@@ -589,14 +589,14 @@ button[disabled].btn--loading {
 .btn--sm,
 .btn--sm:link,
 .btn--sm:visited {
-  height: 34px;
+  height: 2.125rem;
   font-size: .9rem;
 }
 
 .btn--lg,
 .btn--lg:link,
 .btn--lg:visited {
-  height: 64px;
+  height: 4rem;
   padding: 0 2rem;
   font-size: 1.25rem;
 }
@@ -654,7 +654,7 @@ fieldset {
   padding: 1.25rem;
   background: #fff;
   border: 0;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
 }
 
 fieldset.compact {
@@ -669,7 +669,7 @@ legend {
   margin: 0 0 1.25rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
   line-height: 1;
   color: #767676;
 }
@@ -694,7 +694,7 @@ fieldset.compact legend {
   text-transform: uppercase;
   content: 'Required';
   color: #c00;
-  letter-spacing: .25px;
+  letter-spacing: 0.015625rem;
 }
 
 .form-item__label {
@@ -718,13 +718,13 @@ fieldset.compact .form-item {
 [type=url] {
   display: block;
   width: 100%;
-  border: 1px solid rgba(0,0,0,.5);
-  height: 44px;
-  border-radius: 3px;
+  border: 0.0625rem solid rgba(0,0,0,.5);
+  height: 2.75rem;
+  border-radius: 0.1875rem;
   padding: 0 .75rem;
   font-size: 1rem;
   font-family: Lato,sans-serif;
-  box-shadow: inset 0 1px 4px 0 rgba(0,0,0,.125);
+  box-shadow: inset 0 0.0625rem 0.25rem 0 rgba(0,0,0,.125);
   transition: border linear .2s;
 }
 
@@ -736,7 +736,7 @@ fieldset.compact .form-item {
 [type=tel]:focus,
 [type=url]:focus,
 textarea:focus {
-  border: 1px solid #000;
+  border: 0.0625rem solid #000;
   outline: none;
 }
 
@@ -748,7 +748,7 @@ textarea:focus {
 [type=tel].sm,
 [type=url].sm,
 select.sm {
-  height: 36px;
+  height: 2.25rem;
   font-size: .9rem;
 }
 
@@ -771,10 +771,10 @@ select.sm {
 .list-checkbox label [type=checkbox],
 .checkbox-solo > input {
   margin-right: .375rem;
-  -ms-flex: 1 0 20px;
+  -ms-flex: 1 0 1.25rem;
   -webkit-box-flex: 1;
-  flex: 1 0 20px;
-  max-width: 20px;
+  flex: 1 0 1.25rem;
+  max-width: 1.25rem;
 }
 
 .checkbox-solo > span {
@@ -786,17 +786,17 @@ select.sm {
 textarea {
   display: block;
   width: 100%;
-  border: 1px solid rgba(0,0,0,.5);
-  height: 200px;
-  border-radius: 3px;
+  border: 0.0625rem solid rgba(0,0,0,.5);
+  height: 12.5rem;
+  border-radius: 0.1875rem;
   padding: .75rem;
   font-size: 1rem;
   font-family: Lato,sans-serif;
-  box-shadow: inset 0 1px 4px 0 rgba(0,0,0,.125);
+  box-shadow: inset 0 0.0625rem 0.25rem 0 rgba(0,0,0,.125);
 }
 
 textarea.sm {
-  height: 75px;
+  height: 4.6875rem;
   padding: .75rem;
   font-size: .9rem;
 }
@@ -804,9 +804,9 @@ textarea.sm {
 select {
   display: block;
   width: 100%;
-  border: 1px solid rgba(0,0,0,.5);
-  height: 44px;
-  border-radius: 3px;
+  border: 0.0625rem solid rgba(0,0,0,.5);
+  height: 2.75rem;
+  border-radius: 0.1875rem;
   background: #fff url(../img/bg-select.png) right center no-repeat;
   padding: 0 2rem 0 .75rem;
   font-size: 1rem;
@@ -914,7 +914,7 @@ Presented by
 .presented-by > div {
   background-color: rgba(0,0,0,.25);
   padding: .75rem 1.5rem;
-  border-radius: 100px;
+  border-radius: 6.25rem;
 }
 
 .presented-by__logo {
@@ -937,8 +937,8 @@ Presented by
 }
 
 .presented-by img {
-  max-width: 200px;
-  max-height: 50px;
+  max-width: 12.5rem;
+  max-height: 3.125rem;
 }
 
 /* ----------------------------------------------------------------------------
@@ -951,7 +951,7 @@ Page header
   justify-content: space-between;
   background: #fff;
   padding: 0 .75rem;
-  height: 52px;
+  height: 3.25rem;
   line-height: 1;
 }
 
@@ -960,8 +960,8 @@ Page header
 
 .page-header__logo img {
   display: block;
-  max-width: 40px;
-  max-height: 40px;
+  max-width: 2.25rem;
+  max-height: 2.25rem;
   border: 0;
 }
 
@@ -985,20 +985,20 @@ Page header
   -webkit-box-flex: 1;
   flex: 1;
   margin: 0 1rem;
-  border-left: 1px solid #dfdfdf;
-  border-right: 1px solid #dfdfdf;
+  border-left: 0.0625rem solid #dfdfdf;
+  border-right: 0.0625rem solid #dfdfdf;
   padding: 0 1rem;
 }
 
 .page-header__search:before {
   display: block;
-  -ms-flex: 1 0 16px;
+  -ms-flex: 1 0 1rem;
   -webkit-box-flex: 1;
-  flex: 1 0 16px;
-  width: 16px;
-  height: 16px;
+  flex: 1 0 1rem;
+  width: 1rem;
+  height: 1rem;
   background: transparent url('../img/search.svg') center no-repeat;
-  background-size: 16px 16px;
+  background-size: 1rem 1rem;
   content: '';
   opacity: .5;
 }
@@ -1063,16 +1063,16 @@ Page header
 
 .page-header-nav-logo {
   position: relative;
-  -ms-flex: 1 0 75px;
+  -ms-flex: 1 0 4.6875rem;
   -webkit-box-flex: 1;
-  flex: 1 0 75px;
-  max-width: 75px;
+  flex: 1 0 4.6875rem;
+  max-width: 4.6875rem;
 }
 
 .page-header-nav-logo__date {
   position: absolute;
-  top: -3px;
-  left: -14px;
+  top: -0.1875rem;
+  left: -0.875rem;
   font-size: .5rem;
   line-height: 1;
   transform: rotate(-25deg);
@@ -1137,7 +1137,7 @@ Page Hero
   font-size: 2.5rem;
   line-height: 1;
   font-family: 'Passion One';
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 /* Media queries
@@ -1150,13 +1150,13 @@ Page Hero
   position: relative;
   margin: 0 0 2rem;
   background-color: #fff;
-  border-radius: 3px;
-  box-shadow: 0 0 15px rgba(85,85,85,.25);
+  border-radius: 0.1875rem;
+  box-shadow: 0 0 0.9375rem rgba(85,85,85,.25);
 }
 
 .main__metrics .number {
   background-color: #000;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   text-align: center;
   color: #fff;
 }
@@ -1183,7 +1183,7 @@ Page footer
   font-size: .875rem;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .sponsors__tier + .sponsors__tier {
@@ -1199,13 +1199,13 @@ Page footer
 
 .sponsors__tier-title h3 {
   margin: 0 0 .5rem;
-  border-bottom: 2px solid #CDCDCB;
+  border-bottom: 0.125rem solid #CDCDCB;
   padding: 0 0 .5rem;
   font-weight: 700;
   font-size: 1rem;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .sponsors__tier-list,
@@ -1250,39 +1250,39 @@ Page footer
 }
 
 .sponsors__tier--lg .sponsor img {
-  max-height: 30px;
+  max-height: 1.875rem;
 }
 
 .sponsors__tier--lg .sponsor--no-logo {
-  -ms-flex: 1 0 200px;
+  -ms-flex: 1 0 12.5rem;
   -webkit-box-flex: 1;
-  flex: 1 0 200px;
-  max-width: 200px;
-  width: 200px;
+  flex: 1 0 12.5rem;
+  max-width: 12.5rem;
+  width: 12.5rem;
 }
 
 .sponsors__tier--md .sponsor img {
-  max-height: 25px;
+  max-height: 1.5625rem;
 }
 
 .sponsors__tier--md .sponsor--no-logo {
-  -ms-flex: 1 0 150px;
+  -ms-flex: 1 0 9.375rem;
   -webkit-box-flex: 1;
-  flex: 1 0 150px;
-  max-width: 150px;
-  width: 150px;
+  flex: 1 0 9.375rem;
+  max-width: 9.375rem;
+  width: 9.375rem;
 }
 
 .sponsors__tier--sm .sponsor img {
-  max-height: 20px;
+  max-height: 1.25rem;
 }
 
 .sponsors__tier--sm .sponsor--no-logo {
-  -ms-flex: 1 0 150px;
+  -ms-flex: 1 0 9.375rem;
   -webkit-box-flex: 1;
-  flex: 1 0 150px;
-  max-width: 150px;
-  width: 150px;
+  flex: 1 0 9.375rem;
+  max-width: 9.375rem;
+  width: 9.375rem;
 }
 
 /* Sitemap
@@ -1303,7 +1303,7 @@ Page footer
   -ms-flex-align: center;
   -webkit-box-align: center;
   align-items: center;
-  border-top: 1px solid #e5e7de;
+  border-top: 0.0625rem solid #e5e7de;
   padding: 1rem;
   line-height: 1;
 }
@@ -1403,7 +1403,7 @@ Page mobile nav
 
 /* Media queries */
 
-@media (min-height: 480px) {
+@media (min-height: 30rem) {
 
   .overlay__nav {
     font-size: 1.75rem;
@@ -1451,7 +1451,7 @@ Spotlight box
 
 .main__spotlight {
   position: relative;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   padding: 1.5rem;
 }
 
@@ -1463,7 +1463,7 @@ Spotlight box
   height: 0;
   margin: 0;
   border: 0;
-  border-top: 1px solid rgba(42,42,40,.5);
+  border-top: 0.0625rem solid rgba(42,42,40,.5);
 }
 
 /* Day totals
@@ -1509,7 +1509,7 @@ Spotlight box
 }
 
 .main__spotlight .day-totals__numbers .number {
-  margin: 0 0 0 1px;
+  margin: 0 0 0 0.0625rem;
   width: 2em;
   padding: .25rem 0;
 }
@@ -1538,7 +1538,7 @@ Spotlight box
 .nonprofit-search {
   width: 100%;
   text-align: center;
-  border-top: 1px solid #cacac9;
+  border-top: 0.0625rem solid #cacac9;
 }
 
 [class*=nonprofit-search__] {
@@ -1580,7 +1580,7 @@ Spotlight box
 
 .nonprofit-search__see-all a {
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 /* ----------------------------------------------------------------------------
@@ -1596,8 +1596,8 @@ th {
   background: #2a2a28;
   color: #fff;
   line-height: 1;
-  padding: 12px 16px;
-  border-left: 1px solid #fff;
+  padding: 0.75rem 1rem;
+  border-left: 0.0625rem solid #fff;
   text-align: left;
 }
 
@@ -1606,8 +1606,8 @@ th:first-child {
 }
 
 tbody td {
-  border-top: 1px solid #b6b8b1;
-  padding: 12px 16px;
+  border-top: 0.0625rem solid #b6b8b1;
+  padding: 0.75rem 1rem;
 }
 
 tbody tr:first-child td {
@@ -1615,7 +1615,7 @@ tbody tr:first-child td {
 }
 
 tfoot td {
-  padding: 8px 16px 0;
+  padding: 0.5rem 1rem 0;
 }
 
 tr.top td {
@@ -1668,7 +1668,7 @@ ul.toolkit {
   list-style: none;
   background: #fff;
   padding: 0;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
 }
 
 ul.toolkit li {
@@ -1677,13 +1677,13 @@ ul.toolkit li {
 }
 
 ul.toolkit li + li {
-  border-top: 1px solid #e0e0e0;
+  border-top: 0.0625rem solid #e0e0e0;
 }
 
 ul.toolkit svg {
   position: absolute;
   left: 1rem;
-  top: calc(1rem + 5px);
+  top: calc(1rem + 0.3125rem);
 }
 
 /* ----------------------------------------------------------------------------
@@ -1692,9 +1692,9 @@ Actions Row
 
 .actions-row {
   margin: 0 0 1rem;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   background-color: #b6b8b1;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .actions-row > div + div {
@@ -1725,7 +1725,7 @@ Leaderboard
   font-size: 1.25rem;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .leaderboard__filter .select-wrap {
@@ -1736,7 +1736,7 @@ Leaderboard
 .leaderboard__filter select {
   display: inline-block;
   width: auto;
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .leaderboard__actions {
@@ -1754,8 +1754,8 @@ Leaderboard
   line-height: 1;
   background-color: #fff;
   padding: 1rem 1rem 1rem 0;
-  border-radius: 3px;
-  box-shadow: 0 0 15px rgba(185,185,185,.5);
+  border-radius: 0.1875rem;
+  box-shadow: 0 0 0.9375rem rgba(185,185,185,.5);
 }
 
 .leaderboard-item:not(:first-child) {
@@ -1767,10 +1767,10 @@ Leaderboard
 }
 
 .leaderboard-item__num {
-  -ms-flex: 1 0 45px;
+  -ms-flex: 1 0 2.8125rem;
   -webkit-box-flex: 1;
-  flex: 1 0 45px;
-  max-width: 45px;
+  flex: 1 0 2.8125rem;
+  max-width: 2.8125rem;
   color: #767676;
   text-align: right;
 }
@@ -1819,8 +1819,8 @@ Leaderboard
 
 .leaderboard-item--detailed .leaderboard-item__image {
   display: block;
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
   margin: 0 auto;
   border-radius: 100%;
   background-size: cover;
@@ -1867,7 +1867,7 @@ Pagination
 }
 
 .pagination .here {
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   background-color: #494946;
   padding: .375rem .625rem;
   font-weight: 900;
@@ -1894,7 +1894,7 @@ Pagination
 Global Media Queries
 ---------------------------------------------------------------------------- */
 
-@media (min-width: 640px) {
+@media (min-width: 62.25rem) {
 
   .actions-row {
     display: -ms-flexbox;
@@ -1965,10 +1965,10 @@ Global Media Queries
   }
 
   .form-item--address .city-state-zip__zip {
-    -ms-flex: 1 0 125px;
+    -ms-flex: 1 0 7.8125rem;
     -webkit-box-flex: 1;
-    flex: 1 0 125px;
-    max-width: 125px;
+    flex: 1 0 7.8125rem;
+    max-width: 7.8125rem;
   }
 
   .leaderboard-item {
@@ -1987,7 +1987,7 @@ Global Media Queries
 
   .leaderboard-item__num {
     font-size: 1rem;
-    transform: translateY(1px);
+    transform: translateY(0.0625rem);
   }
 
   .leaderboard-item__amount,
@@ -2029,7 +2029,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 825px) {
+@media (min-width: 51.56rem) {
 
   .main__spotlight .day-totals {
     -ms-flex-direction: row;
@@ -2055,7 +2055,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25rem) {
 
   .main {
     padding: 1rem 1rem 3rem;
@@ -2078,7 +2078,7 @@ Global Media Queries
   }
 
   .page-header {
-    height: 84px;
+    height: 5.25rem;
   }
 
   .page-header__logo {
@@ -2086,8 +2086,8 @@ Global Media Queries
   }
 
   .page-header__logo img {
-    max-width: 100px;
-    max-height: 60px;
+    max-width: 6.25rem;
+    max-height: 3.75rem;
   }
 
   .page-header__nav-toggle {
@@ -2139,7 +2139,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 900px) and (min-height: 900px) {
+@media (min-width: 56.25rem) and (min-height: 56.25rem) {
 
   .home .page-hero {
     padding: 6rem 2rem 12rem;
@@ -2159,7 +2159,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 62.5rem) {
 
   .countdown {
     font-size: 1.25rem;
@@ -2193,7 +2193,7 @@ Global Media Queries
   }
 
   .grid--compact .grid-item:not(:first-child) {
-    margin: 0 0 0 15px;
+    margin: 0 0 0 1.15rem;
   }
 
   .leaderboard__title {
@@ -2258,7 +2258,7 @@ Global Media Queries
   .nonprofit-search__category,
   .nonprofit-search__love {
     border: 0;
-    border-left: 1px solid #cacac9;
+    border-left: 0.75solid #cacac9;
   }
 
   .nonprofit-search__category:before,
@@ -2281,7 +2281,7 @@ Global Media Queries
   }
 
   .sponsors__tier--lg .sponsor img {
-    max-height: 80px;
+    max-height: 5.25rem;
   }
 
   .sponsors__tier--lg .sponsor--no-logo {
@@ -2289,7 +2289,7 @@ Global Media Queries
   }
 
   .sponsors__tier--md .sponsor img {
-    max-height: 35px;
+    max-height: 2rem;
   }
 
   .sponsors__tier--md .sponsor--no-logo {
@@ -2297,7 +2297,7 @@ Global Media Queries
   }
 
   .sponsors__tier--sm .sponsor img {
-    max-height: 25px;
+    max-height: 2rem;
   }
 
   .contact-info__item,
@@ -2320,7 +2320,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 16.25rem) {
 
   .home .page-hero__title h1 {
     font-size: 7.5rem;
@@ -2329,7 +2329,7 @@ Global Media Queries
 
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 75rem) {
 
   .contact-info {
     padding: 1rem 1.5rem;
@@ -2385,12 +2385,12 @@ Global Media Queries
   }
 
   .page-header__search:before {
-    -ms-flex: 1 0 24px;
+    -ms-flex: 1 0 2rem;
     -webkit-box-flex: 1;
-    flex: 1 0 24px;
-    width: 24px;
-    height: 24px;
-    background-size: 24px 24px;
+    flex: 1 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    background-size: 2rem 2rem;
   }
 
   .page-header__nav-menu a + a {
