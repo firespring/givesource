@@ -32,41 +32,40 @@
           <h1 class="donation-modal__title">
             Your Donations
           </h1>
-        </section>
+          <div class="donation-modal__content">
+            <donation-cart-modal-list-table
+              @close="close"
+              @find-nonprofit="findNonprofit"
+              @has-error="hasDonationErrors"
+            />
 
-        <div class="donation-modal__content">
-          <donation-cart-modal-list-table
-            @close="close"
-            @find-nonprofit="findNonprofit"
-            @has-error="hasDonationErrors"
-          />
-
-          <div
-            v-if="!isCartEmpty"
-            class="donation-footer"
-          >
-            <a
-              href="#"
-              class="btn btn--lg btn--accent"
-              @click.prevent="checkoutBtn"
-            ><strong>Begin Checking Out</strong></a>
-            <a
-              href="#"
-              class="btn btn--lite"
-              @click.prevent="helpMoreBtn"
-            ><strong>Help More Nonprofits</strong></a>
+            <div
+              v-if="!isCartEmpty"
+              class="donation-footer"
+            >
+              <a
+                href="#"
+                class="btn btn--lg btn--accent"
+                @click.prevent="checkoutBtn"
+              ><strong>Begin Checking Out</strong></a>
+              <a
+                href="#"
+                class="btn btn--lite"
+                @click.prevent="helpMoreBtn"
+              ><strong>Help More Nonprofits</strong></a>
+            </div>
           </div>
-        </div>
 
-        <a
-          href="#"
-          class="donation-close"
-          role="button"
-          @click.prevent="close"
-        ><span class="u-hidden-visually">Close</span><i
-          class="fas fa-times-circle"
-          aria-hidden="true"
-        /></a>
+          <a
+            href="#"
+            class="donation-close"
+            role="button"
+            @click.prevent="close"
+          ><span class="u-hidden-visually">Close</span><i
+            class="fas fa-times-circle"
+            aria-hidden="true"
+          /></a>
+        </section>
       </div>
     </div>
   </div>
