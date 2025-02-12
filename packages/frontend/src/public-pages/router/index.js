@@ -30,7 +30,7 @@ import ComponentNonprofit from './../components/nonprofits/Nonprofit.vue'
 import ComponentRegister from './../components/register/Register.vue'
 import ComponentRegisterResponse from './../components/register/response/RegisterResponse.vue'
 import ComponentSearchResults from './../components/search/SearchResults.vue'
-import ComponentSitemap from './../components/sitemap/Sitemap.vue'
+import ComponentSiteMap from '../components/sitemap/SiteMap.vue'
 import ComponentTermsOfService from './../components/terms/TermsOfService.vue'
 import ComponentToolkits from './../components/toolkits/Toolkits.vue'
 import store from './../store'
@@ -55,7 +55,6 @@ const router = createRouter({
       name: 'homepage',
       component: ComponentHomepage,
       meta: {
-        title: 'Home',
         inSitemap: true
       }
     },
@@ -73,9 +72,7 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: ComponentAbout,
-      meta: {
-        title: 'About',
-        inSitemap: true },
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
           next({ name: '404' })
@@ -88,9 +85,7 @@ const router = createRouter({
       path: '/toolkits',
       name: 'toolkits',
       component: ComponentToolkits,
-      meta: {
-        title: 'Toolkits',
-        inSitemap: true },
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
           next({ name: '404' })
@@ -103,9 +98,7 @@ const router = createRouter({
       path: '/faq',
       name: 'faq',
       component: ComponentFAQ,
-      meta: {
-        title: 'FAQ',
-        inSitemap: true },
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
           next({ name: '404' })
@@ -206,7 +199,7 @@ const router = createRouter({
     {
       path: '/sitemap',
       name: 'sitemap',
-      component: ComponentSitemap,
+      component: ComponentSiteMap,
       meta: { inSitemap: true }
     },
 

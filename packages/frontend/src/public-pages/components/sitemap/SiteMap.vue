@@ -30,23 +30,24 @@
       <div class="wrapper wrapper--sm">
         <ul>
           <li
-              v-for="(route, index) in sitemapRoutes"
-              :key="route.name+ '-link'"
+            v-for="(route) in sitemapRoutes"
+            :key="route.name+ '-link'"
           >
-            <router-link :to="route.path">{{ route.name.charAt(0).toUpperCase() + route.name.slice(1) }}</router-link>
+            <router-link :to="route.path">
+              {{ route.name.charAt(0).toUpperCase() + route.name.slice(1) }}
+            </router-link>
           </li>
           <li
-            v-for="(page, index) in enabledPages"
+            v-for="(page) in enabledPages"
             :key="page.uuid"
-            >
+          >
             <router-link
-                :to="{ path: page.slug }"
+              :to="{ path: page.slug }"
             >
               {{ page.title }}
             </router-link>
           </li>
         </ul>
-        <hr>
       </div>
     </main>
 
@@ -58,7 +59,6 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-import * as Utils from './../../helpers/utils'
 import ComponentFooter from './../layout/Footer.vue'
 import ComponentHeader from './../layout/Header.vue'
 import ComponentHero from './../layout/Hero.vue'
