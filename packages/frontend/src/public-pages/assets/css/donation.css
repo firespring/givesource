@@ -624,6 +624,10 @@ Global Media queries
     -webkit-box-flex: 0;
     flex: none;
   }
+  
+  .cart-totals__subtotal a {
+    text-decoration: underline;
+  }
 
   .cart-totals__total {
     font-size: 1.5rem;
