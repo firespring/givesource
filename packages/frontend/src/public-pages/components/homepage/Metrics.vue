@@ -55,6 +55,19 @@
           <span v-if="countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0 || countdown.seconds >= 0">{{ countdown.seconds }} seconds</span>
         </span>
         {{ countdownSuffix }}
+        <sup>
+          <a
+            id="timer__close"
+            href="#"
+            role="button"
+            title="Hide Countdown"
+            aria-label="Hide Countdown"
+            @click.prevent="countdownHidden = true"
+          ><i
+            class="fas fa-times-circle"
+            aria-hidden="true"
+          /></a>
+        </sup>
       </div>
 
       <div class="main-spotlight-section nonprofit-search">
@@ -283,6 +296,8 @@ export default {
         seconds: null
       },
 
+      countdownHidden: false,
+
       metrics: {
         DONATIONS_COUNT: 0,
         DONATIONS_TOTAL: 0,
@@ -305,7 +320,7 @@ export default {
       return this.eventTitle ? 'until ' + this.eventTitle + ' begins.' : 'until the event beings.'
     },
     displayEventCountdown: function () {
-      return Settings.isBeforeEvent() || Settings.isDuringEvent()
+      return !this.countdownHidden && (Settings.isBeforeEvent() || Settings.isDuringEvent())
     },
     displayRegisterButton: function () {
       const vue = this
