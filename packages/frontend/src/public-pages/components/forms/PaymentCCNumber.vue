@@ -42,7 +42,10 @@
       :aria-describedby="aria?.describedby"
       :aria-labelledby="aria?.labelledby"
     >
-    <div aria-label="Accepted Card Types" class="notes notes--below accepted-cc">
+    <div
+      aria-label="Accepted Card Types"
+      class="notes notes--below accepted-cc"
+    >
       <div
         class="cc visa"
         :class="{na: !displayCardType('visa')}"

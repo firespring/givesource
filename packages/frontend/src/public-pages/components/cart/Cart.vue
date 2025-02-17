@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main id="main-content" class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper wrapper--sm">
         <api-error v-model="apiError" />
 
@@ -44,7 +47,9 @@
 
             <div class="form-item form-item--required">
               <div class="form-item__label">
-                <div id="yourNameLabel">Your Name</div>
+                <div id="yourNameLabel">
+                  Your Name
+                </div>
               </div>
               <div class="form-item__control">
                 <div class="grid">
@@ -117,7 +122,9 @@
 
             <div class="form-item form-item--address form-item--required">
               <div class="form-item__label">
-                <div id="yourAddressLabel">Your Billing Address</div>
+                <div id="yourAddressLabel">
+                  Your Billing Address
+                </div>
               </div>
               <div class="form-item__control">
                 <div class="address1">
@@ -266,7 +273,10 @@
                   >
                   <span>Yes, make my gift(s) anonymous</span>
                 </label>
-                <div id="coverFeeNote" class="notes notes--below">
+                <div
+                  id="coverFeeNote"
+                  class="notes notes--below"
+                >
                   Your name and contact information will not be shared with the designated nonprofits.
                 </div>
               </div>
@@ -328,7 +338,9 @@
                 <div class="grid-item grid-item--collapse">
                   <div class="form-item form-item--required">
                     <div class="form-item__label">
-                      <div id="ccExpiration">Expiration Date</div>
+                      <div id="ccExpiration">
+                        Expiration Date
+                      </div>
                     </div>
                     <div
                       class="form-item__control"

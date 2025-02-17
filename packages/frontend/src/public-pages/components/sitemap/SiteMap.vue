@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main id="main-content" class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper wrapper--sm">
         <ul>
           <li
