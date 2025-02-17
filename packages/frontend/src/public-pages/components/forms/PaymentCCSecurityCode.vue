@@ -25,6 +25,8 @@
     autocomplete="off"
     placeholder="••••"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
   <input
     v-else
@@ -36,6 +38,8 @@
     autocomplete="off"
     placeholder="••••"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
 </template>
 
@@ -55,6 +59,12 @@ export default {
     hasError: {
       type: Boolean,
       default: false
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],

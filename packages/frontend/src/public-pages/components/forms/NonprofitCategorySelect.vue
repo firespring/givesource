@@ -20,6 +20,8 @@
     ref="input"
     v-model="localValue"
     :name="name"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
     <option
       v-if="placeholder"
@@ -62,6 +64,12 @@ export default {
     disablePlaceholder: {
       type: Boolean,
       default: true
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],

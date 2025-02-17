@@ -26,7 +26,7 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main id="main-content" class="main">
       <api-error v-model="apiError" />
       <div
         class="wrapper wrapper--sm"

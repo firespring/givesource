@@ -35,7 +35,9 @@
                   class="c-page-section__fieldset"
                   aria-labelledby="section-your-info"
                 >
-                  <legend>Your Info</legend>
+                  <legend>
+                    <h2>Your Info</h2>
+                  </legend>
                   <div class="c-form-item c-form-item--text c-form-item--required">
                     <div class="c-form-item__control">
                       <div class="c-form-control-grid">

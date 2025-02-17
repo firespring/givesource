@@ -20,6 +20,8 @@
     ref="input"
     v-model="localValue"
     :name="name"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
     <option
       v-for="month in options"
@@ -41,6 +43,12 @@ export default {
     name: {
       type: String,
       default: null
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],

@@ -54,7 +54,9 @@
                   :class="{ 'c-form-item--has-error': formErrors.firstName || formErrors.lastName }"
                 >
                   <fieldset>
-                    <legend>Donor Name</legend>
+                    <legend>
+                      <h2>Donor Name</h2>
+                    </legend>
                     <div class="c-form-item__control">
                       <div class="c-form-control-grid">
                         <div class="c-form-control-grid__item">
@@ -112,7 +114,9 @@
 
                 <div class="c-form-item c-form-item--control-group c-form-item--control-group--address">
                   <fieldset>
-                    <legend>Address</legend>
+                    <legend>
+                      <h2>Address</h2>
+                    </legend>
                     <div class="c-form-item__control u-margin-top-thick">
                       <div class="c-form-control-grid">
                         <div class="c-form-control-grid__item">

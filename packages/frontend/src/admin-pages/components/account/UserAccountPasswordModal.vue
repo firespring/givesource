@@ -53,7 +53,9 @@
                   class="c-page-section__fieldset"
                   aria-labelledby="section-password"
                 >
-                  <legend>Password & Security</legend>
+                  <legend>
+                    <h2>Password & Security</h2>
+                  </legend>
                   <div class="c-form-item c-form-item--password c-form-item--required">
                     <div class="c-form-item__control">
                       <div

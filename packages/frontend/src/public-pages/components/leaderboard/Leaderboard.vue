@@ -26,7 +26,7 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main id="main-content" class="main">
       <div class="wrapper wrapper--sm">
         <div class="main__content">
           <div class="leaderboard">
