@@ -16,7 +16,9 @@
 
 <template>
   <fieldset>
-    <legend>Your Current Donations</legend>
+    <legend>
+      <h2>Your Current Donations</h2>
+    </legend>
 
     <div class="form-item">
       <cart-donations-list-table @has-error="hasError" />

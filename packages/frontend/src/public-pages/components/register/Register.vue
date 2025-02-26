@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <api-error v-model="apiError" />
       <div
         v-if="canRegister"
@@ -39,7 +42,9 @@
 
         <form @submit="submit">
           <fieldset>
-            <legend>Registration Form</legend>
+            <legend>
+              <h2>Registration Form</h2>
+            </legend>
             <div class="form-item form-item--required">
               <div class="form-item__label">
                 <label for="legalName">Organization Legal Name</label>
@@ -296,7 +301,9 @@
           </fieldset>
 
           <fieldset v-for="agreement in agreements">
-            <legend>{{ agreement.agreementTitle }}</legend>
+            <legend>
+              <h2>{{ agreement.agreementTitle }}</h2>
+            </legend>
             <div class="form-item">
               <h2>{{ agreement.agreementTitle }}</h2>
               <div v-html="agreement.agreementText" />

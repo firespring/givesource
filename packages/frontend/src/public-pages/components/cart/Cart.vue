@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper wrapper--sm">
         <api-error v-model="apiError" />
 
@@ -38,11 +41,15 @@
           />
 
           <fieldset v-if="!isCartEmpty">
-            <legend>Your Contact & Billing Info</legend>
+            <legend>
+              <h2>Your Contact & Billing Info</h2>
+            </legend>
 
             <div class="form-item form-item--required">
               <div class="form-item__label">
-                <label>Your Name</label>
+                <div id="yourNameLabel">
+                  Your Name
+                </div>
               </div>
               <div class="form-item__control">
                 <div class="grid">
@@ -58,6 +65,7 @@
                       name="donorNameFirst"
                       placeholder="First Name"
                       :class="{'has-error': formErrors.donor.firstName}"
+                      aria-describedby="yourNameLabel donorNameErrors"
                       required
                     >
                   </div>
@@ -73,12 +81,14 @@
                       name="donorNameLast"
                       placeholder="Last Name"
                       :class="{'has-error': formErrors.donor.lastName}"
+                      aria-describedby="yourNameLabel donorNameErrors"
                       required
                     >
                   </div>
                 </div>
                 <div
                   v-if="formErrors.donor.firstName || formErrors.donor.lastName"
+                  id="donorNameErrors"
                   class="notes notes--below notes--error"
                 >
                   Enter your first name and last name
@@ -97,10 +107,12 @@
                   type="email"
                   name="donorEmail"
                   :class="{'has-error': formErrors.donor.email}"
+                  aria-describedby="donorEmailError"
                   required
                 >
                 <div
                   v-if="formErrors.donor.email"
+                  id="donorEmailError"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.donor.email }}
@@ -110,7 +122,9 @@
 
             <div class="form-item form-item--address form-item--required">
               <div class="form-item__label">
-                <label>Your Billing Address</label>
+                <div id="yourAddressLabel">
+                  Your Billing Address
+                </div>
               </div>
               <div class="form-item__control">
                 <div class="address1">
@@ -125,10 +139,12 @@
                     name="billingAddress1"
                     placeholder="Address Line 1"
                     :class="{'has-error': formErrors.donor.address1}"
+                    aria-describedby="yourAddressLabel donorAddress1Error"
                     required
                   >
                   <div
                     v-if="formErrors.donor.address1"
+                    id="donorAddress1Error"
                     class="notes notes--below notes--error"
                   >
                     {{ formErrors.donor.address1 }}
@@ -147,9 +163,11 @@
                     name="billingAddress2"
                     placeholder="Address Line 2"
                     :class="{'has-error': formErrors.donor.address2}"
+                    aria-describedby="yourAddressLabel donorAddress2Error"
                   >
                   <div
                     v-if="formErrors.donor.address2"
+                    id="donorAddress2Error"
                     class="notes notes--below notes--error"
                   >
                     {{ formErrors.donor.address2 }}
@@ -169,6 +187,7 @@
                       name="billingCity"
                       placeholder="City"
                       :class="{'has-error': formErrors.donor.city}"
+                      aria-describedby="yourAddressLabel donorCszError"
                       required
                     >
                   </div>
@@ -182,7 +201,8 @@
                       v-model="donor.state"
                       name="billingState"
                       placeholder="State"
-                      required
+                      :aria="{ describedby: 'yourAddressLabel donorCszError' }"
+                      :is-required="true"
                     />
                   </div>
                   <div class="city-state-zip__zip">
@@ -197,12 +217,14 @@
                       name="billingZip"
                       placeholder="ZIP"
                       :class="{'has-error': formErrors.donor.zip}"
+                      aria-describedby="yourAddressLabel donorCszError"
                       required
                     >
                   </div>
                 </div>
                 <div
                   v-if="formErrors.donor.city || formErrors.donor.state || formErrors.donor.zip"
+                  id="donorCszError"
                   class="notes notes--below notes--error"
                 >
                   Enter your city, state and zip code
@@ -221,10 +243,12 @@
                   type="tel"
                   name="billingPhone"
                   :class="{'has-error': formErrors.donor.phone}"
+                  aria-describedby="billingPhoneError"
                   required
                 >
                 <div
                   v-if="formErrors.donor.phone"
+                  id="billingPhoneError"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.donor.phone }}
@@ -245,10 +269,14 @@
                     v-model="formData.isAnonymous"
                     type="checkbox"
                     name="coverDonationFees"
+                    aria-describedby="coverFeeNote"
                   >
                   <span>Yes, make my gift(s) anonymous</span>
                 </label>
-                <div class="notes notes--below">
+                <div
+                  id="coverFeeNote"
+                  class="notes notes--below"
+                >
                   Your name and contact information will not be shared with the designated nonprofits.
                 </div>
               </div>
@@ -256,7 +284,9 @@
           </fieldset>
 
           <fieldset v-if="!isCartEmpty">
-            <legend>Your Payment Info</legend>
+            <legend>
+              <h2>Your Payment Info</h2>
+            </legend>
 
             <div class="form-item form-item--required">
               <div class="form-item__label">
@@ -268,9 +298,12 @@
                   v-model="paymentDetails.ccNumber"
                   name="cc_num"
                   :has-error="formErrors.paymentDetails.hasOwnProperty('ccNumber')"
+                  :is-required="true"
+                  :aria="{ describedby: 'ccNumError' }"
                 />
                 <div
                   v-if="formErrors.paymentDetails.ccNumber"
+                  id="ccNumError"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.paymentDetails.ccNumber }}
@@ -289,9 +322,12 @@
                   type="text"
                   name="cc_name"
                   :class="{'has-error': formErrors.paymentDetails.hasOwnProperty('ccName')}"
+                  aria-describedby="ccNameError"
+                  required
                 >
                 <div
                   v-if="formErrors.paymentDetails.ccName"
+                  id="ccNameError"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.paymentDetails.ccName }}
@@ -304,7 +340,9 @@
                 <div class="grid-item grid-item--collapse">
                   <div class="form-item form-item--required">
                     <div class="form-item__label">
-                      <label>Expiration Date</label>
+                      <div id="ccExpiration">
+                        Expiration Date
+                      </div>
                     </div>
                     <div
                       class="form-item__control"
@@ -322,6 +360,8 @@
                           id="cc_exp_month"
                           v-model="paymentDetails.ccExpMonth"
                           name="cc_exp_month"
+                          :is-required="true"
+                          :aria="{ describedby: 'ccExpiration'}"
                         />
                       </div>
 
@@ -335,6 +375,8 @@
                           v-model="paymentDetails.ccExpYear"
                           name="cc_exp_year"
                           :years="10"
+                          :is-required="true"
+                          :aria="{ describedby: 'ccExpiration'}"
                         />
                       </div>
                     </div>
@@ -352,9 +394,12 @@
                         v-model="paymentDetails.ccCvv"
                         name="cc_csc"
                         :has-error="formErrors.paymentDetails.hasOwnProperty('ccCvv')"
+                        :is-required="true"
+                        :aria="{ describedby: 'ccCvvError'}"
                       />
                       <div
                         v-if="formErrors.paymentDetails.ccCvv"
+                        id="ccCvvError"
                         class="notes notes--below notes--error"
                       >
                         {{ formErrors.paymentDetails.ccCvv }}
@@ -685,9 +730,6 @@ export default {
       const vm = this
 
       vm.processing = true
-      vm.formErrors.donor = vm.validate(vm.donor, vm.getDonorConstraints())
-      vm.formErrors.formData = vm.validate(vm.formData, vm.getFormDataConstraints())
-      vm.formErrors.paymentDetails = vm.validate(vm.paymentDetails, vm.getPaymentDetailsConstraints())
 
       if (vm.donationError) {
         $('table.table-donations')[0].scrollIntoView(true)

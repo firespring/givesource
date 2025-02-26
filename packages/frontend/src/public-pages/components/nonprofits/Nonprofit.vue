@@ -43,7 +43,10 @@
     </layout-hero>
 
     <!-- BEGIN page main -->
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper">
         <div class="donation-wrapper nonprofit-campaign">
           <api-error v-model="apiError" />

@@ -30,6 +30,7 @@ import ComponentNonprofit from './../components/nonprofits/Nonprofit.vue'
 import ComponentRegister from './../components/register/Register.vue'
 import ComponentRegisterResponse from './../components/register/response/RegisterResponse.vue'
 import ComponentSearchResults from './../components/search/SearchResults.vue'
+import ComponentSiteMap from '../components/sitemap/SiteMap.vue'
 import ComponentTermsOfService from './../components/terms/TermsOfService.vue'
 import ComponentToolkits from './../components/toolkits/Toolkits.vue'
 import store from './../store'
@@ -52,20 +53,26 @@ const router = createRouter({
     {
       path: '/',
       name: 'homepage',
-      component: ComponentHomepage
+      component: ComponentHomepage,
+      meta: {
+        inSitemap: true
+      }
     },
     {
       path: '/index',
-      redirect: '/'
+      redirect: '/',
+      meta: { inSitemap: false }
     },
     {
       path: '/index.html',
-      redirect: '/'
+      redirect: '/',
+      meta: { inSitemap: false }
     },
     {
       path: '/about',
       name: 'about',
       component: ComponentAbout,
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_ABOUT_ENABLED')) {
           next({ name: '404' })
@@ -78,6 +85,7 @@ const router = createRouter({
       path: '/toolkits',
       name: 'toolkits',
       component: ComponentToolkits,
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_TOOLKIT_ENABLED')) {
           next({ name: '404' })
@@ -90,6 +98,7 @@ const router = createRouter({
       path: '/faq',
       name: 'faq',
       component: ComponentFAQ,
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_FAQ_ENABLED')) {
           next({ name: '404' })
@@ -101,27 +110,32 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'cart',
-      component: ComponentCart
+      component: ComponentCart,
+      meta: { inSitemap: true }
     },
     {
       path: '/cart/thank-you',
       name: 'cart-response',
-      component: ComponentCartResponse
+      component: ComponentCartResponse,
+      meta: { inSitemap: false }
     },
     {
       path: '/contact',
       name: 'contact',
-      component: ComponentContact
+      component: ComponentContact,
+      meta: { inSitemap: true }
     },
     {
       path: '/contact/thank-you',
       name: 'contact-response',
-      component: ComponentContactResponse
+      component: ComponentContactResponse,
+      meta: { inSitemap: false }
     },
     {
       path: '/terms',
       name: 'terms',
       component: ComponentTermsOfService,
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!store.getters.booleanSetting('PAGE_TERMS_ENABLED')) {
           next({ name: '404' })
@@ -134,6 +148,7 @@ const router = createRouter({
       path: '/leaderboard',
       name: 'leaderboard',
       component: ComponentLeaderboard,
+      meta: { inSitemap: true },
       beforeEnter (to, from, next) {
         if (!Settings.isDuringEvent() && !Settings.isAfterEvent()) {
           next({ name: '404' })
@@ -145,17 +160,20 @@ const router = createRouter({
     {
       path: '/search',
       name: 'search-results',
-      component: ComponentSearchResults
+      component: ComponentSearchResults,
+      meta: { inSitemap: false }
     },
     {
       path: '/register',
       name: 'register',
-      component: ComponentRegister
+      component: ComponentRegister,
+      meta: { inSitemap: true }
     },
     {
       path: '/register/thank-you',
       name: 'register-response',
-      component: ComponentRegisterResponse
+      component: ComponentRegisterResponse,
+      meta: { inSitemap: false }
     },
     {
       path: '/nonprofits/:slug',
@@ -178,6 +196,12 @@ const router = createRouter({
         })
       }
     },
+    {
+      path: '/sitemap',
+      name: 'sitemap',
+      component: ComponentSiteMap,
+      meta: { inSitemap: true }
+    },
 
     // Custom Pages
     {
@@ -198,8 +222,10 @@ const router = createRouter({
         })
 
         if (to.meta.page && to.meta.page.enabled) {
+          to.meta.inSitemap = true
           next()
         } else {
+          to.meta.inSitemap = false
           next({ name: '404' })
         }
       }

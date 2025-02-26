@@ -20,6 +20,9 @@
     ref="input"
     v-model="localValue"
     :name="name"
+    :required="isRequired"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
     <option
       v-for="year in range"
@@ -45,6 +48,16 @@ export default {
     years: {
       type: Number,
       default: 10
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    isRequired: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue'],

@@ -23,6 +23,8 @@
     type="text"
     :name="name"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
     @input="format"
   >
   <input
@@ -33,6 +35,8 @@
     type="text"
     :name="name"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
 </template>
 
@@ -54,6 +58,12 @@ export default {
     hasError: {
       type: Boolean,
       default: false
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],

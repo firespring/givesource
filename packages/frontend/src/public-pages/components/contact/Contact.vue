@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper wrapper--sm">
         <api-error v-model="apiError" />
 
@@ -37,7 +40,9 @@
 
         <form @submit="submit">
           <fieldset>
-            <legend>Contact Us</legend>
+            <legend>
+              <h2>Contact Us</h2>
+            </legend>
             <div class="form-item form-item--required">
               <div class="form-item__label">
                 <label id="nameLabel">Your Name</label>

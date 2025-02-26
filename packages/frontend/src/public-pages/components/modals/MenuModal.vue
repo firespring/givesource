@@ -64,6 +64,7 @@
       id="overlay__close"
       href="#"
       role="button"
+      aria-label="Close Navigation"
       @click="close"
     ><i
       class="fas fa-times-circle"

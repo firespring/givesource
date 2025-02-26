@@ -26,6 +26,15 @@
           </router-link>
         </div>
 
+        <div class="sitemap-link">
+          <router-link :to="{ name: 'sitemap' }">
+            <i
+              class="fas fa-sitemap"
+              aria-hidden="true"
+            /> <span>Sitemap</span>
+          </router-link>
+        </div>
+
         <div class="contact-info__item contact-info__contact">
           <router-link :to="{ name: 'contact' }">
             <i

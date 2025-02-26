@@ -20,6 +20,9 @@
     ref="input"
     v-model="localValue"
     :name="name"
+    required="isRequired"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
     <option
       v-for="month in options"
@@ -41,6 +44,16 @@ export default {
     name: {
       type: String,
       default: null
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    isRequired: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue'],

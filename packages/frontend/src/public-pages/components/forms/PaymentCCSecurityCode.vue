@@ -24,7 +24,10 @@
     :name="name"
     autocomplete="off"
     placeholder="••••"
+    :required="isRequired"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
   <input
     v-else
@@ -35,7 +38,10 @@
     :name="name"
     autocomplete="off"
     placeholder="••••"
+    :required="isRequired"
     :class="{'has-error': hasError}"
+    :aria-describedby="aria?.describedby"
+    :aria-labelledby="aria?.labelledby"
   >
 </template>
 
@@ -53,6 +59,16 @@ export default {
       default: null
     },
     hasError: {
+      type: Boolean,
+      default: false
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    isRequired: {
       type: Boolean,
       default: false
     }

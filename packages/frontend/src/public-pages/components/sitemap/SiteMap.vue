@@ -21,7 +21,7 @@
     <layout-hero :presented-by="true">
       <template #title>
         <h1>
-          Terms of Service
+          Sitemap
         </h1>
       </template>
     </layout-hero>
@@ -30,11 +30,28 @@
       id="main-content"
       class="main"
     >
-      <api-error v-model="apiError" />
-      <div
-        class="wrapper wrapper--sm"
-        v-html="terms"
-      />
+      <div class="wrapper wrapper--sm">
+        <ul>
+          <li
+            v-for="(route) in sitemapRoutes"
+            :key="route.name+ '-link'"
+          >
+            <router-link :to="route.path">
+              {{ route.name.charAt(0).toUpperCase() + route.name.slice(1) }}
+            </router-link>
+          </li>
+          <li
+            v-for="(page) in enabledPages"
+            :key="page.uuid"
+          >
+            <router-link
+              :to="{ path: page.slug }"
+            >
+              {{ page.title }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
     </main>
 
     <layout-footer>
@@ -45,7 +62,6 @@
 
 <script>
 import * as Settings from './../../helpers/settings'
-import * as Utils from './../../helpers/utils'
 import ComponentFooter from './../layout/Footer.vue'
 import ComponentHeader from './../layout/Header.vue'
 import ComponentHero from './../layout/Hero.vue'
@@ -58,50 +74,31 @@ export default {
     'layout-hero': ComponentHero,
     'layout-sponsors': ComponentSponsors
   },
-  beforeRouteEnter: function (to, from, next) {
-    next(function (vue) {
-      axios.get(API_URL + 'contents' + Utils.generateQueryString({
-        keys: 'TERMS_TEXT'
-      })).then(function (response) {
-        vue.contents = response.data
-      }).catch(function (err) {
-        vue.apiError = err.response.data.errors
-      })
-    })
-  },
-  beforeRouteUpdate: function (to, from, next) {
-    const vue = this
-
-    axios.get(API_URL + 'contents' + Utils.generateQueryString({
-      keys: 'TERMS_TEXT'
-    })).then(function (response) {
-      vue.contents = response.data
-      next()
-    }).catch(function (err) {
-      vue.apiError = err.response.data.errors
-      next()
-    })
-  },
   data: function () {
     return {
-      contents: [],
-      apiError: {}
+      sitemapRoutes: [],
+      enabledPages: []
     }
   },
   computed: {
-    terms: function () {
-      const terms = _.find(this.contents, { key: 'TERMS_TEXT' })
-      return terms ? terms.value : null
-    },
     eventTitle: function () {
       return Settings.eventTitle()
     }
   },
   beforeMount: function () {
-    const vue = this
+    this.sitemapRoutes = this.$router.getRoutes().filter((route) => {
+      return route.meta.inSitemap
+    })
+    this.enabledPages = (this.$store.getters.pages || []).filter(page => page.enabled && page.enabled !== '0')
 
-    vue.setBodyClasses('page')
-    vue.setPageTitle(vue.eventTitle + ' - Terms of Service')
+    this.setBodyClasses('page')
+    this.setPageTitle(this.eventTitle + ' - Sitemap')
+  },
+  methods: {
+    getContentValue: function (content, contentKey) {
+      const item = _.find(content.value, { key: contentKey })
+      return item ? item.value : null
+    }
   }
 }
 </script>
