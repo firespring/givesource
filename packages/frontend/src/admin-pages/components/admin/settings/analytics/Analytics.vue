@@ -18,7 +18,10 @@
   <div class="o-app">
     <navigation />
 
-    <main class="o-app__main o-app__main--compact">
+    <main
+      id="main-content"
+      class="o-app__main o-app__main--compact"
+    >
       <div class="o-app_main-content o-app_main-content--md">
         <div class="o-page-header">
           <div class="o-page-header__text">
@@ -73,7 +76,7 @@
                     </div>
                     <div class="c-notes c-notes--below">
                       <a
-                        href="https://support.google.com/analytics/answer/1008080?hl=en"
+                        href="https://support.google.com/analytics/answer/10089681?hl=en"
                         target="_blank"
                       >Click here</a> for instructions to get your Google
                       Analytics tracking ID. If you don't have a Google Analytics account, <a

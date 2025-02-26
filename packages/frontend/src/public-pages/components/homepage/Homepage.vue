@@ -42,7 +42,10 @@
       <div v-html="getContentValue('HOMEPAGE_MASTHEAD_TEXT')" />
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div class="wrapper">
         <metrics
           :match-fund-enabled="getContentValue('HOMEPAGE_MATCH_IS_ENABLED', false)"

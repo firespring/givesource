@@ -88,7 +88,6 @@ export default defineConfig(({ command, mode }) => {
       },
       include: [
         'jquery',
-        'chosen-js',
         '@claviska/jquery-minicolors'
       ]
     },
@@ -102,7 +101,6 @@ export default defineConfig(({ command, mode }) => {
       },
       commonJsOptions: [
         'jquery',
-        'chosen-js',
         '@claviska/jquery-minicolors',
         'node_modules'
       ]

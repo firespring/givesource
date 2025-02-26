@@ -244,7 +244,7 @@ export default {
       }).then(function () {
         return vue.$request.post('nonprofits/' + vue.nonprofitId + '/slides', {
           fileId: vue.file.id,
-          type: Media.TYPE_IMAGE
+          type: Media.prototype.TYPE_IMAGE
         })
       }).then(function (response) {
         vue.$store.commit('generateCacheKey')

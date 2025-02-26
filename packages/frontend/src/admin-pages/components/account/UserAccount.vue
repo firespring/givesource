@@ -17,7 +17,10 @@
 <template>
   <div class="o-app">
     <navigation :nonprofit-id="nonprofitId" />
-    <main class="o-app__main o-app__main--compact">
+    <main
+      id="main-content"
+      class="o-app__main o-app__main--compact"
+    >
       <div class="o-app_main-content o-app_main-content">
         <div class="o-app_main-content o-app_main-content--md">
           <div class="o-app-main-content ">
@@ -103,7 +106,10 @@
               </div>
             </section>
 
-            <div class="u-margin-top-scale">
+            <div
+              v-if="canDelete"
+              class="u-margin-top-scale"
+            >
               <button
                 class="c-btn c-btn--sm c-btn--bad c-btn--icon c-btn--text"
                 @click="deleteAccount"
@@ -128,6 +134,11 @@ export default {
       firstName: this.user.firstName || '',
       lastName: this.user.lastName || '',
       nonprofitId: this.user.nonprofitId
+    }
+  },
+  computed: {
+    canDelete: () => {
+      return false
     }
   },
   created: function () {

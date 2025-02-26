@@ -31,10 +31,7 @@
             <div class="c-page-section">
               <div class="c-page-section__main">
                 <api-error v-model="apiError" />
-                <fieldset
-                  class="c-page-section__fieldset"
-                  aria-labelledby="section-donor-email"
-                >
+                <div class="c-form-item--required">
                   <div
                     v-floating-label
                     class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label"
@@ -46,19 +43,25 @@
                       type="email"
                       name="toEmail"
                       :class="{ 'has-error': formErrors.TO_EMAIL }"
+                      required
+                      aria-describedby="toEmailError toEmailNote"
                     >
                     <label for="toEmail">Send To Email Address</label>
                   </div>
                   <div
                     v-if="formErrors.TO_EMAIL"
+                    id="toEmailError"
                     class="c-notes c-notes--below c-notes--bad c-form-control-error"
                   >
                     {{ formErrors.TO_EMAIL }}
                   </div>
-                  <div class="c-notes c-notes--below">
+                  <div
+                    id="toEmailNote"
+                    class="c-notes c-notes--below"
+                  >
                     Enter the email address to send this receipt to.
                   </div>
-                </fieldset>
+                </div>
               </div>
             </div>
 

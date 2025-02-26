@@ -42,11 +42,14 @@
           v-model="localAmount"
           name="amount"
           :has-error="formErrors.hasOwnProperty('amount')"
+          :aria-label="'Donation amount for ' + nonprofit.legalName"
+          :aria-describedby="'amount-error-' + index"
           required
         />
       </div>
       <div
         v-if="error"
+        :id="`amount-error-${index}`"
         class="notes notes--below notes--error"
       >
         A donation amount must be at least $10.00
@@ -56,6 +59,7 @@
       <a
         href="#"
         class="btn btn--sm btn--icon btn--red"
+        :aria-label="'Delete donation for ' + nonprofit.legalName"
         @click.prevent="deleteCartItem"
       >
         <i

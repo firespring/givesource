@@ -53,6 +53,9 @@
                   class="c-page-section__fieldset"
                   aria-labelledby="section-password"
                 >
+                  <legend>
+                    <h2>Password & Security</h2>
+                  </legend>
                   <div class="c-form-item c-form-item--password c-form-item--required">
                     <div class="c-form-item__control">
                       <div
@@ -66,17 +69,22 @@
                           type="password"
                           name="currentPassword"
                           :class="{ 'has-error': formErrors.currentPassword }"
+                          aria-describedby="current-password-notes current-password-error"
                         >
                         <label for="currentPassword">Current Password</label>
                       </div>
                     </div>
                     <div
                       v-if="formErrors.currentPassword"
+                      id="current-password-error"
                       class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                     >
                       {{ formErrors.currentPassword }}
                     </div>
-                    <div class="c-notes c-notes--below">
+                    <div
+                      id="current-password-notes"
+                      class="c-notes c-notes--below"
+                    >
                       Please enter your current password.
                     </div>
                   </div>
@@ -93,16 +101,21 @@
                           type="password"
                           name="password"
                           :class="{ 'has-error': formErrors.password }"
+                          aria-describedby="new-password-notes new-password-error"
                         >
                         <label for="password">New Password</label>
                       </div>
                       <div
                         v-if="formErrors.password"
+                        id="new-password-error"
                         class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                       >
                         {{ formErrors.password }}
                       </div>
-                      <div class="c-notes c-notes--below">
+                      <div
+                        id="new-password-notes"
+                        class="c-notes c-notes--below"
+                      >
                         Your password must be at least 8 characters long and contain a combination of numbers and upper and lower case letters.
                       </div>
                     </div>
@@ -120,11 +133,13 @@
                           type="password"
                           name="passwordConfirm"
                           :class="{ 'has-error': formErrors.passwordConfirm }"
+                          aria-describedby="confirm-password-error"
                         >
                         <label for="passwordConfirm">Confirm Password</label>
                       </div>
                       <div
                         v-if="formErrors.passwordConfirm"
+                        id="confirm-password-error"
                         class="c-notes c-notes--below c-notes--bad c-form-control-error u-margin-bottom-thick"
                       >
                         {{ formErrors.passwordConfirm }}

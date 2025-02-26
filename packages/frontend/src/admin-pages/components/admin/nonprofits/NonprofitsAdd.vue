@@ -17,7 +17,10 @@
 <template>
   <div class="o-app">
     <navigation />
-    <main class="o-app__main o-app__main--compact">
+    <main
+      id="main-content"
+      class="o-app__main o-app__main--compact"
+    >
       <div class="o-app_main-content o-app_main-content--md">
         <div class="o-app-main-content">
           <div class="o-page-header">
@@ -167,14 +170,15 @@
                       </div>
                       <div
                         id="addressGroupDefaultCountryOptions-US"
-                        class="c-form-control-grid__item c-form-item--required u-flex-collapse"
+                        class="c-form-control-grid__item c-form-item--required"
                       >
                         <state-select
                           id="state"
                           v-model="formData.state"
                           name="state"
                           placeholder="State"
-                          :class="{ 'has-error': formErrors.state }"
+                          :required="true"
+                          :select-class="{ 'has-error': formErrors.state }"
                         />
                       </div>
                       <div

@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <div
         class="wrapper wrapper--sm"
         v-html="page.text"

@@ -25,7 +25,10 @@
       :name="name"
       autocomplete="cc-number"
       placeholder="•••• •••• •••• ••••"
+      :required="isRequired"
       :class="{'has-error': hasError}"
+      :aria-describedby="aria?.describedby"
+      :aria-labelledby="aria?.labelledby"
     >
     <input
       v-else
@@ -37,8 +40,14 @@
       autocomplete="cc-number"
       placeholder="•••• •••• •••• ••••"
       :class="{'has-error': hasError}"
+      :required="isRequired"
+      :aria-describedby="aria?.describedby"
+      :aria-labelledby="aria?.labelledby"
     >
-    <div class="notes notes--below accepted-cc">
+    <div
+      aria-label="Accepted Card Types"
+      class="notes notes--below accepted-cc"
+    >
       <div
         class="cc visa"
         :class="{na: !displayCardType('visa')}"
@@ -102,6 +111,16 @@ export default {
       default: null
     },
     hasError: {
+      type: Boolean,
+      default: false
+    },
+    aria: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    isRequired: {
       type: Boolean,
       default: false
     }

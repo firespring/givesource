@@ -39,30 +39,31 @@
         />
         Add Bulk Donation
       </router-link>
-      <a
-        href="#"
-        role="button"
+      <button
         class="c-btn c-btn--sm c-btn--icon"
         @click.prevent="exportReport('DONATIONS')"
-      ><i
-        class="fa fa-cloud-download"
-        aria-hidden="true"
-      />Export Donations</a>
-      <a
-        href="#"
-        role="button"
+      >
+        <i
+          class="fa fa-cloud-download"
+          aria-hidden="true"
+        />Export Donations
+      </button>
+      <button
         class="c-btn c-btn--sm c-btn--icon"
         @click.prevent="donorReceipt"
-      ><i
-        class="fa fa-file-text"
-        aria-hidden="true"
-      />Donor Receipt</a>
+      >
+        <i
+          class="fa fa-file-text"
+          aria-hidden="true"
+        />Donor Receipt
+      </button>
     </div>
     <div
       v-if="isSuperAdmin"
       ref="cBtnDropdown"
       class="c-btn-dropdown"
       @mouseout="closeMenu"
+      @keyup.esc="closeMenu"
       @mouseover="cancelCloseMenu"
     >
       <a

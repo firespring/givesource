@@ -31,10 +31,7 @@
             <div class="c-page-section">
               <div class="c-page-section__main">
                 <api-error v-model="apiError" />
-                <fieldset
-                  class="c-page-section__fieldset"
-                  aria-labelledby="section-donor-email"
-                >
+                <div class="c-form-item--required">
                   <div
                     v-floating-label
                     class="u-control-icon u-control-icon--email has-floating-label has-floating-label--blank js-floating-label"
@@ -46,19 +43,25 @@
                       type="email"
                       name="donorEmail"
                       :class="{ 'has-error': formErrors.DONOR_EMAIL }"
+                      required
+                      aria-describedby="donorEmailNotes donorEmailError"
                     >
                     <label for="donorEmail">Donor Email Address</label>
                   </div>
                   <div
                     v-if="formErrors.DONOR_EMAIL"
+                    id="donorEmailError"
                     class="c-notes c-notes--below c-notes--bad c-form-control-error"
                   >
                     {{ formErrors.DONOR_EMAIL }}
                   </div>
-                  <div class="c-notes c-notes--below">
+                  <div
+                    id="donorEmailNotes"
+                    class="c-notes c-notes--below"
+                  >
                     Enter the email address of the donor.
                   </div>
-                </fieldset>
+                </div>
               </div>
             </div>
 

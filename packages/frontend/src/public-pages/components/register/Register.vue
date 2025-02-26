@@ -26,7 +26,10 @@
       </template>
     </layout-hero>
 
-    <main class="main">
+    <main
+      id="main-content"
+      class="main"
+    >
       <api-error v-model="apiError" />
       <div
         v-if="canRegister"
@@ -39,6 +42,9 @@
 
         <form @submit="submit">
           <fieldset>
+            <legend>
+              <h2>Registration Form</h2>
+            </legend>
             <div class="form-item form-item--required">
               <div class="form-item__label">
                 <label for="legalName">Organization Legal Name</label>
@@ -51,9 +57,12 @@
                   name="legalName"
                   maxlength="200"
                   :class="{'has-error': formErrors.legalName}"
+                  required
+                  aria-describedby="legalNameErrors"
                 >
                 <div
                   v-if="formErrors.legalName"
+                  id="legalNameErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.legalName }}
@@ -73,9 +82,12 @@
                   name="taxId"
                   maxlength="200"
                   :class="{'has-error': formErrors.taxId}"
+                  required
+                  aria-describedby="taxIdErrors"
                 >
                 <div
                   v-if="formErrors.taxId"
+                  id="taxIdErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.taxId }}
@@ -85,35 +97,40 @@
 
             <div class="form-item form-item--required">
               <div class="form-item__label">
-                <label for="firstName">Contact Name</label>
+                <label id="contactNameLabel">Contact Name</label>
               </div>
               <div class="form-item__control">
                 <div class="grid">
                   <div class="grid-item">
+                    <label for="firstName">First Name</label>
                     <input
                       id="firstName"
                       v-model="formData.firstName"
                       type="text"
                       name="firstName"
                       maxlength="200"
-                      placeholder="First Name"
                       :class="{'has-error': formErrors.firstName}"
+                      required
+                      aria-describedby="contactNameLabel contactNameErrors"
                     >
                   </div>
                   <div class="grid-item">
+                    <label for="lastName">Last Name</label>
                     <input
                       id="lastName"
                       v-model="formData.lastName"
                       type="text"
                       name="lastName"
                       maxlength="200"
-                      placeholder="Last Name"
                       :class="{'has-error': formErrors.lastName}"
+                      required
+                      aria-describedby="contactNameLabel contactNameErrors"
                     >
                   </div>
                 </div>
                 <div
                   v-if="formErrors.firstName || formErrors.lastName"
+                  id="contactNameErrors"
                   class="notes notes--below notes--error"
                 >
                   Enter your first name and last name
@@ -133,9 +150,12 @@
                   name="email"
                   maxlength="200"
                   :class="{'has-error': formErrors.email}"
+                  required
+                  aria-describedby="emailErrors"
                 >
                 <div
                   v-if="formErrors.email"
+                  id="emailErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.email }}
@@ -145,21 +165,24 @@
 
             <div class="form-item form-item--address form-item--required">
               <div class="form-item__label">
-                <label for="address1">Organization Address</label>
+                <label id="addressLabel">Organization Address</label>
               </div>
 
               <div class="form-item__control">
                 <div class="address1">
+                  <label for="address1">Address Line 1</label>
                   <input
                     id="address1"
                     v-model="formData.address1"
                     type="text"
                     name="address1"
-                    placeholder="Address Line 1"
                     :class="{'has-error': formErrors.address1}"
+                    required
+                    aria-describedby="addressLabel address1Errors"
                   >
                   <div
                     v-if="formErrors.address1"
+                    id="address1Errors"
                     class="notes notes--below notes--error"
                   >
                     {{ formErrors.address1 }}
@@ -167,46 +190,54 @@
                 </div>
 
                 <div class="address2">
+                  <label for="address2">Address Line 2</label>
                   <input
                     id="address2"
                     v-model="formData.address2"
                     type="text"
                     name="address2"
-                    placeholder="Address Line 2"
+                    aria-describedby="addressLabel"
                   >
                 </div>
 
                 <div class="city-state-zip">
                   <div class="city-state-zip__city">
+                    <label for="city">City</label>
                     <input
                       id="city"
                       v-model="formData.city"
                       type="text"
                       name="city"
                       maxlength="200"
-                      placeholder="City"
                       :class="{'has-error': formErrors.city}"
+                      required
+                      aria-describedby="addressLabel cszErrors"
                     >
                   </div>
 
                   <div class="city-state-zip__state select-wrap">
+                    <label for="state">State</label>
                     <forms-address-state
                       id="state"
                       v-model="formData.state"
                       name="state"
                       placeholder="State"
+                      required
+                      aria-describedby="addressLabel cszErrors"
                     />
                   </div>
 
-                  <div class="city-state-zip__zip">
+                  <div class="city-state-zip__zip has-floating-label has-floating-label--blank js-floating-label">
+                    <label for="zip">Postal Code</label>
                     <input
                       id="zip"
                       v-model="formData.zip"
                       type="text"
                       name="zip"
                       maxlength="200"
-                      placeholder="ZIP"
                       :class="{'has-error': formErrors.zip}"
+                      required
+                      aria-describedby="addressLabel cszErrors"
                     >
                   </div>
                 </div>
@@ -214,6 +245,7 @@
 
               <div
                 v-if="formErrors.city || formErrors.state || formErrors.zip"
+                id="cszErrors"
                 class="notes notes--below notes--error"
               >
                 Enter your organization's city, state and zip code
@@ -231,9 +263,12 @@
                   type="tel"
                   name="phone"
                   :class="{'has-error': formErrors.phone}"
+                  required
+                  aria-describedby="phoneErrors"
                 >
                 <div
                   v-if="formErrors.phone"
+                  id="phoneErrors"
                   class="notes notes--below notes--error"
                 >
                   {{ formErrors.phone }}
@@ -242,22 +277,33 @@
             </div>
 
             <div class="form-item">
-              <div class="form-item__label">
+              <div
+                id="orgCategories"
+                class="form-item__label"
+              >
                 Organization Categories (Check up to 3)
               </div>
               <div class="form-item__control">
                 <div
                   v-if="formErrors.categories"
+                  id="categoryErrors"
                   class="notes notes--above notes--error"
                 >
                   {{ formErrors.categories }}
                 </div>
-                <forms-nonprofit-category v-model="formData.categories" />
+                <forms-nonprofit-category
+                  v-model="formData.categories"
+                  group-label="orgCategories"
+                  error-label="categoryErrors"
+                />
               </div>
             </div>
           </fieldset>
 
           <fieldset v-for="agreement in agreements">
+            <legend>
+              <h2>{{ agreement.agreementTitle }}</h2>
+            </legend>
             <div class="form-item">
               <h2>{{ agreement.agreementTitle }}</h2>
               <div v-html="agreement.agreementText" />
@@ -266,19 +312,24 @@
               class="form-item"
               :class="{'form-item--required': agreement.isRequired}"
             >
-              <div class="form-item__label">
+              <div
+                :id="'agreement' + agreement.id + 'label'"
+                class="form-item__label"
+              >
                 Do you agree to the <strong>{{ agreement.agreementTitle }}</strong>?
               </div>
               <div class="form-item__control">
                 <ul class="list-plain list-checkbox">
                   <li>
-                    <label>
+                    <label :for="'agreement' + agreement.id">
                       <input
+                        :id="'agreement' + agreement.id"
                         v-model="formData.agreedIds"
                         type="checkbox"
                         name="agreedIds[]"
                         :value="agreement.id"
                         :required="agreement.isRequired"
+                        :aria-describedby="'agreedIds' + agreement.id + ' ' + 'agreement' + agreement.id + 'label'"
                       >
                       <span>Yes, I agree to the <strong>{{ agreement.agreementTitle }}</strong>.</span>
                     </label>
@@ -286,6 +337,7 @@
                 </ul>
                 <div
                   v-if="formErrors['agreedIds.'+agreement.id]"
+                  :id="'agreedIds' + agreement.id"
                   class="notes notes--above notes--error"
                 >
                   {{ formErrors['agreedIds.'+agreement.id] }}
