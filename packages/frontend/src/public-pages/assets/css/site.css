@@ -1250,7 +1250,7 @@ Page footer
 }
 
 .sponsors__tier--lg .sponsor img {
-  max-height: 1.875rem;
+  max-height: 8rem;
 }
 
 .sponsors__tier--lg .sponsor--no-logo {
@@ -1262,7 +1262,7 @@ Page footer
 }
 
 .sponsors__tier--md .sponsor img {
-  max-height: 1.5625rem;
+  max-height: 2.5rem;
 }
 
 .sponsors__tier--md .sponsor--no-logo {
@@ -1274,7 +1274,7 @@ Page footer
 }
 
 .sponsors__tier--sm .sponsor img {
-  max-height: 1.25rem;
+  max-height: 1.875rem;
 }
 
 .sponsors__tier--sm .sponsor--no-logo {
@@ -2281,7 +2281,7 @@ Global Media Queries
   }
 
   .sponsors__tier--lg .sponsor img {
-    max-height: 5.25rem;
+    max-height: 8rem;
   }
 
   .sponsors__tier--lg .sponsor--no-logo {
@@ -2289,7 +2289,7 @@ Global Media Queries
   }
 
   .sponsors__tier--md .sponsor img {
-    max-height: 2rem;
+    max-height: 2.5rem;
   }
 
   .sponsors__tier--md .sponsor--no-logo {
@@ -2297,7 +2297,7 @@ Global Media Queries
   }
 
   .sponsors__tier--sm .sponsor img {
-    max-height: 2rem;
+    max-height: 1.875rem;
   }
 
   .contact-info__item,
