@@ -269,7 +269,7 @@ export default {
   },
   methods: {
     getConstraints: function () {
-      return {
+      const constraints = {
         file: {
           presence: false,
           image: true
@@ -280,12 +280,15 @@ export default {
         sponsorTierId: {
           label: 'Tier',
           presence: true
-        },
-        url: {
+        }
+      }
+      if (this.formData.url !== '') {
+        constraints.url = {
           presence: false,
           url: true
         }
       }
+      return constraints
     },
     submit: function (event) {
       event.preventDefault()
