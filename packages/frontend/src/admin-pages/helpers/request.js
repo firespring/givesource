@@ -17,7 +17,7 @@
 import * as _ from 'lodash'
 import { getCognitoUser } from './user'
 import axios from 'axios'
-import store from './../store'
+import {useAdminStore} from './../store'
 
 /**
  * Request constructor
@@ -36,10 +36,11 @@ function Request () {
  */
 Request.prototype.delete = function (uri, data, headers) {
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const store = useAdminStore()
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     const config = data ? { data: data, headers: response } : { headers: response }
-    store.commit('generateCacheKey')
+    store.generateCacheKey()
     return axios.delete(apiUrl + uri, config)
   })
 }
@@ -52,8 +53,9 @@ Request.prototype.delete = function (uri, data, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.get = function (uri, query, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     return axios.get(apiUrl + uri + request.buildQuery(query), { headers: response })
   })
@@ -67,11 +69,12 @@ Request.prototype.get = function (uri, query, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.patch = function (uri, body, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     body = body || {}
-    store.commit('generateCacheKey')
+    store.generateCacheKey()
     return axios.patch(apiUrl + uri, body, { headers: response })
   })
 }
@@ -84,11 +87,12 @@ Request.prototype.patch = function (uri, body, headers) {
  * @param {{}} [headers]
  */
 Request.prototype.post = function (uri, body, headers) {
+  const store = useAdminStore()
   const request = this
-  const apiUrl = store.getters.setting('API_URL')
+  const apiUrl = store.setting('API_URL')
   return request.buildHeaders(headers).then(function (response) {
     body = body || {}
-    store.commit('generateCacheKey')
+    store.generateCacheKey()
     return axios.post(apiUrl + uri, body, { headers: response })
   })
 }
@@ -100,11 +104,12 @@ Request.prototype.post = function (uri, body, headers) {
  * @return {string}
  */
 Request.prototype.buildQuery = function (query) {
+  const store = useAdminStore()
   const params = []
   query = query || {}
 
   if (!query.hasOwnProperty('c')) {
-    query.c = store.getters.cacheKey
+    query.c = store.getCacheKey
   }
 
   if (query) {

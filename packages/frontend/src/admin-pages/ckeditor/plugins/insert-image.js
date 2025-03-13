@@ -18,10 +18,11 @@ import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview'
 import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg'
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin'
 import Request from './../../helpers/request'
-import store from './../../store'
+import { useAdminStore } from './../../store'
 
 export default class InsertImage extends Plugin {
   init () {
+    const store = useAdminStore()
     const plugin = this
     const editor = plugin.editor
 
@@ -43,7 +44,7 @@ export default class InsertImage extends Plugin {
         input.onchange = () => {
           if (input.files.length) {
             plugin.uploadImage(input.files[0]).then(file => {
-              const src = store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path
+              const src = store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path
               editor.model.change(writer => {
                 const imageElement = writer.createElement('image', {
                   src: src

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import store from './../store'
+import { useAdminStore } from './../store'
 import {
   CognitoUser,
   CognitoUserPool,
@@ -29,6 +29,7 @@ import {
  * @param {{}} callbacks
  */
 const login = function (username, password, callbacks) {
+  const store = useAdminStore()
   const data = {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
@@ -74,9 +75,10 @@ const login = function (username, password, callbacks) {
  * @return {CognitoUser|null}
  */
 const getCognitoUser = function () {
+  const store = useAdminStore()
   const userPoolData = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new CognitoUserPool(userPoolData)
   return userPool.getCurrentUser()
@@ -111,6 +113,7 @@ const changePassword = function (oldPassword, newPassword, callback) {
  * @param {{}} callbacks
  */
 const forgotPassword = function (username, callbacks) {
+  const store = useAdminStore()
   const data = {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
@@ -144,6 +147,7 @@ const forgotPassword = function (username, callbacks) {
  * @param {{}} callbacks
  */
 const resetPassword = function (username, code, password, callbacks) {
+  const store = useAdminStore()
   const data = {
     UserPoolId: store.getters.setting('USER_POOL_ID'),
     ClientId: store.getters.setting('USER_POOL_CLIENT_ID')

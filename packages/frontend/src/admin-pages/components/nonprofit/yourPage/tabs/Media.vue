@@ -247,7 +247,7 @@ export default {
           type: Media.prototype.TYPE_IMAGE
         })
       }).then(function (response) {
-        vue.$store.commit('generateCacheKey')
+        vue.store.generateCacheKey()
         vue.$router.push({
           name: 'nonprofit-your-page-media-photos-edit',
           params: {

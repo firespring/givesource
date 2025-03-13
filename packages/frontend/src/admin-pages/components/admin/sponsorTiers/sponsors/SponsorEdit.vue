@@ -338,7 +338,7 @@ export default {
 
         return vue.$request.patch('sponsor-tiers/' + vue.sponsorTierId + '/sponsors/' + vue.sponsorId, params)
       }).then(function () {
-        vue.$store.commit('generateCacheKey')
+        vue.store.generateCacheKey()
         vue.clearModals()
         vue.$router.push({ name: 'sponsors-list' })
       }).catch(function (err) {

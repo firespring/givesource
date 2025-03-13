@@ -224,7 +224,7 @@ export default {
       return this.isSuperAdminUser() || this.isAdminUser()
     },
     imageUrl: function () {
-      return this.file.hasOwnProperty('path') ? this.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false
+      return this.file.hasOwnProperty('path') ? this.store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + this.file.path : false
     }
   },
   watch: {
@@ -377,7 +377,7 @@ export default {
           return vue.$request.delete('files/' + vue.slide.fileId)
         }
       }).then(function () {
-        vue.$store.commit('generateCacheKey')
+        vue.store.generateCacheKey()
         vue.clearModals()
         vue.$router.push({ name: 'nonprofit-your-page', query: { tab: 'media' } })
       }).catch(function (err) {

@@ -27,13 +27,13 @@ import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringK
 import FloatingLabelDirective from './directives/floatingLabel'
 import ModalMixin from './mixins/modals'
 import Request from './helpers/request'
-import router from './router'
 import ShaveDirective from './directives/shave'
-import store from './store'
 import UserMixin from './mixins/user'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import router from './router'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
@@ -50,8 +50,10 @@ window.$ = window.jQuery = $
 window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
+const pinia = createPinia()
+
 const app = createApp(ComponentApp)
-  .use(store)
+  .use(pinia)
   // Register plugins
   .use(VueFilters)
   .use(CKEditor)
