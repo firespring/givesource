@@ -78,7 +78,7 @@ export default {
   created: function () {
     const vue = this
 
-    vue.cartItems = vue.$store.state.cartItems
+    vue.cartItems = vue.store.cartItems
     vue.cartItems.sort(function (a, b) {
       return a.timestamp - b.timestamp
     })
@@ -95,7 +95,7 @@ export default {
       item.amount = amount
 
       vue.cartItems[index] = item
-      vue.$store.commit('updateCartItem', {
+      vue.store.updateCartItem({
         timestamp: item.timestamp,
         amount: item.amount
       })

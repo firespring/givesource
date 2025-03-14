@@ -89,7 +89,7 @@ export default {
     this.sitemapRoutes = this.$router.getRoutes().filter((route) => {
       return route.meta.inSitemap
     })
-    this.enabledPages = (this.$store.getters.pages || []).filter(page => page.enabled && page.enabled !== '0')
+    this.enabledPages = (this.store.pages || []).filter(page => page.enabled && page.enabled !== '0')
 
     this.setBodyClasses('page')
     this.setPageTitle(this.eventTitle + ' - Sitemap')

@@ -76,7 +76,7 @@ export default {
     cartItems () {
       const vm = this
 
-      return [...vm.$store.state.cartItems].sort((a, b) => {
+      return [...vm.store.cartItems].sort((a, b) => {
         return a.timestamp - b.timestamp
       })
     }
@@ -85,13 +85,13 @@ export default {
     removeCartItem (index) {
       const vm = this
       const item = vm.cartItems[index]
-      vm.$store.commit('removeCartItem', item.timestamp)
+      vm.store.removeCartItem(item.timestamp)
     },
     updateCartItem (index, amount, note) {
       const vm = this
 
       const item = vm.cartItems[index]
-      vm.$store.commit('updateCartItem', {
+      vm.store.updateCartItem({
         timestamp: item.timestamp,
         amount: amount,
         note: note

@@ -33,6 +33,7 @@ import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { useAdminStore } from './store'
 import router from './router'
 import VueFilters from './filters'
 import mitt from 'mitt'
@@ -89,6 +90,7 @@ app.config.globalProperties.$request = new Request()
 
 app.config.globalProperties.user = {}
 app.config.globalProperties.groups = []
+app.config.globalProperties.store = useAdminStore()
 
 // Start the app
 app.mount('#app')

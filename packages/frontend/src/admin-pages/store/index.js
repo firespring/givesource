@@ -49,7 +49,7 @@ export const useAdminStore = defineStore('adminStore', {
     },
 
     // Converted to action from mutation
-    generateCacheKey (){
+    generateCacheKey () {
       this.cacheKey = new Date().getTime()
     },
     settings (settings) {

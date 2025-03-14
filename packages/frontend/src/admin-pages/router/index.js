@@ -668,7 +668,6 @@ const loadSettings = function (store) {
   date.setMinutes(date.getMinutes() - 1)
 
   const lastUpdated = store.updatedAt()
-  return updateSettings(store)
   if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
     return updateSettings(store)
   } else {

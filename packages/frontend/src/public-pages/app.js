@@ -20,12 +20,13 @@ import App from './components/App.vue'
 import axios from 'axios'
 import ModalsMixin from './mixins/modals'
 import router from './router'
-import store from './store'
+import { usePublicStore } from './store'
 import VueSocialSharing from 'vue-social-sharing'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
@@ -44,9 +45,11 @@ window.$ = window.jQuery = $
 window.axios = axios
 window.axios.defaults.headers.common['Content-Type'] = 'application/json'
 
+const pinia = createPinia()
+
 // Bootstrap the app
 const app = createApp(App)
-  .use(store)
+  .use(pinia)
   .use(router)
   // Register filters
   .use(VueFilters)
@@ -61,15 +64,18 @@ const app = createApp(App)
   // Register global components
   .component('ApiError', ApiErrorComponent)
   // Start the app
-  // Setup Analytics
-  .use(VueGtag, {
-    config: { id: store.getters.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
-  }, router)
   .provide('bus', emitter)
+
+// Setup Analytics
+const store = usePublicStore()
+app.use(VueGtag, {
+  config: { id: store.setting('GOOGLE_ANALYTICS_TRACKING_ID') }
+}, router)
 
 emitter.$on = emitter.on
 emitter.$off = emitter.off
 emitter.$emit = emitter.emit
 app.config.globalProperties.bus = emitter
+app.config.globalProperties.store = store
 
 app.mount('#app')
