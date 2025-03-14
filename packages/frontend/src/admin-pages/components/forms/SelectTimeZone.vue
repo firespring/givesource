@@ -1688,19 +1688,8 @@ export default {
         }
         vue.localValue = value
         $(vue.$refs.select).val(value)
-        $(vue.$refs.select).trigger('chosen:updated')
       }
     }
-  },
-  mounted: function () {
-    const vue = this
-
-    $(vue.$refs.select).chosen({
-      allow_single_deselect: true,
-      width: '100%'
-    }).change(function () {
-      vue.localValue = $(this).val()
-    })
   }
 }
 </script>
