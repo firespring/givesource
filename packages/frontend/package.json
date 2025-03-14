@@ -102,8 +102,6 @@
     "vue-slider-component": "^4.1.0-beta.7",
     "vue-social-sharing": "^4.0.0-alpha4",
     "vue3-gravatar": "^3.0.0",
-    "vuex": "^4.1.0",
-    "vuex-persistedstate": "^4.1.0",
     "whatwg-fetch": "^3.6.2"
   },
   "type": "module"
