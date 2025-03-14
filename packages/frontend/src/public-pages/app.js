@@ -27,6 +27,7 @@ import ValidateMixin from './mixins/validate'
 import VueGtag from 'vue-gtag'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
@@ -46,6 +47,7 @@ window.axios = axios
 window.axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 // Bootstrap the app
 const app = createApp(App)

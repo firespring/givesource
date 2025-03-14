@@ -432,6 +432,7 @@ const updateSettings = () => {
       })
     }
 
+    settings['API_URL'] = window.API_URL
     store.settings = settings
     store.updatedAt()
   })

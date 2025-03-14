@@ -34,6 +34,7 @@ import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { useAdminStore } from './store'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import router from './router'
 import VueFilters from './filters'
 import mitt from 'mitt'
@@ -52,6 +53,7 @@ window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(ComponentApp)
   .use(pinia)
