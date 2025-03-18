@@ -239,6 +239,12 @@ export default {
       vue.addModal('spinner')
       vue.alert = false
       vue.errors = []
+      if (vue.hasCode && vue.formData.email === '') {
+        vue.formData.code = vue.$route.query.code
+      }
+      if (vue.hasEmail && vue.formData.email === '') {
+        vue.formData.email = vue.$route.query.email
+      }
       vue.formErrors = vue.validate(vue.formData, vue.getConstraints())
       if (Object.keys(vue.formErrors).length) {
         vue.clearModals()
