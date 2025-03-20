@@ -31,8 +31,8 @@ import {
 const login = function (username, password, callbacks) {
   const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new CognitoUserPool(data)
   const userData = {
@@ -115,8 +115,8 @@ const changePassword = function (oldPassword, newPassword, callback) {
 const forgotPassword = function (username, callbacks) {
   const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new CognitoUserPool(data)
   const userData = {
@@ -149,8 +149,8 @@ const forgotPassword = function (username, callbacks) {
 const resetPassword = function (username, code, password, callbacks) {
   const store = useAdminStore()
   const data = {
-    UserPoolId: store.getters.setting('USER_POOL_ID'),
-    ClientId: store.getters.setting('USER_POOL_CLIENT_ID')
+    UserPoolId: store.setting('USER_POOL_ID'),
+    ClientId: store.setting('USER_POOL_CLIENT_ID')
   }
   const userPool = new CognitoUserPool(data)
   const userData = {
