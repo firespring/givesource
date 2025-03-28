@@ -56,7 +56,7 @@ export const usePublicStore = defineStore('publicStore', {
         }
       }
     },
-    removeCartItem: function (tate, timestamp) {
+    removeCartItem: function (timestamp) {
       this.cartItems = _.reject(this.cartItems, { timestamp: timestamp })
     },
     updateCartItem: function (payload) {

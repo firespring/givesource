@@ -578,7 +578,7 @@ export default {
       return Settings.eventTitle()
     },
     isCartEmpty () {
-      return this.$store.state.cartItems.length === 0
+      return this.store.cartItems.length === 0
     },
     /**
        * Check to see if recaptcha key exists
