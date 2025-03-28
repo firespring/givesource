@@ -60,7 +60,7 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { usePublicStore } from '../../../../public-pages/store'
+import { useAdminStore } from '../../../store/index.js'
 
 export default {
   data () {
@@ -70,7 +70,7 @@ export default {
   },
 
   computed: {
-    ...mapState(usePublicStore, {
+    ...mapState(useAdminStore, {
       receipt: store => store.receipt,
       donorEmail: store => store.donorEmail
     })
@@ -104,12 +104,12 @@ export default {
     }
   },
 
-  unmounted () {
+  beforeUnmount () {
     this.clearReceipt()
   },
 
   methods: {
-    ...mapActions(usePublicStore, {
+    ...mapActions(useAdminStore, {
       clearReceipt: 'clearReceipt'
     }),
 

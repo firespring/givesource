@@ -143,7 +143,7 @@ const router = createRouter({
       },
       beforeEnter (to, from, next) {
         const store = useAdminStore()
-        if (store.state.receipt && store.state.donorEmail) {
+        if (store.receipt && store.donorEmail) {
           next()
         } else {
           if (from.name) {
