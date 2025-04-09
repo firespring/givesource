@@ -779,7 +779,7 @@ export default {
           console.log(response.data)
           vm.apiError = { message: response.data.errorMessage, type: response.data.errorType }
         } else {
-          vm.$store.commit('clearCartItems')
+          vm.store.clearCartItems()
           vm.$router.push({ name: 'cart-response' })
         }
       }).catch(err => {

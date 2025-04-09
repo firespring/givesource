@@ -25,7 +25,7 @@ export const usePublicStore = defineStore('publicStore', {
   }),
   actions: {
     updateCartItemNonprofit (payload) {
-      this.cartItems.forEach(function (item) {
+      this.cartItems.forEach((item) => {
         if (item.nonprofit.id === payload.nonprofit.id) {
           item.nonprofit = payload.nonprofit
         }
@@ -39,7 +39,7 @@ export const usePublicStore = defineStore('publicStore', {
         }
 
         let isNew = true
-        this.cartItems.forEach(function (item) {
+        this.cartItems.forEach((item) => {
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
@@ -78,9 +78,7 @@ export const usePublicStore = defineStore('publicStore', {
       this.cartItems = []
     },
     settings (settings) {
-      Object.keys(settings).forEach(function (key) {
-        this.settings[key] = settings[key]
-      })
+      this.settings = [...this.settings, ...settings]
     },
     updatedAt () {
       this.updated = new Date().getTime()

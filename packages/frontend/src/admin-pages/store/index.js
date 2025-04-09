@@ -53,9 +53,7 @@ export const useAdminStore = defineStore('adminStore', {
       this.cacheKey = new Date().getTime()
     },
     settings (settings) {
-      Object.keys(settings).forEach(function (key) {
-        this.settings[key] = settings[key]
-      })
+      this.settings = [...this.settings, ...settings]
     },
     updatedAt () {
       this.updated = new Date().getTime()
