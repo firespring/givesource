@@ -29,6 +29,8 @@
     "config": "^1.31.0",
     "mime": "^2.6.0",
     "mitt": "^3.0.1",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "vite": "^5.4.14",
     "vite-plugin-require": "^1.1.14",
     "vite-plugin-static-copy": "^0.17.1",
@@ -100,8 +102,6 @@
     "vue-slider-component": "^4.1.0-beta.7",
     "vue-social-sharing": "^4.0.0-alpha4",
     "vue3-gravatar": "^3.0.0",
-    "vuex": "^4.1.0",
-    "vuex-persistedstate": "^4.1.0",
     "whatwg-fetch": "^3.6.2"
   },
   "type": "module"

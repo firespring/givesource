@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate'
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
 
-export default createStore({
-  state: {
+export const usePublicStore = defineStore('publicStore', {
+  state: () => ({
     settings: {},
     cartItems: [],
     updated: 0,
     pages: []
-  },
-  mutations: {
-    updateCartItemNonprofit: function (state, payload) {
-      state.cartItems.forEach(function (item) {
+  }),
+  actions: {
+    updateCartItemNonprofit (payload) {
+      this.cartItems.forEach((item) => {
         if (item.nonprofit.id === payload.nonprofit.id) {
           item.nonprofit = payload.nonprofit
         }
       })
     },
-    addCartItem: function (state, payload) {
+    addCartItem (payload) {
       if (payload.amount && payload.nonprofit !== null) {
         let amount = payload.amount
         if (typeof amount === 'string' && amount.indexOf('.') > -1) {
@@ -40,7 +39,7 @@ export default createStore({
         }
 
         let isNew = true
-        state.cartItems.forEach(function (item) {
+        this.cartItems.forEach((item) => {
           if (item.nonprofit.id === payload.nonprofit.id) {
             item.amount = item.amount += amount
             item.timestamp = Date.now()
@@ -49,7 +48,7 @@ export default createStore({
         })
 
         if (isNew) {
-          state.cartItems.push({
+          this.cartItems.push({
             amount: amount,
             nonprofit: payload.nonprofit,
             timestamp: Date.now()
@@ -57,46 +56,38 @@ export default createStore({
         }
       }
     },
-    removeCartItem: function (state, timestamp) {
-      state.cartItems = _.reject(state.cartItems, { timestamp: timestamp })
+    removeCartItem: function (timestamp) {
+      this.cartItems = _.reject(this.cartItems, { timestamp: timestamp })
     },
-    updateCartItem: function (state, payload) {
+    updateCartItem: function (payload) {
       if (payload.amount && payload.timestamp) {
         let amount = payload.amount
         if (typeof amount === 'string' && amount.indexOf('.') > -1) {
           amount = Math.round(parseFloat(payload.amount) * 100)
         }
 
-        const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
+        const cartItem = _.find(this.cartItems, { timestamp: payload.timestamp })
         cartItem.amount = amount
       }
       if (('note' in payload) && payload.timestamp) {
-        const cartItem = _.find(state.cartItems, { timestamp: payload.timestamp })
+        const cartItem = _.find(this.cartItems, { timestamp: payload.timestamp })
         cartItem.note = payload.note
       }
     },
-    clearCartItems: function (state) {
-      state.cartItems = []
+    clearCartItems () {
+      this.cartItems = []
     },
-    settings: function (state, settings) {
-      Object.keys(settings).forEach(function (key) {
-        state.settings[key] = settings[key]
-      })
+    settings (settings) {
+      this.settings = [...this.settings, ...settings]
     },
-    updated: function (state) {
-      state.updated = new Date().getTime()
+    updatedAt () {
+      this.updated = new Date().getTime()
     },
-    pages: function (state, pages) {
-      state.pages = pages
+    setPages (pages) {
+      this.pages = pages
     }
   },
   getters: {
-    cartItems: function (state) {
-      return state.cartItems
-    },
-    settings: function (state) {
-      return state.settings
-    },
     setting: function (state) {
       return function (key) {
         return state.settings.hasOwnProperty(key) ? state.settings[key] : null
@@ -108,15 +99,7 @@ export default createStore({
         const value = state.settings.hasOwnProperty(key) ? state.settings[key] : defaultValue
         return value === '1' || value === 1 || value === true || (typeof value === 'string' && value.toLowerCase() === 'true')
       }
-    },
-    updated: function (state) {
-      return state.updated
-    },
-    pages: function (state) {
-      return state.pages
     }
   },
-  plugins: [
-    createPersistedState()
-  ]
+  persist: true
 })

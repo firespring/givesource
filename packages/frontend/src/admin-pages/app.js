@@ -27,13 +27,15 @@ import ComponentPaymentspringKeysBanner from './components/banner/PaymentSpringK
 import FloatingLabelDirective from './directives/floatingLabel'
 import ModalMixin from './mixins/modals'
 import Request from './helpers/request'
-import router from './router'
 import ShaveDirective from './directives/shave'
-import store from './store'
 import UserMixin from './mixins/user'
 import UtilsMixin from './mixins/utils'
 import ValidateMixin from './mixins/validate'
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import { useAdminStore } from './store'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import router from './router'
 import VueFilters from './filters'
 import mitt from 'mitt'
 
@@ -50,8 +52,11 @@ window.$ = window.jQuery = $
 window.axios = axios
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
 const app = createApp(ComponentApp)
-  .use(store)
+  .use(pinia)
   // Register plugins
   .use(VueFilters)
   .use(CKEditor)
@@ -87,6 +92,7 @@ app.config.globalProperties.$request = new Request()
 
 app.config.globalProperties.user = {}
 app.config.globalProperties.groups = []
+app.config.globalProperties.store = useAdminStore()
 
 // Start the app
 app.mount('#app')

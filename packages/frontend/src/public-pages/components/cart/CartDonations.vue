@@ -56,8 +56,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import ComponentCartDonationsListTable from './CartDonationsListTable.vue'
+import { usePublicStore } from '../../store'
 
 export default {
   components: {
@@ -80,7 +81,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
+    ...mapState(usePublicStore, {
       cartItems: state => state.cartItems
     }),
     donationTotal () {

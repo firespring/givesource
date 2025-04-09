@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     pageLink: function () {
-      return this.$store.getters.setting('EVENT_URL') + '/nonprofits/'
+      return this.store.setting('EVENT_URL') + '/nonprofits/'
     }
   },
   watch: {
@@ -316,7 +316,7 @@ export default {
       if (vue.formData.logo instanceof File) {
         promise = promise.then(function () {
           return vue.uploadFile('logo').then(function (uploadedFile) {
-            vue.$store.commit('generateCacheKey')
+            vue.store.generateCacheKey()
             vue.formData.logoFileId = uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id : ''
           })
         })

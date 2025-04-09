@@ -311,7 +311,7 @@ export default {
           url: vue.formData.url
         })
       }).then(function (response) {
-        vue.$store.commit('generateCacheKey')
+        vue.store.generateCacheKey()
         vue.clearModals()
         if (response.data.errorMessage) {
           console.log(response.data)

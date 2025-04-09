@@ -460,7 +460,7 @@ export default {
       }
 
       promise.then(function () {
-        vue.$store.commit('generateCacheKey')
+        vue.store.generateCacheKey()
         vue.bus.$emit('updateToolkitResourceList', vue.data.content)
         vue.clearModals()
       }).catch(function (err) {

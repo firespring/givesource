@@ -59,7 +59,8 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
+import { useAdminStore } from '../../../store/index.js'
 
 export default {
   data () {
@@ -69,9 +70,9 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      receipt: state => state.receipt,
-      donorEmail: state => state.donorEmail
+    ...mapState(useAdminStore, {
+      receipt: store => store.receipt,
+      donorEmail: store => store.donorEmail
     })
   },
 
@@ -103,14 +104,14 @@ export default {
     }
   },
 
-  unmounted () {
+  beforeUnmount () {
     this.clearReceipt()
   },
 
   methods: {
-    ...mapActions([
-      'clearReceipt'
-    ]),
+    ...mapActions(useAdminStore, {
+      clearReceipt: 'clearReceipt'
+    }),
 
     printReceipt () {
       window.print()

@@ -280,7 +280,7 @@ export default {
         if (vm.formData[key] instanceof File) {
           promise = promise.then(() => {
             return vm.uploadImage(key).then(uploadedFile => {
-              vm.$store.commit('generateCacheKey')
+              vm.store.generateCacheKey()
               settings.push({
                 key: key,
                 value: uploadedFile && uploadedFile.hasOwnProperty('id') ? uploadedFile.id.toString() : ''

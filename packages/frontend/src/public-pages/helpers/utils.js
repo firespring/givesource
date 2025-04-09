@@ -20,7 +20,7 @@ const isInternetExplorer = function () {
 
 const generateQueryString = function (object) {
   const params = []
-  Object.keys(object).forEach(function (key) {
+  Object.keys(object).forEach((key) => {
     if (object.hasOwnProperty(key)) {
       const value = encodeURIComponent(object[key])
       params.push(key + '=' + value)

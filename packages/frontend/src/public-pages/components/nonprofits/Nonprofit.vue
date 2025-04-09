@@ -314,9 +314,9 @@ export default {
       let logo = false
 
       if (vm.logo) {
-        logo = vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.logo.path
-      } else if (vm.$store.getters.setting('EVENT_LOGO')) {
-        logo = vm.$store.getters.setting('EVENT_LOGO')
+        logo = vm.store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vm.logo.path
+      } else if (vm.store.setting('EVENT_LOGO')) {
+        logo = vm.store.setting('EVENT_LOGO')
       } else {
         logo = require('../../assets/img/logo-event.png')
       }
@@ -403,7 +403,7 @@ export default {
       const vm = this
       const file = _.find(vm.files, { id: slideFile.fileId })
 
-      return file ? vm.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : slideFile.url
+      return file ? vm.store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : slideFile.url
     },
     openDonations () {
       const vm = this

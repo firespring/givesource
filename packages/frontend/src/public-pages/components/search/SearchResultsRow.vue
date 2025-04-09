@@ -81,9 +81,9 @@ export default {
       const vue = this
       let logo = false
       if (vue.nonprofit.logo) {
-        logo = vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path
-      } else if (vue.$store.getters.setting('EVENT_LOGO')) {
-        logo = vue.$store.getters.setting('EVENT_LOGO')
+        logo = vue.store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + vue.nonprofit.logo.path
+      } else if (vue.store.setting('EVENT_LOGO')) {
+        logo = vue.store.setting('EVENT_LOGO')
       } else {
         logo = require('../../assets/img/logo-event.png')
       }

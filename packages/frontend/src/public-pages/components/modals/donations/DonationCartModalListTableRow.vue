@@ -116,7 +116,7 @@ export default {
     deleteCartItem: function () {
       const vue = this
 
-      vue.$store.commit('removeCartItem', vue.timestamp)
+      vue.store.removeCartItem(vue.timestamp)
       vue.$emit('remove-cart-item', vue.index)
     }
   }

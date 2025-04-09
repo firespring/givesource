@@ -148,7 +148,7 @@ export default {
       const vue = this
 
       const file = vue.files[fileId]
-      return file.hasOwnProperty('path') ? vue.$store.getters.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false
+      return file.hasOwnProperty('path') ? vue.store.setting('UPLOADS_CLOUD_FRONT_URL') + '/' + file.path : false
     }
   }
 }

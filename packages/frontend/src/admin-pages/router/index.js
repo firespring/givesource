@@ -73,7 +73,7 @@ import ComponentTerms from './../components/admin/pages/Terms.vue'
 import ComponentToolkits from './../components/admin/pages/Toolkits.vue'
 import ComponentUserAccount from './../components/account/UserAccount.vue'
 import Request from './../helpers/request'
-import store from './../store'
+import { useAdminStore } from './../store'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -142,7 +142,8 @@ const router = createRouter({
         allowedGroups: ['SuperAdmin', 'Admin']
       },
       beforeEnter (to, from, next) {
-        if (store.state.receipt && store.state.donorEmail) {
+        const store = useAdminStore()
+        if (store.receipt && store.donorEmail) {
           next()
         } else {
           if (from.name) {
@@ -631,7 +632,7 @@ const router = createRouter({
  *
  * @return {Promise}
  */
-const updateSettings = function () {
+const updateSettings = function (store) {
   const settings = [
     'EVENT_URL',
     'UPLOADS_CLOUD_FRONT_URL',
@@ -641,21 +642,19 @@ const updateSettings = function () {
 
   return axios.get('/settings.json').then(function (response) {
     window.API_URL = response.data.API_URL
-    store.commit('settings', { API_URL: response.data.API_URL })
+    store.settings.API_URL = response.data.API_URL
   }).then(function () {
     return axios.get(API_URL + 'settings' + Utils.generateQueryString({
       keys: settings
     })).then(function (response) {
       if (response.data.length) {
         response.data.forEach(function (setting) {
-          const set = {}
-          set[setting.key] = setting.value
-          store.commit('settings', set)
+          store.settings[setting.key] = setting.value
         })
       }
     })
   }).then(function () {
-    store.commit('updated')
+    store.updatedAt()
   })
 }
 
@@ -664,15 +663,15 @@ const updateSettings = function () {
  *
  * @return {Promise}
  */
-const loadSettings = function () {
+const loadSettings = function (store) {
   const date = new Date()
   date.setMinutes(date.getMinutes() - 1)
 
-  const lastUpdated = store.getters.updated
+  const lastUpdated = store.updated
   if (lastUpdated === 0 || lastUpdated <= date.getTime()) {
-    return updateSettings()
+    return updateSettings(store)
   } else {
-    window.API_URL = store.getters.setting('API_URL')
+    window.API_URL = store.setting('API_URL')
     return Promise.resolve()
   }
 }
@@ -806,7 +805,8 @@ const loadUserMiddleware = function (to, from, next) {
  * @param {function} next
  */
 const loadSettingsMiddleware = function (to, from, next) {
-  loadSettings().then(function () {
+  const store = useAdminStore()
+  loadSettings(store).then(function () {
     next()
   }).catch(function (err) {
     console.log(err)

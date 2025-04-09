@@ -224,7 +224,7 @@ export default {
     selectTier: function (amount) {
       const vue = this
 
-      vue.$store.commit('addCartItem', {
+      vue.store.addCartItem({
         amount: amount,
         nonprofit: vue.nonprofit
       })
@@ -243,7 +243,7 @@ export default {
       vue.formErrors = vue.validate(vue.formData, vue.getConstraints())
 
       if (amount && !Object.keys(vue.formErrors).length) {
-        vue.$store.commit('addCartItem', {
+        vue.store.addCartItem({
           amount: amount,
           nonprofit: vue.nonprofit
         })

@@ -75,7 +75,7 @@ export default {
         vm.clearModals()
       } else {
         vm.countdown = setInterval(() => {
-          vm.$store.commit('generateCacheKey')
+          vm.store.generateCacheKey()
 
           vm.$request.get('nonprofits/' + vm.nonprofit.id + '/reports/' + vm.report.id).then(response => {
             vm.report = response.data

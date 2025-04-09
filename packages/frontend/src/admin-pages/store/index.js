@@ -14,67 +14,50 @@
  * limitations under the License.
  */
 
-import createPersistedState from 'vuex-persistedstate'
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
 
-export default createStore({
-  state: {
+export const useAdminStore = defineStore('adminStore', {
+  state: () => ({
     cacheKey: 0,
     settings: {},
     updated: 0,
     receipt: null,
     donorEmail: null
-  },
-  mutations: {
-    generateCacheKey: function (state) {
-      state.cacheKey = new Date().getTime()
-    },
-    settings: function (state, settings) {
-      Object.keys(settings).forEach(function (key) {
-        state.settings[key] = settings[key]
-      })
-    },
-    setDonorEmail (state, email) {
-      state.donorEmail = email
-    },
-    setReceipt (state, receiptHtml) {
-      state.receipt = receiptHtml
-    },
-    updated: function (state) {
-      state.updated = new Date().getTime()
-    }
-  },
+  }),
   getters: {
-    cacheKey: function (state) {
+    getCacheKey: (state) => {
       if (!state.cacheKey) {
         state.cacheKey = new Date().getTime()
       }
       return state.cacheKey
     },
-    settings: function (state) {
-      return state.settings
-    },
-    setting: function (state) {
+    setting: (state) => {
       return function (key) {
         return state.settings.hasOwnProperty(key) ? state.settings[key] : null
       }
-    },
-    updated: function (state) {
-      return state.updated
     }
   },
   actions: {
-    async setReceipt ({ commit }, payload) {
-      commit('setReceipt', payload.html)
-      commit('setDonorEmail', payload.email)
+    async setReceipt (payload) {
+      this.receipt = payload.html
+      this.donorEmail = payload.email
     },
 
-    async clearReceipt ({ commit }) {
-      commit('setReceipt', null)
-      commit('setDonorEmail', null)
+    async clearReceipt () {
+      this.receipt = null
+      this.donorEmail = null
+    },
+
+    // Converted to action from mutation
+    generateCacheKey () {
+      this.cacheKey = new Date().getTime()
+    },
+    settings (settings) {
+      this.settings = [...this.settings, ...settings]
+    },
+    updatedAt () {
+      this.updated = new Date().getTime()
     }
   },
-  plugins: [
-    createPersistedState()
-  ]
+  persist: true
 })
