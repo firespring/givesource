@@ -268,7 +268,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_MEDIUM
-        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:docker24-ruby32-awscli
         ImagePullCredentialsType: SERVICE_ROLE
         EnvironmentVariables:
           - Type: PLAINTEXT
@@ -452,7 +452,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:docker24-ruby32-awscli
         ImagePullCredentialsType: SERVICE_ROLE
         EnvironmentVariables:
           - Type: PLAINTEXT
@@ -605,7 +605,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:docker24-ruby32-awscli
         ImagePullCredentialsType: SERVICE_ROLE
         EnvironmentVariables:
           - Type: PLAINTEXT
@@ -760,7 +760,7 @@ Resources:
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:24.0-dind
+        Image: 300448126090.dkr.ecr.us-east-1.amazonaws.com/firespring/dind:docker24-ruby32-awscli
         ImagePullCredentialsType: SERVICE_ROLE
         EnvironmentVariables:
           - Type: PLAINTEXT
