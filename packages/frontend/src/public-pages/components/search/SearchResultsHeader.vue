@@ -104,7 +104,7 @@ export default {
   },
   watch: {
     category (value) {
-      this.formData.category = value
+      this.formData.category = +value
     },
     search (value) {
       this.formData.search = value
@@ -133,7 +133,9 @@ export default {
     submit () {
       const vm = this
 
-      vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+      if (vm.formData.search.length !== 0) {
+        vm.formErrors = vm.validate(vm.formData, vm.getConstraints())
+      }
       if (!Object.keys(vm.formErrors).length) {
         vm.searchNonprofits()
       }
@@ -142,7 +144,7 @@ export default {
       const vm = this
 
       vm.$router.push(vm.generatePageLink({
-        category: vm.formData.category,
+        category: +vm.formData.category,
         search: vm.formData.search,
         start: null
       }))
