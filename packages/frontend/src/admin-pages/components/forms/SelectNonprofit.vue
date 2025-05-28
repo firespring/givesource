@@ -92,6 +92,9 @@ export default {
     const selectOptions = computed(() => {
       return props.nonprofits.map((nonprofit) => {
         return { label: nonprofit.legalName, value: nonprofit.id }
+      }).sort((a, b) => {
+        if (a.label < b.label) { return -1 }
+        if (a.label > b.label) { return 1 }
       })
     })
 
