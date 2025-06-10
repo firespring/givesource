@@ -91,7 +91,10 @@ export default {
     const localValue = ref('')
     const selectOptions = computed(() => {
       return props.nonprofits.map((nonprofit) => {
-        return { label: nonprofit.legalName, value: nonprofit.id }
+        return {
+          label: nonprofit.legalName,
+          value: nonprofit.id + ''
+        }
       }).sort((a, b) => {
         if (a.label < b.label) { return -1 }
         if (a.label > b.label) { return 1 }
@@ -100,6 +103,14 @@ export default {
 
     watch(localValue, (newValue) => {
       emit('update:modelValue', newValue + '')
+    })
+    watch(props, (newProps) => {
+      if (newProps.modelValue !== localValue.value) {
+        localValue.value = props.modelValue
+      }
+    }, {
+      deep: true,
+      immediate: true
     })
 
     return {
