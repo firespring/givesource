@@ -438,11 +438,6 @@ export default {
      */
     getConstraints () {
       return {
-        email: {
-          label: 'Donor email address',
-          presence: false,
-          email: true
-        },
         firstName: {
           label: 'Donor first name',
           presence: true
@@ -469,7 +464,15 @@ export default {
         },
         city: {
           presence: false
+        },
+        ...(this.formData.email !== '' && {
+          email: {
+            label: 'Donor email address',
+            presence: false,
+            email: true
+          }
         }
+        )
       }
     },
 
