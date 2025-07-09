@@ -299,7 +299,7 @@ export default {
   },
   methods: {
     getConstraints: function () {
-      return {
+      const constraints = {
         ACCENT_COLOR: {
           label: 'Accent Color'
         },
@@ -315,16 +315,19 @@ export default {
           presence: false,
           image: true
         },
-        FOUNDATION_URL: {
-          presence: false,
-          label: 'Foundation Logo Link',
-          url: true
-        },
         MASTHEAD_IMAGE: {
           presence: false,
           image: true
         }
       }
+      if (this.formData.FOUNDATION_URL !== '') {
+        constraints.FOUNDATION_URL = {
+          presence: false,
+          label: 'Foundation Logo Link',
+          url: true
+        }
+      }
+      return constraints
     },
     submit: function (event) {
       event.preventDefault()
