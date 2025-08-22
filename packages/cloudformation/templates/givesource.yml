@@ -90,7 +90,7 @@ Mappings:
     Timeout:
       Default: 30
     Runtime:
-      Default: nodejs18.x
+      Default: nodejs22.x
 
 Conditions:
 
