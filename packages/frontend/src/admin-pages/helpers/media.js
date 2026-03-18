@@ -21,7 +21,7 @@ Media.prototype.TYPE_IMAGE = 'IMAGE'
 Media.prototype.TYPE_VIMEO = 'VIMEO'
 Media.prototype.TYPE_YOUTUBE = 'YOUTUBE'
 
-Media.prototype.VIDEO_REGEX = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
+Media.prototype.VIDEO_REGEX = /(http:|https:|)\/\/(player\.|www\.|m\.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|watch\?.+&v=|v\/|shorts\/|live\/)?([A-Za-z0-9._%-]*)([?&]\S+)?/
 
 /**
  * Get data from this video's url

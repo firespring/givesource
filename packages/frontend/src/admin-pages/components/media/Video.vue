@@ -22,6 +22,7 @@
     :height="height"
     style="max-width: 100%; border-radius: 3px;"
     frameborder="0"
+    referrerpolicy="strict-origin-when-cross-origin"
     webkitallowfullscreen
     mozallowfullscreen
     allowfullscreen

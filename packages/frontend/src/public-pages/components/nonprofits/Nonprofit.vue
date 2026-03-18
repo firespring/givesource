@@ -146,6 +146,7 @@
                     height="443"
                     style="max-width: 100%;"
                     frameborder="0"
+                    referrerpolicy="strict-origin-when-cross-origin"
                     webkitallowfullscreen
                     mozallowfullscreen
                     allowfullscreen
