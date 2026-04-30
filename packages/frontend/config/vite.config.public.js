@@ -54,6 +54,10 @@ export default defineConfig(async ({ command, mode }) => {
           {
             src: resolve(__dirname, '../config/custom.css'),
             dest: './'
+          },
+          {
+            src: resolve(__dirname, SOURCE_PATH + '/assets/fontawesome'),
+            dest: './assets'
           }
         ]
       })

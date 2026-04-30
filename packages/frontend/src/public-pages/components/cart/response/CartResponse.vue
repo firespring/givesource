@@ -54,9 +54,9 @@
             network="twitter"
           >
             <span class="btn btn--xs btn--dark btn--icon btn--twitter"><i
-              class="fab fa-twitter"
+              class="fab fa-x-twitter"
               aria-hidden="true"
-            />Tweet</span>
+            />Post</span>
           </ShareNetwork>
         </div>
       </div>
