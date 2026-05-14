@@ -731,7 +731,11 @@ export default {
 
       vm.processing = true
 
-      if (vm.donationError) {
+      if (vm.getDonationTotal() < 1000) {
+        vm.apiError = { message: 'The total of your donations must be at least $10.00 to process your cart.' }
+        $('table.table-donations')[0].scrollIntoView(true)
+        vm.processing = false
+      } else if (vm.donationError) {
         $('table.table-donations')[0].scrollIntoView(true)
         vm.processing = false
       } else if (Object.keys(vm.formErrors.donor).length || Object.keys(vm.formErrors.formData).length || Object.keys(vm.formErrors.paymentDetails).length) {
@@ -855,6 +859,9 @@ export default {
         params.public_api_key = publicKey
         return axios.get('https://api.paymentspring.com/api/v1/tokens/jsonp' + Utils.generateQueryString(params))
       })
+    },
+    getDonationTotal () {
+      return this.store.cartItems.reduce((total, item) => total + item.amount, 0)
     },
     donationHasErrors (hasError) {
       this.donationError = hasError
