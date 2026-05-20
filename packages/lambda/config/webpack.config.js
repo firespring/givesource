@@ -56,6 +56,7 @@ const config = {
     GetContents: './src/api/getContents/index.js',
     GetDonation: './src/api/getDonation/index.js',
     GetDonations: './src/api/getDonations/index.js',
+    GetDonationsSummary: './src/api/getDonationsSummary/index.js',
     GetDonationsReceipt: './src/api/getDonationsReceipt/index.js',
     GetDonor: './src/api/getDonor/index.js',
     GetDonors: './src/api/getDonors/index.js',

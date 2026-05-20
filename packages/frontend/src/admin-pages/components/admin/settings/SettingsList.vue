@@ -161,6 +161,20 @@
                     Manage the text and image that is shared via the social media logos on donation pages.
                   </div>
                 </div>
+
+                <hr class="expand">
+
+                <div class="c-page-section-segment">
+                  <h3 class="c-page-section-segment__title">
+                    Donations Summary API
+                  </h3>
+                  <div class="c-notes c-notes--below">
+                    Use this endpoint to retrieve current donation metrics and top nonprofits as JSON.
+                  </div>
+                  <div class="c-notes c-notes--below">
+                    <code>{{ donationsSummaryUrl }}</code>
+                  </div>
+                </div>
               </div>
             </section>
           </div>
@@ -175,6 +189,10 @@ export default {
   computed: {
     isSuperAdmin: function () {
       return this.isSuperAdminUser()
+    },
+    donationsSummaryUrl: function () {
+      const apiUrl = this.store.setting('API_URL')
+      return apiUrl ? apiUrl + 'donations-summary' : ''
     }
   }
 }
