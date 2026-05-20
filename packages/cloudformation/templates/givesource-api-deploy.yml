@@ -72,6 +72,11 @@ Resources:
           LoggingLevel: INFO
           DataTraceEnabled: true
           CachingEnabled: false
+        - ResourcePath: "/donations-summary"
+          HttpMethod: GET
+          CacheDataEncrypted: true
+          CacheTtlInSeconds: 60
+          CachingEnabled: true
         - ResourcePath: "/metrics"
           HttpMethod: GET
           CacheDataEncrypted: true
