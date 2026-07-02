@@ -803,7 +803,9 @@ export default {
           vm.$router.push({ name: 'cart-response' })
         }
       }).catch(err => {
-        vm.apiError = err.response.data.errors
+        vm.apiError = (err.response && err.response.data && err.response.data.errors)
+          ? err.response.data.errors
+          : { message: err.message || 'There was an error processing your payment.' }
         vm.processing = false
       })
     },
