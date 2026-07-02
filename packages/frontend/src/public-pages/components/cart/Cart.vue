@@ -40,7 +40,14 @@
             @has-error="donationHasErrors"
           />
 
-          <fieldset v-if="!isCartEmpty">
+          <div
+            v-if="isEventOver"
+            class="notes notes--error"
+          >
+            This event has ended. Donations are no longer being accepted.
+          </div>
+
+          <fieldset v-if="!isCartEmpty && !isEventOver">
             <legend>
               <h2>Your Contact & Billing Info</h2>
             </legend>
@@ -283,7 +290,7 @@
             </div>
           </fieldset>
 
-          <fieldset v-if="!isCartEmpty">
+          <fieldset v-if="!isCartEmpty && !isEventOver">
             <legend>
               <h2>Your Payment Info</h2>
             </legend>
@@ -417,7 +424,7 @@
           />
 
           <div
-            v-if="!isCartEmpty"
+            v-if="!isCartEmpty && !isEventOver"
             class="form-actions flex justify-center items-center"
           >
             <VueRecaptcha
@@ -587,6 +594,9 @@ export default {
        */
     getSiteKey () {
       return this.store.setting('RECAPTCHA_KEY')
+    },
+    isEventOver () {
+      return Settings.isAfterEvent()
     }
   },
   watch: {
@@ -731,6 +741,12 @@ export default {
 
       vm.processing = true
 
+      if (Settings.isAfterEvent()) {
+        vm.apiError = { message: 'This event has ended. Donations are no longer being accepted.' }
+        vm.processing = false
+        return
+      }
+
       if (vm.getDonationTotal() < 1000) {
         vm.apiError = { message: 'The total of your donations must be at least $10.00 to process your cart.' }
         $('table.table-donations')[0].scrollIntoView(true)
@@ -830,17 +846,21 @@ export default {
         const publicApiKey = _.find(vm.settings, { key: 'PAYMENT_SPRING_PUBLIC_API_KEY' })
         const testPublicApiKey = _.find(vm.settings, { key: 'PAYMENT_SPRING_TEST_PUBLIC_API_KEY' })
 
-        if (paymentMode && paymentMode.value === '1' && publicApiKey.value) {
+        if (paymentMode && paymentMode.value === '1' && publicApiKey && publicApiKey.value) {
           return Promise.resolve(publicApiKey.value)
         }
 
-        if (paymentMode && paymentMode.value === '0' && testPublicApiKey.value) {
+        if (paymentMode && paymentMode.value === '0' && testPublicApiKey && testPublicApiKey.value) {
           return Promise.resolve(testPublicApiKey.value)
         }
 
         return Promise.reject(new Error('There was an error processing your payment.'))
       }).catch(err => {
-        vm.apiError = err.response.data.errors
+        const message = (err.response && err.response.data && err.response.data.errors)
+          ? err.response.data.errors
+          : { message: err.message || 'There was an error processing your payment.' }
+        vm.apiError = message
+        return Promise.reject(err)
       })
     },
     getPaymentToken () {
