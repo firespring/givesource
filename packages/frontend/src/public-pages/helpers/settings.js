@@ -272,6 +272,22 @@ const isDuringDonations = function () {
 }
 
 /**
+ * Is it after the donations end date?
+ *
+ * @returns {boolean}
+ */
+const isAfterDonations = function () {
+  const end = donationsEndDate()
+
+  if (end) {
+    const now = dayjs()
+    return now.isAfter(end, 'day')
+  }
+
+  return false
+}
+
+/**
  * Get an object representing a countdown until a certain date
  *
  * @param {Object} date
@@ -302,6 +318,7 @@ export {
   eventEndDate,
   eventStartDate,
   eventTitle,
+  isAfterDonations,
   isAfterEvent,
   isAfterRegistrations,
   isBeforeEvent,

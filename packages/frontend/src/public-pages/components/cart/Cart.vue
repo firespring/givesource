@@ -596,7 +596,7 @@ export default {
       return this.store.setting('RECAPTCHA_KEY')
     },
     isEventOver () {
-      return Settings.isAfterEvent()
+      return Settings.isAfterDonations()
     }
   },
   watch: {
@@ -741,7 +741,7 @@ export default {
 
       vm.processing = true
 
-      if (Settings.isAfterEvent()) {
+      if (Settings.isAfterDonations()) {
         vm.apiError = { message: 'This event has ended. Donations are no longer being accepted.' }
         vm.processing = false
         return
