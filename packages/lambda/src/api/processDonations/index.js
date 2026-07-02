@@ -158,23 +158,20 @@ exports.handle = function handle (event, context, callback) {
     })
   }).then((popPT) => {
     paymentTransaction = popPT
-    return !payment.is_test_mode ? paymentTransactionsRepository.upsert(paymentTransaction, {}) : Promise.resolve(paymentTransaction)
-    // return paymentTransactionsRepository.upsert(paymentTransaction, {}); // uncomment this for testing ease
+    return paymentTransactionsRepository.upsert(paymentTransaction, {})
   }).then((response) => {
     paymentTransaction = response
     paymentTransaction.timezone = settings.EVENT_TIMEZONE
     donations.forEach((donation) => {
-      donation.paymentTransactionId = !payment.is_test_mode ? response.id : 0
+      donation.paymentTransactionId = response.id
       donation.paymentTransactionAmount = response.transactionAmount
       donation.paymentTransactionIsTestMode = response.isTestMode
       donation.paymentTransactionStatus = response.transactionStatus
     })
   }).then(function () {
-    return !payment.is_test_mode ? donorsRepository.upsert(donor, {}) : Promise.resolve(donor)
-    // return donorsRepository.upsert(donor, {}); // uncomment this for testing ease
+    return donorsRepository.upsert(donor, {})
   }).then(function (savedDonor) {
     donor = savedDonor
-    donor.id = !payment.is_test_mode ? donor.id : 0
     let promise = Promise.resolve()
     const donationValues = []
     donations.forEach(function (donation) {
