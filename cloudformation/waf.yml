@@ -180,6 +180,21 @@
                 - 'kms:*'
               Resource:
                 - '*'
+            # Allow the WAF/CloudWatch log-delivery service to generate the data
+            # key it uses when writing SSE-CMK-encrypted records to the Firehose
+            # delivery stream. Scoped to this account to prevent confused-deputy.
+            - Effect: Allow
+              Principal:
+                Service:
+                  - delivery.logs.amazonaws.com
+              Action:
+                - 'kms:GenerateDataKey*'
+                - 'kms:Decrypt'
+              Resource:
+                - '*'
+              Condition:
+                StringEquals:
+                  aws:SourceAccount: !Ref AWS::AccountId
       DeletionPolicy: Retain
 
     EncryptionKeyAlias:
