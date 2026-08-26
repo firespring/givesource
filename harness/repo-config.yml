@@ -1,0 +1,50 @@
+# Harness repository grounding for firespring/givesource
+repo: firespring/givesource
+kb: harness/givesource.md
+
+packages:
+  - name: frontend
+    path: packages/frontend
+    type: web-ui
+    build_cmd: npm --prefix packages/frontend run build
+    dev_cmd: npm --prefix packages/frontend run dev
+    release_cmd: npm --prefix packages/frontend run release
+    deploy_cmd: npm --prefix packages/frontend run deploy
+    notes:
+      - Vite configs under packages/frontend/config.
+  - name: lambda
+    path: packages/lambda
+    type: aws-lambda
+    build_cmd: npm --prefix packages/lambda run build
+    release_cmd: npm --prefix packages/lambda run release:force
+    deploy_cmd: LAMBDA=<Name> npm --prefix packages/lambda run deploy
+    notes:
+      - For updating a single function: LAMBDA=<Name> npm run build && LAMBDA=<Name> npm run deploy
+  - name: cloudformation
+    path: packages/cloudformation
+    type: infra
+    build_cmd: npm --prefix packages/cloudformation run build
+    release_cmd: npm --prefix packages/cloudformation run release:force
+    update_cmd: npm --prefix packages/cloudformation run update
+
+critical_invariants:
+  - path: packages/frontend/src/admin-pages/helpers/media.js
+    note: "Media.getVideoData depends on VIDEO_REGEX capture groups: group 3 = provider domain, group 6 = video ID. Preserve positions when editing the regex."
+  - path: packages/lambda/src/repositories/**
+    note: "Repositories call loadModels() and close the connection in finally(). Do not mix repository calls with a manually-managed loadModels() in the same handler. Query models directly instead."
+
+deployment_runbooks:
+  - name: new-lambda-and-api-gateway
+    steps:
+      - "Bump version in root package.json"
+      - "Build & release lambda: npm --prefix packages/lambda run release:force"
+      - "Build & release CloudFormation: npm --prefix packages/cloudformation run release:force"
+      - "Update CloudFormation stack: npm --prefix packages/cloudformation run update"
+      - "Manually deploy API Gateway to prod stage (Console) or via CLI: aws apigateway create-deployment --rest-api-id <ID> --stage-name prod"
+
+workflows:
+  plan: .devin/workflows/harness-plan.md
+  checkpoint: .devin/workflows/harness-checkpoint.md
+  amend: .devin/workflows/harness-amend.md
+  adr: .devin/workflows/harness-adr.md
+  kb_update: .devin/workflows/harness-kb-update.md
