@@ -25,7 +25,7 @@ Givesource needs a repository-grounded Harness to guide AI agents working on lon
 5. Fix ADR workflow frontmatter and robust numbering
 6. Add repo launcher skills (plan, story, review, pr, pr-comments, merge) with local fallbacks
 7. Update root README with AI agents section
-8. Update Jira story with work summary; open feature branch and bump version
+8. Update Jira story with work summary; open feature branch. No version bump as part of this PR (follows `develop` version).
 
 ## Risks
 - Agents bypassing Harness conventions — Mitigate via AGENTS.md and skills preamble.
@@ -36,7 +36,7 @@ Givesource needs a repository-grounded Harness to guide AI agents working on lon
 - AGENTS.md published at repo root with clear directives.
 - Skills and workflows present and wired to harness/repo-config.yml.
 - README links users to AGENTS.md and KB.
-- Jira story reflects work performed; feature branch created; version bumped.
+- Jira story reflects work performed; feature branch created; version remains aligned with `develop`.
 
 ## Next Actions
 - Add initial checkpoint after merging this plan.

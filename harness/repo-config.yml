@@ -5,7 +5,7 @@ repo:
   name: givesource
   prefix: gs
   base_branch: develop
-  feature_branch_format: "<STORY_KEY>"
+  feature_branch_format: "feature/<STORY_KEY>"
 
 harness:
   main_file: harness/givesource.md
