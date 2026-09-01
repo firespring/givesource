@@ -19,7 +19,7 @@ Givesource needs a repository-grounded Harness to guide AI agents working on lon
 
 ## Milestones
 1. Scaffold Harness structure (README, repo-config, KB, plans/checkpoints/amendments, ADR template)
-2. Replace ai-search with givesource and update all references
+2. Add repo-specific givesource KB and ensure references point to it (no legacy ai-search file in this repo)
 3. Add AGENTS.md tailored to Givesource packages and invariants
 4. Add .devin workflows (plan, checkpoint, amend, adr, kb-update)
 5. Fix ADR workflow frontmatter and robust numbering

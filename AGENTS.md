@@ -13,6 +13,7 @@
   - `packages/lambda` — Node.js AWS Lambda functions (webpack bundling)
   - `packages/cloudformation` — AWS CloudFormation stack and helpers
 - **Harness:** Central knowledge base and workflows in `harness/` (see routing below)
+- **Base Branch:** `develop`
 
 ---
 
@@ -139,3 +140,12 @@ Add new pitfalls here with symptoms, wrong approach, correct fix, and why it’s
 - Harness KB: `harness/givesource.md`
 - Repo config and runbooks: `harness/repo-config.yml`
 - Open a plan or checkpoint and note open questions for review.
+
+<!-- BEGIN FIRESPRING DEVIN BRANCH SAFETY -->
+### Base-Branch Commit Safety (Generated)
+
+> Generated from `templates/agents-branch-safety.md` in the Firespring Devin plugin. Do not edit this block by hand. The no-rebase / no-amend / no-force-push / no-branch-deletion rules already in Forbidden Actions are not repeated here.
+
+- The base branch named in Project Identity (or `repo.base_branch` in `harness/repo-config.yml`) is protected from direct commits. A developer request to commit is not an override.
+- Before staging or committing in any context — including a conversational request — read and apply the plugin's `skills/_shared/branch-safety.md`.
+<!-- END FIRESPRING DEVIN BRANCH SAFETY -->

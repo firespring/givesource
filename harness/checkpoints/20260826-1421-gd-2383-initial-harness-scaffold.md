@@ -9,7 +9,7 @@
 - Fixed malformed YAML frontmatter in `harness-adr.md` and improved ADR numbering logic
 - Created `AGENTS.md` with Givesource directives and context routing
 - Updated root `README.md` with a "For AI agents" section
-- Replaced `ai-search` with `givesource`; removed `harness/ai-search.md`
+- Established repo-specific KB `harness/givesource.md` and pointed new references to it (no prior `ai-search.md` existed in this repo)
 - Added Givesource-specific skills: `.devin/skills/{plan,story,review,pr,pr-comments,merge}/SKILL.md` with local fallbacks
 - Opened feature branch `feature/GD-2383-harness` based on `develop`
 - Bumped root `package.json` version from 4.2.21 to 4.2.22
