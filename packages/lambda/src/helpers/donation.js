@@ -42,8 +42,36 @@ exports.last4Fields = [
     value: 'email'
   },
   {
+    label: 'donationId',
+    value: 'donationId'
+  },
+  {
+    label: 'address1',
+    value: 'address1'
+  },
+  {
+    label: 'address2',
+    value: 'address2'
+  },
+  {
+    label: 'city',
+    value: 'city'
+  },
+  {
+    label: 'state',
+    value: 'state'
+  },
+  {
+    label: 'zip',
+    value: 'zip'
+  },
+  {
     label: 'subtotalCharged',
     value: 'subtotalCharged'
+  },
+  {
+    label: 'totalCharged',
+    value: 'totalCharged'
   },
   {
     label: 'creditCardLast4',
