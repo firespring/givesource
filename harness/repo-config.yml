@@ -3,7 +3,7 @@ min_plugin_version: "0.9.0"
 
 repo:
   name: givesource
-  prefix: gs
+  prefix: gs-
   base_branch: develop
   feature_branch_format: "feature/<STORY_KEY>"
 
@@ -13,8 +13,8 @@ harness:
   checkpoints_dir: harness/checkpoints/
 
 commands:
-  test: npm run test
-  lint: npm run lint
+  test: test
+  lint: lint
 
 jira:
   session_labels: true
