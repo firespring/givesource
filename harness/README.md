@@ -5,7 +5,7 @@ Ground AI agents on long-running work through structured workflows, a central kn
 - Reference: https://github.com/firespring/firespring-ai/tree/develop/harness
 
 ## Structure
-- **repo-config.yml**: Repo grounding for agents (packages, commands, deploy runbooks, invariants).
+- **repo-config.yml**: Facts-only repo grounding for agents (schema v1). Includes repo prefix/base branch, Harness file locations, and Make targets.
 - **givesource.md**: Living knowledge base with targeted search aids and system invariants.
 - **plans/**: Append-only initiative plans. One plan is "in progress" at a time.
 - **checkpoints/**: Time-stamped progress snapshots; do not edit once written.
@@ -19,10 +19,10 @@ Ground AI agents on long-running work through structured workflows, a central kn
 - **Grounding first**: Agents must read `repo-config.yml` and `givesource.md` before taking action.
 
 ## Quick start
-- **Start a plan**: Use `/harness-plan` workflow to scaffold an initiative file under `harness/plans/`.
-- **Checkpoint work**: Use `/harness-checkpoint` to log progress in `harness/checkpoints/`.
-- **Amend scope**: Use `/harness-amend` to append an amendment.
-- **Record a decision**: Use `/harness-adr` to create a new ADR.
+- **Start a plan**: Run `gs-plan` or `/firespring:fs-plan` (plugin-backed). Plans live under `harness/plans/`.
+- **Checkpoint work**: Create append-only files under `harness/checkpoints/`.
+- **Amend scope**: Use `/harness-amend` to append an amendment under `harness/amendments/`.
+- **Record a decision**: Use `/harness-adr` to create a new ADR under `harness/adrs/`.
 
 ## Conventions
 - Filenames are kebab-case. Checkpoints include a UTC timestamp prefix: `YYYYMMDD-HHMM-<topic>.md`.

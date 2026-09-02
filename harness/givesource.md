@@ -53,3 +53,18 @@ Use these targeted notes and searches to orient quickly and ground agents before
 - Read `harness/repo-config.yml` first. Prefer repository utilities and scripts over bespoke commands.
 - When a task spans multiple days, open or update a plan under `harness/plans/`, then checkpoint daily under `harness/checkpoints/`.
 - For scope/approach changes, append an amendment; for durable tech choices, file an ADR.
+
+## Feature List
+- Admin UI (Vue 3 + Vite)
+- Public Site (Vue 3 + Vite)
+- Lambda APIs (Node.js, Webpack)
+- CloudFormation infrastructure
+
+## Current Progress
+- Plans: see `harness/plans/`
+- Checkpoints: see `harness/checkpoints/` (append-only history of ongoing work)
+- Amendments/ADRs: see `harness/amendments/` and `harness/adrs/`
+
+## Epic Dependency Graph
+- Document epic relationships via plan links and checkpoints.
+- For large initiatives, include a dependency diagram in the plan and reference it here after merge.

@@ -17,39 +17,49 @@
 
 ---
 
-## 2) Critical Directives (Non‑negotiable)
+## Project Conventions
 
-### Security
+- **Security**
+  - Never commit secrets — No API keys, AWS creds, tokens, or `.env` files.
+  - Handle PII with care — Do not add logs that leak donor details or payment data.
+  - Keep AWS changes scripted — Prefer repository scripts and CloudFormation; avoid manual console edits.
 
-1. **Never commit secrets** — No API keys, AWS creds, tokens, or `.env` files.
-2. **Handle PII with care** — Do not add logs that leak donor details or payment data.
-3. **Keep AWS changes scripted** — Prefer repository scripts and CloudFormation; avoid manual console edits.
+- **Lambda (packages/lambda)**
+  - Repository lifecycle invariant — Each repository call manages its own `loadModels()` and closes in `.finally()`. Do not open a manual connection and then call repositories. If you need models with a manual connection, query models directly instead.
+  - Avoid long‑lived connections — Keep handlers stateless and idempotent.
 
-### Lambda (packages/lambda)
+- **Frontend (packages/frontend)**
+  - VIDEO_REGEX capture indices — `Media.getVideoData` relies on exact capture group positions in `src/admin-pages/helpers/media.js`:
+    - Group 3 = provider domain
+    - Group 6 = video ID
+    Preserve these indices or update all dependent parsing.
+  - Separate builds — Admin and Public builds use distinct Vite configs under `config/`.
+  - No secrets in client code — Do not surface credentials or sensitive config in frontend bundles.
 
-1. **Repository lifecycle invariant** — Each repository call manages its own `loadModels()` and closes in `.finally()`. Do not open a manual connection and then call repositories. If you need models with a manual connection, query models directly instead.
-2. **Avoid long‑lived connections** — Keep handlers stateless and idempotent.
-3. **Tests** — Use `npm --prefix packages/lambda run test` (mocha). Validate before release/deploy.
-
-### Frontend (packages/frontend)
-
-1. **VIDEO_REGEX capture indices** — `Media.getVideoData` relies on exact capture group positions in `src/admin-pages/helpers/media.js`:
-   - Group 3 = provider domain
-   - Group 6 = video ID
-   If you change the regex, you must preserve these indices or update all dependent parsing.
-2. **Separate builds** — Admin and Public builds use distinct Vite configs under `config/`.
-3. **No secrets in client code** — Do not surface credentials or sensitive config in frontend bundles.
-
-### CloudFormation (packages/cloudformation)
-
-1. **Templates + scripts** — Make infra changes via templates and `bin/*.js` helpers.
-2. **Prod deploys** — Follow documented runbooks (see Harness KB) and confirm risk.
+- **CloudFormation (packages/cloudformation)**
+  - Make infra changes via templates and `bin/*.js` helpers.
+  - For prod deploys, follow documented runbooks (see Harness KB) and confirm risk.
 
 ### Git / Review Hygiene
 
 - No `git push --force`, `--force-with-lease`, `commit --amend`, or long rebases on shared branches.
 - Add tests for new logic where feasible (especially Lambda data access).
 - Keep PRs scoped; link to Harness plan/checkpoints when work spans days.
+
+## Naming Conventions
+
+- **Branches**: `feature/<STORY_KEY>` (e.g., `feature/GD-2383-harness`).
+- **Skill launchers**: Prefixed with `gs-` (e.g., `gs-plan`, `gs-pr`, `gs-merge`).
+- **Harness docs**: Kebab-case filenames; checkpoints prefixed with UTC timestamp `YYYYMMDD-HHMM-<topic>.md`.
+
+Authoritative values (repo prefix, base branch, feature branch format) are defined in `harness/repo-config.yml`.
+
+## Testing
+
+- Primary: `make test` (delegates to existing npm scripts).
+- Lint: `make lint`.
+- Lambda tests: `npm --prefix packages/lambda run test` (mocha), `npm --prefix packages/lambda run test:coverage` for coverage.
+- Run package builds before release as applicable.
 
 ---
 
@@ -59,7 +69,7 @@
 | --- | --- |
 | Quick orientation, runbooks, invariants | `harness/givesource.md` |
 | Packages, commands, deployment runbooks | `harness/repo-config.yml` |
-| Start/track long‑running work | `.devin/workflows/harness-plan.md`, `harness/checkpoints/` |
+| Start/track long‑running work | `gs-plan` or `/firespring:fs-plan`; checkpoints live in `harness/checkpoints/` |
 | Amend scope / record decisions | `.devin/workflows/harness-amend.md`, `.devin/workflows/harness-adr.md` |
 | Lambda API handlers | `packages/lambda/src/api/**` |
 | Lambda data layer (repositories) | `packages/lambda/src/repositories/**` |
