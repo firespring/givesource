@@ -13,8 +13,8 @@ harness:
   checkpoints_dir: harness/checkpoints/
 
 commands:
-  test: test
-  lint: lint
+  test: make test
+  lint: make lint
 
 jira:
   session_labels: true

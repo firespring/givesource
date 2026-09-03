@@ -140,7 +140,7 @@ Add new pitfalls here with symptoms, wrong approach, correct fix, and why it’s
 
 1. Run package tests/builds as applicable (Lambda tests, Frontend builds).
 2. Verify no secrets or `.env` files are staged.
-3. If the task was long‑running, add a checkpoint (`.devin/workflows/harness-checkpoint.md`).
+3. If the task was long‑running, add a checkpoint under `harness/checkpoints/` (append-only; per-story checkpoints managed by the plugin).
 4. If decisions were made, add an ADR (`.devin/workflows/harness-adr.md`).
 
 ---

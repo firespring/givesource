@@ -1,5 +1,6 @@
 ---
-title: Project Identity (Always Applied)
+description: givesource project identity and agent rulebook pointer
+alwaysApply: true
 ---
 
 - This repository is firespring/givesource — a monorepo with:

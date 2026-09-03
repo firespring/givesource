@@ -68,3 +68,6 @@ Use these targeted notes and searches to orient quickly and ground agents before
 ## Epic Dependency Graph
 - Document epic relationships via plan links and checkpoints.
 - For large initiatives, include a dependency diagram in the plan and reference it here after merge.
+
+## Scope note
+- The state sections (Feature List, Current Progress, Epic Dependency Graph) are intentionally concise. Expansion to cover tenancy isolation, PII/payment handling, and Lambda module coverage is tracked as a follow-up in amendment `20260903-1405-gd-2383-launcher-sync-and-workflow-migration.md` (Story GD-2383).
