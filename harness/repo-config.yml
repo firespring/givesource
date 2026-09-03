@@ -3,7 +3,7 @@ min_plugin_version: "0.9.0"
 
 repo:
   name: givesource
-  prefix: gs-
+  prefix: gs
   base_branch: develop
   feature_branch_format: "feature/<STORY_KEY>"
 
