@@ -26,9 +26,10 @@ description: Create a new Architecture Decision Record (ADR)
      "feature/<STORY_KEY>" \
      "$PWD"
 
-   FILE="harness/adrs/adr-$NUM-<slug>.md"
+   # Substitute the actual ADR number and slug from the file created above.
+   FILE="harness/adrs/adr-<NUM>-<slug>.md"
    git add -- "$FILE"
    git diff --cached --check
    git diff --cached -- "$FILE"
-   git commit -m "harness: add ADR $NUM <slug>"
+   git commit -m "harness: add ADR <NUM> <slug>"
    ```

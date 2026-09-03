@@ -27,8 +27,10 @@ description: Append an amendment to adjust scope, milestones, or approach
      "feature/<STORY_KEY>" \
      "$PWD"
 
+   # Substitute the actual timestamp and plan slug from the file created above.
+   FILE="harness/amendments/<timestamp>-<plan-slug>-amendment.md"
    git add -- "$FILE"
    git diff --cached --check
    git diff --cached -- "$FILE"
-   git commit -m "harness: amendment $TS <plan-slug>"
+   git commit -m "harness: amendment <timestamp> <plan-slug>"
    ```
