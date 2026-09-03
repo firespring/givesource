@@ -258,9 +258,6 @@ const getLastFourPaymentTransactionReportData = function (timezone) {
         const totalInCents = donation.subtotal
         donation.mutate = ''
         donation.timezone = timezone
-        if (donation.Donor && donation.isAnonymous) {
-          donation.Donor.donorIsAnonymous = ''
-        }
         return {
           createdAt: donation.createdAt,
           firstName: donation.Donor.firstName,
