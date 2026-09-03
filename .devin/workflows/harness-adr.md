@@ -15,7 +15,20 @@ description: Create a new Architecture Decision Record (ADR)
 
 2. Fill in Context, Decision, Consequences, and Alternatives. Set Status.
 
-3. Commit the ADR:
+3. Commit the ADR (apply branch safety and stage only the created file):
    ```bash
-   git add harness/adrs && git commit -m "harness: add ADR $NUM <slug>"
+   # Substitute the actual story key and current feature branch for this session.
+   skill_dir="$(devin skills show firespring:fs-story 2>/dev/null | sed -n 's/^Base directory: //p' | head -n 1)"
+   plugin_root="$(cd "${skill_dir}/../.." && pwd)"
+   bash "${plugin_root}/scripts/check-branch-safety.sh" \
+     commit \
+     "develop" \
+     "feature/<STORY_KEY>" \
+     "$PWD"
+
+   FILE="harness/adrs/adr-$NUM-<slug>.md"
+   git add -- "$FILE"
+   git diff --cached --check
+   git diff --cached -- "$FILE"
+   git commit -m "harness: add ADR $NUM <slug>"
    ```
