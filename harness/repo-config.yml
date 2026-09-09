@@ -1,0 +1,27 @@
+schema_version: 1
+min_plugin_version: "0.9.0"
+
+repo:
+  name: givesource
+  prefix: gs
+  base_branch: develop
+  feature_branch_format: "feature/<STORY_KEY>"
+
+harness:
+  main_file: harness/givesource.md
+  amendments_dir: harness/amendments/
+  checkpoints_dir: harness/checkpoints/
+
+commands:
+  test: make test
+  lint: make lint
+
+jira:
+  session_labels: true
+  closure: full
+
+domain_skills: {}
+
+context: {}
+
+workflow_notes: {}

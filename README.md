@@ -36,6 +36,11 @@ This means you have unlimited capacity to help nonprofits fundraise and grow you
 	
 6. When the stack is created, an email will be sent to the admin email address entered in on step 2. This will take up to 25 minutes. Click the link in the email to setup a password and login.
 
+## For AI agents
+
+See [AGENTS.md](AGENTS.md) for repository rules and guardrails, and the Harness KB at [harness/givesource.md](harness/givesource.md).
+
+
 ## License
 
 Copyright 2019 Firespring, Inc.
